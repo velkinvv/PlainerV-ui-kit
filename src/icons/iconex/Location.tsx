@@ -1,0 +1,33 @@
+import type { IconComponentProps } from '../../types/icon';
+import React from 'react';
+import { useTheme } from 'styled-components';
+
+export const IconExLocation: React.FC<IconComponentProps> = ({
+  width = 24,
+  height = 24,
+  color: IconColor,
+  ...props
+}) => {
+  const theme = useTheme();
+  const color = IconColor || theme.colors.text;
+
+  return (
+    <svg
+      width={width}
+      height={height}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        d="M20 10.4167C20 15.8445 13.6 21.5 12 21.5C10.4 21.5 4 15.8445 4 10.4167C4 6.04441 7.58172 2.5 12 2.5C16.4183 2.5 20 6.04441 20 10.4167Z"
+        stroke={color}
+        strokeWidth="1.5"
+      />
+      <circle r="3" transform="matrix(-1 0 0 1 12 10)" stroke={color} strokeWidth="1.5" />
+    </svg>
+  );
+};
+
+export default IconExLocation;

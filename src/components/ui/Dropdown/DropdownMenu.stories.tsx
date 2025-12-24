@@ -1,0 +1,101 @@
+import React from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
+import { ThemeProvider } from '../../../themes/ThemeProvider';
+import { DropdownMenu } from './DropdownMenu';
+import { DropdownMenuItem } from './DropdownMenuItem';
+
+const meta: Meta<typeof DropdownMenu> = {
+  title: 'Components/Dropdown/DropdownMenu',
+  component: DropdownMenu,
+  subcomponents: { DropdownMenuItem },
+  decorators: [
+    Story => (
+      <ThemeProvider>
+        <div style={{ maxWidth: 320 }}>
+          <Story />
+        </div>
+      </ThemeProvider>
+    ),
+  ],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Вспомогательные компоненты `DropdownMenu` и `DropdownMenuItem` для построения содержимого `Dropdown`. Меню оборачивает элементы и передаёт контекст для закрытия dropdown после выбора.',
+      },
+    },
+  },
+  argTypes: {
+    children: {
+      description: 'Слот для элементов меню. Обычно набор `DropdownMenuItem`.',
+      control: false,
+    },
+    onItemSelect: {
+      description: 'Служебный проп, который прокидывается компонентом `Dropdown`. Передавать вручную не требуется.',
+      control: false,
+      table: {
+        category: 'internal',
+      },
+    },
+  },
+  tags: ['autodocs'],
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const BasicMenu: Story = {
+  render: () => (
+    <DropdownMenu>
+      <DropdownMenuItem label="Редактировать" description="Изменить выбранный элемент" shortcut="⌘E" />
+      <DropdownMenuItem label="Дублировать" description="Создать копию" shortcut="⌘D" />
+      <DropdownMenuItem label="Поделиться" description="Открыть настройки доступа" />
+    </DropdownMenu>
+  ),
+};
+
+export const WithIcons: Story = {
+  render: () => (
+    <DropdownMenu>
+      <DropdownMenuItem label="Профиль" icon={<span>👤</span>} description="Настройки аккаунта" />
+      <DropdownMenuItem label="Уведомления" icon={<span>🔔</span>} description="Центр уведомлений" />
+      <DropdownMenuItem label="Выход" icon={<span>🚪</span>} tone="danger" />
+    </DropdownMenu>
+  ),
+};
+
+export const DisabledAndDanger: Story = {
+  render: () => (
+    <DropdownMenu>
+      <DropdownMenuItem label="Скачать отчёт" />
+      <DropdownMenuItem label="Поделиться ссылкой" disabled description="Недоступно для приватных досок" />
+      <DropdownMenuItem label="Удалить проект" tone="danger" />
+    </DropdownMenu>
+  ),
+};
+
+export const CustomContent: Story = {
+  render: () => (
+    <DropdownMenu>
+      <DropdownMenuItem>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <span style={{ fontWeight: 600 }}>System update</span>
+          <span style={{ fontSize: 12, color: '#6b7280' }}>System will be updated tonight</span>
+        </div>
+      </DropdownMenuItem>
+      <DropdownMenuItem>
+        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+          <span>Toggle dark mode</span>
+          <input type="checkbox" aria-label="Dark mode" />
+        </div>
+      </DropdownMenuItem>
+    </DropdownMenu>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Если нужно полностью переопределить верстку элемента, можно передать произвольное `children`. Все стили и поведение по умолчанию сохраняются.',
+      },
+    },
+  },
+};

@@ -1,0 +1,167 @@
+import React, { forwardRef, useMemo } from 'react';
+import {
+  SpinnerContainer,
+  SpinnerWrapper,
+  SpinnerLabel,
+  SpinnerDots,
+  SpinnerBars,
+} from './Spinner.style';
+import { clsx } from 'clsx';
+import type { SpinnerProps } from '../../../types/ui';
+import { SpinnerVariant } from '../../../types/ui';
+
+/**
+ * Валидирует и нормализует пропсы
+ */
+const validateProps = (props: SpinnerProps): SpinnerProps => {
+  const { speed = 1, thickness = 2 } = props;
+
+  return {
+    ...props,
+    speed: Math.max(0.1, Math.min(5, speed || 1)),
+    thickness: Math.max(1, Math.min(10, thickness || 2)),
+  };
+};
+
+/**
+ * Компонент спиннера для отображения состояния загрузки
+ */
+export const Spinner = forwardRef<HTMLDivElement, SpinnerProps>(
+  (
+    {
+      size,
+      color = '#68d5f8',
+      variant = SpinnerVariant.CIRCLE,
+      speed = 1,
+      thickness = 2,
+      label,
+      labelPosition = 'bottom',
+      centered = false,
+      ariaLabel,
+      className,
+      style,
+    },
+    ref,
+  ) => {
+    // Валидация и нормализация пропсов
+    const validatedProps = useMemo(
+      () =>
+        validateProps({
+          speed,
+          thickness,
+        }),
+      [speed, thickness],
+    );
+
+    // ARIA-атрибуты для доступности
+    const ariaAttributes = useMemo(
+      () => ({
+        role: 'status',
+        'aria-label': ariaLabel || label || 'Загрузка',
+        'aria-busy': 'true',
+      }),
+      [ariaLabel, label],
+    );
+
+    // Рендерим спиннер в зависимости от варианта
+    const renderSpinner = () => {
+      const commonProps = {
+        ref: variant === SpinnerVariant.CIRCLE || variant === SpinnerVariant.PULSE ? ref : undefined,
+        size,
+        color,
+        $speed: validatedProps.speed,
+        $thickness: validatedProps.thickness,
+        className: clsx('ui-spinner', className),
+        style,
+        ...ariaAttributes,
+      };
+
+      switch (variant) {
+        case SpinnerVariant.DOTS:
+          return (
+            <SpinnerDots
+              $size={size}
+              $color={color}
+              $speed={validatedProps.speed}
+              $thickness={validatedProps.thickness}
+              className={clsx('ui-spinner', className)}
+              style={style}
+              {...ariaAttributes}
+              ref={ref}
+            >
+              <span />
+              <span />
+              <span />
+            </SpinnerDots>
+          );
+
+        case SpinnerVariant.BARS:
+          return (
+            <SpinnerBars
+              $size={size}
+              $color={color}
+              $speed={validatedProps.speed}
+              $thickness={validatedProps.thickness}
+              className={clsx('ui-spinner', className)}
+              style={style}
+              {...ariaAttributes}
+              ref={ref}
+            >
+              <span />
+              <span />
+              <span />
+            </SpinnerBars>
+          );
+
+        default:
+    return (
+      <SpinnerContainer
+              $variant={variant}
+              $size={size}
+              $color={color}
+              $speed={validatedProps.speed}
+              $thickness={validatedProps.thickness}
+        className={clsx('ui-spinner', className)}
+              style={style}
+              {...ariaAttributes}
+              ref={variant === SpinnerVariant.CIRCLE || variant === SpinnerVariant.PULSE ? ref : undefined}
+      />
+    );
+      }
+    };
+
+    const spinner = renderSpinner();
+
+    // Если есть label, оборачиваем в контейнер
+    if (label) {
+      return (
+        <SpinnerWrapper
+          $centered={centered}
+          $labelPosition={labelPosition}
+          className={clsx('ui-spinner-wrapper', className)}
+        >
+          {labelPosition === 'top' && <SpinnerLabel $position={labelPosition}>{label}</SpinnerLabel>}
+          {labelPosition === 'left' && <SpinnerLabel $position={labelPosition}>{label}</SpinnerLabel>}
+          {spinner}
+          {labelPosition === 'right' && <SpinnerLabel $position={labelPosition}>{label}</SpinnerLabel>}
+          {labelPosition === 'bottom' && (
+            <SpinnerLabel $position={labelPosition}>{label}</SpinnerLabel>
+          )}
+        </SpinnerWrapper>
+      );
+    }
+
+    // Если нужно центрировать, оборачиваем в контейнер
+    if (centered) {
+      return (
+        <SpinnerWrapper $centered={centered} className={clsx('ui-spinner-wrapper', className)}>
+          {spinner}
+        </SpinnerWrapper>
+      );
+    }
+
+    return spinner;
+  },
+);
+
+Spinner.displayName = 'Spinner';

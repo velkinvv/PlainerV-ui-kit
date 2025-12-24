@@ -1,0 +1,314 @@
+# @plainerV/ui
+
+![npm version](https://img.shields.io/npm/v/@plainerV/ui)
+![license](https://img.shields.io/npm/l/@plainerV/ui)
+![npm downloads](https://img.shields.io/npm/dm/@plainerV/ui)
+
+Современная библиотека UI компонентов с поддержкой темизации и TypeScript.
+
+## 🚀 Возможности
+
+- **🎨 Полная темизация** - Поддержка светлой и темной темы с автоматическим переключением
+- **🎯 TypeScript** - Полная типизация всех компонентов и пропсов
+- **📱 Адаптивный дизайн** - Компоненты адаптированы под все устройства
+- **⚡ Производительность** - Оптимизированные компоненты с минимальным бандлом
+- **🎭 Анимации** - Плавные анимации с Framer Motion
+- **🔧 Кастомизация** - Гибкая настройка через пропсы и темы
+- **📚 Storybook** - Интерактивная документация и playground
+
+## 📦 Установка
+
+```bash
+npm install @plainerV/ui
+```
+
+## 📦 Импорт стилей и шрифтов
+
+Для правильной работы библиотеки необходимо импортировать стили:
+
+```tsx
+// Импорт стилей (включает шрифты)
+import '@plainerV/ui/styles';
+// или
+import '@plainerV/ui/dist/styles.css';
+```
+
+Шрифты автоматически подключаются при импорте стилей.
+
+## 🎨 Темизация
+
+Библиотека поддерживает полную темизацию с автоматическим переключением между светлой и темной темой:
+
+```tsx
+import { ThemeProvider, useTheme, ThemeToggle } from '@plainerV/ui';
+
+function App() {
+  return (
+    <ThemeProvider>
+      <div>
+        <ThemeToggle />
+        <YourApp />
+      </div>
+    </ThemeProvider>
+  );
+}
+```
+
+### Использование темы в компонентах
+
+```tsx
+import { useTheme } from '@plainerV/ui';
+
+function MyComponent() {
+  const { mode, toggle } = useTheme();
+
+  return (
+    <div>
+      <p>Текущая тема: {mode}</p>
+      <button onClick={toggle}>Переключить тему</button>
+    </div>
+  );
+}
+```
+
+## 🎯 Компоненты
+
+### Основные UI компоненты
+
+- **Button** - Кнопки с различными вариантами и состояниями
+- **Input** - Поля ввода с валидацией и различными типами
+- **Card** - Карточки для контента
+- **Modal** - Модальные окна
+- **Icon** - Иконки (Lucide React + Plainer иконки)
+- **ThemeToggle** - Переключатель темы
+
+### Формы
+
+- **Form** - Компоненты для работы с формами
+- **Checkbox** - Чекбоксы
+- **Radio** - Радио кнопки
+- **DateInput** - Поля ввода даты
+- **TimeInput** - Поля ввода времени
+
+### Навигация
+
+- **Sidebar** - Боковая панель навигации
+- **Tabs** - Вкладки
+- **Dropdown** - Выпадающие меню
+
+### Отображение данных
+
+- **Badge** - Бейджи и метки
+- **Avatar** - Аватары пользователей
+- **Progress** - Индикаторы прогресса
+- **Spinner** - Спиннеры загрузки
+- **Skeleton** - Скелетоны загрузки
+
+### Обратная связь
+
+- **Tooltip** - Подсказки
+- **Hint** - Расширенные подсказки
+- **Modal** - Модальные окна
+- **Accordion** - Аккордеоны
+
+## 🎨 Иконки
+
+Библиотека поддерживает несколько наборов иконок:
+
+### Lucide React иконки
+
+```tsx
+import { Icon } from '@plainerV/ui';
+
+<Icon name="Home" size={24} variant="lucide" />
+<Icon name="Settings" size={24} variant="lucide" />
+```
+
+### Plainer иконки
+
+```tsx
+import { Icon } from '@plainerV/ui';
+
+<Icon name="IconPlus" size={24} variant="plainer" />
+<Icon name="IconClose" size={24} variant="plainer" />
+<Icon name="IconSearch" size={24} variant="plainer" />
+```
+
+## 🎭 Анимации
+
+Все компоненты используют Framer Motion для плавных анимаций:
+
+```tsx
+import { Button } from '@plainerV/ui';
+
+<Button
+  variant="primary"
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+>
+  Анимированная кнопка
+</Button>
+```
+
+## 📚 Storybook
+
+Запустите Storybook для интерактивной документации:
+
+```bash
+cd plainerV
+npm run storybook
+```
+
+## 🎨 Дизайн система
+
+### Цвета
+
+- **Primary**: #68d5f8 (основной цвет)
+- **Secondary**: #6c757d (вторичный цвет)
+- **Success**: #10b981 (успех)
+- **Danger**: #ef4444 (ошибка)
+- **Warning**: #f59e0b (предупреждение)
+- **Info**: #3b82f6 (информация)
+
+### Типографика
+
+- **Шрифт**: Montserrat
+- **Размеры**: 12px, 14px, 16px, 18px, 20px, 24px, 32px
+- **Вес**: 400 (regular), 500 (medium), 600 (semibold), 700 (bold)
+
+### Размеры
+
+- **Spacing**: 4px, 8px, 12px, 16px, 20px, 24px, 32px, 48px
+- **Border Radius**: 4px, 6px, 8px, 12px, 16px, 24px, 50%
+
+### Тени
+
+- **Small**: 0 1px 2px rgba(0, 0, 0, 0.05)
+- **Medium**: 0 4px 6px rgba(0, 0, 0, 0.1)
+- **Large**: 0 10px 15px rgba(0, 0, 0, 0.1)
+
+## 🔧 Разработка
+
+### Установка зависимостей
+
+```bash
+cd plainerV
+npm install
+```
+
+### Сборка
+
+```bash
+npm run build
+```
+
+### Тестирование
+
+```bash
+npm run test
+```
+
+### Линтинг
+
+```bash
+npm run lint
+```
+
+## 📝 Примеры использования
+
+### Простая форма
+
+```tsx
+import { Input, Button, Card } from '@plainerV/ui';
+
+function LoginForm() {
+  return (
+    <Card>
+      <Input
+        label="Email"
+        type="email"
+        placeholder="Введите email"
+        required
+      />
+      <Input
+        label="Пароль"
+        type="password"
+        placeholder="Введите пароль"
+        required
+      />
+      <Button variant="primary" fullWidth>
+        Войти
+      </Button>
+    </Card>
+  );
+}
+```
+
+### Навигация с сайдбаром
+
+```tsx
+import { Sidebar, ThemeToggle } from '@plainerV/ui';
+
+function AppLayout() {
+  const sidebarItems = [
+    { id: 'home', label: 'Главная', icon: 'Home', active: true },
+    { id: 'profile', label: 'Профиль', icon: 'User' },
+    { id: 'settings', label: 'Настройки', icon: 'Settings' },
+  ];
+
+  return (
+    <div style={{ display: 'flex' }}>
+      <Sidebar items={sidebarItems} />
+      <main>
+        <header>
+          <ThemeToggle />
+        </header>
+        <YourContent />
+      </main>
+    </div>
+  );
+}
+```
+
+## 🌳 Tree-shaking
+
+Библиотека поддерживает tree-shaking благодаря настройке `sideEffects: false`. Это означает, что при импорте только необходимых компонентов, неиспользуемый код будет исключен из финального бандла.
+
+```tsx
+// ✅ Хорошо - импортируется только Button
+import { Button } from '@plainerV/ui';
+
+// ❌ Плохо - импортируется весь пакет
+import * as UI from '@plainerV/ui';
+```
+
+## 📊 Размер бандла
+
+Для анализа размера бандла используйте:
+
+```bash
+npm run analyze
+```
+
+Это создаст файл `dist/stats.html` с визуализацией размера бандла.
+
+### Текущие размеры (примерные)
+
+- **ESM формат**: ~XXX KB (gzipped: ~XXX KB)
+- **CJS формат**: ~XXX KB (gzipped: ~XXX KB)
+
+*Размеры будут обновлены после первой сборки*
+
+## 🤝 Contributing
+
+Мы приветствуем вклад в развитие библиотеки! Пожалуйста, ознакомьтесь с [руководством по контрибьютингу](CONTRIBUTING.md) перед отправкой PR.
+
+## 📝 License
+
+MIT License - см. [LICENSE](LICENSE) для деталей.
+
+## 🔗 Ссылки
+
+- [Документация](https://github.com/velkinvv/PlainerV-ui-kit#readme)
+- [Issues](https://github.com/velkinvv/PlainerV-ui-kit/issues)
+- [Changelog](CHANGELOG.md)

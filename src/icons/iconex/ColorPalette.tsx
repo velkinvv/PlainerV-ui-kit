@@ -1,0 +1,39 @@
+import React from 'react';
+import { useTheme } from 'styled-components';
+import type { IconComponentProps } from '../../types/icon';
+
+export const IconExColorPalette: React.FC<IconComponentProps> = ({
+  width = 24,
+  height = 24,
+  color: IconColor,
+  ...props
+}) => {
+  const theme = useTheme();
+  const color = IconColor || theme.colors.text;
+
+  return (
+    <svg
+      width={width}
+      height={height}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <rect x="2" y="2" width="10" height="20" rx="3" stroke={color} strokeWidth="1.5" />
+      <path
+        d="M12.1421 5L13.0208 4.12132C14.1923 2.94975 16.0918 2.94975 17.2634 4.12132L20.0918 6.94975C21.2634 8.12132 21.2634 10.0208 20.0918 11.1924L12.1421 19.1421"
+        stroke={color}
+        strokeWidth="1.5"
+      />
+      <path
+        d="M19 12V12C20.6569 12 22 13.3431 22 15L22 19C22 20.6569 20.6569 22 19 22L7 22"
+        stroke={color}
+        strokeWidth="1.5"
+      />
+      <circle cx="7" cy="18" r="1" fill={color} />
+    </svg>
+  );
+};
+
+export default IconExColorPalette;

@@ -1,0 +1,48 @@
+import React from 'react';
+import { useTheme } from 'styled-components';
+import type { IconComponentProps } from '../../types/icon';
+
+export const IconExGamePad: React.FC<IconComponentProps> = ({
+  width = 24,
+  height = 24,
+  color: IconColor,
+  ...props
+}) => {
+  const theme = useTheme();
+  const color = IconColor || theme.colors.text;
+
+  return (
+    <svg
+      width={width}
+      height={height}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        d="M2 10.0005C2 7.04241 4.55409 4.73099 7.49752 5.02533L11.403 5.41588C11.8 5.45558 12.2 5.45558 12.597 5.41588L16.5025 5.02533C19.4459 4.73099 22 7.04241 22 10.0005V16C22 19.5933 17.3041 20.9552 15.3815 17.9196C14.0112 15.7559 10.8803 15.6836 9.4116 17.7818L9.12736 18.1878C6.93073 21.3259 2 19.7716 2 15.9411V10.0005Z"
+        stroke={color}
+        strokeWidth="1.5"
+      />
+      <circle cx="18" cy="9.97559" r="1" fill={color} />
+      <circle cx="16" cy="12.9756" r="1" fill={color} />
+      <path
+        d="M8 13.4756L8 9.47559"
+        stroke={color}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M6 11.4756H10"
+        stroke={color}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+};
+
+export default IconExGamePad;

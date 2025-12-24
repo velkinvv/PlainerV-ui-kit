@@ -1,0 +1,513 @@
+import React from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
+import { Icon } from './Icon';
+import * as PlainerIconsModule from '../../../icons/plainer';
+import * as IconExIconsModule from '../../../icons/iconex';
+import { ThemeProvider } from '../../../themes/ThemeProvider';
+import { IconSize } from '../../../types/sizes';
+import type { IconVariant } from '../../../types/ui';
+import type { IconName } from '../../../icons';
+
+// Функция для получения реально существующих иконок
+const getExistingIcons = () => {
+  // Получаем иконки Plainer
+  const plainerIcons = Object.keys(PlainerIconsModule)
+    // .map(key => key.replace('IconPlainer', ''))
+    .filter(name => name.length > 0);
+
+  // Получаем иконки IconEx
+  const iconexIcons = Object.keys(IconExIconsModule)
+    // .map(key => key.replace('IconEx', ''))
+    .filter(name => name.length > 0);
+
+  return {
+    plainerIcons: plainerIcons as IconName[],
+    iconexIcons: iconexIcons as IconName[],
+  };
+};
+
+// Функция для проверки существования иконки
+const iconExists = (name: string, variant: IconVariant): boolean => {
+  if (variant === 'plainer') {
+    const plainerIconName = `IconPlainer${name}` as keyof typeof PlainerIconsModule;
+    return !!(
+      PlainerIconsModule[plainerIconName] &&
+      typeof PlainerIconsModule[plainerIconName] === 'function'
+    );
+  }
+
+  if (variant === 'iconEx') {
+    const iconexIconName = `IconEx${name}` as keyof typeof IconExIconsModule;
+    return !!(
+      IconExIconsModule[iconexIconName] && typeof IconExIconsModule[iconexIconName] === 'function'
+    );
+  }
+
+  return false;
+};
+
+const meta: Meta<typeof Icon> = {
+  title: 'Components/Icon/Categories',
+  component: Icon,
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        component: 'Категории иконок Plainer и IconEx для удобного просмотра',
+      },
+    },
+  },
+  decorators: [
+    Story => (
+      <ThemeProvider>
+        <Story />
+      </ThemeProvider>
+    ),
+  ],
+  tags: ['autodocs'],
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+// Компонент для отображения сетки иконок
+const IconGrid = ({
+  icons,
+  variant: _variant = 'plainer',
+  title,
+}: {
+  icons: IconName[];
+  variant?: IconVariant;
+  title: string;
+}) => (
+  <div style={{ marginBottom: '40px' }}>
+    <style>
+      {`
+        .icon-categories-grid::-webkit-scrollbar {
+          width: 8px;
+        }
+        .icon-categories-grid::-webkit-scrollbar-track {
+          background: #f1f5f9;
+          border-radius: 4px;
+        }
+        .icon-categories-grid::-webkit-scrollbar-thumb {
+          background: #cbd5e1;
+          border-radius: 4px;
+        }
+        .icon-categories-grid::-webkit-scrollbar-thumb:hover {
+          background: #94a3b8;
+        }
+      `}
+    </style>
+    <h3 style={{ marginBottom: '16px', color: '#374151' }}>{title}</h3>
+    <div
+      className="icon-categories-grid"
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
+        gap: '16px',
+        maxHeight: '600px',
+        overflowY: 'auto',
+        padding: '8px',
+        border: '1px solid #e5e7eb',
+        borderRadius: '8px',
+        backgroundColor: '#fafafa',
+        scrollbarWidth: 'thin',
+        scrollbarColor: '#cbd5e1 #f1f5f9',
+      }}
+    >
+      {icons.map((iconName: IconName) => (
+        <div
+          key={iconName}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            padding: '16px',
+            border: '1px solid #e5e7eb',
+            borderRadius: '8px',
+            backgroundColor: '#f9fafb',
+            transition: 'all 0.2s',
+            cursor: 'pointer',
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
+        >
+          <Icon
+            name={iconName}
+            size={IconSize.MD}
+            // variant={variant}
+          />
+          <span
+            style={{
+              fontSize: '12px',
+              marginTop: '8px',
+              textAlign: 'center',
+              color: '#6b7280',
+              fontWeight: '500',
+            }}
+          >
+            {iconName}
+          </span>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+// Категории иконок
+const iconCategories = {
+  navigation: {
+    plainer: ['IconPlainerArrowUp', 'IconPlainerArrowRight', 'IconPlainerArrowLeft'].filter(name =>
+      iconExists(name, 'plainer'),
+    ) as IconName[],
+    iconex: ['IconExArrowDown'].filter(name => iconExists(name, 'iconEx')) as IconName[],
+  },
+  user: {
+    plainer: ['IconPlainerUser'].filter(name => iconExists(name, 'plainer')) as IconName[],
+    iconex: ['IconExUsers', 'IconExAddUser'].filter(name =>
+      iconExists(name, 'iconEx'),
+    ) as IconName[],
+  },
+  actions: {
+    plainer: ['IconPlainerPlus', 'IconPlainerClose', 'IconPlainerSearch'].filter(name =>
+      iconExists(name, 'plainer'),
+    ) as IconName[],
+    iconex: [
+      'IconExClose2',
+      'IconExClose3',
+      'IconExSearch2',
+      'IconExEdit1',
+      'IconExEdit2',
+      'IconExCopy',
+      'IconExSave',
+      'IconExMinus',
+      'IconExDots',
+      'IconExMoreSquare',
+      'IconExMoreCircle',
+    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+  },
+  media: {
+    plainer: [],
+    iconex: [
+      'IconExVideo',
+      'IconExMusic',
+      'IconExMusicPlate',
+      'IconExVolumeUp',
+      'IconExVolumeOff',
+      'IconExVolumeOff2',
+      'IconExVolumeDown',
+      'IconExPlay',
+      'IconExPause',
+      'IconExStop',
+      'IconExCamera',
+      'IconExMicrophone',
+    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+  },
+  communication: {
+    plainer: [],
+    iconex: [
+      'IconExMail',
+      'IconExMessageSquare',
+      'IconExMessageCircle',
+      'IconExSend',
+      'IconExCall',
+      'IconExCalling',
+      'IconExCallMissed',
+    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+  },
+  security: {
+    plainer: [],
+    iconex: [
+      'IconExLock',
+      'IconExLockOpen',
+      'IconExLockCheck',
+      'IconExLockX',
+      'IconExShield',
+      'IconExShield2',
+      'IconExShield3',
+      'IconExKey',
+    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+  },
+  files: {
+    plainer: [],
+    iconex: [
+      'IconExDocument',
+      'IconExDocument2',
+      'IconExDocumentAdd',
+      'IconExDocumentDelete',
+      'IconExFolder',
+      'IconExDownload2',
+      'IconExPaperClip',
+      'IconExCloud',
+      'IconExCloudDownload',
+      'IconExCloudUpload',
+    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+  },
+  settings: {
+    plainer: [],
+    iconex: [
+      'IconExSettings',
+      'IconExToggleRight',
+      'IconExToggleLeft',
+      'IconExFilter',
+      'IconExFilter2',
+    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+  },
+  time: {
+    plainer: [],
+    iconex: [
+      'IconExTimer',
+      'IconExTimeSquare',
+      'IconExTimeCircle',
+      'IconExCalendar',
+      'IconExAlarmClock',
+    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+  },
+  status: {
+    plainer: [],
+    iconex: [
+      'IconExCheck',
+      'IconExStar',
+      'IconExHeart',
+      'IconExInfoSquare',
+      'IconExInfoCircle',
+      'IconExDanger',
+    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+  },
+  shopping: {
+    plainer: [],
+    iconex: [
+      'IconExCart',
+      'IconExBag1',
+      'IconExBag2',
+      'IconExBag3',
+      'IconExWallet',
+      'IconExCreditCard',
+      'IconExCoins',
+      'IconExSale',
+      'IconExReceipt',
+      'IconExCoupon1',
+      'IconExCoupon2',
+      'IconExCoupon3',
+    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+  },
+  entertainment: {
+    plainer: [],
+    iconex: [
+      'IconExGamePad',
+      'IconExOldSchoolGamepad',
+      'IconExBasketBall',
+      'IconExMusic',
+      'IconExMusicPlate',
+      'IconExVideo',
+      'IconExHeadPhones',
+    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+  },
+  tools: {
+    plainer: [],
+    iconex: [
+      'IconExCalculator',
+      'IconExCalcSilent',
+      'IconExScale',
+      'IconExScanner',
+      'IconExCilPen',
+      'IconExFigma',
+      'IconExBrowser',
+      'IconExScreen',
+      'IconExLaptop',
+      'IconExIphone',
+      'IconExMouse',
+    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+  },
+  business: {
+    plainer: [],
+    iconex: [
+      'IconExChart',
+      'IconExChart1',
+      'IconExGraph',
+      'IconExCase',
+      'IconExCategory',
+      'IconExCategory2',
+      'IconExBox1',
+      'IconExBox2',
+    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+  },
+  nature: {
+    plainer: [],
+    iconex: [
+      'IconExFire',
+      'IconExLightning',
+      'IconExFlag',
+      'IconExCompass',
+      'IconExColorPalette',
+    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+  },
+};
+
+// История всех категорий
+export const AllCategories: Story = {
+  render: () => (
+    <div style={{ padding: '20px' }}>
+      <h1>Категории иконок</h1>
+
+      {/* Plainer иконки */}
+      <section style={{ marginBottom: '40px' }}>
+        <h2>Plainer иконки</h2>
+        <IconGrid
+          icons={getExistingIcons().plainerIcons}
+          variant="plainer"
+          title="Все Plainer иконки"
+        />
+      </section>
+
+      {/* IconEx иконки по категориям */}
+      <section>
+        <h2>IconEx иконки по категориям</h2>
+
+        <IconGrid icons={iconCategories.navigation.iconex} variant="iconEx" title="Навигация" />
+
+        <IconGrid icons={iconCategories.user.iconex} variant="iconEx" title="Пользователи" />
+
+        <IconGrid icons={iconCategories.actions.iconex} variant="iconEx" title="Действия" />
+
+        <IconGrid icons={iconCategories.media.iconex} variant="iconEx" title="Медиа" />
+
+        <IconGrid
+          icons={iconCategories.communication.iconex}
+          variant="iconEx"
+          title="Коммуникация"
+        />
+
+        <IconGrid icons={iconCategories.security.iconex} variant="iconEx" title="Безопасность" />
+
+        <IconGrid icons={iconCategories.files.iconex} variant="iconEx" title="Файлы" />
+
+        <IconGrid icons={iconCategories.settings.iconex} variant="iconEx" title="Настройки" />
+
+        <IconGrid icons={iconCategories.time.iconex} variant="iconEx" title="Время" />
+
+        <IconGrid icons={iconCategories.status.iconex} variant="iconEx" title="Статус" />
+
+        <IconGrid icons={iconCategories.shopping.iconex} variant="iconEx" title="Покупки" />
+
+        <IconGrid
+          icons={iconCategories.entertainment.iconex}
+          variant="iconEx"
+          title="Развлечения"
+        />
+
+        <IconGrid icons={iconCategories.tools.iconex} variant="iconEx" title="Инструменты" />
+
+        <IconGrid icons={iconCategories.business.iconex} variant="iconEx" title="Бизнес" />
+
+        <IconGrid icons={iconCategories.nature.iconex} variant="iconEx" title="Природа" />
+      </section>
+    </div>
+  ),
+};
+
+// Отдельные истории для каждой категории
+export const NavigationIcons: Story = {
+  render: () => (
+    <IconGrid icons={iconCategories.navigation.iconex} variant="iconEx" title="Иконки навигации" />
+  ),
+};
+
+export const UserIcons: Story = {
+  render: () => (
+    <IconGrid icons={iconCategories.user.iconex} variant="iconEx" title="Иконки пользователей" />
+  ),
+};
+
+export const ActionIcons: Story = {
+  render: () => (
+    <IconGrid icons={iconCategories.actions.iconex} variant="iconEx" title="Иконки действий" />
+  ),
+};
+
+export const MediaIcons: Story = {
+  render: () => (
+    <IconGrid icons={iconCategories.media.iconex} variant="iconEx" title="Медиа иконки" />
+  ),
+};
+
+export const CommunicationIcons: Story = {
+  render: () => (
+    <IconGrid
+      icons={iconCategories.communication.iconex}
+      variant="iconEx"
+      title="Иконки коммуникации"
+    />
+  ),
+};
+
+export const SecurityIcons: Story = {
+  render: () => (
+    <IconGrid icons={iconCategories.security.iconex} variant="iconEx" title="Иконки безопасности" />
+  ),
+};
+
+export const FileIcons: Story = {
+  render: () => (
+    <IconGrid icons={iconCategories.files.iconex} variant="iconEx" title="Иконки файлов" />
+  ),
+};
+
+export const SettingsIcons: Story = {
+  render: () => (
+    <IconGrid icons={iconCategories.settings.iconex} variant="iconEx" title="Иконки настроек" />
+  ),
+};
+
+export const TimeIcons: Story = {
+  render: () => (
+    <IconGrid icons={iconCategories.time.iconex} variant="iconEx" title="Иконки времени" />
+  ),
+};
+
+export const StatusIcons: Story = {
+  render: () => (
+    <IconGrid icons={iconCategories.status.iconex} variant="iconEx" title="Иконки статуса" />
+  ),
+};
+
+export const ShoppingIcons: Story = {
+  render: () => (
+    <IconGrid icons={iconCategories.shopping.iconex} variant="iconEx" title="Иконки покупок" />
+  ),
+};
+
+export const EntertainmentIcons: Story = {
+  render: () => (
+    <IconGrid
+      icons={iconCategories.entertainment.iconex}
+      variant="iconEx"
+      title="Иконки развлечений"
+    />
+  ),
+};
+
+export const ToolsIcons: Story = {
+  render: () => (
+    <IconGrid icons={iconCategories.tools.iconex} variant="iconEx" title="Иконки инструментов" />
+  ),
+};
+
+export const BusinessIcons: Story = {
+  render: () => (
+    <IconGrid icons={iconCategories.business.iconex} variant="iconEx" title="Иконки бизнеса" />
+  ),
+};
+
+export const NatureIcons: Story = {
+  render: () => (
+    <IconGrid icons={iconCategories.nature.iconex} variant="iconEx" title="Иконки природы" />
+  ),
+};

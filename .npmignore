@@ -1,0 +1,50 @@
+# Исходный код (публикуем только dist)
+src/
+*.ts
+*.tsx
+!dist/**/*.d.ts
+
+# Конфигурационные файлы
+tsconfig.json
+.eslintrc*
+eslint.config.js
+.prettierrc*
+jest.config.js
+jest.setup.js
+.storybook/
+storybook-static/
+
+# Тесты
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+__tests__/
+coverage/
+
+# Документация разработки
+docs/
+*.md
+!README.md
+
+# Временные файлы
+*.log
+*.tmp
+.DS_Store
+node_modules/
+.vscode/
+.idea/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Другие
+*.stories.tsx
+dist/**/*.js.map
+dist/**/*.d.ts.map

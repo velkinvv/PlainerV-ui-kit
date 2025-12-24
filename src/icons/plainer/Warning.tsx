@@ -1,0 +1,50 @@
+import React from 'react';
+import type { IconComponentProps } from '../../types/icon';
+import { useTheme } from 'styled-components';
+
+export const IconPlainerWarning: React.FC<IconComponentProps> = ({
+  width = 24,
+  height = 24,
+  color: IconColor,
+  className,
+  ...props
+}) => {
+  const theme = useTheme();
+  const color = IconColor || theme.colors.text;
+
+  return (
+    <svg
+      width={width}
+      height={height}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      {...props}
+    >
+      <path
+        d="M10.29 3.86L1.82 18A2 2 0 0 0 3.54 21H20.46A2 2 0 0 0 22.18 18L13.71 3.86A2 2 0 0 0 10.29 3.86Z"
+        stroke={color}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M12 9V13"
+        stroke={color}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M12 17H12.01"
+        stroke={color}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+};
+
+export default IconPlainerWarning;

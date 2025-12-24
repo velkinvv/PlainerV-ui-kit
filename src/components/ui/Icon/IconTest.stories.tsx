@@ -1,0 +1,87 @@
+import React from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
+import { Icon } from './Icon';
+import { ThemeProvider } from '../../../themes/ThemeProvider';
+import { IconSize } from '../../../types/sizes';
+
+const meta: Meta<typeof Icon> = {
+  title: 'Components/Icon/Test',
+  component: Icon,
+  parameters: {
+    layout: 'centered',
+  },
+  decorators: [
+    Story => (
+      <ThemeProvider>
+        <Story />
+      </ThemeProvider>
+    ),
+  ],
+  tags: ['autodocs'],
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const TestIcons: Story = {
+  render: () => (
+    <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+      {/* Lucide Icons */}
+      <div style={{ textAlign: 'center' }}>
+        <h4>Lucide</h4>
+        <Icon name="IconExHeart" size={IconSize.MD} />
+        <div>heart</div>
+      </div>
+
+      <div style={{ textAlign: 'center' }}>
+        <h4>Lucide</h4>
+        <Icon name="IconExStar" size={IconSize.MD} />
+        <div>star</div>
+      </div>
+
+      <div style={{ textAlign: 'center' }}>
+        <h4>Lucide</h4>
+        <Icon name="IconExHome" size={IconSize.MD} />
+        <div>home</div>
+      </div>
+
+      {/* Plainer Icons */}
+      <div style={{ textAlign: 'center' }}>
+        <h4>Plainer</h4>
+        <Icon name="IconPlainerUser" size={IconSize.MD} />
+        <div>User</div>
+      </div>
+
+      <div style={{ textAlign: 'center' }}>
+        <h4>Plainer</h4>
+        <Icon name="IconPlainerSearch" size={IconSize.MD} />
+        <div>Search</div>
+      </div>
+
+      <div style={{ textAlign: 'center' }}>
+        <h4>Plainer</h4>
+        <Icon name="IconPlainerPlus" size={IconSize.MD} />
+        <div>Plus</div>
+      </div>
+
+      {/* IconEx Icons */}
+      <div style={{ textAlign: 'center' }}>
+        <h4>IconEx</h4>
+        <Icon name="IconExUser" size={IconSize.MD} />
+        <div>User</div>
+      </div>
+
+      <div style={{ textAlign: 'center' }}>
+        <h4>IconEx</h4>
+        <Icon name="IconExSettings" size={IconSize.MD} />
+        <div>Settings</div>
+      </div>
+
+      <div style={{ textAlign: 'center' }}>
+        <h4>IconEx</h4>
+        <Icon name="IconExHeart" size={IconSize.MD} />
+        <div>Heart</div>
+      </div>
+    </div>
+  ),
+};
