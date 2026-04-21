@@ -307,6 +307,13 @@ npm run analyze
 
 MIT License - см. [LICENSE](LICENSE) для деталей.
 
+## 👤 Автор
+
+**VelkinVV**
+
+- Email: velkinvv@mail.ru
+- GitHub: [@velkinvv](https://github.com/velkinvv)
+
 ## 🔗 Ссылки
 
 - [Документация](https://github.com/velkinvv/PlainerV-ui-kit#readme)
