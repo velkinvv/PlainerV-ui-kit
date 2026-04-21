@@ -1,5 +1,6 @@
 import React, { forwardRef, useCallback, useMemo } from 'react';
-import type { InputProps, TooltipPosition, InputVariant } from '../../../../types/ui';
+import type { InputProps, TooltipPosition } from '../../../../types/ui';
+import { InputVariant } from '../../../../types/ui';
 import { Size, IconSize } from '../../../../types/sizes';
 import { Icon } from '../../Icon/Icon';
 import { Tooltip } from '../../Tooltip/Tooltip';

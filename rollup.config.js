@@ -4,7 +4,7 @@ import typescript from '@rollup/plugin-typescript';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import postcss from 'rollup-plugin-postcss';
 import copy from 'rollup-plugin-copy';
-import { terser } from '@rollup/plugin-terser';
+import terser from '@rollup/plugin-terser';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -25,7 +25,18 @@ export default {
       exports: 'named',
     },
   ],
-  external: ['react', 'react-dom', 'styled-components', 'framer-motion', 'dayjs', 'clsx', 'react-hook-form', 'tailwind-merge'],
+  external: [
+    'react',
+    'react-dom',
+    'styled-components',
+    'framer-motion',
+    'dayjs',
+    'clsx',
+    'react-hook-form',
+    'tailwind-merge',
+    '@reduxjs/toolkit',
+    'react-redux',
+  ],
   plugins: [
     peerDepsExternal(),
     resolve({

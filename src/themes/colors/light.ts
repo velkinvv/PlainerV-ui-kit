@@ -38,6 +38,7 @@ export const lightColors: Colors = {
   text: colors.grey[900], // Основной текст
   textSecondary: colors.grey[600], // Вторичный текст
   textTertiary: colors.grey[400], // Третичный текст
+  textDisabled: colors.grey[400], // Текст отключённых элементов
 
   // Основные цвета
   primary: colors.blue[600], // Основной цвет
@@ -50,11 +51,14 @@ export const lightColors: Colors = {
   border: colors.grey[200], // Основная граница
   borderSecondary: colors.grey[300], // Вторичная граница
   borderTertiary: colors.grey[400], // Третичная граница
+  borderHover: colors.grey[400], // Граница при наведении
 
   // Состояния
   success: colors.green[600], // Успех
+  successHover: colors.green[700], // Успех при наведении
   warning: colors.orange[500], // Предупреждение
   danger: colors.red[600], // Опасность
+  dangerHover: colors.red[700], // Опасность при наведении
   info: colors.blue[500], // Информация
 
   // Специальные цвета

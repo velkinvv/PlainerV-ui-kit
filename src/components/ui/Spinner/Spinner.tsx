@@ -10,16 +10,23 @@ import { clsx } from 'clsx';
 import type { SpinnerProps } from '../../../types/ui';
 import { SpinnerVariant } from '../../../types/ui';
 
+/** Нормализованные числовые параметры анимации спиннера */
+interface SpinnerMotionProps {
+  speed: number;
+  thickness: number;
+}
+
 /**
- * Валидирует и нормализует пропсы
+ * Валидирует скорость и толщину линии спиннера
+ * @param props — частичные пропсы со `speed` и `thickness`
  */
-const validateProps = (props: SpinnerProps): SpinnerProps => {
-  const { speed = 1, thickness = 2 } = props;
+const validateMotionProps = (props: Pick<SpinnerProps, 'speed' | 'thickness'>): SpinnerMotionProps => {
+  const speed = props.speed ?? 1;
+  const thickness = props.thickness ?? 2;
 
   return {
-    ...props,
-    speed: Math.max(0.1, Math.min(5, speed || 1)),
-    thickness: Math.max(1, Math.min(10, thickness || 2)),
+    speed: Math.max(0.1, Math.min(5, speed)),
+    thickness: Math.max(1, Math.min(10, thickness)),
   };
 };
 
@@ -46,7 +53,7 @@ export const Spinner = forwardRef<HTMLDivElement, SpinnerProps>(
     // Валидация и нормализация пропсов
     const validatedProps = useMemo(
       () =>
-        validateProps({
+        validateMotionProps({
           speed,
           thickness,
         }),
@@ -56,9 +63,9 @@ export const Spinner = forwardRef<HTMLDivElement, SpinnerProps>(
     // ARIA-атрибуты для доступности
     const ariaAttributes = useMemo(
       () => ({
-        role: 'status',
+        role: 'status' as const,
         'aria-label': ariaLabel || label || 'Загрузка',
-        'aria-busy': 'true',
+        'aria-busy': true as const,
       }),
       [ariaLabel, label],
     );

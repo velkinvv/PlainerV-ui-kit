@@ -276,6 +276,7 @@ export type Colors = {
   text: string; // Основной текст
   textSecondary: string; // Вторичный текст
   textTertiary: string; // Третичный текст
+  textDisabled: string; // Текст отключённых и внеактивных элементов
 
   // Основные цвета
   primary: string; // Основной цвет
@@ -288,11 +289,14 @@ export type Colors = {
   border: string; // Основная граница
   borderSecondary: string; // Вторичная граница
   borderTertiary: string; // Третичная граница
+  borderHover: string; // Граница при наведении
 
   // Состояния
   success: string; // Успех
+  successHover: string; // Успех при наведении
   warning: string; // Предупреждение
   danger: string; // Опасность
+  dangerHover: string; // Опасность при наведении
   info: string; // Информация
 
   // Специальные цвета

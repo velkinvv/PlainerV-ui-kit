@@ -106,7 +106,7 @@ export const StyledTypography = styled.div<{
     return css`
       @media (max-width: 768px) {
         font-size: ${theme.fontSizes.sm};
-        line-height: ${theme.lineHeights.sm};
+        line-height: ${theme.lineHeights.normal};
       }
     `;
   }}

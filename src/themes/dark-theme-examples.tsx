@@ -28,7 +28,7 @@ export const DarkThemeExamples: React.FC = () => {
           borderRadius: '20px',
           padding: '20px',
           margin: '20px 0',
-          boxShadow: darkTheme.boxShadow.md,
+          boxShadow: `0 4px 16px ${darkTheme.shadow}`,
           border: `1px solid ${darkTheme.border}`,
         }}
       >
@@ -45,7 +45,7 @@ export const DarkThemeExamples: React.FC = () => {
           padding: '15px',
           borderRadius: '10px',
           margin: '20px 0',
-          boxShadow: darkTheme.boxShadow.primary,
+          boxShadow: `0 4px 16px ${darkTheme.shadow}`,
         }}
       >
         Акцентный элемент с голубым цветом и специальной тенью
@@ -66,7 +66,7 @@ export const DarkThemeExamples: React.FC = () => {
             backgroundColor: darkTheme.progressFill,
             width: '55%',
             height: '100%',
-            boxShadow: darkTheme.boxShadow.success,
+            boxShadow: `0 2px 8px ${darkTheme.success}`,
           }}
         />
       </div>
@@ -74,7 +74,7 @@ export const DarkThemeExamples: React.FC = () => {
       {/* Уведомление */}
       <div
         style={{
-          backgroundColor: darkTheme.notification,
+          backgroundColor: darkTheme.danger,
           color: 'white',
           padding: '15px',
           borderRadius: '10px',
@@ -87,7 +87,7 @@ export const DarkThemeExamples: React.FC = () => {
       {/* Элемент с градиентом */}
       <div
         style={{
-          background: darkTheme.gradient,
+          background: `linear-gradient(135deg, ${darkTheme.primary}, ${darkTheme.backgroundSecondary})`,
           padding: '20px',
           borderRadius: '10px',
           margin: '20px 0',
@@ -137,7 +137,7 @@ export const DarkThemeExamples: React.FC = () => {
             width: '12px',
             height: '12px',
             borderRadius: '50%',
-            backgroundColor: darkTheme.onlineIndicator,
+            backgroundColor: darkTheme.success,
             border: `2px solid ${darkTheme.backgroundSecondary}`,
           }}
         />
@@ -171,7 +171,7 @@ export const DarkThemeExamples: React.FC = () => {
           cursor: 'pointer',
           fontSize: '16px',
           fontWeight: '500',
-          boxShadow: darkTheme.boxShadow.primary,
+          boxShadow: `0 4px 16px ${darkTheme.shadow}`,
         }}
       >
         Кнопка с акцентным цветом
@@ -195,7 +195,7 @@ export const DarkThemeExamples: React.FC = () => {
       <div
         style={{
           backgroundColor: 'rgba(22, 36, 49, 0.8)',
-          backdropFilter: darkTheme.backdropFilter,
+          backdropFilter: 'blur(8px)',
           padding: '20px',
           borderRadius: '10px',
           margin: '20px 0',

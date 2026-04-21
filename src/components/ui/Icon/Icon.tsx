@@ -4,29 +4,33 @@ import * as IconExIcons from '../../../icons/iconex';
 import * as PhosphorIcons from '../../../icons/phosphor/regular';
 import { useTheme } from '../../../themes/ThemeProvider';
 import type { IconProps } from '../../../types/ui';
+import type { IconComponentProps } from '../../../types/icon';
 import { /* iconSizeHandler, */ sizeMap } from '../../../handlers/iconHandlers';
 import { IconSize } from '../../../types/sizes';
 
+/** Тип одной SVG-иконки из наборов plainer / iconex / phosphor */
+type SvgIconComponent = React.ComponentType<IconComponentProps>;
+
 // Create a mapping of icon names without prefixes for easier access
-const plainerIconMap: { [key: string]: React.ComponentType<unknown> } = {};
+const plainerIconMap: Record<string, SvgIconComponent> = {};
 Object.keys(PlainerIcons).forEach(key => {
   const name = key.replace('IconPlainer', '');
-  plainerIconMap[name] = PlainerIcons[key as keyof typeof PlainerIcons];
+  plainerIconMap[name] = PlainerIcons[key as keyof typeof PlainerIcons] as SvgIconComponent;
 });
 
-const iconexIconMap: { [key: string]: React.ComponentType<unknown> } = {};
+const iconexIconMap: Record<string, SvgIconComponent> = {};
 Object.keys(IconExIcons).forEach(key => {
   const name = key.replace('IconEx', '');
-  iconexIconMap[name] = IconExIcons[key as keyof typeof IconExIcons];
+  iconexIconMap[name] = IconExIcons[key as keyof typeof IconExIcons] as SvgIconComponent;
 });
 
-const phosphorIconMap: { [key: string]: React.ComponentType<unknown> } = {};
+const phosphorIconMap: Record<string, SvgIconComponent> = {};
 Object.keys(PhosphorIcons).forEach(key => {
   const name = key.replace('Phosphor', '');
-  phosphorIconMap[name] = PhosphorIcons[key as keyof typeof PhosphorIcons];
+  phosphorIconMap[name] = PhosphorIcons[key as keyof typeof PhosphorIcons] as SvgIconComponent;
 });
 
-export const Icons: { [key: string]: React.ComponentType<unknown> } = {
+export const Icons: Record<string, SvgIconComponent> = {
   ...plainerIconMap,
   ...iconexIconMap,
   ...phosphorIconMap,
@@ -48,7 +52,7 @@ export const Icon: React.FC<IconProps> = React.memo(
 
     // Функция для безопасного рендеринга иконки
     const renderIcon = React.useCallback(
-      (IconComponent: React.ComponentType<unknown> | undefined) => {
+      (IconComponent: SvgIconComponent | undefined) => {
         if (!IconComponent || typeof IconComponent !== 'function') {
           return null;
         }

@@ -22,6 +22,17 @@ export const useToast = (): UseToastReturn => {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const timeoutRefs = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
+  const hideToast = useCallback((id: string) => {
+    // Очищаем timeout
+    const timeout = timeoutRefs.current.get(id);
+    if (timeout) {
+      clearTimeout(timeout);
+      timeoutRefs.current.delete(id);
+    }
+
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  }, []);
+
   const showToast = useCallback(
     (message: string, type: ToastType = 'info', title?: string, duration: number = 5000) => {
       const id = Math.random().toString(36).substr(2, 9);
@@ -46,17 +57,6 @@ export const useToast = (): UseToastReturn => {
     },
     [hideToast],
   );
-
-  const hideToast = useCallback((id: string) => {
-    // Очищаем timeout
-    const timeout = timeoutRefs.current.get(id);
-    if (timeout) {
-      clearTimeout(timeout);
-      timeoutRefs.current.delete(id);
-    }
-
-    setToasts(prev => prev.filter(toast => toast.id !== id));
-  }, []);
 
   const clearToasts = useCallback(() => {
     // Очищаем все timeouts

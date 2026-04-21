@@ -1,7 +1,8 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { clsx } from 'clsx';
-import type { TimeInputProps, ButtonVariant, TooltipPosition } from '../../../../types/ui';
+import type { TimeInputProps } from '../../../../types/ui';
+import { ButtonVariant, TooltipPosition } from '../../../../types/ui';
 import { BorderRadiusHandler, TransitionHandler } from '../../../../handlers/uiHandlers';
 import {
   parseTime,
@@ -2015,7 +2016,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
           (() => {
             const currentValue = inputValue || '';
             const currentLength = ignoreMaskCharacters
-              ? currentValue.replace(/[:-/]/g, '').length
+              ? currentValue.replace(/[-:\/]/g, '').length
               : currentValue.length;
 
             // Проверяем threshold для отображения счетчика

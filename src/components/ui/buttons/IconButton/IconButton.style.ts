@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components';
 import { motion } from 'framer-motion';
-import type { IconButtonProps, ButtonVariant } from '../../../../types/ui';
+import type { IconButtonProps } from '../../../../types/ui';
+import { ButtonVariant } from '../../../../types/ui';
 import { Size } from '../../../../types/sizes';
 
 /**

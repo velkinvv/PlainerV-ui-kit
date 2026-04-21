@@ -1,4 +1,5 @@
-import { lightTheme, darkTheme } from './';
+import { lightTheme } from './light';
+import { darkTheme } from './dark';
 import type { ColorTheme } from '../../types/theme';
 import { ThemeMode } from '../../types/theme';
 

@@ -49,18 +49,17 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
 
     // Слушаем события от аддона Storybook
-    if (
-      typeof window !== 'undefined' &&
-      (window as { __STORYBOOK_ADDONS_CHANNEL__?: unknown }).__STORYBOOK_ADDONS_CHANNEL__
-    ) {
-      const channel = (
-        window as {
-          __STORYBOOK_ADDONS_CHANNEL__: {
-            on: (event: string, handler: (event: { theme: string }) => void) => void;
-            off: (event: string, handler: (event: { theme: string }) => void) => void;
-          };
-        }
-      ).__STORYBOOK_ADDONS_CHANNEL__;
+    if (typeof window !== 'undefined') {
+      const storybookWindow = window as unknown as {
+        __STORYBOOK_ADDONS_CHANNEL__?: {
+          on: (event: string, handler: (event: { theme: string }) => void) => void;
+          off: (event: string, handler: (event: { theme: string }) => void) => void;
+        };
+      };
+      const channel = storybookWindow.__STORYBOOK_ADDONS_CHANNEL__;
+      if (!channel) {
+        return;
+      }
       channel.on('THEME_CHANGED', handleThemeChange);
 
       return () => {

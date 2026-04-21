@@ -1,19 +1,27 @@
 import styled, { css } from 'styled-components';
-import type { SidebarProps } from '../../../types/ui';
+import { SidebarVariant } from '../../../types/ui';
+
+/** Transient-пропсы для кусков меню сайдбара (не путать с `SidebarProps` компонента) */
+export interface SidebarMenuStyledProps {
+  /** Вариант раскладки пункта меню */
+  $variant?: SidebarVariant;
+  /** Активный пункт */
+  $active?: boolean;
+}
 
 /**
  * MenuItemContent
  */
-export const MenuItemContent = styled.div<SidebarProps>`
+export const MenuItemContent = styled.div<SidebarMenuStyledProps>`
   display: flex;
   align-items: center;
   gap: 20px;
   width: 177px;
   height: 24px;
 
-  ${({ $variant = 'EXPANDED' }) => {
+  ${({ $variant = SidebarVariant.EXPANDED }) => {
     switch ($variant) {
-      case 'EXPANDED':
+      case SidebarVariant.EXPANDED:
         return css`
           flex-direction: row;
         `;
@@ -26,7 +34,7 @@ export const MenuItemContent = styled.div<SidebarProps>`
 /**
  * MenuIcon
  */
-export const MenuIcon = styled.div<SidebarProps>`
+export const MenuIcon = styled.div<SidebarMenuStyledProps>`
   width: 24px;
   height: 24px;
   display: flex;
@@ -39,7 +47,7 @@ export const MenuIcon = styled.div<SidebarProps>`
 /**
  * MenuLabel
  */
-export const MenuLabel = styled.span<SidebarProps>`
+export const MenuLabel = styled.span<SidebarMenuStyledProps>`
   font-family: ${({ theme }) => theme.fonts.primary};
   font-weight: 400;
   font-size: 14px;
@@ -48,9 +56,9 @@ export const MenuLabel = styled.span<SidebarProps>`
   color: ${({ $active, theme }) => ($active ? theme.colors.primary : theme.colors.text)};
   white-space: nowrap;
 
-  ${({ $variant = 'EXPANDED' }) => {
+  ${({ $variant = SidebarVariant.EXPANDED }) => {
     switch ($variant) {
-      case 'EXPANDED':
+      case SidebarVariant.EXPANDED:
         return css`
           display: block;
         `;

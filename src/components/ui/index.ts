@@ -71,13 +71,9 @@ export type { CheckboxProps } from '@/types/ui';
 export { RadioButton, RadioButtonGroup } from './RadioButton';
 export type { RadioButtonProps, RadioButtonGroupProps, RadioButtonGroupOption } from '@/types/ui';
 
-export { DateTimeInput } from './inputs/DateTimeInput';
-export { DateTimeInputRange } from './inputs/DateTimeInputRange';
 export { DateInput } from './inputs/DateInput';
 export { TimeInput } from './inputs/TimeInput';
 export type {
-  DateTimeInputProps,
-  DateTimeInputRangeProps,
   DateTimeRange,
   DatePickerProps as DateInputProps,
   TimeInputProps,

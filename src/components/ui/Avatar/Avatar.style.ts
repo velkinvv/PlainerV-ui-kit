@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components';
 import { motion } from 'framer-motion';
-import type { AvatarProps, AvatarStatus } from '../../../types/ui';
+import type { AvatarProps } from '../../../types/ui';
+import { AvatarStatus } from '../../../types/ui';
 import { AvatarState } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 

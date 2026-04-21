@@ -1,8 +1,8 @@
-# @plainerV/ui
+# @velkinvv/plainerv
 
-![npm version](https://img.shields.io/npm/v/@plainerV/ui)
-![license](https://img.shields.io/npm/l/@plainerV/ui)
-![npm downloads](https://img.shields.io/npm/dm/@plainerV/ui)
+![npm version](https://img.shields.io/npm/v/@velkinvv/plainerv)
+![license](https://img.shields.io/npm/l/@velkinvv/plainerv)
+![npm downloads](https://img.shields.io/npm/dm/@velkinvv/plainerv)
 
 Современная библиотека UI компонентов с поддержкой темизации и TypeScript.
 
@@ -19,7 +19,7 @@
 ## 📦 Установка
 
 ```bash
-npm install @plainerV/ui
+npm i @velkinvv/plainerv
 ```
 
 ## 📦 Импорт стилей и шрифтов
@@ -28,9 +28,9 @@ npm install @plainerV/ui
 
 ```tsx
 // Импорт стилей (включает шрифты)
-import '@plainerV/ui/styles';
+import '@velkinvv/plainerv/styles';
 // или
-import '@plainerV/ui/dist/styles.css';
+import '@velkinvv/plainerv/dist/styles.css';
 ```
 
 Шрифты автоматически подключаются при импорте стилей.
@@ -40,7 +40,7 @@ import '@plainerV/ui/dist/styles.css';
 Библиотека поддерживает полную темизацию с автоматическим переключением между светлой и темной темой:
 
 ```tsx
-import { ThemeProvider, useTheme, ThemeToggle } from '@plainerV/ui';
+import { ThemeProvider, useTheme, ThemeToggle } from '@velkinvv/plainerv';
 
 function App() {
   return (
@@ -57,7 +57,7 @@ function App() {
 ### Использование темы в компонентах
 
 ```tsx
-import { useTheme } from '@plainerV/ui';
+import { useTheme } from '@velkinvv/plainerv';
 
 function MyComponent() {
   const { mode, toggle } = useTheme();
@@ -118,7 +118,7 @@ function MyComponent() {
 ### Lucide React иконки
 
 ```tsx
-import { Icon } from '@plainerV/ui';
+import { Icon } from '@velkinvv/plainerv';
 
 <Icon name="Home" size={24} variant="lucide" />
 <Icon name="Settings" size={24} variant="lucide" />
@@ -127,7 +127,7 @@ import { Icon } from '@plainerV/ui';
 ### Plainer иконки
 
 ```tsx
-import { Icon } from '@plainerV/ui';
+import { Icon } from '@velkinvv/plainerv';
 
 <Icon name="IconPlus" size={24} variant="plainer" />
 <Icon name="IconClose" size={24} variant="plainer" />
@@ -139,7 +139,7 @@ import { Icon } from '@plainerV/ui';
 Все компоненты используют Framer Motion для плавных анимаций:
 
 ```tsx
-import { Button } from '@plainerV/ui';
+import { Button } from '@velkinvv/plainerv';
 
 <Button
   variant="primary"
@@ -155,7 +155,7 @@ import { Button } from '@plainerV/ui';
 Запустите Storybook для интерактивной документации:
 
 ```bash
-cd plainerV
+cd web
 npm run storybook
 ```
 
@@ -192,7 +192,7 @@ npm run storybook
 ### Установка зависимостей
 
 ```bash
-cd plainerV
+cd web
 npm install
 ```
 
@@ -219,7 +219,7 @@ npm run lint
 ### Простая форма
 
 ```tsx
-import { Input, Button, Card } from '@plainerV/ui';
+import { Input, Button, Card } from '@velkinvv/plainerv';
 
 function LoginForm() {
   return (
@@ -247,7 +247,7 @@ function LoginForm() {
 ### Навигация с сайдбаром
 
 ```tsx
-import { Sidebar, ThemeToggle } from '@plainerV/ui';
+import { Sidebar, ThemeToggle } from '@velkinvv/plainerv';
 
 function AppLayout() {
   const sidebarItems = [
@@ -276,10 +276,10 @@ function AppLayout() {
 
 ```tsx
 // ✅ Хорошо - импортируется только Button
-import { Button } from '@plainerV/ui';
+import { Button } from '@velkinvv/plainerv';
 
 // ❌ Плохо - импортируется весь пакет
-import * as UI from '@plainerV/ui';
+import * as UI from '@velkinvv/plainerv';
 ```
 
 ## 📊 Размер бандла

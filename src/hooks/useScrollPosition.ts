@@ -33,15 +33,14 @@ export function useScrollPosition({
       }
 
       timeoutId = setTimeout(() => {
-        const x =
-          targetElement === window
-            ? window.pageXOffset || document.documentElement.scrollLeft
-            : targetElement.scrollLeft;
+        const isWindowTarget = targetElement === window;
+        const x = isWindowTarget
+          ? window.pageXOffset || document.documentElement.scrollLeft
+          : (targetElement as HTMLElement).scrollLeft;
 
-        const y =
-          targetElement === window
-            ? window.pageYOffset || document.documentElement.scrollTop
-            : targetElement.scrollTop;
+        const y = isWindowTarget
+          ? window.pageYOffset || document.documentElement.scrollTop
+          : (targetElement as HTMLElement).scrollTop;
 
         setScrollPosition({ x, y });
       }, throttle);

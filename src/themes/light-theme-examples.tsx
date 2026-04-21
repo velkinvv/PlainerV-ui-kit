@@ -1,5 +1,5 @@
 import React from 'react';
-import { lightTheme } from '../variables/colors/light';
+import { lightTheme } from './colors/light';
 import { applyLightThemeToDocument } from '../variables/cssVariables/css-variables';
 
 // Примеры использования обновленной светлой темы
@@ -27,7 +27,7 @@ export const LightThemeExamples: React.FC = () => {
           borderRadius: '20px',
           padding: '20px',
           margin: '20px 0',
-          boxShadow: lightTheme.boxShadow.md,
+          boxShadow: `0 4px 16px ${lightTheme.shadow}`,
           border: `1px solid ${lightTheme.border}`,
         }}
       >
@@ -44,7 +44,7 @@ export const LightThemeExamples: React.FC = () => {
           padding: '15px',
           borderRadius: '10px',
           margin: '20px 0',
-          boxShadow: lightTheme.boxShadow.primary,
+          boxShadow: `0 4px 16px ${lightTheme.shadow}`,
         }}
       >
         Акцентный элемент с голубым цветом и специальной тенью
@@ -65,7 +65,7 @@ export const LightThemeExamples: React.FC = () => {
             backgroundColor: lightTheme.progressFill,
             width: '55%',
             height: '100%',
-            boxShadow: lightTheme.boxShadow.success,
+            boxShadow: `0 2px 8px ${lightTheme.success}`,
           }}
         />
       </div>
@@ -73,7 +73,7 @@ export const LightThemeExamples: React.FC = () => {
       {/* Уведомление */}
       <div
         style={{
-          backgroundColor: lightTheme.notification,
+          backgroundColor: lightTheme.danger,
           color: 'white',
           padding: '15px',
           borderRadius: '10px',
@@ -86,7 +86,7 @@ export const LightThemeExamples: React.FC = () => {
       {/* Элемент с градиентом */}
       <div
         style={{
-          background: lightTheme.gradient,
+          background: `linear-gradient(135deg, ${lightTheme.primary}, ${lightTheme.backgroundSecondary})`,
           padding: '20px',
           borderRadius: '10px',
           margin: '20px 0',
@@ -141,7 +141,7 @@ export const LightThemeExamples: React.FC = () => {
           cursor: 'pointer',
           fontSize: '16px',
           fontWeight: '500',
-          boxShadow: lightTheme.boxShadow.primary,
+          boxShadow: `0 4px 16px ${lightTheme.shadow}`,
         }}
       >
         Кнопка с акцентным цветом

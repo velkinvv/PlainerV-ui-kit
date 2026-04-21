@@ -1,7 +1,11 @@
 {
-  "name": "@plainerV/ui",
+  "name": "@velkinvv/plainerv",
   "version": "0.1.0",
   "description": "Современная библиотека UI компонентов с поддержкой темизации и TypeScript",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "dist/index.cjs.js",
   "types": "dist/index.d.ts",
   "module": "dist/index.esm.js",
@@ -16,12 +20,14 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "sideEffects": false,
   "scripts": {
-    "build": "NODE_ENV=production rollup -c",
-    "build:dev": "NODE_ENV=development rollup -c",
+    "start": "PUBLIC_URL=/plainerv-ui npm run dev",
+    "build": "cross-env NODE_ENV=production rollup -c",
+    "build:dev": "cross-env NODE_ENV=development rollup -c",
     "dev": "rollup -c --watch",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
@@ -81,6 +87,7 @@
     "tailwind-merge": "^2.0.0"
   },
   "devDependencies": {
+    "@reduxjs/toolkit": "^2.5.0",
     "@commitlint/cli": "^19.0.0",
     "@commitlint/config-conventional": "^19.0.0",
     "@rollup/plugin-commonjs": "^29.0.0",
@@ -104,6 +111,7 @@
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
     "autoprefixer": "^10.4.23",
+    "cross-env": "^7.0.3",
     "eslint": "^9.0.0",
     "eslint-config-prettier": "^10.0.0",
     "eslint-plugin-prettier": "^5.0.0",
@@ -117,6 +125,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "lint-staged": "^15.0.0",
     "prettier": "^3.6.2",
+    "react-redux": "^9.2.0",
     "rollup": "^4.54.0",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
@@ -128,8 +137,18 @@
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0",
+    "@reduxjs/toolkit": "^2.0.0",
+    "react-redux": "^9.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@reduxjs/toolkit": {
+      "optional": true
+    },
+    "react-redux": {
+      "optional": true
+    }
   },
   "lint-staged": {
     "*.{ts,tsx}": [

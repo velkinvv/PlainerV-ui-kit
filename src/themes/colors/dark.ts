@@ -38,6 +38,7 @@ export const darkColors: Colors = {
   text: colors.neutral[10], // Основной текст (белый)
   textSecondary: colors.grey[300], // Вторичный текст
   textTertiary: colors.grey[500], // Третичный текст
+  textDisabled: colors.grey[600], // Текст отключённых элементов
 
   // Основные цвета
   primary: colors.blue[400], // Основной цвет
@@ -50,11 +51,14 @@ export const darkColors: Colors = {
   border: colors.blue[600], // Основная граница
   borderSecondary: colors.blue[500], // Вторичная граница
   borderTertiary: colors.blue[400], // Третичная граница
+  borderHover: colors.blue[400], // Граница при наведении
 
   // Состояния
   success: colors.green[400], // Успех
+  successHover: colors.green[300], // Успех при наведении
   warning: colors.orange[400], // Предупреждение
   danger: colors.red[400], // Опасность
+  dangerHover: colors.red[300], // Опасность при наведении
   info: colors.blue[300], // Информация
 
   // Специальные цвета

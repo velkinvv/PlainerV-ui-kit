@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import { MenuItemContent, MenuIcon, MenuLabel } from './Sidebar.style';
 
 import { clsx } from 'clsx';
-import type { SidebarProps, SidebarItem, SidebarVariant } from '../../../types/ui';
+import type { SidebarProps, SidebarItem } from '../../../types/ui';
+import { SidebarVariant } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 import { BorderRadiusHandler, BoxShadowHandler } from '../../../handlers/uiHandlers';
 

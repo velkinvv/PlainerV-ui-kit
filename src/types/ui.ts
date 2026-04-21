@@ -110,7 +110,7 @@ export interface HintProps extends BaseComponentProps {
   /** Иконка в hint */
   icon?: ReactNode;
   /** Кнопки действий внутри hint */
-  actions?: Array<{ label: string; onClick: () => void; variant?: ButtonVariant }>;
+  actions?: HintAction[];
   /** Кастомный футер hint */
   footer?: ReactNode;
   /** Пресет анимации появления/исчезновения */
@@ -226,6 +226,18 @@ export enum ButtonVariant {
   WARNING = 'warning', // Кнопка для предупреждений
   LINE = 'line', // Кнопка в виде ссылки
   SKELETON = 'skeleton', // Скелетон кнопка для загрузки
+}
+
+/**
+ * Кнопка-действие внутри содержимого Hint
+ * @property label — текст на кнопке
+ * @property onClick — обработчик клика
+ * @property variant — визуальный вариант кнопки
+ */
+export interface HintAction {
+  label: string;
+  onClick?: () => void;
+  variant?: ButtonVariant;
 }
 
 /**
@@ -1152,6 +1164,8 @@ export interface SpinnerProps extends BaseComponentProps {
   labelPosition?: 'top' | 'bottom' | 'left' | 'right';
   centered?: boolean;
   ariaLabel?: string;
+  /** Инлайн-стили корневого элемента спиннера */
+  style?: React.CSSProperties;
 }
 
 /**

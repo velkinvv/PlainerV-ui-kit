@@ -1,7 +1,8 @@
-import React, { forwardRef, useState, useRef, useEffect } from 'react';
+import React, { forwardRef, useState, useRef, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { clsx } from 'clsx';
-import type { DatePickerProps, TooltipPosition } from '../../../../types/ui';
+import type { DatePickerProps } from '../../../../types/ui';
+import { TooltipPosition } from '../../../../types/ui';
 import { BorderRadiusHandler, TransitionHandler } from '../../../../handlers/uiHandlers';
 import {
   parseDate,

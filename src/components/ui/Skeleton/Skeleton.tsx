@@ -34,17 +34,26 @@ const getVariantDimensions = (
   }
 };
 
+/** Нормализованные числовые параметры скелетона */
+interface SkeletonNumericProps {
+  count: number;
+  gap: number;
+  animationSpeed: number;
+}
+
 /**
- * Валидирует и нормализует пропсы
+ * Валидирует count, gap и скорость анимации
+ * @param props — подмножество пропсов скелетона
  */
-const validateProps = (props: SkeletonProps): SkeletonProps => {
-  const { count = 1, gap = 8, animationSpeed = 1.5 } = props;
+const validateNumericProps = (props: Pick<SkeletonProps, 'count' | 'gap' | 'animationSpeed'>): SkeletonNumericProps => {
+  const count = props.count ?? 1;
+  const gap = props.gap ?? 8;
+  const animationSpeed = props.animationSpeed ?? 1.5;
 
   return {
-    ...props,
-    count: Math.max(1, Math.floor(count || 1)),
-    gap: Math.max(0, gap || 0),
-    animationSpeed: Math.max(0.1, Math.min(5, animationSpeed || 1.5)),
+    count: Math.max(1, Math.floor(count)),
+    gap: Math.max(0, gap),
+    animationSpeed: Math.max(0.1, Math.min(5, animationSpeed)),
   };
 };
 
@@ -70,7 +79,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   // Валидация и нормализация пропсов
   const validatedProps = useMemo(
     () =>
-      validateProps({
+      validateNumericProps({
         count,
         gap,
         animationSpeed,
@@ -105,9 +114,9 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   // ARIA-атрибуты для доступности
   const ariaAttributes = useMemo(
     () => ({
-      role: 'status',
+      role: 'status' as const,
       'aria-label': ariaLabel || 'Загрузка контента',
-      'aria-busy': animated ? 'true' : 'false',
+      'aria-busy': animated,
     }),
     [ariaLabel, animated],
   );
@@ -131,20 +140,19 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   }
 
   // Рендерим группу элементов
-  const items = useMemo(
-    () =>
-      Array.from({ length: validatedProps.count }, (_, index) => (
-        <SkeletonWrapper
-          key={`skeleton-${index}`}
-          $width={finalWidth}
-          $height={finalHeight}
-          $shape={finalShape}
-          $animated={animated}
-          $animationSpeed={validatedProps.animationSpeed}
-          $borderRadius={finalBorderRadius}
-          $inline={inline}
-        />
-      )),
+  const items = useMemo((): React.ReactElement[] =>
+    Array.from({ length: validatedProps.count }, (_, index) => (
+      <SkeletonWrapper
+        key={`skeleton-${index}`}
+        $width={finalWidth}
+        $height={finalHeight}
+        $shape={finalShape}
+        $animated={animated}
+        $animationSpeed={validatedProps.animationSpeed}
+        $borderRadius={finalBorderRadius}
+        $inline={inline}
+      />
+    )),
     [
       validatedProps.count,
       finalWidth,

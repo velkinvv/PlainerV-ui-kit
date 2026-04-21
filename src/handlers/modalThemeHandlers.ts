@@ -36,6 +36,7 @@ export const getModalSize = (theme: ModalTheme | undefined, size: ModalSize): Mo
     },
     [ModalSize.FULL]: {
       width: '95vw',
+      maxWidth: '95vw',
       height: '95vh',
       padding: '32px',
       borderRadius: '24px',
@@ -47,9 +48,17 @@ export const getModalSize = (theme: ModalTheme | undefined, size: ModalSize): Mo
     return fallbackSizes[size];
   }
 
-  // Получаем размер из темы и проверяем, что все обязательные поля присутствуют
+  // Получаем размер из темы (у FULL в типе темы может не быть maxWidth)
   const themeSize = theme.sizes[size];
-  if (!themeSize || !themeSize.width || !themeSize.maxWidth) {
+  if (!themeSize?.width) {
+    return fallbackSizes[size];
+  }
+
+  if (size === ModalSize.FULL) {
+    return themeSize;
+  }
+
+  if (!('maxWidth' in themeSize) || !themeSize.maxWidth) {
     return fallbackSizes[size];
   }
 
@@ -73,9 +82,16 @@ export const getModalContainerStyles = (theme: ModalTheme | undefined, size: Mod
   };
 
   // Дополнительная защита на случай, если что-то пошло не так
+  const resolvedMaxWidth =
+    size === ModalSize.FULL
+      ? sizeStyles.width
+      : 'maxWidth' in sizeStyles && sizeStyles.maxWidth
+        ? sizeStyles.maxWidth
+        : '600px';
+
   return {
     width: sizeStyles?.width || '100%',
-    maxWidth: sizeStyles?.maxWidth || '600px',
+    maxWidth: resolvedMaxWidth,
     padding: sizeStyles?.padding || '24px',
     borderRadius: sizeStyles?.borderRadius || '16px',
     maxHeight: settings.maxHeight,

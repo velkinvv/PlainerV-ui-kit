@@ -1,7 +1,7 @@
 import React from 'react';
-import type { IconProps } from '../../types/icon';
+import type { IconComponentProps } from '../../types/icon';
 
-export const IconPlainerClock: React.FC<IconProps> = ({
+export const IconPlainerClock: React.FC<IconComponentProps> = ({
   width = 24,
   height = 24,
   color = 'currentColor',
