@@ -1,13 +1,14 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useCallback } from 'react';
 import { clsx } from 'clsx';
 import { type ButtonProps, ButtonVariant } from '../../../../types/ui';
 import { Size } from '../../../../types/sizes';
-import { StyledButton, LoadingContainer, LoadingSpinner } from './Button.style';
+import { StyledButton, StyledLinkButton, LoadingContainer, LoadingSpinner } from './Button.style';
 import { getButtonAnimations } from '../../../../handlers/buttonThemeHandlers';
+import { mergeAnchorRel } from '../../../../handlers/linkHandlers';
 import { useTheme } from 'styled-components';
 import { Tooltip } from '../../Tooltip/Tooltip';
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
   (
     {
       children,
@@ -23,12 +24,29 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       tooltipText,
       className,
       onClick,
+      href,
+      target,
+      rel,
+      download,
+      type,
       ...props
     },
     ref,
   ) => {
     const theme = useTheme();
     const animations = getButtonAnimations(theme.buttons);
+    const isAnchor = Boolean(href);
+
+    const handleClick = useCallback(
+      (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
+        if (isAnchor && (disabled || loading)) {
+          e.preventDefault();
+        }
+        onClick?.(e as React.MouseEvent<HTMLButtonElement>);
+      },
+      [isAnchor, disabled, loading, onClick],
+    );
+
     const renderContent = () => {
       if (loading) {
         return (
@@ -64,23 +82,33 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       return children;
     };
 
-    const buttonElement = (
-      <StyledButton
-        ref={ref}
-        variant={variant}
-        size={size}
-        disabled={disabled || loading}
-        loading={loading}
-        fullWidth={fullWidth}
-        rounded={rounded}
-        className={clsx('ui-button', className)}
-        onClick={onClick}
-        whileHover={!disabled && !loading ? { scale: animations.hoverScale } : undefined}
-        whileTap={!disabled && !loading ? { scale: animations.tapScale } : undefined}
-        {...props}
-      >
-        {renderContent()}
-      </StyledButton>
+    const mergedRel = isAnchor ? mergeAnchorRel(target, rel) : undefined;
+
+    const motionProps = {
+      ref: ref as React.Ref<HTMLButtonElement & HTMLAnchorElement>,
+      href: isAnchor ? href : undefined,
+      target: isAnchor ? target : undefined,
+      rel: mergedRel,
+      download: isAnchor ? download : undefined,
+      type: isAnchor ? undefined : type,
+      variant,
+      size,
+      disabled: disabled || loading,
+      loading,
+      fullWidth,
+      rounded,
+      'aria-disabled': isAnchor && (disabled || loading) ? true : undefined,
+      className: clsx('ui-button', isAnchor ? 'ui-button--link' : null, className),
+      onClick: handleClick,
+      whileHover: !disabled && !loading ? { scale: animations.hoverScale } : undefined,
+      whileTap: !disabled && !loading ? { scale: animations.tapScale } : undefined,
+      ...props,
+    };
+
+    const buttonElement = isAnchor ? (
+      <StyledLinkButton {...motionProps}>{renderContent()}</StyledLinkButton>
+    ) : (
+      <StyledButton {...motionProps}>{renderContent()}</StyledButton>
     );
 
     // Если нужно показать тултип и есть текст тултипа

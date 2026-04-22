@@ -352,15 +352,21 @@ export const normalizeDropdownValue = <T>(
 
 /**
  * Создает ключ для элемента меню
- * @param item - элемент меню
+ * @param item - элемент меню (`value` и/или `label` для ключа; `label` нестрокового типа не используется как ключ)
  * @param index - индекс элемента
  * @returns ключ для React
  */
 export const getMenuItemKey = (
-  item: { value?: unknown; label?: string },
+  item: { value?: unknown; label?: React.ReactNode },
   index: number,
 ): React.Key => {
-  return (item.value as React.Key) ?? item.label ?? index;
+  if (item.value !== undefined && item.value !== null) {
+    return item.value as React.Key;
+  }
+  if (typeof item.label === 'string' || typeof item.label === 'number') {
+    return item.label;
+  }
+  return index;
 };
 
 /**

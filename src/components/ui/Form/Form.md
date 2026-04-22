@@ -41,6 +41,67 @@ function LoginForm() {
 </Form>
 ```
 
+### Группа кнопок
+
+Несколько действий в одной строке удобно обернуть в **`ButtonGroup`** (`@/components/ui`): задайте **`ariaLabel`** для доступности; для сегментированного вида — **`attached`**. Сторис: **Components/Buttons/ButtonGroup**.
+
+### FileInput в форме
+
+`FileInput` рендерит скрытый `input type="file"` с атрибутом `form` из контекста `Form`. Передайте `name`, при необходимости `accept`, `multiple`, обработчик `onChange` и опционально `showClearButton` / `onClear` для сброса выбора.
+
+```tsx
+import { Form, FileInput, Button } from '@/components/ui';
+
+<Form onSubmit={handleSubmit}>
+  <FileInput label="Скан" name="scan" accept="application/pdf" helperText="Только PDF" required />
+  <Button type="submit">Отправить</Button>
+</Form>
+```
+
+### Switch в форме
+
+`Switch` — обычный `input` с `type="checkbox"` и `role="switch"`: передайте `name` и обрабатывайте `onChange` при отправке формы.
+
+```tsx
+import { Form, Switch } from '@/components/ui';
+
+<Form onSubmit={handleSubmit}>
+  <Switch label="Показывать превью" name="preview" defaultChecked />
+  <button type="submit">Сохранить</button>
+</Form>
+```
+
+### Уведомления после действия в форме
+
+Для обратной связи после `onSubmit` используйте **`useToast`** (карточки в углу экрана) или **`useSnackbar`** (компактная полоса снизу, опционально с кнопкой действия). Хуки работают только внутри соответствующих провайдеров; как правило, **`ThemeProvider` → `ToastProvider` / `SnackbarProvider`** задают один раз на корне приложения.
+
+```tsx
+import { Form, Input, Button } from '@/components/ui';
+import { useToast } from '@/hooks';
+
+function SaveForm() {
+  const { showToast } = useToast();
+
+  return (
+    <Form
+      onSubmit={(e) => {
+        e.preventDefault();
+        showToast('Данные сохранены', 'success', 'Готово');
+      }}
+    >
+      <Input label="Название" name="title" required />
+      <Button type="submit">Сохранить</Button>
+    </Form>
+  );
+}
+```
+
+Для Snackbar: `import { useSnackbar } from '@/hooks'`, затем `showSnackbar('Текст', { actionLabel: 'Отменить', onAction: () => {...} })`. Сторис: **Hooks/useToast**, **Hooks/useSnackbar**, **Components/Feedback/Toast**, **Components/Feedback/Snackbar**.
+
+### Пагинация списков
+
+Для таблиц и списков с постраничной выборкой используйте **`Pagination`** из `@/components/ui` (внутри **`ThemeProvider`**). Пример: `totalPages={total}`, контролируемый режим — `page={page}` и `onPageChange={setPage}`; без `page` — неконтролируемый с `defaultPage`. Сторис: **Components/Navigation/Pagination**.
+
 ## Пропсы
 
 | Проп        | Тип                                             | По умолчанию | Описание                                             |
@@ -54,7 +115,7 @@ function LoginForm() {
 
 ## Контекст формы
 
-Компонент `Form` использует `FormProvider` для предоставления контекста формы. Все поля `Input` внутри формы автоматически получают атрибут `form`, что устраняет предупреждения браузера.
+Компонент `Form` использует `FormProvider` для предоставления контекста формы. Поля `Input`, `TextArea` и `Select` внутри формы автоматически получают атрибут `form` (ссылка на `id` элемента `<form>`), что устраняет предупреждения браузера и корректно связывает контролы с отправкой формы.
 
 ### Хуки для работы с контекстом
 
@@ -156,7 +217,47 @@ import { Form, HiddenUsernameField } from '@/components/ui';
     autoComplete="new-password"
     required
   />
+  <TextArea
+    label="О себе"
+    name="bio"
+    rows={4}
+    placeholder="Кратко опишите себя (необязательно)"
+    maxLength={500}
+    displayCharacterCounter
+  />
+  <Select
+    label="Страна"
+    name="country"
+    placeholder="Выберите страну"
+    options={[
+      { value: 'ru', label: 'Россия' },
+      { value: 'kz', label: 'Казахстан' },
+    ]}
+  />
   <button type="submit">Зарегистрироваться</button>
+</Form>
+```
+
+Для примера выше импортируйте `TextArea` (и `Select`, если добавляете выпадающий список) вместе с `Input`:
+
+```tsx
+import { Form, Input, TextArea, Select } from '@/components/ui';
+```
+
+Пример с `Select` (по умолчанию `mode="select"` — выпадающая панель в стиле `Dropdown`; для системного списка укажите `mode="native"`):
+
+```tsx
+<Form formId="profile-form" onSubmit={handleSubmit}>
+  <Select
+    label="Роль"
+    name="role"
+    required
+    placeholder="Выберите роль"
+    options={[
+      { value: 'admin', label: 'Администратор' },
+      { value: 'user', label: 'Пользователь' },
+    ]}
+  />
 </Form>
 ```
 

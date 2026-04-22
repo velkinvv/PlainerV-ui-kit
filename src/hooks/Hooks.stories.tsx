@@ -19,7 +19,8 @@ const meta: Meta = {
 
 ### State Management
 - **useModal** - управление модальными окнами
-- **useToast** - управление уведомлениями
+- **useToast** - стек карточек Toast (нужны `ThemeProvider` + `ToastProvider`)
+- **useSnackbar** - стек полос Snackbar внизу экрана (`ThemeProvider` + `SnackbarProvider`)
 - **useLocalStorage** - работа с localStorage
 
 ### Performance & Optimization
@@ -64,11 +65,19 @@ const HooksOverview = () => {
         },
         {
           name: 'useToast',
-          description: 'Управление уведомлениями',
-          features: ['Показ уведомлений', 'Автоматическое скрытие', 'Различные типы'],
+          description: 'Стек Toast (карточки, портал в body)',
+          features: ['Типы success/error/warning/info', 'Заголовок и текст', 'Таймер и ручное закрытие'],
           color: '#e8f5e8',
           borderColor: '#4caf50',
           icon: '🔔',
+        },
+        {
+          name: 'useSnackbar',
+          description: 'Стек Snackbar (компактная полоса снизу)',
+          features: ['Опция действия actionLabel + onAction', 'Таймер по умолчанию 4 с', 'Позиция bottom-*'],
+          color: '#eceff1',
+          borderColor: '#607d8b',
+          icon: '📣',
         },
         {
           name: 'useLocalStorage',
@@ -258,7 +267,8 @@ const MyComponent = () => {
         },
         {
           name: 'useToast',
-          code: `import { useToast } from '@/hooks';
+          code: `// Корень приложения: <ThemeProvider><ToastProvider>...</ToastProvider></ThemeProvider>
+import { useToast } from '@/hooks';
 
 const MyComponent = () => {
   const { showToast } = useToast();
@@ -278,7 +288,31 @@ const MyComponent = () => {
     </div>
   );
 };`,
-          description: 'Показ уведомлений пользователю',
+          description: 'Показ карточек Toast (провайдеры на корне)',
+        },
+        {
+          name: 'useSnackbar',
+          code: `// Корень: <ThemeProvider><SnackbarProvider placement="bottom-center">...</SnackbarProvider></ThemeProvider>
+import { useSnackbar } from '@/hooks';
+
+const MyComponent = () => {
+  const { showSnackbar } = useSnackbar();
+
+  return (
+    <button
+      type="button"
+      onClick={() =>
+        showSnackbar('Удалено', {
+          actionLabel: 'Отменить',
+          onAction: () => console.log('отмена'),
+        })
+      }
+    >
+      Показать snackbar
+    </button>
+  );
+};`,
+          description: 'Компактные полосы снизу с опциональным действием',
         },
         {
           name: 'useLocalStorage',
@@ -501,7 +535,7 @@ const HooksBestPractices = () => {
       title: 'Импорт хуков',
       description: 'Импортируйте только необходимые хуки',
       code: `// ✅ Хорошо - импорт только нужных хуков
-import { useModal, useToast } from '@/hooks';
+import { useModal, useToast, useSnackbar } from '@/hooks';
 
 // ❌ Плохо - импорт всех хуков
 import * as hooks from '@/hooks';`,
@@ -514,7 +548,8 @@ import * as hooks from '@/hooks';`,
     {
       title: 'Обработка ошибок',
       description: 'Всегда обрабатывайте возможные ошибки',
-      code: `const MyComponent = () => {
+      code: `// useToast / useSnackbar работают только внутри соответствующих провайдеров (см. README)
+const MyComponent = () => {
   const { showToast } = useToast();
 
   const handleAction = async () => {

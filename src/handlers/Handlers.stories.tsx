@@ -303,13 +303,15 @@ const HandlersIntegrationGuide = () => {
       title: 'Импорт хендлеров',
       description: 'Импортируйте необходимые хендлеры в ваш компонент',
       code: `import { parseDate, formatDateForDisplay } from '@/handlers/dateHandlers';
-import { useModal, useToast } from '@/hooks';`,
+import { useModal, useToast } from '@/hooks';
+// useToast: в корне приложения оберните дерево в ThemeProvider + ToastProvider`,
     },
     {
       step: 2,
       title: 'Использование в компонентах',
       description: 'Используйте хендлеры в логике ваших компонентов',
-      code: `const MyComponent = () => {
+      code: `// Компонент должен рендериться внутри ToastProvider (и ThemeProvider)
+const MyComponent = () => {
   const { showToast } = useToast();
 
   const handleDateChange = (dateString: string) => {

@@ -9,18 +9,17 @@ import {
   getButtonSettings,
 } from '../../../../handlers/buttonThemeHandlers';
 
-/**
- * Стилизованная кнопка
- * @param variant - вариант кнопки (PRIMARY, SECONDARY, OUTLINE, LINE, GHOST, DANGER, SUCCESS)
- * @param size - размер кнопки
- * @param disabled - состояние отключения
- * @param loading - состояние загрузки
- * @param fullWidth - полная ширина
- * @param rounded - скругленные углы
- */
-export const StyledButton = styled(motion.button).withConfig({
-  shouldForwardProp: prop => !['loading', 'fullWidth', 'rounded'].includes(prop),
-})<ButtonProps>`
+const buttonStyleConfig = {
+  shouldForwardProp: (prop: string) => !['loading', 'fullWidth', 'rounded'].includes(prop),
+};
+
+const linkButtonStyleConfig = {
+  shouldForwardProp: (prop: string) =>
+    !['loading', 'fullWidth', 'rounded', 'disabled'].includes(prop),
+};
+
+/** Общие стили кнопки (используются и для `<button>`, и для ссылки-кнопки `<a>`). */
+const sharedButtonCss = css<ButtonProps>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -122,7 +121,7 @@ export const StyledButton = styled(motion.button).withConfig({
         font-weight: ${settings.fontWeight.large};
       `}
 
-      &:hover:not(:disabled) {
+      &:hover:not(:disabled):not([aria-disabled='true']) {
         ${variant === ButtonVariant.SKELETON
           ? css`
               background-image: ${variantStyles.hover.background};
@@ -142,7 +141,7 @@ export const StyledButton = styled(motion.button).withConfig({
         `text-decoration: ${variantStyles.hover.textDecoration};`}
       }
 
-      &:active:not(:disabled) {
+      &:active:not(:disabled):not([aria-disabled='true']) {
         ${variant === ButtonVariant.SKELETON
           ? css`
               background-image: ${variantStyles.active.background};
@@ -189,9 +188,30 @@ export const StyledButton = styled(motion.button).withConfig({
   }}
 
   /* Анимации */
-  &:not(:disabled):not([data-loading="true"]) {
+  &:not(:disabled):not([aria-disabled='true']):not([data-loading='true']) {
     transition: all 0.2s ease-in-out;
   }
+`;
+
+/**
+ * Стилизованная кнопка
+ * @param variant - вариант кнопки (PRIMARY, SECONDARY, OUTLINE, LINE, GHOST, DANGER, SUCCESS)
+ * @param size - размер кнопки
+ * @param disabled - состояние отключения
+ * @param loading - состояние загрузки
+ * @param fullWidth - полная ширина
+ * @param rounded - скругленные углы
+ */
+export const StyledButton = styled(motion.button).withConfig(buttonStyleConfig)<ButtonProps>`
+  ${sharedButtonCss}
+`;
+
+/**
+ * Ссылка с теми же стилями, что у кнопки (`href` на стороне `Button`).
+ * Атрибут `disabled` не прокидывается в DOM — используется только для стилей; в DOM — `aria-disabled`.
+ */
+export const StyledLinkButton = styled(motion.a).withConfig(linkButtonStyleConfig)<ButtonProps>`
+  ${sharedButtonCss}
 `;
 
 /**

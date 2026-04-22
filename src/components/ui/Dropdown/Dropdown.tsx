@@ -446,9 +446,13 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
         if (searchFilter) {
           return searchFilter(currentSearchValue, item);
         }
-        const label = item.label?.toLowerCase() ?? '';
+        // Дефолтный поиск: строковый `label` сравнивается по тексту; для `ReactNode` — только `description`
         const description = item.description?.toLowerCase() ?? '';
-        return label.includes(normalizedSearchQuery) || description.includes(normalizedSearchQuery);
+        const descriptionMatches = description.includes(normalizedSearchQuery);
+        if (typeof item.label === 'string') {
+          return item.label.toLowerCase().includes(normalizedSearchQuery) || descriptionMatches;
+        }
+        return descriptionMatches;
       },
       [searchable, normalizedSearchQuery, searchFilter, currentSearchValue],
     );

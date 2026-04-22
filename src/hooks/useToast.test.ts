@@ -1,8 +1,16 @@
+/** Реальный styled-components: иначе мок в jest.setup прокидывает `$*` в DOM и сыпятся warning’и */
+jest.unmock('styled-components');
+
+import React from 'react';
 import { renderHook, act } from '@testing-library/react';
+import { ThemeProvider } from '../themes/ThemeProvider';
+import { ToastProvider } from '../components/ui/Toast';
 import { useToast } from './useToast';
 
-// Мокаем таймеры
 jest.useFakeTimers();
+
+const wrapper = ({ children }: { children: React.ReactNode }) =>
+  React.createElement(ThemeProvider, null, React.createElement(ToastProvider, null, children));
 
 describe('useToast', () => {
   beforeEach(() => {
@@ -10,19 +18,21 @@ describe('useToast', () => {
   });
 
   afterEach(() => {
-    jest.runOnlyPendingTimers();
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
     jest.useRealTimers();
     jest.useFakeTimers();
   });
 
   it('инициализируется с пустым массивом toasts', () => {
-    const { result } = renderHook(() => useToast());
+    const { result } = renderHook(() => useToast(), { wrapper });
 
     expect(result.current.toasts).toEqual([]);
   });
 
   it('показывает toast', () => {
-    const { result } = renderHook(() => useToast());
+    const { result } = renderHook(() => useToast(), { wrapper });
 
     act(() => {
       result.current.showToast('Тестовое сообщение', 'success');
@@ -34,7 +44,7 @@ describe('useToast', () => {
   });
 
   it('скрывает toast автоматически', () => {
-    const { result } = renderHook(() => useToast());
+    const { result } = renderHook(() => useToast(), { wrapper });
 
     act(() => {
       result.current.showToast('Сообщение', 'info', undefined, 1000);
@@ -50,7 +60,7 @@ describe('useToast', () => {
   });
 
   it('скрывает toast вручную', () => {
-    const { result } = renderHook(() => useToast());
+    const { result } = renderHook(() => useToast(), { wrapper });
 
     act(() => {
       result.current.showToast('Сообщение', 'info');
@@ -69,7 +79,7 @@ describe('useToast', () => {
   });
 
   it('очищает все toasts', () => {
-    const { result } = renderHook(() => useToast());
+    const { result } = renderHook(() => useToast(), { wrapper });
 
     act(() => {
       result.current.showToast('Сообщение 1', 'info');
@@ -86,7 +96,7 @@ describe('useToast', () => {
   });
 
   it('поддерживает разные типы toasts', () => {
-    const { result } = renderHook(() => useToast());
+    const { result } = renderHook(() => useToast(), { wrapper });
 
     act(() => {
       result.current.showToast('Успех', 'success');

@@ -173,7 +173,6 @@ export interface BaseButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEl
 /**
  * Базовые пропсы для полей ввода
  * Расширяет стандартные HTML атрибуты input
- * @property label - Текстовая метка поля
  * @property error - Сообщение об ошибке
  * @property success - Показывает успешное состояние
  * @property helperText - Вспомогательный текст
@@ -183,9 +182,10 @@ export interface BaseButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEl
  * @property onClearIconClick - Обработчик клика по иконке очистки
  * @property textAlign - Выравнивание текста в поле
  * @property readOnly - Поле только для чтения (текст остается обычным цветом, но фон становится серым)
+ * @property label - Метка поля (`ReactNode`)
  */
 export interface BaseInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
-  label?: string;
+  label?: ReactNode;
   error?: string;
   success?: boolean;
   helperText?: string;
@@ -230,12 +230,12 @@ export enum ButtonVariant {
 
 /**
  * Кнопка-действие внутри содержимого Hint
- * @property label — текст на кнопке
+ * @property label — подпись кнопки (`ReactNode`)
  * @property onClick — обработчик клика
  * @property variant — визуальный вариант кнопки
  */
 export interface HintAction {
-  label: string;
+  label: ReactNode;
   onClick?: () => void;
   variant?: ButtonVariant;
 }
@@ -326,6 +326,10 @@ export enum DividerOrientation {
  * @property iconEnd - Иконка в конце кнопки
  * @property showTooltip - Показывать ли тултип
  * @property tooltipText - Текст тултипа
+ * @property href - Если задан, компонент рендерится как ссылка `<a>` с теми же стилями (ссылка-кнопка)
+ * @property target - Цель навигации (только при `href`)
+ * @property rel - Отношение к целевому документу (только при `href`; при `target="_blank"` рекомендуется `noopener noreferrer`)
+ * @property download - Подсказка браузеру для скачивания (только при `href`)
  */
 export interface ButtonProps extends BaseButtonProps {
   variant?: ButtonVariant;
@@ -334,6 +338,88 @@ export interface ButtonProps extends BaseButtonProps {
   iconEnd?: React.ReactNode;
   showTooltip?: boolean;
   tooltipText?: string;
+  href?: string;
+  target?: React.HTMLAttributeAnchorTarget;
+  rel?: string;
+  download?: string | boolean;
+}
+
+/**
+ * Режим компонента `Link`: обычный текст или оформление как кнопка.
+ */
+export enum LinkMode {
+  TEXT = 'text',
+  BUTTON = 'button',
+}
+
+/**
+ * Общие атрибуты навигации для `Link`.
+ * @property href - URL назначения
+ * @property children - Содержимое ссылки
+ * @property className - Дополнительный CSS-класс
+ * @property target - Цель (`_blank` и т.д.)
+ * @property rel - Явный `rel` (для `_blank` при необходимости дополняется в компоненте)
+ * @property download - Атрибут `download` у `<a>`
+ */
+export interface LinkAnchorCommon {
+  href: string;
+  children?: ReactNode;
+  className?: string;
+  target?: React.HTMLAttributeAnchorTarget;
+  rel?: string;
+  download?: string | boolean;
+}
+
+/**
+ * Текстовая ссылка (`<a>`).
+ * @property mode - `text` или не указывать (по умолчанию текстовая ссылка)
+ * @property textVariant - `default` — акцентный цвет; `line` — с подчёркиванием; `muted` — вторичный цвет
+ */
+export interface LinkTextProps
+  extends LinkAnchorCommon,
+    Omit<
+      React.AnchorHTMLAttributes<HTMLAnchorElement>,
+      'href' | 'children' | 'className' | 'target' | 'rel' | 'download'
+    > {
+  mode?: LinkMode.TEXT | 'text';
+  textVariant?: 'default' | 'line' | 'muted';
+}
+
+/**
+ * Ссылка с видом кнопки: те же пропсы, что у `Button`, плюс обязательный `href`.
+ * @property mode - Должен быть `button`
+ */
+export type LinkButtonProps = LinkAnchorCommon & {
+  mode: LinkMode.BUTTON | 'button';
+} & Omit<ButtonProps, 'href' | 'type' | 'children' | 'className' | 'target' | 'rel' | 'download'>;
+
+/**
+ * Унион пропсов `Link` по полю `mode`.
+ */
+export type LinkProps = LinkTextProps | LinkButtonProps;
+
+/**
+ * Ориентация группы кнопок
+ */
+export type ButtonGroupOrientation = 'horizontal' | 'vertical';
+
+/**
+ * Пропсы группы кнопок (`Button` / `IconButton`)
+ * @property children - Дочерние кнопки (рекомендуется одинаковые `variant` и `size` внутри группы)
+ * @property orientation - Ряд или колонка (по умолчанию `horizontal`)
+ * @property attached - Склеить соседние границы; скругления только у краёв группы
+ * @property fullWidth - Растянуть группу на ширину родителя (`display: flex`, `width: 100%`)
+ * @property role - Роль контейнера (по умолчанию `group`)
+ * @property ariaLabel - Подпись для `aria-label` (желательно для доступности)
+ * @property className - CSS-класс на контейнере
+ */
+export interface ButtonGroupProps extends Omit<BaseComponentProps, 'children'> {
+  children: ReactNode;
+  orientation?: ButtonGroupOrientation;
+  attached?: boolean;
+  fullWidth?: boolean;
+  role?: string;
+  ariaLabel?: string;
 }
 
 /**
@@ -384,6 +470,107 @@ export interface InputProps extends BaseInputProps {
   onClear?: () => void;
   showClearButton?: boolean;
   status?: 'error' | 'success' | 'warning'; // Статус компонента для изменения цвета бордера
+}
+
+/**
+ * Пропсы текстовой области
+ * @property label - Метка поля (`ReactNode`)
+ * @property error - Сообщение об ошибке
+ * @property success - Показывает успешное состояние
+ * @property helperText - Вспомогательный текст
+ * @property required - Обязательное поле
+ * @property fullWidth - Растягивает поле на всю ширину
+ * @property textAlign - Выравнивание текста
+ * @property readOnly - Поле только для чтения
+ * @property skeleton - Состояние skeleton
+ * @property disableCopying - Отключает возможность вставки/копирования
+ * @property extraText - Дополнительный текст под полем
+ * @property tooltip - Текст/контент подсказки
+ * @property tooltipType - Тип подсказки (`tooltip` или `hint`)
+ * @property tooltipPosition - Позиция подсказки
+ * @property displayCharacterCounter - Показывать ли счетчик символов
+ * @property characterCounterVisibilityThreshold - Порог в символах: счётчик виден при длине текста ≥ порога (при `maxLength` > 0)
+ * @property additionalLabel - Дополнительный лейбл
+ * @property status - Статус компонента для изменения цвета бордера
+ * @property resize - Режим изменения размеров textarea (CSS `resize`)
+ * @property rows - Высота в строках (`HTMLTextAreaElement.rows`, по умолчанию в компоненте 4)
+ */
+export interface TextAreaProps
+  extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'size'> {
+  label?: ReactNode;
+  error?: string;
+  success?: boolean;
+  helperText?: string;
+  required?: boolean;
+  fullWidth?: boolean;
+  textAlign?: TextAlign;
+  readOnly?: boolean;
+  skeleton?: boolean;
+  disableCopying?: boolean;
+  extraText?: string;
+  tooltip?: React.ReactNode;
+  tooltipType?: 'tooltip' | 'hint';
+  tooltipPosition?: 'top' | 'bottom' | 'left' | 'right';
+  displayCharacterCounter?: boolean;
+  characterCounterVisibilityThreshold?: number;
+  additionalLabel?: string;
+  status?: 'error' | 'success' | 'warning';
+  resize?: 'none' | 'both' | 'horizontal' | 'vertical';
+}
+
+/**
+ * Пропсы поля выбора файла (скрытый `input type="file"` + триггер и подпись выбранных файлов).
+ * @property label - Подпись над полем (`ReactNode`); участвует в `aria-labelledby` у скрытого `input`
+ * @property error - Текст ошибки; влияет на статус обводки
+ * @property success - Успешное состояние (булево); показывает текст «Успешно» под полем
+ * @property helperText - Вспомогательный текст (скрывается при `error` / `success`)
+ * @property required - Обязательное поле (звёздочка у `label`)
+ * @property fullWidth - Растянуть блок на ширину контейнера
+ * @property skeleton - Скелетон вместо поля
+ * @property disabled - Отключение поля и триггера
+ * @property variant - Вариант обводки (`InputVariant`, по умолчанию `default`)
+ * @property size - Размер отступов/высоты как у `Input`
+ * @property status - Явный статус обводки (`error` | `success` | `warning`)
+ * @property buttonLabel - Текст на `<label htmlFor>` триггера открытия диалога (по умолчанию «Выбрать файл»)
+ * @property placeholder - Текст в области имени файла, пока ничего не выбрано
+ * @property fileName - Контролируемая подпись выбранных файлов (приоритет над авто-текстом из `input.files`)
+ * @property showClearButton - Показывать кнопку сброса выбора (очищает значение у `input`)
+ * @property onClear - Колбэк после сброса выбора (вместе с очисткой `input`)
+ * @property onChange - Событие `change` у нативного `input[type=file]`
+ * @property multiple - Множественный выбор файлов
+ * @property accept - HTML-атрибут `accept`
+ * @property name - Имя поля при отправке формы
+ * @property id - Явный `id` скрытого `input` (иначе генерируется через `useId`)
+ * @property tooltip - Подсказка (`tooltip` оборачивает поле, `hint` — отдельный блок)
+ * @property tooltipType - Тип подсказки: `tooltip` или `hint`
+ * @property tooltipPosition - Позиция подсказки
+ * @property additionalLabel - Дополнительная подпись под основным `label`
+ * @property extraText - Дополнительный текст под полем
+ * @property isLoading - Показ спиннера справа в строке выбора
+ */
+export interface FileInputProps
+  extends Omit<
+    BaseInputProps,
+    | 'type'
+    | 'handleInput'
+    | 'clearIcon'
+    | 'onClearIconClick'
+    | 'displayCharacterCounter'
+    | 'ignoreMaskCharacters'
+    | 'characterCounterVisibilityThreshold'
+    | 'disableCopying'
+    | 'textAlign'
+    | 'readOnly'
+    | 'value'
+    | 'defaultValue'
+  > {
+  variant?: InputVariant;
+  size?: Size;
+  status?: 'error' | 'success' | 'warning';
+  buttonLabel?: string;
+  fileName?: string;
+  showClearButton?: boolean;
+  onClear?: () => void;
 }
 
 /**
@@ -540,11 +727,11 @@ export interface CardProps extends BaseComponentProps {
  * Расширяет ButtonProps с обязательным onClick
  */
 export interface ModalButtonProps extends Omit<ButtonProps, 'onClick'> {
-  label: string;
+  label: ReactNode;
   onClick: () => void;
   placement?: 'primary' | 'secondary';
   asyncOnClick?: () => Promise<void>;
-  loadingLabel?: string;
+  loadingLabel?: ReactNode;
 }
 
 /**
@@ -635,6 +822,59 @@ export interface ModalProps extends BaseComponentProps {
   overlayStyledCss?: string;
   showCloseButton?: boolean;
   children?: React.ReactNode;
+}
+
+/**
+ * Сторона экрана, с которой выезжает панель `Drawer`.
+ */
+export type DrawerPlacement = 'left' | 'right' | 'top' | 'bottom';
+
+/**
+ * Пропсы выдвижной панели (`Drawer`).
+ * @property isOpen - Открыт ли drawer
+ * @property onClose - Закрытие (оверлей, Escape, кнопка)
+ * @property placement - Сторона появления панели (по умолчанию `right`)
+ * @property title - Заголовок в шапке
+ * @property children - Контент панели
+ * @property showCloseButton - Показывать кнопку закрытия (по умолчанию `true`)
+ * @property width - Ширина панели при `left` / `right` (число — px, строка — CSS)
+ * @property height - Высота панели при `top` / `bottom`
+ * @property container - Корень портала (по умолчанию `document.body`)
+ * @property portalTargetId - id элемента для портала
+ * @property portalZIndex - z-index оверлея (поверх `overlayStyle`)
+ * @property overlayClassName - Класс оверлея
+ * @property overlayVariant - Визуал подложки как у `Modal`
+ * @property overlayStyle - Inline-стили оверлея
+ * @property closeOnOverlayClick - Закрытие по клику на подложку
+ * @property closeOnEscape - Блок обработки Escape (см. `useModalEscape`)
+ * @property closeOnEscapeKeyDown - Закрытие по Escape
+ * @property closeOnOutsideClick - Учитывается вместе с `closeOnOverlayClick` при клике по оверлею
+ * @property initialFocusRef - Куда ставить фокус при открытии
+ * @property initialFocusSelector - Селектор элемента для начального фокуса
+ * @property headerSlot - Кастомная шапка вместо `title` + крестик
+ * @property className - Класс на панели (`aside`)
+ */
+export interface DrawerProps extends BaseComponentProps {
+  isOpen: boolean;
+  onClose: () => void;
+  placement?: DrawerPlacement;
+  title?: string;
+  showCloseButton?: boolean;
+  width?: string | number;
+  height?: string | number;
+  container?: Element | null;
+  portalTargetId?: string;
+  portalZIndex?: number;
+  overlayClassName?: string;
+  overlayVariant?: 'default' | 'blur' | 'dark' | 'frosted';
+  overlayStyle?: React.CSSProperties;
+  closeOnOverlayClick?: boolean;
+  closeOnEscape?: boolean;
+  closeOnEscapeKeyDown?: boolean;
+  closeOnOutsideClick?: boolean;
+  initialFocusRef?: React.RefObject<HTMLElement>;
+  initialFocusSelector?: string;
+  headerSlot?: React.ReactNode;
 }
 
 /**
@@ -802,7 +1042,7 @@ export interface DropdownMenuProps extends BaseComponentProps {
 
 /**
  * Пропсы элемента меню
- * @property label - Основной текст пункта меню
+ * @property label - Основное содержимое пункта меню (`ReactNode`)
  * @property description - Дополнительное описание в две строки
  * @property value - Значение, которое вернётся в `onSelect`
  * @property icon - Левый слот с иконкой/аватаром
@@ -818,7 +1058,7 @@ export interface DropdownMenuProps extends BaseComponentProps {
  * @property children - Кастомное содержимое, если нужно полностью переопределить верстку
  */
 export interface DropdownMenuItemProps extends BaseComponentProps {
-  label?: string;
+  label?: ReactNode;
   description?: string;
   value?: DropdownMenuItemValue;
   icon?: React.ReactNode;
@@ -933,9 +1173,9 @@ export interface ProgressStep {
    */
   id: string | number;
   /**
-   * Заголовок шага
+   * Заголовок шага (`ReactNode`)
    */
-  label: string;
+  label: ReactNode;
   /**
    * Описание шага (опционально)
    */
@@ -1121,7 +1361,7 @@ export interface ProgressProps extends BaseComponentProps {
    * Сегменты для варианта segmented. Массив объектов с value (0-100) и color
    * @required Для варианта 'segmented' это поле обязательно
    */
-  segments?: Array<{ value: number; color: string; label?: string }>;
+  segments?: Array<{ value: number; color: string; label?: ReactNode }>;
   /**
    * Показывать все шаги одновременно в степпере (не только текущий и следующий)
    */
@@ -1149,7 +1389,7 @@ export enum SpinnerVariant {
  * @property variant - Визуальный вариант спиннера (`circle` | `dots` | `bars` | `pulse`)
  * @property speed - Скорость анимации в секундах (по умолчанию 1)
  * @property thickness - Толщина границы для circle варианта (в пикселях, по умолчанию 2)
- * @property label - Текст, отображаемый рядом со спиннером
+ * @property label - Подпись рядом со спиннером (`ReactNode`)
  * @property labelPosition - Позиция текста относительно спиннера (`top` | `bottom` | `left` | `right`, по умолчанию `bottom`)
  * @property centered - Центрировать спиннер в контейнере (по умолчанию false)
  * @property ariaLabel - Текст для screen readers (по умолчанию "Загрузка")
@@ -1160,7 +1400,7 @@ export interface SpinnerProps extends BaseComponentProps {
   variant?: SpinnerVariant | 'circle' | 'dots' | 'bars' | 'pulse';
   speed?: number;
   thickness?: number;
-  label?: string;
+  label?: ReactNode;
   labelPosition?: 'top' | 'bottom' | 'left' | 'right';
   centered?: boolean;
   ariaLabel?: string;
@@ -1228,30 +1468,278 @@ export interface DividerProps extends BaseComponentProps {
 }
 
 /**
- * Пропсы селекта (выпадающего списка)
- * @property options - Опции для выбора
- * @property value - Выбранное значение
- * @property onChange - Обработчик изменения
- * @property placeholder - Плейсхолдер
- * @property disabled - Отключить селект
- * @property error - Сообщение об ошибке
- * @property size - Размер селекта
+ * Элемент списка нативного `Select`
+ * @property value - Значение `value` у тега `option`
+ * @property label - Отображаемая подпись
+ * @property disabled - Отключённая опция
  */
-export interface SelectProps extends BaseComponentProps {
-  options: Array<{ value: string; label: string; disabled?: boolean }>;
-  value?: string;
-  onChange?: (value: string) => void;
-  placeholder?: string;
+export interface SelectOption {
+  value: string;
+  label: ReactNode;
   disabled?: boolean;
+}
+
+/**
+ * Пропсы селекта (нативный `select` в оболочке как у `Input`)
+ * @property options - Список опций
+ * @property label - Подпись поля
+ * @property placeholder - Первая пустая опция-плейсхолдер (`value=""`)
+ * @property value - Контролируемое значение
+ * @property defaultValue - Начальное значение в неконтролируемом режиме
+ * @property onChange - Событие изменения (`ChangeEvent<HTMLSelectElement>`)
+ * @property error - Текст ошибки и статус обводки
+ * @property success - Успешное состояние
+ * @property status - Явный статус обводки
+ * @property helperText - Подсказка под полем
+ * @property required - Обязательное поле
+ * @property fullWidth - На всю ширину контейнера
+ * @property readOnly - Блокировка выбора (через `disabled` у `select`, визуально как read-only)
+ * @property disabled - Отключено
+ * @property skeleton - Скелетон
+ * @property size - Размер из `Size` (конфликт с HTML `size` у `select` снят через `Omit`)
+ * @property textAlign - Выравнивание текста
+ * @property isLoading - Спиннер справа
+ * @property tooltip - Подсказка
+ * @property tooltipType - `tooltip` или `hint`
+ * @property tooltipPosition - Позиция подсказки
+ * @property additionalLabel - Доп. подпись
+ * @property extraText - Текст под полем
+ * @property mode - `native` — нативный `select`; `select` — панель как у `Dropdown` с поиском и мультивыбором
+ * @property multiple - Множественный выбор (нативно и в `mode="select"`)
+ * @property searchable - В `mode="select"`: поле поиска в панели (по умолчанию `true`, передайте `false` чтобы отключить)
+ * @property searchPlaceholder - Плейсхолдер поиска в панели
+ * @property searchValue - Контролируемая строка поиска (прокидывается в `Dropdown`)
+ * @property defaultSearchValue - Неконтролируемое значение поиска по умолчанию
+ * @property onSearch - Изменение строки поиска в панели
+ * @property searchFilter - Кастомная фильтрация пунктов (как у `Dropdown`)
+ * @property dropdownVariant - Вариант оформления панели (`Dropdown`)
+ * @property menuMaxHeight - Макс. высота панели
+ * @property dropdownInline - `inline` у `Dropdown` (портал выключен)
+ * @property onValueChange - Удобный колбэк при смене значения в `mode="select"` (строка или массив строк)
+ * @property value - Для `multiple` — массив строк; иначе строка
+ * @property defaultValue - Аналогично `value` для неконтролируемого режима
+ */
+export interface SelectProps
+  extends Omit<
+    React.SelectHTMLAttributes<HTMLSelectElement>,
+    'size' | 'children' | 'value' | 'defaultValue'
+  > {
+  options: SelectOption[];
+  label?: ReactNode;
+  placeholder?: string;
+  value?: string | string[];
+  defaultValue?: string | string[];
   error?: string;
+  success?: boolean;
+  status?: 'error' | 'success' | 'warning';
+  helperText?: string;
+  required?: boolean;
+  fullWidth?: boolean;
+  readOnly?: boolean;
+  skeleton?: boolean;
   size?: Size;
+  textAlign?: 'left' | 'center' | 'right';
+  isLoading?: boolean;
+  tooltip?: React.ReactNode;
+  tooltipType?: 'tooltip' | 'hint';
+  tooltipPosition?: 'top' | 'bottom' | 'left' | 'right';
+  additionalLabel?: string;
+  extraText?: string;
+  /** `select` — выпадающая панель в стиле `Dropdown`; `native` — системный `select` */
+  mode?: 'native' | 'select';
+  /** В `mode="select"`: показывать поле поиска в панели (по умолчанию `true`) */
+  searchable?: boolean;
+  searchPlaceholder?: string;
+  searchValue?: string;
+  defaultSearchValue?: string;
+  onSearch?: (query: string) => void;
+  searchFilter?: (query: string, item: DropdownMenuItemProps) => boolean;
+  dropdownVariant?: 'default' | 'elevated' | 'outlined';
+  menuMaxHeight?: string | number;
+  /** Прокидывается в `Dropdown.inline` */
+  dropdownInline?: boolean;
+  /** Колбэк при изменении выбранного значения (удобен в `mode="select"`) */
+  onValueChange?: (value: string | string[]) => void;
+}
+
+/**
+ * Визуальный тип toast-уведомления
+ */
+export type ToastType = 'success' | 'error' | 'warning' | 'info';
+
+/**
+ * Одна запись в стеке уведомлений (данные для компонента `Toast`)
+ * @property id - Уникальный идентификатор
+ * @property type - Визуальный тип (акцентная полоса и палитра)
+ * @property message - Основной текст
+ * @property title - Заголовок (опционально)
+ * @property duration - Автоскрытие в мс (`0` — не скрывать по таймеру)
+ */
+export interface ToastItem {
+  id: string;
+  type: ToastType;
+  message: string;
+  title?: string;
+  duration?: number;
+}
+
+/**
+ * Значение контекста провайдера toast — то же, что возвращает хук `useToast`
+ */
+export interface ToastContextValue {
+  toasts: ToastItem[];
+  showToast: (message: string, type?: ToastType, title?: string, duration?: number) => void;
+  hideToast: (id: string) => void;
+  clearToasts: () => void;
+}
+
+/**
+ * Возвращаемый тип хука `useToast` (алиас к {@link ToastContextValue})
+ */
+export type UseToastReturn = ToastContextValue;
+
+/**
+ * Позиция стека toast на экране
+ */
+export type ToastPlacement = 'top-right' | 'top-center' | 'bottom-right';
+
+/**
+ * Пропсы провайдера toast
+ * @property children - Дерево приложения
+ * @property placement - Расположение колонки уведомлений
+ */
+export interface ToastProviderProps {
+  children?: ReactNode;
+  placement?: ToastPlacement;
+}
+
+/**
+ * Опции вызова `showSnackbar`
+ * @property duration - Автоскрытие в мс (по умолчанию 4000; `0` — не закрывать по таймеру)
+ * @property actionLabel - Текст кнопки действия справа от сообщения
+ * @property onAction - Обработчик клика по действию (после вызова snackbar закрывается)
+ */
+export interface ShowSnackbarOptions {
+  duration?: number;
+  actionLabel?: string;
+  onAction?: () => void;
+}
+
+/**
+ * Одна запись компактной полосы snackbar (данные для компонента `Snackbar`)
+ * @property id - Уникальный идентификатор
+ * @property message - Текст уведомления
+ * @property duration - Длительность показа в мс (копия из опций при создании)
+ * @property actionLabel - Подпись действия (опционально)
+ * @property onAction - Колбэк действия (опционально)
+ */
+export interface SnackbarItem {
+  id: string;
+  message: string;
+  duration: number;
+  actionLabel?: string;
+  onAction?: () => void;
+}
+
+/**
+ * Значение контекста `SnackbarProvider` — возвращает хук `useSnackbar`
+ */
+export interface SnackbarContextValue {
+  snackbars: SnackbarItem[];
+  showSnackbar: (message: string, options?: ShowSnackbarOptions) => void;
+  hideSnackbar: (id: string) => void;
+  clearSnackbars: () => void;
+}
+
+/**
+ * Возвращаемый тип хука `useSnackbar`
+ */
+export type UseSnackbarReturn = SnackbarContextValue;
+
+/**
+ * Позиция стека snackbar у нижнего края экрана
+ */
+export type SnackbarPlacement = 'bottom-center' | 'bottom-left' | 'bottom-right';
+
+/**
+ * Пропсы провайдера snackbar
+ * @property children - Дерево приложения
+ * @property placement - Выравнивание полосы (`bottom-center` по умолчанию)
+ */
+export interface SnackbarProviderProps {
+  children?: ReactNode;
+  placement?: SnackbarPlacement;
+}
+
+/**
+ * Один пункт цепочки «хлебных крошек».
+ * @property id - Стабильный ключ для списка (иначе используется индекс)
+ * @property label - Текст или разметка пункта
+ * @property href - URL ссылки (если задан — рендерится `<a>`)
+ * @property target - Цель ссылки (`_blank` и т.д.)
+ * @property rel - Явный `rel` (для `_blank` можно дополнить через логику компонента)
+ * @property onClick - Клик по пункту (рендер `<button type="button">` со стилем ссылки, если нет `href`)
+ * @property current - Явно текущая страница (`aria-current="page"`); иначе: последний пункт без `href` и без `onClick`
+ * @property className - CSS-класс на элементе `li` пункта
+ * @property disabled - Отключить ссылку/кнопку
+ */
+export interface BreadcrumbItem {
+  id?: string | number;
+  label: ReactNode;
+  href?: string;
+  target?: React.HTMLAttributeAnchorTarget;
+  rel?: string;
+  onClick?: (event: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void;
+  current?: boolean;
+  className?: string;
+  disabled?: boolean;
+}
+
+/**
+ * Пропсы компонента «хлебные крошки».
+ * @property items - Цепочка пунктов (минимум один)
+ * @property separator - Разделитель между пунктами (по умолчанию стрелка из иконки)
+ * @property ariaLabel - Подпись для `nav` (`aria-label`, по умолчанию «Навигационная цепочка»)
+ * @property size - Размер текста (`Size.SM` | `Size.MD` и т.д.)
+ * @property className - Класс на корневом `nav`
+ */
+export interface BreadcrumbProps extends BaseComponentProps {
+  items: BreadcrumbItem[];
+  separator?: ReactNode;
+  ariaLabel?: string;
+  size?: Size;
+}
+
+/**
+ * Пропсы пагинации по страницам
+ * @property totalPages - Всего страниц (если меньше 2, компонент не рендерится)
+ * @property page - Текущая страница (1..totalPages), контролируемый режим
+ * @property defaultPage - Начальная страница в неконтролируемом режиме (по умолчанию 1)
+ * @property onPageChange - Вызывается при выборе страницы или «назад»/«вперёд»
+ * @property siblingCount - Сколько номеров слева и справа от текущей (без учёта 1 и последней)
+ * @property showPrevNext - Показывать кнопки предыдущая / следующая страница
+ * @property size - Размер кнопок номеров
+ * @property disabled - Отключить всю навигацию
+ * @property ariaLabel - Подпись для `nav` (доступность)
+ * @property className - CSS-класс на корневом `nav`
+ */
+export interface PaginationProps extends BaseComponentProps {
+  totalPages: number;
+  page?: number;
+  defaultPage?: number;
+  onPageChange?: (page: number) => void;
+  siblingCount?: number;
+  showPrevNext?: boolean;
+  size?: Size;
+  disabled?: boolean;
+  ariaLabel?: string;
 }
 
 /**
  * Пропсы чекбокса
  * @property checked - Отмечен ли чекбокс
  * @property onChange - Обработчик изменения
- * @property label - Текстовая метка
+ * @property label - Метка (`ReactNode`)
  * @property disabled - Отключить чекбокс
  * @property size - Размер чекбокса
  * @property error - Сообщение об ошибке
@@ -1259,7 +1747,7 @@ export interface SelectProps extends BaseComponentProps {
 export interface CheckboxProps extends BaseComponentProps {
   checked?: boolean;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  label?: string;
+  label?: ReactNode;
   disabled?: boolean;
   size?: Size;
   error?: string;
@@ -1269,7 +1757,7 @@ export interface CheckboxProps extends BaseComponentProps {
  * Пропсы радиокнопки
  * @property checked - Выбрана ли радиокнопка
  * @property onChange - Обработчик изменения
- * @property label - Текстовая метка
+ * @property label - Метка (`ReactNode`)
  * @property disabled - Отключить радиокнопку
  * @property error - Сообщение об ошибке
  * @property name - Имя группы радиокнопок
@@ -1278,7 +1766,7 @@ export interface CheckboxProps extends BaseComponentProps {
 export interface RadioProps extends BaseComponentProps {
   checked?: boolean;
   onChange?: (checked: boolean) => void;
-  label?: string;
+  label?: ReactNode;
   disabled?: boolean;
   error?: string;
   name: string;
@@ -1289,7 +1777,7 @@ export interface RadioProps extends BaseComponentProps {
  * Пропсы радио кнопки (новый компонент)
  * @property checked - Выбрана ли радио кнопка
  * @property onChange - Обработчик изменения
- * @property label - Текстовая метка
+ * @property label - Метка (`ReactNode`)
  * @property disabled - Отключить радио кнопку
  * @property size - Размер радио кнопки
  * @property name - Имя группы радио кнопок
@@ -1321,7 +1809,7 @@ export interface RadioButtonProps extends BaseComponentProps {
   checked?: boolean;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onClick?: (event: React.MouseEvent<HTMLLabelElement>) => void; // Обработчик клика по кнопке или лейблу
-  label?: string;
+  label?: ReactNode;
   disabled?: boolean;
   size?: Size;
   name?: string;
@@ -1356,7 +1844,7 @@ export enum RadioButtonGroupOrientation {
 export interface RadioButtonGroupOption
   extends Omit<RadioButtonProps, 'checked' | 'onChange' | 'name' | 'disabled' | 'readOnly'> {
   value: string; // Значение опции (обязательно)
-  label: string; // Лейбл опции (обязательно)
+  label: ReactNode; // Лейбл опции (обязательно)
   disabled?: boolean; // Отключить конкретную опцию (переопределяет disabled группы)
   readOnly?: boolean; // Только для чтения конкретной опции (переопределяет readOnly группы)
 }
@@ -1383,7 +1871,7 @@ export interface RadioButtonGroupProps extends BaseComponentProps {
   value?: string; // Активное значение
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void; // Обработчик изменения
   onClick?: (value: string, option: RadioButtonGroupOption) => void; // Обработчик клика
-  label?: string; // Лейбл для всей группы
+  label?: ReactNode; // Лейбл для всей группы
   disabled?: boolean; // Отключить всю группу
   readOnly?: boolean; // Только для чтения (вся группа)
   orientation?: RadioButtonGroupOrientation; // Ориентация группы
@@ -1411,7 +1899,7 @@ export interface DateTimeRange {
  * Пропсы компонента ввода даты и времени
  * @property value - Значение даты/времени
  * @property onChange - Обработчик изменения
- * @property label - Текстовая метка
+ * @property label - Метка (`ReactNode`)
  * @property placeholder - Плейсхолдер
  * @property disabled - Отключить поле ввода
  * @property size - Размер поля ввода
@@ -1426,7 +1914,7 @@ export interface DateTimeRange {
 export interface DateTimeInputProps extends BaseComponentProps {
   value?: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  label?: string;
+  label?: ReactNode;
   placeholder?: string;
   disabled?: boolean;
   size?: Size;
@@ -1438,7 +1926,7 @@ export interface DateTimeInputProps extends BaseComponentProps {
 export interface DateTimeInputRangeProps extends BaseComponentProps {
   value?: DateTimeRange;
   onChange?: (range: DateTimeRange) => void;
-  label?: string;
+  label?: ReactNode;
   placeholder?: string;
   disabled?: boolean;
   size?: Size;
@@ -1479,7 +1967,7 @@ export interface TimeRange {
  * Пропсы компонента выбора времени
  * @property value - Значение времени (строка в формате HH:mm:ss или объект TimeRange для диапазона)
  * @property onChange - Обработчик изменения значения
- * @property label - Текстовая метка поля
+ * @property label - Метка поля (`ReactNode`, наследуется из `BaseInputProps`)
  * @property placeholder - Плейсхолдер
  * @property disabled - Отключить поле
  * @property size - Размер поля
@@ -1522,17 +2010,29 @@ export interface TimeInputProps extends Omit<BaseInputProps, 'value' | 'onChange
 }
 
 /**
- * Пропсы переключателя (switch)
- * @property checked - Включен ли переключатель
- * @property onChange - Обработчик изменения
- * @property label - Текстовая метка
- * @property disabled - Отключить переключатель
+ * Пропсы переключателя (Switch)
+ * @property checked - Контролируемое состояние «вкл»
+ * @property defaultChecked - Начальное состояние в неконтролируемом режиме
+ * @property onChange - Событие от нативного `input` (`ChangeEvent`, `target.checked`)
+ * @property label - Подпись рядом с треком
+ * @property labelPosition - Сторона подписи относительно трека
+ * @property disabled - Отключение
+ * @property size - Размер трека и бегунка (`Size`)
+ * @property error - Текст ошибки под компонентом
+ * @property fullWidth - Растянуть строку на ширину контейнера (подпись + трек)
+ * @property name - Имя поля для форм
+ * @property id - Явный id (иначе генерируется внутри компонента)
  */
-export interface SwitchProps extends BaseComponentProps {
+export interface SwitchProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type' | 'size' | 'role'> {
   checked?: boolean;
-  onChange?: (checked: boolean) => void;
-  label?: string;
+  defaultChecked?: boolean;
+  label?: ReactNode;
+  labelPosition?: 'left' | 'right';
   disabled?: boolean;
+  size?: Size;
+  error?: string;
+  fullWidth?: boolean;
 }
 
 /**
@@ -1540,7 +2040,7 @@ export interface SwitchProps extends BaseComponentProps {
  * @property value - Значение текстовой области
  * @property onChange - Обработчик изменения
  * @property placeholder - Плейсхолдер
- * @property label - Текстовая метка
+ * @property label - Метка (`ReactNode`)
  * @property error - Сообщение об ошибке
  * @property disabled - Отключить текстовую область
  * @property rows - Количество строк
@@ -1551,7 +2051,7 @@ export interface TextareaProps extends BaseComponentProps {
   value?: string;
   onChange?: (value: string) => void;
   placeholder?: string;
-  label?: string;
+  label?: ReactNode;
   error?: string;
   disabled?: boolean;
   rows?: number;
@@ -1570,7 +2070,7 @@ export enum SidebarVariant {
 /**
  * Элемент боковой панели
  * @property id - Уникальный идентификатор
- * @property label - Текст элемента
+ * @property label - Подпись элемента (`ReactNode`)
  * @property icon - Иконка элемента
  * @property active - Активен ли элемент
  * @property notificationCount - Количество уведомлений
@@ -1578,7 +2078,7 @@ export enum SidebarVariant {
  */
 export interface SidebarItem {
   id: string;
-  label: string;
+  label: ReactNode;
   icon?: React.ReactNode;
   active?: boolean;
   notificationCount?: number;

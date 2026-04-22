@@ -322,7 +322,7 @@
 2. ⬜ Select (отдельно от Dropdown)
 3. ⬜ Table/DataTable
 4. ⬜ Breadcrumbs
-5. ⬜ Pagination
+5. ✅ Pagination
 6. ⬜ Stepper/Wizard
 
 **Шаги для каждого компонента:**

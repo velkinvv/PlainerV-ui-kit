@@ -60,15 +60,16 @@ export const Spinner = forwardRef<HTMLDivElement, SpinnerProps>(
       [speed, thickness],
     );
 
-    // ARIA-атрибуты для доступности
-    const ariaAttributes = useMemo(
-      () => ({
+    // ARIA-атрибуты: `aria-label` только строка (`label` может быть `ReactNode`)
+    const ariaAttributes = useMemo(() => {
+      const labelForAria =
+        typeof label === 'string' || typeof label === 'number' ? String(label) : undefined;
+      return {
         role: 'status' as const,
-        'aria-label': ariaLabel || label || 'Загрузка',
+        'aria-label': ariaLabel ?? labelForAria ?? 'Загрузка',
         'aria-busy': true as const,
-      }),
-      [ariaLabel, label],
-    );
+      };
+    }, [ariaLabel, label]);
 
     // Рендерим спиннер в зависимости от варианта
     const renderSpinner = () => {
