@@ -878,6 +878,17 @@ export interface DrawerProps extends BaseComponentProps {
 }
 
 /**
+ * Сторона появления панели `Sheet` (совпадает с `DrawerPlacement`).
+ */
+export type SheetPlacement = DrawerPlacement;
+
+/**
+ * Пропсы панели `Sheet` (лист с края экрана, чаще снизу): те же поля, что у `Drawer` (`isOpen`, `onClose`, `placement`, `width`, `height`, оверлей, фокус).
+ * В компоненте по умолчанию `placement="bottom"` и иная дефолтная высота для вертикальных сторон.
+ */
+export type SheetProps = DrawerProps;
+
+/**
  * Пропсы всплывающей подсказки
  * @property content - Содержимое подсказки
  * @property position - Позиция подсказки
@@ -1187,6 +1198,178 @@ export interface ProgressStep {
 }
 
 /**
+ * Визуальный режим степпера навигации (светлый / тёмный «пилюльный» контейнер по макету Figma).
+ */
+export type StepperAppearance = 'light' | 'dark';
+
+/**
+ * Вариант степпера: компактное кольцо с «N/M» и подписями или горизонтальная цепочка шагов с линиями.
+ */
+export type StepperVariant = 'compact' | 'linear';
+
+/**
+ * Шаг для варианта `Stepper` с `variant="linear"`.
+ * @property stepLabel - Подпись над заголовком (по умолчанию «Шаг N»).
+ * @property title - Основной текст пункта.
+ */
+export interface StepperLinearStep {
+  stepLabel?: ReactNode;
+  title: ReactNode;
+}
+
+/**
+ * Общие пропсы степпера навигации (макеты Figma: узлы 4806-10699, 4809-2458).
+ * @property appearance - Принудительно светлый/тёмный вид панели; без значения берётся из `ThemeProvider.mode`.
+ * @property fullWidth - Растянуть корневой `nav` на ширину контейнера.
+ * @property backButtonLabel - `aria-label` кнопки «назад».
+ * @property onBack - Обработчик клика по стрелке назад (кнопка скрыта, если не передан).
+ */
+export interface StepperBaseProps extends BaseComponentProps {
+  appearance?: StepperAppearance;
+  fullWidth?: boolean;
+  backButtonLabel?: string;
+  onBack?: () => void;
+}
+
+/**
+ * Компактный степпер: назад, кольцо прогресса с «current/total», заголовок и подзаголовок.
+ * @property variant - Обязательно `compact`.
+ * @property currentStep - Текущий шаг, счёт с 1 (внутри кольца «1/3»).
+ * @property totalSteps - Всего шагов.
+ * @property title - Основная строка справа.
+ * @property subtitle - Вторая строка (например «Следующий шаг»).
+ */
+export interface StepperCompactProps extends StepperBaseProps {
+  variant: 'compact';
+  currentStep: number;
+  totalSteps: number;
+  title: ReactNode;
+  subtitle?: ReactNode;
+}
+
+/**
+ * Линейный степпер: назад, шаги с кружками и соединителями.
+ * @property variant - Обязательно `linear`.
+ * @property steps - Список шагов.
+ * @property activeStepIndex - Индекс активного шага, с 0.
+ */
+export interface StepperLinearProps extends StepperBaseProps {
+  variant: 'linear';
+  steps: StepperLinearStep[];
+  activeStepIndex: number;
+}
+
+/**
+ * Пропсы компонента `Stepper` (объединение вариантов `compact` и `linear`).
+ */
+export type StepperProps = StepperCompactProps | StepperLinearProps;
+
+/**
+ * Формат подписи в шапке календаря (рядом со стрелками).
+ * - `monthYear` — только месяц и год видимого месяца
+ * - `full` — день, месяц, год выбранной даты (или видимого месяца, если даты нет)
+ * - `dayMonth` — день и месяц выбранной даты
+ */
+export type CalendarHeaderMode = 'monthYear' | 'full' | 'dayMonth';
+
+/**
+ * Разметка выбора месяца и года в шапке календаря.
+ * - `combined` — один триггер и выпадающий список месяц+год.
+ * - `split` — два отдельных триггера (макет Figma «триггеры»).
+ */
+export type CalendarMonthYearLayout = 'combined' | 'split';
+
+/**
+ * Пропсы календаря (сетка месяца по макету Figma).
+ * @property value - Контролируемая выбранная дата (`undefined` — неконтролируемый режим).
+ * @property defaultValue - Начальное значение в неконтролируемом режиме.
+ * @property visibleMonth - Контролируемый отображаемый месяц (первое число месяца логически).
+ * @property defaultVisibleMonth - Стартовый месяц сетки без `visibleMonth`.
+ * @property onChange - Выбор дня.
+ * @property onVisibleMonthChange - Смена месяца (стрелки или выпадающий список).
+ * @property locale - Локаль для `Intl` и подписей дней недели.
+ * @property minDate / maxDate - Границы выбора и навигации.
+ * @property isDateDisabled - Дополнительное отключение дат.
+ * @property showTitle — заголовок «Календарь» над панелью.
+ * @property weekStartsOn — 0: с воскресенья, 1: с понедельника (по умолчанию 1).
+ * @property headerMode — формат строки месяца/даты в триггере.
+ * @property showMonthPicker — выпадающий выбор месяца/года (`Dropdown`).
+ * @property monthPickerRange — сколько месяцев назад и вперёд включить в список (симметрично).
+ * @property size — размер ячеек и отступов.
+ * @property disabled — блокировка взаимодействия.
+ * @property selectionMode — `single` (по умолчанию) или `range` (подсветка диапазона).
+ * @property rangeStart / rangeEnd / rangeHoverDate — состояние диапазона; конец предпросмотра при наведении.
+ * @property onSelectDate — клик по дню: если задан, вызывается вместо встроенной логики `onChange` (удобно для `DateInput`).
+ * @property weekdays — ровно 7 подписей столбцов (иначе из `Intl` по `locale` и `weekStartsOn`).
+ * @property footer — блок под сеткой (кнопки «Очистить» / «Применить» и т.п.).
+ * @property embedded — компактный вид без лишней тени (внутри попапа `DateInput`).
+ * @property onDayMouseEnter / onDayMouseLeave — наведение на день (предпросмотр конца диапазона в `DateInput`).
+ * @property showDateRollers — три колонки «день — месяц — год» над сеткой (макет Figma «роллеры»).
+ * @property monthYearLayout — один выпадающий список или два триггера месяц / год.
+ * @property onRollersDateChange — если задан, роллеры вызывают его вместо `onSelectDate`/`onChange` (например, без закрытия попапа в `DateInput`).
+ */
+export type CalendarSelectionMode = 'single' | 'range';
+
+export interface CalendarProps
+  extends BaseComponentProps,
+    Omit<
+      React.HTMLAttributes<HTMLDivElement>,
+      'children' | 'onChange' | 'defaultValue' | 'value'
+    > {
+  value?: Date | null;
+  defaultValue?: Date | null;
+  visibleMonth?: Date;
+  defaultVisibleMonth?: Date;
+  onChange?: (date: Date) => void;
+  onVisibleMonthChange?: (monthStart: Date) => void;
+  locale?: string;
+  minDate?: Date;
+  maxDate?: Date;
+  isDateDisabled?: (date: Date) => boolean;
+  showTitle?: boolean;
+  weekStartsOn?: 0 | 1;
+  headerMode?: CalendarHeaderMode;
+  showMonthPicker?: boolean;
+  monthPickerRange?: number;
+  size?: Size;
+  disabled?: boolean;
+  selectionMode?: CalendarSelectionMode;
+  rangeStart?: Date | null;
+  rangeEnd?: Date | null;
+  rangeHoverDate?: Date | null;
+  onSelectDate?: (date: Date) => void;
+  weekdays?: string[];
+  footer?: React.ReactNode;
+  embedded?: boolean;
+  onDayMouseEnter?: (date: Date) => void;
+  onDayMouseLeave?: () => void;
+  showDateRollers?: boolean;
+  monthYearLayout?: CalendarMonthYearLayout;
+  onRollersDateChange?: (date: Date) => void;
+}
+
+/**
+ * Пропсы роллеров даты (день / месяц / год).
+ * @property value — текущая дата (время игнорируется).
+ * @property onChange — выбор новой даты после прокрутки или клика.
+ * @property locale — подписи месяцев через `Intl`.
+ * @property minDate / maxDate — границы календарного дня.
+ * @property isDateDisabled — дополнительная блокировка конкретных дат.
+ * @property size — размер отступов между колонками.
+ * @property disabled — отключить взаимодействие.
+ */
+export interface DateRollerPickerProps extends BaseComponentProps {
+  value: Date;
+  onChange: (date: Date) => void;
+  locale?: string;
+  minDate?: Date;
+  maxDate?: Date;
+  isDateDisabled?: (date: Date) => boolean;
+  size?: Size;
+  disabled?: boolean;
+}
+
+/**
  * Пропсы прогресс-бара
  *
  * @note Для варианта 'stepper' или 'stepper-circle' поля `steps` и `activeStep` обязательны
@@ -1483,7 +1666,7 @@ export interface SelectOption {
  * Пропсы селекта (нативный `select` в оболочке как у `Input`)
  * @property options - Список опций
  * @property label - Подпись поля
- * @property placeholder - Первая пустая опция-плейсхолдер (`value=""`)
+ * @property placeholder - Пустое состояние в триггере и первая опция (`value=""`) в native single; при `multiple` в `mode="select"` при ненулевом выборе триггер показывает «Выбрано: N»
  * @property value - Контролируемое значение
  * @property defaultValue - Начальное значение в неконтролируемом режиме
  * @property onChange - Событие изменения (`ChangeEvent<HTMLSelectElement>`)
@@ -1515,6 +1698,7 @@ export interface SelectOption {
  * @property dropdownVariant - Вариант оформления панели (`Dropdown`)
  * @property menuMaxHeight - Макс. высота панели
  * @property dropdownInline - `inline` у `Dropdown` (портал выключен)
+ * @property showMultiSelectionCountBadge - В `mode="select"` при `multiple`: круглый бейдж с числом выбранных слева от шеврона (по умолчанию включён)
  * @property onValueChange - Удобный колбэк при смене значения в `mode="select"` (строка или массив строк)
  * @property value - Для `multiple` — массив строк; иначе строка
  * @property defaultValue - Аналогично `value` для неконтролируемого режима
@@ -1558,6 +1742,11 @@ export interface SelectProps
   menuMaxHeight?: string | number;
   /** Прокидывается в `Dropdown.inline` */
   dropdownInline?: boolean;
+  /**
+   * В `mode="select"` при `multiple`: показывать бейдж с числом выбранных слева от шеврона (как в макете).
+   * По умолчанию `true`; передайте `false`, чтобы скрыть.
+   */
+  showMultiSelectionCountBadge?: boolean;
   /** Колбэк при изменении выбранного значения (удобен в `mode="select"`) */
   onValueChange?: (value: string | string[]) => void;
 }
@@ -1953,6 +2142,10 @@ export interface DatePickerProps extends Omit<BaseInputProps, 'value' | 'onChang
   disabledYears?: number[]; // Массив дизейбленных годов
   segmented?: boolean; // Определяет режим ввода: false = обычный input, true = сегментированный ввод
   format?: string; // Формат отображения даты (например, 'DD.MM.YYYY', 'MM/DD/YYYY', 'YYYY-MM-DD')
+  /** Роллеры день/месяц/год над сеткой в попапе (макет Figma) */
+  showDateRollers?: boolean;
+  /** Два триггера «месяц» и «год» в шапке календаря вместо одного списка */
+  calendarMonthYearLayout?: CalendarMonthYearLayout;
 }
 
 /**

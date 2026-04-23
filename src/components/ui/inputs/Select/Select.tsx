@@ -4,7 +4,7 @@ import { SelectNative } from './SelectNative';
 import { SelectPanel } from './SelectPanel';
 
 /**
- * Поле выбора: по умолчанию `mode="select"` — панель как у `Dropdown` (поиск, мультивыбор); `mode="native"` — нативный `select`.
+ * Поле выбора: по умолчанию `mode="select"` — панель как у `Dropdown` (поиск, мультивыбор, бейдж числа выбранных); `mode="native"` — нативный `select`.
  * @param props - Пропсы `SelectProps` (`mode` опционален, по умолчанию `select`).
  * @param ref - Ref на `HTMLSelectElement` (в панельном режиме — на скрытый `select` для форм).
  */

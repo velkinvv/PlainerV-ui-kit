@@ -84,6 +84,7 @@ function MyComponent() {
 - **Card** - Карточки для контента
 - **Modal** - Модальные окна
 - **Drawer** - Выдвижная панель (портал, оверлей как у `Modal`, `placement`, фокус-ловушка)
+- **Sheet** - Панель-лист как `Drawer`, по умолчанию снизу (`placement="bottom"`), `safe-area` для нижнего края
 - **Icon** - Иконки (Lucide React + Plainer иконки)
 - **ThemeToggle** - Переключатель темы
 
@@ -94,6 +95,7 @@ function MyComponent() {
 - **Switch** - Переключатель (трек + бегунок, подпись, ошибка)
 - **Radio** - Радио кнопки
 - **DateInput** - Поля ввода даты
+- **Calendar** — сетка месяца (локаль `locale`, `weekStartsOn`, `minDate` / `maxDate`, выпадающий месяц/год на `Dropdown`, режимы `headerMode`, контроль `value` / `visibleMonth`)
 - **TimeInput** - Поля ввода времени
 - **Select** — `mode="select"`: панель как у `Dropdown` (поиск, мультивыбор) + скрытый `select` для форм; `mode="native"` — нативный список
 
@@ -102,6 +104,7 @@ function MyComponent() {
 - **Sidebar** - Боковая панель навигации
 - **Tabs** - Вкладки
 - **Breadcrumb** - «Хлебные крошки» (`nav` + `ol`, `aria-current`, разделитель, `Size`)
+- **Stepper** - Шаги навигации по макету: `variant="compact"` (кольцо «N/M», заголовок, подзаголовок, `onBack`) или `variant="linear"` (кружки, подписи «Шаг N», соединители); `appearance` / тема, `fullWidth`
 - **Pagination** - Номера страниц с разрывами «…», стрелки назад/вперёд, контролируемый и неконтролируемый режимы (`totalPages`, `page` / `defaultPage`, `onPageChange`, `siblingCount`, `showPrevNext`, `size`)
 - **Dropdown** - Выпадающие меню
 
@@ -136,6 +139,7 @@ import { ThemeProvider, Pagination } from '@velkinvv/plainerv';
 - **Snackbar** + **SnackbarProvider** / **useSnackbar** - Компактные полосы внизу экрана, опциональное действие и таймер (портал в `body`)
 - **Modal** - Модальные окна
 - **Drawer** - Выдвижная панель (оверлей, Escape, стороны `left` | `right` | `top` | `bottom`)
+- **Sheet** - Те же пропсы, что у `Drawer`; дефолт — нижний лист и высота `min(50vh, 560px)`
 
 #### Toast и Snackbar в приложении
 

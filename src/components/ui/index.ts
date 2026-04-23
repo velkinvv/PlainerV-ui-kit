@@ -36,6 +36,8 @@ export { Modal } from './Modal';
 export type { ModalProps } from '@/types/ui';
 export { Drawer } from './Drawer';
 export type { DrawerProps, DrawerPlacement } from '@/types/ui';
+export { Sheet } from './Sheet';
+export type { SheetProps, SheetPlacement } from '@/types/ui';
 
 export { Tooltip } from './Tooltip';
 export type { TooltipProps } from '@/types/ui';
@@ -62,6 +64,26 @@ export type { AccordionProps } from '@/types/ui';
 
 export { Progress } from './Progress';
 export type { ProgressProps } from '@/types/ui';
+
+export { Stepper } from './Stepper';
+export type {
+  StepperProps,
+  StepperCompactProps,
+  StepperLinearProps,
+  StepperLinearStep,
+  StepperAppearance,
+  StepperVariant,
+} from '@/types/ui';
+
+export { Calendar } from './Calendar';
+export { DateRollerPicker } from './DateRollerPicker';
+export type {
+  CalendarProps,
+  CalendarHeaderMode,
+  CalendarSelectionMode,
+  CalendarMonthYearLayout,
+  DateRollerPickerProps,
+} from '@/types/ui';
 
 export { Spinner } from './Spinner';
 export type { SpinnerProps } from '@/types/ui';

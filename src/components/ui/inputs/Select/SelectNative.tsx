@@ -1,6 +1,6 @@
 import React, { forwardRef, useCallback, useMemo, useState } from 'react';
 import { InputVariant, type SelectProps, type TooltipPosition } from '../../../../types/ui';
-import { Size, IconSize } from '../../../../types/sizes';
+import { Size } from '../../../../types/sizes';
 import { Icon } from '../../Icon/Icon';
 import { Tooltip } from '../../Tooltip/Tooltip';
 import { Hint, HintVariant, type HintPosition } from '../../Hint/Hint';
@@ -19,7 +19,7 @@ import {
   RequiredIndicator,
 } from '../shared';
 import { StyledSelect, SelectChevronSlot } from './Select.style';
-import { getSelectStatus, getSelectUncontrolledDefaultValue } from './handlers';
+import { getSelectChevronIconSize, getSelectStatus, getSelectUncontrolledDefaultValue } from './handlers';
 
 /**
  * Нативный `select` в оболочке полей ввода (`mode="native"`).
@@ -69,6 +69,7 @@ export const SelectNative = forwardRef<HTMLSelectElement, SelectProps>(
       dropdownVariant: _dropdownVariant,
       menuMaxHeight: _menuMaxHeight,
       dropdownInline: _dropdownInline,
+      showMultiSelectionCountBadge: _showMultiSelectionCountBadge,
       ...rest
     },
     ref,
@@ -80,6 +81,8 @@ export const SelectNative = forwardRef<HTMLSelectElement, SelectProps>(
       () => getSelectStatus(status, error, success),
       [status, error, success],
     );
+
+    const chevronIconSize = useMemo(() => getSelectChevronIconSize(size), [size]);
 
     const isControlled = value !== undefined;
     const uncontrolledDefault = useMemo(
@@ -168,7 +171,7 @@ export const SelectNative = forwardRef<HTMLSelectElement, SelectProps>(
         {selectElement}
         {isLoading ? <LoadingSpinner size={size} /> : null}
         <SelectChevronSlot aria-hidden>
-          <Icon name="IconPlainerArrowDown" size={IconSize.MD} />
+          <Icon name="IconPlainerArrowDown" size={chevronIconSize} />
         </SelectChevronSlot>
       </>
     );

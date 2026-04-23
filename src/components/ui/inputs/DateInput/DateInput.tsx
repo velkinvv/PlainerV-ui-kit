@@ -1,23 +1,17 @@
 import React, { forwardRef, useState, useRef, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { clsx } from 'clsx';
-import type { DatePickerProps } from '../../../../types/ui';
-import { TooltipPosition } from '../../../../types/ui';
+import { ButtonVariant, TooltipPosition, type DatePickerProps } from '../../../../types/ui';
 import { BorderRadiusHandler, TransitionHandler } from '../../../../handlers/uiHandlers';
 import {
   parseDate,
   formatDateForDisplay,
   toISODateString,
-  isToday,
-  getDaysInMonth,
-  getMonthYearDisplay,
   getWeekdayNames,
-  isInRange,
-  isRangeStart,
-  isRangeEnd,
-  isCurrentMonth,
 } from '../../../../handlers/dateHandlers';
 import { Size, IconSize } from '../../../../types/sizes';
+import { Calendar } from '../../Calendar/Calendar';
+import { Button } from '../../buttons/Button/Button';
 import { Icon } from '../../Icon/Icon';
 import { Tooltip } from '../../Tooltip/Tooltip';
 import { Hint, HintPosition, HintVariant } from '../../Hint/Hint';
@@ -230,128 +224,6 @@ const CalendarPopup = styled.div.withConfig({
   min-width: 280px;
 `;
 
-const CalendarHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-`;
-
-const MonthYear = styled.div`
-  font-weight: 600;
-  font-size: 16px;
-  color: ${({ theme }) => theme.colors.text};
-`;
-
-const NavigationButton = styled.button`
-  background: none;
-  border: none;
-  padding: 4px;
-  cursor: pointer;
-  color: ${({ theme }) => theme.colors.textSecondary};
-  transition: ${TransitionHandler()};
-  border-radius: 4px;
-
-  &:hover {
-    color: ${({ theme }) => theme.colors.primary};
-    background: ${({ theme }) => theme.colors.backgroundSecondary};
-  }
-`;
-
-const CalendarGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-`;
-
-const WeekdayHeader = styled.div`
-  text-align: center;
-  font-size: 12px;
-  font-weight: 500;
-  color: ${({ theme }) => theme.colors.textSecondary};
-  padding: 8px 4px;
-`;
-
-const DayButton = styled.button.withConfig({
-  shouldForwardProp: prop =>
-    ![
-      'isCurrentMonth',
-      'isSelected',
-      'isToday',
-      'isInRange',
-      'isRangeStart',
-      'isRangeEnd',
-    ].includes(prop),
-})<{
-  isCurrentMonth: boolean;
-  isSelected: boolean;
-  isToday: boolean;
-  isInRange?: boolean;
-  isRangeStart?: boolean;
-  isRangeEnd?: boolean;
-}>`
-  background: ${({ theme, isSelected, isInRange, isRangeStart, isRangeEnd }) => {
-    if (isSelected || isRangeStart || isRangeEnd) return theme.colors.primary;
-    if (isInRange) return theme.colors.primaryHover;
-    return 'transparent';
-  }};
-  border: none;
-  padding: 8px;
-  cursor: pointer;
-  border-radius: 4px;
-  font-size: 14px;
-  transition: ${TransitionHandler()};
-  color: ${({ theme, isCurrentMonth, isSelected, isRangeStart, isRangeEnd }) => {
-    if (isSelected || isRangeStart || isRangeEnd) return theme.colors.text;
-    if (!isCurrentMonth) return theme.colors.textDisabled;
-    return theme.colors.text;
-  }};
-  font-weight: ${({ isToday, isSelected, isRangeStart, isRangeEnd }) =>
-    isToday || isSelected || isRangeStart || isRangeEnd ? 600 : 400};
-
-  &:hover {
-    background: ${({ theme, isSelected, isRangeStart, isRangeEnd }) => {
-      if (isSelected || isRangeStart || isRangeEnd) return theme.colors.primaryHover;
-      return theme.colors.backgroundSecondary;
-    }};
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
-`;
-
-const Footer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid ${({ theme }) => theme.colors.borderSecondary};
-`;
-
-const ActionButton = styled.button.withConfig({
-  shouldForwardProp: prop => !['variant'].includes(prop),
-})<{ variant?: 'primary' | 'secondary' }>`
-  background: ${({ theme, variant }) =>
-    variant === 'primary' ? theme.colors.primary : 'transparent'};
-  color: ${({ theme, variant }) => (variant === 'primary' ? theme.colors.text : theme.colors.text)};
-  border: 1px solid
-    ${({ theme, variant }) =>
-      variant === 'primary' ? theme.colors.primary : theme.colors.borderSecondary};
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: ${TransitionHandler()};
-
-  &:hover {
-    background: ${({ theme, variant }) =>
-      variant === 'primary' ? theme.colors.primaryHover : theme.colors.backgroundSecondary};
-  }
-`;
-
 // Стилизованные компоненты для сегментированного ввода даты
 const DateSegmentsContainer = styled.div.withConfig({
   shouldForwardProp: prop => !['size', 'textAlign'].includes(prop),
@@ -523,6 +395,8 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
       disabledYears = [],
       segmented = false, // По умолчанию используем обычный input
       format = 'DD.MM.YYYY', // Формат отображения даты по умолчанию
+      showDateRollers = false,
+      calendarMonthYearLayout = 'combined',
       ...props
     },
     ref,
@@ -865,26 +739,6 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
 
     // Используем хендлеры для работы с датами
 
-    // Используем хендлеры для проверки диапазонов
-    const checkIsInRange = (date: Date): boolean => {
-      if (!range || !rangeStart) return false;
-      const end = rangeEnd || tempRangeEnd;
-      if (!end) return false;
-      return isInRange(date, rangeStart, end);
-    };
-
-    const checkIsRangeStart = (date: Date): boolean => {
-      if (!range || !rangeStart) return false;
-      return isRangeStart(date, rangeStart);
-    };
-
-    const checkIsRangeEnd = (date: Date): boolean => {
-      if (!range) return false;
-      const end = rangeEnd || tempRangeEnd;
-      if (!end) return false;
-      return isRangeEnd(date, end);
-    };
-
     const handleDayClick = (date: Date) => {
       if (!range) {
         setSelectedDate(date);
@@ -927,6 +781,20 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
       }
     };
 
+    /** Роллеры: одиночная дата без закрытия попапа; диапазон — та же логика, что у клика по дню */
+    const handleCalendarRollersDate = (d: Date) => {
+      if (!range) {
+        setSelectedDate(d);
+        setInputValue(formatDate(d));
+        if (onChange) {
+          onChange(toISODateString(d));
+        }
+        setCurrentDate(d);
+        return;
+      }
+      handleDayClick(d);
+    };
+
     const handleApply = () => {
       if (range && rangeStart && rangeEnd) {
         if (onChange) {
@@ -956,18 +824,6 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
         }
       }
       setIsOpen(false);
-    };
-
-    const navigateMonth = (direction: 'prev' | 'next') => {
-      setCurrentDate(prev => {
-        const newDate = new Date(prev);
-        if (direction === 'prev') {
-          newDate.setMonth(newDate.getMonth() - 1);
-        } else {
-          newDate.setMonth(newDate.getMonth() + 1);
-        }
-        return newDate;
-      });
     };
 
     // Обработчики для сегментированного ввода даты
@@ -1345,9 +1201,6 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
       );
     };
 
-    const weekdays = getWeekdayNames();
-    const days = getDaysInMonth(currentDate);
-
     // Очищаем буфер при изменении даты
     useEffect(() => {
       setInputBuffer({ day: '', month: '', year: '' });
@@ -1506,51 +1359,45 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
             </div>
           )}
 
-          <CalendarHeader>
-            <NavigationButton onClick={() => navigateMonth('prev')}>
-              <Icon name="IconPlainerArrowLeft" size={IconSize.SM} />
-            </NavigationButton>
-            <MonthYear>{getMonthYearDisplay(currentDate)}</MonthYear>
-            <NavigationButton onClick={() => navigateMonth('next')}>
-              <Icon name="IconPlainerArrowRight" size={IconSize.SM} />
-            </NavigationButton>
-          </CalendarHeader>
-
-          <CalendarGrid>
-            {weekdays.map(day => (
-              <WeekdayHeader key={day}>{day}</WeekdayHeader>
-            ))}
-            {days.map((date, index) => (
-              <DayButton
-                key={index}
-                isCurrentMonth={isCurrentMonth(date, currentDate)}
-                isSelected={
-                  !range ? selectedDate !== null && isRangeStart(date, selectedDate) : false
-                }
-                isToday={isToday(date)}
-                isInRange={checkIsInRange(date)}
-                isRangeStart={checkIsRangeStart(date)}
-                isRangeEnd={checkIsRangeEnd(date)}
-                onClick={() => handleDayClick(date)}
-                onMouseEnter={() => handleDayMouseEnter(date)}
-                onMouseLeave={handleDayMouseLeave}
-                disabled={isDateDisabled(date)}
-              >
-                {date.getDate()}
-              </DayButton>
-            ))}
-          </CalendarGrid>
-
-          <Footer>
-            <ActionButton variant="secondary" onClick={handleClear}>
-              Очистить
-            </ActionButton>
-            {range && (
-              <ActionButton variant="primary" onClick={handleApply}>
-                Применить
-              </ActionButton>
-            )}
-          </Footer>
+          <Calendar
+            embedded
+            showTitle={false}
+            visibleMonth={currentDate}
+            onVisibleMonthChange={monthStart => setCurrentDate(monthStart)}
+            locale="ru-RU"
+            weekStartsOn={1}
+            headerMode="monthYear"
+            showMonthPicker
+            monthYearLayout={calendarMonthYearLayout}
+            showDateRollers={showDateRollers}
+            onRollersDateChange={handleCalendarRollersDate}
+            size={size}
+            disabled={disabled}
+            minDate={minDate}
+            maxDate={maxDate}
+            isDateDisabled={isDateDisabled}
+            selectionMode={range ? 'range' : 'single'}
+            {...(!range ? { value: selectedDate } : {})}
+            rangeStart={range ? rangeStart : null}
+            rangeEnd={range ? rangeEnd : null}
+            rangeHoverDate={range ? tempRangeEnd : null}
+            onSelectDate={handleDayClick}
+            onDayMouseEnter={handleDayMouseEnter}
+            onDayMouseLeave={handleDayMouseLeave}
+            weekdays={getWeekdayNames()}
+            footer={
+              <>
+                <Button variant={ButtonVariant.SECONDARY} size={size} type="button" onClick={handleClear}>
+                  Очистить
+                </Button>
+                {range ? (
+                  <Button variant={ButtonVariant.PRIMARY} size={size} type="button" onClick={handleApply}>
+                    Применить
+                  </Button>
+                ) : null}
+              </>
+            }
+          />
 
           {renderBottomPanel && (
             <div style={{ padding: '16px', borderTop: '1px solid #e0e0e0' }}>

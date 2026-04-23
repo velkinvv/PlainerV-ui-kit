@@ -56,6 +56,15 @@ const meta: Meta<typeof DateInput> = {
       control: { type: 'boolean' },
       description: 'Режим ввода: true = сегментированный, false = обычный input',
     },
+    showDateRollers: {
+      control: { type: 'boolean' },
+      description: 'Роллеры день/месяц/год над сеткой в попапе календаря',
+    },
+    calendarMonthYearLayout: {
+      control: { type: 'select' },
+      options: ['combined', 'split'],
+      description: 'Один выпадающий список месяц+год или два триггера',
+    },
     displayCharacterCounter: {
       control: { type: 'boolean' },
       description: 'Показывать счетчик символов при наличии maxLength',
@@ -166,6 +175,34 @@ export const Interactive: Story = {
           <strong>Выбранная дата:</strong> {value || 'Не выбрано'}
         </div>
       </div>
+    );
+  },
+};
+
+/** Попап с роллерами и раздельными триггерами месяц/год (макеты Figma) */
+export const WithRollersAndSplitHeader: Story = {
+  parameters: {
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4863-782',
+    },
+  },
+  render: () => {
+    const [value, setValue] = useState('');
+
+    const handleChange = (newValue: string | DateTimeRange) => {
+      setValue(typeof newValue === 'string' ? newValue : '');
+    };
+
+    return (
+      <DateInput
+        label="Дата (роллеры + месяц/год отдельно)"
+        value={value}
+        onChange={handleChange}
+        showDateRollers
+        calendarMonthYearLayout="split"
+        placeholder="Откройте календарь по иконке"
+      />
     );
   },
 };

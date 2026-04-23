@@ -25,10 +25,14 @@ const meta: Meta<typeof Select> = {
   component: Select,
   parameters: {
     layout: 'padded',
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4823-16420',
+    },
     docs: {
       description: {
         component:
-          'По умолчанию `mode="select"`: выпадающая панель как у `Dropdown` (поиск в шапке панели, мультивыбор), плюс скрытый нативный `select` для форм. `mode="native"` — только нативный список в оболочке поля.',
+          'По умолчанию `mode="select"`: выпадающая панель как у `Dropdown` (поиск в шапке панели, мультивыбор), плюс скрытый нативный `select` для форм. `mode="native"` — только нативный список в оболочке поля. Макет: [Figma — селект](https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4823-16420&t=cStO03cIis1M6Tar-4).',
       },
     },
   },
@@ -53,7 +57,10 @@ const meta: Meta<typeof Select> = {
     },
     label: { description: 'Подпись поля' },
     options: { description: 'Массив `{ value, label, disabled? }`' },
-    placeholder: { description: 'Пустое состояние (триггер / первая опция в native single)' },
+    placeholder: {
+      description:
+        'Пустое состояние (триггер / первая опция в native single); при `multiple` и выбранных значениях триггер — «Выбрано: N»',
+    },
     value: { description: 'Контролируемое значение: строка или `string[]` при `multiple`' },
     defaultValue: { description: 'Неконтролируемое начальное значение' },
     onChange: {
@@ -61,6 +68,11 @@ const meta: Meta<typeof Select> = {
     },
     onValueChange: { description: 'Удобный колбэк `(value: string | string[])` в `mode="select"`' },
     multiple: { control: 'boolean', description: 'Множественный выбор' },
+    showMultiSelectionCountBadge: {
+      control: 'boolean',
+      description:
+        'В `mode="select"` при `multiple`: бейдж с числом слева от шеврона (по умолчанию `true`)',
+    },
     searchable: {
       control: 'boolean',
       description:
@@ -146,7 +158,7 @@ export const Controlled: Story = {
   },
 };
 
-/** Несколько значений; в триггере — «N выбрано» или одна подпись */
+/** Несколько значений; в триггере при выборе — «Выбрано: N», пустое состояние — плейсхолдер */
 export const MultiSelect: Story = {
   render: () => {
     const [value, setValue] = useState<string[]>(['ru', 'en']);
@@ -155,6 +167,25 @@ export const MultiSelect: Story = {
         label="Языки"
         name="langs"
         multiple
+        options={sampleOptions.filter((o) => !o.disabled)}
+        value={value}
+        onValueChange={(v) => setValue(v as string[])}
+        placeholder="Выберите языки"
+      />
+    );
+  },
+};
+
+/** Мультиселект без бейджа числа у шеврона (`showMultiSelectionCountBadge={false}`) */
+export const MultiSelectWithoutCountBadge: Story = {
+  render: () => {
+    const [value, setValue] = useState<string[]>(['ru', 'en']);
+    return (
+      <Select
+        label="Языки (без бейджа)"
+        name="langs-no-badge"
+        multiple
+        showMultiSelectionCountBadge={false}
         options={sampleOptions.filter((o) => !o.disabled)}
         value={value}
         onValueChange={(v) => setValue(v as string[])}

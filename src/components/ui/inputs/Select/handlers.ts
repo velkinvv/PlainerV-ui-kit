@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { DropdownMenuItemProps, SelectOption, SelectProps } from '../../../../types/ui';
+import { Size, IconSize } from '../../../../types/sizes';
 
 /**
  * Итоговый статус обводки селекта по приоритету: явный `status`, затем `error` / `success`.
@@ -72,7 +73,7 @@ export const formatSelectOptionLabel = (label: ReactNode | undefined, value: str
  * @param value - Текущее значение (строка или массив при `multiple`).
  * @param multiple - Мультиселект.
  * @param placeholder - Текст при пустом выборе.
- * @returns Строка для кнопки-триггера.
+ * @returns Строка для кнопки-триггера; при `multiple` и ненулевом выборе — «Выбрано: N».
  */
 export const getSelectPanelTriggerText = (
   options: SelectOption[],
@@ -85,11 +86,8 @@ export const getSelectPanelTriggerText = (
     if (arr.length === 0) {
       return placeholder ?? '';
     }
-    if (arr.length === 1) {
-      const opt = options.find((o) => o.value === arr[0]);
-      return opt ? formatSelectOptionLabel(opt.label, opt.value) : arr[0];
-    }
-    return `${arr.length} выбрано`;
+    // Формат триггера как в макете: «Выбрано: N» (мультиселект).
+    return `Выбрано: ${arr.length}`;
   }
   const v = value === undefined || value === null ? '' : Array.isArray(value) ? '' : String(value);
   if (v === '') {
@@ -97,6 +95,55 @@ export const getSelectPanelTriggerText = (
   }
   const opt = options.find((o) => o.value === v);
   return opt ? formatSelectOptionLabel(opt.label, opt.value) : v;
+};
+
+/**
+ * Показывается ли на триггере плейсхолдер (для стиля `textTertiary`, как в макете).
+ * @param value - Текущее значение.
+ * @param multiple - Мультиселект.
+ * @param placeholder - Текст плейсхолдера; без него всегда `false`.
+ * @returns `true`, если выбор пустой и задан непустой плейсхолдер.
+ */
+export const getSelectTriggerShowsPlaceholder = (
+  value: string | string[] | undefined,
+  multiple: boolean,
+  placeholder?: string,
+): boolean => {
+  if (!placeholder) {
+    return false;
+  }
+  if (multiple) {
+    const arr = Array.isArray(value) ? value : value ? [String(value)] : [];
+    return arr.length === 0;
+  }
+  const v =
+    value === undefined || value === null ? '' : Array.isArray(value) ? '' : String(value);
+  return v === '';
+};
+
+/**
+ * Количество выбранных значений для мультиселекта (длина массива или 0 / 1 для одиночной строки).
+ * @param value - Текущее значение поля (`string[]` или при ошибочной передаче строка).
+ * @returns Число выбранных пунктов.
+ */
+export const getSelectMultiSelectedCount = (value: string | string[] | undefined): number => {
+  const arr = Array.isArray(value) ? value : value ? [String(value)] : [];
+  return arr.length;
+};
+
+/**
+ * Размер иконки-шеврона в зависимости от размера поля (согласовано с DateInput / TimeInput).
+ * @param size - Размер из `SelectProps.size`.
+ * @returns Значение `IconSize` для `Icon`.
+ */
+export const getSelectChevronIconSize = (size: Size | undefined): IconSize => {
+  if (size === Size.SM || size === Size.XS) {
+    return IconSize.XS;
+  }
+  if (size === Size.LG || size === Size.XL) {
+    return IconSize.MD;
+  }
+  return IconSize.SM;
 };
 
 /**

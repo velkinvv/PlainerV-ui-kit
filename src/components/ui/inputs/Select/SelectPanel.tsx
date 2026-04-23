@@ -13,7 +13,7 @@ import {
   type SelectProps,
   type TooltipPosition,
 } from '../../../../types/ui';
-import { Size, IconSize } from '../../../../types/sizes';
+import { Size } from '../../../../types/sizes';
 import { Icon } from '../../Icon/Icon';
 import { Tooltip } from '../../Tooltip/Tooltip';
 import { Hint, HintVariant, type HintPosition } from '../../Hint/Hint';
@@ -33,12 +33,23 @@ import {
 } from '../shared';
 import { Dropdown } from '../../Dropdown/Dropdown';
 import { normalizeDropdownValue } from '../../Dropdown/handlers';
-import { SelectChevronSlot, SelectTriggerButton, VisuallyHiddenSelect } from './Select.style';
+import {
+  SelectChevronFlip,
+  SelectChevronSlot,
+  SelectDropdownAnchor,
+  SelectMultiCountBadge,
+  SelectPanelRoot,
+  SelectTriggerButton,
+  VisuallyHiddenSelect,
+} from './Select.style';
 import {
   applySelectPanelSelection,
+  getSelectChevronIconSize,
+  getSelectMultiSelectedCount,
   getSelectPanelInitialValue,
   getSelectPanelTriggerText,
   getSelectStatus,
+  getSelectTriggerShowsPlaceholder,
   mapSelectOptionsToDropdownItems,
 } from './handlers';
 
@@ -89,6 +100,7 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
       dropdownVariant = 'default',
       menuMaxHeight = 320,
       dropdownInline = true,
+      showMultiSelectionCountBadge,
       mode: _mode,
       ...rest
     },
@@ -125,6 +137,23 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
       () => getSelectPanelTriggerText(options, effectiveValue, isMultiple, placeholder),
       [options, effectiveValue, isMultiple, placeholder],
     );
+
+    const triggerShowsPlaceholder = useMemo(
+      () => getSelectTriggerShowsPlaceholder(effectiveValue, isMultiple, placeholder),
+      [effectiveValue, isMultiple, placeholder],
+    );
+
+    const chevronIconSize = useMemo(() => getSelectChevronIconSize(size), [size]);
+
+    const multiSelectedCount = useMemo(
+      () => (isMultiple ? getSelectMultiSelectedCount(effectiveValue) : 0),
+      [isMultiple, effectiveValue],
+    );
+
+    const showMultiCountBadge =
+      isMultiple &&
+      showMultiSelectionCountBadge !== false &&
+      multiSelectedCount > 0;
 
     const dropdownValue = useMemo(
       () => normalizeDropdownValue(effectiveValue, isMultiple),
@@ -211,6 +240,7 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
           type="button"
           id={triggerId}
           disabled={selectDisabled}
+          $isPlaceholder={triggerShowsPlaceholder}
           textAlign={textAlign}
           aria-haspopup="listbox"
           aria-expanded={menuOpen}
@@ -228,21 +258,21 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
           {triggerText}
         </SelectTriggerButton>
         {isLoading ? <LoadingSpinner size={size} /> : null}
+        {showMultiCountBadge ? (
+          <SelectMultiCountBadge $fieldSize={size} aria-hidden>
+            {multiSelectedCount}
+          </SelectMultiCountBadge>
+        ) : null}
         <SelectChevronSlot aria-hidden>
-          <Icon name="IconPlainerArrowDown" size={IconSize.MD} />
+          <SelectChevronFlip $isOpen={menuOpen}>
+            <Icon name="IconPlainerArrowDown" size={chevronIconSize} />
+          </SelectChevronFlip>
         </SelectChevronSlot>
       </InputWrapper>
     );
 
     const dropdownBlock = (
-      <div
-        ref={containerRef}
-        style={{
-          width: fullWidth ? '100%' : undefined,
-          position: 'relative',
-          alignSelf: fullWidth ? 'stretch' : undefined,
-        }}
-      >
+      <SelectDropdownAnchor ref={containerRef} $fullWidth={fullWidth}>
         <Dropdown
           trigger={triggerControl}
           items={dropdownItems}
@@ -267,7 +297,7 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
           disableAutoFocus
           positioningMode="autoFlip"
         />
-      </div>
+      </SelectDropdownAnchor>
     );
 
     const hiddenNative = (
@@ -299,7 +329,7 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
     );
 
     return (
-      <InputContainer fullWidth={fullWidth} style={{ position: 'relative' }}>
+      <SelectPanelRoot fullWidth={fullWidth}>
         {label ? (
           <Label htmlFor={triggerId}>
             {label}
@@ -333,7 +363,7 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
         {extraText ? <ExtraText>{extraText}</ExtraText> : null}
 
         {hiddenNative}
-      </InputContainer>
+      </SelectPanelRoot>
     );
   },
 );
