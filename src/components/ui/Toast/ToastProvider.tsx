@@ -8,7 +8,14 @@ import React, {
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
-import type { ToastItem, ToastContextValue, ToastProviderProps, ToastType } from '@/types/ui';
+import {
+  ToastAppearance,
+  type ToastItem,
+  type ToastContextValue,
+  type ToastProviderProps,
+  type ToastType,
+  type ShowToastOptions,
+} from '@/types/ui';
 import { Toast } from './Toast';
 import { ToastStack } from './Toast.style';
 import { createToastId } from './handlers';
@@ -34,6 +41,7 @@ export const useToast = (): ToastContextValue => {
 export const ToastProvider: React.FC<ToastProviderProps> = ({
   children,
   placement = 'top-right',
+  defaultAppearance = ToastAppearance.CARD,
 }) => {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const timeoutRefs = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
@@ -48,7 +56,13 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
   }, []);
 
   const showToast = useCallback(
-    (message: string, type: ToastType = 'info', title?: string, duration: number = 5000) => {
+    (
+      message: string,
+      type: ToastType = 'info',
+      title?: string,
+      duration: number = 5000,
+      options?: ShowToastOptions,
+    ) => {
       const id = createToastId();
       const item: ToastItem = {
         id,
@@ -56,6 +70,9 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
         message,
         title,
         duration,
+        appearance: options?.appearance ?? defaultAppearance,
+        actionLabel: options?.actionLabel,
+        onAction: options?.onAction,
       };
       setToasts((prev) => [...prev, item]);
       if (duration > 0) {
@@ -65,7 +82,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
         timeoutRefs.current.set(id, tid);
       }
     },
-    [hideToast],
+    [hideToast, defaultAppearance],
   );
 
   const clearToasts = useCallback(() => {

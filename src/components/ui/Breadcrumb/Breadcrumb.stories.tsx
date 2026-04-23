@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import { Breadcrumb } from './Breadcrumb';
-import { Size } from '../../../types/sizes';
+import { Icon } from '../Icon/Icon';
+import { IconSize, Size } from '../../../types/sizes';
 import type { BreadcrumbItem } from '../../../types/ui';
 
 const meta: Meta<typeof Breadcrumb> = {
@@ -9,10 +10,14 @@ const meta: Meta<typeof Breadcrumb> = {
   component: Breadcrumb,
   parameters: {
     layout: 'padded',
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4882-9860',
+    },
     docs: {
       description: {
         component:
-          'Навигационная цепочка: `nav` + `ol`/`li`, разделитель, `aria-current="page"` у текущей страницы, `rel` для `target="_blank"`.',
+          'Макет Figma: шеврон между пунктами, иконка слева, капсула у текущей страницы, сегмент «…» (`ellipsis`), `aria-current`, `rel` для `target="_blank"`.',
       },
     },
   },
@@ -71,4 +76,29 @@ export const ExternalBlank: Story = {
       { label: 'Документация' },
     ],
   },
+};
+
+/** Как в макете: дом + Главная, …, Новости, текущая «Новость» в капсуле */
+export const FigmaLayout: Story = {
+  render: () => (
+    <Breadcrumb
+      items={[
+        {
+          id: 'home',
+          label: 'Главная',
+          href: '/',
+          icon: <Icon name="IconExHome" size={IconSize.SM} color="currentColor" aria-hidden />,
+        },
+        {
+          id: 'more',
+          label: '…',
+          ellipsis: true,
+          onClick: () => undefined,
+          ellipsisAriaLabel: 'Показать скрытые разделы',
+        },
+        { id: 'news', label: 'Новости', href: '/news' },
+        { id: 'article', label: 'Новость' },
+      ]}
+    />
+  ),
 };

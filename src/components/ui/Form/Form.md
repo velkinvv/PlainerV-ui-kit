@@ -102,6 +102,10 @@ function SaveForm() {
 
 Для таблиц и списков с постраничной выборкой используйте **`Pagination`** из `@/components/ui` (внутри **`ThemeProvider`**). Пример: `totalPages={total}`, контролируемый режим — `page={page}` и `onPageChange={setPage}`; без `page` — неконтролируемый с `defaultPage`. Сторис: **Components/Navigation/Pagination**.
 
+### Плавающая панель инструментов
+
+Для дополнительной панели действий (как в Figma внизу экрана) используйте **`FloatingMenu`** из `@/components/ui`: `placement` (`FloatingMenuPlacement`) для закрепления у края, `draggable` и опционально `dragSource={HANDLE}` + **`FloatingMenu.DragHandle`** для перетаскивания только за ручку; внутри — **`FloatingMenu.Group`**, **`FloatingMenu.Divider`**, **`FloatingMenu.GroupItem`** с `tooltip`, `dropdownContent` (часто обёртка с **`Menu`** / **`MenuItem`**), `dropdownTrigger` `click` | `hover`. Сторис: **Components/Navigation/FloatingMenu**.
+
 ## Пропсы
 
 | Проп        | Тип                                             | По умолчанию | Описание                                             |

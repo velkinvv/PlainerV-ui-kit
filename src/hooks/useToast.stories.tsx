@@ -6,7 +6,7 @@ import { Typography } from '../components/ui/Typography';
 import { ThemeProvider } from '../themes/ThemeProvider';
 import { ToastProvider } from '../components/ui/Toast';
 import { useToast } from './useToast';
-import type { ToastType } from '@/types/ui';
+import { ToastAppearance, type ToastType } from '@/types/ui';
 
 const withToast: Decorator = (Story) => (
   <ThemeProvider>
@@ -16,10 +16,23 @@ const withToast: Decorator = (Story) => (
   </ThemeProvider>
 );
 
+/** Провайдер с внешним видом «пилюля» по умолчанию (макет Figma) */
+const withPillToast: Decorator = (Story) => (
+  <ThemeProvider>
+    <ToastProvider defaultAppearance={ToastAppearance.PILL}>
+      <Story />
+    </ToastProvider>
+  </ThemeProvider>
+);
+
 const meta: Meta = {
   title: 'Hooks/useToast',
   decorators: [withToast],
   parameters: {
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4911-4334&t=eb4vmm0U8WfOr8yP-4',
+    },
     docs: {
       description: {
         component: `
@@ -31,10 +44,10 @@ const meta: Meta = {
 
 \`\`\`tsx
 import { ThemeProvider } from '@velkinvv/plainerv';
-import { ToastProvider, useToast } from '@velkinvv/plainerv';
+import { ToastProvider, useToast, ToastAppearance } from '@velkinvv/plainerv';
 
 <ThemeProvider>
-  <ToastProvider placement="top-right">
+  <ToastProvider placement="top-right" defaultAppearance={ToastAppearance.CARD}>
     <App />
   </ToastProvider>
 </ThemeProvider>
@@ -42,8 +55,8 @@ import { ToastProvider, useToast } from '@velkinvv/plainerv';
 
 ## API
 
-- **toasts** — активные записи (\`ToastItem\`: \`id\`, \`type\`, \`message\`, \`title\`, \`duration\`)
-- **showToast(message, type?, title?, duration?)** — показать (\`duration\` по умолчанию 5000 мс, \`0\` — без автоскрытия)
+- **toasts** — активные записи (\`ToastItem\`: \`id\`, \`type\`, \`message\`, \`title\`, \`duration\`, опционально \`appearance\`, \`actionLabel\`, \`onAction\`)
+- **showToast(message, type?, title?, duration?, options?)** — показать (\`duration\` по умолчанию 5000 мс, \`0\` — без автоскрытия). В \`options\` можно передать \`appearance\`, \`actionLabel\`, \`onAction\` (кнопка действия для вида «пилюля»; после клика вызывается \`onAction\` и toast закрывается).
 - **hideToast(id)** — закрыть по id
 - **clearToasts()** — очистить всё
 
@@ -135,6 +148,12 @@ const ToastTypesDemo = () => {
       title: 'Информация',
       duration: 6000,
     },
+    {
+      message: 'Нейтральное сообщение без акцента статуса',
+      type: 'neutral',
+      title: 'Уведомление',
+      duration: 4000,
+    },
   ];
 
   return (
@@ -146,7 +165,7 @@ const ToastTypesDemo = () => {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
           gap: '12px',
           marginBottom: '16px',
         }}
@@ -221,6 +240,84 @@ const AutoHideDemo = () => {
   );
 };
 
+const PillToastDemo = () => {
+  const { showToast, clearToasts, toasts } = useToast();
+
+  return (
+    <Card padding="lg">
+      <Typography variant="h3" marginBottom="md">
+        Внешний вид «пилюля» (по умолчанию у провайдера)
+      </Typography>
+      <Typography variant="body2" marginBottom="md" style={{ color: '#616161' }}>
+        Типы как в макете Figma: иконка с glow, кнопка «Action» закрывает toast после колбэка.
+      </Typography>
+
+      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
+        <Button
+          onClick={() =>
+            showToast('Notification', 'neutral', undefined, 6000, {
+              actionLabel: 'Action',
+              onAction: () => {},
+            })
+          }
+        >
+          Neutral + Action
+        </Button>
+        <Button
+          onClick={() =>
+            showToast('Notification', 'info', undefined, 6000, {
+              actionLabel: 'Action',
+              onAction: () => {},
+            })
+          }
+        >
+          Info + Action
+        </Button>
+        <Button
+          onClick={() =>
+            showToast('Сохранено', 'success', undefined, 5000, {
+              actionLabel: 'Action',
+              onAction: () => {},
+            })
+          }
+        >
+          Success + Action
+        </Button>
+        <Button
+          onClick={() =>
+            showToast('Сбой операции', 'error', undefined, 5000, {
+              actionLabel: 'Action',
+              onAction: () => {},
+            })
+          }
+        >
+          Error + Action
+        </Button>
+        <Button
+          onClick={() =>
+            showToast('Проверьте данные', 'warning', undefined, 5000, {
+              actionLabel: 'Action',
+              onAction: () => {},
+            })
+          }
+        >
+          Warning + Action
+        </Button>
+        <Button
+          onClick={() => showToast('Без кнопки действия', 'neutral', 'Заметка', 4000)}
+          variant="outlined"
+        >
+          Без действия
+        </Button>
+      </div>
+
+      <Button onClick={clearToasts} variant="outlined" disabled={toasts.length === 0}>
+        Очистить все ({toasts.length})
+      </Button>
+    </Card>
+  );
+};
+
 const BulkOperationsDemo = () => {
   const { toasts, showToast, hideToast, clearToasts } = useToast();
 
@@ -291,6 +388,11 @@ export const BasicUsage: Story = {
 
 export const ToastTypes: Story = {
   render: () => <ToastTypesDemo />,
+};
+
+export const PillAppearance: Story = {
+  decorators: [withPillToast],
+  render: () => <PillToastDemo />,
 };
 
 export const AutoHide: Story = {

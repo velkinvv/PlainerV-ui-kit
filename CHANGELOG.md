@@ -9,7 +9,7 @@
 
 ### Added
 - Начальная версия библиотеки UI компонентов
-- Компоненты: Button, ButtonGroup, Input, Modal, Dropdown, Card, Badge, Spinner, Skeleton, Divider, Checkbox, RadioButton, Switch, Progress, Avatar, Tooltip, Toast, Snackbar, Pagination, Tabs, Accordion
+- Компоненты: Button, ButtonGroup, Input, Modal, Dropdown, Card, Badge, Spinner, Skeleton, Divider, Checkbox, RadioButton, Switch, Progress, Avatar, Tooltip, Toast, Snackbar, Pagination, Tabs, Accordion, Menu, FloatingMenu
 - Поддержка темной и светлой темы
 - TypeScript типизация для всех компонентов
 - Хуки: useModal, useToast, useSnackbar, useDebounce, useLocalStorage, useClickOutside, useKeyPress, useMediaQuery, useScrollPosition, useWindowSize

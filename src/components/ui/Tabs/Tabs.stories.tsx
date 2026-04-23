@@ -6,6 +6,7 @@ import { ThemeProvider } from '../../../themes/ThemeProvider';
 import {
   TabsDirection,
   TabsVerticalPosition,
+  TabsVariant,
   TabItemTextOrientation,
   TabItemTextPosition,
 } from '../../../types/ui';
@@ -60,6 +61,16 @@ const meta: Meta<typeof Tabs> = {
         defaultValue: { summary: 'START' },
       },
     },
+    variant: {
+      control: { type: 'select' },
+      options: [TabsVariant.PILL, TabsVariant.LINE],
+      description:
+        'PILL — сегментированный трек (макет Figma). LINE — линия-индикатор. Если не задан: горизонтально pill, вертикально line.',
+      table: {
+        type: { summary: 'TabsVariant' },
+        defaultValue: { summary: 'undefined (авто)' },
+      },
+    },
     onChange: {
       description:
         'Обработчик изменения активной вкладки. Вызывается при переключении вкладки с параметром value активной вкладки.',
@@ -91,6 +102,65 @@ const meta: Meta<typeof Tabs> = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+/** Сегменты, иконки и бейджи — как в макете Figma (node 4817-16422) */
+export const PillSegmentedWithIconsAndBadge: Story = {
+  args: {
+    defaultActiveTab: 'inbox',
+    children: (
+      <>
+        <Tabs.List>
+          <TabItem
+            value="inbox"
+            label="Входящие"
+            iconStart={<Icon name="IconExHome" size="md" />}
+            badge={3}
+          >
+            <div style={{ padding: '16px' }}>Контент «Входящие»</div>
+          </TabItem>
+          <TabItem value="folders" label="Папки" iconEnd={<Icon name="IconExSettings" size="md" />}>
+            <div style={{ padding: '16px' }}>Контент «Папки»</div>
+          </TabItem>
+          <TabItem
+            value="archive"
+            label="Архив"
+            iconStart={<Icon name="IconExUser" size="md" />}
+            badge={12}
+          >
+            <div style={{ padding: '16px' }}>Контент «Архив»</div>
+          </TabItem>
+        </Tabs.List>
+      </>
+    ),
+  },
+  parameters: {
+    layout: 'padded',
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4817-16422',
+    },
+  },
+};
+
+/** Горизонтальные табы с нижней линией (явный variant=LINE) */
+export const LineHorizontal: Story = {
+  args: {
+    variant: TabsVariant.LINE,
+    children: (
+      <>
+        <Tabs.List>
+          <TabItem value="a" label="Вкладка A">
+            <div style={{ padding: '16px' }}>Контент A</div>
+          </TabItem>
+          <TabItem value="b" label="Вкладка B">
+            <div style={{ padding: '16px' }}>Контент B</div>
+          </TabItem>
+        </Tabs.List>
+      </>
+    ),
+  },
+  parameters: { layout: 'padded' },
+};
 
 export const Default: Story = {
   args: {

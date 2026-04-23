@@ -14,9 +14,14 @@ const renderWithTheme = (component: React.ReactElement) => {
 };
 
 describe('FileInput', () => {
-  it('рендерит подпись и триггер выбора файла', () => {
+  it('рендерит подпись и поле выбора файла (макет field по умолчанию)', () => {
     renderWithTheme(<FileInput label="Вложение" name="f" />);
     expect(screen.getByText('Вложение')).toBeInTheDocument();
+    expect(screen.getByText('input_file')).toBeInTheDocument();
+  });
+
+  it('рендерит кнопку «Выбрать файл» в макете trigger', () => {
+    renderWithTheme(<FileInput label="Вложение" name="f" fileLayout="trigger" />);
     expect(screen.getByText('Выбрать файл')).toBeInTheDocument();
   });
 
@@ -41,6 +46,11 @@ describe('FileInput', () => {
     expect(screen.getByText('doc.pdf')).toBeInTheDocument();
   });
 
+  it('в карточке файла показывает кнопку удаления без showClearButton', () => {
+    renderWithTheme(<FileInput label="Файл" name="f" fileLayout="file" fileName="a.txt" />);
+    expect(screen.getByRole('button', { name: 'Удалить файл' })).toBeInTheDocument();
+  });
+
   it('при showClearButton очищает выбор по клику', () => {
     const onClear = jest.fn();
     renderWithTheme(
@@ -52,6 +62,6 @@ describe('FileInput', () => {
     expect(screen.getByText('a.txt')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Очистить выбор файла' }));
     expect(onClear).toHaveBeenCalled();
-    expect(screen.getByText('Файл не выбран')).toBeInTheDocument();
+    expect(screen.getByText('input_file')).toBeInTheDocument();
   });
 });

@@ -1,6 +1,6 @@
 // UI Components
 export { Button, ButtonGroup } from './buttons';
-export type { ButtonProps, ButtonGroupProps } from '@/types/ui';
+export type { ButtonProps, ButtonGroupProps, ButtonGroupAttachedShape } from '@/types/ui';
 export { Link, LinkMode } from './Link';
 export type { LinkProps, LinkTextProps, LinkButtonProps } from './Link';
 export { IconButton } from './buttons';
@@ -11,7 +11,7 @@ export type { InputProps } from '@/types/ui';
 export { TextArea } from './inputs/TextArea';
 export type { TextAreaProps } from '@/types/ui';
 export { FileInput } from './inputs/FileInput';
-export type { FileInputProps } from '@/types/ui';
+export type { FileInputProps, FileInputLayout } from '@/types/ui';
 
 export { Select } from './inputs/Select';
 export type { SelectProps, SelectOption } from '@/types/ui';
@@ -20,6 +20,9 @@ export { Form, HiddenUsernameField } from './Form';
 
 export { Badge } from './Badge';
 export type { BadgeProps } from '@/types/ui';
+
+export { Tag } from './Tag';
+export type { TagProps, TagColorVariant, TagAppearance } from '@/types/ui';
 export { Breadcrumb } from './Breadcrumb';
 export type { BreadcrumbProps, BreadcrumbItem } from '@/types/ui';
 
@@ -55,6 +58,32 @@ export type { DropdownProps } from '@/types/ui';
 
 export { Tabs } from './Tabs';
 export type { TabsProps } from '@/types/ui';
+export { TabsVariant } from '@/types/ui';
+
+export { Menu, MenuItem } from './Menu';
+export type { MenuProps, MenuItemProps } from '@/types/ui';
+export { MenuActiveAppearance } from '@/types/ui';
+
+export {
+  FloatingMenu,
+  FloatingMenuGroup,
+  FloatingMenuGroupItem,
+  FloatingMenuDivider,
+  FloatingMenuDragHandle,
+} from './FloatingMenu';
+export type {
+  FloatingMenuProps,
+  FloatingMenuGroupProps,
+  FloatingMenuGroupItemProps,
+  FloatingMenuDividerProps,
+  FloatingMenuDragHandleProps,
+} from '@/types/ui';
+export {
+  FloatingMenuPlacement,
+  FloatingMenuGroupVariant,
+  FloatingMenuDropdownTrigger,
+  FloatingMenuDragSource,
+} from '@/types/ui';
 
 export { Pagination } from './Pagination';
 export type { PaginationProps } from '@/types/ui';
@@ -94,6 +123,13 @@ export type { SkeletonProps } from '@/types/ui';
 export { Divider } from './Divider';
 export type { DividerProps } from '@/types/ui';
 
+export { Pill } from './Pill';
+export type { PillProps } from '@/types/ui';
+export type { PillGeometry } from './Pill';
+
+export { Slider, RangeSlider } from './Slider';
+export type { SliderProps, RangeSliderProps, SliderRangeValue } from '@/types/ui';
+
 export { Icon } from './Icon';
 export type { IconProps } from '@/types/ui';
 
@@ -111,7 +147,13 @@ export type { SwitchProps } from '@/types/ui';
 
 export { Toast, ToastProvider } from './Toast';
 export type { ToastProps } from './Toast';
-export type { ToastType, ToastItem, ToastPlacement } from '@/types/ui';
+export type {
+  ToastType,
+  ToastItem,
+  ToastPlacement,
+  ShowToastOptions,
+} from '@/types/ui';
+export { ToastAppearance } from '@/types/ui';
 
 export { Snackbar, SnackbarProvider } from './Snackbar';
 export type { SnackbarProps } from './Snackbar';

@@ -21,7 +21,7 @@ export function getPaginationDimensions(size: Size = Size.MD): {
         minHeight: '24px',
         fontSize: '11px',
         gap: '2px',
-        borderRadius: '4px',
+        borderRadius: '6px',
       };
     case Size.SM:
       return {
@@ -29,23 +29,23 @@ export function getPaginationDimensions(size: Size = Size.MD): {
         minHeight: '28px',
         fontSize: '12px',
         gap: '4px',
-        borderRadius: '6px',
+        borderRadius: '8px',
       };
     case Size.LG:
       return {
         minWidth: '40px',
         minHeight: '40px',
         fontSize: '16px',
-        gap: '8px',
-        borderRadius: '8px',
+        gap: '6px',
+        borderRadius: '10px',
       };
     case Size.XL:
       return {
         minWidth: '44px',
         minHeight: '44px',
         fontSize: '16px',
-        gap: '8px',
-        borderRadius: '8px',
+        gap: '6px',
+        borderRadius: '10px',
       };
     case Size.MD:
     default:
@@ -53,7 +53,7 @@ export function getPaginationDimensions(size: Size = Size.MD): {
         minWidth: '32px',
         minHeight: '32px',
         fontSize: '14px',
-        gap: '6px',
+        gap: '4px',
         borderRadius: '8px',
       };
   }

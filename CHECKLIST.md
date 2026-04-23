@@ -101,6 +101,7 @@
 - [ ] Table/DataTable
 - [ ] Breadcrumbs
 - [x] Pagination
+- [x] FloatingMenu
 - [ ] Stepper/Wizard
 
 ### 12. Улучшение accessibility

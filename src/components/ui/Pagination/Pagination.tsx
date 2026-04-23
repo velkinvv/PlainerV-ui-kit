@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { clsx } from 'clsx';
 import type { PaginationProps } from '@/types/ui';
-import { ButtonVariant } from '@/types/ui';
 import { IconSize, Size } from '@/types/sizes';
 import { Icon } from '../Icon/Icon';
-import { IconButton } from '../buttons/IconButton';
 import { buildPaginationSegments, getPaginationDimensions } from './handlers';
 import {
   Ellipsis,
   PageButton,
+  PaginationArrowButton,
+  PaginationBar,
   PaginationList,
   PaginationListItem,
   PaginationNav,
@@ -33,7 +33,7 @@ function paginationSizeToIconSize(size: Size | undefined): IconSize {
 }
 
 /**
- * Пагинация: номера страниц с разрывами «…», опционально «назад»/«вперёд».
+ * Пагинация: плашка с номерами и разрывами «…», стрелки внутри контейнера (макет Figma).
  * Поддерживаются контролируемый (`page` + `onPageChange`) и неконтролируемый (`defaultPage`) режимы.
  * @param props - Пропсы `PaginationProps`.
  */
@@ -56,7 +56,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
   useEffect(() => {
     if (!isControlled && totalPages >= 1) {
-      setInternalPage((p) => Math.min(Math.max(1, p), totalPages));
+      setInternalPage(p => Math.min(Math.max(1, p), totalPages));
     }
   }, [totalPages, isControlled]);
 
@@ -91,73 +91,80 @@ export const Pagination: React.FC<PaginationProps> = ({
 
   const dim = getPaginationDimensions(size);
   const iconSize = paginationSizeToIconSize(size);
-  const navGap = size === Size.XS || size === Size.SM ? '4px' : '8px';
 
   if (totalPages < 1) {
     return null;
   }
 
   return (
-    <PaginationNav className={clsx(className)} aria-label={ariaLabel} $gap={navGap}>
-      {showPrevNext ? (
-        <IconButton
-          type="button"
-          variant={ButtonVariant.GHOST}
-          size={size}
-          disabled={disabled || currentPage <= 1}
-          aria-label="Предыдущая страница"
-          icon={<Icon name="PhosphorArrowCircleLeft" size={iconSize} />}
-          onClick={() => setPage(currentPage - 1)}
-        />
-      ) : null}
+    <PaginationNav className={clsx(className)} aria-label={ariaLabel}>
+      <PaginationBar>
+        {showPrevNext ? (
+          <PaginationArrowButton
+            type="button"
+            disabled={disabled || currentPage <= 1}
+            aria-label="Предыдущая страница"
+            $minW={dim.minWidth}
+            $minH={dim.minHeight}
+            $radius={dim.borderRadius}
+            onClick={() => setPage(currentPage - 1)}
+          >
+            <Icon name="PhosphorArrowFatLineLeft" size={iconSize} color="currentColor" />
+          </PaginationArrowButton>
+        ) : null}
 
-      <PaginationList $gap={dim.gap}>
-        {segments.map((seg) => {
-          if (seg.kind === 'gap') {
+        <PaginationList $gap={dim.gap}>
+          {segments.map(seg => {
+            if (seg.kind === 'gap') {
+              return (
+                <PaginationListItem key={seg.id}>
+                  <Ellipsis $minH={dim.minHeight} aria-hidden>
+                    …
+                  </Ellipsis>
+                </PaginationListItem>
+              );
+            }
+            const isActive = seg.page === currentPage;
             return (
-              <PaginationListItem key={seg.id}>
-                <Ellipsis aria-hidden>…</Ellipsis>
+              <PaginationListItem key={seg.page}>
+                <PageButton
+                  type="button"
+                  disabled={disabled}
+                  $disabled={disabled}
+                  $active={isActive}
+                  $minW={dim.minWidth}
+                  $minH={dim.minHeight}
+                  $fontSize={dim.fontSize}
+                  $radius={dim.borderRadius}
+                  aria-label={`Страница ${seg.page}`}
+                  aria-current={isActive ? 'page' : undefined}
+                  onClick={() => {
+                    if (!isActive && !disabled) {
+                      setPage(seg.page);
+                    }
+                  }}
+                >
+                  {seg.page}
+                </PageButton>
               </PaginationListItem>
             );
-          }
-          const isActive = seg.page === currentPage;
-          return (
-            <PaginationListItem key={seg.page}>
-              <PageButton
-                type="button"
-                disabled={disabled}
-                $dim={disabled}
-                $active={isActive}
-                $minW={dim.minWidth}
-                $minH={dim.minHeight}
-                $fontSize={dim.fontSize}
-                $radius={dim.borderRadius}
-                aria-label={`Страница ${seg.page}`}
-                aria-current={isActive ? 'page' : undefined}
-                onClick={() => {
-                  if (!isActive && !disabled) {
-                    setPage(seg.page);
-                  }
-                }}
-              >
-                {seg.page}
-              </PageButton>
-            </PaginationListItem>
-          );
-        })}
-      </PaginationList>
+          })}
+        </PaginationList>
 
-      {showPrevNext ? (
-        <IconButton
-          type="button"
-          variant={ButtonVariant.GHOST}
-          size={size}
-          disabled={disabled || currentPage >= totalPages}
-          aria-label="Следующая страница"
-          icon={<Icon name="PhosphorArrowCircleRight" size={iconSize} />}
-          onClick={() => setPage(currentPage + 1)}
-        />
-      ) : null}
+        {showPrevNext ? (
+          <PaginationArrowButton
+            type="button"
+            disabled={disabled || currentPage >= totalPages}
+            aria-label="Следующая страница"
+            $minW={dim.minWidth}
+            $minH={dim.minHeight}
+            $radius={dim.borderRadius}
+            onClick={() => setPage(currentPage + 1)}
+          >
+            <Icon name="PhosphorArrowFatLineRight" size={iconSize} color="currentColor" />
+          </PaginationArrowButton>
+        ) : null}
+      </PaginationBar>
     </PaginationNav>
   );
 };

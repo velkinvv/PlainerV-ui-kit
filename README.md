@@ -106,6 +106,8 @@ function MyComponent() {
 - **Breadcrumb** - «Хлебные крошки» (`nav` + `ol`, `aria-current`, разделитель, `Size`)
 - **Stepper** - Шаги навигации по макету: `variant="compact"` (кольцо «N/M», заголовок, подзаголовок, `onBack`) или `variant="linear"` (кружки, подписи «Шаг N», соединители); `appearance` / тема, `fullWidth`
 - **Pagination** - Номера страниц с разрывами «…», стрелки назад/вперёд, контролируемый и неконтролируемый режимы (`totalPages`, `page` / `defaultPage`, `onPageChange`, `siblingCount`, `showPrevNext`, `size`)
+- **Menu** — вертикальная навигация (`Menu` + `MenuItem`), бейдж, collapsed; для панели инструментов поверх холста — **FloatingMenu**
+- **FloatingMenu** — плавающая панель инструментов внизу/по краю экрана (`FloatingMenuPlacement`), перетаскивание (`draggable`, `dragSource`, `DragHandle`), группы `FloatingMenu.Group` (`variant: inset`), разделитель `Divider`, пункт `GroupItem` (иконка, `active`, `tooltip`, вложенное `Menu` через `dropdownContent`, открытие по `dropdownTrigger`: click | hover)
 - **Dropdown** - Выпадающие меню
 
 ```tsx
@@ -161,7 +163,7 @@ function Root() {
 }
 ```
 
-**Storybook:** `Hooks/useToast`, `Hooks/useSnackbar`, `Components/Feedback/Toast`, `Components/Feedback/Snackbar`, `Components/Navigation/Pagination`, `Components/Buttons/ButtonGroup`.
+**Storybook:** `Hooks/useToast`, `Hooks/useSnackbar`, `Components/Feedback/Toast`, `Components/Feedback/Snackbar`, `Components/Navigation/Pagination`, `Components/Navigation/FloatingMenu`, `Components/Buttons/ButtonGroup`.
 - **Accordion** - Аккордеоны
 
 ## 🎨 Иконки

@@ -32,6 +32,7 @@
   - Modal (6 тестов)
   - Dropdown (5 тестов)
   - Pagination (6 тестов)
+  - FloatingMenu (1 тест)
 - ✅ Созданы тесты для хуков:
   - useModal (5 тестов)
   - useToast (6 тестов)

@@ -18,10 +18,14 @@ const meta: Meta<typeof Pagination> = {
   ],
   parameters: {
     layout: 'padded',
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4911-2616',
+    },
     docs: {
       description: {
         component:
-          'Пагинация в стиле Plainer: номера страниц, разрывы «…», стрелки «назад/вперёд», контролируемый и неконтролируемый режимы.',
+          'Пагинация по макету Figma: единая плашка со скруглением, номера без рамки, активная страница с заливкой primary и мягким свечением, стрелки внутри плашки.',
       },
     },
   },

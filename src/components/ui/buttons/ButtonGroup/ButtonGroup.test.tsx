@@ -21,4 +21,15 @@ describe('ButtonGroup', () => {
     expect(screen.getByText('A')).toBeInTheDocument();
     expect(screen.getByText('B')).toBeInTheDocument();
   });
+
+  it('в режиме attached добавляет класс ui-button-group', () => {
+    renderWithTheme(
+      <ButtonGroup attached ariaLabel="Склеенная">
+        <Button variant={ButtonVariant.SECONDARY}>A</Button>
+        <Button variant={ButtonVariant.SECONDARY}>B</Button>
+      </ButtonGroup>,
+    );
+    const group = screen.getByRole('group', { name: 'Склеенная' });
+    expect(group).toHaveClass('ui-button-group');
+  });
 });

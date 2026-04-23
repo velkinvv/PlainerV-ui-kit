@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { clsx } from 'clsx';
 import { TabsDirection, TabsVerticalPosition, type TabsProps } from '../../../types/ui';
+import { resolveTabsVariant } from '@/handlers/resolveTabsVariant';
 import {
   TabItemGroup,
   TabItemGroupContainer,
@@ -25,6 +26,7 @@ export const Tabs: React.FC<TabsProps> & {
   onChange,
   direction = TabsDirection.HORIZONTAL,
   tabsPosition = TabsVerticalPosition.START,
+  variant,
 }) => {
   return (
     <TabItemGroup
@@ -32,6 +34,7 @@ export const Tabs: React.FC<TabsProps> & {
       onChange={onChange}
       direction={direction}
       tabsPosition={tabsPosition}
+      variant={variant}
       className={clsx('ui-tabs', className)}
     >
       {children}
@@ -49,10 +52,16 @@ const TabsListComponent: React.FC<TabsListProps> = ({ children, className, ...pr
   // Получаем direction из контекста TabItem.Group
   const groupContext = useContext(TabItemGroupContext);
   // Используем direction из контекста или по умолчанию HORIZONTAL
-  const direction = groupContext?.direction || TabsDirection.HORIZONTAL;
+  const direction = groupContext?.direction ?? TabsDirection.HORIZONTAL;
+  const variant = groupContext?.variant ?? resolveTabsVariant(direction);
 
   return (
-    <TabItemGroupList className={clsx('ui-tabs-list', className)} $direction={direction} {...props}>
+    <TabItemGroupList
+      className={clsx('ui-tabs-list', className)}
+      $direction={direction}
+      $variant={variant}
+      {...props}
+    >
       {children}
     </TabItemGroupList>
   );

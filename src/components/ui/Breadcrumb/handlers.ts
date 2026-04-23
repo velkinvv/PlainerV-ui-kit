@@ -12,6 +12,9 @@ export const isBreadcrumbCurrentPage = (
   index: number,
   length: number,
 ): boolean => {
+  if (item.ellipsis) {
+    return false;
+  }
   if (item.current === true) {
     return true;
   }
@@ -19,4 +22,25 @@ export const isBreadcrumbCurrentPage = (
     return false;
   }
   return index === length - 1 && !item.href && !item.onClick;
+};
+
+/**
+ * Нужна ли капсула с фоном вокруг крошки (макет Figma: текущая страница и явный `pill`).
+ * @param item - Пункт
+ * @param isCurrent - Результат `isBreadcrumbCurrentPage`
+ */
+export const shouldUseBreadcrumbPill = (item: BreadcrumbItem, isCurrent: boolean): boolean => {
+  if (item.ellipsis) {
+    return false;
+  }
+  if (item.crumbStyle === 'pill') {
+    return true;
+  }
+  if (item.crumbStyle === 'plain') {
+    return false;
+  }
+  if (item.disabled) {
+    return false;
+  }
+  return Boolean(isCurrent);
 };

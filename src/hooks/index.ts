@@ -1,7 +1,8 @@
 // UI хуки
 export { useModal } from './useModal';
 export { useToast, ToastProvider } from './useToast';
-export type { ToastType, ToastItem, UseToastReturn } from './useToast';
+export type { ToastType, ToastItem, UseToastReturn, ShowToastOptions } from './useToast';
+export { ToastAppearance } from './useToast';
 export { useSnackbar, SnackbarProvider } from './useSnackbar';
 export type {
   SnackbarItem,

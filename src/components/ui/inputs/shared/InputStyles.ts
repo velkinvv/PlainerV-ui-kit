@@ -73,7 +73,9 @@ export const RightLabel = styled(AbsoluteLabel)`
 
 export const InputWrapper = styled(motion.div).withConfig({
   shouldForwardProp: prop =>
-    !['error', 'success', 'fullWidth', 'focused', 'status', 'readOnly'].includes(prop),
+    !['error', 'success', 'fullWidth', 'focused', 'status', 'readOnly', '$fileSurface', '$dragActive'].includes(
+      prop,
+    ),
 })<{
   variant?: InputVariant;
   size?: Size;
@@ -83,25 +85,46 @@ export const InputWrapper = styled(motion.div).withConfig({
   focused?: boolean;
   status?: 'error' | 'success' | 'warning';
   readOnly?: boolean;
+  /** Режимы `FileInput`: поле, пунктирная зона или карточка файла (макет Figma) */
+  $fileSurface?: 'field' | 'dropzone' | 'file';
+  /** Подсветка зоны при перетаскивании файла */
+  $dragActive?: boolean;
 }>`
   position: relative;
   display: flex;
   align-items: center;
-  background: ${({ theme }) => theme.colors.backgroundSecondary};
+  background: ${({ theme, $fileSurface }) =>
+    $fileSurface ? theme.colors.input : theme.colors.backgroundSecondary};
   border: 1px solid
-    ${({ theme, status }) => {
+    ${({ theme, status, $dragActive }) => {
+      if ($dragActive) {
+        return theme.colors.primary;
+      }
       if (status === 'error') return theme.colors.danger;
       if (status === 'success') return theme.colors.success;
       if (status === 'warning') return theme.colors.warning;
       return theme.colors.borderSecondary;
     }};
-  border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
+  border-style: ${({ $fileSurface }) => ($fileSurface === 'dropzone' ? 'dashed' : 'solid')};
+  /* У FileInput в макете скругление ~10px, не «пилюля» общих инпутов */
+  border-radius: ${({ theme, $fileSurface }) =>
+    $fileSurface ? '10px' : BorderRadiusHandler(theme.borderRadius)};
   transition: ${TransitionHandler()};
   width: ${({ fullWidth }) => (fullWidth ? '100%' : '335px')};
 
-  ${({ size, theme }) => css`
+  ${({ size, theme, $fileSurface }) => css`
     min-height: ${InputSizeHandler(size ?? theme.defaultInputSize)};
     padding: ${InputPaddingHandler(size ?? theme.defaultInputSize)};
+    ${$fileSurface === 'dropzone' &&
+    css`
+      min-height: calc(${InputSizeHandler(size ?? theme.defaultInputSize)} * 2.35);
+      align-items: stretch;
+    `}
+    ${$fileSurface === 'file' &&
+    css`
+      min-height: calc(${InputSizeHandler(size ?? theme.defaultInputSize)} * 1.45);
+      align-items: stretch;
+    `}
   `}
 
   ${({ focused, theme }) =>

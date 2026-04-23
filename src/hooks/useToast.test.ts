@@ -6,6 +6,7 @@ import { renderHook, act } from '@testing-library/react';
 import { ThemeProvider } from '../themes/ThemeProvider';
 import { ToastProvider } from '../components/ui/Toast';
 import { useToast } from './useToast';
+import { ToastAppearance } from '@/types/ui';
 
 jest.useFakeTimers();
 
@@ -103,12 +104,31 @@ describe('useToast', () => {
       result.current.showToast('Ошибка', 'error');
       result.current.showToast('Предупреждение', 'warning');
       result.current.showToast('Информация', 'info');
+      result.current.showToast('Нейтрально', 'neutral');
     });
 
-    expect(result.current.toasts).toHaveLength(4);
+    expect(result.current.toasts).toHaveLength(5);
     expect(result.current.toasts[0]?.type).toBe('success');
     expect(result.current.toasts[1]?.type).toBe('error');
     expect(result.current.toasts[2]?.type).toBe('warning');
     expect(result.current.toasts[3]?.type).toBe('info');
+    expect(result.current.toasts[4]?.type).toBe('neutral');
+  });
+
+  it('принимает пятый аргумент options: внешний вид, действие', () => {
+    const { result } = renderHook(() => useToast(), { wrapper });
+
+    act(() => {
+      result.current.showToast('Текст', 'info', 'Заголовок', 0, {
+        appearance: ToastAppearance.PILL,
+        actionLabel: 'OK',
+        onAction: () => {},
+      });
+    });
+
+    const t = result.current.toasts[0];
+    expect(t?.appearance).toBe(ToastAppearance.PILL);
+    expect(t?.actionLabel).toBe('OK');
+    expect(t?.onAction).toBeDefined();
   });
 });

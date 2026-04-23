@@ -12,29 +12,95 @@ import {
   BreadcrumbCrumbLink,
   BreadcrumbCrumbButton,
   BreadcrumbCrumbText,
+  BreadcrumbCrumbRow,
+  BreadcrumbCrumbIcon,
+  BreadcrumbCrumbLabel,
+  BreadcrumbEllipsisButton,
 } from './Breadcrumb.style';
-import { isBreadcrumbCurrentPage } from './handlers';
+import { isBreadcrumbCurrentPage, shouldUseBreadcrumbPill } from './handlers';
 
 const DEFAULT_ARIA_LABEL = 'Навигационная цепочка';
 
 /**
- * Рендерит одну «крошку»: ссылка, кнопка или текст текущей страницы.
+ * Тело крошки: опциональная иконка + подпись.
+ * @param item - Пункт
+ * @param iconMuted - Приглушить иконку (disabled)
+ */
+const BreadcrumbCrumbBody: React.FC<{ item: BreadcrumbItem; iconMuted: boolean }> = ({
+  item,
+  iconMuted,
+}) => (
+  <BreadcrumbCrumbRow>
+    {item.icon ? <BreadcrumbCrumbIcon $muted={iconMuted}>{item.icon}</BreadcrumbCrumbIcon> : null}
+    <BreadcrumbCrumbLabel>{item.label}</BreadcrumbCrumbLabel>
+  </BreadcrumbCrumbRow>
+);
+
+/**
+ * Рендерит одну «крошку»: ссылка, кнопка, текст или сегмент «…».
  * @param item - Данные пункта
  * @param isCurrent - Флаг текущей страницы (`aria-current`)
  */
 const renderCrumb = (item: BreadcrumbItem, isCurrent: boolean) => {
-  if (isCurrent) {
+  const pill = shouldUseBreadcrumbPill(item, isCurrent);
+  const iconMuted = Boolean(item.disabled);
+
+  if (item.ellipsis) {
     return (
-      <BreadcrumbCrumbText aria-current="page" $muted={false}>
-        {item.label}
+      <BreadcrumbEllipsisButton
+        type="button"
+        onClick={item.onClick as React.MouseEventHandler<HTMLButtonElement> | undefined}
+        disabled={item.disabled}
+        $disabled={item.disabled}
+        aria-label={item.ellipsisAriaLabel ?? 'Показать скрытые уровни навигации'}
+      >
+        …
+      </BreadcrumbEllipsisButton>
+    );
+  }
+
+  if (isCurrent) {
+    if (item.href && !item.disabled) {
+      const safeRel = mergeAnchorRel(item.target, item.rel);
+      return (
+        <BreadcrumbCrumbLink
+          href={item.href}
+          target={item.target}
+          rel={safeRel}
+          $pill={pill}
+          $muted={false}
+          aria-current="page"
+          onClick={item.onClick as React.MouseEventHandler<HTMLAnchorElement> | undefined}
+        >
+          <BreadcrumbCrumbBody item={item} iconMuted={iconMuted} />
+        </BreadcrumbCrumbLink>
+      );
+    }
+    if (item.onClick && !item.disabled) {
+      return (
+        <BreadcrumbCrumbButton
+          type="button"
+          onClick={item.onClick}
+          disabled={item.disabled}
+          $pill={pill}
+          $muted={false}
+          aria-current="page"
+        >
+          <BreadcrumbCrumbBody item={item} iconMuted={iconMuted} />
+        </BreadcrumbCrumbButton>
+      );
+    }
+    return (
+      <BreadcrumbCrumbText aria-current="page" $pill={pill} $muted={false}>
+        <BreadcrumbCrumbBody item={item} iconMuted={iconMuted} />
       </BreadcrumbCrumbText>
     );
   }
 
   if (item.disabled && item.href) {
     return (
-      <BreadcrumbCrumbText $muted aria-disabled="true">
-        {item.label}
+      <BreadcrumbCrumbText $pill={false} $muted aria-disabled="true">
+        <BreadcrumbCrumbBody item={item} iconMuted />
       </BreadcrumbCrumbText>
     );
   }
@@ -46,26 +112,38 @@ const renderCrumb = (item: BreadcrumbItem, isCurrent: boolean) => {
         href={item.href}
         target={item.target}
         rel={safeRel}
+        $pill={pill}
+        $muted={false}
         onClick={item.onClick as React.MouseEventHandler<HTMLAnchorElement> | undefined}
       >
-        {item.label}
+        <BreadcrumbCrumbBody item={item} iconMuted={iconMuted} />
       </BreadcrumbCrumbLink>
     );
   }
 
   if (item.onClick) {
     return (
-      <BreadcrumbCrumbButton type="button" onClick={item.onClick} disabled={item.disabled}>
-        {item.label}
+      <BreadcrumbCrumbButton
+        type="button"
+        onClick={item.onClick}
+        disabled={item.disabled}
+        $pill={pill}
+        $muted={Boolean(item.disabled)}
+      >
+        <BreadcrumbCrumbBody item={item} iconMuted={iconMuted} />
       </BreadcrumbCrumbButton>
     );
   }
 
-  return <BreadcrumbCrumbText $muted>{item.label}</BreadcrumbCrumbText>;
+  return (
+    <BreadcrumbCrumbText $pill={pill} $muted={Boolean(item.disabled)}>
+      <BreadcrumbCrumbBody item={item} iconMuted={iconMuted} />
+    </BreadcrumbCrumbText>
+  );
 };
 
 /**
- * Хлебные крошки: семантический `nav` + `ol`/`li`, разделитель, текущая страница с `aria-current`.
+ * Хлебные крошки по макету Figma: `nav` + `ol`/`li`, шеврон, капсула у текущей страницы, иконка, сегмент «…».
  *
  * Пропсы — см. `BreadcrumbProps` и `BreadcrumbItem` в `types/ui`.
  */

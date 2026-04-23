@@ -404,10 +404,17 @@ export type LinkProps = LinkTextProps | LinkButtonProps;
 export type ButtonGroupOrientation = 'horizontal' | 'vertical';
 
 /**
+ * Скругление внешних углов склеенной группы (макет Figma: сегмент / капсула).
+ */
+export type ButtonGroupAttachedShape = 'segment' | 'pill';
+
+/**
  * Пропсы группы кнопок (`Button` / `IconButton`)
  * @property children - Дочерние кнопки (рекомендуется одинаковые `variant` и `size` внутри группы)
  * @property orientation - Ряд или колонка (по умолчанию `horizontal`)
- * @property attached - Склеить соседние границы; скругления только у краёв группы
+ * @property attached - Склеить соседние границы; скругления только у краёв группы; `gap: 0`, общий контур
+ * @property size - Размер для расчёта внешнего радиуса в `attached` (совпадайте с `size` у дочерних `Button`)
+ * @property attachedShape - `segment` — радиус от `size`; `pill` — внешние углы как у капсулы
  * @property fullWidth - Растянуть группу на ширину родителя (`display: flex`, `width: 100%`)
  * @property role - Роль контейнера (по умолчанию `group`)
  * @property ariaLabel - Подпись для `aria-label` (желательно для доступности)
@@ -417,6 +424,9 @@ export interface ButtonGroupProps extends Omit<BaseComponentProps, 'children'> {
   children: ReactNode;
   orientation?: ButtonGroupOrientation;
   attached?: boolean;
+  /** Размер сегментов (для радиуса краёв при `attached`) */
+  size?: Size;
+  attachedShape?: ButtonGroupAttachedShape;
   fullWidth?: boolean;
   role?: string;
   ariaLabel?: string;
@@ -547,7 +557,15 @@ export interface TextAreaProps
  * @property additionalLabel - Дополнительная подпись под основным `label`
  * @property extraText - Дополнительный текст под полем
  * @property isLoading - Показ спиннера справа в строке выбора
+ * @property fileLayout - Макет Figma: `field` — слева плейсхолдер по умолчанию `input_file`, справа иконка загрузки; `dropzone` — пунктир и центр; `file` — карточка файла; `trigger` — прежний вид с отдельной кнопкой «Выбрать файл»
+ * @property dropzoneText - Текст в режиме `dropzone` (по умолчанию «Перенесите для загрузки»)
+ * @property fileCardLabel - Подпись над именем в карточке (`file`), напр. «Название файла»
+ * @property fileCardBadge - Короткая метка под иконкой (например расширение `doc`)
+ * @property uploadProgress - Прогресс 0–100: кольцевой индикатор справа в карточке
+ * @property fileSizeLabel - Подпись размера справа (например «1 МБ») после загрузки
  */
+export type FileInputLayout = 'field' | 'dropzone' | 'file' | 'trigger';
+
 export interface FileInputProps
   extends Omit<
     BaseInputProps,
@@ -571,6 +589,22 @@ export interface FileInputProps
   fileName?: string;
   showClearButton?: boolean;
   onClear?: () => void;
+  fileLayout?: FileInputLayout;
+  /** Текст по центру зоны `dropzone` */
+  dropzoneText?: string;
+  /** Подпись над именем файла в режиме `file` */
+  fileCardLabel?: string;
+  /** Метка под иконкой документа в режиме `file` */
+  fileCardBadge?: string;
+  /** Прогресс загрузки 0–100 для кольцевого индикатора */
+  uploadProgress?: number;
+  /** Размер файла для отображения справа (режим `file`) */
+  fileSizeLabel?: string;
+  /** Drag-and-drop (режим `dropzone`) */
+  onDragEnter?: React.DragEventHandler<HTMLDivElement>;
+  onDragLeave?: React.DragEventHandler<HTMLDivElement>;
+  onDragOver?: React.DragEventHandler<HTMLDivElement>;
+  onDrop?: React.DragEventHandler<HTMLDivElement>;
 }
 
 /**
@@ -587,6 +621,116 @@ export interface BadgeProps extends BaseComponentProps {
   isDot?: boolean; // Специальный dot размер
   rounded?: boolean;
   onClick?: () => void;
+}
+
+/** Цветовая схема тега (макет Figma) */
+export type TagColorVariant = 'neutral' | 'danger' | 'info' | 'success' | 'warning';
+
+/** Вид заливки: мягкий фон или контрастная обводка */
+export type TagAppearance = 'filled' | 'outline';
+
+/**
+ * Тег (pill с текстом/иконками): нейтральный, ошибка, инфо, успех, предупреждение × filled / outline.
+ * @property children - Текст (например «Tag»)
+ * @property colorVariant - Палитра (`neutral` по умолчанию)
+ * @property appearance - `filled` или `outline`
+ * @property size - Высота и отступы (по умолчанию SM)
+ * @property leftIcon - Иконка слева от текста
+ * @property rightIcon - Иконка справа от текста
+ * @property onClick - Кликабельный тег (`role="button"`, клавиатура)
+ * @property disabled - Неактивное состояние
+ */
+export interface TagProps extends BaseComponentProps, Omit<React.HTMLAttributes<HTMLSpanElement>, 'children'> {
+  children?: React.ReactNode;
+  colorVariant?: TagColorVariant;
+  appearance?: TagAppearance;
+  size?: Size;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  onClick?: React.MouseEventHandler<HTMLSpanElement>;
+  disabled?: boolean;
+}
+
+/**
+ * Чип «Pill» с круглым индикатором слева (макет Figma: default / hover / active / selected / disabled).
+ * @property children - Подпись (например «Pill»)
+ * @property selected - Выбранное состояние (синий акцент, заполненный индикатор)
+ * @property size - Размер: SM / MD / LG
+ * @property disabled - Неактивное состояние
+ * @property className - Дополнительный CSS-класс
+ * Остальные пропсы передаются на нативную кнопку (`type="button"` по умолчанию).
+ */
+export interface PillProps
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'size'>,
+    BaseComponentProps {
+  children: React.ReactNode;
+  selected?: boolean;
+  size?: Size;
+}
+
+/** Значение диапазона для `RangeSlider`: [нижняя граница, верхняя граница] */
+export type SliderRangeValue = readonly [number, number];
+
+/**
+ * Общие пропсы шкалы для `Slider` и `RangeSlider`.
+ * @property min - Минимум шкалы
+ * @property max - Максимум шкалы
+ * @property step - Шаг изменения
+ * @property disabled - Отключение взаимодействия
+ * @property fullWidth - Растянуть на ширину контейнера
+ * @property formatValue - Подпись под бегунком (и под каждым в range)
+ * @property formatMinLabel - Текст над левым концом трека
+ * @property formatMaxLabel - Текст над правым концом трека
+ * @property showValueLabel - Показывать число под бегунком(ами)
+ * @property size - Размер бегунка (SM / MD / LG)
+ */
+export interface SliderBaseProps extends BaseComponentProps {
+  min?: number;
+  max?: number;
+  step?: number;
+  disabled?: boolean;
+  fullWidth?: boolean;
+  formatValue?: (value: number) => string;
+  formatMinLabel?: (min: number) => string;
+  formatMaxLabel?: (max: number) => string;
+  showValueLabel?: boolean;
+  size?: Size;
+}
+
+/**
+ * Одиночный слайдер (один бегунок, активный трек слева до значения).
+ * @property value - Контролируемое значение
+ * @property defaultValue - Начальное значение в неконтролируемом режиме
+ * @property onChange - Сообщает новое число после перетаскивания / клика по треку / клавиатуры
+ * @property name - Имя для скрытого `input` (опционально, для форм)
+ */
+export interface SliderProps extends SliderBaseProps {
+  value?: number;
+  defaultValue?: number;
+  onChange?: (value: number) => void;
+  name?: string;
+}
+
+/**
+ * Слайдер диапазона (два бегунка, активный трек между ними).
+ * @property value - Контролируемая пара `[от, до]`
+ * @property defaultValue - Начальная пара в неконтролируемом режиме
+ * @property onChange - Новая пара после изменения
+ * @property showManualInputs - Поля ввода «От» / «До» под шкалой (как в макете)
+ * @property fromInputPlaceholder / toInputPlaceholder - Плейсхолдеры полей
+ * @property currencySuffix - Символ справа в полях (например «₽»)
+ * @property nameFrom / nameTo - Атрибуты `name` у полей ввода
+ */
+export interface RangeSliderProps extends SliderBaseProps {
+  value?: SliderRangeValue;
+  defaultValue?: SliderRangeValue;
+  onChange?: (value: SliderRangeValue) => void;
+  showManualInputs?: boolean;
+  fromInputPlaceholder?: string;
+  toInputPlaceholder?: string;
+  currencySuffix?: string;
+  nameFrom?: string;
+  nameTo?: string;
 }
 
 /**
@@ -1116,6 +1260,16 @@ export enum TabsVerticalPosition {
 }
 
 /**
+ * Внешний вид табов (макет Figma: сегментированный «pill» или классическая линия)
+ */
+export enum TabsVariant {
+  /** Нижняя/боковая линия-индикатор, фон панели */
+  LINE = 'line',
+  /** Сегментированный контрол в скруглённом треке */
+  PILL = 'pill',
+}
+
+/**
  * Ориентация текста в TabItem
  */
 export enum TabItemTextOrientation {
@@ -1138,7 +1292,176 @@ export interface TabsProps extends BaseComponentProps {
   direction?: TabsDirection;
   /** Позиция табов в вертикальном режиме (слева или справа от контента) */
   tabsPosition?: TabsVerticalPosition;
+  /**
+   * Вариант оформления. Если не задан: горизонтально — pill (макет сегментов), вертикально — line.
+   */
+  variant?: TabsVariant;
 }
+
+/**
+ * Подсветка активного пункта бокового меню (макет Figma Menu / MenuItem)
+ */
+export enum MenuActiveAppearance {
+  /** Синяя полоса слева + акцентный цвет подписи и иконок */
+  BAR = 'bar',
+  /** Полоса + мягкий голубой фон */
+  HIGHLIGHTED = 'highlighted',
+  /** Сплошная заливка primary, белый текст */
+  SOLID = 'solid',
+}
+
+/**
+ * Пропсы контейнера вертикального меню навигации
+ * @property collapsed — компактный режим: только иконки, бейдж на иконке
+ * @property activeId — id выбранного пункта (контролируемый режим)
+ * @property defaultActiveId — начальный выбранный пункт
+ * @property onActiveChange — смена выбранного id
+ * @property activeAppearance — стиль подсветки активного пункта
+ * @property aria-label — доступное имя для элемента навигации
+ */
+export interface MenuProps extends BaseComponentProps {
+  collapsed?: boolean;
+  activeId?: string | null;
+  defaultActiveId?: string | null;
+  onActiveChange?: (id: string) => void;
+  activeAppearance?: MenuActiveAppearance;
+  'aria-label'?: string;
+}
+
+/**
+ * Пропсы пункта меню
+ * @property id — уникальный ключ внутри меню (связь с activeId)
+ * @property label — основной текст (в collapsed скрывается визуально)
+ * @property icon — префикс-иконка слева
+ * @property badge — красный бейдж (в expanded — справа от текста, в collapsed — на иконке)
+ * @property suffix — суффикс (например шеврон подменю)
+ * @property disabled — отключённое состояние
+ * @property href — если задан, рендерится ссылка вместо кнопки
+ * @property title — подсказка; в collapsed по умолчанию не задаётся из label (передайте строку)
+ * @property onClick — дополнительный обработчик клика
+ */
+export interface MenuItemProps {
+  id: string;
+  label: React.ReactNode;
+  icon?: React.ReactNode;
+  badge?: React.ReactNode;
+  suffix?: React.ReactNode;
+  disabled?: boolean;
+  href?: string;
+  className?: string;
+  title?: string;
+  children?: React.ReactNode;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => void;
+}
+
+/**
+ * Закрепление плавающей панели у края экрана (ось-выравнивание).
+ */
+export enum FloatingMenuPlacement {
+  LEFT_TOP = 'left-top',
+  LEFT_CENTER = 'left-center',
+  LEFT_BOTTOM = 'left-bottom',
+  RIGHT_TOP = 'right-top',
+  RIGHT_CENTER = 'right-center',
+  RIGHT_BOTTOM = 'right-bottom',
+  TOP_LEFT = 'top-left',
+  TOP_CENTER = 'top-center',
+  TOP_RIGHT = 'top-right',
+  BOTTOM_LEFT = 'bottom-left',
+  BOTTOM_CENTER = 'bottom-center',
+  BOTTOM_RIGHT = 'bottom-right',
+}
+
+/**
+ * Внешний вид группы кнопок внутри панели (макет Figma: вторая группа — светлый «инсет»).
+ */
+export enum FloatingMenuGroupVariant {
+  /** Обычные кнопки на белом фоне панели */
+  DEFAULT = 'default',
+  /** Вложенный серый блок со скруглением */
+  INSET = 'inset',
+}
+
+/**
+ * Как открывается всплывающее меню у пункта.
+ */
+export enum FloatingMenuDropdownTrigger {
+  CLICK = 'click',
+  HOVER = 'hover',
+}
+
+/**
+ * С чего начинается перетаскивание панели.
+ */
+export enum FloatingMenuDragSource {
+  /** За всю панель (кроме интерактивных дочерних кнопок) */
+  BAR = 'bar',
+  /** Только за область `FloatingMenu.DragHandle` */
+  HANDLE = 'handle',
+}
+
+/**
+ * Пропсы корневой плавающей панели (toolbar).
+ * @property placement — фиксация у края экрана; не используется при `draggable=true` (позиция задаётся смещением)
+ * @property draggable — свободное перемещение по экрану
+ * @property dragSource — перетаскивание за всю панель или только за `DragHandle`
+ * @property defaultOffset — начальные координаты `left/top` в px при `draggable` (если не заданы — центр по нижнему краю)
+ * @property zIndex — слой отображения
+ * @property aria-label — подпись для `role="toolbar"`
+ */
+export interface FloatingMenuProps extends BaseComponentProps {
+  placement?: FloatingMenuPlacement;
+  draggable?: boolean;
+  dragSource?: FloatingMenuDragSource;
+  defaultOffset?: { x: number; y: number };
+  zIndex?: number;
+  'aria-label': string;
+}
+
+/**
+ * Пропсы группы действий (между группами — `FloatingMenu.Divider`).
+ * @property variant — default или inset (серый фон)
+ */
+export interface FloatingMenuGroupProps extends BaseComponentProps {
+  variant?: FloatingMenuGroupVariant;
+}
+
+/**
+ * Пропсы кнопки пункта панели.
+ * @property icon — содержимое кнопки (иконка)
+ * @property active — выбранный инструмент (синяя подложка в default-группе)
+ * @property disabled — отключить взаимодействие
+ * @property hasDropdown — показать шеврон (рядом с иконкой)
+ * @property dropdownTrigger — открытие меню по клику или по наведению
+ * @property dropdownContent — вложенное меню (обычно `<Menu>…</Menu>`)
+ * @property tooltip — текст или узел для `Tooltip`
+ * @property tooltipPosition — положение подсказки
+ * @property onClick — клик по кнопке
+ */
+export interface FloatingMenuGroupItemProps extends BaseComponentProps {
+  icon: React.ReactNode;
+  active?: boolean;
+  disabled?: boolean;
+  hasDropdown?: boolean;
+  dropdownTrigger?: FloatingMenuDropdownTrigger;
+  dropdownContent?: React.ReactNode;
+  tooltip?: React.ReactNode;
+  tooltipPosition?: TooltipPosition;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  'aria-label': string;
+}
+
+/**
+ * Пропсы маркера зоны перетаскивания (при `dragSource={HANDLE}`).
+ */
+export interface FloatingMenuDragHandleProps extends BaseComponentProps {
+  children?: React.ReactNode;
+}
+
+/**
+ * Пропсы вертикального разделителя между группами.
+ */
+export interface FloatingMenuDividerProps extends BaseComponentProps {}
 
 /**
  * Пропсы аккордеона
@@ -1753,8 +2076,31 @@ export interface SelectProps
 
 /**
  * Визуальный тип toast-уведомления
+ * `neutral` — нейтральная серая палитра (в основном для внешнего вида «пилюля» по макету Figma)
  */
-export type ToastType = 'success' | 'error' | 'warning' | 'info';
+export type ToastType = 'success' | 'error' | 'warning' | 'info' | 'neutral';
+
+/**
+ * Внешний вид карточки toast: классическая с полосой слева или «пилюля» с иконкой, свечением и кнопкой действия
+ */
+export enum ToastAppearance {
+  /** Полоса слева, фон по типу уведомления */
+  CARD = 'card',
+  /** Светлая «капсула»: иконка с glow, текст, опциональная кнопка действия, круглая кнопка закрытия */
+  PILL = 'pill',
+}
+
+/**
+ * Дополнительные параметры вызова `showToast` (пятый аргумент)
+ * @property appearance - Переопределить внешний вид для этой записи
+ * @property actionLabel - Текст кнопки действия (для `pill` — справа от сообщения)
+ * @property onAction - Обработчик действия; после вызова toast закрывается
+ */
+export interface ShowToastOptions {
+  appearance?: ToastAppearance;
+  actionLabel?: string;
+  onAction?: () => void;
+}
 
 /**
  * Одна запись в стеке уведомлений (данные для компонента `Toast`)
@@ -1763,6 +2109,9 @@ export type ToastType = 'success' | 'error' | 'warning' | 'info';
  * @property message - Основной текст
  * @property title - Заголовок (опционально)
  * @property duration - Автоскрытие в мс (`0` — не скрывать по таймеру)
+ * @property appearance - Внешний вид; если не задан — берётся `defaultAppearance` у `ToastProvider`
+ * @property actionLabel - Подпись кнопки действия (внешний вид `pill`)
+ * @property onAction - Колбэк кнопки действия
  */
 export interface ToastItem {
   id: string;
@@ -1770,6 +2119,9 @@ export interface ToastItem {
   message: string;
   title?: string;
   duration?: number;
+  appearance?: ToastAppearance;
+  actionLabel?: string;
+  onAction?: () => void;
 }
 
 /**
@@ -1777,7 +2129,13 @@ export interface ToastItem {
  */
 export interface ToastContextValue {
   toasts: ToastItem[];
-  showToast: (message: string, type?: ToastType, title?: string, duration?: number) => void;
+  showToast: (
+    message: string,
+    type?: ToastType,
+    title?: string,
+    duration?: number,
+    options?: ShowToastOptions,
+  ) => void;
   hideToast: (id: string) => void;
   clearToasts: () => void;
 }
@@ -1800,6 +2158,8 @@ export type ToastPlacement = 'top-right' | 'top-center' | 'bottom-right';
 export interface ToastProviderProps {
   children?: ReactNode;
   placement?: ToastPlacement;
+  /** Внешний вид новых toast, если в записи не указан `appearance` */
+  defaultAppearance?: ToastAppearance;
 }
 
 /**
@@ -1871,6 +2231,10 @@ export interface SnackbarProviderProps {
  * @property current - Явно текущая страница (`aria-current="page"`); иначе: последний пункт без `href` и без `onClick`
  * @property className - CSS-класс на элементе `li` пункта
  * @property disabled - Отключить ссылку/кнопку
+ * @property icon - Иконка слева от подписи (макет Figma: «дом + Главная»)
+ * @property crumbStyle - `plain` — только текст/иконка; `pill` — капсула с фоном; если не задано — у текущей страницы автоматически `pill`
+ * @property ellipsis - Свернутый сегмент «…» в капсуле; обычно с `onClick`
+ * @property ellipsisAriaLabel - Подпись для `aria-label` у сегмента `ellipsis` (доступность)
  */
 export interface BreadcrumbItem {
   id?: string | number;
@@ -1882,6 +2246,10 @@ export interface BreadcrumbItem {
   current?: boolean;
   className?: string;
   disabled?: boolean;
+  icon?: ReactNode;
+  crumbStyle?: 'plain' | 'pill';
+  ellipsis?: boolean;
+  ellipsisAriaLabel?: string;
 }
 
 /**

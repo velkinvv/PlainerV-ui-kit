@@ -32,3 +32,28 @@ export const formatFileListSummary = (
   }
   return list[0]?.name ?? '';
 };
+
+/**
+ * Ограничивает прогресс загрузки диапазоном 0–100.
+ * @param value - Значение из пропсов.
+ * @returns Число 0..100 или `null`, если значение не задано / не число.
+ */
+export const clampUploadProgress = (value: number | undefined): number | null => {
+  if (value === undefined || Number.isNaN(value)) {
+    return null;
+  }
+  return Math.min(100, Math.max(0, value));
+};
+
+/**
+ * Короткое расширение файла для бейджа карточки (например `doc`).
+ * @param fileName - Имя файла с точкой и расширением.
+ */
+export const getFileExtensionBadge = (fileName: string): string => {
+  if (!fileName?.includes('.')) {
+    return '';
+  }
+  const parts = fileName.split('.');
+  const ext = parts[parts.length - 1];
+  return ext ? ext.toLowerCase() : '';
+};
