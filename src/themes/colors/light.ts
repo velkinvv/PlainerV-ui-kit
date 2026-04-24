@@ -59,7 +59,8 @@ export const lightColors: Colors = {
   warning: colors.orange[500], // Предупреждение
   danger: colors.red[600], // Опасность
   dangerHover: colors.red[700], // Опасность при наведении
-  info: colors.blue[500], // Информация
+  /* Яркий синий UI (календарь, инфо); не colors.blue — там тёмные брендовые оттенки */
+  info: colors.primary[500],
 
   // Специальные цвета
   overlay: 'rgba(0, 0, 0, 0.5)', // Наложение

@@ -313,7 +313,7 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
                     >
                       <CalendarMonthTriggerLabel>{triggerLabel}</CalendarMonthTriggerLabel>
                       <CalendarChevronFlip $open={monthMenuOpen} aria-hidden>
-                        <Icon name="IconPlainerArrowDown" size={IconSize.SM} color="currentColor" />
+                        <Icon name="IconPlainerChevronDown" size={IconSize.MD} color="currentColor" />
                       </CalendarChevronFlip>
                     </CalendarMonthTrigger>
                   }
@@ -322,8 +322,9 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
                   onSelect={handleMonthSelect}
                   disabled={disabled}
                   size={Size.SM}
+                  menuDensity="compact"
                   searchable={false}
-                  menuMaxHeight={280}
+                  menuMaxHeight={240}
                   isMenuOpen={monthMenuOpen}
                   onMenuOpenChange={setMonthMenuOpen}
                   disableAutoFocus
@@ -369,13 +370,13 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
           />
         ) : null}
 
-        <CalendarWeekdays>
+        <CalendarWeekdays $size={size}>
           {weekdayLabels.map((wd, i) => (
             <CalendarWeekdayCell key={`${wd}-${i}`}>{wd}</CalendarWeekdayCell>
           ))}
         </CalendarWeekdays>
 
-        <CalendarGrid>
+        <CalendarGrid $size={size}>
           {cells.map((cell, idx) => {
             const dayOnly = new Date(
               cell.date.getFullYear(),

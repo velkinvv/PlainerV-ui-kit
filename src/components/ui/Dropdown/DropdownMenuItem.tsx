@@ -54,7 +54,13 @@ export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuIte
       onActivateItem,
       multiSelection,
       disableSelectedOptionHighlight,
+      menuDensity,
+      size: menuSize,
     } = useDropdownMenuContext();
+
+    /** Плотные строки для календаря и др. */
+    const itemDensity = menuDensity === 'compact' ? 'compact' : undefined;
+    const itemSize = menuSize ?? Size.MD;
 
     const isDisabled = disabled || loading || skeleton;
 
@@ -181,6 +187,8 @@ export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuIte
         data-tone={tone}
         data-skeleton={true}
         $state={finalState}
+        $size={itemSize}
+        $density={itemDensity}
         className={clsx('ui-dropdown-menu-item', className)}
         onClick={handleClick}
         onMouseEnter={handleMouseEnter}
@@ -206,6 +214,8 @@ export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuIte
         data-tone={tone}
         data-loading={loading}
         $state={finalState}
+        $size={itemSize}
+        $density={itemDensity}
         className={clsx('ui-dropdown-menu-item', className)}
         onClick={handleClick}
         onMouseEnter={handleMouseEnter}

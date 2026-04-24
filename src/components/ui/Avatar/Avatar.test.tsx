@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { Avatar } from './Avatar';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Size } from '../../../types/sizes';
@@ -73,30 +73,47 @@ describe('Avatar', () => {
         />,
       );
 
+      const image = screen.getByAltText('Иван Петров');
+      fireEvent.error(image);
+
       // Проверяем, что отображаются инициалы после ошибки загрузки изображения
       expect(screen.getByText('ИП')).toBeInTheDocument();
     });
   });
 
   describe('status functionality', () => {
-    it('should display online status', () => {
+    it('показывает Badge с числом при ONLINE и messageCount (цвет статуса задаётся в Badge)', () => {
       renderWithTheme(
+        <Avatar
+          userName="Иван Петров"
+          status={AvatarStatus.ONLINE}
+          messageCount={4}
+          size={Size.MD}
+        />,
+      );
+
+      expect(screen.getByText('4')).toBeInTheDocument();
+    });
+
+    it('показывает Badge с числом при OFFLINE и messageCount', () => {
+      renderWithTheme(
+        <Avatar
+          userName="Иван Петров"
+          status={AvatarStatus.OFFLINE}
+          messageCount={2}
+          size={Size.MD}
+        />,
+      );
+
+      expect(screen.getByText('2')).toBeInTheDocument();
+    });
+
+    it('не рендерит Badge без messageCount даже при переданном статусе', () => {
+      const { container } = renderWithTheme(
         <Avatar userName="Иван Петров" status={AvatarStatus.ONLINE} size={Size.MD} />,
       );
 
-      // Проверяем, что отображается статус (зеленый индикатор)
-      const statusIndicator = document.querySelector('[style*="backgroundColor"][style*="93e850"]');
-      expect(statusIndicator).toBeInTheDocument();
-    });
-
-    it('should display offline status', () => {
-      renderWithTheme(
-        <Avatar userName="Иван Петров" status={AvatarStatus.OFFLINE} size={Size.MD} />,
-      );
-
-      // Проверяем, что отображается статус (серый индикатор)
-      const statusIndicator = document.querySelector('[style*="backgroundColor"][style*="9ca3af"]');
-      expect(statusIndicator).toBeInTheDocument();
+      expect(container.querySelector('.ui-badge')).not.toBeInTheDocument();
     });
   });
 

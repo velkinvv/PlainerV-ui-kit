@@ -19,8 +19,8 @@ const meta: Meta = {
 
 ### State Management
 - **useModal** - управление модальными окнами
-- **useToast** - стек карточек Toast (нужны `ThemeProvider` + `ToastProvider`)
-- **useSnackbar** - стек полос Snackbar внизу экрана (`ThemeProvider` + `SnackbarProvider`)
+- **useToast** - стек карточек Toast (нужны **ThemeProvider** + **ToastProvider**)
+- **useSnackbar** - стек полос Snackbar внизу экрана (**ThemeProvider** + **SnackbarProvider**)
 - **useLocalStorage** - работа с localStorage
 
 ### Performance & Optimization

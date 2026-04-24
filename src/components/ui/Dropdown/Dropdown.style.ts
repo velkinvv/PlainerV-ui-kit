@@ -1,4 +1,4 @@
-import styled, { keyframes } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { Size } from '../../../types/sizes';
 import type { DropdownAlignSelf, DropdownCssMixin } from '../../../types/ui';
 import {
@@ -41,6 +41,8 @@ export const DropdownContent = styled.div<{
   $menuMaxHeight?: string | number;
   $dropContainerCssMixin?: DropdownCssMixin;
   $inline?: boolean;
+  /** Узкие внутренние отступы панели списка (календарь и т.п.) */
+  $menuDensity?: 'default' | 'compact';
 }>`
   position: ${({ $inline }) => ($inline ? 'absolute' : 'fixed')};
   overflow: hidden;
@@ -65,6 +67,12 @@ export const DropdownContent = styled.div<{
       user-select: ${styles.userSelect};
     `;
   }}
+
+  ${({ $menuDensity }) =>
+    $menuDensity === 'compact' &&
+    css`
+      padding: 4px 4px;
+    `}
 
   opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
   visibility: ${({ $isOpen }) => ($isOpen ? 'visible' : 'hidden')};
@@ -190,10 +198,13 @@ export const DropdownDivider = styled.div`
 /**
  * Обёртка списка пунктов меню
  */
-export const DropdownMenuWrapper = styled.div`
+/** Обёртка списка пунктов; при `compact` без лишнего вертикального зазора между строками */
+export const DropdownMenuWrapper = styled.div.withConfig({
+  shouldForwardProp: prop => prop !== '$density',
+})<{ $density?: 'default' | 'compact' }>`
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: ${({ $density }) => ($density === 'compact' ? '0px' : '4px')};
   width: 100%;
 `;
 
@@ -208,9 +219,13 @@ const spin = keyframes`
  * @param size - размер элемента
  * @param state - состояние элемента
  */
-export const DropdownItem = styled.div<{
+export const DropdownItem = styled.div.withConfig({
+  shouldForwardProp: prop => !['$density', '$size', '$state'].includes(prop),
+})<{
   $size?: Size;
   $state?: 'hover' | 'active' | 'disabled' | 'selected' | 'focus';
+  /** Компактные строки меню (календарь) */
+  $density?: 'default' | 'compact';
 }>`
   display: flex;
   align-items: center;
@@ -318,6 +333,16 @@ export const DropdownItem = styled.div<{
       return styles.borderRadius;
     }};
   }
+
+  /* После правил скругления краёв списка — чтобы padding/радиус компактного режима не перебивались */
+  ${({ $density }) =>
+    $density === 'compact' &&
+    css`
+      padding: 3px 10px;
+      line-height: 1.2;
+      border-radius: 6px;
+      gap: 6px;
+    `}
 `;
 
 export const DropdownItemIconSlot = styled.span`

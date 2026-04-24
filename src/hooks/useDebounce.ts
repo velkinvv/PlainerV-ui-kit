@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 
 export function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
@@ -16,21 +16,37 @@ export function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
+/**
+ * Возвращает стабильную функцию: вызовы `callback` группируются, срабатывают после `delay` мс простоя.
+ * @param callback - исходный обработчик
+ * @param delay - пауза в мс (как у lodash debounce trailing edge)
+ */
 export function useDebounceCallback<T extends (...args: unknown[]) => unknown>(
   callback: T,
   delay: number,
 ): T {
-  const [debouncedCallback, setDebouncedCallback] = useState<T>(callback);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const callbackRef = useRef<T>(callback);
+  callbackRef.current = callback;
 
   useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedCallback(() => callback);
-    }, delay);
-
     return () => {
-      clearTimeout(handler);
+      if (timeoutRef.current !== undefined) {
+        clearTimeout(timeoutRef.current);
+      }
     };
-  }, [callback, delay]);
+  }, []);
 
-  return debouncedCallback;
+  return useMemo(() => {
+    const debounced = (...args: Parameters<T>) => {
+      if (timeoutRef.current !== undefined) {
+        clearTimeout(timeoutRef.current);
+      }
+      timeoutRef.current = setTimeout(() => {
+        timeoutRef.current = undefined;
+        void callbackRef.current(...args);
+      }, delay);
+    };
+    return debounced as T;
+  }, [delay]);
 }

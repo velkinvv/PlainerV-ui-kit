@@ -9,6 +9,7 @@ import {
   toISODateString,
   getWeekdayNames,
 } from '../../../../handlers/dateHandlers';
+import { getClearIconSizeForInputField } from '../../../../handlers/iconHandlers';
 import { Size, IconSize } from '../../../../types/sizes';
 import { Calendar } from '../../Calendar/Calendar';
 import { Button } from '../../buttons/Button/Button';
@@ -72,7 +73,8 @@ const _Label = styled.label.withConfig({
   font-size: ${({ size }) => {
     switch (size) {
       case Size.SM:
-        return '10px';
+        /* Как у MD: 12px, не 10px — читаемость по макету */
+        return '12px';
       case Size.LG:
         return '14px';
       default:
@@ -117,7 +119,7 @@ const LeftLabel = styled(AbsoluteLabel)`
   font-size: ${({ size }) => {
     switch (size) {
       case Size.SM:
-        return '10px';
+        return '12px';
       case Size.LG:
         return '14px';
       default:
@@ -203,16 +205,29 @@ const IconButton = styled.button`
   }
 `;
 
+/** Ширина как у `InputWrapper`, чтобы счётчик и подписи не растягивались на 100% ширины внешнего контейнера */
+const DateInputFieldStack = styled.div.withConfig({
+  shouldForwardProp: prop => !['fullWidth'].includes(prop),
+})<{ fullWidth?: boolean }>`
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: ${({ fullWidth }) => (fullWidth ? '100%' : '335px')};
+  max-width: 100%;
+`;
+
 const CalendarPopup = styled.div.withConfig({
   shouldForwardProp: prop => !['isOpen', 'size'].includes(prop),
 })<{ isOpen: boolean; size?: Size }>`
   position: absolute;
   top: 100%;
   left: 0;
-  right: 0;
+  /* По ширине календаря, без растягивания на всю ширину поля ввода */
+  width: max-content;
+  max-width: 100%;
   background: ${({ theme }) => theme.colors.backgroundSecondary};
   border: 2px solid ${({ theme }) => theme.colors.borderSecondary};
-  border-radius: ${BorderRadiusHandler(Size.SM)};
+  border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 1000;
   opacity: ${({ isOpen }) => (isOpen ? 1 : 0)};
@@ -362,7 +377,8 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
       placeholder,
       disabled = false,
       readOnly = false,
-      size = Size.MD,
+      size = Size.SM,
+      fullWidth = false,
       error,
       className,
       range = false,
@@ -1256,10 +1272,11 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
             )}
           </div>
         )}
+        <DateInputFieldStack fullWidth={fullWidth}>
         {skeleton ? (
-          <SkeletonEffect size={size} />
+          <SkeletonEffect size={size} fullWidth />
         ) : (
-          <InputWrapper focused={isOpen} error={error} size={size} status={status}>
+          <InputWrapper focused={isOpen} error={error} size={size} status={status} fullWidth={fullWidth}>
             {showIcon && (
               <IconWrapper size={size}>
                 {isLoading ? (
@@ -1316,12 +1333,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
             {clearIcon && inputValue && !disabled && (
               <IconWrapper size={size} style={{ marginLeft: 'auto' }}>
                 <IconButton onClick={handleClearIconClick}>
-                  <Icon
-                    name="IconPlainerClose"
-                    size={
-                      size === Size.SM ? IconSize.XS : size === Size.LG ? IconSize.MD : IconSize.SM
-                    }
-                  />
+                  <Icon name="IconPlainerClose" size={getClearIconSizeForInputField(size)} />
                 </IconButton>
               </IconWrapper>
             )}
@@ -1351,6 +1363,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
               </CharacterCounter>
             ) : null;
           })()}
+        </DateInputFieldStack>
 
         <CalendarPopup isOpen={isOpen} size={size}>
           {renderTopPanel && (

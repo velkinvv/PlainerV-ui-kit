@@ -1,6 +1,7 @@
 import React, {
   forwardRef,
   useCallback,
+  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -40,10 +41,12 @@ import {
   SelectMultiCountBadge,
   SelectPanelRoot,
   SelectTriggerButton,
+  SelectTriggerInput,
   VisuallyHiddenSelect,
 } from './Select.style';
 import {
   applySelectPanelSelection,
+  filterSelectItemsByQuery,
   getSelectChevronIconSize,
   getSelectMultiSelectedCount,
   getSelectPanelInitialValue,
@@ -54,8 +57,8 @@ import {
 } from './handlers';
 
 /**
- * Селект с панелью как у `Dropdown` (`mode="select"`): поиск, мультивыбор, скрытый нативный `select` для форм.
- * @param props - Пропсы `SelectProps` без `mode`.
+ * Селект с панелью как у `Dropdown` (`mode="select"` | `searchSelect`): скрытый нативный `select` для форм.
+ * @param props - Пропсы панельного режима, включая `mode`.
  * @param ref - Ref на скрытый `HTMLSelectElement` для форм и тестов.
  */
 export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
@@ -79,7 +82,7 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
       readOnly = false,
       disabled = false,
       skeleton = false,
-      size = Size.MD,
+      size = Size.SM,
       textAlign = 'left',
       isLoading = false,
       tooltip,
@@ -99,9 +102,10 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
       searchFilter,
       dropdownVariant = 'default',
       menuMaxHeight = 320,
-      dropdownInline = true,
+      // Портал в `document.body` + `position: fixed`, как у выпадающих в Calendar — корректная позиция у триггера
+      dropdownInline = false,
       showMultiSelectionCountBadge,
-      mode: _mode,
+      mode = 'select',
       ...rest
     },
     ref,
@@ -118,7 +122,31 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
     const triggerId = id ?? autoTriggerId;
     const isMultiple = Boolean(multiple);
     const isControlled = value !== undefined;
-    const effectiveSearchable = searchable !== false;
+    /** Режим «поиск в триггере» только для одиночного выбора; при `multiple` ведём себя как обычный `select` */
+    const isSearchSelectMode = mode === 'searchSelect' && !isMultiple;
+    const effectiveSearchable = isSearchSelectMode ? false : searchable !== false;
+
+    const [searchSelectDraft, setSearchSelectDraft] = useState('');
+    const isSearchQueryControlled = searchValue !== undefined;
+    const effectiveSearchQuery = isSearchQueryControlled ? (searchValue ?? '') : searchSelectDraft;
+
+    const setEffectiveSearchQuery = useCallback(
+      (next: string) => {
+        if (!isSearchQueryControlled) {
+          setSearchSelectDraft(next);
+        }
+        onSearch?.(next);
+      },
+      [isSearchQueryControlled, onSearch],
+    );
+
+    // При открытии меню в searchSelect сбрасываем черновик (неконтролируемый режим), чтобы список начинался полным
+    useEffect(() => {
+      if (!isSearchSelectMode || !menuOpen || isSearchQueryControlled) {
+        return;
+      }
+      setSearchSelectDraft('');
+    }, [isSearchSelectMode, menuOpen, isSearchQueryControlled]);
 
     const [internalValue, setInternalValue] = useState<string | string[]>(() =>
       getSelectPanelInitialValue(options, defaultValue, isMultiple, placeholder),
@@ -133,6 +161,13 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
 
     const dropdownItems = useMemo(() => mapSelectOptionsToDropdownItems(options), [options]);
 
+    const dropdownItemsForMenu = useMemo(() => {
+      if (!isSearchSelectMode || !menuOpen) {
+        return dropdownItems;
+      }
+      return filterSelectItemsByQuery(effectiveSearchQuery, dropdownItems, searchFilter);
+    }, [isSearchSelectMode, menuOpen, effectiveSearchQuery, dropdownItems, searchFilter]);
+
     const triggerText = useMemo(
       () => getSelectPanelTriggerText(options, effectiveValue, isMultiple, placeholder),
       [options, effectiveValue, isMultiple, placeholder],
@@ -141,6 +176,12 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
     const triggerShowsPlaceholder = useMemo(
       () => getSelectTriggerShowsPlaceholder(effectiveValue, isMultiple, placeholder),
       [effectiveValue, isMultiple, placeholder],
+    );
+
+    /** Текст в поле-триггере: при открытом меню — строка поиска, при закрытом — выбранная подпись */
+    const searchSelectInputDisplay = useMemo(
+      () => (menuOpen ? effectiveSearchQuery : triggerText),
+      [menuOpen, effectiveSearchQuery, triggerText],
     );
 
     const chevronIconSize = useMemo(() => getSelectChevronIconSize(size), [size]);
@@ -218,8 +259,8 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
     if (skeleton) {
       return (
         <InputContainer fullWidth={fullWidth}>
-          {label ? <SkeletonEffect size={size} /> : null}
-          <SkeletonEffect size={size} />
+          {label ? <SkeletonEffect size={size} $layout="compact" /> : null}
+          <SkeletonEffect size={size} fullWidth={fullWidth} />
         </InputContainer>
       );
     }
@@ -236,36 +277,83 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
         readOnly={readOnly}
         className={className}
       >
-        <SelectTriggerButton
-          type="button"
-          id={triggerId}
-          disabled={selectDisabled}
-          $isPlaceholder={triggerShowsPlaceholder}
-          textAlign={textAlign}
-          aria-haspopup="listbox"
-          aria-expanded={menuOpen}
-          aria-invalid={error ? true : undefined}
-          aria-required={required ? true : undefined}
-          onFocus={(e) => {
-            setFocused(true);
-            onFocus?.(e as unknown as React.FocusEvent<HTMLSelectElement>);
-          }}
-          onBlur={(e) => {
-            setFocused(false);
-            onBlur?.(e as unknown as React.FocusEvent<HTMLSelectElement>);
-          }}
-        >
-          {triggerText}
-        </SelectTriggerButton>
+        {isSearchSelectMode ? (
+          <SelectTriggerInput
+            type="text"
+            id={triggerId}
+            disabled={selectDisabled}
+            value={searchSelectInputDisplay}
+            placeholder={placeholder ?? searchPlaceholder}
+            $isPlaceholder={Boolean(triggerShowsPlaceholder && !menuOpen)}
+            textAlign={textAlign}
+            aria-haspopup="listbox"
+            aria-expanded={menuOpen}
+            aria-autocomplete="list"
+            aria-invalid={error ? true : undefined}
+            aria-required={required ? true : undefined}
+            autoComplete="off"
+            onChange={(e) => {
+              const v = e.target.value;
+              setEffectiveSearchQuery(v);
+              if (!menuOpen) {
+                setMenuOpen(true);
+              }
+            }}
+            onFocus={(e) => {
+              setFocused(true);
+              setMenuOpen(true);
+              onFocus?.(e as unknown as React.FocusEvent<HTMLSelectElement>);
+            }}
+            onBlur={(e) => {
+              setFocused(false);
+              onBlur?.(e as unknown as React.FocusEvent<HTMLSelectElement>);
+            }}
+          />
+        ) : (
+          <SelectTriggerButton
+            type="button"
+            id={triggerId}
+            disabled={selectDisabled}
+            $isPlaceholder={triggerShowsPlaceholder}
+            textAlign={textAlign}
+            aria-haspopup="listbox"
+            aria-expanded={menuOpen}
+            aria-invalid={error ? true : undefined}
+            aria-required={required ? true : undefined}
+            onFocus={(e) => {
+              setFocused(true);
+              onFocus?.(e as unknown as React.FocusEvent<HTMLSelectElement>);
+            }}
+            onBlur={(e) => {
+              setFocused(false);
+              onBlur?.(e as unknown as React.FocusEvent<HTMLSelectElement>);
+            }}
+          >
+            {triggerText}
+          </SelectTriggerButton>
+        )}
         {isLoading ? <LoadingSpinner size={size} /> : null}
         {showMultiCountBadge ? (
           <SelectMultiCountBadge $fieldSize={size} aria-hidden>
             {multiSelectedCount}
           </SelectMultiCountBadge>
         ) : null}
-        <SelectChevronSlot aria-hidden>
+        <SelectChevronSlot
+          aria-hidden
+          onMouseDown={
+            isSearchSelectMode
+              ? (e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (!selectDisabled) {
+                    setMenuOpen((open) => !open);
+                  }
+                }
+              : undefined
+          }
+        >
           <SelectChevronFlip $isOpen={menuOpen}>
-            <Icon name="IconPlainerArrowDown" size={chevronIconSize} />
+            <Icon name="IconPlainerChevronDown" size={chevronIconSize} color="currentColor" />
           </SelectChevronFlip>
         </SelectChevronSlot>
       </InputWrapper>
@@ -275,7 +363,7 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
       <SelectDropdownAnchor ref={containerRef} $fullWidth={fullWidth}>
         <Dropdown
           trigger={triggerControl}
-          items={dropdownItems}
+          items={dropdownItemsForMenu}
           value={dropdownValue}
           onSelect={handleDropdownSelect}
           disabled={selectDisabled}
@@ -296,6 +384,7 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
           onMenuOpenChange={setMenuOpen}
           disableAutoFocus
           positioningMode="autoFlip"
+          triggerWrapClickToggle={!isSearchSelectMode}
         />
       </SelectDropdownAnchor>
     );

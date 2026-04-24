@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ThemeProvider } from '../../../../themes/ThemeProvider';
+import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Dropdown } from './Dropdown';
 import { Button } from '../buttons/Button/Button';
 
@@ -62,7 +62,7 @@ describe('Dropdown', () => {
     const item = screen.getByText('Пункт 1');
     fireEvent.click(item);
 
-    expect(handleSelect).toHaveBeenCalledWith('1');
+    expect(handleSelect).toHaveBeenCalledWith('1', expect.any(Object));
   });
 
   it('закрывается при выборе элемента', () => {

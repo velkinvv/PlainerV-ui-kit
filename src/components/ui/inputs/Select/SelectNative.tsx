@@ -46,7 +46,7 @@ export const SelectNative = forwardRef<HTMLSelectElement, SelectProps>(
       readOnly = false,
       disabled = false,
       skeleton = false,
-      size = Size.MD,
+      size = Size.SM,
       textAlign = 'left',
       isLoading = false,
       tooltip,
@@ -160,8 +160,8 @@ export const SelectNative = forwardRef<HTMLSelectElement, SelectProps>(
     if (skeleton) {
       return (
         <InputContainer fullWidth={fullWidth}>
-          {label ? <SkeletonEffect size={size} /> : null}
-          <SkeletonEffect size={size} />
+          {label ? <SkeletonEffect size={size} $layout="compact" /> : null}
+          <SkeletonEffect size={size} fullWidth={fullWidth} />
         </InputContainer>
       );
     }
@@ -171,7 +171,7 @@ export const SelectNative = forwardRef<HTMLSelectElement, SelectProps>(
         {selectElement}
         {isLoading ? <LoadingSpinner size={size} /> : null}
         <SelectChevronSlot aria-hidden>
-          <Icon name="IconPlainerArrowDown" size={chevronIconSize} />
+          <Icon name="IconPlainerChevronDown" size={chevronIconSize} color="currentColor" />
         </SelectChevronSlot>
       </>
     );

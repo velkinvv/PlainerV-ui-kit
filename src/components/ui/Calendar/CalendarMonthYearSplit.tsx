@@ -124,7 +124,7 @@ export const CalendarMonthYearSplit: React.FC<CalendarMonthYearSplitProps> = ({
                   {monthLabelFmt.format(new Date(year, month, 1))}
                 </CalendarMonthTriggerLabel>
                 <CalendarChevronFlip $open={monthMenuOpen} aria-hidden>
-                  <Icon name="IconPlainerArrowDown" size={IconSize.SM} color="currentColor" />
+                  <Icon name="IconPlainerChevronDown" size={IconSize.MD} color="currentColor" />
                 </CalendarChevronFlip>
               </CalendarMonthTrigger>
             }
@@ -133,8 +133,9 @@ export const CalendarMonthYearSplit: React.FC<CalendarMonthYearSplitProps> = ({
             onSelect={handleMonthSelect}
             disabled={disabled}
             size={Size.SM}
+            menuDensity="compact"
             searchable={false}
-            menuMaxHeight={280}
+            menuMaxHeight={240}
             isMenuOpen={monthMenuOpen}
             onMenuOpenChange={setMonthMenuOpen}
             disableAutoFocus
@@ -153,7 +154,7 @@ export const CalendarMonthYearSplit: React.FC<CalendarMonthYearSplitProps> = ({
               >
                 <CalendarMonthTriggerLabel>{String(year)}</CalendarMonthTriggerLabel>
                 <CalendarChevronFlip $open={yearMenuOpen} aria-hidden>
-                  <Icon name="IconPlainerArrowDown" size={IconSize.SM} color="currentColor" />
+                  <Icon name="IconPlainerChevronDown" size={IconSize.MD} color="currentColor" />
                 </CalendarChevronFlip>
               </CalendarMonthTrigger>
             }
@@ -162,8 +163,9 @@ export const CalendarMonthYearSplit: React.FC<CalendarMonthYearSplitProps> = ({
             onSelect={handleYearSelect}
             disabled={disabled}
             size={Size.SM}
+            menuDensity="compact"
             searchable={false}
-            menuMaxHeight={280}
+            menuMaxHeight={240}
             isMenuOpen={yearMenuOpen}
             onMenuOpenChange={setYearMenuOpen}
             disableAutoFocus

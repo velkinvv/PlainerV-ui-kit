@@ -13,6 +13,7 @@ jest.mock('../Avatar/Avatar', () => ({
     onClick,
     showTooltip,
     tooltipText,
+    size,
     ...props
   }: {
     userName?: string;
@@ -20,6 +21,7 @@ jest.mock('../Avatar/Avatar', () => ({
     onClick?: () => void;
     showTooltip?: boolean;
     tooltipText?: string;
+    size?: string;
     [key: string]: unknown;
   }) => (
     <div
@@ -28,6 +30,7 @@ jest.mock('../Avatar/Avatar', () => ({
       data-alt={alt}
       data-show-tooltip={showTooltip}
       data-tooltip-text={tooltipText}
+      data-size={size}
       onClick={onClick}
       {...props}
     >
@@ -195,8 +198,8 @@ describe('AvatarGroup', () => {
     render(<AvatarGroup avatars={sampleAvatars} size={Size.LG} />);
 
     const avatars = screen.getAllByTestId('avatar');
-    avatars.forEach(avatar => {
-      expect(avatar).toHaveAttribute('size', Size.LG);
+    avatars.forEach((avatar) => {
+      expect(avatar).toHaveAttribute('data-size', Size.LG);
     });
   });
 

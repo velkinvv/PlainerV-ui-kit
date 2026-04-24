@@ -1,4 +1,5 @@
 export * from './iconHandlers';
+export * from './tableSelectionHandlers';
 export * from './linkHandlers';
 export * from './uiHandlers';
 export * from './dateHandlers';

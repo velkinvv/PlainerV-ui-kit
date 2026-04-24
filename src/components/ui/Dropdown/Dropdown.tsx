@@ -91,6 +91,8 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       emptyMessage = 'Нет данных',
       renderErrorState,
       inline = false,
+      menuDensity = 'default',
+      triggerWrapClickToggle = true,
     },
     _ref,
   ) => {
@@ -532,6 +534,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
           disableSelectedOptionHighlight={disableSelectedOptionHighlight}
           virtualScroll={effectiveVirtualScroll}
           size={size}
+          menuDensity={menuDensity}
         >
           {renderDefinitions(pinnedTop, 'pinned-top')}
           {renderDefinitions(middle, 'regular')}
@@ -547,6 +550,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       disableSelectedOptionHighlight,
       virtualScroll,
       size,
+      menuDensity,
     ]);
 
     const renderChildren = React.useMemo(() => {
@@ -567,6 +571,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
             disableSelectedOptionHighlight,
             virtualScroll,
             size,
+            menuDensity,
           });
         }
 
@@ -594,6 +599,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       disableSelectedOptionHighlight,
       virtualScroll,
       size,
+      menuDensity,
     ]);
 
     const isAsyncLoading = shouldUseAsyncItems && asyncStatus === 'loading';
@@ -656,6 +662,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
         $menuMaxHeight={menuMaxHeight}
         $dropContainerCssMixin={dropContainerCssMixin}
         $inline={inline}
+        $menuDensity={menuDensity}
         style={dropContainerStyle}
       >
         {topPanel && <DropdownTopPanel>{topPanel}</DropdownTopPanel>}
@@ -683,7 +690,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
         >
           {trigger ? (
             <div
-              onClick={handleTriggerClick}
+              onClick={triggerWrapClickToggle ? handleTriggerClick : undefined}
               style={{ cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.6 : 1 }}
             >
               {trigger}

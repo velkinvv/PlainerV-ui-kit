@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
-import { BlurEffects } from '../components/storybook/BlurEffects/BlurEffects';
+import { BlurEffects } from './BlurEffects';
 import { blurClasses } from './blur';
 
 const meta: Meta<typeof BlurEffects> = {

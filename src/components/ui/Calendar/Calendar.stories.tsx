@@ -6,7 +6,7 @@ import { darkTheme } from '../../../themes/themes';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 
 const meta: Meta<typeof Calendar> = {
-  title: 'Components/Inputs/Calendar',
+  title: 'Components/Calendar',
   component: Calendar,
   decorators: [
     (Story) => (

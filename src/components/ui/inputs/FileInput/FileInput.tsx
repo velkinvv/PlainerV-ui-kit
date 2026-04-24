@@ -1,6 +1,7 @@
 import React, { forwardRef, useCallback, useId, useMemo, useRef, useState } from 'react';
 import type { FileInputLayout, FileInputProps, TooltipPosition } from '../../../../types/ui';
 import { InputVariant } from '../../../../types/ui';
+import { getClearIconSizeForInputField } from '../../../../handlers/iconHandlers';
 import { Size, IconSize } from '../../../../types/sizes';
 import { Icon } from '../../Icon/Icon';
 import { Tooltip } from '../../Tooltip/Tooltip';
@@ -85,7 +86,7 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
       skeleton = false,
       disabled = false,
       variant = InputVariant.DEFAULT,
-      size = Size.MD,
+      size = Size.SM,
       buttonLabel = DEFAULT_BUTTON_LABEL,
       fileName,
       showClearButton = false,
@@ -390,8 +391,8 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
     if (skeleton) {
       return (
         <InputContainer fullWidth={fullWidth}>
-          {label ? <SkeletonEffect size={size} /> : null}
-          <SkeletonEffect size={size} />
+          {label ? <SkeletonEffect size={size} $layout="compact" /> : null}
+          <SkeletonEffect size={size} fullWidth={fullWidth} />
         </InputContainer>
       );
     }
@@ -407,7 +408,7 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
         {rowContent}
         {useFloatingClear ? (
           <ClearButton type="button" onClick={handleClear} aria-label="Очистить выбор файла">
-            <Icon name="IconExClose" size={IconSize.SM} />
+            <Icon name="IconExClose" size={getClearIconSizeForInputField(size)} />
           </ClearButton>
         ) : null}
       </InputWrapper>

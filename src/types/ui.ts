@@ -282,10 +282,16 @@ export type InputSize = Size;
  */
 export enum InputVariant {
   DEFAULT = 'default', // Стандартное поле
-  SELECTOR = 'selector', // Поле-селектор
-  DATE = 'date', // Поле для даты
+  SELECTOR = 'selector', // Поле-селектор (обёртка `InputWrapper` для Select / FileInput)
+  DATE = 'date', // Поле для даты (обёртка для DateInput)
   CLEAR = 'clear', // Поле с кнопкой очистки
 }
+
+/**
+ * Допустимые варианты для компонента `Input` (текстовое поле).
+ * Стили селектора и даты задаются в `Select` и `DateInput`, не через `Input`.
+ */
+export type TextInputVariant = InputVariant.DEFAULT | InputVariant.CLEAR;
 
 /**
  * Позиции элементов
@@ -465,15 +471,15 @@ export interface IconButtonProps extends BaseButtonProps {
 
 /**
  * Пропсы поля ввода
- * @property variant - Тип поля ввода
- * @property size - Размер поля
+ * @property variant - Вариант оформления: `default` или `clear` (селектор и дата — только в `Select` / `DateInput`)
+ * @property size - Размер поля (в компоненте по умолчанию `Size.SM`, см. также `theme.defaultInputSize`)
  * @property leftIcon - Иконка слева
  * @property rightIcon - Иконка справа
  * @property onClear - Обработчик очистки поля
  * @property showClearButton - Показывать кнопку очистки
  */
 export interface InputProps extends BaseInputProps {
-  variant?: InputVariant;
+  variant?: TextInputVariant;
   size?: Size;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
@@ -539,7 +545,7 @@ export interface TextAreaProps
  * @property skeleton - Скелетон вместо поля
  * @property disabled - Отключение поля и триггера
  * @property variant - Вариант обводки (`InputVariant`, по умолчанию `default`)
- * @property size - Размер отступов/высоты как у `Input`
+ * @property size - Размер отступов/высоты как у `Input` (в компоненте по умолчанию `Size.SM`)
  * @property status - Явный статус обводки (`error` | `success` | `warning`)
  * @property buttonLabel - Текст на `<label htmlFor>` триггера открытия диалога (по умолчанию «Выбрать файл»)
  * @property placeholder - Текст в области имени файла, пока ничего не выбрано
@@ -1115,14 +1121,9 @@ export type HintCssMixin = string | number | false | HintCssMixin[] | undefined;
  * @property emptyMessage - Сообщение по умолчанию для пустого состояния
  * @property renderErrorState - Кастомный рендер ошибки (получает ошибку и функцию повтора)
  * @property inline - Режим без портала: меню рендерится внутри контейнера и позиционируется через `position: absolute`
+ * @property menuDensity - `compact`: уменьшенные отступы у списка и пунктов (календарь и др. плотные макеты)
  * @property children - Содержимое dropdown (обычно `DropdownMenu`)
  */
-export interface DropdownTopPanelProps {
-  size?: Size;
-  variant?: 'default' | 'elevated' | 'outlined';
-  disabled?: boolean;
-}
-
 export interface DropdownVirtualScrollConfig {
   itemHeight: number | 'auto';
 }
@@ -1157,6 +1158,11 @@ export interface DropdownProps extends BaseComponentProps {
   dropContainerCssMixin?: DropdownCssMixin;
   positioningMode?: DropdownPositioningMode;
   portalContainer?: HTMLElement | null;
+  /**
+   * Если `false`, клик по обёртке триггера не открывает/закрывает меню (только снаружи через `isMenuOpen` / свой UI).
+   * Для комбобокса с полем ввода в триггере (`Select` `searchSelect`), чтобы не конфликтовать с кликом по `input`.
+   */
+  triggerWrapClickToggle?: boolean;
   searchable?: boolean;
   searchPlaceholder?: string;
   searchValue?: string;
@@ -1170,7 +1176,16 @@ export interface DropdownProps extends BaseComponentProps {
   emptyMessage?: string;
   renderErrorState?: (error?: unknown, retry?: () => void) => React.ReactNode;
   inline?: boolean;
+  /** Плотность меню: `compact` — меньше padding у контейнера и строк (например, месяц/год в календаре) */
+  menuDensity?: 'default' | 'compact';
   children?: React.ReactElement<DropdownMenuProps> | React.ReactNode;
+}
+
+/** Пропсы верхней/нижней панели выпадающего меню (`renderTopPanel` / `renderBottomPanel`) */
+export interface DropdownTopPanelProps {
+  size?: Size;
+  variant?: 'default' | 'elevated' | 'outlined';
+  disabled?: boolean;
 }
 
 /**
@@ -1183,6 +1198,7 @@ export interface DropdownProps extends BaseComponentProps {
  * @property disableSelectedOptionHighlight - Отключает подсветку выбранной опции
  * @property virtualScroll - Конфигурация виртуального скролла
  * @property size - Размер dropdown для вычисления высоты элемента при itemHeight="auto"
+ * @property menuDensity - `compact` — плотные пункты списка (согласовано с `Dropdown.menuDensity`)
  */
 export interface DropdownMenuProps extends BaseComponentProps {
   children: React.ReactNode;
@@ -1193,6 +1209,7 @@ export interface DropdownMenuProps extends BaseComponentProps {
   disableSelectedOptionHighlight?: boolean;
   virtualScroll?: DropdownVirtualScrollConfig;
   size?: Size;
+  menuDensity?: 'default' | 'compact';
 }
 
 /**
@@ -1461,7 +1478,8 @@ export interface FloatingMenuDragHandleProps extends BaseComponentProps {
 /**
  * Пропсы вертикального разделителя между группами.
  */
-export interface FloatingMenuDividerProps extends BaseComponentProps {}
+/** Разделитель групп: только базовые пропсы (`className`, `style` и т.д.) */
+export type FloatingMenuDividerProps = BaseComponentProps;
 
 /**
  * Пропсы аккордеона
@@ -2002,7 +2020,7 @@ export interface SelectOption {
  * @property readOnly - Блокировка выбора (через `disabled` у `select`, визуально как read-only)
  * @property disabled - Отключено
  * @property skeleton - Скелетон
- * @property size - Размер из `Size` (конфликт с HTML `size` у `select` снят через `Omit`)
+ * @property size - Размер из `Size` (в компоненте по умолчанию `Size.SM`; конфликт с HTML `size` у `select` снят через `Omit`)
  * @property textAlign - Выравнивание текста
  * @property isLoading - Спиннер справа
  * @property tooltip - Подсказка
@@ -2010,17 +2028,17 @@ export interface SelectOption {
  * @property tooltipPosition - Позиция подсказки
  * @property additionalLabel - Доп. подпись
  * @property extraText - Текст под полем
- * @property mode - `native` — нативный `select`; `select` — панель как у `Dropdown` с поиском и мультивыбором
- * @property multiple - Множественный выбор (нативно и в `mode="select"`)
- * @property searchable - В `mode="select"`: поле поиска в панели (по умолчанию `true`, передайте `false` чтобы отключить)
- * @property searchPlaceholder - Плейсхолдер поиска в панели
- * @property searchValue - Контролируемая строка поиска (прокидывается в `Dropdown`)
- * @property defaultSearchValue - Неконтролируемое значение поиска по умолчанию
- * @property onSearch - Изменение строки поиска в панели
+ * @property mode - `native` — нативный `select`; `select` — панель как у `Dropdown` (поиск в шапке панели по умолчанию); `searchSelect` — одиночный выбор: фильтр вводится в само поле, список открывается по фокусу, без отдельного поиска в панели (при `multiple` режим ведёт себя как `select`)
+ * @property multiple - Множественный выбор (нативно и в панельных режимах)
+ * @property searchable - В `mode="select"`: поле поиска в панели (по умолчанию `true`, передайте `false` чтобы отключить). В `mode="searchSelect"` игнорируется (поиск только в триггере); строка запроса — `searchValue` / `onSearch` при контроле
+ * @property searchPlaceholder - Плейсхолдер поиска в панели (`select`) или у поля в триггере (`searchSelect`)
+ * @property searchValue - Контролируемая строка поиска (панель или триггер в зависимости от `mode`)
+ * @property defaultSearchValue - Неконтролируемое значение поиска по умолчанию (панель)
+ * @property onSearch - Изменение строки поиска (панель или триггер)
  * @property searchFilter - Кастомная фильтрация пунктов (как у `Dropdown`)
  * @property dropdownVariant - Вариант оформления панели (`Dropdown`)
  * @property menuMaxHeight - Макс. высота панели
- * @property dropdownInline - `inline` у `Dropdown` (портал выключен)
+ * @property dropdownInline - `inline` у `Dropdown` (по умолчанию `false`: портал в body, меню под полем; `true` — меню внутри контейнера)
  * @property showMultiSelectionCountBadge - В `mode="select"` при `multiple`: круглый бейдж с числом выбранных слева от шеврона (по умолчанию включён)
  * @property onValueChange - Удобный колбэк при смене значения в `mode="select"` (строка или массив строк)
  * @property value - Для `multiple` — массив строк; иначе строка
@@ -2052,13 +2070,16 @@ export interface SelectProps
   tooltipPosition?: 'top' | 'bottom' | 'left' | 'right';
   additionalLabel?: string;
   extraText?: string;
-  /** `select` — выпадающая панель в стиле `Dropdown`; `native` — системный `select` */
-  mode?: 'native' | 'select';
-  /** В `mode="select"`: показывать поле поиска в панели (по умолчанию `true`) */
+  /** `select` — панель `Dropdown`; `searchSelect` — поиск в триггере (только single); `native` — системный `select` */
+  mode?: 'native' | 'select' | 'searchSelect';
+  /** В `mode="select"`: поле поиска в панели (по умолчанию `true`). В `searchSelect` не используется */
   searchable?: boolean;
+  /** В `mode="select"`: плейсхолдер поиска в панели. В `searchSelect`: плейсхолдер у поля ввода в триггере */
   searchPlaceholder?: string;
+  /** Контролируемая строка поиска: в `searchSelect` — текст в поле при открытом меню; в `select` — строка в панели `Dropdown` */
   searchValue?: string;
   defaultSearchValue?: string;
+  /** Ввод в строку поиска (`searchSelect` — в триггере; `select` — в панели при `searchable`) */
   onSearch?: (query: string) => void;
   searchFilter?: (query: string, item: DropdownMenuItemProps) => boolean;
   dropdownVariant?: 'default' | 'elevated' | 'outlined';
@@ -2300,6 +2321,7 @@ export interface PaginationProps extends BaseComponentProps {
  * @property disabled - Отключить чекбокс
  * @property size - Размер чекбокса
  * @property error - Сообщение об ошибке
+ * @property indeterminate - Промежуточное состояние (частичный выбор); для DOM `input.indeterminate`
  */
 export interface CheckboxProps extends BaseComponentProps {
   checked?: boolean;
@@ -2308,6 +2330,7 @@ export interface CheckboxProps extends BaseComponentProps {
   disabled?: boolean;
   size?: Size;
   error?: string;
+  indeterminate?: boolean;
 }
 
 /**
@@ -2495,6 +2518,7 @@ export interface DateTimeInputRangeProps extends BaseComponentProps {
 export interface DatePickerProps extends Omit<BaseInputProps, 'value' | 'onChange' | 'size'> {
   value?: string | DateTimeRange;
   onChange?: (value: string | DateTimeRange) => void;
+  /** Размер поля (в `DateInput` по умолчанию `Size.SM`) */
   size?: Size;
   range?: boolean; // Определяет режим работы: false = single, true = range
   minDate?: Date;
@@ -2531,7 +2555,7 @@ export interface TimeRange {
  * @property label - Метка поля (`ReactNode`, наследуется из `BaseInputProps`)
  * @property placeholder - Плейсхолдер
  * @property disabled - Отключить поле
- * @property size - Размер поля
+ * @property size - Размер поля (в компоненте по умолчанию `Size.SM`)
  * @property error - Сообщение об ошибке
  * @property range - Режим работы: false = одиночное время, true = диапазон времени
  * @property minTime - Минимальное время
@@ -2803,6 +2827,288 @@ export interface GridItemProps extends BaseComponentProps {
   maxHeight?: string | number;
 
   // Дополнительные стили
+  style?: React.CSSProperties;
+}
+
+// --- Таблица (аналогично MUI Table, см. https://mui.com/material-ui/react-table/) ---
+
+/** Плотность строк таблицы */
+export type TableSize = 'sm' | 'md';
+
+/**
+ * Обёртка с горизонтальным скроллом и визуалом «карточки» (скругление, фон, тень).
+ * @property component - Корневой элемент (по умолчанию `div`)
+ * @property elevated - Показать тень как у карточки в макете
+ * @property className - Доп. класс
+ * @property children - Обычно `Table`
+ * @property style - Инлайн-стили корня
+ */
+export interface TableContainerProps extends BaseComponentProps {
+  component?: React.ElementType;
+  elevated?: boolean;
+  style?: React.CSSProperties;
+}
+
+/**
+ * Нативная `<table>` + контекст размера и зебры для дочерних строк.
+ * @property stickyHeader - Липкий заголовок (`thead th` с `position: sticky`)
+ * @property size - Вертикальные отступы ячеек (`sm` | `md`)
+ * @property striped - Чередование фона строк в `tbody`
+ * @property className - Доп. класс
+ * @property children - `TableHead`, `TableBody`, …
+ * @property style - Инлайн-стили таблицы
+ */
+export interface TableProps
+  extends BaseComponentProps,
+    Omit<React.TableHTMLAttributes<HTMLTableElement>, 'children' | 'className' | 'style'> {
+  stickyHeader?: boolean;
+  size?: TableSize;
+  striped?: boolean;
+  style?: React.CSSProperties;
+}
+
+/**
+ * Секция заголовка (`thead`).
+ * @property className - Доп. класс
+ * @property children - Строки `TableRow` с ячейками `TableCell` (`variant="head"` или `component="th"`)
+ */
+export interface TableHeadProps
+  extends BaseComponentProps,
+    Omit<React.HTMLAttributes<HTMLTableSectionElement>, 'children' | 'className' | 'style'> {
+  style?: React.CSSProperties;
+}
+
+/**
+ * Секция тела (`tbody`).
+ */
+export interface TableBodyProps
+  extends BaseComponentProps,
+    Omit<React.HTMLAttributes<HTMLTableSectionElement>, 'children' | 'className' | 'style'> {
+  style?: React.CSSProperties;
+}
+
+/**
+ * Секция подвала (`tfoot`), например «Загрузить ещё».
+ */
+export interface TableFooterProps
+  extends BaseComponentProps,
+    Omit<React.HTMLAttributes<HTMLTableSectionElement>, 'children' | 'className' | 'style'> {
+  style?: React.CSSProperties;
+}
+
+/**
+ * Строка таблицы (`tr`).
+ * @property selected - Подсветка выбранной строки (как в макете)
+ * @property hover - Подсветка при наведении (по умолчанию true для body-строк)
+ * @property disabled - Пониженная непрозрачность (disabled-состояние макета)
+ */
+export interface TableRowProps extends BaseComponentProps, React.HTMLAttributes<HTMLTableRowElement> {
+  selected?: boolean;
+  hover?: boolean;
+  disabled?: boolean;
+  style?: React.CSSProperties;
+}
+
+/** Вариант ячейки по смыслу секции */
+export type TableCellVariant = 'head' | 'body' | 'footer';
+
+/**
+ * Ячейка (`th` | `td`).
+ * @property align - Горизонтальное выравнивание содержимого
+ * @property component - Явный тег/компонент (`th`, `td`, …)
+ * @property variant - Влияет на тег по умолчанию: `head` → `th`, иначе `td`
+ * @property padding - Узкая колонка чекбокса (`checkbox`), без отступов (`none`), обычная (`normal`)
+ * @property activeColumn - Для шапки: усиленная нижняя граница активной сортируемой колонки (макет Figma)
+ * @property colSpan / rowSpan / scope — стандартные атрибуты таблицы
+ */
+export interface TableCellProps
+  extends BaseComponentProps,
+    Omit<React.TdHTMLAttributes<HTMLTableCellElement>, 'align'> {
+  align?: 'inherit' | 'left' | 'center' | 'right' | 'justify';
+  component?: React.ElementType;
+  variant?: TableCellVariant;
+  padding?: 'normal' | 'checkbox' | 'none';
+  /** Подсветка активной колонки в `TableHead` */
+  activeColumn?: boolean;
+  colSpan?: number;
+  rowSpan?: number;
+  scope?: string;
+  style?: React.CSSProperties;
+}
+
+/**
+ * Пагинация под таблицей (обёртка над `Pagination`, API близко к MUI `TablePagination`).
+ * @property count - Всего записей
+ * @property page - Номер страницы с нуля (как в MUI)
+ * @property rowsPerPage - Записей на странице
+ * @property onPageChange - `(event, nextPageZeroBased)` при смене страницы
+ * @property siblingCount - Соседи вокруг текущей страницы у числовой плашки
+ * @property rowsPerPageOptions - Если задано, показывается выбор «строк на странице» (простой select)
+ * @property onRowsPerPageChange - Событие смены `rowsPerPage` (нативный `change` от select)
+ * @property labelRowsPerPage - Подпись к селекту строк на странице
+ * @property disabled - Отключить пагинацию и селект
+ * @property size - Размер внутреннего компонента `Pagination` (`Size` из дизайн-системы)
+ */
+export interface TablePaginationProps extends BaseComponentProps {
+  count: number;
+  page: number;
+  rowsPerPage: number;
+  onPageChange?: (event: unknown, page: number) => void;
+  siblingCount?: number;
+  rowsPerPageOptions?: number[];
+  onRowsPerPageChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  labelRowsPerPage?: React.ReactNode;
+  disabled?: boolean;
+  size?: Size;
+  style?: React.CSSProperties;
+}
+
+/** Направление сортировки колонки */
+export type TableSortDirection = 'asc' | 'desc';
+
+/**
+ * Кликабельная подпись колонки с иконкой сортировки (нейтральная / asc / desc по макету Figma).
+ * @property active - Колонка сортируется сейчас
+ * @property direction - Направление при `active`; `false` — без активного направления
+ * @property hideSortIcon - Скрыть иконку (только текст)
+ * @property disabled - Отключить кнопку
+ * @property onClick - Переключение сортировки снаружи
+ */
+export interface TableSortLabelProps
+  extends BaseComponentProps,
+    Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'className' | 'style' | 'type'> {
+  active?: boolean;
+  direction?: TableSortDirection | false;
+  hideSortIcon?: boolean;
+  disabled?: boolean;
+  style?: React.CSSProperties;
+}
+
+// --- DataGrid (композиция над Table*, см. MUI X DataGrid / Admiral Data Table) ---
+
+/** Идентификатор строки в DataGrid */
+export type DataGridRowId = string;
+
+/** Минимальная строка: обязательный `id` */
+export interface DataGridBaseRow {
+  id: DataGridRowId;
+  [key: string]: unknown;
+}
+
+/** Направление сортировки в модели грида */
+export type DataGridSortDirection = 'asc' | 'desc';
+
+/** Активная сортировка (контролируемая модель) */
+export interface DataGridSortModel {
+  /** Имя поля из `columns[].field` */
+  field: string;
+  direction: DataGridSortDirection;
+}
+
+/** Модель пагинации (страница с нуля, как в MUI) */
+export interface DataGridPaginationModel {
+  page: number;
+  pageSize: number;
+}
+
+/** Режим пагинации: `client` — срез `rows` внутри грида; `server` — `rows` уже отфильтрованы сервером */
+export type DataGridPaginationMode = 'client' | 'server';
+
+/** Параметры глобального `renderCell` и `render` колонки */
+export interface DataGridRenderCellParams<Row extends DataGridBaseRow = DataGridBaseRow> {
+  row: Row;
+  field: string;
+  value: unknown;
+  rowIndex: number;
+}
+
+/** Описание колонки (аналог `GridColDef` в MUI X) */
+export interface DataGridColumn<Row extends DataGridBaseRow = DataGridBaseRow> {
+  /** Ключ поля в строке (строка допускает вложенные пути через точку, напр. `user.name`) */
+  field: keyof Row | string;
+  /** Заголовок колонки */
+  headerName?: ReactNode;
+  width?: number | string;
+  minWidth?: number | string;
+  align?: 'left' | 'center' | 'right';
+  sortable?: boolean;
+  /** Кастомное значение ячейки */
+  valueGetter?: (row: Row) => unknown;
+  /** Рендер ячейки; приоритетнее глобального `renderCell` у `DataGrid` */
+  render?: (params: DataGridRenderCellParams<Row>) => ReactNode;
+  /** Не участвует в перестановке колонок drag-and-drop */
+  disableReorder?: boolean;
+}
+
+/** Аргумент `renderRowWrapper`: обёртка над одной строкой `tr` */
+export interface DataGridRenderRowWrapperParams<Row extends DataGridBaseRow = DataGridBaseRow> {
+  row: Row;
+  /** Готовый элемент строки таблицы */
+  children: React.ReactElement;
+}
+
+/**
+ * Готовая таблица-грид: колонки, строки, выбор, пагинация, сортировка, загрузка, DnD (опционально).
+ * @property tableId — `id` у `<table>` и `name` у группы радиокнопок при `multiselect={false}`
+ * @property columns — Описание колонок
+ * @property rows — Данные (при `paginationMode="client"` можно передать полный набор)
+ * @property totalRows — Всего записей (для футера и client-среза)
+ * @property getRowId — По умолчанию `row => row.id`
+ * @property displayRowSelectionColumn — Показать колонку выбора (чекбокс или радио)
+ * @property multiselect — Множественный выбор; при `false` и включённой колонке выбора — радиокнопки
+ * @property selectedIds — Выбранные id
+ * @property disabledIds — Неактивные строки по id
+ * @property onRowSelectionChange — Изменение выбора; для single массив из 0–1 элемента
+ * @property paginationModel + onPaginationChange — Контролируемая пагинация; без них футер пагинации скрыт
+ * @property paginationMode — Как интерпретировать `rows` при пагинации
+ * @property sortModel + onSortChange — Контролируемая сортировка (только UI + колбэк; данные сортирует родитель)
+ * @property rowBackgroundColorByStatus — Фон строки по данным строки
+ * @property expandedRowIds + onRowCollapseChange + getRowExpandable + renderExpandedRow — раскрывающаяся подстрока
+ * @property renderRowWrapper — Обёртка над `TableRow` (должна сохранять один корневой `tr` или `Fragment` с одним `tr`)
+ * @property renderCell — Глобальный рендер ячейки, если у колонки нет `render`
+ * @property onColumnDragEnd — Завершение перетаскивания заголовка колонки (индексы в текущем порядке `columns`)
+ * @property onRowDragEnd — Новый порядок id после перетаскивания строк (только при `enableRowDrag`)
+ * @property size — `Size` дизайн-системы → плотность `Table` и размеры контролов
+ */
+export interface DataGridProps<Row extends DataGridBaseRow = DataGridBaseRow> extends BaseComponentProps {
+  tableId: string;
+  columns: readonly DataGridColumn<Row>[];
+  rows: readonly Row[];
+  totalRows: number;
+  getRowId?: (row: Row) => DataGridRowId;
+  displayRowSelectionColumn?: boolean;
+  multiselect?: boolean;
+  selectedIds?: ReadonlySet<DataGridRowId> | readonly DataGridRowId[];
+  disabledIds?: ReadonlySet<DataGridRowId> | readonly DataGridRowId[];
+  onRowSelectionChange?: (nextIds: DataGridRowId[], reason: 'row' | 'header' | 'clear') => void;
+  onRowClick?: (row: Row, event: React.MouseEvent<HTMLTableRowElement>) => void;
+  onRowDoubleClick?: (row: Row, event: React.MouseEvent<HTMLTableRowElement>) => void;
+  paginationModel?: DataGridPaginationModel;
+  onPaginationChange?: (model: DataGridPaginationModel) => void;
+  paginationMode?: DataGridPaginationMode;
+  rowsPerPageOptions?: number[];
+  sortModel?: DataGridSortModel | null;
+  onSortChange?: (model: DataGridSortModel | null) => void;
+  stickyHeader?: boolean;
+  striped?: boolean;
+  /** Масштаб строк, шрифтов и контролов выбора */
+  size?: Size;
+  isLoading?: boolean;
+  /** Цвет фона строки; например по статусу из `row` */
+  rowBackgroundColorByStatus?: (row: Row) => string | undefined;
+  expandedRowIds?: ReadonlySet<DataGridRowId> | readonly DataGridRowId[];
+  onRowCollapseChange?: (rowId: DataGridRowId, expanded: boolean) => void;
+  getRowExpandable?: (row: Row) => boolean;
+  renderExpandedRow?: (row: Row) => ReactNode;
+  renderRowWrapper?: (params: DataGridRenderRowWrapperParams<Row>) => React.ReactElement;
+  renderCell?: (params: DataGridRenderCellParams<Row>) => ReactNode;
+  enableColumnDrag?: boolean;
+  onColumnDragEnd?: (fromIndex: number, toIndex: number) => void;
+  enableRowDrag?: boolean;
+  onRowDragEnd?: (orderedIds: DataGridRowId[]) => void;
+  hideFooter?: boolean;
+  elevated?: boolean;
+  tableAriaLabel?: string;
   style?: React.CSSProperties;
 }
 

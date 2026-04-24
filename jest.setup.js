@@ -1,92 +1,180 @@
 require('@testing-library/jest-dom');
+const React = require('react');
 const { configure } = require('@testing-library/react');
+const actualStyledComponents = jest.requireActual('styled-components');
 
 // Настройка для styled-components
 configure({ testIdAttribute: 'data-testid' });
 
-// Mock styled-components
-const createStyledComponent = (tag) => {
-  return jest.fn((strings, ...values) => {
-    return tag;
-  });
+/**
+ * Пропсы styled-компонентов, которые не должны попадать на нативные DOM-теги в Jest (иначе warning'и React).
+ */
+const STYLED_DOM_BLOCKLIST = new Set([
+  'theme',
+  'as',
+  'fullWidth',
+  'textAlign',
+  'variant',
+  'focused',
+  'error',
+  'success',
+  'status',
+  'skeleton',
+  'isLoading',
+  'loading',
+  'disableCopying',
+  'messageCount',
+  'showTooltip',
+  'tooltipText',
+  'transparent',
+  'round',
+  'column',
+  'row',
+  'columnSpan',
+  'rowSpan',
+  'justifySelf',
+  'alignSelf',
+  'placeSelf',
+  'area',
+  'labelPosition',
+  'iconStart',
+  'iconEnd',
+  'showClearButton',
+  'clearIcon',
+  'state',
+  'cursor',
+  'minColumnWidth',
+  'maxColumnWidth',
+  'iconOnly',
+  'htmlType',
+  'isActive',
+  'isSelected',
+  'isCurrent',
+  'isOpen',
+  'tone',
+  'minWidth',
+  'maxWidth',
+  'hasIcon',
+  'isDisabled',
+  'showSeconds',
+]);
+
+/**
+ * Убирает transient ($prop) и кастомные пропсы перед createElement для строковых тегов.
+ * @param {string} elType - имя DOM-тега
+ * @param {Record<string, unknown>} props - исходные пропсы
+ */
+const sanitizeDomProps = (elType, props) => {
+  const out = {};
+  for (const [key, value] of Object.entries(props)) {
+    if (key === 'theme' || key === 'as') continue;
+    if (key.startsWith('$')) continue;
+    if (STYLED_DOM_BLOCKLIST.has(key)) continue;
+    // Анимации framer-motion — не валидны на нативных тегах
+    if (
+      key === 'whileHover' ||
+      key === 'whileTap' ||
+      key === 'whileFocus' ||
+      key === 'transition' ||
+      key === 'layout' ||
+      key === 'initial' ||
+      key === 'animate' ||
+      key === 'exit'
+    ) {
+      continue;
+    }
+    if (key === 'checked' && elType !== 'input') continue;
+    if (key === 'readOnly' && elType !== 'input' && elType !== 'textarea') continue;
+    if (key === 'size' && elType !== 'input' && elType !== 'select') continue;
+    out[key] = value;
+  }
+  return out;
 };
 
-const styled = new Proxy(
-  {},
-  {
-    get: (target, prop) => {
-      if (prop === 'default') {
-        return styled;
+const makeStyledFactory = (element) => {
+  const templateFn = (strings, ...values) => {
+    const Type = typeof element === 'string' ? element : element;
+    const Comp = React.forwardRef((props, ref) => {
+      const { as: asProp, ...rest } = props;
+      if (typeof Type === 'string') {
+        const El = typeof asProp === 'string' && asProp ? asProp : Type;
+        return React.createElement(El, { ...sanitizeDomProps(El, rest), ref });
       }
-      return createStyledComponent(prop);
-    },
-  },
-);
+      // styled(motion.*): убираем пропсы UI-кита, иначе они утекают на button/span
+      return React.createElement(Type, { ...sanitizeDomProps('div', rest), ref });
+    });
+    const label = typeof element === 'string' ? element : element.displayName || 'Component';
+    Comp.displayName = `styled(${label})`;
+    return Comp;
+  };
+  templateFn.withConfig = () => templateFn;
+  return templateFn;
+};
 
-// Добавляем методы для styled-components
-styled.div = createStyledComponent('div');
-styled.button = createStyledComponent('button');
-styled.input = createStyledComponent('input');
-styled.label = createStyledComponent('label');
-styled.span = createStyledComponent('span');
-styled.svg = createStyledComponent('svg');
-styled.circle = createStyledComponent('circle');
-styled.path = createStyledComponent('path');
-styled.p = createStyledComponent('p');
-styled.h1 = createStyledComponent('h1');
-styled.h2 = createStyledComponent('h2');
-styled.h3 = createStyledComponent('h3');
-styled.h4 = createStyledComponent('h4');
-styled.h5 = createStyledComponent('h5');
-styled.h6 = createStyledComponent('h6');
-styled.section = createStyledComponent('section');
-styled.article = createStyledComponent('article');
-styled.header = createStyledComponent('header');
-styled.footer = createStyledComponent('footer');
-styled.nav = createStyledComponent('nav');
-styled.main = createStyledComponent('main');
-styled.aside = createStyledComponent('aside');
-styled.ul = createStyledComponent('ul');
-styled.ol = createStyledComponent('ol');
-styled.li = createStyledComponent('li');
-styled.a = createStyledComponent('a');
-styled.img = createStyledComponent('img');
-styled.form = createStyledComponent('form');
-styled.textarea = createStyledComponent('textarea');
-styled.select = createStyledComponent('select');
-styled.option = createStyledComponent('option');
+const intrinsicTags = [
+  'div',
+  'button',
+  'input',
+  'label',
+  'span',
+  'svg',
+  'circle',
+  'path',
+  'p',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'section',
+  'article',
+  'header',
+  'footer',
+  'nav',
+  'main',
+  'aside',
+  'ul',
+  'ol',
+  'li',
+  'a',
+  'img',
+  'form',
+  'textarea',
+  'select',
+  'option',
+  'table',
+  'thead',
+  'tbody',
+  'tfoot',
+  'tr',
+  'th',
+  'td',
+];
+
+/** @param {string | import('react').ElementType} tagOrComponent - тег или компонент */
+function styled(tagOrComponent) {
+  return makeStyledFactory(tagOrComponent);
+}
+
+intrinsicTags.forEach((tag) => {
+  styled[tag] = makeStyledFactory(tag);
+});
 
 jest.mock('styled-components', () => ({
   __esModule: true,
   default: styled,
-  ThemeProvider: ({ children }) => children,
+  ThemeProvider: actualStyledComponents.ThemeProvider,
   createGlobalStyle: jest.fn(() => () => null),
   keyframes: jest.fn(() => ''),
-  css: jest.fn((strings, ...values) => strings.join('')),
-  useTheme: () => ({
-    colors: {
-      progressFill: '#68D5F8',
-      progressFillHover: '#5BC4E5',
-      progressValue: '#333333',
-      progressStatusAwait: '#94D263',
-      progressStatusLoading: '#68D5F8',
-      progressStatusSuccess: '#94D263',
-      progressStatusError: '#FF5252',
-      progressTrack: '#F2F2F2',
-      text: '#333333',
-      textSecondary: '#666666',
-      backgroundSecondary: '#F5F5F5',
-      borderSecondary: '#E0E0E0',
-      primary: '#68D5F8',
-    },
-    mode: 'light',
-  }),
+  css: jest.fn((strings, ...values) => (Array.isArray(strings) ? strings.join('') : String(strings))),
+  useTheme: actualStyledComponents.useTheme,
 }));
 
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
+  value: jest.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,

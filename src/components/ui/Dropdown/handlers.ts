@@ -264,42 +264,45 @@ export const calculateDropdownPosition = ({
   let x = triggerRect.left;
   let y = triggerRect.bottom + offset;
 
-  if (!menuRect || mode === 'default') {
-    return { x, y };
-  }
+  // Flip / горизонтальная подгонка только при известных размерах меню и не в режиме `default`
+  if (menuRect && mode !== 'default') {
+    const menuHeight = menuRect.height;
+    const menuWidth = menuRect.width;
+    const spaceBelow = viewportHeight - triggerRect.bottom;
+    const spaceAbove = triggerRect.top;
 
-  const menuHeight = menuRect.height;
-  const menuWidth = menuRect.width;
-  const spaceBelow = viewportHeight - triggerRect.bottom;
-  const spaceAbove = triggerRect.top;
+    const shouldFlipVertically =
+      menuHeight > 0 &&
+      spaceBelow < menuHeight + offset &&
+      (mode === 'autoFit' || spaceAbove >= menuHeight + offset || spaceAbove > spaceBelow);
 
-  const shouldFlipVertically =
-    menuHeight > 0 &&
-    spaceBelow < menuHeight + offset &&
-    (mode === 'autoFit' || spaceAbove >= menuHeight + offset || spaceAbove > spaceBelow);
-
-  if (shouldFlipVertically) {
-    y = clamp(triggerRect.top - menuHeight - offset, offset, viewportHeight - menuHeight - offset);
-  } else if (triggerRect.bottom + menuHeight + offset > viewportHeight) {
-    y = clamp(viewportHeight - menuHeight - offset, offset, triggerRect.bottom + offset);
-  }
-
-  if (mode === 'autoFit' && menuWidth > 0) {
-    const maxX = viewportWidth - menuWidth - offset;
-    if (triggerRect.left + menuWidth > viewportWidth) {
-      x = clamp(maxX, offset, triggerRect.right - menuWidth);
+    if (shouldFlipVertically) {
+      y = clamp(triggerRect.top - menuHeight - offset, offset, viewportHeight - menuHeight - offset);
+    } else if (triggerRect.bottom + menuHeight + offset > viewportHeight) {
+      y = clamp(viewportHeight - menuHeight - offset, offset, triggerRect.bottom + offset);
     }
-    if (x < offset) {
-      x = offset;
+
+    if (mode === 'autoFit' && menuWidth > 0) {
+      const maxX = viewportWidth - menuWidth - offset;
+      if (triggerRect.left + menuWidth > viewportWidth) {
+        x = clamp(maxX, offset, triggerRect.right - menuWidth);
+      }
+      if (x < offset) {
+        x = offset;
+      }
     }
   }
 
+  // Внутренний режим (`inline`): координаты должны быть относительно boundary, иначе `absolute`
+  // получает значения вьюпорта и меню «улетает» (как у Select с панелью внутри формы).
   if (boundaryElement) {
     const boundaryRect = boundaryElement.getBoundingClientRect();
     x -= boundaryRect.left;
     y -= boundaryRect.top;
-    x = clamp(x, 0, (boundaryElement.clientWidth || viewportWidth) - (menuRect?.width ?? 0));
-    y = clamp(y, 0, (boundaryElement.clientHeight || viewportHeight) - (menuRect?.height ?? 0));
+    if (menuRect && menuRect.width > 0 && menuRect.height > 0) {
+      x = clamp(x, 0, (boundaryElement.clientWidth || viewportWidth) - menuRect.width);
+      y = clamp(y, 0, (boundaryElement.clientHeight || viewportHeight) - menuRect.height);
+    }
   }
 
   return { x, y };

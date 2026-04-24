@@ -197,7 +197,7 @@ const ResponsiveDemo = () => {
         </div>
         <div style={{ padding: '8px', backgroundColor: '#f8f9fa', borderRadius: '4px', textAlign: 'center' }}>
           <Typography variant="body2" style={{ fontSize: '12px' }}>
-            Large > 1440px
+            Large {'>'} 1440px
           </Typography>
           <Badge variant={width > 1440 ? 'success' : 'outlined'} size="sm">
             {width > 1440 ? 'Активно' : 'Неактивно'}
@@ -373,7 +373,7 @@ const OrientationDemo = () => {
             <strong>Портретная</strong>
           </Typography>
           <Typography variant="body2" style={{ fontSize: '12px' }}>
-            Высота > Ширины
+            Высота {'>'} Ширины
           </Typography>
           <Badge variant={isPortrait ? 'success' : 'outlined'} style={{ marginTop: '8px' }}>
             {isPortrait ? 'Активно' : 'Неактивно'}
@@ -393,7 +393,7 @@ const OrientationDemo = () => {
             <strong>Альбомная</strong>
           </Typography>
           <Typography variant="body2" style={{ fontSize: '12px' }}>
-            Ширина > Высоты
+            Ширина {'>'} Высоты
           </Typography>
           <Badge variant={isLandscape ? 'success' : 'outlined'} style={{ marginTop: '8px' }}>
             {isLandscape ? 'Активно' : 'Неактивно'}

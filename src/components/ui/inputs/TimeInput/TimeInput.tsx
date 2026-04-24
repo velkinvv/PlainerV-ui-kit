@@ -3,7 +3,12 @@ import styled from 'styled-components';
 import { clsx } from 'clsx';
 import type { TimeInputProps } from '../../../../types/ui';
 import { ButtonVariant, TooltipPosition } from '../../../../types/ui';
-import { BorderRadiusHandler, TransitionHandler } from '../../../../handlers/uiHandlers';
+import {
+  BorderRadiusHandler,
+  TransitionHandler,
+  InputSizeHandler,
+  InputPaddingHandler,
+} from '../../../../handlers/uiHandlers';
 import {
   parseTime,
   formatTimeForDisplay,
@@ -24,11 +29,13 @@ import {
   isTimeRangeStart,
   isTimeRangeEnd,
 } from '../../../../handlers/timeHandlers';
+import { getClearIconSizeForInputField } from '../../../../handlers/iconHandlers';
 import { Size, IconSize } from '../../../../types/sizes';
 import { Icon } from '../../Icon/Icon';
 import { Tooltip } from '../../Tooltip/Tooltip';
 import { Hint, HintPosition, HintVariant } from '../../Hint/Hint';
 import { Button } from '../../buttons/Button';
+import { SkeletonEffect } from '../shared';
 
 // Стилизованные компоненты
 const Container = styled.div.withConfig({
@@ -77,65 +84,6 @@ const LoadingSpinner = styled.div<{ size?: Size }>`
   }
 `;
 
-const SkeletonEffect = styled.div.withConfig({
-  shouldForwardProp: prop => !['size'].includes(prop),
-})<{ size?: Size }>`
-  position: relative;
-  display: flex;
-  align-items: center;
-  background: linear-gradient(
-    90deg,
-    ${({ theme }) => theme.colors.backgroundTertiary} 25%,
-    ${({ theme }) => theme.colors.borderSecondary} 50%,
-    ${({ theme }) => theme.colors.backgroundTertiary} 75%
-  );
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite;
-  border: 2px solid ${({ theme }) => theme.colors.borderSecondary};
-  border-radius: ${BorderRadiusHandler(Size.SM)};
-  transition: ${TransitionHandler()};
-  min-height: ${({ size }) => {
-    switch (size) {
-      case Size.SM:
-        return '32px';
-      case Size.LG:
-        return '48px';
-      default:
-        return '40px';
-    }
-  }};
-  padding: ${({ size }) => {
-    switch (size) {
-      case Size.SM:
-        return '4px 8px';
-      case Size.LG:
-        return '8px 16px';
-      default:
-        return '6px 12px';
-    }
-  }};
-  margin-top: ${({ size }) => {
-    switch (size) {
-      case Size.SM:
-        return '4px';
-      case Size.LG:
-        return '8px';
-      default:
-        return '6px';
-    }
-  }};
-  width: 100%;
-
-  @keyframes skeleton-loading {
-    0% {
-      background-position: 200% 0;
-    }
-    100% {
-      background-position: -200% 0;
-    }
-  }
-`;
-
 const InputWrapper = styled.div.withConfig({
   shouldForwardProp: prop => !['focused', 'error', 'status'].includes(prop),
 })<{
@@ -148,7 +96,7 @@ const InputWrapper = styled.div.withConfig({
   position: relative;
   display: flex;
   align-items: center;
-  border: 2px solid
+  border: 1px solid
     ${({ theme, focused, error, disabled, status }) => {
       if (disabled) return theme.colors.borderTertiary;
       if (error) return theme.colors.danger;
@@ -158,40 +106,14 @@ const InputWrapper = styled.div.withConfig({
       if (focused) return theme.colors.primary;
       return theme.colors.borderSecondary;
     }};
-  border-radius: ${BorderRadiusHandler(Size.SM)};
+  border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
   background: ${({ theme, disabled }) =>
     disabled ? theme.colors.backgroundTertiary : theme.colors.backgroundSecondary};
   transition: ${TransitionHandler()};
-  min-height: ${({ size }) => {
-    switch (size) {
-      case Size.SM:
-        return '32px';
-      case Size.LG:
-        return '48px';
-      default:
-        return '40px';
-    }
-  }};
-  padding: ${({ size }) => {
-    switch (size) {
-      case Size.SM:
-        return '4px 8px';
-      case Size.LG:
-        return '8px 16px';
-      default:
-        return '6px 12px';
-    }
-  }};
-  margin-top: ${({ size }) => {
-    switch (size) {
-      case Size.SM:
-        return '4px';
-      case Size.LG:
-        return '6px';
-      default:
-        return '5px';
-    }
-  }};
+  width: 100%;
+  box-sizing: border-box;
+  min-height: ${({ size, theme }) => InputSizeHandler(size ?? theme.defaultInputSize)};
+  padding: ${({ size, theme }) => InputPaddingHandler(size ?? theme.defaultInputSize)};
 
   &:hover {
     border-color: ${({ theme, focused, error, disabled, status }) => {
@@ -292,7 +214,7 @@ const _Label = styled.label.withConfig({
   font-size: ${({ size }) => {
     switch (size) {
       case Size.SM:
-        return '10px';
+        return '12px';
       case Size.LG:
         return '14px';
       default:
@@ -337,7 +259,7 @@ const LeftLabel = styled(AbsoluteLabel)`
   font-size: ${({ size }) => {
     switch (size) {
       case Size.SM:
-        return '10px';
+        return '12px';
       case Size.LG:
         return '14px';
       default:
@@ -802,7 +724,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
       label,
       placeholder,
       disabled = false,
-      size = Size.MD,
+      size = Size.SM,
       error,
       className,
       range = false,
@@ -1932,7 +1854,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
           </div>
         )}
         {skeleton ? (
-          <SkeletonEffect size={size} />
+          <SkeletonEffect size={size} fullWidth />
         ) : (
           <InputWrapper
             focused={isFocused}
@@ -1998,12 +1920,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
             {clearIcon && inputValue && !disabled && (
               <IconWrapper size={size} style={{ marginLeft: 'auto' }}>
                 <IconButton onClick={handleClearIconClick}>
-                  <Icon
-                    name="IconPlainerClose"
-                    size={
-                      size === Size.SM ? IconSize.XS : size === Size.LG ? IconSize.MD : IconSize.SM
-                    }
-                  />
+                  <Icon name="IconPlainerClose" size={getClearIconSizeForInputField(size)} />
                 </IconButton>
               </IconWrapper>
             )}

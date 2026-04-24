@@ -1,5 +1,10 @@
 import type { ReactNode } from 'react';
-import type { DropdownMenuItemProps, SelectOption, SelectProps } from '../../../../types/ui';
+import type {
+  DropdownMenuGroup,
+  DropdownMenuItemProps,
+  SelectOption,
+  SelectProps,
+} from '../../../../types/ui';
 import { Size, IconSize } from '../../../../types/sizes';
 
 /**
@@ -53,6 +58,58 @@ export const mapSelectOptionsToDropdownItems = (options: SelectOption[]): Dropdo
     value: opt.value,
     disabled: opt.disabled,
   }));
+
+const isSelectDropdownMenuGroup = (
+  entry: DropdownMenuItemProps | DropdownMenuGroup,
+): entry is DropdownMenuGroup => {
+  return Array.isArray((entry as DropdownMenuGroup)?.items);
+};
+
+/**
+ * Фильтрует пункты меню селекта по строке запроса (логика как у `Dropdown` при `searchable`).
+ * @param query - Строка поиска (как в поле ввода).
+ * @param items - Плоский список или группы (группы сужаются по вложенным пунктам).
+ * @param searchFilter - Необязательный кастомный фильтр `(query, item)`.
+ * @returns Отфильтрованный список; при пустом `query` возвращает исходный `items`.
+ */
+export const filterSelectItemsByQuery = (
+  query: string,
+  items: (DropdownMenuItemProps | DropdownMenuGroup)[],
+  searchFilter?: (query: string, item: DropdownMenuItemProps) => boolean,
+): (DropdownMenuItemProps | DropdownMenuGroup)[] => {
+  const normalized = query.trim().toLowerCase();
+  if (!normalized) {
+    return items;
+  }
+
+  const matchItem = (item: DropdownMenuItemProps): boolean => {
+    if (searchFilter) {
+      return searchFilter(query, item);
+    }
+    const description = item.description?.toLowerCase() ?? '';
+    const descriptionMatches = description.includes(normalized);
+    if (typeof item.label === 'string') {
+      return item.label.toLowerCase().includes(normalized) || descriptionMatches;
+    }
+    if (typeof item.label === 'number') {
+      return String(item.label).toLowerCase().includes(normalized) || descriptionMatches;
+    }
+    return descriptionMatches;
+  };
+
+  const next: (DropdownMenuItemProps | DropdownMenuGroup)[] = [];
+  items.forEach((definition) => {
+    if (isSelectDropdownMenuGroup(definition)) {
+      const matchedItems = definition.items.filter(matchItem);
+      if (matchedItems.length > 0) {
+        next.push({ ...definition, items: matchedItems });
+      }
+    } else if (matchItem(definition)) {
+      next.push(definition);
+    }
+  });
+  return next;
+};
 
 /**
  * Строковое представление `label` опции для отображения в триггере.

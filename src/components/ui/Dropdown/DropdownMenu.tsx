@@ -26,7 +26,12 @@ import {
 type DropdownMenuContextValue = Pick<
   DropdownMenuProps,
   'onItemSelect' | 'value' | 'onActivateItem' | 'multiSelection' | 'disableSelectedOptionHighlight'
->;
+> & {
+  /** Согласовано с `Dropdown.menuDensity` */
+  menuDensity?: 'default' | 'compact';
+  /** Размер пунктов темы */
+  size?: Size;
+};
 
 const DropdownMenuContext = createContext<DropdownMenuContextValue>({});
 
@@ -49,6 +54,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   disableSelectedOptionHighlight,
   virtualScroll,
   size = Size.MD,
+  menuDensity = 'default',
   className,
 }) => {
   const theme = useTheme();
@@ -139,11 +145,14 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
         onActivateItem,
         multiSelection,
         disableSelectedOptionHighlight,
+        menuDensity,
+        size,
       }}
     >
       <DropdownMenuWrapper
         ref={scrollContainerRef}
         className={clsx('ui-dropdown-menu', className)}
+        $density={menuDensity}
         role="menu"
         onScroll={virtualScroll ? handleScroll : undefined}
         style={getVirtualScrollContainerStyles(fixedContainerHeight, itemHeight, gap)}

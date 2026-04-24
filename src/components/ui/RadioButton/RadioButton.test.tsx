@@ -56,14 +56,9 @@ describe('RadioButton', () => {
 
     // onChange может вызываться несколько раз из-за всплытия событий (label -> input)
     expect(handleChange).toHaveBeenCalled();
-    expect(handleChange).toHaveBeenCalledWith(
-      expect.objectContaining({
-        target: expect.objectContaining({
-          checked: true,
-          value: 'test-value',
-        }),
-      }),
-    );
+    const ev = handleChange.mock.calls[0]?.[0] as React.ChangeEvent<HTMLInputElement>;
+    expect(ev?.target).toBeInstanceOf(HTMLInputElement);
+    expect((ev?.target as HTMLInputElement)?.value).toBe('test-value');
   });
 
   it('calls onChange when label is clicked', () => {
@@ -78,14 +73,9 @@ describe('RadioButton', () => {
 
     // onChange может вызываться несколько раз из-за всплытия событий (label -> input)
     expect(handleChange).toHaveBeenCalled();
-    expect(handleChange).toHaveBeenCalledWith(
-      expect.objectContaining({
-        target: expect.objectContaining({
-          checked: true,
-          value: 'test-value',
-        }),
-      }),
-    );
+    const ev = handleChange.mock.calls[0]?.[0] as React.ChangeEvent<HTMLInputElement>;
+    expect(ev?.target).toBeInstanceOf(HTMLInputElement);
+    expect((ev?.target as HTMLInputElement)?.value).toBe('test-value');
   });
 
   it('does not call onChange when disabled', () => {

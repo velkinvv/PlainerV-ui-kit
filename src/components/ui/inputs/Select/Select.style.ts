@@ -44,7 +44,7 @@ const selectMultiCountBadgeDimensions = (fieldSize: Size | undefined) => {
 };
 
 /**
- * Нативный `select` визуально как текстовое поле: без системной стрелки, кастомная иконка снаружи.
+ * Нативный `select` визуально как текстовое поле: без системной стрелки, кастомный шеврон снаружи.
  * @property textAlign - Выравнивание текста внутри поля.
  */
 export const StyledSelect = styled.select.withConfig({
@@ -88,7 +88,7 @@ export const SelectChevronSlot = styled.div`
 `;
 
 /**
- * Иконка «вниз» при закрытом меню; при открытом — поворот 180° (стрелка вверх), как в макете.
+ * Шеврон вниз при закрытом меню; при открытом — поворот 180° (шеврон вверх).
  * @property $isOpen - Меню раскрыто.
  */
 /**
@@ -149,6 +149,39 @@ export const SelectTriggerButton = styled.button.withConfig({
 
   &:disabled {
     cursor: not-allowed;
+  }
+`;
+
+/**
+ * Поле ввода в триггере (`mode="searchSelect"`): внешний вид как у кнопки-триггера, курсор текстовый.
+ * @property textAlign - Выравнивание текста.
+ * @property $isPlaceholder - Стиль плейсхолдера (пустое значение).
+ */
+export const SelectTriggerInput = styled.input.withConfig({
+  shouldForwardProp: (prop) => !['textAlign', '$isPlaceholder'].includes(prop),
+})<{
+  textAlign?: 'left' | 'center' | 'right';
+  $isPlaceholder?: boolean;
+}>`
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  color: ${({ theme, $isPlaceholder }) =>
+    $isPlaceholder ? theme.colors.textTertiary : 'inherit'};
+  cursor: text;
+  text-align: ${({ textAlign = 'left' }) => textAlign};
+  padding: 0;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  &::placeholder {
+    color: ${({ theme }) => theme.colors.textTertiary};
   }
 `;
 

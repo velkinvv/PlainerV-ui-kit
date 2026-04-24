@@ -43,7 +43,7 @@ export const CalendarRoot = styled.div.withConfig({
     }
     return $size === Size.SM ? '12px' : $size === Size.LG ? '20px' : '16px';
   }};
-  border-radius: ${BorderRadiusHandler(Size.MD)};
+  border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
   background: ${({ theme }) => theme.colors.backgroundSecondary};
   border: ${({ $embedded, theme }) =>
     $embedded ? 'none' : `1px solid ${theme.colors.border}`};
@@ -206,9 +206,12 @@ export const CalendarNavButton = styled.button.withConfig({
   }
 `;
 
-export const CalendarWeekdays = styled.div`
+/** Строка заголовков дней недели; колонки совпадают с сеткой дней по ширине ячейки */
+export const CalendarWeekdays = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== '$size',
+})<{ $size?: Size }>`
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, ${({ $size }) => dayCellSize($size)});
   gap: 4px;
   margin-bottom: 6px;
 `;
@@ -222,9 +225,12 @@ export const CalendarWeekdayCell = styled.div`
   padding: 4px 0;
 `;
 
-export const CalendarGrid = styled.div`
+/** Сетка дней: фиксированная ширина колонок, без растягивания во внешнем широком контейнере */
+export const CalendarGrid = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== '$size',
+})<{ $size?: Size }>`
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, ${({ $size }) => dayCellSize($size)});
   gap: 6px;
 `;
 
@@ -296,38 +302,36 @@ export const CalendarDayButton = styled.button.withConfig({
         opacity: 0.55;
       `;
     }
+    /* Круг выбранного дня — яркий синий как в макете (`info`), не тёмный `primary` бренда */
     if ($rangeStart || $rangeEnd || $selected) {
       return css`
         border: 2px solid transparent;
-        background: ${theme.colors.primary};
+        background: ${theme.colors.info};
         color: ${theme.colors.backgroundSecondary};
       `;
     }
+    // Дни между началом и концом: светлая подложка и акцентный текст (не тёмный primaryHover — иначе цифры нечитаемы)
     if ($inRange) {
       return css`
-        border: 1px solid transparent;
-        border-radius: 8px;
-        background: ${theme.colors.primaryHover};
-        color: ${theme.colors.text};
+        border: 1px solid ${theme.colors.primary};
+        border-radius: 50%;
+        background: color-mix(in srgb, ${theme.colors.primary} 14%, ${theme.colors.backgroundSecondary});
+        color: ${theme.colors.primary};
         &:hover {
-          background: ${theme.colors.primary};
-          color: ${theme.colors.backgroundSecondary};
+          background: color-mix(in srgb, ${theme.colors.primary} 24%, ${theme.colors.backgroundSecondary});
+          color: ${theme.colors.primaryActive};
+          border-color: ${theme.colors.primaryActive};
         }
       `;
     }
     if ($inCurrentMonth) {
       return css`
-        border: 1px solid ${theme.colors.borderSecondary};
+        border: ${$today ? `2px solid ${theme.colors.info}` : `1px solid ${theme.colors.borderSecondary}`};
         background: ${theme.colors.backgroundSecondary};
         color: ${theme.colors.text};
-        ${$today
-          ? css`
-              box-shadow: 0 0 0 2px ${theme.colors.primary}40;
-            `
-          : ''}
         &:hover {
-          border-color: ${theme.colors.primary};
-          color: ${theme.colors.primary};
+          border-color: ${theme.colors.info};
+          color: ${theme.colors.info};
         }
       `;
     }

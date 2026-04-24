@@ -16,7 +16,7 @@ import {
 } from './handlers';
 import type { ProgressStep } from '../../../types/ui';
 
-// Мок темы для тестов
+// Мок темы для тестов (структура как у DefaultTheme: getStatusColor читает theme.progress.colors)
 const mockTheme = {
   colors: {
     progressStatusAwait: '#94D263',
@@ -24,6 +24,15 @@ const mockTheme = {
     progressStatusSuccess: '#94D263',
     progressStatusError: '#FF5252',
     progressFill: '#68D5F8',
+  },
+  progress: {
+    colors: {
+      fill: '#68D5F8',
+      statusAwait: '#94D263',
+      statusLoading: '#68D5F8',
+      statusSuccess: '#94D263',
+      statusError: '#FF5252',
+    },
   },
 } as any;
 

@@ -32,7 +32,7 @@ const meta: Meta<typeof Select> = {
     docs: {
       description: {
         component:
-          'По умолчанию `mode="select"`: выпадающая панель как у `Dropdown` (поиск в шапке панели, мультивыбор), плюс скрытый нативный `select` для форм. `mode="native"` — только нативный список в оболочке поля. Макет: [Figma — селект](https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4823-16420&t=cStO03cIis1M6Tar-4).',
+          'По умолчанию `mode="select"`: панель `Dropdown` (поиск в шапке панели по умолчанию, мультивыбор). `mode="searchSelect"` — одиночный выбор: фильтр вводится в поле селекта, список открывается по фокусу, без отдельного поля поиска в панели (см. [Admiral SearchSelect](https://admiralds.github.io/react-ui/?path=/docs/admiral-2-1-input-select-%D1%80%D0%B5%D0%B6%D0%B8%D0%BC-searchselect--docs)). `mode="native"` — нативный `select`. Макет: [Figma — селект](https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4823-16420&t=cStO03cIis1M6Tar-4).',
       },
     },
   },
@@ -52,8 +52,9 @@ const meta: Meta<typeof Select> = {
   argTypes: {
     mode: {
       control: 'radio',
-      options: ['select', 'native'],
-      description: '`select` — панель Dropdown + поиск; `native` — системный select',
+      options: ['select', 'searchSelect', 'native'],
+      description:
+        '`select` — панель с поиском внутри; `searchSelect` — ввод в триггер (только single); `native` — системный select',
     },
     label: { description: 'Подпись поля' },
     options: { description: 'Массив `{ value, label, disabled? }`' },
@@ -76,7 +77,7 @@ const meta: Meta<typeof Select> = {
     searchable: {
       control: 'boolean',
       description:
-        'В `mode="select"`: поле поиска (по умолчанию `true`, передайте `false` чтобы отключить)',
+        'Только `mode="select"`: поле поиска в панели (по умолчанию `true`). В `searchSelect` не используется',
     },
     searchPlaceholder: { description: 'Плейсхолдер поля поиска в панели' },
     error: { description: 'Текст ошибки' },
@@ -109,7 +110,10 @@ const meta: Meta<typeof Select> = {
       description: 'Вариант оформления панели (`Dropdown`)',
     },
     menuMaxHeight: { description: 'Максимальная высота панели (px или строка)' },
-    dropdownInline: { description: '`Dropdown.inline` (портал выключен)' },
+    dropdownInline: {
+      description:
+        '`Dropdown.inline`: по умолчанию `false` — меню в портале под триггером; `true` — внутри контейнера (overflow/тесты)',
+    },
     tooltip: { description: 'Подсказка' },
     tooltipType: { control: 'radio', options: ['tooltip', 'hint'] },
     tooltipPosition: {
@@ -130,6 +134,35 @@ export const Default: Story = {
     options: manyOptions,
     placeholder: 'Выберите город',
     name: 'city',
+  },
+};
+
+/** Поиск в самом поле; список открывается по фокусу; отдельного инпута в панели нет */
+export const SearchSelect: Story = {
+  render: () => {
+    const [value, setValue] = useState('');
+    return (
+      <div style={{ maxWidth: 360 }}>
+        <Select
+          mode="searchSelect"
+          label="Город"
+          options={manyOptions}
+          placeholder="Начните вводить название"
+          searchPlaceholder="Фильтр списка"
+          value={value}
+          onValueChange={(v) => setValue(String(v))}
+          name="city-search"
+        />
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Режим `searchSelect`: строка фильтра вводится в поле селекта, при фокусе открывается список. Для контролируемой строки поиска используйте `searchValue` и `onSearch`.',
+      },
+    },
   },
 };
 

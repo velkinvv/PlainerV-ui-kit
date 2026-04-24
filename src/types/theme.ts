@@ -2151,7 +2151,7 @@ export type ThemeType = {
   zIndex: ZIndexType; // Z-index значения
   globalSize: Size; // Глобальный размер
   mode: ThemeMode; // Режим темы (светлая/темная)
-  defaultInputSize: Size; // Размер полей ввода по умолчанию
+  defaultInputSize: Size; // Размер полей ввода по умолчанию (`Size.SM` в темах)
   defaultButtonSize: Size; // Размер кнопок по умолчанию
   boxShadow: BoxShadowType; // Тени
   blur: BlurType; // Размытие

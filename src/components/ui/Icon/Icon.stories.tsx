@@ -487,6 +487,7 @@ export const PlainerIcons: Story = {
       'IconPlainerArrowRight',
       'IconPlainerArrowLeft',
       'IconPlainerArrowDown',
+      'IconPlainerChevronDown',
       'IconPlainerDollar',
       'IconPlainerPercent',
       'IconPlainerSun',

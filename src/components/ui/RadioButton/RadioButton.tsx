@@ -1,4 +1,4 @@
-import React, { forwardRef, useMemo } from 'react';
+import React, { forwardRef, useMemo, useRef } from 'react';
 import styled from 'styled-components';
 import {
   RadioContainerWrapper,
@@ -118,6 +118,8 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
     },
     ref,
   ) => {
+    /** Подавляет второй click по input после клика по подписи (label → программный click на radio). */
+    const suppressNextInputClickRef = useRef(false);
     const radioId = useMemo(() => `radio-${Math.random().toString(36).substr(2, 9)}`, []);
     const errorId = useMemo(() => `radio-error-${Math.random().toString(36).substr(2, 9)}`, []);
     const helperId = useMemo(() => `radio-helper-${Math.random().toString(36).substr(2, 9)}`, []);
@@ -129,28 +131,44 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
     };
 
     const handleLabelClick = (event: React.MouseEvent<HTMLDivElement>) => {
-      if (!disabled && !readOnly) {
+      if (disabled || readOnly) return;
+
+      const target = event.target as HTMLElement | null;
+
+      if (target instanceof HTMLInputElement && target.type === 'radio') {
+        if (suppressNextInputClickRef.current) {
+          suppressNextInputClickRef.current = false;
+          return;
+        }
         if (onClick) {
           onClick(event as unknown as React.MouseEvent<HTMLLabelElement>);
         }
-        if (onChange) {
+        return;
+      }
+
+      suppressNextInputClickRef.current = true;
+      requestAnimationFrame(() => {
+        suppressNextInputClickRef.current = false;
+      });
+
+      if (onClick) {
+        onClick(event as unknown as React.MouseEvent<HTMLLabelElement>);
+      }
+      // onChange при клике мышью не дублируем: срабатывает нативно через <label htmlFor>
+    };
+
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (readOnly || !(event.key === 'Enter' || event.key === ' ')) return;
+      event.preventDefault();
+      if (disabled || readOnly) return;
+      if (onClick) {
+        onClick(event as unknown as React.MouseEvent<HTMLLabelElement>);
+      }
+      if (onChange) {
         const syntheticEvent = {
           target: { checked: true, value },
         } as React.ChangeEvent<HTMLInputElement>;
         onChange(syntheticEvent);
-        }
-      }
-    };
-
-    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-      if (!readOnly && (event.key === 'Enter' || event.key === ' ')) {
-        event.preventDefault();
-        // Создаём синтетическое событие для onClick
-        const syntheticClickEvent = {
-          ...event,
-          currentTarget: event.currentTarget,
-        } as unknown as React.MouseEvent<HTMLDivElement>;
-        handleLabelClick(syntheticClickEvent);
       }
     };
 

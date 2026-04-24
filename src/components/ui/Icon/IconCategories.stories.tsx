@@ -164,7 +164,7 @@ const IconGrid = ({
 // Категории иконок
 const iconCategories = {
   navigation: {
-    plainer: ['IconPlainerArrowUp', 'IconPlainerArrowRight', 'IconPlainerArrowLeft'].filter(name =>
+    plainer: ['ArrowUp', 'ArrowRight', 'ArrowLeft', 'ChevronDown'].filter(name =>
       iconExists(name, 'plainer'),
     ) as IconName[],
     iconex: ['IconExArrowDown'].filter(name => iconExists(name, 'iconEx')) as IconName[],

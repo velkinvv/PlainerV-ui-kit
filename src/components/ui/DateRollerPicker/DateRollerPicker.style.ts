@@ -99,18 +99,19 @@ export const DateRollerOption = styled.button.withConfig({
     if ($disabled) {
       return theme.colors.textTertiary;
     }
-    return $active ? theme.colors.primary : theme.colors.textSecondary;
+    /* Активная строка — тот же синий акцент, что у выбранного дня в сетке календаря */
+    return $active ? theme.colors.info : theme.colors.textSecondary;
   }};
   cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
   opacity: ${({ $disabled }) => ($disabled ? 0.45 : 1)};
   flex-shrink: 0;
 
   &:hover:not(:disabled) {
-    color: ${({ theme }) => theme.colors.primary};
+    color: ${({ theme }) => theme.colors.info};
   }
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.primary};
+    outline: 2px solid ${({ theme }) => theme.colors.info};
     outline-offset: -2px;
   }
 `;

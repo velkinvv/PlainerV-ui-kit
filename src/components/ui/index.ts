@@ -130,6 +130,58 @@ export type { PillGeometry } from './Pill';
 export { Slider, RangeSlider } from './Slider';
 export type { SliderProps, RangeSliderProps, SliderRangeValue } from '@/types/ui';
 
+export {
+  TableContainer,
+  Table,
+  TableHead,
+  TableBody,
+  TableFooter,
+  TableRow,
+  TableCell,
+  TablePagination,
+  TableSortLabel,
+  getTableTotalPages,
+  clampTablePageZeroBased,
+  toggleTableSortDirection,
+  getSortChevronTones,
+} from './Table';
+export type {
+  TableContainerProps,
+  TableProps,
+  TableHeadProps,
+  TableBodyProps,
+  TableFooterProps,
+  TableRowProps,
+  TableCellProps,
+  TablePaginationProps,
+  TableSortLabelProps,
+  TableSize,
+  TableCellVariant,
+  TableSortDirection,
+} from '@/types/ui';
+export type { TableSortChevronTone } from './Table';
+
+export { DataGrid } from './DataGrid';
+export {
+  dataGridSizeToTableSize,
+  sliceRowsForPagination,
+  getDataGridCellValue,
+  reorderByIndex,
+  toIdSet,
+} from './DataGrid';
+export type {
+  DataGridProps,
+  DataGridBaseRow,
+  DataGridRowId,
+  DataGridColumn,
+  DataGridPaginationModel,
+  DataGridPaginationMode,
+  DataGridSortModel,
+  DataGridSortDirection,
+  DataGridRenderCellParams,
+  DataGridRenderRowWrapperParams,
+} from '@/types/ui';
+
 export { Icon } from './Icon';
 export type { IconProps } from '@/types/ui';
 
