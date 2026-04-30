@@ -1,9 +1,10 @@
 import styled, { css } from 'styled-components';
 import type { StepperAppearance } from '../../../types/ui';
+import { BorderRadiusHandler } from '../../../handlers/uiHandlers';
 import { neutral } from '../../../variables/colors/neutral';
 
 /**
- * Корень степпера (`nav`): «пилюля», горизонтальный ряд.
+ * Корень степпера (`nav`): горизонтальный ряд, скругление из `theme.borderRadius` (`BorderRadiusHandler`).
  * @property $appearance - Светлая или тёмная панель по макету.
  * @property $fullWidth - Растянуть на всю ширину контейнера.
  */
@@ -18,7 +19,7 @@ export const StepperRoot = styled.nav.withConfig({
   max-width: 100%;
   box-sizing: border-box;
   padding: 10px 14px;
-  border-radius: 9999px;
+  border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
 
   ${({ $appearance, theme }) =>
     $appearance === 'dark'
@@ -34,7 +35,7 @@ export const StepperRoot = styled.nav.withConfig({
 `;
 
 /**
- * Кнопка «назад» (шеврон).
+ * Кнопка «назад» (шеврон); скругление как у остальных контролов темы.
  * @property $appearance - Влияет на цвет иконки.
  */
 export const StepperBackButton = styled.button.withConfig({
@@ -47,7 +48,7 @@ export const StepperBackButton = styled.button.withConfig({
   margin: 0;
   padding: 4px;
   border: none;
-  border-radius: 50%;
+  border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
   background: transparent;
   cursor: pointer;
   color: ${({ theme, $appearance }) =>

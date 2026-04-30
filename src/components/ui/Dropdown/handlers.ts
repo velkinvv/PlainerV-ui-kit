@@ -2,7 +2,13 @@ import type { DropdownTheme } from '../../../types/theme';
 import type { Size } from '../../../types/sizes';
 import { getDropdownItemStyles } from '../../../handlers/dropdownThemeHandlers';
 import type React from 'react';
-import type { DropdownPositioningMode, DropdownVirtualScrollConfig } from '../../../types/ui';
+import type {
+  DropdownMenuGroup,
+  DropdownMenuItemProps,
+  DropdownPositioningMode,
+  DropdownVirtualScrollConfig,
+} from '../../../types/ui';
+import { HintPosition, TooltipPosition } from '../../../types/ui';
 
 /**
  * Вычисляет высоту элемента dropdown из темы
@@ -490,4 +496,54 @@ export const getVirtualScrollItemStyles = (topPosition: number): React.CSSProper
     left: 0,
     right: 0,
   };
+};
+
+/**
+ * Проверяет, что запись — группа с вложенными пунктами (`items`), а не одиночный пункт.
+ * @param entry - элемент списка определений меню
+ */
+export const isDropdownGroup = (
+  entry: DropdownMenuItemProps | DropdownMenuGroup,
+): entry is DropdownMenuGroup => {
+  return Array.isArray((entry as DropdownMenuGroup)?.items);
+};
+
+/**
+ * Разворачивает группы и одиночные пункты в один плоский список (порядок: как в дереве).
+ * @param definitions - Элементы меню или группы
+ * @returns Плоский массив пунктов
+ */
+export const flattenDropdownDefinitions = (
+  definitions: (DropdownMenuItemProps | DropdownMenuGroup)[] | null | undefined,
+): DropdownMenuItemProps[] => {
+  if (!definitions?.length) {
+    return [];
+  }
+  const out: DropdownMenuItemProps[] = [];
+  definitions.forEach((def) => {
+    if (isDropdownGroup(def)) {
+      def.items.forEach((item) => out.push(item));
+    } else {
+      out.push(def);
+    }
+  });
+  return out;
+};
+
+/**
+ * Позиция `Hint` для пункта меню: значения совпадают с `TooltipPosition` для сторон света.
+ * @param tooltipPosition - значение из пропса пункта (`top` | `bottom` | `left` | `right`)
+ */
+export const mapTooltipPositionToHintPlacement = (tooltipPosition: TooltipPosition): HintPosition => {
+  switch (tooltipPosition) {
+    case TooltipPosition.BOTTOM:
+      return HintPosition.BOTTOM;
+    case TooltipPosition.LEFT:
+      return HintPosition.LEFT;
+    case TooltipPosition.RIGHT:
+      return HintPosition.RIGHT;
+    case TooltipPosition.TOP:
+    default:
+      return HintPosition.TOP;
+  }
 };

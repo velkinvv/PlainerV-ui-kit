@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import { ButtonGroup } from './ButtonGroup';
 import { Button } from '../Button';
@@ -9,7 +9,7 @@ import { IconSize, Size } from '@/types/sizes';
 import { Icon } from '../../Icon/Icon';
 
 const meta: Meta<typeof ButtonGroup> = {
-  title: 'Components/Buttons/ButtonGroup',
+  title: 'UI Kit/Inputs/ButtonGroup',
   component: ButtonGroup,
   decorators: [
     (Story) => (
@@ -23,18 +23,53 @@ const meta: Meta<typeof ButtonGroup> = {
     docs: {
       description: {
         component:
-          'Группа `Button` / `IconButton` по макету Figma: в режиме `attached` — `gap: 0`, скругления только на внешних углах первого и последнего сегмента, внутренние стыки с перекрытием −1px. Проп `size` задаёт внешний радиус (согласуйте с `size` у дочерних кнопок); `attachedShape="pill"` — капсула. У `IconButton` в склеенной группе задавайте `rounded={false}`.',
+          'Группа `Button` / `IconButton`: в режиме `attached` — `gap: 0`, скругления только на внешних углах первого и последнего сегмента, внутренние стыки с перекрытием −1px. Проп `size` задаёт внешний радиус (согласуйте с `size` у дочерних кнопок); `attachedShape="pill"` — капсула. У `IconButton` в склеенной группе задавайте `rounded={false}`.',
       },
     },
   },
   tags: ['autodocs'],
   argTypes: {
-    orientation: { control: 'radio', options: ['horizontal', 'vertical'] },
-    attached: { control: 'boolean' },
-    size: { control: 'select', options: [Size.XS, Size.SM, Size.MD, Size.LG, Size.XL] },
-    attachedShape: { control: 'radio', options: ['segment', 'pill'] },
-    fullWidth: { control: 'boolean' },
-    ariaLabel: { description: 'Подпись для `aria-label` на контейнере' },
+    orientation: {
+      control: 'radio',
+      options: ['horizontal', 'vertical'],
+      table: {
+        type: { summary: 'horizontal или vertical' },
+      },
+    },
+    attached: {
+      control: 'boolean',
+      description: 'Склеенная группа: общий радиус и стык −1px',
+      table: { type: { summary: 'boolean' } },
+    },
+    size: {
+      control: 'select',
+      options: [Size.XS, Size.SM, Size.MD, Size.LG, Size.XL],
+      description: 'Внешний радиус сегмента (согласуйте с size у кнопок)',
+      table: {
+        type: { summary: 'Size: XS, SM, MD, LG, XL' },
+      },
+    },
+    attachedShape: {
+      control: 'radio',
+      options: ['segment', 'pill'],
+      description: 'Форма склеенной группы',
+      table: {
+        type: { summary: 'segment или pill' },
+      },
+    },
+    fullWidth: {
+      control: 'boolean',
+      table: { type: { summary: 'boolean' } },
+    },
+    ariaLabel: {
+      description: 'Подпись для `aria-label` на контейнере',
+      table: { type: { summary: 'string' } },
+    },
+    children: {
+      control: false,
+      description: 'Button и/или IconButton',
+      table: { type: { summary: 'ReactNode' } },
+    },
   },
 };
 
@@ -81,7 +116,7 @@ export const AttachedPrimaryOutline: Story = {
   ),
 };
 
-/** Три размера — разный внешний радиус сегмента (макет Figma) */
+/** Три размера — разный внешний радиус сегмента */
 export const AttachedSizes: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -127,23 +162,39 @@ export const AttachedPill: Story = {
   ),
 };
 
-/** Текст + иконка / иконка + текст (макет) */
+/** Текст + иконка / иконка + текст */
 export const AttachedWithIcons: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       <ButtonGroup attached size={Size.MD} ariaLabel="Текст и стрелка справа">
-        <Button variant={ButtonVariant.SECONDARY} size={Size.MD} iconEnd={<Icon name="IconPlainerArrowRight" size={IconSize.SM} />}>
+        <Button
+          variant={ButtonVariant.SECONDARY}
+          size={Size.MD}
+          iconEnd={<Icon name="IconPlainerArrowRight" size={IconSize.SM} />}
+        >
           Button
         </Button>
-        <Button variant={ButtonVariant.PRIMARY} size={Size.MD} iconEnd={<Icon name="IconPlainerArrowRight" size={IconSize.SM} />}>
+        <Button
+          variant={ButtonVariant.PRIMARY}
+          size={Size.MD}
+          iconEnd={<Icon name="IconPlainerArrowRight" size={IconSize.SM} />}
+        >
           Button
         </Button>
       </ButtonGroup>
       <ButtonGroup attached size={Size.MD} ariaLabel="Стрелка слева от текста">
-        <Button variant={ButtonVariant.SECONDARY} size={Size.MD} iconStart={<Icon name="IconPlainerArrowRight" size={IconSize.SM} />}>
+        <Button
+          variant={ButtonVariant.SECONDARY}
+          size={Size.MD}
+          iconStart={<Icon name="IconPlainerArrowRight" size={IconSize.SM} />}
+        >
           Button
         </Button>
-        <Button variant={ButtonVariant.PRIMARY} size={Size.MD} iconStart={<Icon name="IconPlainerArrowRight" size={IconSize.SM} />}>
+        <Button
+          variant={ButtonVariant.PRIMARY}
+          size={Size.MD}
+          iconStart={<Icon name="IconPlainerArrowRight" size={IconSize.SM} />}
+        >
           Button
         </Button>
       </ButtonGroup>
@@ -215,3 +266,4 @@ export const AttachedFullWidth: Story = {
     </div>
   ),
 };
+

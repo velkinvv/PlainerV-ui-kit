@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Tabs } from './Tabs';
 import { TabItem } from './TabItem';
@@ -13,7 +13,7 @@ import {
 import { Icon } from '../Icon/Icon';
 
 const meta: Meta<typeof Tabs> = {
-  title: 'Components/Tabs',
+  title: 'UI Kit/Navigation/Tabs',
   component: Tabs,
   parameters: {
     layout: 'centered',
@@ -46,7 +46,7 @@ const meta: Meta<typeof Tabs> = {
       description:
         'Направление отображения табов. HORIZONTAL - табы сверху, контент снизу. VERTICAL - табы слева/справа, контент рядом.',
       table: {
-        type: { summary: 'TabsDirection' },
+        type: { summary: '"horizontal", "vertical"' },
         defaultValue: { summary: 'HORIZONTAL' },
       },
     },
@@ -57,7 +57,7 @@ const meta: Meta<typeof Tabs> = {
         'Позиция табов в вертикальном режиме. START - табы слева от контента (по умолчанию). END - табы справа от контента. Применяется только при direction=VERTICAL.',
       if: { arg: 'direction', eq: TabsDirection.VERTICAL },
       table: {
-        type: { summary: 'TabsVerticalPosition' },
+        type: { summary: '"start", "end"' },
         defaultValue: { summary: 'START' },
       },
     },
@@ -65,9 +65,9 @@ const meta: Meta<typeof Tabs> = {
       control: { type: 'select' },
       options: [TabsVariant.PILL, TabsVariant.LINE],
       description:
-        'PILL — сегментированный трек (макет Figma). LINE — линия-индикатор. Если не задан: горизонтально pill, вертикально line.',
+        'PILL — сегментированный трек. LINE — линия-индикатор. Если не задан: горизонтально pill, вертикально line.',
       table: {
-        type: { summary: 'TabsVariant' },
+        type: { summary: '"pill", "line"' },
         defaultValue: { summary: 'undefined (авто)' },
       },
     },
@@ -103,7 +103,7 @@ const meta: Meta<typeof Tabs> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** Сегменты, иконки и бейджи — как в макете Figma (node 4817-16422) */
+/** Сегменты, иконки и бейджи */
 export const PillSegmentedWithIconsAndBadge: Story = {
   args: {
     defaultActiveTab: 'inbox',
@@ -135,10 +135,6 @@ export const PillSegmentedWithIconsAndBadge: Story = {
   },
   parameters: {
     layout: 'padded',
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4817-16422',
-    },
   },
 };
 
@@ -834,3 +830,4 @@ export const VerticalTabsOnRightWithVerticalText: Story = {
     },
   },
 };
+

@@ -9,7 +9,6 @@ import { IconSize, ModalSize } from '../../../types/sizes';
 import {
   useModalEscape,
   shouldCloseOnOverlayClick,
-  getModalMountNode,
   hasModalButtons,
   useModalFocus,
   useFocusTrap,
@@ -29,6 +28,9 @@ import {
   ModalButtonsIcon,
   ModalFooter,
 } from './Modal.style';
+import { useOverlayVisibility } from '../../../hooks/useOverlayVisibility';
+import { useOverlayPortal } from '../../../hooks/useOverlayPortal';
+import { useOverlayPresentation } from '../../../hooks/useOverlayPresentation';
 
 export const Modal = forwardRef<HTMLDivElement, ModalProps>(
   (
@@ -65,6 +67,8 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
       closeOnEscapeKeyDown = true,
       closeOnOutsideClick = true,
       showCloseButton = true,
+      unmountOnClose = true,
+      lazy = true,
       className,
     },
     ref,
@@ -95,7 +99,12 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
       }
     };
 
-    const mountNode = getModalMountNode(container, portalTargetId);
+    const { mountNode, overlayInlineStyle } = useOverlayPortal({
+      container,
+      portalTargetId,
+      overlayStyle,
+      portalZIndex,
+    });
     const presetAnimations = getAnimationPreset(animationPreset);
     const animations = useMemo(() => {
       if (!animationConfig) {
@@ -119,14 +128,12 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
       };
     }, [animationConfig, presetAnimations]);
 
-    const overlayInlineStyle = useMemo(() => {
-      if (portalZIndex === undefined) {
-        return overlayStyle;
-      }
-      return { ...(overlayStyle || {}), zIndex: portalZIndex };
-    }, [overlayStyle, portalZIndex]);
-
     const [asyncButtonsState, setAsyncButtonsState] = useState<Record<number, boolean>>({});
+    const { shouldRenderPortal, shouldRenderContent, isHidden } = useOverlayVisibility({
+      isOpen,
+      unmountOnClose,
+      lazy,
+    });
 
     const handleButtonAction = useCallback(async (button: ModalButtonProps, index: number) => {
       if (button.asyncOnClick) {
@@ -172,104 +179,113 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
       };
     }, [isOpen]);
 
-    if (!mountNode) {
+    const { overlayPresentationStyle, ariaHidden } = useOverlayPresentation({
+      isOpen,
+      isHidden,
+      overlayInlineStyle,
+    });
+
+    if (!mountNode || !shouldRenderPortal) {
       return null;
     }
 
+    const modalBody = (
+      <Overlay
+        $mobile={mobile}
+        $overlayCss={overlayStyledCss}
+        $overlayVariant={overlayVariant}
+        initial={animations.overlay.initial}
+        animate={animations.overlay.animate}
+        exit={animations.overlay.exit}
+        onClick={handleOverlayClick}
+        className={overlayClassName}
+        style={overlayPresentationStyle}
+        onAnimationComplete={() => {
+          // Сигнализируем Storybook о завершении анимации оверлея
+          const overlayElement = document.querySelector('[data-modal-overlay]');
+          if (overlayElement) {
+            overlayElement.setAttribute('data-animation-complete', 'true');
+          }
+        }}
+        data-modal-overlay
+        aria-hidden={ariaHidden}
+      >
+        <ModalContainer
+          ref={setModalRef}
+          size={size}
+          $mobile={mobile}
+          tabIndex={-1}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={title ? titleId : undefined}
+          aria-describedby={description ? descriptionId : undefined}
+          className={clsx('ui-modal', className)}
+          initial={animations.modal.initial}
+          animate={animations.modal.animate}
+          exit={animations.modal.exit}
+          transition={animations.modal.transition}
+          onAnimationComplete={() => {
+            // Сигнализируем Storybook о завершении анимации модального окна
+            if (modalContainerRef.current) {
+              modalContainerRef.current.setAttribute('data-animation-complete', 'true');
+            }
+          }}
+        >
+          {headerSlot ? (
+            <ModalHeader $variant={modalVariant}>{headerSlot}</ModalHeader>
+          ) : (
+            (title || showCloseButton || headerIcon) && (
+              <ModalHeader $variant={modalVariant}>
+                <ModalHeaderTitleWrapper>
+                  {headerIcon && <ModalHeaderIcon>{headerIcon}</ModalHeaderIcon>}
+                  {title && (
+                    <ModalTitle $variant={modalVariant} id={titleId}>
+                      {title}
+                    </ModalTitle>
+                  )}
+                </ModalHeaderTitleWrapper>
+                {showCloseButton && (
+                  <CloseButton onClick={onClose} aria-label="Закрыть">
+                    <Icon name="PhosphorX" size={IconSize.MD} color="#9E9E9E" />
+                  </CloseButton>
+                )}
+              </ModalHeader>
+            )
+          )}
+          <ModalContent ref={contentRef} tabIndex={-1}>
+            {contentIcon && <ModalContentIcon>{contentIcon}</ModalContentIcon>}
+            {description && <p id={descriptionId}>{description}</p>}
+            {content}
+            {children}
+          </ModalContent>
+          {footerSlot && <ModalFooter>{footerSlot}</ModalFooter>}
+          {(buttonsSlot || hasModalButtons(sortedButtons)) && (
+            <ModalButtonContainer>
+              {buttonsIcon && <ModalButtonsIcon>{buttonsIcon}</ModalButtonsIcon>}
+              {buttonsSlot
+                ? buttonsSlot
+                : sortedButtons.map((buttonProps, index) => (
+                    <Button
+                      key={index}
+                      {...buttonProps}
+                      loading={buttonProps.loading || asyncButtonsState[index]}
+                      disabled={buttonProps.disabled || asyncButtonsState[index]}
+                      onClick={() => handleButtonAction(buttonProps, index)}
+                    >
+                      {asyncButtonsState[index] && buttonProps.loadingLabel
+                        ? buttonProps.loadingLabel
+                        : buttonProps.label}
+                    </Button>
+                  ))}
+            </ModalButtonContainer>
+          )}
+        </ModalContainer>
+      </Overlay>
+    );
+
     return createPortal(
       <AnimatePresence>
-        {isOpen && (
-          <Overlay
-            $mobile={mobile}
-            $overlayCss={overlayStyledCss}
-            $overlayVariant={overlayVariant}
-            initial={animations.overlay.initial}
-            animate={animations.overlay.animate}
-            exit={animations.overlay.exit}
-            onClick={handleOverlayClick}
-            className={overlayClassName}
-            style={overlayInlineStyle}
-            onAnimationComplete={() => {
-              // Сигнализируем Storybook о завершении анимации оверлея
-              const overlayElement = document.querySelector('[data-modal-overlay]');
-              if (overlayElement) {
-                overlayElement.setAttribute('data-animation-complete', 'true');
-              }
-            }}
-            data-modal-overlay
-          >
-            <ModalContainer
-              ref={setModalRef}
-              size={size}
-              $mobile={mobile}
-              tabIndex={-1}
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby={title ? titleId : undefined}
-              aria-describedby={description ? descriptionId : undefined}
-              className={clsx('ui-modal', className)}
-              initial={animations.modal.initial}
-              animate={animations.modal.animate}
-              exit={animations.modal.exit}
-              transition={animations.modal.transition}
-              onAnimationComplete={() => {
-                // Сигнализируем Storybook о завершении анимации модального окна
-                if (modalContainerRef.current) {
-                  modalContainerRef.current.setAttribute('data-animation-complete', 'true');
-                }
-              }}
-            >
-              {headerSlot ? (
-                <ModalHeader $variant={modalVariant}>{headerSlot}</ModalHeader>
-              ) : (
-                (title || showCloseButton || headerIcon) && (
-                  <ModalHeader $variant={modalVariant}>
-                    <ModalHeaderTitleWrapper>
-                      {headerIcon && <ModalHeaderIcon>{headerIcon}</ModalHeaderIcon>}
-                      {title && (
-                        <ModalTitle $variant={modalVariant} id={titleId}>
-                          {title}
-                        </ModalTitle>
-                      )}
-                    </ModalHeaderTitleWrapper>
-                    {showCloseButton && (
-                      <CloseButton onClick={onClose} aria-label="Закрыть">
-                        <Icon name="PhosphorX" size={IconSize.MD} color="#9E9E9E" />
-                      </CloseButton>
-                    )}
-                  </ModalHeader>
-                )
-              )}
-              <ModalContent ref={contentRef} tabIndex={-1}>
-                {contentIcon && <ModalContentIcon>{contentIcon}</ModalContentIcon>}
-                {description && <p id={descriptionId}>{description}</p>}
-                {content}
-                {children}
-              </ModalContent>
-              {footerSlot && <ModalFooter>{footerSlot}</ModalFooter>}
-              {(buttonsSlot || hasModalButtons(sortedButtons)) && (
-                <ModalButtonContainer>
-                  {buttonsIcon && <ModalButtonsIcon>{buttonsIcon}</ModalButtonsIcon>}
-                  {buttonsSlot
-                    ? buttonsSlot
-                    : sortedButtons.map((buttonProps, index) => (
-                        <Button
-                          key={index}
-                          {...buttonProps}
-                          loading={buttonProps.loading || asyncButtonsState[index]}
-                          disabled={buttonProps.disabled || asyncButtonsState[index]}
-                          onClick={() => handleButtonAction(buttonProps, index)}
-                        >
-                          {asyncButtonsState[index] && buttonProps.loadingLabel
-                            ? buttonProps.loadingLabel
-                            : buttonProps.label}
-                        </Button>
-                      ))}
-                </ModalButtonContainer>
-              )}
-            </ModalContainer>
-          </Overlay>
-        )}
+        {shouldRenderContent ? modalBody : null}
       </AnimatePresence>,
       mountNode,
     );

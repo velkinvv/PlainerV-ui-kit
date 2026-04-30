@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 import type { HintVariant, HintCssMixin, HintAnimationPreset } from '../../../types/ui';
 import { HintPosition, HintAnimationPreset as AnimationPreset } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
-// import { TransitionHandler, ZIndexHandler } from '../../../handlers/uiHandlers';
+import { ZIndexHandler } from '../../../handlers/uiHandlers';
 
 /**
  * Внешний контейнер для hint (AnchorWrapper)
@@ -42,7 +42,7 @@ export const HintContent = styled.div<{
   position: fixed;
   font-family: ${({ theme }) => theme.fonts.primary};
   font-weight: 500;
-  z-index: ${({ $zIndex, theme }) => $zIndex ?? theme.hints.settings.zIndex};
+  z-index: ${({ $zIndex }) => $zIndex ?? ZIndexHandler('hint')};
   pointer-events: ${({ $isVisible, $clickable }) =>
     $isVisible ? ($clickable ? 'auto' : 'none') : 'none'};
   user-select: ${({ theme }) => theme.hints.settings.userSelect};

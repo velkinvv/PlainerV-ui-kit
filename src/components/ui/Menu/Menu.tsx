@@ -1,62 +1,76 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { clsx } from 'clsx';
-import { MenuActiveAppearance, type MenuProps } from '@/types/ui';
-import { MenuContext, type MenuContextValue } from './MenuContext';
-import { MenuNav, MenuList } from './Menu.style';
+import type { MenuProps } from '@/types/ui';
+import { handleMenuListKeyboardNavigation, MENU_FOCUSABLE_ITEM_SELECTOR } from './Menu.handlers';
+import { MenuSurface, MenuList } from './Menu.style';
 import { MenuItem } from './MenuItem';
+import {
+  MenuListPresentationContext,
+  type MenuListPresentationContextValue,
+} from './MenuListPresentationContext';
 
 /**
- * Вертикальное меню навигации (макет Figma: expanded / collapsed, состояния пунктов).
- * @property collapsed — только иконки; подписи скрыты визуально, остаются для скринридеров
- * @property activeId — контролируемый выбранный пункт (если передан, внешний источник истины)
- * @property defaultActiveId — начальный выбор в неконтролируемом режиме
- * @property onActiveChange — вызывается при выборе пункта (и в controlled, и в uncontrolled)
- * @property activeAppearance — BAR | HIGHLIGHTED | SOLID
- * @property aria-label — рекомендуется для `<nav>`
- * @property className — доп. класс на `<nav>`
- * @property children — только `MenuItem` / `Menu.Item`
+ * Поверхность списка действий (содержимое выпадающего меню): `role="menu"`, клавиатура, скролл.
+ * Позиционирование у якоря не входит в компонент — оборачивайте в портал/Popper снаружи.
+ * @param children — обычно только `MenuItem`
+ * @param className — класс на внешней обёртке
+ * @param aria-label — подпись для списка меню
+ * @param id — id списка
+ * @param maxHeight — ограничение высоты с прокруткой
+ * @param dense — компактные пункты
+ * @param autoFocusFirstItem — сфокусировать первый доступный пункт после монтирования
  */
 export const Menu: React.FC<MenuProps> & { Item: typeof MenuItem } = ({
-  collapsed = false,
-  activeId: activeIdProp,
-  defaultActiveId = null,
-  onActiveChange,
-  activeAppearance = MenuActiveAppearance.BAR,
-  className,
   children,
+  className,
+  id,
+  maxHeight,
+  dense = false,
+  autoFocusFirstItem = true,
   'aria-label': ariaLabel,
 }) => {
-  const isControlled = activeIdProp !== undefined;
-  const [internalActiveId, setInternalActiveId] = useState<string | null>(defaultActiveId ?? null);
+  const listRef = useRef<HTMLUListElement>(null);
 
-  const activeId = isControlled ? activeIdProp ?? null : internalActiveId;
+  const presentationValue = useMemo<MenuListPresentationContextValue>(
+    () => ({ dense: !!dense }),
+    [dense],
+  );
 
-  const setActiveId = useCallback(
-    (id: string) => {
-      if (!isControlled) {
-        setInternalActiveId(id);
-      }
-      onActiveChange?.(id);
+  const onListKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLUListElement>) => {
+      handleMenuListKeyboardNavigation(listRef.current, event);
     },
-    [isControlled, onActiveChange],
+    [],
   );
 
-  const contextValue = useMemo<MenuContextValue>(
-    () => ({
-      collapsed,
-      activeId,
-      setActiveId,
-      activeAppearance,
-    }),
-    [collapsed, activeId, setActiveId, activeAppearance],
-  );
+  useEffect(() => {
+    if (!autoFocusFirstItem) {
+      return;
+    }
+    const listElement = listRef.current;
+    if (!listElement) {
+      return;
+    }
+    const firstItem = listElement.querySelector<HTMLElement>(MENU_FOCUSABLE_ITEM_SELECTOR);
+    firstItem?.focus();
+  }, [autoFocusFirstItem, children]);
 
   return (
-    <MenuContext.Provider value={contextValue}>
-      <MenuNav className={clsx('ui-menu', className)} aria-label={ariaLabel}>
-        <MenuList>{children}</MenuList>
-      </MenuNav>
-    </MenuContext.Provider>
+    <MenuSurface className={clsx('ui-surface-menu', className)}>
+      <MenuListPresentationContext.Provider value={presentationValue}>
+        <MenuList
+          ref={listRef}
+          id={id}
+          role="menu"
+          aria-label={ariaLabel}
+          tabIndex={-1}
+          onKeyDown={onListKeyDown}
+          $maxHeight={maxHeight}
+        >
+          {children}
+        </MenuList>
+      </MenuListPresentationContext.Provider>
+    </MenuSurface>
   );
 };
 

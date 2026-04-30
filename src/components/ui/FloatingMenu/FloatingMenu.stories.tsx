@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { FloatingMenu } from './FloatingMenu';
 import { ThemeProvider } from '@/themes/ThemeProvider';
@@ -7,17 +7,17 @@ import {
   FloatingMenuDragSource,
   FloatingMenuGroupVariant,
   FloatingMenuPlacement,
-  MenuActiveAppearance,
+  NavigationMenuActiveAppearance,
 } from '@/types/ui';
 import { Icon } from '../Icon/Icon';
-import { Menu } from '../Menu/Menu';
-import { MenuItem } from '../Menu/MenuItem';
+import { NavigationMenu } from '../NavigationMenu/NavigationMenu';
+import { NavigationMenuItem } from '../NavigationMenu/NavigationMenuItem';
 
 const meta: Meta<typeof FloatingMenu> = {
-  title: 'Components/Navigation/FloatingMenu',
+  title: 'UI Kit/Navigation/FloatingMenu',
   component: FloatingMenu,
   decorators: [
-    Story => (
+    (Story) => (
       <ThemeProvider>
         <div style={{ minHeight: 400, position: 'relative' }}>
           <Story />
@@ -30,22 +30,72 @@ const meta: Meta<typeof FloatingMenu> = {
     docs: {
       description: {
         component:
-          'Плавающая панель инструментов: группы `FloatingMenu.Group`, разделитель `Divider`, пункты `GroupItem` с подсказкой и вложенным `Menu`. Закрепление по краю (`placement`) или перетаскивание (`draggable`).',
+          'Плавающая панель инструментов: группы `FloatingMenu.Group`, разделитель `Divider`, пункты `GroupItem` с подсказкой и вложенным `NavigationMenu`. Закрепление по краю (`placement`) или перетаскивание (`draggable`).',
       },
     },
   },
   tags: ['autodocs'],
+  argTypes: {
+    'aria-label': {
+      description: 'Доступное имя панели инструментов',
+      table: { type: { summary: 'string' } },
+    },
+    placement: {
+      control: { type: 'select' },
+      options: Object.values(FloatingMenuPlacement),
+      description: 'Закрепление панели у края вьюпорта',
+      table: {
+        type: {
+          summary:
+            'FloatingMenuPlacement: left-top, left-center, …, bottom-center и др. (см. enum)',
+        },
+      },
+    },
+    draggable: {
+      control: 'boolean',
+      description: 'Разрешить перетаскивание панели',
+      table: { type: { summary: 'boolean' } },
+    },
+    dragSource: {
+      control: { type: 'select' },
+      options: Object.values(FloatingMenuDragSource),
+      description: 'За что тянуть: вся панель или отдельная ручка',
+      table: {
+        type: { summary: 'bar (вся панель) или handle (только зона DragHandle)' },
+      },
+    },
+    defaultOffset: {
+      control: 'object',
+      description: 'Начальное смещение в px от закреплённой позиции',
+      table: {
+        type: { summary: '{ x: number; y: number }' },
+      },
+    },
+    zIndex: {
+      control: 'number',
+      table: { type: { summary: 'number' } },
+    },
+    children: {
+      control: false,
+      description: 'Группы FloatingMenu.Group, Divider, содержимое',
+      table: { type: { summary: 'ReactNode' } },
+    },
+  },
 };
 
 export default meta;
 type Story = StoryObj<typeof FloatingMenu>;
 
 const shapesMenu = (
-  <Menu aria-label="Фигуры" activeAppearance={MenuActiveAppearance.HIGHLIGHTED} defaultActiveId="r">
-    <MenuItem id="r" label="Прямоугольник" />
-    <MenuItem id="e" label="Эллипс" />
-    <MenuItem id="l" label="Линия" />
-  </Menu>
+  <NavigationMenu
+    aria-label="Фигуры"
+    activeAppearance={NavigationMenuActiveAppearance.HIGHLIGHTED}
+    defaultActiveId="r"
+  >
+    <NavigationMenuItem id="r" label="Прямоугольник" />
+    <NavigationMenuItem id="e" label="Эллипс" />
+    <NavigationMenuItem id="l" label="Линия" />
+  </NavigationMenu>
 );
 
 export const BottomCenterFixed: Story = {
@@ -104,8 +154,14 @@ export const DraggableBar: Story = {
   render: () => (
     <FloatingMenu aria-label="Перетаскиваемая панель" draggable>
       <FloatingMenu.Group>
-        <FloatingMenu.GroupItem icon={<Icon name="PhosphorArrowFatLineLeft" size="sm" />} aria-label="A" />
-        <FloatingMenu.GroupItem icon={<Icon name="PhosphorArrowFatLineRight" size="sm" />} aria-label="B" />
+        <FloatingMenu.GroupItem
+          icon={<Icon name="PhosphorArrowFatLineLeft" size="sm" />}
+          aria-label="A"
+        />
+        <FloatingMenu.GroupItem
+          icon={<Icon name="PhosphorArrowFatLineRight" size="sm" />}
+          aria-label="B"
+        />
       </FloatingMenu.Group>
     </FloatingMenu>
   ),
@@ -113,11 +169,7 @@ export const DraggableBar: Story = {
 
 export const DraggableByHandle: Story = {
   render: () => (
-    <FloatingMenu
-      aria-label="Панель с ручкой"
-      draggable
-      dragSource={FloatingMenuDragSource.HANDLE}
-    >
+    <FloatingMenu aria-label="Панель с ручкой" draggable dragSource={FloatingMenuDragSource.HANDLE}>
       <FloatingMenu.DragHandle />
       <FloatingMenu.Group>
         <FloatingMenu.GroupItem icon={<span>1</span>} aria-label="Один" />
@@ -153,8 +205,8 @@ export const Placements: Story = {
         <p style={{ marginBottom: 16 }}>
           <label>
             Размещение:{' '}
-            <select value={p} onChange={e => setP(e.target.value as FloatingMenuPlacement)}>
-              {Object.values(FloatingMenuPlacement).map(v => (
+            <select value={p} onChange={(e) => setP(e.target.value as FloatingMenuPlacement)}>
+              {Object.values(FloatingMenuPlacement).map((v) => (
                 <option key={v} value={v}>
                   {v}
                 </option>
@@ -172,3 +224,4 @@ export const Placements: Story = {
     );
   },
 };
+

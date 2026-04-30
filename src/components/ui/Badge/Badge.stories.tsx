@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Badge } from './Badge';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
@@ -6,7 +6,7 @@ import { BadgeVariant } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 
 const meta: Meta<typeof Badge> = {
-  title: 'Components/Badge',
+  title: 'UI Kit/Data Display/Badge',
   component: Badge,
   parameters: {
     layout: 'padded',
@@ -17,7 +17,7 @@ const meta: Meta<typeof Badge> = {
     },
   },
   decorators: [
-    Story => (
+    (Story) => (
       <ThemeProvider>
         <Story />
       </ThemeProvider>
@@ -29,11 +29,17 @@ const meta: Meta<typeof Badge> = {
       control: { type: 'select' },
       options: [...Object.values(BadgeVariant)],
       description: 'Вариант стилизации бейджа',
+      table: {
+        type: { summary: 'BadgeVariant (см. список в control)' },
+      },
     },
     size: {
       control: { type: 'select' },
       options: [...Object.values(Size)],
       description: 'Размер бейджа',
+      table: {
+        type: { summary: 'Size: XS, SM, MD, LG, XL' },
+      },
     },
     isDot: {
       control: { type: 'boolean' },
@@ -49,7 +55,7 @@ const meta: Meta<typeof Badge> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Основные варианты согласно макету
+// Основные варианты
 export const Default: Story = {
   args: {
     children: '3',
@@ -113,7 +119,7 @@ export const Info: Story = {
   },
 };
 
-// Размеры согласно макету
+// Размеры
 export const Dot: Story = {
   args: {
     variant: BadgeVariant.DEFAULT,
@@ -125,7 +131,7 @@ export const Small: Story = {
   args: {
     children: '3',
     variant: BadgeVariant.DEFAULT,
-    size: Size.XS, // sm в макете
+    size: Size.XS,
   },
 };
 
@@ -133,7 +139,7 @@ export const Medium: Story = {
   args: {
     children: '3',
     variant: BadgeVariant.DEFAULT,
-    size: Size.SM, // md в макете
+    size: Size.SM,
   },
 };
 
@@ -141,7 +147,7 @@ export const Large: Story = {
   args: {
     children: '3',
     variant: BadgeVariant.DEFAULT,
-    size: Size.MD, // lg в макете
+    size: Size.MD,
   },
 };
 
@@ -149,7 +155,7 @@ export const ExtraLarge: Story = {
   args: {
     children: '3',
     variant: BadgeVariant.DEFAULT,
-    size: Size.LG, // xl в макете
+    size: Size.LG,
   },
 };
 
@@ -167,7 +173,7 @@ export const Clickable: Story = {
   },
 };
 
-// Демонстрация всех вариантов согласно макету
+// Демонстрация всех вариантов
 export const AllVariants: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
@@ -258,3 +264,4 @@ export const NumberLimiting: Story = {
     layout: 'padded',
   },
 };
+

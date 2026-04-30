@@ -1,19 +1,31 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { css } from 'styled-components';
 import { Dropdown } from './Dropdown';
 import { DropdownDivider } from './Dropdown.style';
 import { Button } from '../buttons/Button/Button';
 import { ButtonVariant } from '../../../types/ui';
-import type { DropdownMenuItemProps, DropdownProps } from '../../../types/ui';
+import type {
+  DropdownMenuItemProps,
+  DropdownMenuItemValue,
+  DropdownProps,
+} from '../../../types/ui';
+import {
+  applyTreeMultiSelectionToValues,
+  collectTreeBranchKeysFromSections,
+} from '../../../handlers/dropdownTreeSelectionHandlers';
 import { Size } from '../../../types/sizes';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { DropdownMenu } from './DropdownMenu';
 import { DropdownMenuItem } from './DropdownMenuItem';
 
 const meta: Meta<typeof Dropdown> = {
-  title: 'Components/Dropdown',
+  title: 'UI Kit/Navigation/Dropdown',
   component: Dropdown,
+  /** Чтобы в Controls отображался объект `openMenuIconProps` у сторис без своего `trigger`. */
+  args: {
+    openMenuIconProps: {},
+  },
   parameters: {
     layout: 'padded',
     docs: {
@@ -43,6 +55,14 @@ const meta: Meta<typeof Dropdown> = {
       description:
         'Пропсы для кнопки по умолчанию (variant, size, иконки, children). onClick переопределяется компонентом.',
       control: false,
+    },
+    openMenuIconProps: {
+      control: 'object',
+      description:
+        'Пропсы иконки раскрытия меню у дефолтной кнопки (когда `trigger` не задан): мерж с `IconPlainerChevronDown` и `getChevronIconSizeForField(size)`.',
+      table: {
+        type: { summary: 'OpenMenuIconProps' },
+      },
     },
     items: {
       description:
@@ -74,10 +94,18 @@ const meta: Meta<typeof Dropdown> = {
     },
     multiSelection: {
       description:
-        'Режим множественного выбора. Если `true`, позволяет выбрать несколько элементов, показывает чекбоксы в элементах меню, меню не закрывается при выборе. В этом режиме `value` должен быть массивом значений.',
+        'Режим множественного выбора: несколько значений, меню не закрывается при выборе; чекбоксы по умолчанию (см. `showCheckbox`). В этом режиме `value` — массив.',
       control: { type: 'boolean' },
       table: {
         defaultValue: { summary: 'false' },
+      },
+    },
+    showCheckbox: {
+      description:
+        'При `multiSelection`: показывать чекбокс в пункте (по умолчанию `true`). `false` — мультивыбор по клику на строку без чекбоксов.',
+      control: { type: 'boolean' },
+      table: {
+        defaultValue: { summary: 'true (если не передано)' },
       },
     },
     disableSelectedOptionHighlight: {
@@ -93,7 +121,7 @@ const meta: Meta<typeof Dropdown> = {
         'Включение виртуального скролла для меню. Максимальная высота меню рассчитывается исходя из высоты 1 пункта. Если `itemHeight` = "auto", то в расчет идет высота согласно dimension из темы. Объект с полем `itemHeight`: число (высота в пикселях) или "auto" (автоматический расчет из темы).',
       control: false,
       table: {
-        type: { summary: '{ itemHeight: number | "auto" }' },
+        type: { summary: '{ itemHeight: число (px) или "auto" }' },
         defaultValue: { summary: 'undefined' },
       },
     },
@@ -137,6 +165,12 @@ const meta: Meta<typeof Dropdown> = {
       description:
         'Значение выбранного элемента. Сравнивается с `value` каждого элемента меню для определения выбранного состояния. Полезно для контролируемых компонентов.',
       control: { type: 'text' },
+      table: {
+        type: {
+          summary:
+            'одно значение пункта (строка либо число) или массив таких значений при мультивыборе',
+        },
+      },
     },
     isMenuOpen: {
       description:
@@ -164,11 +198,22 @@ const meta: Meta<typeof Dropdown> = {
       description:
         'Колбэк, который вызывается при выборе пункта меню. Получает значение элемента (`value`) и нативное событие клика.',
       control: false,
+      table: {
+        type: {
+          summary:
+            '(value: строка или число, опционально undefined; event: MouseEvent) => void',
+        },
+      },
     },
     onActivateItem: {
       description:
         'Обработчик активации (hover) элемента меню. Вызывается при наведении курсора на элемент меню. Получает значение элемента (`value`).',
       control: false,
+      table: {
+        type: {
+          summary: '(value: строка или число, опционально undefined) => void',
+        },
+      },
     },
     renderTopPanel: {
       description:
@@ -185,12 +230,21 @@ const meta: Meta<typeof Dropdown> = {
         'Обработчик клика вне компонента и его детей. Вызывается при клике вне триггера и меню (включая другие Dropdown компоненты). Получает нативное событие (`Event`).',
       control: false,
     },
+    onFocus: {
+      action: 'focus',
+      description:
+        'Фокус внутри корня (`DropdownContainer`) или портал-панели (`DropdownContent` при `inline={false}`); `FocusEvent<HTMLDivElement>`',
+    },
+    onBlur: {
+      action: 'blur',
+      description: 'Потеря фокуса на корне / панели меню',
+    },
     menuWidth: {
       description:
         'Ширина меню. Может быть строкой (например, "200px", "50%", "20rem") или числом (в пикселях). Если не задана, используется минимальная и максимальная ширина из темы.',
       control: { type: 'text' },
       table: {
-        type: { summary: 'string | number' },
+        type: { summary: 'CSS-строка ("200px", "50%", …) или число (px)' },
         defaultValue: { summary: 'undefined' },
       },
     },
@@ -199,7 +253,7 @@ const meta: Meta<typeof Dropdown> = {
         'Максимальная высота меню. Может быть строкой или числом (в пикселях). При превышении высоты контент внутри меню становится прокручиваемым по вертикали.',
       control: { type: 'text' },
       table: {
-        type: { summary: 'string | number' },
+        type: { summary: 'CSS-строка или число (px)' },
         defaultValue: { summary: 'undefined' },
       },
     },
@@ -237,6 +291,12 @@ const meta: Meta<typeof Dropdown> = {
       table: {
         defaultValue: { summary: 'false' },
       },
+    },
+    searchFormat: {
+      control: 'radio',
+      options: ['wholly', 'word'],
+      description:
+        'Без `searchFilter`: `wholly` — вся строка как подстрока; `word` — каждое слово запроса (пробелы) должно встречаться в тексте пункта',
     },
     searchPlaceholder: {
       description: 'Placeholder для поля поиска.',
@@ -317,22 +377,65 @@ const meta: Meta<typeof Dropdown> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+/** Пункты с `nestedItems` для сторис дерева: каскадный мультивыбор и шевроны веток (секция `m` у `DropdownMenuFromDefinitions`). */
+const dropdownTreeMultiItems: DropdownMenuItemProps[] = [
+  {
+    id: 'region-center',
+    label: 'Регион: Центр',
+    value: 'region-center',
+    nestedItems: [
+      { label: 'Москва', value: 'msk' },
+      { label: 'Тула', value: 'tula' },
+    ],
+  },
+  {
+    id: 'region-nw',
+    label: 'Регион: Северо-Запад',
+    value: 'region-nw',
+    nestedItems: [
+      { label: 'Санкт-Петербург', value: 'spb' },
+      { label: 'Калининград', value: 'kgd' },
+    ],
+  },
+  { label: 'Без вложений', value: 'flat-other' },
+];
+
 export const Default: Story = {
   args: {
     buttonProps: {
       variant: ButtonVariant.PRIMARY,
       children: 'Открыть меню',
-      iconEnd: (
-        <span role="presentation" aria-hidden="true">
-          ▼
-        </span>
-      ),
     },
     items: [
       { label: 'Option 1', value: 'option-1' },
       { label: 'Option 2', value: 'option-2' },
       { label: 'Option 3', value: 'option-3' },
     ] as DropdownMenuItemProps[],
+  },
+};
+
+/** Проп `openMenuIconProps` у дефолтной кнопки (без `trigger`): стилизация шеврона `IconPlainerChevronDown`. */
+export const OpenMenuIconProps: Story = {
+  args: {
+    buttonProps: {
+      variant: ButtonVariant.OUTLINE,
+      children: 'Меню',
+    },
+    openMenuIconProps: {
+      color: '#1565c0',
+    },
+    items: [
+      { label: 'Пункт 1', value: '1' },
+      { label: 'Пункт 2', value: '2' },
+    ] as DropdownMenuItemProps[],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Работает только без кастомного `trigger`: шеврон справа от подписи кнопки. Настройка через Controls → `openMenuIconProps` (JSON).',
+      },
+    },
   },
 };
 
@@ -1749,6 +1852,195 @@ export const MultiSelectionWithoutHighlight: Story = {
   },
 };
 
+/** Дерево `nestedItems` + мультивыбор: каскад по родителю, частичный выбор листьев, шевроны раскрытия (`treeDefaultExpanded="expanded"`). */
+export const TreeMultiSelect: Story = {
+  render: () => {
+    const [selectedValues, setSelectedValues] = React.useState<string[]>([]);
+
+    const handleTreeSelect = (
+      value?: DropdownMenuItemValue,
+      event?: React.MouseEvent<HTMLElement>,
+    ) => {
+      if (value === undefined || value === null) {
+        return;
+      }
+      const checkedFromCheckbox = (
+        event as React.MouseEvent<HTMLElement> & { dropdownTreeCheckboxChecked?: boolean }
+      )?.dropdownTreeCheckboxChecked;
+      setSelectedValues(previous =>
+        applyTreeMultiSelectionToValues(
+          previous,
+          String(value),
+          dropdownTreeMultiItems,
+          checkedFromCheckbox,
+        ),
+      );
+    };
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 440 }}>
+        <p style={{ margin: 0, fontSize: 14, color: '#64748b', lineHeight: 1.5 }}>
+          Клик по строке родителя: если в ветке никого не выбрано — выбирается всё поддерево; если
+          выбрано хотя бы одно значение (частично или полностью) — снимается вся ветка. Чекбокс
+          родителя по-прежнему явно включает или выключает всё поддерево. Листья можно переключать
+          по одному.
+        </p>
+        <Dropdown
+          buttonProps={{
+            variant: ButtonVariant.PRIMARY,
+            children: `Выбрано значений: ${selectedValues.length}`,
+          }}
+          defaultOpen
+          multiSelection
+          treeExpandable
+          treeDefaultExpanded="expanded"
+          disableSelectedOptionHighlight
+          value={selectedValues}
+          onSelect={handleTreeSelect}
+          items={dropdownTreeMultiItems}
+        />
+        {selectedValues.length > 0 ? (
+          <pre
+            style={{
+              margin: 0,
+              padding: 12,
+              backgroundColor: '#f1f5f9',
+              borderRadius: 8,
+              fontSize: 12,
+              overflow: 'auto',
+            }}
+          >
+            {JSON.stringify(selectedValues, null, 2)}
+          </pre>
+        ) : null}
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Список из `items` с `nestedItems`. Состояние выбора обновляется через `applyTreeMultiSelectionToValues` (тот же подход, что у `Select` с вложенными `options`). Раскрытие веток по умолчанию — все открыты.',
+      },
+    },
+  },
+};
+
+/** Ветки дерева по умолчанию свёрнуты (`treeDefaultExpanded="collapsed"`). */
+export const TreeMultiSelectCollapsedDefault: Story = {
+  render: () => {
+    const [selectedValues, setSelectedValues] = React.useState<string[]>([]);
+
+    const handleTreeSelect = (
+      value?: DropdownMenuItemValue,
+      event?: React.MouseEvent<HTMLElement>,
+    ) => {
+      if (value === undefined || value === null) {
+        return;
+      }
+      const checkedFromCheckbox = (
+        event as React.MouseEvent<HTMLElement> & { dropdownTreeCheckboxChecked?: boolean }
+      )?.dropdownTreeCheckboxChecked;
+      setSelectedValues(previous =>
+        applyTreeMultiSelectionToValues(
+          previous,
+          String(value),
+          dropdownTreeMultiItems,
+          checkedFromCheckbox,
+        ),
+      );
+    };
+
+    return (
+      <div style={{ maxWidth: 440 }}>
+        <Dropdown
+          buttonProps={{
+            variant: ButtonVariant.OUTLINE,
+            children: 'Дерево (ветки свёрнуты по умолчанию)',
+          }}
+          defaultOpen
+          multiSelection
+          treeExpandable
+          treeDefaultExpanded="collapsed"
+          disableSelectedOptionHighlight
+          value={selectedValues}
+          onSelect={handleTreeSelect}
+          items={dropdownTreeMultiItems}
+        />
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: '`treeDefaultExpanded="collapsed"`: при первом открытии дочерние списки скрыты, шеврон раскрывает ветку.',
+      },
+    },
+  },
+};
+
+/** Контролируемое раскрытие веток: `treeExpandedKeys` и `onTreeExpandedKeysChange` (изначально развёрнута только первая ветка). */
+export const TreeMultiSelectControlledBranches: Story = {
+  render: () => {
+    const [selectedValues, setSelectedValues] = React.useState<string[]>([]);
+    const branchKeys = collectTreeBranchKeysFromSections([], dropdownTreeMultiItems, []);
+    const [expandedKeys, setExpandedKeys] = React.useState<string[]>(() =>
+      branchKeys.length > 0 ? [branchKeys[0]!] : [],
+    );
+
+    const handleTreeSelect = (
+      value?: DropdownMenuItemValue,
+      event?: React.MouseEvent<HTMLElement>,
+    ) => {
+      if (value === undefined || value === null) {
+        return;
+      }
+      const checkedFromCheckbox = (
+        event as React.MouseEvent<HTMLElement> & { dropdownTreeCheckboxChecked?: boolean }
+      )?.dropdownTreeCheckboxChecked;
+      setSelectedValues(previous =>
+        applyTreeMultiSelectionToValues(
+          previous,
+          String(value),
+          dropdownTreeMultiItems,
+          checkedFromCheckbox,
+        ),
+      );
+    };
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 480 }}>
+        <p style={{ margin: 0, fontSize: 13, color: '#64748b' }}>
+          Ключи раскрытых веток: <code>{expandedKeys.join(', ') || '—'}</code>
+        </p>
+        <Dropdown
+          buttonProps={{
+            variant: ButtonVariant.SECONDARY,
+            children: 'Дерево с контролем раскрытия',
+          }}
+          defaultOpen
+          multiSelection
+          treeExpandable
+          treeExpandedKeys={expandedKeys}
+          onTreeExpandedKeysChange={setExpandedKeys}
+          disableSelectedOptionHighlight
+          value={selectedValues}
+          onSelect={handleTreeSelect}
+          items={dropdownTreeMultiItems}
+        />
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Полный контроль над раскрытием: передайте `treeExpandedKeys` и обновляйте массив в `onTreeExpandedKeysChange`. Ключи веток совпадают с логикой `collectTreeBranchKeysFromSections` (префикс секции `m` для обычного блока `items`).',
+      },
+    },
+  },
+};
+
 export const VirtualScroll: Story = {
   render: () => {
     // Создаем большой список элементов для демонстрации виртуального скролла
@@ -1944,3 +2236,4 @@ export const WithTooltips: Story = {
     },
   },
 };
+

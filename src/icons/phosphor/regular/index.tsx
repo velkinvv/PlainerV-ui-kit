@@ -1,5 +1,9 @@
 export { PhosphorRecycle } from './Recycle';
 export { PhosphorCaretDoubleLeft } from './CaretDoubleLeft';
+export { PhosphorCaretLeft } from './CaretLeft';
+export { PhosphorCaretRight } from './CaretRight';
+export { PhosphorCaretUp } from './CaretUp';
+export { PhosphorCaretDown } from './CaretDown';
 export { PhosphorArrowArcLeft } from './ArrowArcLeft';
 
 // ArrowFatLine иконки

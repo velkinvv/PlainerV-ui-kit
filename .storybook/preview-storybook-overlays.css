@@ -1,0 +1,16 @@
+/**
+ * Выпадающие списки / тултипы у Plainerv монтируются в document.body (createPortal) с position: fixed.
+ * В панели Docs у Storybook превью сторис иногда оборачивается в блок с overflow: hidden — тогда
+ * визуально кажется, что «меню внутри контейнера», хотя DOM уже вне превью.
+ * См. обсуждение: https://github.com/storybookjs/storybook/issues/25083
+ *
+ * Селекторы намеренно узкие: только зона интерактивного превью autodocs, без таблицы props.
+ */
+.sbdocs-preview {
+  overflow: visible !important;
+}
+
+/* Обёртка сторис на вкладке Canvas (имя класса может меняться между мажорными версиями SB) */
+.sb-show-main {
+  overflow: visible !important;
+}

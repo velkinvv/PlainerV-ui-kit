@@ -1,22 +1,18 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import { FileInput } from './FileInput';
 import { Form } from '../../Form';
 import { Size } from '../../../../types/sizes';
 
 const meta: Meta<typeof FileInput> = {
-  title: 'Components/Inputs/FileInput',
+  title: 'UI Kit/Inputs/FileInput',
   component: FileInput,
   parameters: {
     layout: 'padded',
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-',
-    },
     docs: {
       description: {
         component:
-          'Макет Figma: `fileLayout` — `field` (текст + иконка загрузки), `dropzone` (пунктир, центр), `file` (карточка, прогресс/размер/крестик), `trigger` (кнопка «Выбрать файл»). Скрытый `input[type=file]`, `Form`.',
+          '`fileLayout` — `field` (текст + иконка загрузки), `dropzone` (пунктир, центр), `file` (карточка, прогресс/размер/крестик), `trigger` (кнопка «Выбрать файл»). Скрытый `input[type=file]`, `Form`.',
       },
     },
   },
@@ -33,6 +29,9 @@ const meta: Meta<typeof FileInput> = {
       </Form>
     ),
   ],
+  args: {
+    clearIconProps: {},
+  },
   argTypes: {
     label: { description: 'Подпись над полем (`ReactNode`)' },
     placeholder: { description: 'Текст, пока файлы не выбраны' },
@@ -44,9 +43,21 @@ const meta: Meta<typeof FileInput> = {
       control: { type: 'select' },
       options: [undefined, 'error', 'success', 'warning'],
       description: 'Явный статус обводки',
+      table: {
+        type: { summary: '`error`, `success`, `warning` либо не задан' },
+      },
     },
     fileName: { description: 'Контролируемая подпись выбранных файлов' },
-    showClearButton: { control: 'boolean', description: 'Кнопка сброса выбора' },
+    displayClearIcon: { control: 'boolean', description: 'Кнопка сброса выбора (крестик)' },
+    onClearIconClick: { action: 'clearIconClick', description: 'После сброса `input` и внутренней подписи' },
+    clearIconProps: {
+      control: 'object',
+      description:
+        'Частичные пропсы `Icon` для крестиков сброса: плавающая кнопка при `displayClearIcon` и кнопка удаления в карточке (`fileLayout="file"`). По умолчанию `IconExClose`; мерж поверх `size` / `color`.',
+      table: {
+        type: { summary: 'ClearIconProps' },
+      },
+    },
     accept: { description: 'HTML `accept`' },
     multiple: { control: 'boolean', description: 'Множественный выбор' },
     fullWidth: { control: 'boolean', description: 'На всю ширину контейнера' },
@@ -61,7 +72,7 @@ const meta: Meta<typeof FileInput> = {
     fileLayout: {
       control: { type: 'select' },
       options: ['field', 'dropzone', 'file', 'trigger'],
-      description: 'Макет поля',
+      description: 'Вариант разметки поля; допустимые значения: `field`, `dropzone`, `file`, `trigger`',
     },
     dropzoneText: { description: 'Текст в режиме dropzone' },
     fileCardLabel: { description: 'Подпись над именем в карточке' },
@@ -117,16 +128,16 @@ export const FileCard: Story = {
           fileLayout="file"
           fileName={name}
           fileSizeLabel="1 mb"
-          onClear={() => setName('')}
-          helperText="После загрузки — только размер (как в макете)"
+          onClearIconClick={() => setName('')}
+          helperText="После загрузки — только размер"
         />
         <FileInput
           label="Удаление"
           name="f3"
           fileLayout="file"
           fileName={deletableName}
-          onClear={() => setDeletableName('')}
-          helperText="Крестик без showClearButton; при контроле fileName нужен onClear"
+          onClearIconClick={() => setDeletableName('')}
+          helperText="Крестик в карточке; при контроле `fileName` нужен `onClearIconClick`"
         />
       </div>
     );
@@ -150,14 +161,14 @@ export const WithClear: Story = {
       <FileInput
         label="Документ"
         name="doc"
-        showClearButton
+        displayClearIcon
         fileName={name}
         placeholder="Файл не выбран"
         onChange={(e) => {
           const f = e.target?.files?.[0];
           setName(f?.name ?? '');
         }}
-        onClear={() => setName('')}
+        onClearIconClick={() => setName('')}
         helperText="После выбора доступна очистка"
       />
     );
@@ -182,3 +193,4 @@ export const Multiple: Story = {
     placeholder: 'Ни одного файла',
   },
 };
+

@@ -1,6 +1,10 @@
 import styled, { css } from 'styled-components';
 import { ThemeMode } from '@/types/theme';
-import { FloatingMenuGroupVariant } from '@/types/ui';
+import { Size } from '@/types/sizes';
+import { ButtonVariant, FloatingMenuGroupVariant } from '@/types/ui';
+import { BorderRadiusHandler } from '../../../handlers/uiHandlers';
+import { getButtonVariant } from '../../../handlers/buttonThemeHandlers';
+import { getDropdownContainerStyles } from '../../../handlers/dropdownThemeHandlers';
 
 /** Корневая фиксированная панель */
 export const FloatingMenuRoot = styled.div<{ $isDragging?: boolean }>`
@@ -10,7 +14,7 @@ export const FloatingMenuRoot = styled.div<{ $isDragging?: boolean }>`
   cursor: ${({ $isDragging }) => ($isDragging ? 'grabbing' : 'default')};
 `;
 
-/** Белая «пилюля» с тенью (макет Figma) */
+/** Панель с тенью; скругление из `theme.borderRadius` (`BorderRadiusHandler`) */
 export const FloatingMenuBar = styled.div`
   display: flex;
   flex-direction: row;
@@ -18,7 +22,7 @@ export const FloatingMenuBar = styled.div`
   gap: 4px;
   box-sizing: border-box;
   padding: 6px 10px;
-  border-radius: 9999px;
+  border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
   background: ${({ theme }) =>
     theme.mode === ThemeMode.DARK ? theme.colors.backgroundSecondary : '#ffffff'};
   border: 1px solid
@@ -39,7 +43,7 @@ export const FloatingMenuGroupInner = styled.div<{ $variant: FloatingMenuGroupVa
     $variant === FloatingMenuGroupVariant.INSET
       ? css`
           padding: 4px;
-          border-radius: 10px;
+          border-radius: ${BorderRadiusHandler(theme.borderRadius)};
           background: ${theme.mode === ThemeMode.DARK ? 'rgba(255, 255, 255, 0.06)' : '#f0f0f0'};
         `
       : ''}
@@ -49,7 +53,7 @@ export const FloatingMenuGroupInner = styled.div<{ $variant: FloatingMenuGroupVa
  * Кнопка пункта панели.
  * @property $active — выбранное состояние
  * @property $disabled — disabled
- * @property $insetGroup — стили активного пункта внутри inset-группы (белый квадрат)
+ * @property $insetGroup — активный пункт в inset-группе: светлый фон и цвет иконки `theme.colors.primary`
  */
 export const FloatingMenuItemButton = styled.button<{
   $active: boolean;
@@ -67,7 +71,7 @@ export const FloatingMenuItemButton = styled.button<{
   min-height: 36px;
   padding: 0 6px;
   border: none;
-  border-radius: 8px;
+  border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
   background: transparent;
   color: ${({ theme }) => theme.colors.text};
   cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
@@ -81,29 +85,37 @@ export const FloatingMenuItemButton = styled.button<{
       $disabled ? 'transparent' : theme.mode === ThemeMode.DARK ? 'rgba(255,255,255,0.08)' : '#f5f5f5'};
   }
 
-  ${({ $active, $insetGroup, theme }) =>
-    $active && !$insetGroup
-      ? css`
-          background: ${theme.colors.primary};
-          color: #ffffff;
+  ${({ $active, $insetGroup, theme }) => {
+    if (!$active || $insetGroup) {
+      return '';
+    }
+    /* Подложка: theme.colors.info (яркий акцент), не theme.colors.primary (тёмный blue из макета) */
+    const primaryButtonStyles = getButtonVariant(theme.buttons, ButtonVariant.PRIMARY);
+    const activeTextOnInfo =
+      primaryButtonStyles.hover.color ?? primaryButtonStyles.color;
+    return css`
+      background: ${theme.colors.info};
+      color: ${primaryButtonStyles.color};
 
-          &:hover {
-            background: ${theme.colors.primaryHover};
-            color: #ffffff;
-          }
-        `
-      : ''}
+      &:hover {
+        background: ${theme.colors.infoHover};
+        color: ${activeTextOnInfo};
+      }
+    `;
+  }}
 
   ${({ $active, $insetGroup, theme }) =>
     $active && $insetGroup
       ? css`
           background: ${theme.mode === ThemeMode.DARK ? theme.colors.backgroundSecondary : '#ffffff'};
-          color: ${theme.colors.text};
+          /* Акцент иконки — тот же яркий info, что и у залитого активного пункта */
+          color: ${theme.colors.info};
           box-shadow: 0 0 0 1px
             ${theme.mode === ThemeMode.DARK ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.06)'};
 
           &:hover {
             background: ${theme.mode === ThemeMode.DARK ? theme.colors.backgroundSecondary : '#ffffff'};
+            color: ${theme.colors.infoHover};
           }
         `
       : ''}
@@ -113,7 +125,7 @@ export const FloatingMenuItemButton = styled.button<{
   }
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.primary};
+    outline: 2px solid ${({ theme }) => theme.colors.info};
     outline-offset: 2px;
   }
 `;
@@ -152,7 +164,9 @@ export const FloatingMenuDropdownPanel = styled.div<{ $zIndex: number }>`
   min-width: 180px;
   max-width: min(320px, calc(100vw - 24px));
   padding: 8px;
-  border-radius: 10px;
+  border-radius: ${({ theme }) =>
+    getDropdownContainerStyles(theme.dropdowns, theme.defaultInputSize ?? Size.SM, 'default')
+      .borderRadius};
   background: ${({ theme }) => theme.colors.backgroundSecondary};
   border: 1px solid ${({ theme }) => theme.colors.borderSecondary};
   box-shadow:
@@ -174,7 +188,7 @@ export const FloatingMenuDragHandleRoot = styled.div`
   justify-content: center;
   padding: 4px 6px;
   margin-right: 2px;
-  border-radius: 8px;
+  border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
   cursor: grab;
   color: ${({ theme }) => theme.colors.textSecondary};
 

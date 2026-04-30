@@ -15,6 +15,8 @@ import {
   ToastPillDismiss,
   ToastPillIconWrap,
   ToastPillMessage,
+  ToastProgressFill,
+  ToastProgressTrack,
   ToastPillRoot,
   ToastPillRow,
   ToastPillTextCol,
@@ -32,20 +34,44 @@ import { getToastPillIconName, getToastPillVisualTokens, getToastSurfaceTokens }
 export interface ToastProps {
   toast: ToastItem;
   onClose: (id: string) => void;
+  onPauseTimer: (id: string) => void;
+  onResumeTimer: (id: string) => void;
+  timing?: {
+    duration: number;
+    remaining: number;
+  };
 }
 
 /**
- * Визуальная карточка уведомления: классическая (полоса слева) или «пилюля» по макету Figma.
+ * Визуальная карточка уведомления: по умолчанию «пилюля» по макету Figma, опционально классика с полосой слева (`ToastAppearance.CARD`).
  */
-export const Toast: React.FC<ToastProps> = ({ toast, onClose }) => {
+export const Toast: React.FC<ToastProps> = ({ toast, onClose, onPauseTimer, onResumeTimer, timing }) => {
   const { mode } = useTheme();
-  const resolvedAppearance = toast.appearance ?? ToastAppearance.CARD;
+  const resolvedAppearance = toast.appearance ?? ToastAppearance.PILL;
 
   if (resolvedAppearance === ToastAppearance.PILL) {
-    return <ToastPillView toast={toast} onClose={onClose} mode={mode} />;
+    return (
+      <ToastPillView
+        toast={toast}
+        onClose={onClose}
+        mode={mode}
+        onPauseTimer={onPauseTimer}
+        onResumeTimer={onResumeTimer}
+        timing={timing}
+      />
+    );
   }
 
-  return <ToastCardView toast={toast} onClose={onClose} mode={mode} />;
+  return (
+    <ToastCardView
+      toast={toast}
+      onClose={onClose}
+      mode={mode}
+      onPauseTimer={onPauseTimer}
+      onResumeTimer={onResumeTimer}
+      timing={timing}
+    />
+  );
 };
 
 /**
@@ -58,27 +84,60 @@ const ToastCardView: React.FC<{
   toast: ToastItem;
   onClose: (id: string) => void;
   mode: ThemeMode;
-}> = ({ toast, onClose, mode }) => {
+  onPauseTimer: (id: string) => void;
+  onResumeTimer: (id: string) => void;
+  timing?: {
+    duration: number;
+    remaining: number;
+  };
+}> = ({ toast, onClose, mode, onPauseTimer, onResumeTimer, timing }) => {
   const tokens = getToastSurfaceTokens(toast.type, mode);
   const iconColor = mode === ThemeMode.DARK ? neutral[400] : grey[500];
+  const progressPercent =
+    timing && timing.duration > 0
+      ? Math.max(0, Math.min(100, (timing.remaining / timing.duration) * 100))
+      : 0;
 
   return (
-    <ToastCard $tokens={tokens} role="status" aria-live="polite">
+    <ToastCard
+      $tokens={tokens}
+      role="status"
+      aria-live="polite"
+      onMouseEnter={() => onPauseTimer(toast.id)}
+      onMouseLeave={() => onResumeTimer(toast.id)}
+      onClick={() => {
+        if (toast.closeOnClick) {
+          onClose(toast.id);
+        }
+      }}
+    >
       <ToastHeaderRow>
         <ToastTextBlock>
           {toast.title ? <ToastTitle $color={tokens.titleColor}>{toast.title}</ToastTitle> : null}
           <ToastMessage $color={tokens.bodyColor}>{toast.message}</ToastMessage>
         </ToastTextBlock>
-        <ToastDismiss type="button" aria-label="Закрыть уведомление" onClick={() => onClose(toast.id)}>
+        <ToastDismiss
+          type="button"
+          aria-label="Закрыть уведомление"
+          onClick={(event) => {
+            event.stopPropagation();
+            onClose(toast.id);
+          }}
+        >
           <Icon name="PhosphorX" size={IconSize.SM} color={iconColor} />
         </ToastDismiss>
       </ToastHeaderRow>
+      {toast.showProgressBar && timing && timing.duration > 0 ? (
+        <ToastProgressTrack>
+          <ToastProgressFill $color={tokens.accent} style={{ width: `${progressPercent}%` }} />
+        </ToastProgressTrack>
+      ) : null}
     </ToastCard>
   );
 };
 
 /**
- * Вид «пилюля»: иконка с glow, текст, опциональное действие, круглое закрытие
+ * Вид «пилюля» (макет Figma): пастельный фон, рамка типа, иконка с glow, заголовок/текст, действие, крестик в строке.
  * @property toast - Запись уведомления
  * @property onClose - Закрытие по id
  * @property mode - Тема оформления
@@ -87,10 +146,20 @@ const ToastPillView: React.FC<{
   toast: ToastItem;
   onClose: (id: string) => void;
   mode: ThemeMode;
-}> = ({ toast, onClose, mode }) => {
+  onPauseTimer: (id: string) => void;
+  onResumeTimer: (id: string) => void;
+  timing?: {
+    duration: number;
+    remaining: number;
+  };
+}> = ({ toast, onClose, mode, onPauseTimer, onResumeTimer, timing }) => {
   const pill = getToastPillVisualTokens(toast.type, mode);
   const iconName = getToastPillIconName(toast.type);
   const hasAction = Boolean(toast.actionLabel?.trim());
+  const progressPercent =
+    timing && timing.duration > 0
+      ? Math.max(0, Math.min(100, (timing.remaining / timing.duration) * 100))
+      : 0;
 
   const handleAction = () => {
     toast.onAction?.();
@@ -98,7 +167,18 @@ const ToastPillView: React.FC<{
   };
 
   return (
-    <ToastPillRoot $tokens={pill} role="status" aria-live="polite">
+    <ToastPillRoot
+      $tokens={pill}
+      role="status"
+      aria-live="polite"
+      onMouseEnter={() => onPauseTimer(toast.id)}
+      onMouseLeave={() => onResumeTimer(toast.id)}
+      onClick={() => {
+        if (toast.closeOnClick) {
+          onClose(toast.id);
+        }
+      }}
+    >
       <ToastPillRow>
         <ToastPillIconWrap $glow={pill.iconGlow}>
           <Icon name={iconName} size={IconSize.LG} color={pill.iconColor} />
@@ -112,20 +192,30 @@ const ToastPillView: React.FC<{
             type="button"
             $bg={pill.actionBg}
             $fg={pill.actionText}
-            onClick={handleAction}
+            onClick={(event) => {
+              event.stopPropagation();
+              handleAction();
+            }}
           >
             {toast.actionLabel}
           </ToastPillAction>
         ) : null}
+        <ToastPillDismiss
+          type="button"
+          aria-label="Закрыть уведомление"
+          onClick={(event) => {
+            event.stopPropagation();
+            onClose(toast.id);
+          }}
+        >
+          <Icon name="PhosphorX" size={IconSize.SM} color={pill.dismissIcon} />
+        </ToastPillDismiss>
       </ToastPillRow>
-      <ToastPillDismiss
-        type="button"
-        aria-label="Закрыть уведомление"
-        $bg={pill.closeBg}
-        onClick={() => onClose(toast.id)}
-      >
-        <Icon name="PhosphorX" size={IconSize.SM} color={pill.closeIcon} />
-      </ToastPillDismiss>
+      {toast.showProgressBar && timing && timing.duration > 0 ? (
+        <ToastProgressTrack>
+          <ToastProgressFill $color={pill.iconColor} style={{ width: `${progressPercent}%` }} />
+        </ToastProgressTrack>
+      ) : null}
     </ToastPillRoot>
   );
 };

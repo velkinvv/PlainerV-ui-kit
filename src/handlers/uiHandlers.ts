@@ -337,9 +337,19 @@ export const BoxShadowHandler = (size: Size = Size.MD): string => {
   return shadowMap[size];
 };
 
-// Хендлеры для z-index
+/**
+ * Слои наложения: панель `Dropdown` в теме задаётся отдельно (`~9999`); тултип и хинт должны быть выше панели.
+ * @param level - имя слоя
+ */
 export const ZIndexHandler = (
-  level: 'dropdown' | 'sticky' | 'fixed' | 'modal' | 'popover' | 'tooltip' = 'dropdown',
+  level:
+    | 'dropdown'
+    | 'sticky'
+    | 'fixed'
+    | 'modal'
+    | 'popover'
+    | 'tooltip'
+    | 'hint' = 'dropdown',
 ): number => {
   const zIndexMap: Record<string, number> = {
     dropdown: 1000,
@@ -347,7 +357,10 @@ export const ZIndexHandler = (
     fixed: 1030,
     modal: 1040,
     popover: 1050,
-    tooltip: 11000,
+    /** Выше панели выпадающего меню (`theme.dropdowns.settings.zIndex`, обычно 9999) */
+    tooltip: 11500,
+    /** Чуть выше тултипа, чтобы `Hint` не перекрывался тултипом при совпадении областей */
+    hint: 11600,
   };
   return zIndexMap[level];
 };

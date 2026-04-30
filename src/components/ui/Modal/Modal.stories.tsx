@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Modal, useModal } from './index';
 import { Button } from '../buttons/Button';
@@ -6,20 +6,50 @@ import { Icon } from '../Icon/Icon';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { ButtonVariant } from '../../../types/ui';
 import { Size, IconSize, ModalSize } from '../../../types/sizes';
+import {
+  ButtonsSlotGrid,
+  CenteredActionRow,
+  CenteredContentPadding24,
+  ColumnGap12,
+  ContentPadding24,
+  DashedContainer,
+  EndAlignedActions,
+  FocusContentStack,
+  FocusInput,
+  FocusInputLabel,
+  FooterHintText,
+  FormActionsRow,
+  FormField,
+  FormFieldLabel,
+  FormInput,
+  FormSelect,
+  FormStack,
+  FormTextArea,
+  InnerOverlayContainer,
+  ModalContentActions,
+  PortalArea,
+  ReadableParagraph,
+  RelativePortalContainer,
+  RowGap8,
+  SizesButtonsWrap,
+  VariantLabelButton,
+  WarningIconCircle,
+} from './Modal.stories.style';
 
 const meta: Meta<typeof Modal> = {
-  title: 'Components/Modal',
+  title: 'UI Kit/Surfaces/Modal',
   component: Modal,
   parameters: {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Компонент модального окна для отображения важной информации',
+        component:
+          'Компонент модального окна для отображения важной информации. Поддерживает единый lifecycle API: `isOpen`, `unmountOnClose` (по умолчанию `true`) и `lazy` (по умолчанию `true`).',
       },
     },
   },
   decorators: [
-    Story => (
+    (Story) => (
       <ThemeProvider>
         <Story />
       </ThemeProvider>
@@ -43,6 +73,9 @@ const meta: Meta<typeof Modal> = {
       control: false,
       description:
         'DOM контейнер, в который будет смонтировано модальное окно (по умолчанию document.body)',
+      table: {
+        type: { summary: 'DOM-элемент или null; если не задан — используется document.body' },
+      },
     },
     buttons: {
       control: { type: 'object' },
@@ -66,6 +99,9 @@ const meta: Meta<typeof Modal> = {
       control: { type: 'select' },
       options: ['default', 'blur', 'dark', 'frosted'],
       description: 'Предустановленные стили подложки: стандарт, блюр, тёмный или “frosted glass”.',
+      table: {
+        type: { summary: 'default, blur, dark, frosted' },
+      },
     },
     overlayStyle: {
       control: { type: 'object' },
@@ -83,6 +119,9 @@ const meta: Meta<typeof Modal> = {
       control: { type: 'select' },
       options: ['default', 'fade', 'slideUp'],
       description: 'Пресет анимации появления модального окна',
+      table: {
+        type: { summary: 'default, fade, slideUp' },
+      },
     },
     animationConfig: {
       control: false,
@@ -124,11 +163,18 @@ const meta: Meta<typeof Modal> = {
       control: { type: 'select' },
       options: ['default', 'danger', 'success', 'info'],
       description: 'Варианты оформления заголовка/иконок модального окна',
+      table: {
+        type: { summary: 'default, danger, success, info' },
+      },
     },
     size: {
       control: { type: 'select' },
-      options: ['sm', 'md', 'lg', 'xl', 'full'],
-      description: 'Размер модального окна',
+      options: Object.values(ModalSize),
+      description: 'Размер модального окна (ширина и высота по токенам темы)',
+      table: {
+        type: { summary: 'ModalSize: XS, SM, MD, LG, FULL' },
+        defaultValue: { summary: 'MD' },
+      },
     },
     closeOnOverlayClick: {
       control: { type: 'boolean' },
@@ -151,6 +197,22 @@ const meta: Meta<typeof Modal> = {
     showCloseButton: {
       control: { type: 'boolean' },
       description: 'Показать кнопку закрытия',
+    },
+    unmountOnClose: {
+      control: { type: 'boolean' },
+      description:
+        'Размонтировать модальное окно после закрытия. По умолчанию true: закрытое окно удаляется из DOM.',
+      table: {
+        defaultValue: { summary: 'true' },
+      },
+    },
+    lazy: {
+      control: { type: 'boolean' },
+      description:
+        'Ленивая инициализация: компонент модалки монтируется только после первого открытия.',
+      table: {
+        defaultValue: { summary: 'true' },
+      },
     },
   },
 };
@@ -312,14 +374,7 @@ export const WithContent: Story = {
       content={
         <div>
           <p>This is a basic modal with default settings.</p>
-          <div
-            style={{
-              marginTop: '16px',
-              display: 'flex',
-              gap: '8px',
-              justifyContent: 'flex-end',
-            }}
-          >
+          <ModalContentActions>
             <Button
               variant={ButtonVariant.OUTLINE}
               onClick={() => {
@@ -335,7 +390,7 @@ export const WithContent: Story = {
             >
               Confirm
             </Button>
-          </div>
+          </ModalContentActions>
         </div>
       }
     />
@@ -355,14 +410,7 @@ export const WithChildren: Story = {
     <ModalWrapper title="Default Modal">
       <div>
         <p>This is a basic modal with default settings.</p>
-        <div
-          style={{
-            marginTop: '16px',
-            display: 'flex',
-            gap: '8px',
-            justifyContent: 'flex-end',
-          }}
-        >
+        <ModalContentActions>
           <Button
             variant={ButtonVariant.OUTLINE}
             onClick={() => {
@@ -378,7 +426,7 @@ export const WithChildren: Story = {
           >
             Confirm
           </Button>
-        </div>
+        </ModalContentActions>
       </div>
     </ModalWrapper>
   ),
@@ -650,19 +698,15 @@ export const FocusManagement: Story = {
             },
           ]}
         >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <FocusContentStack>
+            <FocusInputLabel>
               Email
-              <input
-                type="email"
-                placeholder="user@example.com"
-                style={{ padding: '8px 12px', borderRadius: 6, border: '1px solid #d1d5db' }}
-              />
-            </label>
+              <FocusInput type="email" placeholder="user@example.com" />
+            </FocusInputLabel>
             <Button ref={primaryActionRef} variant={ButtonVariant.PRIMARY}>
               Continue
             </Button>
-          </div>
+          </FocusContentStack>
         </Modal>
       </>
     );
@@ -718,7 +762,7 @@ export const AsyncActions: Story = {
     const [isOpen, setIsOpen] = React.useState(false);
 
     const simulateAsync = async () =>
-      new Promise<void>(resolve => {
+      new Promise<void>((resolve) => {
         setTimeout(resolve, 1500);
       });
 
@@ -778,14 +822,7 @@ export const ButtonsSlotExample: Story = {
           title="Custom buttons slot"
           description="Полностью кастомная зона кнопок с произвольной сеткой."
           buttonsSlot={
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '12px',
-                width: '100%',
-              }}
-            >
+            <ButtonsSlotGrid>
               <Button variant={ButtonVariant.OUTLINE} onClick={() => setIsOpen(false)}>
                 Skip
               </Button>
@@ -798,7 +835,7 @@ export const ButtonsSlotExample: Story = {
               >
                 Continue
               </Button>
-            </div>
+            </ButtonsSlotGrid>
           }
         />
       </>
@@ -821,10 +858,11 @@ export const ModalVariants: Story = {
     const [isOpen, setIsOpen] = React.useState(false);
 
     return (
-      <div style={{ display: 'flex', gap: 8 }}>
-        {['default', 'danger', 'success', 'info'].map(option => (
-          <Button
+      <RowGap8>
+        {['default', 'danger', 'success', 'info'].map((option) => (
+          <VariantLabelButton
             key={option}
+            $isActive={variant === option}
             variant={variant === option ? ButtonVariant.PRIMARY : ButtonVariant.SECONDARY}
             onClick={() => {
               setVariant(option as typeof variant);
@@ -832,7 +870,7 @@ export const ModalVariants: Story = {
             }}
           >
             {option}
-          </Button>
+          </VariantLabelButton>
         ))}
         <Modal
           isOpen={isOpen}
@@ -850,7 +888,7 @@ export const ModalVariants: Story = {
             },
           ]}
         />
-      </div>
+      </RowGap8>
     );
   },
   parameters: {
@@ -867,15 +905,8 @@ export const PortalTarget: Story = {
     const [isOpen, setIsOpen] = React.useState(false);
 
     return (
-      <div style={{ position: 'relative', padding: 24 }}>
-        <div
-          id="modal-portal-area"
-          style={{
-            position: 'absolute',
-            inset: 0,
-            pointerEvents: 'none',
-          }}
-        />
+      <RelativePortalContainer>
+        <PortalArea id="modal-portal-area" />
         <Button onClick={() => setIsOpen(true)}>Open in portal target</Button>
         <Modal
           isOpen={isOpen}
@@ -892,7 +923,7 @@ export const PortalTarget: Story = {
             },
           ]}
         />
-      </div>
+      </RelativePortalContainer>
     );
   },
   parameters: {
@@ -919,11 +950,7 @@ export const BestPractices: Story = {
           description="Комбинация рекомендаций: initialFocusSelector, async кнопки, кастомный футер."
           initialFocusRef={submitBtnRef}
           modalVariant="info"
-          footerSlot={
-            <p style={{ margin: 0, color: '#6b7280' }}>
-              Нажимая подтвердить, вы соглашаетесь с условиями.
-            </p>
-          }
+          footerSlot={<FooterHintText>Нажимая подтвердить, вы соглашаетесь с условиями.</FooterHintText>}
           buttons={[
             {
               label: 'Отменить',
@@ -933,7 +960,7 @@ export const BestPractices: Story = {
             },
           ]}
           buttonsSlot={
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+            <EndAlignedActions>
               <Button variant={ButtonVariant.OUTLINE} onClick={() => setIsOpen(false)}>
                 Назад
               </Button>
@@ -944,17 +971,13 @@ export const BestPractices: Story = {
               >
                 Подтвердить
               </Button>
-            </div>
+            </EndAlignedActions>
           }
         >
-          <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <FocusInputLabel>
             Название
-            <input
-              type="text"
-              placeholder="Введите текст"
-              style={{ padding: '8px 12px', borderRadius: 6, border: '1px solid #d1d5db' }}
-            />
-          </label>
+            <FocusInput type="text" placeholder="Введите текст" />
+          </FocusInputLabel>
         </Modal>
       </>
     );
@@ -972,18 +995,11 @@ export const BestPractices: Story = {
 export const WithoutCloseButton: Story = {
   render: () => (
     <ModalWrapper showCloseButton={false}>
-      <div style={{ padding: '24px' }}>
+      <ContentPadding24>
         <h2>Modal without Close Button</h2>
         <p>This modal doesn&apos;t have a close button in the header.</p>
         <p>You can only close it using the Cancel button or by clicking outside.</p>
-        <div
-          style={{
-            marginTop: '16px',
-            display: 'flex',
-            gap: '8px',
-            justifyContent: 'flex-end',
-          }}
-        >
+        <ModalContentActions>
           <Button
             variant={ButtonVariant.OUTLINE}
             onClick={() => {
@@ -999,41 +1015,22 @@ export const WithoutCloseButton: Story = {
           >
             Continue
           </Button>
-        </div>
-      </div>
+        </ModalContentActions>
+      </ContentPadding24>
     </ModalWrapper>
   ),
 };
 
 export const ConfirmationModal: Story = {
   render: () => (
-    <ModalWrapper size="sm">
-      <div style={{ padding: '24px', textAlign: 'center' }}>
-        <div
-          style={{
-            width: '64px',
-            height: '64px',
-            borderRadius: '50%',
-            backgroundColor: '#fef3c7',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            margin: '0 auto 16px',
-            fontSize: '32px',
-          }}
-        >
+    <ModalWrapper size={ModalSize.SM}>
+      <CenteredContentPadding24>
+        <WarningIconCircle>
           ⚠️
-        </div>
+        </WarningIconCircle>
         <h3>Confirm Action</h3>
         <p>Are you sure you want to delete this item? This action cannot be undone.</p>
-        <div
-          style={{
-            marginTop: '24px',
-            display: 'flex',
-            gap: '12px',
-            justifyContent: 'center',
-          }}
-        >
+        <CenteredActionRow>
           <Button
             variant={ButtonVariant.OUTLINE}
             onClick={() => {
@@ -1050,96 +1047,36 @@ export const ConfirmationModal: Story = {
           >
             Delete
           </Button>
-        </div>
-      </div>
+        </CenteredActionRow>
+      </CenteredContentPadding24>
     </ModalWrapper>
   ),
 };
 
 export const FormModal: Story = {
   render: () => (
-    <ModalWrapper size="md">
-      <div style={{ padding: '24px' }}>
+    <ModalWrapper size={ModalSize.MD}>
+      <ContentPadding24>
         <h2>Create New Item</h2>
-        <form style={{ marginTop: '16px' }}>
-          <div style={{ marginBottom: '16px' }}>
-            <label
-              style={{
-                display: 'block',
-                marginBottom: '4px',
-                fontWeight: '500',
-              }}
-            >
-              Name
-            </label>
-            <input
-              type="text"
-              style={{
-                width: '100%',
-                padding: '8px 12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '14px',
-              }}
-              placeholder="Enter name"
-            />
-          </div>
-          <div style={{ marginBottom: '16px' }}>
-            <label
-              style={{
-                display: 'block',
-                marginBottom: '4px',
-                fontWeight: '500',
-              }}
-            >
-              Description
-            </label>
-            <textarea
-              style={{
-                width: '100%',
-                padding: '8px 12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '14px',
-                minHeight: '80px',
-                resize: 'vertical',
-              }}
-              placeholder="Enter description"
-            />
-          </div>
-          <div style={{ marginBottom: '16px' }}>
-            <label
-              style={{
-                display: 'block',
-                marginBottom: '4px',
-                fontWeight: '500',
-              }}
-            >
-              Category
-            </label>
-            <select
-              style={{
-                width: '100%',
-                padding: '8px 12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '14px',
-              }}
-            >
+        <FormStack>
+          <FormField>
+            <FormFieldLabel>Name</FormFieldLabel>
+            <FormInput type="text" placeholder="Enter name" />
+          </FormField>
+          <FormField>
+            <FormFieldLabel>Description</FormFieldLabel>
+            <FormTextArea placeholder="Enter description" />
+          </FormField>
+          <FormField>
+            <FormFieldLabel>Category</FormFieldLabel>
+            <FormSelect>
               <option>Select category</option>
               <option>Category 1</option>
               <option>Category 2</option>
               <option>Category 3</option>
-            </select>
-          </div>
-          <div
-            style={{
-              marginTop: '24px',
-              display: 'flex',
-              gap: '12px',
-              justifyContent: 'flex-end',
-            }}
-          >
+            </FormSelect>
+          </FormField>
+          <FormActionsRow>
             <Button
               variant={ButtonVariant.OUTLINE}
               onClick={() => {
@@ -1155,9 +1092,9 @@ export const FormModal: Story = {
             >
               Create Item
             </Button>
-          </div>
-        </form>
-      </div>
+          </FormActionsRow>
+        </FormStack>
+      </ContentPadding24>
     </ModalWrapper>
   ),
 };
@@ -1192,11 +1129,11 @@ export const AllSizes: Story = {
     const openModal = (size: ModalSize) => setActiveModal(size);
     const closeModal = () => setActiveModal(null);
 
-    const activeConfig = sizeOptions.find(option => option.size === activeModal);
+    const activeConfig = sizeOptions.find((option) => option.size === activeModal);
 
     return (
-      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-        {sizeOptions.map(option => (
+      <SizesButtonsWrap>
+        {sizeOptions.map((option) => (
           <Button key={option.size} onClick={() => openModal(option.size)}>
             {option.label}
           </Button>
@@ -1218,7 +1155,7 @@ export const AllSizes: Story = {
             ]}
           />
         )}
-      </div>
+      </SizesButtonsWrap>
     );
   },
   parameters: {
@@ -1232,25 +1169,8 @@ export const CustomContainer: Story = {
     const containerRef = React.useRef<HTMLDivElement>(null);
 
     return (
-      <div
-        style={{
-          border: '1px dashed #cbd5f5',
-          padding: 24,
-          borderRadius: 12,
-          position: 'relative',
-          minHeight: 220,
-        }}
-      >
-        <div
-          ref={containerRef}
-          style={{
-            position: 'absolute',
-            inset: 16,
-            pointerEvents: 'none',
-            borderRadius: 8,
-            overflow: 'hidden',
-          }}
-        />
+      <DashedContainer>
+        <InnerOverlayContainer ref={containerRef} />
 
         <Button onClick={() => setIsOpen(true)}>Open Modal in Custom Container</Button>
 
@@ -1268,7 +1188,7 @@ export const CustomContainer: Story = {
             },
           ]}
         />
-      </div>
+      </DashedContainer>
     );
   },
   parameters: {
@@ -1327,9 +1247,9 @@ export const OverlayVariants: Story = {
     const [isOpen, setIsOpen] = React.useState(false);
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <div style={{ display: 'flex', gap: 8 }}>
-          {['default', 'blur', 'dark', 'frosted'].map(option => (
+      <ColumnGap12>
+        <RowGap8>
+          {['default', 'blur', 'dark', 'frosted'].map((option) => (
             <Button
               key={option}
               variant={variant === option ? ButtonVariant.PRIMARY : ButtonVariant.SECONDARY}
@@ -1341,7 +1261,7 @@ export const OverlayVariants: Story = {
               {option}
             </Button>
           ))}
-        </div>
+        </RowGap8>
 
         <Modal
           isOpen={isOpen}
@@ -1357,7 +1277,7 @@ export const OverlayVariants: Story = {
             },
           ]}
         />
-      </div>
+      </ColumnGap12>
     );
   },
   parameters: {
@@ -1376,9 +1296,9 @@ export const AnimationPresets: Story = {
     const [isOpen, setIsOpen] = React.useState(false);
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <div style={{ display: 'flex', gap: 8 }}>
-          {['default', 'fade', 'slideUp'].map(option => (
+      <ColumnGap12>
+        <RowGap8>
+          {['default', 'fade', 'slideUp'].map((option) => (
             <Button
               key={option}
               variant={preset === option ? ButtonVariant.PRIMARY : ButtonVariant.SECONDARY}
@@ -1390,7 +1310,7 @@ export const AnimationPresets: Story = {
               {option}
             </Button>
           ))}
-        </div>
+        </RowGap8>
         <Modal
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
@@ -1405,7 +1325,7 @@ export const AnimationPresets: Story = {
             },
           ]}
         />
-      </div>
+      </ColumnGap12>
     );
   },
   parameters: {
@@ -1454,3 +1374,124 @@ export const UseModalHook: Story = {
     },
   },
 };
+
+const KeepMountedWithLazyInitDemo = () => {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [renderCounter, setRenderCounter] = React.useState(0);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setRenderCounter((previousCounterValue) => previousCounterValue + 1);
+    }
+  }, [isOpen]);
+
+  return (
+    <>
+      <Button onClick={() => setIsOpen(true)}>Open keep-mounted modal</Button>
+      <Modal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        title="Keep mounted + lazy init"
+        description="После первого открытия модальное окно остаётся в DOM при закрытии, чтобы сохранять локальное состояние."
+        unmountOnClose={false}
+        lazy
+        buttons={[
+          {
+            label: 'Close',
+            variant: ButtonVariant.PRIMARY,
+            onClick: () => setIsOpen(false),
+          },
+        ]}
+      >
+        <p>Количество открытий: {renderCounter}</p>
+      </Modal>
+    </>
+  );
+};
+
+export const KeepMountedWithLazyInit: Story = {
+  render: () => <KeepMountedWithLazyInitDemo />,
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Компромиссный режим жизненного цикла: lazy-монтирование после первого открытия + сохранение дерева (`unmountOnClose=false`) при последующих закрытиях.',
+      },
+    },
+  },
+};
+
+const LifecycleCheatsheetDemo = () => {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [lazyModeEnabled, setLazyModeEnabled] = React.useState(true);
+  const [unmountOnCloseEnabled, setUnmountOnCloseEnabled] = React.useState(true);
+  const [openCount, setOpenCount] = React.useState(0);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setOpenCount((previousOpenCountValue) => previousOpenCountValue + 1);
+    }
+  }, [isOpen]);
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 760 }}>
+      <p style={{ margin: 0 }}>
+        Быстрая памятка: переключите режимы и откройте модалку, чтобы увидеть поведение lifecycle.
+      </p>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        <Button
+          variant={lazyModeEnabled ? ButtonVariant.PRIMARY : ButtonVariant.OUTLINE}
+          onClick={() => setLazyModeEnabled((previousLazyModeEnabled) => !previousLazyModeEnabled)}
+        >
+          lazy: {String(lazyModeEnabled)}
+        </Button>
+        <Button
+          variant={unmountOnCloseEnabled ? ButtonVariant.PRIMARY : ButtonVariant.OUTLINE}
+          onClick={() =>
+            setUnmountOnCloseEnabled((previousUnmountOnCloseEnabled) => !previousUnmountOnCloseEnabled)
+          }
+        >
+          unmountOnClose: {String(unmountOnCloseEnabled)}
+        </Button>
+        <Button onClick={() => setIsOpen(true)}>Open modal</Button>
+      </div>
+      <p style={{ margin: 0, color: '#6b7280' }}>
+        Открытий в текущей сессии: {openCount}. Сохранение внутреннего состояния видно при
+        `unmountOnClose=false`.
+      </p>
+      <Modal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        title="Lifecycle cheatsheet"
+        description="Используйте переключатели lazy и unmountOnClose, чтобы увидеть разницу между режимами."
+        lazy={lazyModeEnabled}
+        unmountOnClose={unmountOnCloseEnabled}
+        buttons={[
+          {
+            label: 'Close',
+            variant: ButtonVariant.PRIMARY,
+            onClick: () => setIsOpen(false),
+          },
+        ]}
+      >
+        <p style={{ margin: 0 }}>
+          Текущая конфигурация: lazy={String(lazyModeEnabled)}, unmountOnClose=
+          {String(unmountOnCloseEnabled)}.
+        </p>
+      </Modal>
+    </div>
+  );
+};
+
+export const LifecycleCheatsheet: Story = {
+  render: () => <LifecycleCheatsheetDemo />,
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Cheatsheet для lifecycle-параметров `lazy` и `unmountOnClose`: быстрое сравнение всех режимов в одном интерактивном примере.',
+      },
+    },
+  },
+};
+

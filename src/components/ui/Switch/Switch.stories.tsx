@@ -1,17 +1,17 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import { Switch } from './Switch';
 import { Size } from '../../../types/sizes';
 
 const meta: Meta<typeof Switch> = {
-  title: 'Components/Forms/Switch',
+  title: 'UI Kit/Inputs/Switch',
   component: Switch,
   parameters: {
     layout: 'padded',
     docs: {
       description: {
         component:
-          'Переключатель в стиле макета Plainer: трек, бегунок, подпись слева/справа, `role="switch"`, состояние ошибки.',
+          'Переключатель в стиле Plainer: трек, бегунок, подпись слева/справа, `role="switch"`, состояние ошибки.',
       },
     },
   },
@@ -19,7 +19,16 @@ const meta: Meta<typeof Switch> = {
   argTypes: {
     checked: { description: 'Контролируемое состояние «вкл»' },
     defaultChecked: { description: 'Неконтролируемое начальное значение' },
-    onChange: { description: 'Событие `ChangeEvent<HTMLInputElement>` (`target.checked`)' },
+    onChange: {
+      description:
+        'Событие `change` у нативного `input`; актуальное значение — `event.target.checked` (boolean)',
+      table: {
+        type: {
+          summary:
+            'обработчик события change у input[type=checkbox]: (event: React.ChangeEvent<HTMLInputElement>) => void',
+        },
+      },
+    },
     label: { description: 'Подпись (`ReactNode`)' },
     labelPosition: {
       control: 'radio',
@@ -129,3 +138,4 @@ export const FullWidth: Story = {
     name: 'fw',
   },
 };
+

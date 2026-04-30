@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import { RadioButtonGroup } from './RadioButtonGroup';
 import { Size, IconSize } from '../../../types/sizes';
@@ -12,7 +12,7 @@ import {
 import { Icon } from '../Icon/Icon';
 
 const meta: Meta<typeof RadioButtonGroup> = {
-  title: 'Components/RadioButton/RadioButtonGroup',
+  title: 'UI Kit/Inputs/RadioButtonGroup',
   component: RadioButtonGroup,
   parameters: {
     layout: 'padded',
@@ -52,6 +52,16 @@ const meta: Meta<typeof RadioButtonGroup> = {
         RadioButtonLabelPosition.NONE,
       ],
       description: 'Позиция лейбла для радиокнопок в группе',
+    },
+    error: {
+      description:
+        'Текст ошибки для всей группы или отдельных опций: одна строка либо массив строк по порядку опций',
+      control: { type: 'text' },
+      table: {
+        type: {
+          summary: 'строка (общая ошибка) или массив строк (по опциям)',
+        },
+      },
     },
   },
 };
@@ -486,3 +496,4 @@ export const GroupComplexNew: RadioButtonGroupStory = {
     );
   },
 };
+

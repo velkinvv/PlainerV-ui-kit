@@ -298,6 +298,8 @@ export type Colors = {
   danger: string; // Опасность
   dangerHover: string; // Опасность при наведении
   info: string; // Информация
+  /** Hover для яркого info-акцента (палитра `colors.primary`, не путать с `colors.primary` в теме) */
+  infoHover: string;
 
   // Специальные цвета
   overlay: string; // Наложение

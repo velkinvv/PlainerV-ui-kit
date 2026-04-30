@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Checkbox } from './Checkbox';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Size } from '../../../types/sizes';
 
 const meta: Meta<typeof Checkbox> = {
-  title: 'Components/Checkbox',
+  title: 'UI Kit/Inputs/Checkbox',
   component: Checkbox,
   parameters: {
     layout: 'padded',
   },
   decorators: [
-    Story => (
+    (Story) => (
       <ThemeProvider>
         <Story />
       </ThemeProvider>
@@ -39,6 +39,12 @@ const meta: Meta<typeof Checkbox> = {
     onChange: {
       action: 'changed',
       description: 'Обработчик изменения',
+      table: {
+        type: {
+          summary:
+            'обработчик change у input: (event: React.ChangeEvent<HTMLInputElement>) => void',
+        },
+      },
     },
   },
 };
@@ -104,7 +110,7 @@ export const Interactive: Story = {
     return (
       <Checkbox
         checked={checked}
-        onChange={_e => setChecked(prev => !prev)}
+        onChange={(_e) => setChecked((prev) => !prev)}
         label="Интерактивный чекбокс"
       />
     );
@@ -127,18 +133,18 @@ export const CheckboxGroup: Story = {
       if (checked) {
         setSelectedItems([...selectedItems, id]);
       } else {
-        setSelectedItems(selectedItems.filter(item => item !== id));
+        setSelectedItems(selectedItems.filter((item) => item !== id));
       }
     };
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         <h3>Выберите опции:</h3>
-        {items.map(item => (
+        {items.map((item) => (
           <Checkbox
             key={item.id}
             checked={selectedItems.includes(item.id)}
-            onChange={e => handleChange(item.id, e.target.checked)}
+            onChange={(e) => handleChange(item.id, e.target.checked)}
             label={item.label}
           />
         ))}
@@ -149,3 +155,4 @@ export const CheckboxGroup: Story = {
     );
   },
 };
+

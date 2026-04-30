@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import { Link } from './Link';
 import { LinkMode } from '../../../types/ui';
@@ -6,14 +6,14 @@ import { ButtonVariant } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 
 const meta: Meta<typeof Link> = {
-  title: 'Components/Link',
+  title: 'UI Kit/Inputs/Link',
   component: Link,
   parameters: {
     layout: 'padded',
     docs: {
       description: {
         component:
-          '`mode="text"` — стилизованный `<a>`; `mode="button"` — тот же `Button` с `href` (единые `variant`, `size`, иконки). Для `target="_blank"` подмешивается безопасный `rel`.',
+          'Проп `mode`: значение `text` — стилизованный `<a>`; значение `button` — вид кнопки с `href` (те же `variant`, `size`, иконки). Для `target="_blank"` подмешивается безопасный `rel`.',
       },
     },
   },
@@ -24,13 +24,25 @@ const meta: Meta<typeof Link> = {
       control: { type: 'select' },
       options: [LinkMode.TEXT, LinkMode.BUTTON],
       description: 'Текстовая ссылка или вид кнопки',
+      table: {
+        type: { summary: '`text` или `button`' },
+      },
     },
     textVariant: {
       control: { type: 'select' },
       options: ['default', 'line', 'muted'],
-      description: 'Только для `mode="text"`',
+      description: 'Только при `mode="text"`; допустимые значения: `default`, `line`, `muted`',
     },
     target: { description: 'Цель навигации' },
+    download: {
+      description: 'Атрибут `download` у итогового `<a>`',
+      control: { type: 'text' },
+      table: {
+        type: {
+          summary: 'имя файла (строка), `true` или `false`',
+        },
+      },
+    },
     children: { description: 'Содержимое ссылки' },
   },
 };
@@ -84,3 +96,4 @@ export const ButtonPrimaryExternal: Story = {
     children: 'Открыть в новой вкладке',
   },
 };
+

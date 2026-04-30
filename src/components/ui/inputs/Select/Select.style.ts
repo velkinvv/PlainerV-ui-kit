@@ -1,47 +1,5 @@
 import styled, { css } from 'styled-components';
-import { Size } from '../../../../types/sizes';
 import { InputContainer } from '../shared/InputStyles';
-
-/** Размеры бейджа числа выбранных по размеру поля */
-const selectMultiCountBadgeDimensions = (fieldSize: Size | undefined) => {
-  switch (fieldSize) {
-    case Size.XS:
-      return css`
-        min-width: 16px;
-        height: 16px;
-        padding: 0 4px;
-        font-size: 10px;
-      `;
-    case Size.SM:
-      return css`
-        min-width: 18px;
-        height: 18px;
-        padding: 0 4px;
-        font-size: 11px;
-      `;
-    case Size.LG:
-      return css`
-        min-width: 22px;
-        height: 22px;
-        padding: 0 5px;
-        font-size: 13px;
-      `;
-    case Size.XL:
-      return css`
-        min-width: 24px;
-        height: 24px;
-        padding: 0 6px;
-        font-size: 14px;
-      `;
-    default:
-      return css`
-        min-width: 20px;
-        height: 20px;
-        padding: 0 5px;
-        font-size: 12px;
-      `;
-  }
-};
 
 /**
  * Нативный `select` визуально как текстовое поле: без системной стрелки, кастомный шеврон снаружи.
@@ -76,14 +34,15 @@ export const StyledSelect = styled.select.withConfig({
 `;
 
 /**
- * Слот под иконку-шеврон справа: не перехватывает клики (клик попадает в нативный `select`).
+ * Слот под иконку-шеврон справа: кликабелен — в `SelectNative` открывает нативный список,
+ * в `SelectPanel` — `onMouseDown`/`onClick` со `stopPropagation`, чтобы не было двойного переключения с обёрткой `Dropdown`.
  */
 export const SelectChevronSlot = styled.div`
   display: flex;
   align-items: center;
   flex-shrink: 0;
   margin-left: 8px;
-  pointer-events: none;
+  pointer-events: auto;
   color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
@@ -91,26 +50,12 @@ export const SelectChevronSlot = styled.div`
  * Шеврон вниз при закрытом меню; при открытом — поворот 180° (шеврон вверх).
  * @property $isOpen - Меню раскрыто.
  */
-/**
- * Бейдж с числом выбранных в мультиселекте (тёмный фон, светлый текст), слева от шеврона.
- * @property $fieldSize - Размер поля `Select.size` для масштаба капсулы и шрифта.
- */
-export const SelectMultiCountBadge = styled.span.withConfig({
-  shouldForwardProp: (prop) => prop !== '$fieldSize',
-})<{ $fieldSize?: Size }>`
+/** Слот для `Badge` счётчика выбранных в мультиселекте: отступ слева от триггера; далее в ряду — «очистить всё», шеврон. */
+export const SelectMultiCountBadgeSlot = styled.span`
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
   flex-shrink: 0;
   margin-left: 8px;
-  box-sizing: border-box;
-  border-radius: 9999px;
-  font-weight: 600;
-  line-height: 1;
   pointer-events: none;
-  background: ${({ theme }) => theme.colors.text};
-  color: ${({ theme }) => theme.colors.backgroundSecondary};
-  ${({ $fieldSize }) => selectMultiCountBadgeDimensions($fieldSize)}
 `;
 
 export const SelectChevronFlip = styled.span.withConfig({
@@ -121,6 +66,186 @@ export const SelectChevronFlip = styled.span.withConfig({
   justify-content: center;
   transform: ${({ $isOpen }) => ($isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
   transition: transform 0.2s ease;
+`;
+
+/**
+ * Фокусируемая область мультиселекта: чипы и плейсхолдер (не `button`, чтобы внутри были кнопки удаления чипа).
+ * @property $disabled - Недоступное поле: курсор и прозрачность.
+ * @property $textAlign - Выравнивание ряда чипов / плейсхолдера.
+ */
+export const SelectMultiTriggerRoot = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['$disabled', '$textAlign'].includes(prop),
+})<{
+  $disabled?: boolean;
+  $textAlign?: 'left' | 'center' | 'right';
+}>`
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  line-height: 1.25;
+  text-align: ${({ $textAlign = 'left' }) => $textAlign};
+  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
+  padding: 0;
+  opacity: ${({ $disabled }) => ($disabled ? 0.6 : 1)};
+  scrollbar-width: thin;
+
+  &:focus-visible {
+    outline: none;
+  }
+`;
+
+/**
+ * Плейсхолдер в мультитриггере при пустом выборе.
+ * @property $isPlaceholder - Стиль вторичного текста.
+ */
+export const SelectMultiPlaceholder = styled.span.withConfig({
+  shouldForwardProp: (prop) => prop !== '$isPlaceholder',
+})<{ $isPlaceholder?: boolean }>`
+  min-width: 0;
+  line-height: 1.25;
+  color: ${({ theme, $isPlaceholder }) =>
+    $isPlaceholder ? theme.colors.textTertiary : 'inherit'};
+`;
+
+/** Обёртка одного чипа (капсула с подписью и кнопкой снятия). */
+export const SelectMultiChip = styled.span`
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  max-width: 100%;
+  gap: 2px;
+  padding: 0 4px 0 8px;
+  line-height: 1.25;
+  border-radius: 999px;
+  background: ${({ theme }) => theme.colors.backgroundTertiary};
+  color: ${({ theme }) => theme.colors.text};
+  box-sizing: border-box;
+`;
+
+/** Текст чипа с обрезкой длинных подписей. */
+export const SelectMultiChipLabel = styled.span`
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: inherit;
+`;
+
+/** Удаление одного значения из мультивыбора (иконка в чипе); атрибут `disabled` — недоступное поле. */
+export const SelectMultiChipRemove = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+  width: 18px;
+  height: 18px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  color: ${({ theme }) => theme.colors.textSecondary};
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &:hover:not(:disabled) {
+    color: ${({ theme }) => theme.colors.text};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.primary};
+    outline-offset: 1px;
+  }
+`;
+
+/**
+ * Кнопка «очистить весь мультивыбор» (иконка крестика) между чипами и шевроном.
+ * @property $compact — в одной строке с чипами: без вертикальных отступов, фиксированный квадрат, чтобы высота поля не «прыгала».
+ * Атрибут `disabled` — поле `disabled` / `readOnly` / загрузка.
+ */
+export const SelectMultiClearAllBtn = styled.button.withConfig({
+  shouldForwardProp: (prop) => prop !== '$compact',
+})<{ $compact?: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin: 0 0 0 4px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  color: ${({ theme }) => theme.colors.textSecondary};
+  transition: color 0.15s ease;
+
+  ${({ $compact }) =>
+    $compact
+      ? css`
+          padding: 0;
+          width: 22px;
+          height: 22px;
+          box-sizing: border-box;
+          line-height: 0;
+        `
+      : css`
+          padding: 4px;
+        `}
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &:hover:not(:disabled) {
+    color: ${({ theme }) => theme.colors.text};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.primary};
+    outline-offset: 2px;
+  }
+`;
+
+/**
+ * Ссылка «Выбрать все» в подвале панели `Dropdown` (только неотключённые опции).
+ * Используйте атрибут `disabled`, когда нет доступных пунктов, все уже выбраны или поле недоступно.
+ */
+export const SelectMultiSelectAllFooterBtn = styled.button`
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 4px 0 0;
+  border: none;
+  background: none;
+  text-align: left;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.35;
+  cursor: pointer;
+  color: ${({ theme }) => theme.colors.primary};
+
+  &:disabled {
+    cursor: not-allowed;
+    color: ${({ theme }) => theme.colors.textTertiary};
+  }
+
+  &:hover:not(:disabled) {
+    text-decoration: underline;
+  }
 `;
 
 /**

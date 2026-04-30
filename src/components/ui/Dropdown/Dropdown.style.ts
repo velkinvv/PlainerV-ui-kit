@@ -7,13 +7,25 @@ import {
   getDropdownAnimations,
 } from '../../../handlers/dropdownThemeHandlers';
 import { colors } from '../../../variables/colors';
+import { primary } from '../../../variables/colors/primary';
 
 /**
  * Контейнер dropdown
+ * @property $fullWidth — блок на всю ширину родителя (иначе `inline-block` сжимает триггер, как у `Select fullWidth`)
  */
-export const DropdownContainer = styled.div<{ $alignSelf?: DropdownAlignSelf }>`
+export const DropdownContainer = styled.div.withConfig({
+  shouldForwardProp: prop => prop !== '$alignSelf' && prop !== '$fullWidth',
+})<{ $alignSelf?: DropdownAlignSelf; $fullWidth?: boolean }>`
   position: relative;
-  display: inline-block;
+  ${({ $fullWidth }) =>
+    $fullWidth
+      ? css`
+          display: block;
+          width: 100%;
+        `
+      : css`
+          display: inline-block;
+        `}
   ${({ $alignSelf }) => $alignSelf && `align-self: ${$alignSelf};`}
 `;
 
@@ -195,6 +207,51 @@ export const DropdownDivider = styled.div`
   width: 100%;
 `;
 
+/** Контейнер вложенного уровня дерева пунктов меню */
+export const DropdownMenuTreeNestedList = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding-left: 10px;
+  margin-left: 8px;
+  border-left: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#374151' : '#e5e7eb')};
+`;
+
+/** Обёртка иконки шеврона ветки: поворот без `style` на `Icon` (тип `IconProps` не принимает `style`). */
+export const DropdownMenuTreeChevronFrame = styled.span<{ $expanded: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform: ${({ $expanded }) => ($expanded ? 'rotate(0deg)' : 'rotate(-90deg)')};
+  transition: transform 0.15s ease;
+`;
+
+/** Кнопка раскрытия ветки (шеврон), не участвует в выборе строки */
+export const DropdownMenuTreeExpandButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  margin: 0 4px 0 0;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+
+  &:hover {
+    background: ${({ theme }) => (theme.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)')};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors?.primary ?? '#2563eb'};
+    outline-offset: 1px;
+  }
+`;
+
 /**
  * Обёртка списка пунктов меню
  */
@@ -204,7 +261,7 @@ export const DropdownMenuWrapper = styled.div.withConfig({
 })<{ $density?: 'default' | 'compact' }>`
   display: flex;
   flex-direction: column;
-  gap: ${({ $density }) => ($density === 'compact' ? '0px' : '4px')};
+  gap: ${({ $density }) => ($density === 'compact' ? '2px' : '4px')};
   width: 100%;
 `;
 
@@ -252,7 +309,15 @@ export const DropdownItem = styled.div.withConfig({
       text-align: ${styles.textAlign};
       user-select: ${styles.userSelect};
       opacity: ${$state && 'opacity' in styles ? styles.opacity : 1};
-      ${$state === 'focus' && 'border' in styles ? `border: ${styles.border};` : 'border: none;'}
+      ${
+        $state === 'focus'
+          ? `
+      border: none;
+      outline: none;
+      box-shadow: 0 0 0 2px ${theme.mode === 'dark' ? primary[300] : primary[500]};
+    `
+          : 'border: none;'
+      }
     `;
   }}
 
@@ -272,16 +337,28 @@ export const DropdownItem = styled.div.withConfig({
     opacity: 0.75;
   }
 
-  &:focus,
+  &:focus {
+    outline: none;
+  }
+
+  /* Клик мышью: без рамки/кольца фокуса (раньше срабатывал общий блок с border из темы). */
+  &:focus:not(:focus-visible) {
+    border: none;
+    box-shadow: none;
+  }
+
+  /* Клавиатура: кольцо через box-shadow — без смены border и без системной чёрной обводки. */
   &:focus-visible {
     ${({ theme, $size = Size.MD }) => {
       const focusStyles = getDropdownItemStyles(theme.dropdowns, $size, 'focus');
+      const ringColor = theme.mode === 'dark' ? primary[300] : primary[500];
       return `
         background: ${'background' in focusStyles ? focusStyles.background : 'transparent'};
         color: ${'color' in focusStyles ? focusStyles.color : 'inherit'};
-        border: ${'border' in focusStyles ? focusStyles.border : 'none'};
+        border: none;
         font-weight: ${'fontWeight' in focusStyles ? focusStyles.fontWeight : 400};
         outline: none;
+        box-shadow: 0 0 0 2px ${ringColor};
       `;
     }}
   }

@@ -1,6 +1,8 @@
 import React from 'react';
 import { clsx } from 'clsx';
-import type { DropdownMenuItemProps } from '../../../types/ui';
+import { TooltipPosition, type DropdownMenuItemProps } from '../../../types/ui';
+import { Hint, HintVariant } from '../Hint/Hint';
+import { mapTooltipPositionToHintPlacement } from './handlers';
 import {
   DropdownItem,
   DropdownItemContent,
@@ -10,13 +12,24 @@ import {
   DropdownItemLoadingSpinner,
   DropdownItemRightSlot,
   DropdownItemShortcut,
+  DropdownMenuTreeChevronFrame,
+  DropdownMenuTreeExpandButton,
+  DropdownMenuTreeNestedList,
 } from './Dropdown.style';
 import { Skeleton } from '../Skeleton/Skeleton';
 import { Checkbox } from '../Checkbox/Checkbox';
 import { Size } from '../../../types/sizes';
+import { Icon } from '../Icon/Icon';
+import { getChevronIconSizeForField } from '../../../handlers/iconHandlers';
+import {
+  buildDropdownTreeBranchKey,
+  collectSelectableValuesFromTreeItem,
+  getTreeParentCheckboxVisualState,
+} from '../../../handlers/dropdownTreeSelectionHandlers';
 import {
   isSelectedInMultiSelection as checkIsSelectedInMultiSelection,
   calculateMenuItemState,
+  getMenuItemKey,
 } from './handlers';
 import { useDropdownMenuContext } from './DropdownMenu';
 import { Tooltip } from '../Tooltip/Tooltip';
@@ -31,6 +44,7 @@ export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuIte
       description,
       value,
       icon,
+      id,
       rightSlot,
       shortcut,
       disabled = false,
@@ -44,6 +58,13 @@ export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuIte
       className,
       showTooltip = false,
       tooltipText,
+      tooltip,
+      tooltipType = 'tooltip',
+      tooltipPosition = TooltipPosition.TOP,
+      nestedItems,
+      treeAncestorKey,
+      treeIndex = 0,
+      onClick: itemRowClick,
       ...rest
     },
     ref,
@@ -53,10 +74,26 @@ export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuIte
       value: selectedValue,
       onActivateItem,
       multiSelection,
+      showCheckbox: showCheckboxFromMenu,
       disableSelectedOptionHighlight,
       menuDensity,
       size: menuSize,
+      treeExpandable: treeExpandableFromMenu = true,
+      isTreeBranchExpanded,
+      toggleTreeBranch,
+      lookupTreeMenuItemByValue,
     } = useDropdownMenuContext();
+
+    const hasNestedTree = Boolean(nestedItems?.length);
+    const branchKey = React.useMemo(
+      () => buildDropdownTreeBranchKey(treeAncestorKey ?? '', { id, value, label }, treeIndex),
+      [treeAncestorKey, id, value, label, treeIndex],
+    );
+    const treeBranchExpanded =
+      !hasNestedTree || (isTreeBranchExpanded?.(branchKey) ?? true);
+
+    /** Чекбоксы в мультивыборе: по умолчанию показываем, пока родитель не передал `showCheckbox={false}` */
+    const showMultiCheckbox = Boolean(multiSelection && showCheckboxFromMenu !== false);
 
     /** Плотные строки для календаря и др. */
     const itemDensity = menuDensity === 'compact' ? 'compact' : undefined;
@@ -98,6 +135,53 @@ export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuIte
       onItemSelect?.(value, event);
     };
 
+    /** Сначала выбор строки, затем опциональный `onClick` с пропсов (`{...rest}` не должен перезаписывать выбор). */
+    const handleRowClick = (event: React.MouseEvent<HTMLDivElement>) => {
+      handleClick(event);
+      itemRowClick?.(event);
+    };
+
+    const treeSelfItem = React.useMemo(
+      () =>
+        ({
+          value,
+          id,
+          disabled,
+          nestedItems,
+          label,
+        }) as DropdownMenuItemProps,
+      [value, id, disabled, nestedItems, label],
+    );
+
+    /**
+     * Полное поддерево для каскада чекбокса (селект с поиском режет `nestedItems` у пункта в панели).
+     * TODO(tree-multiselect): снятие выбора по чекбоксу родителя после выбора только детей всё ещё может не
+     * совпадать со строкой — разобрать цепочку событий / controlled Checkbox и добить поведение; пометка на доработку.
+     */
+    const resolvedTreeItemForCheckbox = React.useMemo(() => {
+      if (!hasNestedTree || value === undefined || value === null) {
+        return treeSelfItem;
+      }
+      const resolvedNode = lookupTreeMenuItemByValue?.(String(value));
+      return resolvedNode ?? treeSelfItem;
+    }, [hasNestedTree, value, lookupTreeMenuItemByValue, treeSelfItem]);
+
+    const checkboxVisualState = React.useMemo(() => {
+      if (!multiSelection || !hasNestedTree || !Array.isArray(selectedValue)) {
+        return {
+          checked: isSelectedInMultiSelection,
+          indeterminate: false,
+        };
+      }
+      return getTreeParentCheckboxVisualState(resolvedTreeItemForCheckbox, selectedValue);
+    }, [
+      multiSelection,
+      hasNestedTree,
+      selectedValue,
+      resolvedTreeItemForCheckbox,
+      isSelectedInMultiSelection,
+    ]);
+
     const handleCheckboxChange = React.useCallback(
       (event: React.ChangeEvent<HTMLInputElement>) => {
         if (isDisabled) {
@@ -107,11 +191,45 @@ export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuIte
         }
 
         event.stopPropagation();
-        // В режиме multiSelection клик по чекбоксу также вызывает onItemSelect
+        if (multiSelection && hasNestedTree) {
+          /**
+           * Совпадает с логикой строки: в поддереве (по полному узлу из lookup) уже есть выбранные значения — снять ветку (`false`);
+           * иначе — ориентируемся на `target.checked` для включения.
+           * TODO(tree-multiselect): см. комментарий у `resolvedTreeItemForCheckbox` — при необходимости пересмотреть всю ветку `handleCheckboxChange`.
+           */
+          const subtreeValueKeys = collectSelectableValuesFromTreeItem(resolvedTreeItemForCheckbox);
+          const selectedStrings = Array.isArray(selectedValue)
+            ? selectedValue.map((entry) => String(entry))
+            : [];
+          const selectedSetForSubtree = new Set(selectedStrings);
+          const subtreeHasSelectedValue = subtreeValueKeys.some((subtreeKey) =>
+            selectedSetForSubtree.has(subtreeKey),
+          );
+          const rawChecked = event.target.checked;
+          const effectiveTreeCheckboxChecked = subtreeHasSelectedValue
+            ? false
+            : rawChecked !== false;
+          /** Отдельный объект — не мутируем `ChangeEvent`, иначе на всплытии к строке меню можно прочитать «чужой» флаг. */
+          const treeCheckboxEvent = {
+            dropdownTreeCheckboxChecked: effectiveTreeCheckboxChecked,
+          } as unknown as React.MouseEvent<HTMLDivElement>;
+          onSelect?.(value, treeCheckboxEvent);
+          onItemSelect?.(value, treeCheckboxEvent as unknown as React.MouseEvent<HTMLElement>);
+          return;
+        }
         onSelect?.(value, event as unknown as React.MouseEvent<HTMLDivElement>);
         onItemSelect?.(value, event as unknown as React.MouseEvent<HTMLElement>);
       },
-      [isDisabled, onSelect, onItemSelect, value],
+      [
+        isDisabled,
+        onSelect,
+        onItemSelect,
+        value,
+        multiSelection,
+        hasNestedTree,
+        resolvedTreeItemForCheckbox,
+        selectedValue,
+      ],
     );
 
     const handleMouseEnter = () => {
@@ -151,11 +269,17 @@ export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuIte
         return <DropdownItemLoadingSpinner role="progressbar" aria-label="Загрузка" />;
       }
 
-      if (multiSelection) {
+      if (showMultiCheckbox) {
         return (
-          <DropdownItemIconSlot>
+          <DropdownItemIconSlot
+            onClick={(iconSlotClick) => {
+              // Клик по чекбоксу не должен всплывать к строке меню: второй onItemSelect с «чистым» MouseEvent ломает каскад дерева.
+              iconSlotClick.stopPropagation();
+            }}
+          >
             <Checkbox
-              checked={isSelectedInMultiSelection}
+              checked={checkboxVisualState.checked}
+              indeterminate={checkboxVisualState.indeterminate}
               onChange={handleCheckboxChange}
               disabled={isDisabled}
               size={Size.SM}
@@ -171,12 +295,35 @@ export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuIte
       return null;
     }, [
       loading,
-      multiSelection,
-      isSelectedInMultiSelection,
+      showMultiCheckbox,
+      checkboxVisualState.checked,
+      checkboxVisualState.indeterminate,
       handleCheckboxChange,
       isDisabled,
       icon,
     ]);
+
+    const expandControl =
+      hasNestedTree && treeExpandableFromMenu ? (
+        <DropdownMenuTreeExpandButton
+          type="button"
+          aria-expanded={treeBranchExpanded}
+          aria-label={treeBranchExpanded ? 'Свернуть вложенный список' : 'Развернуть вложенный список'}
+          onClick={(expandEvent) => {
+            if (branchKey) {
+              toggleTreeBranch?.(branchKey, expandEvent);
+            }
+          }}
+        >
+          <DropdownMenuTreeChevronFrame $expanded={treeBranchExpanded}>
+            <Icon
+              name="IconPlainerChevronDown"
+              size={getChevronIconSizeForField(Size.SM)}
+              color="currentColor"
+            />
+          </DropdownMenuTreeChevronFrame>
+        </DropdownMenuTreeExpandButton>
+      ) : null;
 
     const skeletonNode = (
       <DropdownItem
@@ -186,11 +333,13 @@ export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuIte
         tabIndex={-1}
         data-tone={tone}
         data-skeleton={true}
+        data-dropdown-item-value={value !== undefined && value !== null ? String(value) : undefined}
+        data-dropdown-item-id={id}
         $state={finalState}
         $size={itemSize}
         $density={itemDensity}
         className={clsx('ui-dropdown-menu-item', className)}
-        onClick={handleClick}
+        onClick={handleRowClick}
         onMouseEnter={handleMouseEnter}
         style={{ padding: 0 }}
         {...(rest as Omit<typeof rest, 'style'>)}
@@ -205,7 +354,7 @@ export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuIte
       </DropdownItem>
     );
 
-    const regularNode = (
+    const regularRow = (
       <DropdownItem
         ref={ref}
         role="menuitem"
@@ -213,29 +362,72 @@ export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuIte
         tabIndex={isDisabled ? -1 : 0}
         data-tone={tone}
         data-loading={loading}
+        data-dropdown-item-value={value !== undefined && value !== null ? String(value) : undefined}
+        data-dropdown-item-id={id}
         $state={finalState}
         $size={itemSize}
         $density={itemDensity}
         className={clsx('ui-dropdown-menu-item', className)}
-        onClick={handleClick}
+        onClick={handleRowClick}
         onMouseEnter={handleMouseEnter}
         {...rest}
       >
+        {expandControl}
         {leftSlot}
         <DropdownItemContent>{resolvedContent}</DropdownItemContent>
-        {trailingSlot && <DropdownItemRightSlot>{trailingSlot}</DropdownItemRightSlot>}
+        {trailingSlot ? <DropdownItemRightSlot>{trailingSlot}</DropdownItemRightSlot> : null}
       </DropdownItem>
+    );
+
+    const nestedTreeBlock =
+      hasNestedTree && treeBranchExpanded && nestedItems?.length ? (
+        <DropdownMenuTreeNestedList role="group">
+          {nestedItems.map((childItem, childIndex) => (
+            <DropdownMenuItem
+              key={getMenuItemKey(childItem, childIndex)}
+              {...childItem}
+              treeAncestorKey={branchKey}
+              treeIndex={childIndex}
+            />
+          ))}
+        </DropdownMenuTreeNestedList>
+      ) : null;
+
+    const regularNode = (
+      <>
+        {regularRow}
+        {nestedTreeBlock}
+      </>
     );
 
     const itemNode = skeleton ? skeletonNode : regularNode;
 
-    if (showTooltip) {
-      const content = tooltipText ?? label ?? description;
-      if (!content) {
-        return itemNode;
+    const resolvedTooltipContent = tooltip ?? (showTooltip ? (tooltipText ?? label ?? description) : null);
+    /** Для `disabled` / `loading` / `skeleton` подсказку у пункта не показываем (как у `Tooltip` с `disabled`). */
+    const isItemHelpSuppressed = isDisabled || skeleton || loading;
+
+    if (resolvedTooltipContent) {
+      if (tooltipType === 'hint') {
+        if (isItemHelpSuppressed) {
+          return itemNode;
+        }
+        return (
+          <Hint
+            content={resolvedTooltipContent}
+            placement={mapTooltipPositionToHintPlacement(tooltipPosition)}
+            variant={HintVariant.DEFAULT}
+          >
+            {itemNode}
+          </Hint>
+        );
       }
+
       return (
-        <Tooltip content={content} disabled={isDisabled || skeleton || loading}>
+        <Tooltip
+          content={resolvedTooltipContent}
+          position={tooltipPosition}
+          disabled={isItemHelpSuppressed}
+        >
           {itemNode}
         </Tooltip>
       );

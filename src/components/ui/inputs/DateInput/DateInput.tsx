@@ -403,8 +403,9 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
       characterCounterVisibilityThreshold = 0,
       additionalLabel,
       textAlign = 'left',
-      clearIcon = false,
+      displayClearIcon = false,
       onClearIconClick,
+      clearIconProps,
       disabledDates = [],
       disabledDays = [],
       disabledMonths = [],
@@ -1330,10 +1331,14 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
                 {...props}
               />
             )}
-            {clearIcon && inputValue && !disabled && (
+            {displayClearIcon && inputValue && !disabled && (
               <IconWrapper size={size} style={{ marginLeft: 'auto' }}>
                 <IconButton onClick={handleClearIconClick}>
-                  <Icon name="IconPlainerClose" size={getClearIconSizeForInputField(size)} />
+                  <Icon
+                    name="IconPlainerClose"
+                    size={getClearIconSizeForInputField(size)}
+                    {...clearIconProps}
+                  />
                 </IconButton>
               </IconWrapper>
             )}

@@ -23,6 +23,20 @@ export const iconSizeHandler = (size?: number, iconSize: IconSize = IconSize.MD)
  * @param fieldSize — размер поля (`Size` из пропсов Input / DateInput / TimeInput / FileInput и т.д.; по умолчанию `Size.SM`)
  * @returns значение `IconSize` для компонента `Icon`
  */
+/**
+ * Размер шеврона / индикатора «открыть меню» по высоте строки (`Select`, дефолтный `Dropdown`).
+ * @param fieldSize — `Size` поля или `Dropdown.size` (по умолчанию считаем `MD`)
+ */
+export const getChevronIconSizeForField = (fieldSize: Size | undefined): IconSize => {
+  if (fieldSize === Size.SM || fieldSize === Size.XS) {
+    return IconSize.XS;
+  }
+  if (fieldSize === Size.LG || fieldSize === Size.XL) {
+    return IconSize.MD;
+  }
+  return IconSize.SM;
+};
+
 export const getClearIconSizeForInputField = (fieldSize: Size = Size.SM): IconSize => {
   switch (fieldSize) {
     case Size.XS:

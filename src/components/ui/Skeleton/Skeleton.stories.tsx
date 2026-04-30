@@ -1,14 +1,14 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Skeleton } from './Skeleton';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { SkeletonVariant, SkeletonGroupDirection } from '../../../types/ui';
 
 const meta: Meta<typeof Skeleton> = {
-  title: 'Components/Skeleton',
+  title: 'UI Kit/Data Display/Skeleton',
   component: Skeleton,
   decorators: [
-    Story => (
+    (Story) => (
       <ThemeProvider>
         <div style={{ padding: 24 }}>
           <Story />
@@ -17,38 +17,78 @@ const meta: Meta<typeof Skeleton> = {
     ),
   ],
   argTypes: {
-    width: { control: 'text', description: 'Ширина скелетона (число или CSS-значение)' },
-    height: { control: 'text', description: 'Высота скелетона' },
+    width: {
+      control: 'text',
+      description: 'Ширина скелетона (число или CSS-значение)',
+      table: {
+        type: { summary: 'число (px) либо CSS-строка (например 100%, 12rem)' },
+      },
+    },
+    height: {
+      control: 'text',
+      description: 'Высота скелетона',
+      table: {
+        type: { summary: 'число (px) либо CSS-строка' },
+      },
+    },
     shape: {
       control: { type: 'inline-radio' },
       options: ['rect', 'circle'],
       description: 'Форма скелетона',
+      table: {
+        type: { summary: 'rect или circle' },
+      },
     },
-    animated: { control: 'boolean', description: 'Включить анимацию' },
+    animated: {
+      control: 'boolean',
+      description: 'Включить анимацию',
+      table: { type: { summary: 'boolean' } },
+    },
     animationSpeed: {
       control: { type: 'number', min: 0.1, max: 5, step: 0.1 },
       description: 'Скорость анимации в секундах',
+      table: { type: { summary: 'number (секунды)' } },
     },
-    count: { control: 'number', description: 'Количество повторений' },
-    inline: { control: 'boolean', description: 'Отображать как inline-block' },
-    gap: { control: 'number', description: 'Отступ между элементами при count > 1' },
+    count: {
+      control: 'number',
+      description: 'Количество повторений',
+      table: { type: { summary: 'number (целое ≥ 1)' } },
+    },
+    inline: {
+      control: 'boolean',
+      description: 'Отображать как inline-block',
+      table: { type: { summary: 'boolean' } },
+    },
+    gap: {
+      control: 'number',
+      description: 'Отступ между элементами при count > 1',
+      table: { type: { summary: 'number (px)' } },
+    },
     direction: {
       control: { type: 'select' },
-      options: ['row', 'column'],
+      options: Object.values(SkeletonGroupDirection),
       description: 'Направление группы элементов',
+      table: {
+        type: { summary: 'row или column (SkeletonGroupDirection)' },
+      },
     },
     variant: {
       control: { type: 'select' },
-      options: ['text', 'avatar', 'button', 'custom'],
+      options: Object.values(SkeletonVariant),
       description: 'Предустановленный вариант скелетона',
+      table: {
+        type: { summary: 'text, avatar, button или custom (SkeletonVariant)' },
+      },
     },
     borderRadius: {
       control: 'text',
       description: 'Кастомное значение border-radius',
+      table: { type: { summary: 'CSS-строка (например 8px)' } },
     },
     ariaLabel: {
       control: 'text',
       description: 'Текст для screen readers',
+      table: { type: { summary: 'string' } },
     },
   },
   tags: ['autodocs'],
@@ -217,8 +257,7 @@ export const Accessibility: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          'Скелетон с кастомным aria-label для улучшения доступности для screen readers.',
+        story: 'Скелетон с кастомным aria-label для улучшения доступности для screen readers.',
       },
     },
   },
@@ -251,3 +290,4 @@ export const ComplexLayout: Story = {
     },
   },
 };
+

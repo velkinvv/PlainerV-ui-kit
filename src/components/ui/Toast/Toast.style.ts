@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components';
 import type { ToastPlacement } from '@/types/ui';
+import { BorderRadiusHandler } from '@/handlers/uiHandlers';
 import type { ToastPillVisualTokens, ToastSurfaceTokens } from './handlers';
 
 const placementMixin = ($placement: ToastPlacement) => {
@@ -28,15 +29,23 @@ const placementMixin = ($placement: ToastPlacement) => {
  * Фиксированная колонка стека уведомлений (портал в `document.body`).
  * @property $placement - Угол или верх по центру
  */
-export const ToastStack = styled.div<{ $placement: ToastPlacement }>`
+export const ToastStack = styled.div<{ $placement: ToastPlacement; $stacked?: boolean }>`
   position: fixed;
   z-index: ${({ theme }) => (theme.zIndex?.modal ?? 2000) + 50};
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: ${({ $stacked }) => ($stacked ? 6 : 10)}px;
   align-items: stretch;
   max-width: min(560px, calc(100vw - 32px));
   pointer-events: none;
+  ${({ $stacked }) =>
+    $stacked
+      ? css`
+          & > * + * {
+            margin-top: -2px;
+          }
+        `
+      : ''}
   ${({ $placement }) => placementMixin($placement)}
 `;
 
@@ -49,6 +58,8 @@ export const ToastCard = styled.article<{ $tokens: ToastSurfaceTokens }>`
   display: flex;
   flex-direction: column;
   gap: 6px;
+  position: relative;
+  overflow: hidden;
   padding: 14px 12px 14px 16px;
   border-radius: 8px;
   background: ${({ $tokens }) => $tokens.surface};
@@ -120,21 +131,22 @@ export const ToastDismiss = styled.button`
   }
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.primary};
+    outline: 2px solid ${({ theme }) => theme.colors.info};
     outline-offset: 2px;
   }
 `;
 
 /**
- * Корень «пилюли»: белая капсула, тень, кнопка закрытия с перекрытием угла
+ * Корень «пилюли»: тонированный фон и цветная рамка по макету, скругление из темы.
  * @property $tokens - Палитра из {@link getToastPillVisualTokens}
  */
 export const ToastPillRoot = styled.article<{ $tokens: ToastPillVisualTokens }>`
   pointer-events: auto;
-  position: relative;
   display: block;
-  padding: 12px 20px 12px 16px;
-  border-radius: 999px;
+  position: relative;
+  overflow: hidden;
+  padding: 14px 12px 14px 16px;
+  border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
   background: ${({ $tokens }) => $tokens.surface};
   border: ${({ $tokens }) => $tokens.border};
   box-shadow: ${({ theme }) => theme.boxShadow.notification};
@@ -149,7 +161,6 @@ export const ToastPillRow = styled.div`
   align-items: center;
   gap: 12px;
   min-height: 36px;
-  padding-right: 8px;
 `;
 
 /**
@@ -229,38 +240,57 @@ export const ToastPillAction = styled.button<{ $bg: string; $fg: string }>`
   }
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.primary};
+    outline: 2px solid ${({ theme }) => theme.colors.info};
     outline-offset: 2px;
   }
 `;
 
 /**
- * Круглая кнопка закрытия, частично выходит за границы карточки (макет Figma)
- * @property $bg - Фон круга
+ * Закрытие в строке (контурный крестик справа, как в макете).
  */
-export const ToastPillDismiss = styled.button<{ $bg: string }>`
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  z-index: 1;
+export const ToastPillDismiss = styled.button`
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  padding: 0;
+  margin: -4px -4px -4px 4px;
+  padding: 4px;
   border: none;
-  border-radius: 50%;
-  background: ${({ $bg }) => $bg};
+  border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
+  background: transparent;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  color: inherit;
+  opacity: 0.65;
 
   &:hover {
-    filter: brightness(1.08);
+    opacity: 1;
   }
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.primary};
+    outline: 2px solid ${({ theme }) => theme.colors.info};
     outline-offset: 2px;
   }
+`;
+
+/**
+ * Трек нижнего индикатора времени автозакрытия.
+ */
+export const ToastProgressTrack = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: rgba(0, 0, 0, 0.08);
+`;
+
+/**
+ * Заполняемая полоса времени автозакрытия.
+ * @property $color - Акцентный цвет типа уведомления.
+ */
+export const ToastProgressFill = styled.div<{ $color: string }>`
+  height: 100%;
+  width: 100%;
+  background: ${({ $color }) => $color};
+  transition: width 100ms linear;
 `;

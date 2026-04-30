@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import { fn } from '@storybook/test';
 import { DateInput } from './DateInput';
@@ -7,7 +7,7 @@ import type { DateTimeRange } from '../../../../types/ui';
 import { Icon } from '../../Icon/Icon';
 
 const meta: Meta<typeof DateInput> = {
-  title: 'Components/Inputs/DateInput',
+  title: 'UI Kit/Inputs/DateInput',
   component: DateInput,
   parameters: {
     layout: 'padded',
@@ -16,7 +16,13 @@ const meta: Meta<typeof DateInput> = {
   argTypes: {
     value: {
       control: 'text',
-      description: 'Значение даты (для single mode) или диапазона (для range mode)',
+      description:
+        'При `range: false` — строка даты в формате поля (как в `format`). При `range: true` — объект `{ start: string; end: string }` с границами диапазона',
+      table: {
+        type: {
+          summary: 'строка при `range: false`; объект `{ start, end }` при `range: true`',
+        },
+      },
     },
     label: {
       control: 'text',
@@ -33,11 +39,13 @@ const meta: Meta<typeof DateInput> = {
     size: {
       control: { type: 'select' },
       options: [Size.SM, Size.MD, Size.LG],
-      description: 'Размер поля ввода',
+      description:
+        'Размер поля; в сторис доступны `SM`, `MD`, `LG` (полный набор — все значения `Size`)',
     },
     range: {
       control: 'boolean',
-      description: 'Режим работы: false = одиночная дата, true = диапазон',
+      description:
+        'Режим: `false` — одна дата (строка в `value`), `true` — диапазон (объект `{ start, end }` в `value`)',
     },
     showIcon: {
       control: 'boolean',
@@ -46,15 +54,24 @@ const meta: Meta<typeof DateInput> = {
     textAlign: {
       control: { type: 'select' },
       options: ['left', 'center', 'right'],
-      description: 'Выравнивание текста',
+      description: 'Выравнивание текста; значения: `left`, `center`, `right`',
     },
-    clearIcon: {
+    displayClearIcon: {
       control: { type: 'boolean' },
-      description: 'Показывать иконку очистки',
+      description: 'Показывать кнопку с крестиком очистки',
+    },
+    onClearIconClick: { action: 'clearIconClick', description: 'После сброса даты в компоненте' },
+    clearIconProps: {
+      control: 'object',
+      description:
+        'Частичные пропсы `Icon` для кнопки очистки при `displayClearIcon`. По умолчанию `IconPlainerClose`; мерж поверх вычисленного `size`.',
+      table: {
+        type: { summary: 'ClearIconProps' },
+      },
     },
     segmented: {
       control: { type: 'boolean' },
-      description: 'Режим ввода: true = сегментированный, false = обычный input',
+      description: 'Режим ввода: `true` — сегментированный ввод, `false` — обычный `input`',
     },
     showDateRollers: {
       control: { type: 'boolean' },
@@ -63,7 +80,8 @@ const meta: Meta<typeof DateInput> = {
     calendarMonthYearLayout: {
       control: { type: 'select' },
       options: ['combined', 'split'],
-      description: 'Один выпадающий список месяц+год или два триггера',
+      description:
+        'Шапка календаря в попапе: `combined` — один список «месяц + год»; `split` — отдельные триггеры месяца и года',
     },
     displayCharacterCounter: {
       control: { type: 'boolean' },
@@ -85,6 +103,7 @@ const meta: Meta<typeof DateInput> = {
   },
   args: {
     onChange: fn(),
+    clearIconProps: {},
   },
 };
 
@@ -179,14 +198,8 @@ export const Interactive: Story = {
   },
 };
 
-/** Попап с роллерами и раздельными триггерами месяц/год (макеты Figma) */
+/** Попап с роллерами и раздельными триггерами месяц/год */
 export const WithRollersAndSplitHeader: Story = {
-  parameters: {
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4863-782',
-    },
-  },
   render: () => {
     const [value, setValue] = useState('');
 
@@ -209,7 +222,7 @@ export const WithRollersAndSplitHeader: Story = {
 
 export const RangeInteractive: Story = {
   render: () => {
-    const [range, setRange] = useState<DateTimeRange>({ start: '', end: '' });
+    const [range, setRange] = useState({ start: '', end: '' });
 
     const handleChange = (newValue: string | DateTimeRange) => {
       if (typeof newValue === 'object') {
@@ -312,7 +325,7 @@ export const FormExample: Story = {
       endDate: '',
       eventDate: '',
     });
-    const [errors, setErrors] = useState<Record<string, string>>({});
+    const [errors, setErrors] = useState({} as Record<string, string>);
 
     const handleSubmit = () => {
       const newErrors: Record<string, string> = {};
@@ -488,15 +501,15 @@ export const TextAlignComparison: Story = {
 
 export const RangeTextAlignComparison: Story = {
   render: () => {
-    const [leftRange, setLeftRange] = useState<DateTimeRange>({
+    const [leftRange, setLeftRange] = useState({
       start: '2024-01-01',
       end: '2024-01-31',
     });
-    const [centerRange, setCenterRange] = useState<DateTimeRange>({
+    const [centerRange, setCenterRange] = useState({
       start: '2024-01-01',
       end: '2024-01-31',
     });
-    const [rightRange, setRightRange] = useState<DateTimeRange>({
+    const [rightRange, setRightRange] = useState({
       start: '2024-01-01',
       end: '2024-01-31',
     });
@@ -553,7 +566,7 @@ export const WithClearIcon: Story = {
   args: {
     label: 'С иконкой очистки',
     placeholder: 'Выберите дату',
-    clearIcon: true,
+    displayClearIcon: true,
     value: '2024-01-15',
     onChange: fn(),
     onClearIconClick: () => console.log('Clear icon clicked'),
@@ -1028,15 +1041,15 @@ export const SegmentedDateFormatDemo: Story = {
 
 export const RangeDateFormatDemo: Story = {
   render: () => {
-    const [range1, setRange1] = useState<DateTimeRange>({
+    const [range1, setRange1] = useState({
       start: '2024-01-01',
       end: '2024-01-15',
     });
-    const [range2, setRange2] = useState<DateTimeRange>({
+    const [range2, setRange2] = useState({
       start: '2024-01-01',
       end: '2024-01-15',
     });
-    const [range3, setRange3] = useState<DateTimeRange>({
+    const [range3, setRange3] = useState({
       start: '2024-01-01',
       end: '2024-01-15',
     });
@@ -1213,11 +1226,11 @@ export const SegmentedCustomIconDemo: Story = {
 
 export const RangeCustomIconDemo: Story = {
   render: () => {
-    const [range1, setRange1] = useState<DateTimeRange>({
+    const [range1, setRange1] = useState({
       start: '2024-01-01',
       end: '2024-01-15',
     });
-    const [range2, setRange2] = useState<DateTimeRange>({
+    const [range2, setRange2] = useState({
       start: '2024-01-01',
       end: '2024-01-15',
     });
@@ -1361,7 +1374,7 @@ export const BottomPanelDemo: Story = {
 
 export const RangeBottomPanelDemo: Story = {
   render: () => {
-    const [range, setRange] = useState<DateTimeRange>({
+    const [range, setRange] = useState({
       start: '2024-01-01',
       end: '2024-01-15',
     });
@@ -1657,15 +1670,15 @@ export const SegmentedStatusDemo: Story = {
 
 export const RangeStatusDemo: Story = {
   render: () => {
-    const [range1, setRange1] = useState<DateTimeRange>({
+    const [range1, setRange1] = useState({
       start: '2024-01-01',
       end: '2024-01-15',
     });
-    const [range2, setRange2] = useState<DateTimeRange>({
+    const [range2, setRange2] = useState({
       start: '2024-01-01',
       end: '2024-01-15',
     });
-    const [range3, setRange3] = useState<DateTimeRange>({
+    const [range3, setRange3] = useState({
       start: '2024-01-01',
       end: '2024-01-15',
     });
@@ -2545,3 +2558,4 @@ export const AdditionalLabelDemo: Story = {
     },
   },
 };
+

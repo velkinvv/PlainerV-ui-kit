@@ -1,13 +1,30 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
+import { Size } from '../types/sizes';
 import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
 import { Input } from '../components/ui/inputs/Input';
 import { useLocalStorage } from './useLocalStorage';
+import {
+  ActionsRow,
+  ActionsRowCenter,
+  ActionsRowTop,
+  ActionsRowWrap,
+  AllExamplesContainer,
+  CounterValue,
+  EmptyItemsText,
+  ItemRow,
+  ItemsList,
+  RemoveItemButton,
+  SectionContainer,
+  StatusContainer,
+  TwoColumnsGrid,
+  UserJsonPreview,
+} from './useLocalStorage.stories.style';
 
 const meta: Meta = {
-  title: 'Hooks/useLocalStorage',
+  title: 'UI Kit/Hooks/useLocalStorage',
   parameters: {
     docs: {
       description: {
@@ -69,27 +86,20 @@ const BasicLocalStorageDemo = () => {
         Базовое использование useLocalStorage
       </Typography>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '16px',
-          marginBottom: '16px',
-        }}
-      >
+      <TwoColumnsGrid>
         <div>
           <Typography variant="body1" marginBottom="sm">
             Имя:
           </Typography>
           <Input value={name} onChange={e => setName(e.target.value)} placeholder="Введите имя" />
-          <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-            <Button size="sm" onClick={() => setName('')}>
+          <ActionsRowTop>
+            <Button size={Size.SM} onClick={() => setName('')}>
               Очистить
             </Button>
-            <Button size="sm" variant="outlined" onClick={removeName}>
+            <Button size={Size.SM} variant="outlined" onClick={removeName}>
               Удалить
             </Button>
-          </div>
+          </ActionsRowTop>
         </div>
 
         <div>
@@ -102,35 +112,35 @@ const BasicLocalStorageDemo = () => {
             onChange={e => setAge(parseInt(e.target.value) || 0)}
             placeholder="Введите возраст"
           />
-          <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-            <Button size="sm" onClick={() => setAge(age + 1)}>
+          <ActionsRowTop>
+            <Button size={Size.SM} onClick={() => setAge(age + 1)}>
               +1
             </Button>
-            <Button size="sm" variant="outlined" onClick={removeAge}>
+            <Button size={Size.SM} variant="outlined" onClick={removeAge}>
               Удалить
             </Button>
-          </div>
+          </ActionsRowTop>
         </div>
-      </div>
+      </TwoColumnsGrid>
 
-      <div style={{ marginBottom: '16px' }}>
+      <SectionContainer>
         <Typography variant="body1" marginBottom="sm">
           Активен:
         </Typography>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <ActionsRowCenter>
           <Button
             variant={isActive ? 'primary' : 'outlined'}
             onClick={() => setIsActive(!isActive)}
           >
             {isActive ? 'Активен' : 'Неактивен'}
           </Button>
-          <Button size="sm" variant="outlined" onClick={removeIsActive}>
+          <Button size={Size.SM} variant="outlined" onClick={removeIsActive}>
             Удалить
           </Button>
-        </div>
-      </div>
+        </ActionsRowCenter>
+      </SectionContainer>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <StatusContainer>
         <Typography variant="body1" marginBottom="sm">
           <strong>Текущие значения:</strong>
         </Typography>
@@ -141,7 +151,7 @@ const BasicLocalStorageDemo = () => {
           Возраст: {age}
         </Typography>
         <Typography variant="body2">Активен: {isActive ? 'Да' : 'Нет'}</Typography>
-      </div>
+      </StatusContainer>
     </Card>
   );
 };
@@ -157,19 +167,19 @@ const ObjectLocalStorageDemo = () => {
     },
   });
 
-  const updateUser = (field: string, value: any) => {
+  const updateUser = (fieldName: string, fieldValue: string) => {
     setUser(prev => ({
       ...prev,
-      [field]: value,
+      [fieldName]: fieldValue,
     }));
   };
 
-  const updatePreferences = (field: string, value: any) => {
+  const updatePreferences = (fieldName: string, fieldValue: string | boolean) => {
     setUser(prev => ({
       ...prev,
       preferences: {
-        ...prev.preferences,
-        [field]: value,
+        ...prev?.preferences,
+        [fieldName]: fieldValue,
       },
     }));
   };
@@ -180,14 +190,7 @@ const ObjectLocalStorageDemo = () => {
         Работа с объектами
       </Typography>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '16px',
-          marginBottom: '16px',
-        }}
-      >
+      <TwoColumnsGrid>
         <div>
           <Typography variant="body1" marginBottom="sm">
             Имя пользователя:
@@ -209,33 +212,33 @@ const ObjectLocalStorageDemo = () => {
             placeholder="Введите email"
           />
         </div>
-      </div>
+      </TwoColumnsGrid>
 
-      <div style={{ marginBottom: '16px' }}>
+      <SectionContainer>
         <Typography variant="body1" marginBottom="sm">
           Настройки:
         </Typography>
-        <div style={{ display: 'flex', gap: '16px' }}>
+        <ActionsRow>
           <div>
             <Typography variant="body2" marginBottom="xs">
               Тема:
             </Typography>
-            <div style={{ display: 'flex', gap: '8px' }}>
+            <ActionsRow>
               <Button
-                size="sm"
-                variant={user.preferences.theme === 'light' ? 'primary' : 'outlined'}
+                size={Size.SM}
+                variant={user?.preferences?.theme === 'light' ? 'primary' : 'outlined'}
                 onClick={() => updatePreferences('theme', 'light')}
               >
                 Светлая
               </Button>
               <Button
-                size="sm"
-                variant={user.preferences.theme === 'dark' ? 'primary' : 'outlined'}
+                size={Size.SM}
+                variant={user?.preferences?.theme === 'dark' ? 'primary' : 'outlined'}
                 onClick={() => updatePreferences('theme', 'dark')}
               >
                 Темная
               </Button>
-            </div>
+            </ActionsRow>
           </div>
 
           <div>
@@ -243,17 +246,18 @@ const ObjectLocalStorageDemo = () => {
               Уведомления:
             </Typography>
             <Button
-              size="sm"
-              variant={user.preferences.notifications ? 'primary' : 'outlined'}
-              onClick={() => updatePreferences('notifications', !user.preferences.notifications)}
+              size={Size.SM}
+              variant={user?.preferences?.notifications ? 'primary' : 'outlined'}
+              onClick={() => updatePreferences('notifications', !user?.preferences?.notifications)}
             >
-              {user.preferences.notifications ? 'Включены' : 'Отключены'}
+              {user?.preferences?.notifications ? 'Включены' : 'Отключены'}
             </Button>
           </div>
-        </div>
-      </div>
+        </ActionsRow>
+      </SectionContainer>
 
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+      <SectionContainer>
+        <ActionsRow>
         <Button onClick={removeUser} variant="outlined">
           Удалить пользователя
         </Button>
@@ -271,14 +275,15 @@ const ObjectLocalStorageDemo = () => {
         >
           Сбросить к новому пользователю
         </Button>
-      </div>
+        </ActionsRow>
+      </SectionContainer>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <StatusContainer>
         <Typography variant="body1" marginBottom="sm">
           <strong>Текущий пользователь:</strong>
         </Typography>
-        <pre style={{ fontSize: '12px', overflow: 'auto' }}>{JSON.stringify(user, null, 2)}</pre>
-      </div>
+        <UserJsonPreview>{JSON.stringify(user, null, 2)}</UserJsonPreview>
+      </StatusContainer>
     </Card>
   );
 };
@@ -294,20 +299,13 @@ const SyncDemo = () => {
         Синхронизация между вкладками
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <SectionContainer>
         <Typography variant="body1" marginBottom="sm">
           Откройте эту страницу в нескольких вкладках, чтобы увидеть синхронизацию в действии.
         </Typography>
-      </div>
+      </SectionContainer>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '16px',
-          marginBottom: '16px',
-        }}
-      >
+      <TwoColumnsGrid>
         <div>
           <Typography variant="body1" marginBottom="sm">
             Общее значение:
@@ -317,40 +315,40 @@ const SyncDemo = () => {
             onChange={e => setSharedValue(e.target.value)}
             placeholder="Введите значение"
           />
-          <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-            <Button size="sm" onClick={() => setSharedValue('')}>
+          <ActionsRowTop>
+            <Button size={Size.SM} onClick={() => setSharedValue('')}>
               Очистить
             </Button>
-            <Button size="sm" variant="outlined" onClick={removeSharedValue}>
+            <Button size={Size.SM} variant="outlined" onClick={removeSharedValue}>
               Удалить
             </Button>
-          </div>
+          </ActionsRowTop>
         </div>
 
         <div>
           <Typography variant="body1" marginBottom="sm">
             Счетчик:
           </Typography>
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <Button size="sm" onClick={() => setCounter(counter - 1)}>
+          <ActionsRowCenter>
+            <Button size={Size.SM} onClick={() => setCounter(counter - 1)}>
               -
             </Button>
-            <Typography variant="h4" style={{ margin: '0 16px' }}>
+            <CounterValue variant="h4">
               {counter}
-            </Typography>
-            <Button size="sm" onClick={() => setCounter(counter + 1)}>
+            </CounterValue>
+            <Button size={Size.SM} onClick={() => setCounter(counter + 1)}>
               +
             </Button>
-          </div>
-          <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-            <Button size="sm" onClick={() => setCounter(0)}>
+          </ActionsRowCenter>
+          <ActionsRowTop>
+            <Button size={Size.SM} onClick={() => setCounter(0)}>
               Сбросить
             </Button>
-          </div>
+          </ActionsRowTop>
         </div>
-      </div>
+      </TwoColumnsGrid>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <StatusContainer>
         <Typography variant="body1" marginBottom="sm">
           <strong>Текущие значения:</strong>
         </Typography>
@@ -358,7 +356,7 @@ const SyncDemo = () => {
           Общее значение: {sharedValue || 'пусто'}
         </Typography>
         <Typography variant="body2">Счетчик: {counter}</Typography>
-      </div>
+      </StatusContainer>
     </Card>
   );
 };
@@ -386,7 +384,8 @@ const ArrayLocalStorageDemo = () => {
         Работа с массивами
       </Typography>
 
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
+      <SectionContainer>
+        <ActionsRowWrap>
         <Button onClick={addItem}>Добавить элемент</Button>
         <Button onClick={clearItems} variant="outlined">
           Очистить массив
@@ -394,54 +393,43 @@ const ArrayLocalStorageDemo = () => {
         <Button onClick={removeItems} variant="outlined">
           Удалить из localStorage
         </Button>
-      </div>
+        </ActionsRowWrap>
+      </SectionContainer>
 
-      <div style={{ marginBottom: '16px' }}>
+      <SectionContainer>
         <Typography variant="body1" marginBottom="sm">
           Элементы ({items.length}):
         </Typography>
         {items.length === 0 ? (
-          <Typography variant="body2" style={{ color: '#6c757d', fontStyle: 'italic' }}>
+          <EmptyItemsText variant="body2">
             Массив пуст
-          </Typography>
+          </EmptyItemsText>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {items.map((item, index) => (
-              <div
-                key={index}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '8px 12px',
-                  backgroundColor: '#f8f9fa',
-                  borderRadius: '4px',
-                  border: '1px solid #dee2e6',
-                }}
-              >
+          <ItemsList>
+            {items.map((item, itemIndex) => (
+              <ItemRow key={itemIndex}>
                 <Typography variant="body2">
-                  {index + 1}. {item}
+                  {itemIndex + 1}. {item}
                 </Typography>
-                <Button
-                  size="sm"
+                <RemoveItemButton
+                  size={Size.SM}
                   variant="ghost"
-                  onClick={() => removeItem(index)}
-                  style={{ padding: '4px 8px', minWidth: 'auto' }}
+                  onClick={() => removeItem(itemIndex)}
                 >
                   ×
-                </Button>
-              </div>
+                </RemoveItemButton>
+              </ItemRow>
             ))}
-          </div>
+          </ItemsList>
         )}
-      </div>
+      </SectionContainer>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <StatusContainer>
         <Typography variant="body1" marginBottom="sm">
           <strong>Массив в localStorage:</strong>
         </Typography>
-        <pre style={{ fontSize: '12px', overflow: 'auto' }}>{JSON.stringify(items, null, 2)}</pre>
-      </div>
+        <UserJsonPreview>{JSON.stringify(items, null, 2)}</UserJsonPreview>
+      </StatusContainer>
     </Card>
   );
 };
@@ -464,11 +452,12 @@ export const ArrayStorage: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <AllExamplesContainer>
       <BasicLocalStorageDemo />
       <ObjectLocalStorageDemo />
       <SyncDemo />
       <ArrayLocalStorageDemo />
-    </div>
+    </AllExamplesContainer>
   ),
 };
+

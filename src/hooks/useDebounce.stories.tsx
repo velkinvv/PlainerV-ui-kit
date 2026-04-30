@@ -1,13 +1,36 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
+import { Size } from '../types/sizes';
 import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
 import { Input } from '../components/ui/inputs/Input';
 import { useDebounce, useDebounceCallback } from './useDebounce';
+import {
+  AllExamplesContainer,
+  CenteredMessage,
+  DebouncedQueryCard,
+  LogContainer,
+  LogEntry,
+  LogEntryText,
+  LogHeader,
+  NumberInput,
+  QueryValueCard,
+  ReadOnlyInputDanger,
+  ReadOnlyInputMuted,
+  ReadOnlyInputSuccess,
+  ReadOnlyInputWarning,
+  ResultItem,
+  ResultsList,
+  SectionContainer,
+  SourceQueryCard,
+  StatusContainer,
+  ThreeColumnsGrid,
+  TwoColumnsGrid,
+} from './useDebounce.stories.style';
 
 const meta: Meta = {
-  title: 'Hooks/useDebounce',
+  title: 'UI Kit/Hooks/useDebounce',
   parameters: {
     docs: {
       description: {
@@ -67,26 +90,18 @@ const BasicDebounceDemo = () => {
         Базовое использование useDebounce
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <SectionContainer>
         <Typography variant="body1" marginBottom="sm">
           Задержка (мс):
         </Typography>
-        <Input
+        <NumberInput
           type="number"
           value={delay}
           onChange={e => setDelay(parseInt(e.target.value) || 500)}
-          style={{ width: '100px', marginBottom: '12px' }}
         />
-      </div>
+      </SectionContainer>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '16px',
-          marginBottom: '16px',
-        }}
-      >
+      <TwoColumnsGrid>
         <div>
           <Typography variant="body1" marginBottom="sm">
             Введите текст:
@@ -102,11 +117,11 @@ const BasicDebounceDemo = () => {
           <Typography variant="body1" marginBottom="sm">
             Отложенное значение:
           </Typography>
-          <Input value={debouncedValue} readOnly style={{ backgroundColor: '#f8f9fa' }} />
+          <ReadOnlyInputMuted value={debouncedValue} readOnly />
         </div>
-      </div>
+      </TwoColumnsGrid>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <StatusContainer>
         <Typography variant="body1" marginBottom="sm">
           <strong>Статус:</strong>
         </Typography>
@@ -117,7 +132,7 @@ const BasicDebounceDemo = () => {
           Отложенное значение: "{debouncedValue}"
         </Typography>
         <Typography variant="body2">Задержка: {delay}мс</Typography>
-      </div>
+      </StatusContainer>
     </Card>
   );
 };
@@ -165,7 +180,7 @@ const SearchDemo = () => {
         Поиск с задержкой
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <SectionContainer>
         <Typography variant="body1" marginBottom="sm">
           Поиск:
         </Typography>
@@ -174,83 +189,54 @@ const SearchDemo = () => {
           onChange={e => setSearchTerm(e.target.value)}
           placeholder="Введите поисковый запрос..."
         />
-      </div>
+      </SectionContainer>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '16px',
-          marginBottom: '16px',
-        }}
-      >
+      <TwoColumnsGrid>
         <div>
           <Typography variant="body1" marginBottom="sm">
             Исходный запрос:
           </Typography>
-          <div
-            style={{
-              padding: '8px',
-              backgroundColor: '#f8f9fa',
-              borderRadius: '4px',
-              border: '1px solid #dee2e6',
-            }}
-          >
+          <SourceQueryCard>
             <Typography variant="body2">"{searchTerm}"</Typography>
-          </div>
+          </SourceQueryCard>
         </div>
 
         <div>
           <Typography variant="body1" marginBottom="sm">
             Отложенный запрос:
           </Typography>
-          <div
-            style={{
-              padding: '8px',
-              backgroundColor: '#e3f2fd',
-              borderRadius: '4px',
-              border: '1px solid #2196f3',
-            }}
-          >
+          <DebouncedQueryCard>
             <Typography variant="body2">"{debouncedSearchTerm}"</Typography>
-          </div>
+          </DebouncedQueryCard>
         </div>
-      </div>
+      </TwoColumnsGrid>
 
-      <div style={{ marginBottom: '16px' }}>
+      <SectionContainer>
         <Typography variant="body1" marginBottom="sm">
           Результаты поиска:
         </Typography>
         {isSearching ? (
-          <div style={{ padding: '12px', textAlign: 'center', color: '#6c757d' }}>
+          <CenteredMessage>
             <Typography variant="body2">Поиск...</Typography>
-          </div>
+          </CenteredMessage>
         ) : results.length === 0 ? (
-          <div style={{ padding: '12px', textAlign: 'center', color: '#6c757d' }}>
+          <CenteredMessage>
             <Typography variant="body2">
               {searchTerm ? 'Результаты не найдены' : 'Введите поисковый запрос'}
             </Typography>
-          </div>
+          </CenteredMessage>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {results.map((result, index) => (
-              <div
-                key={index}
-                style={{
-                  padding: '8px 12px',
-                  backgroundColor: '#f8f9fa',
-                  borderRadius: '4px',
-                  border: '1px solid #dee2e6',
-                }}
-              >
+          <ResultsList>
+            {results.map((result, resultIndex) => (
+              <ResultItem key={resultIndex}>
                 <Typography variant="body2">{result}</Typography>
-              </div>
+              </ResultItem>
             ))}
-          </div>
+          </ResultsList>
         )}
-      </div>
+      </SectionContainer>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <StatusContainer>
         <Typography variant="body1" marginBottom="sm">
           <strong>Статус:</strong>
         </Typography>
@@ -261,7 +247,7 @@ const SearchDemo = () => {
           Результатов: {results.length}
         </Typography>
         <Typography variant="body2">Задержка: 300мс</Typography>
-      </div>
+      </StatusContainer>
     </Card>
   );
 };
@@ -293,19 +279,18 @@ const DebounceCallbackDemo = () => {
         useDebounceCallback
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <SectionContainer>
         <Typography variant="body1" marginBottom="sm">
           Задержка (мс):
         </Typography>
-        <Input
+        <NumberInput
           type="number"
           value={delay}
           onChange={e => setDelay(parseInt(e.target.value) || 500)}
-          style={{ width: '100px', marginBottom: '12px' }}
         />
-      </div>
+      </SectionContainer>
 
-      <div style={{ marginBottom: '16px' }}>
+      <SectionContainer>
         <Typography variant="body1" marginBottom="sm">
           Введите текст:
         </Typography>
@@ -314,54 +299,37 @@ const DebounceCallbackDemo = () => {
           onChange={e => handleInputChange(e.target.value)}
           placeholder="Введите что-нибудь..."
         />
-      </div>
+      </SectionContainer>
 
-      <div style={{ marginBottom: '16px' }}>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '8px',
-          }}
-        >
+      <SectionContainer>
+        <LogHeader>
           <Typography variant="body1">Лог обработки:</Typography>
-          <Button size="sm" variant="outlined" onClick={clearLog}>
+          <Button size={Size.SM} variant="outlined" onClick={clearLog}>
             Очистить
           </Button>
-        </div>
-        <div
-          style={{
-            maxHeight: '200px',
-            overflow: 'auto',
-            border: '1px solid #dee2e6',
-            borderRadius: '4px',
-          }}
-        >
+        </LogHeader>
+        <LogContainer>
           {log.length === 0 ? (
-            <div style={{ padding: '12px', textAlign: 'center', color: '#6c757d' }}>
+            <CenteredMessage>
               <Typography variant="body2">Лог пуст</Typography>
-            </div>
+            </CenteredMessage>
           ) : (
-            log.map((entry, index) => (
-              <div
-                key={index}
-                style={{
-                  padding: '8px 12px',
-                  borderBottom: index < log.length - 1 ? '1px solid #dee2e6' : 'none',
-                  backgroundColor: index % 2 === 0 ? '#f8f9fa' : 'white',
-                }}
+            log.map((entry, entryIndex) => (
+              <LogEntry
+                key={entryIndex}
+                $isLast={entryIndex === log.length - 1}
+                $isEven={entryIndex % 2 === 0}
               >
-                <Typography variant="body2" style={{ fontSize: '12px' }}>
+                <LogEntryText variant="body2">
                   {entry}
-                </Typography>
-              </div>
+                </LogEntryText>
+              </LogEntry>
             ))
           )}
-        </div>
-      </div>
+        </LogContainer>
+      </SectionContainer>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <StatusContainer>
         <Typography variant="body1" marginBottom="sm">
           <strong>Информация:</strong>
         </Typography>
@@ -372,7 +340,7 @@ const DebounceCallbackDemo = () => {
           Задержка: {delay}мс
         </Typography>
         <Typography variant="body2">Записей в логе: {log.length}</Typography>
-      </div>
+      </StatusContainer>
     </Card>
   );
 };
@@ -390,7 +358,7 @@ const DelayComparisonDemo = () => {
         Сравнение различных задержек
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <SectionContainer>
         <Typography variant="body1" marginBottom="sm">
           Введите текст:
         </Typography>
@@ -399,51 +367,32 @@ const DelayComparisonDemo = () => {
           onChange={e => setInputValue(e.target.value)}
           placeholder="Введите что-нибудь..."
         />
-      </div>
+      </SectionContainer>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '16px',
-          marginBottom: '16px',
-        }}
-      >
+      <ThreeColumnsGrid>
         <div>
           <Typography variant="body1" marginBottom="sm">
             Быстро (100мс):
           </Typography>
-          <Input
-            value={debouncedFast}
-            readOnly
-            style={{ backgroundColor: '#d4edda', borderColor: '#c3e6cb' }}
-          />
+          <ReadOnlyInputSuccess value={debouncedFast} readOnly />
         </div>
 
         <div>
           <Typography variant="body1" marginBottom="sm">
             Средне (500мс):
           </Typography>
-          <Input
-            value={debouncedMedium}
-            readOnly
-            style={{ backgroundColor: '#fff3cd', borderColor: '#ffeaa7' }}
-          />
+          <ReadOnlyInputWarning value={debouncedMedium} readOnly />
         </div>
 
         <div>
           <Typography variant="body1" marginBottom="sm">
             Медленно (1000мс):
           </Typography>
-          <Input
-            value={debouncedSlow}
-            readOnly
-            style={{ backgroundColor: '#f8d7da', borderColor: '#f5c6cb' }}
-          />
+          <ReadOnlyInputDanger value={debouncedSlow} readOnly />
         </div>
-      </div>
+      </ThreeColumnsGrid>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <StatusContainer>
         <Typography variant="body1" marginBottom="sm">
           <strong>Текущие значения:</strong>
         </Typography>
@@ -457,7 +406,7 @@ const DelayComparisonDemo = () => {
           Средне: "{debouncedMedium}"
         </Typography>
         <Typography variant="body2">Медленно: "{debouncedSlow}"</Typography>
-      </div>
+      </StatusContainer>
     </Card>
   );
 };
@@ -480,11 +429,12 @@ export const DelayComparison: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <AllExamplesContainer>
       <BasicDebounceDemo />
       <SearchDemo />
       <DebounceCallbackDemo />
       <DelayComparisonDemo />
-    </div>
+    </AllExamplesContainer>
   ),
 };
+

@@ -1,17 +1,13 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import { Pill } from './Pill';
 import { Size } from '../../../types/sizes';
 
 const meta: Meta<typeof Pill> = {
-  title: 'Components/Pill',
+  title: 'UI Kit/Data Display/Pill',
   component: Pill,
   parameters: {
     layout: 'padded',
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4833-5',
-    },
     docs: {
       description: {
         component:
@@ -21,13 +17,25 @@ const meta: Meta<typeof Pill> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    children: { description: 'Подпись' },
-    selected: { description: 'Выбранное состояние' },
-    disabled: { description: 'Отключено' },
+    children: {
+      description: 'Подпись',
+      table: { type: { summary: 'ReactNode' } },
+    },
+    selected: {
+      description: 'Выбранное состояние',
+      table: { type: { summary: 'boolean' } },
+    },
+    disabled: {
+      description: 'Отключено',
+      table: { type: { summary: 'boolean' } },
+    },
     size: {
       control: { type: 'select' },
       options: [Size.SM, Size.MD, Size.LG],
-      description: 'Размер',
+      description: 'Размер; значения: `SM`, `MD`, `LG`',
+      table: {
+        type: { summary: 'Size: SM, MD или LG' },
+      },
     },
   },
 };
@@ -56,7 +64,7 @@ export const Disabled: Story = {
   },
 };
 
-/** Сетка состояний как в макете: строки — размеры, колонки — default / hover / active / selected / disabled */
+/** Сетка состояний: строки — размеры, колонки — default / hover / active / selected / disabled */
 export const StatesMatrix: Story = {
   render: () => {
     const cols = ['Default', 'Hover', 'Active', 'Selected', 'Disabled'] as const;
@@ -73,12 +81,12 @@ export const StatesMatrix: Story = {
           }}
         >
           <span />
-          {cols.map(c => (
+          {cols.map((c) => (
             <span key={c} style={{ fontSize: 12, color: '#888' }}>
               {c}
             </span>
           ))}
-          {sizes.map(sz => (
+          {sizes.map((sz) => (
             <React.Fragment key={sz}>
               <span style={{ fontSize: 12, color: '#888' }}>{sz}</span>
               <Pill size={sz}>Pill</Pill>
@@ -94,8 +102,8 @@ export const StatesMatrix: Story = {
           ))}
         </div>
         <p style={{ fontSize: 12, color: '#666', maxWidth: 560 }}>
-          Колонки Hover / Active в Storybook совпадают с Default — интерактивные состояния проверяйте наведением
-          и удержанием мыши на первых трёх кнопках в строке.
+          Колонки Hover / Active в Storybook совпадают с Default — интерактивные состояния
+          проверяйте наведением и удержанием мыши на первых трёх кнопках в строке.
         </p>
       </div>
     );
@@ -106,8 +114,12 @@ export const RadioGroup: Story = {
   render: () => {
     const [v, setV] = useState('b');
     return (
-      <div role="radiogroup" aria-label="Пример группы" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-        {(['a', 'b', 'c'] as const).map(id => (
+      <div
+        role="radiogroup"
+        aria-label="Пример группы"
+        style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}
+      >
+        {(['a', 'b', 'c'] as const).map((id) => (
           <Pill key={id} role="radio" selected={v === id} onClick={() => setV(id)}>
             Вариант {id}
           </Pill>
@@ -116,3 +128,4 @@ export const RadioGroup: Story = {
     );
   },
 };
+

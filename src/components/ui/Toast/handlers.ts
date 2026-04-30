@@ -19,7 +19,7 @@ export interface ToastSurfaceTokens {
 }
 
 /**
- * Токены внешнего вида «пилюля» (Figma): фон, иконка, glow, кнопка действия, кнопка закрытия
+ * Токены внешнего вида «пилюля» (макет Figma): тонированный фон, обводка акцентом, иконка с glow, тёмный заголовок.
  */
 export interface ToastPillVisualTokens {
   surface: string;
@@ -31,8 +31,8 @@ export interface ToastPillVisualTokens {
   iconGlow: string;
   actionBg: string;
   actionText: string;
-  closeBg: string;
-  closeIcon: string;
+  /** Цвет иконки закрытия (контурный крестик справа) */
+  dismissIcon: string;
 }
 
 /**
@@ -115,84 +115,75 @@ export function getToastPillIconName(type: ToastType): IconName {
 }
 
 /**
- * Палитра «пилюли» по типу и теме (макет Figma: белая капсула, цветной glow и кнопка действия)
+ * Палитра «пилюли» по типу и теме (макет Figma: пастельный фон, рамка цветом типа, иконка с glow, заголовок тёмно‑серый).
+ * Фон и вторичный текст согласованы с {@link getToastSurfaceTokens}.
  * @param type - Категория уведомления
  * @param mode - Режим темы
  */
 export function getToastPillVisualTokens(type: ToastType, mode: ThemeMode): ToastPillVisualTokens {
   const isDark = mode === ThemeMode.DARK;
   const white = '#ffffff';
-  const closeBg = isDark ? neutral[700] : grey[800];
-  const closeIcon = white;
+  const cardTokens = getToastSurfaceTokens(type, mode);
+  const dismissIcon = isDark ? neutral[400] : grey[500];
+  /** Заголовок по макету — тёмный нейтральный, акцент только в иконке и рамке */
+  const titleColor = isDark ? neutral[200] : grey[900];
 
-  const baseNeutral = (): ToastPillVisualTokens => ({
-    surface: isDark ? neutral[900] : white,
-    border: isDark ? `1px solid ${neutral[700]}` : `1px solid ${grey[200]}`,
-    titleColor: isDark ? neutral[200] : grey[800],
-    bodyColor: isDark ? neutral[300] : grey[600],
-    iconColor: isDark ? neutral[400] : grey[600],
-    iconGlow: isDark ? 'rgba(163, 163, 163, 0.35)' : 'rgba(115, 115, 115, 0.25)',
-    actionBg: isDark ? neutral[600] : grey[700],
-    actionText: white,
-    closeBg,
-    closeIcon,
-  });
+  const actionForType = (): Pick<ToastPillVisualTokens, 'actionBg' | 'actionText'> => {
+    switch (type) {
+      case 'success':
+        return { actionBg: success[500], actionText: white };
+      case 'error':
+        return { actionBg: danger[500], actionText: white };
+      case 'warning':
+        return { actionBg: warning[500], actionText: grey[900] };
+      case 'neutral':
+        return { actionBg: isDark ? neutral[600] : grey[700], actionText: white };
+      case 'info':
+      default:
+        return { actionBg: primary[500], actionText: white };
+    }
+  };
 
-  switch (type) {
-    case 'success':
-      return {
-        surface: isDark ? neutral[900] : white,
-        border: isDark ? `1px solid ${neutral[700]}` : `1px solid ${grey[200]}`,
-        titleColor: isDark ? neutral[200] : grey[800],
-        bodyColor: isDark ? neutral[300] : grey[600],
-        iconColor: success[500],
-        iconGlow: 'rgba(34, 197, 94, 0.45)',
-        actionBg: success[500],
-        actionText: white,
-        closeBg,
-        closeIcon,
-      };
-    case 'error':
-      return {
-        surface: isDark ? neutral[900] : white,
-        border: isDark ? `1px solid ${neutral[700]}` : `1px solid ${grey[200]}`,
-        titleColor: isDark ? neutral[200] : grey[800],
-        bodyColor: isDark ? neutral[300] : grey[600],
-        iconColor: danger[500],
-        iconGlow: 'rgba(239, 68, 68, 0.45)',
-        actionBg: danger[500],
-        actionText: white,
-        closeBg,
-        closeIcon,
-      };
-    case 'warning':
-      return {
-        surface: isDark ? neutral[900] : white,
-        border: isDark ? `1px solid ${neutral[700]}` : `1px solid ${grey[200]}`,
-        titleColor: isDark ? neutral[200] : grey[800],
-        bodyColor: isDark ? neutral[300] : grey[600],
-        iconColor: warning[500],
-        iconGlow: 'rgba(234, 179, 8, 0.5)',
-        actionBg: warning[500],
-        actionText: grey[900],
-        closeBg,
-        closeIcon,
-      };
-    case 'neutral':
-      return baseNeutral();
-    case 'info':
-    default:
-      return {
-        surface: isDark ? neutral[900] : white,
-        border: isDark ? `1px solid ${neutral[700]}` : `1px solid ${grey[200]}`,
-        titleColor: isDark ? neutral[200] : grey[800],
-        bodyColor: isDark ? neutral[300] : grey[600],
-        iconColor: primary[500],
-        iconGlow: 'rgba(59, 130, 246, 0.45)',
-        actionBg: primary[500],
-        actionText: white,
-        closeBg,
-        closeIcon,
-      };
-  }
+  const iconGlowForType = (): string => {
+    switch (type) {
+      case 'success':
+        return 'rgba(34, 197, 94, 0.38)';
+      case 'error':
+        return 'rgba(239, 68, 68, 0.38)';
+      case 'warning':
+        return 'rgba(234, 179, 8, 0.42)';
+      case 'neutral':
+        return isDark ? 'rgba(163, 163, 163, 0.32)' : 'rgba(115, 115, 115, 0.22)';
+      case 'info':
+      default:
+        return 'rgba(33, 150, 243, 0.4)';
+    }
+  };
+
+  const iconColorForType = (): string => {
+    switch (type) {
+      case 'success':
+        return success[500];
+      case 'error':
+        return danger[500];
+      case 'warning':
+        return warning[500];
+      case 'neutral':
+        return isDark ? neutral[400] : grey[600];
+      case 'info':
+      default:
+        return primary[500];
+    }
+  };
+
+  return {
+    surface: cardTokens.surface,
+    border: `1px solid ${cardTokens.accent}`,
+    titleColor,
+    bodyColor: cardTokens.bodyColor,
+    iconColor: iconColorForType(),
+    iconGlow: iconGlowForType(),
+    ...actionForType(),
+    dismissIcon,
+  };
 }

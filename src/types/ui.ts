@@ -178,8 +178,9 @@ export interface BaseButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEl
  * @property helperText - Вспомогательный текст
  * @property required - Обязательное поле
  * @property fullWidth - Растягивает поле на всю ширину
- * @property clearIcon - Показывать ли иконку очистки
- * @property onClearIconClick - Обработчик клика по иконке очистки
+ * @property displayClearIcon - Показывать кнопку с крестиком очистки значения
+ * @property onClearIconClick - Колбэк по клику на очистку (после сброса значения в компоненте)
+ * @property clearIconProps - Частичные пропсы `Icon` для кнопки очистки (`displayClearIcon`); мерж поверх имени, `size` и при необходимости `color` по умолчанию в компоненте
  * @property textAlign - Выравнивание текста в поле
  * @property readOnly - Поле только для чтения (текст остается обычным цветом, но фон становится серым)
  * @property label - Метка поля (`ReactNode`)
@@ -191,8 +192,13 @@ export interface BaseInputProps extends Omit<React.InputHTMLAttributes<HTMLInput
   helperText?: string;
   required?: boolean;
   fullWidth?: boolean;
-  clearIcon?: boolean;
+  displayClearIcon?: boolean;
   onClearIconClick?: () => void;
+  /**
+   * Частичные пропсы `Icon` для иконки очистки при `displayClearIcon`.
+   * Мерж поверх значений по умолчанию в конкретном поле (имя иконки, `size`, опционально `color`).
+   */
+  clearIconProps?: ClearIconProps;
   textAlign?: TextAlign;
   readOnly?: boolean; // Поле только для чтения (текст остается обычным цветом, но фон становится серым)
   isLoading?: boolean; // Статус загрузки данных
@@ -475,16 +481,13 @@ export interface IconButtonProps extends BaseButtonProps {
  * @property size - Размер поля (в компоненте по умолчанию `Size.SM`, см. также `theme.defaultInputSize`)
  * @property leftIcon - Иконка слева
  * @property rightIcon - Иконка справа
- * @property onClear - Обработчик очистки поля
- * @property showClearButton - Показывать кнопку очистки
+ * Кнопка очистки: `displayClearIcon` + `onClearIconClick` из `BaseInputProps`.
  */
 export interface InputProps extends BaseInputProps {
   variant?: TextInputVariant;
   size?: Size;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
-  onClear?: () => void;
-  showClearButton?: boolean;
   status?: 'error' | 'success' | 'warning'; // Статус компонента для изменения цвета бордера
 }
 
@@ -550,8 +553,8 @@ export interface TextAreaProps
  * @property buttonLabel - Текст на `<label htmlFor>` триггера открытия диалога (по умолчанию «Выбрать файл»)
  * @property placeholder - Текст в области имени файла, пока ничего не выбрано
  * @property fileName - Контролируемая подпись выбранных файлов (приоритет над авто-текстом из `input.files`)
- * @property showClearButton - Показывать кнопку сброса выбора (очищает значение у `input`)
- * @property onClear - Колбэк после сброса выбора (вместе с очисткой `input`)
+ * @property displayClearIcon - Показывать кнопку сброса выбора (крестик; очищает значение у `input`)
+ * @property onClearIconClick - Колбэк после сброса выбора (вместе с очисткой `input`)
  * @property onChange - Событие `change` у нативного `input[type=file]`
  * @property multiple - Множественный выбор файлов
  * @property accept - HTML-атрибут `accept`
@@ -577,8 +580,6 @@ export interface FileInputProps
     BaseInputProps,
     | 'type'
     | 'handleInput'
-    | 'clearIcon'
-    | 'onClearIconClick'
     | 'displayCharacterCounter'
     | 'ignoreMaskCharacters'
     | 'characterCounterVisibilityThreshold'
@@ -593,8 +594,6 @@ export interface FileInputProps
   status?: 'error' | 'success' | 'warning';
   buttonLabel?: string;
   fileName?: string;
-  showClearButton?: boolean;
-  onClear?: () => void;
   fileLayout?: FileInputLayout;
   /** Текст по центру зоны `dropzone` */
   dropzoneText?: string;
@@ -689,6 +688,7 @@ export type SliderRangeValue = readonly [number, number];
  * @property formatMaxLabel - Текст над правым концом трека
  * @property showValueLabel - Показывать число под бегунком(ами)
  * @property size - Размер бегунка (SM / MD / LG)
+ * Цвет активного трека и бегунка: `theme.colors.info` / `infoHover` (яркий синий UI, как тултип и пагинация).
  */
 export interface SliderBaseProps extends BaseComponentProps {
   min?: number;
@@ -971,6 +971,16 @@ export interface ModalProps extends BaseComponentProps {
   closeOnOutsideClick?: boolean; // Глобальный флаг: разрешено ли закрывать модалку на клик вне контента
   overlayStyledCss?: string;
   showCloseButton?: boolean;
+  /**
+   * Размонтировать модальное окно после закрытия
+   * @default true
+   */
+  unmountOnClose?: boolean;
+  /**
+   * Лениво монтировать модальное окно только после первого открытия
+   * @default true
+   */
+  lazy?: boolean;
   children?: React.ReactNode;
 }
 
@@ -1002,6 +1012,8 @@ export type DrawerPlacement = 'left' | 'right' | 'top' | 'bottom';
  * @property initialFocusRef - Куда ставить фокус при открытии
  * @property initialFocusSelector - Селектор элемента для начального фокуса
  * @property headerSlot - Кастомная шапка вместо `title` + крестик
+ * @property unmountOnClose - Размонтировать панель после закрытия (по умолчанию `true`)
+ * @property lazy - Лениво монтировать панель только после первого открытия (по умолчанию `true`)
  * @property className - Класс на панели (`aside`)
  */
 export interface DrawerProps extends BaseComponentProps {
@@ -1025,6 +1037,16 @@ export interface DrawerProps extends BaseComponentProps {
   initialFocusRef?: React.RefObject<HTMLElement>;
   initialFocusSelector?: string;
   headerSlot?: React.ReactNode;
+  /**
+   * Размонтировать панель после закрытия
+   * @default true
+   */
+  unmountOnClose?: boolean;
+  /**
+   * Лениво монтировать панель только после первого открытия
+   * @default true
+   */
+  lazy?: boolean;
 }
 
 /**
@@ -1033,7 +1055,7 @@ export interface DrawerProps extends BaseComponentProps {
 export type SheetPlacement = DrawerPlacement;
 
 /**
- * Пропсы панели `Sheet` (лист с края экрана, чаще снизу): те же поля, что у `Drawer` (`isOpen`, `onClose`, `placement`, `width`, `height`, оверлей, фокус).
+ * Пропсы панели `Sheet` (лист с края экрана, чаще снизу): те же поля, что у `Drawer` (`isOpen`, `onClose`, `placement`, `width`, `height`, оверлей, фокус, `unmountOnClose`, `lazy`).
  * В компоненте по умолчанию `placement="bottom"` и иная дефолтная высота для вертикальных сторон.
  */
 export type SheetProps = DrawerProps;
@@ -1094,7 +1116,8 @@ export type HintCssMixin = string | number | false | HintCssMixin[] | undefined;
  * @property targetElement - Элемент, относительно которого позиционируется выпадающее меню. Если не задан, используется trigger элемент
  * @property size - Размер dropdown (`Size.SM` | `Size.MD` | `Size.LG`)
  * @property variant - Вариант dropdown (`default` | `elevated` | `outlined`)
- * @property multiSelection - Режим множественного выбора. Если `true`, позволяет выбрать несколько элементов, показывает чекбоксы в элементах меню, меню не закрывается при выборе
+ * @property multiSelection - Режим множественного выбора: несколько значений, меню не закрывается при выборе; чекбоксы у пунктов по умолчанию (`showCheckbox` не `false`)
+ * @property showCheckbox - При `multiSelection`: показывать чекбокс в пункте (по умолчанию `true`; `false` — без чекбоксов)
  * @property disableSelectedOptionHighlight - Отключает подсветку выбранной опции. Полезно для режима множественного выбора, когда у каждой опции есть чекбокс
  * @property virtualScroll - Включение виртуального скролла для меню. Максимальная высота меню рассчитывается исходя из высоты 1 пункта. Если `itemHeight` = "auto", то в расчет идет высота согласно dimension из темы
  * @property disableAutoFocus - Отключает автоматическую установку фокуса на стандартный триггер при монтировании компонента
@@ -1112,10 +1135,18 @@ export type HintCssMixin = string | number | false | HintCssMixin[] | undefined;
  * @property searchPlaceholder - Placeholder для поля поиска
  * @property searchValue - Контролируемое значение поля поиска
  * @property defaultSearchValue - Неконтролируемое значение поиска по умолчанию
- * @property onSearch - Колбэк, вызываемый при изменении текста поиска
+ * @property onSearch - `(query, searchFormat?) => void` — изменение строки поиска; второй аргумент — текущий `searchFormat` из пропсов (если задан)
  * @property searchFilter - Кастомная функция фильтрации элементов меню
+ * @property searchFormat - Встроенный поиск без `searchFilter`: `wholly` — вся строка; `word` — по словам запроса
  * @property enableKeyboardNavigation - Включает стрелочную навигацию, Home/End и focus trap внутри меню
  * @property loadItems - Функция ленивой загрузки пунктов меню (если `items` не переданы)
+ * @property onMenuOpened - Доп. колбэк при открытии (до `onMenuOpenChange(true)`)
+ * @property onMenuClosed - Доп. колбэк при закрытии
+ * @property onMenuScroll - Скролл списка (метрики элемента-источника события)
+ * @property onMenuLoadMore - Догрузка при приближении к низу; скролл компенсируется по дельте высоты
+ * @property menuLoadMoreThresholdPx - Порог в px до низа для `onMenuLoadMore`
+ * @property menuHasMore - Нет данных — не вызывать догрузку
+ * @property menuIsLoadingMore - Внешний флаг загрузки порции
  * @property onLoadItemsError - Колбэк, вызываемый при ошибке загрузки пунктов меню
  * @property renderEmptyState - Кастомный рендер пустого состояния
  * @property emptyMessage - Сообщение по умолчанию для пустого состояния
@@ -1128,6 +1159,54 @@ export interface DropdownVirtualScrollConfig {
   itemHeight: number | 'auto';
 }
 
+/** Метрики прокрутки контейнера меню (элемент, на котором сработал `scroll`) */
+export interface DropdownMenuScrollInfo {
+  scrollTop: number;
+  scrollHeight: number;
+  clientHeight: number;
+}
+
+/**
+ * Контекст догрузки пунктов при приближении к низу списка (бесконечный скролл).
+ * @property direction - Сейчас только догрузка «в конец» списка
+ * @property anchorFlatIndex - Индекс якорной строки в плоском списке (обычно последняя загруженная)
+ * @property anchorValue - `value` якорной опции (курсор для следующей порции на бэкенде)
+ * @property anchorId - Необязательный `id` строки (`DropdownMenuItemProps.id`)
+ */
+export interface DropdownMenuLoadMoreContext {
+  direction: 'end';
+  anchorFlatIndex: number;
+  anchorValue: string;
+  anchorId?: string;
+  scrollTop: number;
+  scrollHeight: number;
+  clientHeight: number;
+}
+
+/**
+ * Режим встроенной фильтрации по строке поиска (если не задан кастомный `searchFilter`):
+ * `wholly` — вся строка запроса как одна подстрока в `label` / `description`;
+ * `word` — каждое слово запроса (разделение по пробелам) должно встречаться в объединённом тексте пункта.
+ */
+export type SearchFormat = 'word' | 'wholly';
+
+/**
+ * Частичные пропсы индикатора открытия меню (`Icon` в `Select` / дефолтный триггер `Dropdown` без `trigger`).
+ * Без `name` подставляется `IconPlainerChevronDown`; остальное мержится поверх размера от `size` и цвета по умолчанию.
+ */
+export type OpenMenuIconProps = Partial<{
+  name: IconName;
+  size: IconSize;
+  color: string;
+  className: string;
+}>;
+
+/**
+ * Частичные пропсы иконок сброса (`IconExClose` по умолчанию): кнопка очистки поля, «очистить всё» у мультиселекта, крест в чипе.
+ * Та же форма, что у `OpenMenuIconProps` — мерж поверх вычисленного `size` и `color`.
+ */
+export type ClearIconProps = OpenMenuIconProps;
+
 export interface DropdownProps extends BaseComponentProps {
   trigger?: React.ReactNode;
   buttonProps?: DropdownButtonProps;
@@ -1138,11 +1217,33 @@ export interface DropdownProps extends BaseComponentProps {
   value?: DropdownMenuItemValue | DropdownMenuItemValue[];
   isMenuOpen?: boolean;
   onMenuOpenChange?: (isOpen: boolean) => void;
+  /** Вызывается сразу после открытия меню (вместе с `onMenuOpenChange(true)`) */
+  onMenuOpened?: () => void;
+  /** Вызывается сразу после закрытия меню */
+  onMenuClosed?: () => void;
+  /** Прокрутка любого вложенного прокручиваемого блока меню (capture на контейнере панели) */
+  onMenuScroll?: (info: DropdownMenuScrollInfo) => void;
+  /**
+   * Догрузка при приближении к низу списка; родитель дописывает `items`, скролл стабилизируется по дельте высоты.
+   * Задайте `menuHasMore={false}`, когда данных больше нет.
+   */
+  onMenuLoadMore?: (context: DropdownMenuLoadMoreContext) => void | Promise<void>;
+  /** Порог в px от низа прокрутки для вызова `onMenuLoadMore` (по умолчанию 80) */
+  menuLoadMoreThresholdPx?: number;
+  /** Есть ли ещё порции данных (пока `false`, порог не вызывает догрузку) */
+  menuHasMore?: boolean;
+  /** Внешний флаг загрузки: пока `true`, повторные вызовы `onMenuLoadMore` не выполняются */
+  menuIsLoadingMore?: boolean;
   disabled?: boolean;
   targetElement?: HTMLElement | null;
   size?: Size;
   variant?: 'default' | 'elevated' | 'outlined';
   multiSelection?: boolean;
+  /**
+   * При `multiSelection`: показывать чекбокс в пункте (по умолчанию `true`).
+   * `false` — мультивыбор по клику на строку без чекбоксов.
+   */
+  showCheckbox?: boolean;
   disableSelectedOptionHighlight?: boolean;
   virtualScroll?: DropdownVirtualScrollConfig;
   disableAutoFocus?: boolean;
@@ -1151,6 +1252,10 @@ export interface DropdownProps extends BaseComponentProps {
   renderTopPanel?: (props: DropdownTopPanelProps) => React.ReactNode;
   renderBottomPanel?: (props: DropdownTopPanelProps) => React.ReactNode;
   onClickOutside?: (event: Event) => void;
+  /** Фокус внутри корня выпадашки (триггер или портал с меню; `currentTarget` — элемент с обработчиком) */
+  onFocus?: React.FocusEventHandler<HTMLDivElement>;
+  /** Потеря фокуса внутри корня / панели меню */
+  onBlur?: React.FocusEventHandler<HTMLDivElement>;
   menuWidth?: string | number;
   menuMaxHeight?: string | number;
   alignSelf?: DropdownAlignSelf;
@@ -1167,8 +1272,13 @@ export interface DropdownProps extends BaseComponentProps {
   searchPlaceholder?: string;
   searchValue?: string;
   defaultSearchValue?: string;
-  onSearch?: (value: string) => void;
+  /** Строка поиска и активный `searchFormat` (второй аргумент, если задан проп `searchFormat`) */
+  onSearch?: (query: string, searchFormat?: SearchFormat) => void;
+  /** Нативное событие `change` у поля поиска в шапке панели (после обновления строки поиска внутри `Dropdown`) */
+  onSearchInputChange?: React.ChangeEventHandler<HTMLInputElement>;
   searchFilter?: (query: string, item: DropdownMenuItemProps) => boolean;
+  /** Встроенный поиск: `wholly` — подстрока целиком; `word` — по отдельным словам запроса */
+  searchFormat?: SearchFormat;
   enableKeyboardNavigation?: boolean;
   loadItems?: () => Promise<DropdownMenuItemProps[]>;
   onLoadItemsError?: (error: unknown) => void;
@@ -1178,7 +1288,33 @@ export interface DropdownProps extends BaseComponentProps {
   inline?: boolean;
   /** Плотность меню: `compact` — меньше padding у контейнера и строк (например, месяц/год в календаре) */
   menuDensity?: 'default' | 'compact';
+  /**
+   * Растянуть корень (`DropdownContainer`) и обёртку триггера на ширину родителя.
+   * Нужно для полей вроде `Select` с `fullWidth`: иначе `inline-block` даёт ширину по контенту.
+   */
+  fullWidth?: boolean;
+  /**
+   * Пропсы иконки раскрытия меню у дефолтной кнопки (`trigger` не задан): мерж с `IconPlainerChevronDown` и `getChevronIconSizeForField(size)`.
+   * При кастомном `trigger` не применяется.
+   */
+  openMenuIconProps?: OpenMenuIconProps;
   children?: React.ReactElement<DropdownMenuProps> | React.ReactNode;
+  /**
+   * Дерево пунктов (`nestedItems`): каскадный мультивыбор и раскрытие веток (как у групп-чекбоксов в меню).
+   * Если не задано, поведение как раньше; при наличии `nestedItems` в `items` достаточно передать `treeDefaultExpanded` / `treeExpandedKeys`.
+   */
+  treeExpandable?: boolean;
+  /** Начальное раскрытие веток с дочерними элементами: все развёрнуты (по умолчанию), все свёрнуты или явный список ключей веток */
+  treeDefaultExpanded?: 'expanded' | 'collapsed' | string[];
+  /** Контролируемый набор ключей раскрытых веток */
+  treeExpandedKeys?: string[];
+  /** Смена набора раскрытых веток (контролируемый режим) */
+  onTreeExpandedKeysChange?: (keys: string[]) => void;
+  /**
+   * Полный узел дерева по `value` (например, селект: полные `nestedItems` при отфильтрованном меню).
+   * Нужен для чекбокса родителя и каскада; без него используются только `nestedItems` из пропсов пункта.
+   */
+  lookupTreeMenuItemByValue?: (itemValue: string) => DropdownMenuItemProps | null;
 }
 
 /** Пропсы верхней/нижней панели выпадающего меню (`renderTopPanel` / `renderBottomPanel`) */
@@ -1195,10 +1331,16 @@ export interface DropdownTopPanelProps {
  * @property value - Значение выбранного элемента для сравнения с `value` элементов меню. В режиме multiSelection - массив значений
  * @property onActivateItem - Обработчик активации (hover) элемента меню. Получает значение элемента (`value`)
  * @property multiSelection - Режим множественного выбора
+ * @property showCheckbox - При `multiSelection`: показывать чекбокс (по умолчанию `true`; `false` — скрыть)
  * @property disableSelectedOptionHighlight - Отключает подсветку выбранной опции
  * @property virtualScroll - Конфигурация виртуального скролла
  * @property size - Размер dropdown для вычисления высоты элемента при itemHeight="auto"
  * @property menuDensity - `compact` — плотные пункты списка (согласовано с `Dropdown.menuDensity`)
+ * @property treeExpandable - Показывать шеврон и разрешать сворачивать ветки с `nestedItems` (по умолчанию `true`, если в данных есть дерево)
+ * @property defaultExpandedTreeKeys - Ключи развёрнутых веток при первом показе (неконтролируемый режим; считает родитель)
+ * @property treeExpandedKeys - Контролируемые ключи раскрытых веток
+ * @property onTreeExpandedKeysChange - Колбэк при смене раскрытия (контролируемый режим)
+ * @property lookupTreeMenuItemByValue - Поиск полного узла по `value` для каскада чекбокса при урезанном дереве в панели
  */
 export interface DropdownMenuProps extends BaseComponentProps {
   children: React.ReactNode;
@@ -1206,10 +1348,20 @@ export interface DropdownMenuProps extends BaseComponentProps {
   value?: DropdownMenuItemValue | DropdownMenuItemValue[];
   onActivateItem?: (value?: DropdownMenuItemValue) => void;
   multiSelection?: boolean;
+  /** При `multiSelection`: показывать чекбокс в пункте (по умолчанию `true`) */
+  showCheckbox?: boolean;
   disableSelectedOptionHighlight?: boolean;
   virtualScroll?: DropdownVirtualScrollConfig;
   size?: Size;
   menuDensity?: 'default' | 'compact';
+  /** Разрешить сворачивание веток с `nestedItems` */
+  treeExpandable?: boolean;
+  /** Ключи веток, развёрнутые по умолчанию (неконтролируемое дерево) */
+  defaultExpandedTreeKeys?: string[];
+  treeExpandedKeys?: string[];
+  onTreeExpandedKeysChange?: (keys: string[]) => void;
+  /** Полный узел по `value` (см. `DropdownProps.lookupTreeMenuItemByValue`) */
+  lookupTreeMenuItemByValue?: (itemValue: string) => DropdownMenuItemProps | null;
 }
 
 /**
@@ -1226,12 +1378,19 @@ export interface DropdownMenuProps extends BaseComponentProps {
  * @property tone - Тон оформления (`default` | `danger`)
  * @property state - Принудительное состояние (`selected`)
  * @property selected - Выбранное состояние элемента (используется в режиме multiSelection)
+ * @property tooltip - Контент тултипа для конкретного пункта меню (если задан, включается автоматически)
+ * @property tooltipType - Тип подсказки у пункта: `tooltip` (по умолчанию) или `hint`
+ * @property tooltipPosition - Позиция тултипа пункта (`top` | `bottom` | `left` | `right`)
  * @property onSelect - Индивидуальный обработчик выбора
  * @property children - Кастомное содержимое, если нужно полностью переопределить верстку
+ * @property nestedItems - Дочерние пункты дерева (мультивыбор: каскад у родителя, частичный выбор, `indeterminate` у чекбокса)
+ * @property treeAncestorKey - Префикс ключа ветки для дочерних узлов (задаёт рендерер дерева)
  */
 export interface DropdownMenuItemProps extends BaseComponentProps {
   label?: ReactNode;
   description?: string;
+  /** Необязательный стабильный id строки (курсор API, отличный от `value`) */
+  id?: string;
   value?: DropdownMenuItemValue;
   icon?: React.ReactNode;
   rightSlot?: React.ReactNode;
@@ -1242,10 +1401,22 @@ export interface DropdownMenuItemProps extends BaseComponentProps {
   tone?: 'default' | 'danger';
   state?: 'selected';
   selected?: boolean;
+  tooltip?: React.ReactNode;
+  /** `tooltip` — компактный тултип; `hint` — карточка подсказки (`Hint`) */
+  tooltipType?: 'tooltip' | 'hint';
+  tooltipPosition?: TooltipPosition;
   onSelect?: (value?: DropdownMenuItemValue, event?: React.MouseEvent<HTMLDivElement>) => void;
   children?: React.ReactNode;
   showTooltip?: boolean;
   tooltipText?: string;
+  /** Дочерние пункты того же формата (рекурсивное дерево для мультивыбора и раскрытия) */
+  nestedItems?: DropdownMenuItemProps[];
+  /** Префикс пути для построения ключа ветки (`''` или `g0` для группы) */
+  treeAncestorKey?: string;
+  /** Индекс среди соседей (для стабильного ключа ветки) */
+  treeIndex?: number;
+  /** Дополнительный клик по строке (после встроенной логики выбора); не должен подменять основной обработчик строки. */
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
 }
 
 export interface DropdownMenuGroup {
@@ -1316,9 +1487,9 @@ export interface TabsProps extends BaseComponentProps {
 }
 
 /**
- * Подсветка активного пункта бокового меню (макет Figma Menu / MenuItem)
+ * Подсветка активного пункта бокового меню навигации (макет Figma; компонент `NavigationMenu`)
  */
-export enum MenuActiveAppearance {
+export enum NavigationMenuActiveAppearance {
   /** Синяя полоса слева + акцентный цвет подписи и иконок */
   BAR = 'bar',
   /** Полоса + мягкий голубой фон */
@@ -1328,7 +1499,7 @@ export enum MenuActiveAppearance {
 }
 
 /**
- * Пропсы контейнера вертикального меню навигации
+ * Пропсы контейнера вертикального меню навигации (`NavigationMenu`)
  * @property collapsed — компактный режим: только иконки, бейдж на иконке
  * @property activeId — id выбранного пункта (контролируемый режим)
  * @property defaultActiveId — начальный выбранный пункт
@@ -1336,18 +1507,18 @@ export enum MenuActiveAppearance {
  * @property activeAppearance — стиль подсветки активного пункта
  * @property aria-label — доступное имя для элемента навигации
  */
-export interface MenuProps extends BaseComponentProps {
+export interface NavigationMenuProps extends BaseComponentProps {
   collapsed?: boolean;
   activeId?: string | null;
   defaultActiveId?: string | null;
   onActiveChange?: (id: string) => void;
-  activeAppearance?: MenuActiveAppearance;
+  activeAppearance?: NavigationMenuActiveAppearance;
   'aria-label'?: string;
 }
 
 /**
- * Пропсы пункта меню
- * @property id — уникальный ключ внутри меню (связь с activeId)
+ * Пропсы пункта меню навигации (`NavigationMenuItem`)
+ * @property id — уникальный ключ внутри навигации (связь с activeId)
  * @property label — основной текст (в collapsed скрывается визуально)
  * @property icon — префикс-иконка слева
  * @property badge — красный бейдж (в expanded — справа от текста, в collapsed — на иконке)
@@ -1357,7 +1528,7 @@ export interface MenuProps extends BaseComponentProps {
  * @property title — подсказка; в collapsed по умолчанию не задаётся из label (передайте строку)
  * @property onClick — дополнительный обработчик клика
  */
-export interface MenuItemProps {
+export interface NavigationMenuItemProps {
   id: string;
   label: React.ReactNode;
   icon?: React.ReactNode;
@@ -1369,6 +1540,41 @@ export interface MenuItemProps {
   title?: string;
   children?: React.ReactNode;
   onClick?: (event: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => void;
+}
+
+/**
+ * Поверхность списка действий: содержимое выпадающей панели по паттерну WAI-ARIA Menu.
+ * Позиционирование относительно якоря (портал, Popper) задаётся снаружи; компонент отвечает за список и клавиатурную навигацию по пунктам.
+ * @property aria-label — подпись для `role="menu"`
+ * @property id — id корневого списка
+ * @property maxHeight — ограничение высоты с прокруткой
+ * @property dense — уменьшенные вертикальные отступы у пунктов
+ * @property autoFocusFirstItem — при монтировании перевести фокус на первый доступный пункт (удобно после открытия панели)
+ */
+export interface MenuProps extends BaseComponentProps {
+  'aria-label'?: string;
+  id?: string;
+  maxHeight?: string | number;
+  dense?: boolean;
+  autoFocusFirstItem?: boolean;
+}
+
+/**
+ * Пункт выпадающего меню (`MenuItem`): интерактивная строка с `role="menuitem"`.
+ * @property children — содержимое строки (текст, иконка и т.д.)
+ * @property disabled — отключённое состояние и исключение из стрелок на клавиатуре
+ * @property selected — визуальное выделение текущего выбора
+ * @property destructive — стиль для опасного действия
+ * @property onClick — клик по пункту
+ * @property className — класс на кнопке
+ */
+export interface MenuItemProps {
+  children: React.ReactNode;
+  disabled?: boolean;
+  selected?: boolean;
+  destructive?: boolean;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  className?: string;
 }
 
 /**
@@ -1446,7 +1652,7 @@ export interface FloatingMenuGroupProps extends BaseComponentProps {
 /**
  * Пропсы кнопки пункта панели.
  * @property icon — содержимое кнопки (иконка)
- * @property active — выбранный инструмент (синяя подложка в default-группе)
+ * @property active — выбранный инструмент (яркая подложка `theme.colors.info` в default-группе; в inset — цвет иконки info)
  * @property disabled — отключить взаимодействие
  * @property hasDropdown — показать шеврон (рядом с иконкой)
  * @property dropdownTrigger — открытие меню по клику или по наведению
@@ -1539,7 +1745,7 @@ export interface ProgressStep {
 }
 
 /**
- * Визуальный режим степпера навигации (светлый / тёмный «пилюльный» контейнер по макету Figma).
+ * Визуальный режим степпера навигации (светлая / тёмная панель; скругление из `theme.borderRadius`).
  */
 export type StepperAppearance = 'light' | 'dark';
 
@@ -1996,18 +2202,28 @@ export interface DividerProps extends BaseComponentProps {
  * @property value - Значение `value` у тега `option`
  * @property label - Отображаемая подпись
  * @property disabled - Отключённая опция
+ * @property tooltip - Контент тултипа пункта в панельных режимах (`select` / `searchSelect`)
+ * @property tooltipType - Тип подсказки у пункта в списке: `tooltip` (по умолчанию) или `hint`
+ * @property tooltipPosition - Позиция тултипа пункта (`top` | `bottom` | `left` | `right`)
  */
 export interface SelectOption {
   value: string;
   label: ReactNode;
   disabled?: boolean;
+  tooltip?: React.ReactNode;
+  tooltipType?: 'tooltip' | 'hint';
+  tooltipPosition?: TooltipPosition;
+  /** Необязательный id для догрузки / API (передаётся в `onMenuLoadMore` как `anchorId`) */
+  id?: string;
+  /** Вложенные опции (дерево: каскадный мультивыбор и раскрытие в панели) */
+  options?: SelectOption[];
 }
 
 /**
  * Пропсы селекта (нативный `select` в оболочке как у `Input`)
  * @property options - Список опций
  * @property label - Подпись поля
- * @property placeholder - Пустое состояние в триггере и первая опция (`value=""`) в native single; при `multiple` в `mode="select"` при ненулевом выборе триггер показывает «Выбрано: N»
+ * @property placeholder - Пустое состояние в триггере и первая опция (`value=""`) в native single; при `multiple` в панели (`select` / `searchSelect` в закрытом меню) — плейсхолдер при пустом выборе, при выборе — чипы с подписями в триггере
  * @property value - Контролируемое значение
  * @property defaultValue - Начальное значение в неконтролируемом режиме
  * @property onChange - Событие изменения (`ChangeEvent<HTMLSelectElement>`)
@@ -2028,27 +2244,53 @@ export interface SelectOption {
  * @property tooltipPosition - Позиция подсказки
  * @property additionalLabel - Доп. подпись
  * @property extraText - Текст под полем
- * @property mode - `native` — нативный `select`; `select` — панель как у `Dropdown` (поиск в шапке панели по умолчанию); `searchSelect` — одиночный выбор: фильтр вводится в само поле, список открывается по фокусу, без отдельного поиска в панели (при `multiple` режим ведёт себя как `select`)
+ * @property onFocus - Фокус внутри оболочки `Dropdown` (триггер / портал меню), `FocusEvent` с `currentTarget` как у `HTMLDivElement`
+ * @property onBlur - Потеря фокуса внутри оболочки / панели меню
+ * @property mode - `native` — нативный `select`; `select` — панель как у `Dropdown` (поиск в шапке панели по умолчанию); `searchSelect` — фильтр в поле-триггере, без поиска в панели; при `multiple` в закрытом состоянии — чипы в триггере, при открытом — поле фильтра и чекбоксы в списке
  * @property multiple - Множественный выбор (нативно и в панельных режимах)
+ * @property showCheckbox - При `multiple` в панели: чекбоксы в списке (по умолчанию `true`; `false` — скрыть)
+ * @property moveSelectedOnTop - Поднимать выбранные опции в начало списка в панели. По умолчанию при `multiple` — включено (как раньше); при single по умолчанию выключено, передайте `true`, чтобы включить
+ * @property displayClearIcon - Показывать кнопку очистки значения (иконка справа в триггере, до шеврона); при `multiple` с чипами не дублирует кнопку «очистить всё» у чипов
+ * @property onClearIconClick - Колбэк по клику на крестик очистки (после сброса значения)
  * @property searchable - В `mode="select"`: поле поиска в панели (по умолчанию `true`, передайте `false` чтобы отключить). В `mode="searchSelect"` игнорируется (поиск только в триггере); строка запроса — `searchValue` / `onSearch` при контроле
  * @property searchPlaceholder - Плейсхолдер поиска в панели (`select`) или у поля в триггере (`searchSelect`)
  * @property searchValue - Контролируемая строка поиска (панель или триггер в зависимости от `mode`)
  * @property defaultSearchValue - Неконтролируемое значение поиска по умолчанию (панель)
- * @property onSearch - Изменение строки поиска (панель или триггер)
+ * @property onSearch - `(query, searchFormat?) => void` — изменение строки поиска (панель или триггер); второй аргумент — текущий `searchFormat`
+ * @property onInputChange - Нативный `change` у внутреннего поля ввода поиска: в `searchSelect` — `input` в триггере; в `select` при `searchable` — поле в шапке панели (вызывается после внутреннего обновления строки вместе с `onSearch`, если задан)
+ * @property searchFormat - Встроенная фильтрация без `searchFilter`: `wholly` — вся строка; `word` — по словам запроса (пробелы)
+ * @property clearInputValueAfterSelect - Только `mode="searchSelect"`: после выбора пункта очищать строку в поле фильтра (`searchValue` / `onSearch` при контроле). По умолчанию `false`
  * @property searchFilter - Кастомная фильтрация пунктов (как у `Dropdown`)
  * @property dropdownVariant - Вариант оформления панели (`Dropdown`)
  * @property menuMaxHeight - Макс. высота панели
+ * @property virtualScroll - Виртуальный скролл списка опций в панели (как у `Dropdown`): `{ itemHeight: number | 'auto' }`; при `'auto'` высота строки берётся из темы (`size` селекта); макс. высота области списка завязана на высоту одного пункта (см. `DropdownMenu`)
  * @property dropdownInline - `inline` у `Dropdown` (по умолчанию `false`: портал в body, меню под полем; `true` — меню внутри контейнера)
- * @property showMultiSelectionCountBadge - В `mode="select"` при `multiple`: круглый бейдж с числом выбранных слева от шеврона (по умолчанию включён)
+ * @property renderTopPanel - Кастомный блок над списком опций в панели (перед полем поиска в `select`, если `searchable`; см. `DropdownTopPanelProps`)
+ * @property renderBottomPanel - Кастомный блок под списком опций; при `multiple` и `showMultiSelectAll` кнопка «Выбрать все» рендерится ниже этой панели
+ * @property showMultiSelectionCountBadge - В панельных режимах при `multiple`: бейдж с числом выбранных слева от шеврона (по умолчанию включён)
+ * @property showMultiSelectAll - При `multiple` в панели: кнопка «Выбрать все» в подвале (только неотключённые опции; по умолчанию `true`)
+ * @property isMenuOpen - Контролируемое открытие панели: если задано (`true` / `false`), видимость меню берётся только из этого пропа (нужен `onMenuOpenChange`)
+ * @property onMenuOpenChange - Запрос на открытие/закрытие панели (`true` — открыть); в контролируемом режиме обновите `isMenuOpen` снаружи
+ * @property onOpenMenu - Панель открыта (`mode="select"` | `searchSelect`), вызывается при фактическом переходе в открытое состояние
+ * @property onCloseMenu - Панель закрыта, вызывается при переходе в закрытое
+ * @property onScrollMenu - Прокрутка контейнера выпадающего списка (метрики элемента, на котором скролл)
+ * @property onMenuLoadMore - Догрузка при приближении к низу списка; в колбэке — индекс и `value`/`id` якорной строки
+ * @property menuLoadMoreThresholdPx - Порог в px до низа для `onMenuLoadMore`
+ * @property menuHasMore - Есть ли ещё данные для догрузки
+ * @property menuIsLoadingMore - Блокировка повторного вызова догрузки снаружи
+ * @property openMenuIconProps - Пропсы иконки шеврона: панельные режимы — в `Dropdown`; `native` — мерж к `Icon` у поля
+ * @property clearIconProps - Как у `BaseInputProps`: крест в чипе, «очистить всё», кнопка сброса в триггере (`select` / `searchSelect`)
  * @property onValueChange - Удобный колбэк при смене значения в `mode="select"` (строка или массив строк)
+ * @property onSelectedChange - Событие при изменении выбранной опции или набора опций (`select` / `searchSelect` / `native`): актуальное `value` — строка или массив строк
  * @property value - Для `multiple` — массив строк; иначе строка
  * @property defaultValue - Аналогично `value` для неконтролируемого режима
  */
 export interface SelectProps
   extends Omit<
-    React.SelectHTMLAttributes<HTMLSelectElement>,
-    'size' | 'children' | 'value' | 'defaultValue'
-  > {
+      React.SelectHTMLAttributes<HTMLSelectElement>,
+      'size' | 'children' | 'value' | 'defaultValue' | 'onFocus' | 'onBlur'
+    >,
+    Pick<BaseInputProps, 'clearIconProps'> {
   options: SelectOption[];
   label?: ReactNode;
   placeholder?: string;
@@ -2070,7 +2312,13 @@ export interface SelectProps
   tooltipPosition?: 'top' | 'bottom' | 'left' | 'right';
   additionalLabel?: string;
   extraText?: string;
-  /** `select` — панель `Dropdown`; `searchSelect` — поиск в триггере (только single); `native` — системный `select` */
+  /**
+   * Фокус на оболочке комбобокса (`Dropdown`) или нативного поля (`InputWrapper` вокруг `select`): событие с `currentTarget` как у `HTMLDivElement`.
+   */
+  onFocus?: React.FocusEventHandler<HTMLDivElement>;
+  /** Потеря фокуса на оболочке (аналогично `onFocus`) */
+  onBlur?: React.FocusEventHandler<HTMLDivElement>;
+  /** `select` — панель `Dropdown`; `searchSelect` — поиск в триггере (single или `multiple`); `native` — системный `select` */
   mode?: 'native' | 'select' | 'searchSelect';
   /** В `mode="select"`: поле поиска в панели (по умолчанию `true`). В `searchSelect` не используется */
   searchable?: boolean;
@@ -2079,20 +2327,101 @@ export interface SelectProps
   /** Контролируемая строка поиска: в `searchSelect` — текст в поле при открытом меню; в `select` — строка в панели `Dropdown` */
   searchValue?: string;
   defaultSearchValue?: string;
-  /** Ввод в строку поиска (`searchSelect` — в триггере; `select` — в панели при `searchable`) */
-  onSearch?: (query: string) => void;
+  /** Ввод в строку поиска (`searchSelect` — в триггере; `select` — в панели при `searchable`); второй аргумент — текущий `searchFormat` */
+  onSearch?: (query: string, searchFormat?: SearchFormat) => void;
+  /** Событие `change` внутреннего `HTMLInputElement` поиска (триггер `searchSelect` или поле в панели `select`) */
+  onInputChange?: React.ChangeEventHandler<HTMLInputElement>;
   searchFilter?: (query: string, item: DropdownMenuItemProps) => boolean;
+  /** Встроенный поиск в панели и в `searchSelect`: `wholly` — подстрока целиком; `word` — по отдельным словам */
+  searchFormat?: SearchFormat;
+  /**
+   * Только `mode="searchSelect"`: после выбора опции из списка сбрасывать текст в поле-триггере (через `setEffectiveSearchQuery('')` / `onSearch('', …)`).
+   * При контролируемом `searchValue` родитель должен обновить строку до `''`.
+   */
+  clearInputValueAfterSelect?: boolean;
   dropdownVariant?: 'default' | 'elevated' | 'outlined';
   menuMaxHeight?: string | number;
+  /**
+   * Виртуальный скролл списка в панели (`Dropdown`): фиксированная высота строки или `'auto'` по размерам пункта из темы для текущего `size`.
+   */
+  virtualScroll?: DropdownVirtualScrollConfig;
   /** Прокидывается в `Dropdown.inline` */
   dropdownInline?: boolean;
+  /** Панель над списком опций в выпадающем меню (как у `Dropdown.renderTopPanel`) */
+  renderTopPanel?: (props: DropdownTopPanelProps) => React.ReactNode;
+  /** Панель под списком опций в выпадающем меню (как у `Dropdown.renderBottomPanel`; подвал «Выбрать все» при `multiple` добавляется ниже) */
+  renderBottomPanel?: (props: DropdownTopPanelProps) => React.ReactNode;
   /**
-   * В `mode="select"` при `multiple`: показывать бейдж с числом выбранных слева от шеврона (как в макете).
+   * При `multiple` в панельных режимах (`select`, `searchSelect`): бейдж с числом выбранных слева от шеврона.
    * По умолчанию `true`; передайте `false`, чтобы скрыть.
    */
   showMultiSelectionCountBadge?: boolean;
+  /**
+   * При `multiple` в панели: кнопка «Выбрать все» внизу (только опции без `disabled`).
+   * По умолчанию включена; передайте `false`, чтобы скрыть.
+   */
+  showMultiSelectAll?: boolean;
+  /**
+   * При `multiple` в панели: чекбоксы у пунктов выпадающего списка (как у `Dropdown.showCheckbox`).
+   * По умолчанию `true`; передайте `false`, чтобы оставить мультивыбор по клику без чекбоксов.
+   */
+  showCheckbox?: boolean;
+  /**
+   * Вложенные `options` у опций: дерево в панели, каскадный мультивыбор и раскрытие веток (пропсы как у `Dropdown`).
+   */
+  treeExpandable?: boolean;
+  treeDefaultExpanded?: 'expanded' | 'collapsed' | string[];
+  treeExpandedKeys?: string[];
+  onTreeExpandedKeysChange?: (keys: string[]) => void;
+  /**
+   * Панельные режимы: выбранные опции показывать вверху списка (`reorder` по `value`).
+   * По умолчанию при `multiple` — `true` (прежнее поведение); при одиночном выборе по умолчанию порядок как в `options`, пока явно не передать `true`.
+   */
+  moveSelectedOnTop?: boolean;
+  /**
+   * Показывать кнопку сброса значения (крестик в триггере, как `displayClearIcon` у полей из `BaseInputProps`).
+   * Не показывается при `multiple`, если уже видна кнопка очистки всех чипов.
+   */
+  displayClearIcon?: boolean;
+  /** Колбэк по клику на крестик очистки (после сброса `value` и строки поиска в `searchSelect`) */
+  onClearIconClick?: () => void;
+  /**
+   * Контролируемое состояние открытия выпадающей панели (как `Dropdown.isMenuOpen`).
+   * Если не передано — используется внутреннее состояние.
+   */
+  isMenuOpen?: boolean;
+  /**
+   * Колбэк смены открытости панели (как `Dropdown.onMenuOpenChange`).
+   * При контролируемом режиме (`isMenuOpen` задан) обязателен для реакции на клики и закрытие снаружи.
+   */
+  onMenuOpenChange?: (isOpen: boolean) => void;
+  /** Панель выбора открыта (`mode="select"` | `searchSelect`) */
+  onOpenMenu?: () => void;
+  /** Панель выбора закрыта */
+  onCloseMenu?: () => void;
+  /** Прокрутка списка опций в панели */
+  onScrollMenu?: (info: DropdownMenuScrollInfo) => void;
+  /**
+   * Ленивая догрузка опций при приближении к низу списка: якорь — последняя строка текущего плоского списка
+   * (`anchorFlatIndex`, `anchorValue`, опционально `anchorId` из `SelectOption.id`).
+   * После обновления `options` скролл компенсируется по дельте высоты (меню не закрывается).
+   */
+  onMenuLoadMore?: (context: DropdownMenuLoadMoreContext) => void | Promise<void>;
+  /** Порог в px до нижней границы прокрутки для вызова `onMenuLoadMore` (по умолчанию 80) */
+  menuLoadMoreThresholdPx?: number;
+  /** Передайте `false`, когда догружать больше нечего */
+  menuHasMore?: boolean;
+  /** Пока `true`, внутренний порог не вызывает повторный `onMenuLoadMore` */
+  menuIsLoadingMore?: boolean;
+  /** Пропсы иконки открытия меню: `select` / `searchSelect` — в `Dropdown.openMenuIconProps`; `native` — мерж к `Icon` у поля */
+  openMenuIconProps?: OpenMenuIconProps;
   /** Колбэк при изменении выбранного значения (удобен в `mode="select"`) */
   onValueChange?: (value: string | string[]) => void;
+  /**
+   * Вызывается при смене выбора: одиночное значение или массив при `multiple`.
+   * Срабатывает во всех режимах (`select`, `searchSelect`, `native`) после фиксации нового значения.
+   */
+  onSelectedChange?: (value: string | string[]) => void;
 }
 
 /**
@@ -2102,12 +2431,12 @@ export interface SelectProps
 export type ToastType = 'success' | 'error' | 'warning' | 'info' | 'neutral';
 
 /**
- * Внешний вид карточки toast: классическая с полосой слева или «пилюля» с иконкой, свечением и кнопкой действия
+ * Внешний вид toast: по умолчанию «пилюля» (макет Figma); опционально классика с полосой слева.
  */
 export enum ToastAppearance {
   /** Полоса слева, фон по типу уведомления */
   CARD = 'card',
-  /** Светлая «капсула»: иконка с glow, текст, опциональная кнопка действия, круглая кнопка закрытия */
+  /** Пастельный фон, цветная обводка, иконка с glow, крестик в строке справа */
   PILL = 'pill',
 }
 
@@ -2121,6 +2450,20 @@ export interface ShowToastOptions {
   appearance?: ToastAppearance;
   actionLabel?: string;
   onAction?: () => void;
+  /** Явный id тоста (для предотвращения дублей и последующего update) */
+  toastId?: string;
+  /** Не создавать дубликат, если toast с тем же `toastId` уже активен */
+  preventDuplicate?: boolean;
+  /** Стратегия дедупликации: по id, по содержимому или оба варианта */
+  dedupeStrategy?: 'id' | 'content' | 'both';
+  /** Останавливать автозакрытие при наведении курсора */
+  pauseOnHover?: boolean;
+  /** Останавливать автозакрытие, пока вкладка не в фокусе */
+  pauseOnFocusLoss?: boolean;
+  /** Закрывать toast по клику на карточку */
+  closeOnClick?: boolean;
+  /** Показывать нижнюю полоску времени до автозакрытия */
+  showProgressBar?: boolean;
 }
 
 /**
@@ -2143,6 +2486,10 @@ export interface ToastItem {
   appearance?: ToastAppearance;
   actionLabel?: string;
   onAction?: () => void;
+  pauseOnHover?: boolean;
+  pauseOnFocusLoss?: boolean;
+  closeOnClick?: boolean;
+  showProgressBar?: boolean;
 }
 
 /**
@@ -2157,8 +2504,12 @@ export interface ToastContextValue {
     duration?: number,
     options?: ShowToastOptions,
   ) => void;
+  updateToast: (id: string, patch: Partial<Omit<ToastItem, 'id'>>) => void;
+  isActiveToast: (id: string) => boolean;
   hideToast: (id: string) => void;
   clearToasts: () => void;
+  pauseToasts: (id?: string) => void;
+  playToasts: (id?: string) => void;
 }
 
 /**
@@ -2181,6 +2532,20 @@ export interface ToastProviderProps {
   placement?: ToastPlacement;
   /** Внешний вид новых toast, если в записи не указан `appearance` */
   defaultAppearance?: ToastAppearance;
+  /** Ограничение количества видимых тостов (`0` — без лимита) */
+  limit?: number;
+  /** Добавлять новые тосты в начало списка */
+  newestOnTop?: boolean;
+  /** Включить плотное наложение стека */
+  stacked?: boolean;
+  /** Значение по умолчанию для паузы автозакрытия по hover */
+  pauseOnHover?: boolean;
+  /** Значение по умолчанию для паузы автозакрытия при потере фокуса вкладки */
+  pauseOnFocusLoss?: boolean;
+  /** Значение по умолчанию для закрытия toast по клику на карточку */
+  closeOnClick?: boolean;
+  /** Значение по умолчанию для показа прогресс-бара времени */
+  showProgressBar?: boolean;
 }
 
 /**
@@ -2296,6 +2661,7 @@ export interface BreadcrumbProps extends BaseComponentProps {
  * @property onPageChange - Вызывается при выборе страницы или «назад»/«вперёд»
  * @property siblingCount - Сколько номеров слева и справа от текущей (без учёта 1 и последней)
  * @property showPrevNext - Показывать кнопки предыдущая / следующая страница
+ * @property variant - `default` — номера и «…»; `compact` — только стрелки и текущая страница между ними
  * @property size - Размер кнопок номеров
  * @property disabled - Отключить всю навигацию
  * @property ariaLabel - Подпись для `nav` (доступность)
@@ -2308,6 +2674,8 @@ export interface PaginationProps extends BaseComponentProps {
   onPageChange?: (page: number) => void;
   siblingCount?: number;
   showPrevNext?: boolean;
+  /** Режим отображения списка страниц */
+  variant?: 'default' | 'compact';
   size?: Size;
   disabled?: boolean;
   ariaLabel?: string;
@@ -2515,6 +2883,10 @@ export interface DateTimeInputRangeProps extends BaseComponentProps {
   showIcon?: boolean;
 }
 
+/**
+ * Пропсы поля даты (`DateInput`).
+ * Крестик очистки: `displayClearIcon`, `onClearIconClick`, `clearIconProps` из `BaseInputProps`.
+ */
 export interface DatePickerProps extends Omit<BaseInputProps, 'value' | 'onChange' | 'size'> {
   value?: string | DateTimeRange;
   onChange?: (value: string | DateTimeRange) => void;
@@ -2568,8 +2940,7 @@ export interface TimeRange {
  * @property disabledHours - Массив дизейбленных часов (числа от 0 до 23)
  * @property disabledMinutes - Массив дизейбленных минут (числа от 0 до 59)
  * @property disabledSeconds - Массив дизейбленных секунд (числа от 0 до 59)
- * @property clearIcon - Показывать ли иконку очистки
- * @property onClearIconClick - Обработчик клика по иконке очистки
+ * @remarks Крестик очистки: `displayClearIcon`, `onClearIconClick` и `clearIconProps` из `BaseInputProps`.
  */
 export interface TimeInputProps extends Omit<BaseInputProps, 'value' | 'onChange' | 'size'> {
   value?: string | TimeRange;
@@ -2830,7 +3201,7 @@ export interface GridItemProps extends BaseComponentProps {
   style?: React.CSSProperties;
 }
 
-// --- Таблица (аналогично MUI Table, см. https://mui.com/material-ui/react-table/) ---
+// --- Таблица ---
 
 /** Плотность строк таблицы */
 export type TableSize = 'sm' | 'md';
@@ -2936,16 +3307,28 @@ export interface TableCellProps
   style?: React.CSSProperties;
 }
 
+/** Выравнивание строки под таблицей: выбор числа строк + плашка страниц */
+export type TablePaginationToolbarAlign = 'left' | 'center' | 'right';
+
 /**
- * Пагинация под таблицей (обёртка над `Pagination`, API близко к MUI `TablePagination`).
+ * Пагинация под таблицей (обёртка над `Pagination`, нумерация страниц с нуля).
  * @property count - Всего записей
- * @property page - Номер страницы с нуля (как в MUI)
+ * @property page - Номер страницы с нуля
  * @property rowsPerPage - Записей на странице
  * @property onPageChange - `(event, nextPageZeroBased)` при смене страницы
- * @property siblingCount - Соседи вокруг текущей страницы у числовой плашки
- * @property rowsPerPageOptions - Если задано, показывается выбор «строк на странице» (простой select)
- * @property onRowsPerPageChange - Событие смены `rowsPerPage` (нативный `change` от select)
- * @property labelRowsPerPage - Подпись к селекту строк на странице
+ * @property siblingCount - Соседи вокруг текущей страницы у числовой плашки (только при `paginationVariant="default"`)
+ * @property paginationToolbarAlign - Выравнивание строки футера (селект строк, поле «страница», плашка страниц); по умолчанию `right`
+ * @property paginationToolbarReverse - Обратный порядок элементов в строке (`Pagination` и поле страницы меняются местами с блоком «строк на странице»)
+ * @property paginationVariant - `compact` — только стрелки и номер текущей страницы между ними
+ * @property rowsPerPageOptions - Список допустимых размеров страницы для нативного `select` (если пусто/не задано — блок не показывается)
+ * @property showRowsPerPageSelect - Показывать ли выбор числа строк; по умолчанию `true`, если задан непустой `rowsPerPageOptions`. При `false` блок скрыт даже при наличии опций
+ * @property rowsPerPageSelectVariant - `compact` — короткая подпись по умолчанию («На стр.:») и более компактный селект
+ * @property onRowsPerPageChange - Событие смены `rowsPerPage` (`change` от внутреннего `select`)
+ * @property labelRowsPerPage - Подпись перед селектором размера страницы; если не задано — зависит от `rowsPerPageSelectVariant`
+ * @property showRecordsTotal - Показывать «записей из {count}» после селектора; по умолчанию `true`, если задан `rowsPerPageOptions`
+ * @property formatRecordsTotal - Кастомный текст итога; иначе «записей из N» с форматированием `ru-RU`
+ * @property showPageJump - Поле «перейти к странице» слева от компонента `Pagination` (по умолчанию `true`; скрыто при одной странице)
+ * @property labelPageJump - Подпись перед полем номера страницы (по умолчанию «Страница:»)
  * @property disabled - Отключить пагинацию и селект
  * @property size - Размер внутреннего компонента `Pagination` (`Size` из дизайн-системы)
  */
@@ -2956,8 +3339,26 @@ export interface TablePaginationProps extends BaseComponentProps {
   onPageChange?: (event: unknown, page: number) => void;
   siblingCount?: number;
   rowsPerPageOptions?: number[];
+  /** Показать селект размера страницы; по умолчанию совпадает с наличием непустого `rowsPerPageOptions` */
+  showRowsPerPageSelect?: boolean;
+  /** Внешний вид блока «строк на странице» */
+  rowsPerPageSelectVariant?: 'default' | 'compact';
   onRowsPerPageChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   labelRowsPerPage?: React.ReactNode;
+  /** Показывать текст итога записей после селектора размера страницы */
+  showRecordsTotal?: boolean;
+  /** Кастомный текст итога; по умолчанию «записей из {count}» */
+  formatRecordsTotal?: (totalCount: number) => React.ReactNode;
+  /** Поле ввода номера страницы рядом с `Pagination` */
+  showPageJump?: boolean;
+  /** Подпись перед полем перехода к странице */
+  labelPageJump?: React.ReactNode;
+  /** Режим плашки страниц: `compact` — только «назад», номер текущей, «вперёд» */
+  paginationVariant?: 'default' | 'compact';
+  /** Горизонтальное выравнивание группы «строк на странице» + пагинация */
+  paginationToolbarAlign?: TablePaginationToolbarAlign;
+  /** Обратный порядок блоков в строке футера (`flex-direction: row-reverse`) */
+  paginationToolbarReverse?: boolean;
   disabled?: boolean;
   size?: Size;
   style?: React.CSSProperties;
@@ -2984,7 +3385,7 @@ export interface TableSortLabelProps
   style?: React.CSSProperties;
 }
 
-// --- DataGrid (композиция над Table*, см. MUI X DataGrid / Admiral Data Table) ---
+// --- DataGrid (композиция над Table*) ---
 
 /** Идентификатор строки в DataGrid */
 export type DataGridRowId = string;
@@ -3005,7 +3406,7 @@ export interface DataGridSortModel {
   direction: DataGridSortDirection;
 }
 
-/** Модель пагинации (страница с нуля, как в MUI) */
+/** Модель пагинации (номер страницы с нуля) */
 export interface DataGridPaginationModel {
   page: number;
   pageSize: number;
@@ -3022,7 +3423,7 @@ export interface DataGridRenderCellParams<Row extends DataGridBaseRow = DataGrid
   rowIndex: number;
 }
 
-/** Описание колонки (аналог `GridColDef` в MUI X) */
+/** Описание колонки грида (поле, заголовок, рендер ячейки) */
 export interface DataGridColumn<Row extends DataGridBaseRow = DataGridBaseRow> {
   /** Ключ поля в строке (строка допускает вложенные пути через точку, напр. `user.name`) */
   field: keyof Row | string;
@@ -3060,6 +3461,13 @@ export interface DataGridRenderRowWrapperParams<Row extends DataGridBaseRow = Da
  * @property disabledIds — Неактивные строки по id
  * @property onRowSelectionChange — Изменение выбора; для single массив из 0–1 элемента
  * @property paginationModel + onPaginationChange — Контролируемая пагинация; без них футер пагинации скрыт
+ * @property paginationVariant — Вид плашки страниц у `TablePagination`: `compact` — только стрелки и номер текущей страницы между ними
+ * @property paginationToolbarAlign — Выравнивание строки «строк на странице» + пагинация (`TablePagination`); по умолчанию `right`
+ * @property paginationToolbarReverse — Реверсивный порядок элементов строки футера
+ * @property showRowsPerPageSelect — Показывать ли выбор размера страницы (прокидывается в `TablePagination`)
+ * @property showPageJump — Поле ввода номера страницы слева от плашки страниц (`TablePagination`)
+ * @property labelPageJump — Подпись к полю перехода к странице
+ * @property rowsPerPageSelectVariant — `compact` для сокращённого блока «строк на странице»
  * @property paginationMode — Как интерпретировать `rows` при пагинации
  * @property sortModel + onSortChange — Контролируемая сортировка (только UI + колбэк; данные сортирует родитель)
  * @property rowBackgroundColorByStatus — Фон строки по данным строки
@@ -3085,6 +3493,20 @@ export interface DataGridProps<Row extends DataGridBaseRow = DataGridBaseRow> ex
   onRowDoubleClick?: (row: Row, event: React.MouseEvent<HTMLTableRowElement>) => void;
   paginationModel?: DataGridPaginationModel;
   onPaginationChange?: (model: DataGridPaginationModel) => void;
+  /** Режим отображения номеров страниц в подвале (`TablePagination`) */
+  paginationVariant?: 'default' | 'compact';
+  /** Выравнивание футера пагинации (селект размера страницы + номера страниц) */
+  paginationToolbarAlign?: TablePaginationToolbarAlign;
+  /** Обратный порядок элементов в строке футера пагинации */
+  paginationToolbarReverse?: boolean;
+  /** Показать селект «строк на странице» в подвале (см. `TablePagination`) */
+  showRowsPerPageSelect?: boolean;
+  /** Поле «перейти к странице» слева от плашки страниц */
+  showPageJump?: boolean;
+  /** Подпись перед полем номера страницы */
+  labelPageJump?: React.ReactNode;
+  /** Сокращённый вид селектора размера страницы */
+  rowsPerPageSelectVariant?: 'default' | 'compact';
   paginationMode?: DataGridPaginationMode;
   rowsPerPageOptions?: number[];
   sortModel?: DataGridSortModel | null;

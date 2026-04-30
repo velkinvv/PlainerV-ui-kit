@@ -1,4 +1,5 @@
-import type { Decorator, Meta, StoryObj } from '@storybook/react';
+﻿import type { Decorator, Meta, StoryObj } from '@storybook/react';
+import { fn } from '@storybook/test';
 import React from 'react';
 import { Button } from '../buttons/Button';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
@@ -13,23 +14,45 @@ const withTheme: Decorator = (Story) => (
 );
 
 const meta: Meta<typeof Toast> = {
-  title: 'Components/Feedback/Toast',
+  title: 'UI Kit/Feedback/Toast',
   component: Toast,
   decorators: [withTheme],
   parameters: {
     layout: 'padded',
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4911-4334&t=eb4vmm0U8WfOr8yP-4',
-    },
     docs: {
       description: {
         component:
-          'Карточка уведомления: классический вид (полоса слева) или «пилюля» по макету Figma — иконка с glow, текст, кнопка действия, круглое закрытие. В приложении — `ThemeProvider` + `ToastProvider` + хук `useToast` (сторис **Hooks/useToast**). Внешний вид задаётся полем `appearance` у записи или `defaultAppearance` у провайдера.',
+          'По умолчанию — вид «пилюля» по макету Figma: пастельный фон и рамка цветом типа, иконка с glow, тёмный заголовок, вторичный текст, крестик в строке. Классика с полосой слева — `ToastAppearance.CARD`. `ThemeProvider` + `ToastProvider` + `useToast` (сторис **Hooks/useToast**).',
       },
     },
   },
   tags: ['autodocs'],
+  argTypes: {
+    toast: {
+      description:
+        'Данные уведомления: тип, текст, опционально заголовок, duration, appearance, действие',
+      control: 'object',
+      table: {
+        type: {
+          summary:
+            'ToastItem: id, type (success, error, warning, info, neutral), message, title?, duration?, appearance?, actionLabel?, onAction?',
+        },
+      },
+    },
+    onClose: {
+      description: 'Закрытие по id',
+      table: {
+        type: { summary: '(id: string) => void' },
+      },
+    },
+    onPauseTimer: { control: false, table: { disable: true } },
+    onResumeTimer: { control: false, table: { disable: true } },
+    timing: { control: false, table: { disable: true } },
+  },
+  args: {
+    onPauseTimer: fn(),
+    onResumeTimer: fn(),
+  },
 };
 
 export default meta;
@@ -46,7 +69,7 @@ const sample = (partial: Partial<ToastItem>): ToastItem => ({
 export const Info: Story = {
   args: {
     toast: sample({ type: 'info', title: 'Информация' }),
-    onClose: () => {},
+    onClose: fn(),
   },
 };
 
@@ -57,7 +80,7 @@ export const Success: Story = {
       title: 'Успех',
       message: 'Операция выполнена успешно.',
     }),
-    onClose: () => {},
+    onClose: fn(),
   },
 };
 
@@ -69,7 +92,7 @@ export const ErrorToast: Story = {
       title: 'Ошибка',
       message: 'Не удалось сохранить изменения.',
     }),
-    onClose: () => {},
+    onClose: fn(),
   },
 };
 
@@ -81,7 +104,7 @@ export const WarningToast: Story = {
       title: 'Внимание',
       message: 'Проверьте введённые данные.',
     }),
-    onClose: () => {},
+    onClose: fn(),
   },
 };
 
@@ -90,10 +113,11 @@ export const NeutralCard: Story = {
   args: {
     toast: sample({
       type: 'neutral',
+      appearance: ToastAppearance.CARD,
       title: 'Уведомление',
       message: 'Нейтральное сообщение без акцента ошибки или успеха.',
     }),
-    onClose: () => {},
+    onClose: fn(),
   },
 };
 
@@ -105,9 +129,9 @@ export const PillInfo: Story = {
       appearance: ToastAppearance.PILL,
       message: 'Notification',
       actionLabel: 'Action',
-      onAction: () => {},
+      onAction: fn(),
     }),
-    onClose: () => {},
+    onClose: fn(),
   },
 };
 
@@ -120,9 +144,9 @@ export const PillSuccess: Story = {
       title: 'Готово',
       message: 'Изменения сохранены.',
       actionLabel: 'Action',
-      onAction: () => {},
+      onAction: fn(),
     }),
-    onClose: () => {},
+    onClose: fn(),
   },
 };
 
@@ -134,7 +158,7 @@ export const PillNeutralNoAction: Story = {
       appearance: ToastAppearance.PILL,
       message: 'Короткое уведомление без кнопки действия.',
     }),
-    onClose: () => {},
+    onClose: fn(),
   },
 };
 
@@ -165,3 +189,134 @@ export const PlacementTopCenter: Story = {
 export const PlacementBottomRight: Story = {
   render: () => <PlacementDemo placement="bottom-right" />,
 };
+
+const AdvancedToastControls = () => {
+  const { showToast, updateToast, pauseToasts, playToasts } = useToast();
+
+  const handleShowHoverToast = () => {
+    showToast(
+      'Наведи курсор: автозакрытие остановится до ухода мыши.',
+      'info',
+      'Pause on hover',
+      6000,
+      {
+        toastId: 'hover-pause-toast',
+        pauseOnHover: true,
+        pauseOnFocusLoss: true,
+        showProgressBar: true,
+      },
+    );
+  };
+
+  const handleShowAndUpdate = () => {
+    showToast('Имитация загрузки началась...', 'info', 'Обновление по id', 0, {
+      toastId: 'update-toast',
+      showProgressBar: false,
+    });
+
+    setTimeout(() => {
+      updateToast('update-toast', {
+        type: 'success',
+        title: 'Готово',
+        message: 'Операция завершена. Этот toast обновился без пересоздания.',
+        duration: 4000,
+        showProgressBar: true,
+      });
+    }, 1400);
+  };
+
+  const handlePauseAll = () => {
+    pauseToasts();
+  };
+
+  const handlePlayAll = () => {
+    playToasts();
+  };
+
+  const handlePauseSingle = () => {
+    pauseToasts('hover-pause-toast');
+  };
+
+  const handlePlaySingle = () => {
+    playToasts('hover-pause-toast');
+  };
+
+  const controlsContainerStyle: React.CSSProperties = {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '8px',
+  };
+
+  return (
+    <div style={controlsContainerStyle}>
+      <Button onClick={handleShowHoverToast}>Pause on hover</Button>
+      <Button onClick={handleShowAndUpdate}>Update by id</Button>
+      <Button variant="outlined" onClick={handlePauseAll}>
+        Pause all
+      </Button>
+      <Button variant="outlined" onClick={handlePlayAll}>
+        Play all
+      </Button>
+      <Button variant="outlined" onClick={handlePauseSingle}>
+        Pause one
+      </Button>
+      <Button variant="outlined" onClick={handlePlaySingle}>
+        Play one
+      </Button>
+    </div>
+  );
+};
+
+export const PauseOnHoverAndProgress: Story = {
+  render: () => (
+    <ToastProvider pauseOnHover showProgressBar>
+      <AdvancedToastControls />
+    </ToastProvider>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Демонстрация pauseOnHover + progress bar: таймер останавливается на hover и возобновляется после ухода курсора.',
+      },
+    },
+  },
+};
+
+const ToastLimitDemoControls = () => {
+  const { showToast, clearToasts } = useToast();
+
+  const handlePushMany = () => {
+    showToast('Первое уведомление', 'info', 'Queue #1', 7000);
+    showToast('Второе уведомление', 'success', 'Queue #2', 7000);
+    showToast('Третье уведомление', 'warning', 'Queue #3', 7000);
+    showToast('Четвертое уведомление', 'error', 'Queue #4', 7000);
+    showToast('Пятое уведомление', 'neutral', 'Queue #5', 7000);
+  };
+
+  return (
+    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+      <Button onClick={handlePushMany}>Показать 5 уведомлений</Button>
+      <Button variant="outlined" onClick={clearToasts}>
+        Очистить
+      </Button>
+    </div>
+  );
+};
+
+export const LimitNewestOnTopStacked: Story = {
+  render: () => (
+    <ToastProvider limit={3} newestOnTop stacked>
+      <ToastLimitDemoControls />
+    </ToastProvider>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Демонстрация limit/newestOnTop/stacked: в стеке максимум 3 уведомления, новые сверху, плотная компоновка.',
+      },
+    },
+  },
+};
+

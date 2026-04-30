@@ -4,9 +4,9 @@ import type { Decorator } from '@storybook/react';
  * Декоратор превью Storybook.
  *
  * Задаёт минимальную высоту области сторис и `overflow: visible`, чтобы вложенные элементы
- * с `position: absolute` (календарь DateInput, выпадающие меню и т.п.) не обрезались канвасом:
- * абсолютное позиционирование не увеличивает высоту потока, и без «запаса» по высоте попап
- * оказывается за пределами кликабельной/видимой зоны превью.
+ * с `position: absolute` (календарь DateInput и т.п.) не обрезались канвасом.
+ * Попапы, смонтированные в `body` через портал (`Dropdown` при `inline={false}`), дополнительно
+ * разжимают обёртки Storybook в `preview-storybook-overlays.css`.
  */
 export const withStoryCanvasRoom: Decorator = (Story) => (
   <div

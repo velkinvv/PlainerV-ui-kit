@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import { Pagination } from './Pagination';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
@@ -7,7 +7,7 @@ import { Card } from '../Card';
 import { Typography } from '../Typography';
 
 const meta: Meta<typeof Pagination> = {
-  title: 'Components/Navigation/Pagination',
+  title: 'UI Kit/Navigation/Pagination',
   component: Pagination,
   decorators: [
     (Story) => (
@@ -18,31 +18,67 @@ const meta: Meta<typeof Pagination> = {
   ],
   parameters: {
     layout: 'padded',
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4911-2616',
-    },
     docs: {
       description: {
         component:
-          'Пагинация по макету Figma: единая плашка со скруглением, номера без рамки, активная страница с заливкой primary и мягким свечением, стрелки внутри плашки.',
+          'Плашка со скруглением: в светлой теме белый фон и текст из `theme.colors.text`; в тёмной — серая плашка (`grey[800]`) и светлый текст. Активная страница — `theme.colors.info` (яркий синий) и подпись как у primary-кнопки; стрелки внутри плашки.',
       },
     },
   },
   tags: ['autodocs'],
   argTypes: {
-    totalPages: { control: { type: 'number', min: 1 }, description: 'Всего страниц' },
-    page: { control: { type: 'number', min: 1 }, description: 'Текущая страница (контроль)' },
-    defaultPage: { description: 'Стартовая страница без `page`' },
+    totalPages: {
+      control: { type: 'number', min: 1 },
+      description: 'Всего страниц',
+      table: { type: { summary: 'number (≥ 1)' } },
+    },
+    page: {
+      control: { type: 'number', min: 1 },
+      description: 'Текущая страница (контролируемый режим)',
+      table: { type: { summary: 'number' } },
+    },
+    defaultPage: {
+      description: 'Стартовая страница, если не задан контролируемый `page`',
+      table: { type: { summary: 'number' } },
+    },
     siblingCount: {
       control: { type: 'number', min: 0, max: 3 },
       description: 'Соседи вокруг текущей',
+      table: { type: { summary: 'number (0–3)' } },
     },
-    showPrevNext: { control: 'boolean', description: 'Стрелки вперёд/назад' },
-    size: { control: 'select', options: Object.values(Size), description: 'Размер' },
-    disabled: { control: 'boolean' },
-    ariaLabel: { description: 'Подпись `nav` для a11y' },
-    onPageChange: { action: 'pageChange' },
+    showPrevNext: {
+      control: 'boolean',
+      description: 'Стрелки вперёд/назад',
+      table: { type: { summary: 'boolean' } },
+    },
+    variant: {
+      control: 'select',
+      options: ['default', 'compact'],
+      description: '`compact` — только стрелки и текущая страница между ними',
+      table: { type: { summary: `'default' | 'compact'` } },
+    },
+    size: {
+      control: 'select',
+      options: Object.values(Size),
+      description: 'Размер компонента; значения из `Size` (например `SM`, `MD`, `LG`, `XL`)',
+      table: {
+        type: { summary: 'Size: XS, SM, MD, LG, XL' },
+      },
+    },
+    disabled: {
+      control: 'boolean',
+      table: { type: { summary: 'boolean' } },
+    },
+    ariaLabel: {
+      description: 'Подпись `nav` для a11y',
+      table: { type: { summary: 'string' } },
+    },
+    onPageChange: {
+      action: 'pageChange',
+      table: {
+        type: { summary: '(page: number) => void' },
+      },
+    },
   },
 };
 
@@ -83,6 +119,16 @@ export const Small: Story = {
   },
 };
 
+/** Сокращённый вид: «назад», номер текущей страницы, «вперёд». */
+export const Compact: Story = {
+  args: {
+    totalPages: 24,
+    defaultPage: 5,
+    variant: 'compact',
+    siblingCount: 1,
+  },
+};
+
 export const Disabled: Story = {
   args: {
     totalPages: 5,
@@ -106,3 +152,4 @@ const ControlledDemo = () => {
 export const Controlled: Story = {
   render: () => <ControlledDemo />,
 };
+

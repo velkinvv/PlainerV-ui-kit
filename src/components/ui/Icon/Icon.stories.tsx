@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Icon } from './Icon';
 import * as PlainerIconsModule from '../../../icons/plainer';
@@ -53,7 +53,7 @@ const getIconVariant = (name: string): IconVariant => {
 };
 
 const meta: Meta<typeof Icon> = {
-  title: ' Components/Icon',
+  title: 'UI Kit/Data Display/Icon',
   component: Icon,
   parameters: {
     layout: 'padded',
@@ -604,7 +604,6 @@ export const IconExIcons: Story = {
       'IconExEdit1',
       'IconExEdit2',
       'IconExEye',
-      'IconExFigma',
       'IconExFilter',
       'IconExFilter2',
       'IconExFire',
@@ -964,3 +963,4 @@ export const IconColors: Story = {
     </div>
   ),
 };
+

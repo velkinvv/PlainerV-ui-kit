@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import { Calendar } from './Calendar';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
@@ -6,7 +6,7 @@ import { darkTheme } from '../../../themes/themes';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 
 const meta: Meta<typeof Calendar> = {
-  title: 'Components/Calendar',
+  title: 'UI Kit/Inputs/Calendar',
   component: Calendar,
   decorators: [
     (Story) => (
@@ -17,18 +17,60 @@ const meta: Meta<typeof Calendar> = {
   ],
   parameters: {
     layout: 'padded',
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4817-15976',
-    },
     docs: {
       description: {
         component:
-          'Календарь по макетам Figma: сетка 7×6, подписи дней недели (`weekStartsOn`), выбор дня, стрелки месяца, выпадающий список месяца/года на базе `Dropdown`. Опции: `showDateRollers` — роллеры день/месяц/год; `monthYearLayout="split"` — два триггера месяц и год. Ссылки: [месяц/год](https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4858-15297&t=cStO03cIis1M6Tar-4), [роллеры](https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4863-782&t=cStO03cIis1M6Tar-4), [триггеры](https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4858-15432&t=cStO03cIis1M6Tar-4).',
+          'Календарь: сетка 7×6, подписи дней недели (`weekStartsOn`), выбор дня, стрелки месяца, выпадающий список месяца/года на базе `Dropdown`. Опции: `showDateRollers` — роллеры день/месяц/год; `monthYearLayout="split"` — два триггера месяц и год.',
       },
     },
   },
   tags: ['autodocs'],
+  argTypes: {
+    value: {
+      description: 'Выбранная дата в режиме `single`',
+      table: {
+        type: { summary: 'Date выбранного дня или null' },
+      },
+    },
+    defaultValue: {
+      description: 'Начальное значение в неконтролируемом режиме',
+      table: {
+        type: { summary: 'Date или null' },
+      },
+    },
+    visibleMonth: {
+      description: 'Контролируемый отображаемый месяц (начало месяца)',
+      table: { type: { summary: 'Date' } },
+    },
+    defaultVisibleMonth: {
+      description: 'Стартовый отображаемый месяц без `visibleMonth`',
+      table: { type: { summary: 'Date' } },
+    },
+    rangeStart: {
+      description: 'Начало выделенного диапазона при `selectionMode="range"`',
+      table: { type: { summary: 'Date или null' } },
+    },
+    rangeEnd: {
+      description: 'Конец диапазона',
+      table: { type: { summary: 'Date или null' } },
+    },
+    rangeHoverDate: {
+      description: 'Предпросмотр конца диапазона при наведении',
+      table: { type: { summary: 'Date или null' } },
+    },
+    weekStartsOn: {
+      description: 'С какого дня начинается неделя в шапке',
+      table: { type: { summary: '0 (воскресенье) или 1 (понедельник)' } },
+    },
+    selectionMode: {
+      description: 'Режим выбора дат',
+      table: { type: { summary: '`single` или `range`' } },
+    },
+    monthYearLayout: {
+      description: 'Разметка переключателя месяца и года',
+      table: { type: { summary: '`combined` или `split`' } },
+    },
+  },
 };
 
 export default meta;
@@ -179,3 +221,4 @@ export const OnDarkSurface: Story = {
     );
   },
 };
+

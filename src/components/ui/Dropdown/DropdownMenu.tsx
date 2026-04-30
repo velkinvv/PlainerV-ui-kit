@@ -5,6 +5,7 @@ import React, {
   useState,
   useMemo,
   useLayoutEffect,
+  useCallback,
 } from 'react';
 import { clsx } from 'clsx';
 import type { DropdownMenuProps } from '../../../types/ui';
@@ -25,12 +26,24 @@ import {
 
 type DropdownMenuContextValue = Pick<
   DropdownMenuProps,
-  'onItemSelect' | 'value' | 'onActivateItem' | 'multiSelection' | 'disableSelectedOptionHighlight'
+  | 'onItemSelect'
+  | 'value'
+  | 'onActivateItem'
+  | 'multiSelection'
+  | 'showCheckbox'
+  | 'disableSelectedOptionHighlight'
+  | 'lookupTreeMenuItemByValue'
 > & {
   /** Согласовано с `Dropdown.menuDensity` */
   menuDensity?: 'default' | 'compact';
   /** Размер пунктов темы */
   size?: Size;
+  /** Показывать шеврон раскрытия у веток с `nestedItems` */
+  treeExpandable?: boolean;
+  /** Раскрыта ли ветка с данным ключом */
+  isTreeBranchExpanded?: (branchKey: string) => boolean;
+  /** Переключить раскрытие ветки (клик по шеврону) */
+  toggleTreeBranch?: (branchKey: string, event: React.MouseEvent) => void;
 };
 
 const DropdownMenuContext = createContext<DropdownMenuContextValue>({});
@@ -51,15 +64,104 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   value,
   onActivateItem,
   multiSelection,
+  showCheckbox,
   disableSelectedOptionHighlight,
   virtualScroll,
   size = Size.MD,
   menuDensity = 'default',
   className,
+  treeExpandable = true,
+  defaultExpandedTreeKeys,
+  treeExpandedKeys: treeExpandedKeysProp,
+  onTreeExpandedKeysChange,
+  lookupTreeMenuItemByValue,
 }) => {
   const theme = useTheme();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [scrollTop, setScrollTop] = useState(0);
+
+  const isTreeControlled = treeExpandedKeysProp !== undefined;
+  const [innerExpandedTreeKeys, setInnerExpandedTreeKeys] = useState<Set<string>>(() => {
+    return new Set(defaultExpandedTreeKeys ?? []);
+  });
+
+  const expandedTreeSet = useMemo(() => {
+    if (isTreeControlled) {
+      return new Set(treeExpandedKeysProp ?? []);
+    }
+    return innerExpandedTreeKeys;
+  }, [isTreeControlled, treeExpandedKeysProp, innerExpandedTreeKeys]);
+
+  const isTreeBranchExpanded = useCallback(
+    (branchKey: string) => {
+      if (!treeExpandable) {
+        return true;
+      }
+      return expandedTreeSet.has(branchKey);
+    },
+    [expandedTreeSet, treeExpandable],
+  );
+
+  const toggleTreeBranch = useCallback(
+    (branchKey: string, event: React.MouseEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (!treeExpandable) {
+        return;
+      }
+      if (isTreeControlled) {
+        const next = new Set(treeExpandedKeysProp ?? []);
+        if (next.has(branchKey)) {
+          next.delete(branchKey);
+        } else {
+          next.add(branchKey);
+        }
+        onTreeExpandedKeysChange?.([...next]);
+        return;
+      }
+      setInnerExpandedTreeKeys((previous) => {
+        const next = new Set(previous);
+        if (next.has(branchKey)) {
+          next.delete(branchKey);
+        } else {
+          next.add(branchKey);
+        }
+        return next;
+      });
+    },
+    [isTreeControlled, treeExpandedKeysProp, onTreeExpandedKeysChange, treeExpandable],
+  );
+
+  const contextValue = useMemo<DropdownMenuContextValue>(
+    () => ({
+      onItemSelect,
+      value,
+      onActivateItem,
+      multiSelection,
+      showCheckbox,
+      disableSelectedOptionHighlight,
+      menuDensity,
+      size,
+      treeExpandable,
+      isTreeBranchExpanded,
+      toggleTreeBranch,
+      lookupTreeMenuItemByValue,
+    }),
+    [
+      onItemSelect,
+      value,
+      onActivateItem,
+      multiSelection,
+      showCheckbox,
+      disableSelectedOptionHighlight,
+      menuDensity,
+      size,
+      treeExpandable,
+      isTreeBranchExpanded,
+      toggleTreeBranch,
+      lookupTreeMenuItemByValue,
+    ],
+  );
 
   // Вычисляем высоту элемента
   const itemHeight = useMemo(() => {
@@ -138,17 +240,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   }, [virtualScroll, totalHeight]);
 
   return (
-    <DropdownMenuContext.Provider
-      value={{
-        onItemSelect,
-        value,
-        onActivateItem,
-        multiSelection,
-        disableSelectedOptionHighlight,
-        menuDensity,
-        size,
-      }}
-    >
+    <DropdownMenuContext.Provider value={contextValue}>
       <DropdownMenuWrapper
         ref={scrollContainerRef}
         className={clsx('ui-dropdown-menu', className)}

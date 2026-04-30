@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Avatar } from './Avatar';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
@@ -6,7 +6,7 @@ import { Size } from '../../../types/sizes';
 import { AvatarState, AvatarStatus } from '../../../types/ui';
 
 const meta: Meta<typeof Avatar> = {
-  title: 'Components/Avatar',
+  title: 'UI Kit/Data Display/Avatar',
   component: Avatar,
   parameters: {
     layout: 'padded',
@@ -17,7 +17,7 @@ const meta: Meta<typeof Avatar> = {
     },
   },
   decorators: [
-    Story => (
+    (Story) => (
       <ThemeProvider>
         <Story />
       </ThemeProvider>
@@ -29,49 +29,68 @@ const meta: Meta<typeof Avatar> = {
       control: { type: 'select' },
       options: [...Object.values(Size)],
       description: 'Размер аватара',
+      table: {
+        type: { summary: 'Size: XS, SM, MD, LG, XL' },
+      },
     },
     state: {
       control: { type: 'select' },
       options: [...Object.values(AvatarState)],
       description: 'Состояние аватара',
+      table: {
+        type: { summary: 'AvatarState (offline, avatar, close, pin и др.; см. enum)' },
+      },
     },
     src: {
       control: { type: 'text' },
       description: 'URL изображения',
+      table: { type: { summary: 'string (URL)' } },
     },
     alt: {
       control: { type: 'text' },
       description: 'Альтернативный текст',
+      table: { type: { summary: 'string' } },
     },
     text: {
       control: { type: 'text' },
       description: 'Текст для отображения в состоянии avatar',
+      table: { type: { summary: 'string' } },
     },
     status: {
       control: { type: 'select' },
       options: [...Object.values(AvatarStatus)],
       description: 'Статус пользователя для определения цвета Badge',
+      table: {
+        type: { summary: 'AvatarStatus: online, offline, busy и т.д. (см. enum)' },
+      },
     },
     messageCount: {
       control: { type: 'number' },
       description: 'Количество сообщений для отображения в Badge',
+      table: { type: { summary: 'number' } },
     },
     userName: {
       control: { type: 'text' },
       description: 'Имя пользователя для генерации инициалов и цвета фона',
+      table: { type: { summary: 'string' } },
     },
     showTooltip: {
       control: { type: 'boolean' },
       description: 'Отображение тултипа',
+      table: { type: { summary: 'boolean' } },
     },
     tooltipText: {
       control: { type: 'text' },
       description: 'Кастомный текст для тултипа',
+      table: { type: { summary: 'string' } },
     },
     cursor: {
       control: { type: 'select' },
       options: ['default', 'pointer'],
       description: 'Тип курсора',
+      table: {
+        type: { summary: 'default или pointer' },
+      },
     },
   },
 };
@@ -316,7 +335,7 @@ export const AllStates: Story = {
     layout: 'padded',
     docs: {
       description: {
-        story: 'Все состояния аватара согласно макету Figma',
+        story: 'Все состояния аватара',
       },
     },
   },
@@ -958,3 +977,4 @@ export const BadgeVariations: Story = {
     },
   },
 };
+

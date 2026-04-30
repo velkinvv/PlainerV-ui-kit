@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Grid } from './Grid';
 import { GridItem } from './GridItem';
@@ -6,7 +6,7 @@ import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Card } from '../Card/Card';
 
 const meta: Meta<typeof GridItem> = {
-  title: 'Components/Grid/GridItem',
+  title: 'UI Kit/Layout/GridItem',
   component: GridItem,
   parameters: {
     layout: 'padded',
@@ -18,7 +18,7 @@ const meta: Meta<typeof GridItem> = {
     },
   },
   decorators: [
-    Story => (
+    (Story) => (
       <ThemeProvider>
         <Story />
       </ThemeProvider>
@@ -29,18 +29,30 @@ const meta: Meta<typeof GridItem> = {
     column: {
       control: 'text',
       description: 'Позиция по колонке (число или строка)',
+      table: {
+        type: { summary: 'целое число (индекс) либо CSS-строка для grid-column' },
+      },
     },
     row: {
       control: 'text',
       description: 'Позиция по строке (число или строка)',
+      table: {
+        type: { summary: 'целое число (индекс) либо CSS-строка для grid-row' },
+      },
     },
     columnSpan: {
       control: 'text',
       description: 'Растяжение по колонкам (число или строка)',
+      table: {
+        type: { summary: 'целое число (span) либо CSS-строка для grid-column' },
+      },
     },
     rowSpan: {
       control: 'text',
       description: 'Растяжение по строкам (число или строка)',
+      table: {
+        type: { summary: 'целое число (span) либо CSS-строка для grid-row' },
+      },
     },
     justifySelf: {
       control: { type: 'select' },
@@ -246,3 +258,4 @@ export const NestedGridItems: Story = {
     </Grid>
   ),
 };
+

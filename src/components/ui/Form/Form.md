@@ -47,7 +47,7 @@ function LoginForm() {
 
 ### FileInput в форме
 
-`FileInput` рендерит скрытый `input type="file"` с атрибутом `form` из контекста `Form`. Передайте `name`, при необходимости `accept`, `multiple`, обработчик `onChange` и опционально `showClearButton` / `onClear` для сброса выбора.
+`FileInput` рендерит скрытый `input type="file"` с атрибутом `form` из контекста `Form`. Передайте `name`, при необходимости `accept`, `multiple`, обработчик `onChange` и опционально `displayClearIcon` / `onClearIconClick` для сброса выбора.
 
 ```tsx
 import { Form, FileInput, Button } from '@/components/ui';
@@ -104,7 +104,7 @@ function SaveForm() {
 
 ### Плавающая панель инструментов
 
-Для дополнительной панели действий (как в Figma внизу экрана) используйте **`FloatingMenu`** из `@/components/ui`: `placement` (`FloatingMenuPlacement`) для закрепления у края, `draggable` и опционально `dragSource={HANDLE}` + **`FloatingMenu.DragHandle`** для перетаскивания только за ручку; внутри — **`FloatingMenu.Group`**, **`FloatingMenu.Divider`**, **`FloatingMenu.GroupItem`** с `tooltip`, `dropdownContent` (часто обёртка с **`Menu`** / **`MenuItem`**), `dropdownTrigger` `click` | `hover`. Сторис: **Components/Navigation/FloatingMenu**.
+Для дополнительной панели действий (как в Figma внизу экрана) используйте **`FloatingMenu`** из `@/components/ui`: `placement` (`FloatingMenuPlacement`) для закрепления у края, `draggable` и опционально `dragSource={HANDLE}` + **`FloatingMenu.DragHandle`** для перетаскивания только за ручку; внутри — **`FloatingMenu.Group`**, **`FloatingMenu.Divider`**, **`FloatingMenu.GroupItem`** с `tooltip`, `dropdownContent` (часто обёртка с **`NavigationMenu`** / **`NavigationMenuItem`** для бокового списка; выпадающий список действий — отдельный **`Menu`** / **`MenuItem`**), `dropdownTrigger` `click` | `hover`. Сторис: **Components/Navigation/FloatingMenu**.
 
 ## Пропсы
 

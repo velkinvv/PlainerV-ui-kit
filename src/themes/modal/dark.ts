@@ -1,6 +1,7 @@
 import { ModalSize } from '../../types/sizes';
 import type { ModalTheme } from '../../types/theme';
-import { neutral } from '../../variables/colors/neutral';
+import { Size } from '../../types/sizes';
+import { themeRadiusBySize } from '../radiusScale';
 import { fontFamily } from '../fonts';
 
 /**
@@ -14,31 +15,31 @@ export const darkModalTheme: ModalTheme = {
       width: '100%',
       maxWidth: '400px',
       padding: '24px',
-      borderRadius: '16px',
+      borderRadius: themeRadiusBySize[Size.MD],
     },
     [ModalSize.SM]: {
       width: '100%',
       maxWidth: '500px',
       padding: '24px',
-      borderRadius: '16px',
+      borderRadius: themeRadiusBySize[Size.LG],
     },
     [ModalSize.MD]: {
       width: '540px',
       maxWidth: '540px',
       padding: '24px',
-      borderRadius: '16px',
+      borderRadius: themeRadiusBySize[Size.LG],
     },
     [ModalSize.LG]: {
       width: '100%',
       maxWidth: '800px',
       padding: '32px',
-      borderRadius: '20px',
+      borderRadius: themeRadiusBySize[Size.XL],
     },
     [ModalSize.FULL]: {
       width: '95vw',
       height: '95vh',
       padding: '32px',
-      borderRadius: '24px',
+      borderRadius: themeRadiusBySize[Size.XL],
     },
   },
 
@@ -66,7 +67,7 @@ export const darkModalTheme: ModalTheme = {
     closeButton: {
       width: '26px',
       height: '26px',
-      borderRadius: '0',
+      borderRadius: themeRadiusBySize[Size.SM],
       color: '#9E9E9E',
       hoverBackground: 'transparent',
       hoverColor: '#FFFFFF',

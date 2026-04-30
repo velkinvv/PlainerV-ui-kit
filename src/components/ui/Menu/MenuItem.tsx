@@ -1,121 +1,42 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { clsx } from 'clsx';
 import type { MenuItemProps } from '@/types/ui';
-import { useMenuContext } from './MenuContext';
-import {
-  MenuRow,
-  MenuItemButton,
-  MenuItemAnchor,
-  MenuItemIconWrap,
-  MenuItemBadge,
-  MenuItemLabel,
-  MenuItemSuffix,
-} from './Menu.style';
+import { useMenuListPresentationContext } from './MenuListPresentationContext';
+import { MenuItemRow, MenuItemControl } from './Menu.style';
 
 /**
- * Пункт вертикального меню (`Menu`). Поддерживает иконку, бейдж, суффикс и режим collapsed.
- * @property id — совпадает с `activeId` родительского `Menu` при выборе
- * @property label — основной текст
- * @property icon — иконка слева
- * @property badge — красный бейдж
- * @property suffix — элемент справа (например шеврон)
- * @property disabled — блокирует клики и обновление active
- * @property href — режим ссылки (не используется вместе с `disabled`: при `disabled` рендерится кнопка)
- * @property title — подсказка; в collapsed полезно при `label` не строка
- * @property onClick — дополнительный обработчик после логики выбора
- * @property className — класс на интерактивном элементе
- * @property children — доп. содержимое строки (между подписью и бейджем)
+ * Пункт выпадающего списка (`Menu`): кнопка с `role="menuitem"`.
+ * @param children — содержимое строки
+ * @param disabled — отключить пункт и исключить из стрелок на клавиатуре
+ * @param selected — подсветка выбранного пункта
+ * @param destructive — цвет для деструктивного действия
+ * @param onClick — обработчик клика
+ * @param className — дополнительный класс на кнопке
  */
-export const MenuItem = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, MenuItemProps>(
+export const MenuItem = React.forwardRef<HTMLButtonElement, MenuItemProps>(
   (
-    {
-      id,
-      label,
-      icon,
-      badge,
-      suffix,
-      disabled = false,
-      href,
-      className,
-      title,
-      children,
-      onClick,
-    },
+    { children, disabled = false, selected = false, destructive = false, onClick, className },
     ref,
   ) => {
-    const { collapsed, activeId, setActiveId, activeAppearance } = useMenuContext();
-    const active = activeId === id;
-
-    const resolvedTitle =
-      title ?? (collapsed && typeof label === 'string' ? label : undefined);
-
-    const handleClick = useCallback(
-      (event: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
-        onClick?.(event);
-        if (disabled || event.defaultPrevented) {
-          return;
-        }
-        setActiveId(id);
-      },
-      [disabled, id, onClick, setActiveId],
-    );
-
-    const showFloatingBadge = !!(collapsed && badge != null && badge !== false);
-    const showInlineBadge = !!(!collapsed && badge != null && badge !== false);
-    const useLink = Boolean(href) && !disabled;
-
-    const inner = (
-      <>
-        {icon != null || showFloatingBadge ? (
-          <MenuItemIconWrap>
-            {icon}
-            {showFloatingBadge ? <MenuItemBadge $floating>{badge}</MenuItemBadge> : null}
-          </MenuItemIconWrap>
-        ) : null}
-        <MenuItemLabel $collapsed={collapsed}>{label}</MenuItemLabel>
-        {children}
-        {showInlineBadge ? <MenuItemBadge>{badge}</MenuItemBadge> : null}
-        {!collapsed && suffix ? <MenuItemSuffix>{suffix}</MenuItemSuffix> : null}
-      </>
-    );
-
-    const commonSurface = {
-      $collapsed: collapsed,
-      $active: active,
-      $disabled: !!disabled,
-      $appearance: activeAppearance,
-      className: clsx('ui-menu-item', className),
-      'aria-current': active ? ('page' as const) : undefined,
-      title: resolvedTitle,
-    };
-
-    if (useLink && href) {
-      return (
-        <MenuRow>
-          <MenuItemAnchor
-            ref={ref as React.Ref<HTMLAnchorElement>}
-            href={href}
-            {...commonSurface}
-            onClick={handleClick}
-          >
-            {inner}
-          </MenuItemAnchor>
-        </MenuRow>
-      );
-    }
+    const { dense } = useMenuListPresentationContext();
 
     return (
-      <MenuRow>
-        <MenuItemButton
-          ref={ref as React.Ref<HTMLButtonElement>}
+      <MenuItemRow role="presentation">
+        <MenuItemControl
+          ref={ref}
           type="button"
+          role="menuitem"
           disabled={disabled}
-          {...commonSurface}
-          onClick={handleClick}
+          tabIndex={-1}
+          $dense={dense}
+          $selected={!!selected}
+          $destructive={!!destructive}
+          className={clsx('ui-surface-menu-item', className)}
+          onClick={onClick}
         >
-          {inner}
-        </MenuItemButton>
-      </MenuRow>
+          {children}
+        </MenuItemControl>
+      </MenuItemRow>
     );
   },
 );

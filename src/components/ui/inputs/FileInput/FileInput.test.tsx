@@ -46,22 +46,22 @@ describe('FileInput', () => {
     expect(screen.getByText('doc.pdf')).toBeInTheDocument();
   });
 
-  it('в карточке файла показывает кнопку удаления без showClearButton', () => {
+  it('в карточке файла показывает кнопку удаления без displayClearIcon', () => {
     renderWithTheme(<FileInput label="Файл" name="f" fileLayout="file" fileName="a.txt" />);
     expect(screen.getByRole('button', { name: 'Удалить файл' })).toBeInTheDocument();
   });
 
-  it('при showClearButton очищает выбор по клику', () => {
-    const onClear = jest.fn();
+  it('при displayClearIcon очищает выбор по клику', () => {
+    const onClearIconClick = jest.fn();
     renderWithTheme(
-      <FileInput label="Файл" name="f" showClearButton onClear={onClear} />,
+      <FileInput label="Файл" name="f" displayClearIcon onClearIconClick={onClearIconClick} />,
     );
     const input = document.querySelector('input[type="file"]') as HTMLInputElement;
     const file = new File(['x'], 'a.txt', { type: 'text/plain' });
     fireEvent.change(input, { target: { files: [file] } });
     expect(screen.getByText('a.txt')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Очистить выбор файла' }));
-    expect(onClear).toHaveBeenCalled();
+    expect(onClearIconClick).toHaveBeenCalled();
     expect(screen.getByText('input_file')).toBeInTheDocument();
   });
 });

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Card, CardContent, CardHeader, CardTitle } from './Card';
 import { Button } from './buttons/Button';
@@ -19,7 +19,7 @@ import { Size } from '../../types/sizes';
 import { ButtonVariant, BadgeVariant } from '../../types/ui';
 
 const meta: Meta = {
-  title: 'Components/Theme/Theme Showcase',
+  title: 'UI Kit/Utils/Theme Showcase',
   parameters: {
     layout: 'fullscreen',
   },
@@ -503,3 +503,4 @@ export const DarkTheme: Story = {
     );
   },
 };
+

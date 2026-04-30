@@ -58,12 +58,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       required = false,
       type = 'text',
       textAlign = 'left',
-      clearIcon: _clearIcon = false,
-      onClearIconClick: _onClearIconClick,
+      displayClearIcon = false,
+      onClearIconClick,
+      clearIconProps,
       leftIcon,
       rightIcon,
-      onClear,
-      showClearButton,
       className,
       id,
       ...props
@@ -188,10 +187,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       [onChange, handleInput],
     );
 
+    /** Сброс значения и уведомление родителя (контролируемый режим — обновить `value` в `onClearIconClick`). */
     const handleClear = useCallback(() => {
       setInternalValue('');
-      onClear?.();
-    }, [onClear]);
+      onClearIconClick?.();
+    }, [onClearIconClick]);
 
     // Обработчики для отключения копирования/вставки
     const handleCopy = useCallback(
@@ -308,9 +308,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
               {isLoading && <LoadingSpinner size={size} />}
 
-              {showClearButton && displayValue && !disabled && !readOnly && (
+              {displayClearIcon && displayValue && !disabled && !readOnly && (
                 <ClearButton onClick={handleClear} type="button">
-                  <Icon name="IconExClose" size={getClearIconSizeForInputField(size)} />
+                  <Icon
+                    name="IconExClose"
+                    size={getClearIconSizeForInputField(size)}
+                    {...clearIconProps}
+                  />
                 </ClearButton>
               )}
             </InputWrapper>
@@ -361,9 +365,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
             {isLoading && <LoadingSpinner size={size} />}
 
-            {showClearButton && displayValue && !disabled && !readOnly && (
+            {displayClearIcon && displayValue && !disabled && !readOnly && (
               <ClearButton onClick={handleClear} type="button">
-                <Icon name="IconExClose" size={getClearIconSizeForInputField(size)} />
+                <Icon
+                  name="IconExClose"
+                  size={getClearIconSizeForInputField(size)}
+                  {...clearIconProps}
+                />
               </ClearButton>
             )}
           </InputWrapper>

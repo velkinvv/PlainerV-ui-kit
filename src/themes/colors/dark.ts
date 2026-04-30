@@ -60,6 +60,7 @@ export const darkColors: Colors = {
   danger: colors.red[400], // Опасность
   dangerHover: colors.red[300], // Опасность при наведении
   info: colors.primary[400],
+  infoHover: colors.primary[300],
 
   // Специальные цвета
   overlay: 'rgba(0, 0, 0, 0.7)', // Наложение

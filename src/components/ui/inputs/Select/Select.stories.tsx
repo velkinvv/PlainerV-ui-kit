@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import { Select } from './Select';
-import type { SelectOption } from '../../../../types/ui';
+import type { DropdownMenuLoadMoreContext, SelectOption } from '../../../../types/ui';
 import { Form } from '../../Form';
 import { Size } from '../../../../types/sizes';
 
@@ -20,19 +20,43 @@ const manyOptions: SelectOption[] = [
   { value: 'nn', label: 'Нижний Новгород' },
 ];
 
+/** Иерархия опций для сторис дерева: родитель с `options`, каскадный мультивыбор в панели. */
+const treeSelectOptions: SelectOption[] = [
+  {
+    value: 'region-center',
+    id: 'region-center',
+    label: 'Регион: Центр',
+    options: [
+      { value: 'msk', label: 'Москва' },
+      { value: 'tula', label: 'Тула' },
+    ],
+  },
+  {
+    value: 'region-nw',
+    id: 'region-nw',
+    label: 'Регион: Северо-Запад',
+    options: [
+      { value: 'spb-tree', label: 'Санкт-Петербург' },
+      { value: 'kgd', label: 'Калининград' },
+    ],
+  },
+  { value: 'other-city', label: 'Отдельный пункт' },
+];
+
 const meta: Meta<typeof Select> = {
-  title: 'Components/Inputs/Select',
+  title: 'UI Kit/Inputs/Select',
   component: Select,
+  /** Пустой объект — чтобы в Controls был слайдер/редактор `openMenuIconProps` у всех сторис. */
+  args: {
+    openMenuIconProps: {},
+    clearIconProps: {},
+  },
   parameters: {
     layout: 'padded',
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4823-16420',
-    },
     docs: {
       description: {
         component:
-          'По умолчанию `mode="select"`: панель `Dropdown` (поиск в шапке панели по умолчанию, мультивыбор). `mode="searchSelect"` — одиночный выбор: фильтр вводится в поле селекта, список открывается по фокусу, без отдельного поля поиска в панели (см. [Admiral SearchSelect](https://admiralds.github.io/react-ui/?path=/docs/admiral-2-1-input-select-%D1%80%D0%B5%D0%B6%D0%B8%D0%BC-searchselect--docs)). `mode="native"` — нативный `select`. Макет: [Figma — селект](https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4823-16420&t=cStO03cIis1M6Tar-4).',
+          'По умолчанию `mode="select"`: панель `Dropdown` (поиск в шапке панели по умолчанию, мультивыбор). `mode="searchSelect"`: фильтр в поле селекта, список по фокусу, без поиска в панели; поддерживается и `multiple` (в закрытом состоянии — чипы, при открытом — поле фильтра). `mode="native"` — нативный `select`.',
       },
     },
   },
@@ -54,71 +78,256 @@ const meta: Meta<typeof Select> = {
       control: 'radio',
       options: ['select', 'searchSelect', 'native'],
       description:
-        '`select` — панель с поиском внутри; `searchSelect` — ввод в триггер (только single); `native` — системный select',
+        '`select` — панель с поиском внутри; `searchSelect` — ввод фильтра в триггер (single или multiple); `native` — системный select',
+      table: {
+        type: { summary: '`select`, `searchSelect`, `native`' },
+      },
     },
     label: { description: 'Подпись поля' },
-    options: { description: 'Массив `{ value, label, disabled? }`' },
+    options: {
+      description:
+        'Массив опций: `{ value, label, disabled?, options? (вложенное дерево), tooltip?, … }`; в панели `tooltip` + `tooltipType: "hint"` дают хинт на строке списка',
+    },
     placeholder: {
       description:
-        'Пустое состояние (триггер / первая опция в native single); при `multiple` и выбранных значениях триггер — «Выбрано: N»',
+        'Пустое состояние (триггер / первая опция в native single); при `multiple` в панели — плейсхолдер при пустом выборе, при выборе — чипы с подписями',
     },
-    value: { description: 'Контролируемое значение: строка или `string[]` при `multiple`' },
-    defaultValue: { description: 'Неконтролируемое начальное значение' },
+    value: {
+      description:
+        'Контролируемое значение: при `multiple: false` — одна строка (`value` выбранной опции); при `multiple: true` — массив строк (`value` всех выбранных опций)',
+      table: {
+        type: {
+          summary: 'строка при одиночном выборе; массив строк при `multiple: true`',
+        },
+      },
+    },
+    defaultValue: {
+      description:
+        'Неконтролируемое начальное значение: те же правила, что у `value` — одна строка или массив строк в зависимости от `multiple`',
+      table: {
+        type: {
+          summary: 'строка при одиночном выборе; массив строк при `multiple: true`',
+        },
+        defaultValue: { summary: 'undefined' },
+      },
+    },
     onChange: {
-      description: 'Событие от скрытого/нативного `select` (`ChangeEvent<HTMLSelectElement>`)',
+      description:
+        'Событие изменения скрытого или нативного `select`: объект события с полем `target` (как у стандартного HTMLSelectElement)',
+      table: {
+        type: { summary: 'ChangeEvent у HTMLSelectElement' },
+      },
     },
-    onValueChange: { description: 'Удобный колбэк `(value: string | string[])` в `mode="select"`' },
+    onValueChange: {
+      description:
+        'Колбэк в `mode="select"`: при одиночном выборе передаётся строка; при `multiple: true` — массив строк выбранных значений',
+      table: {
+        type: {
+          summary: '(значение: строка или массив строк) => void',
+        },
+      },
+    },
+    onSelectedChange: {
+      action: 'selectedChange',
+      description:
+        'Смена выбранной опции или набора опций во всех режимах: строка или массив строк (`multiple`)',
+      table: {
+        type: { summary: '(value: string | string[]) => void' },
+      },
+    },
     multiple: { control: 'boolean', description: 'Множественный выбор' },
+    treeExpandable: {
+      control: 'boolean',
+      description:
+        'При вложенных `options`: показывать шеврон и разрешать сворачивать ветки (как у `Dropdown.treeExpandable`)',
+    },
+    treeDefaultExpanded: {
+      control: 'radio',
+      options: ['expanded', 'collapsed'],
+      description:
+        'Начальное раскрытие веток: все развёрнуты, все свёрнуты или задайте `treeExpandedKeys` для явного списка ключей',
+    },
+    treeExpandedKeys: {
+      control: 'object',
+      description: 'Контролируемый набор ключей раскрытых веток (см. сторис «дерево» у Dropdown)',
+    },
+    onTreeExpandedKeysChange: {
+      action: 'treeExpandedKeysChange',
+      description: 'Смена набора раскрытых веток при контролируемом `treeExpandedKeys`',
+    },
+    showCheckbox: {
+      control: 'boolean',
+      description:
+        'При `multiple` в панели: чекбоксы у пунктов списка (по умолчанию `true`; `false` — скрыть, выбор по клику на строку)',
+    },
+    moveSelectedOnTop: {
+      control: 'boolean',
+      description:
+        'Панель `select` / `searchSelect`: выбранные строки вверху списка. По умолчанию при `multiple` — да; при single — только если `true`',
+    },
+    displayClearIcon: {
+      control: 'boolean',
+      description:
+        'В `select` / `searchSelect`: кнопка сброса в триггере (до шеврона). При `multiple` с чипами не показывается, если уже есть «очистить всё» у чипов. В `native` не используется',
+    },
+    onClearIconClick: {
+      action: 'clearIconClick',
+      description: 'Колбэк после сброса значения (и строки поиска в `searchSelect`) по клику на иконку очистки',
+    },
     showMultiSelectionCountBadge: {
       control: 'boolean',
       description:
         'В `mode="select"` при `multiple`: бейдж с числом слева от шеврона (по умолчанию `true`)',
+    },
+    showMultiSelectAll: {
+      control: 'boolean',
+      description:
+        'В `mode="select"` при `multiple`: кнопка «Выбрать все» в подвале панели (только неотключённые опции; по умолчанию `true`)',
     },
     searchable: {
       control: 'boolean',
       description:
         'Только `mode="select"`: поле поиска в панели (по умолчанию `true`). В `searchSelect` не используется',
     },
+    searchFormat: {
+      control: 'radio',
+      options: ['wholly', 'word'],
+      description:
+        'Встроенный поиск без `searchFilter`: `wholly` — подстрока целиком; `word` — каждое слово запроса (пробелы) должно встречаться в тексте опции',
+    },
+    clearInputValueAfterSelect: {
+      control: 'boolean',
+      description:
+        'Только `searchSelect`: после выбора пункта из списка очищать строку в поле фильтра (`onSearch(\'\')` при контроле — обновите `searchValue`)',
+    },
     searchPlaceholder: { description: 'Плейсхолдер поля поиска в панели' },
+    onInputChange: {
+      action: 'inputChange',
+      description:
+        '`ChangeEvent` внутреннего `input`: в `searchSelect` — триггер; в `select` при включённом поиске — поле в шапке панели',
+    },
     error: { description: 'Текст ошибки' },
     success: { description: 'Успешное состояние' },
     status: {
       control: { type: 'select' },
       options: [undefined, 'error', 'success', 'warning'],
-      description: 'Явный статус обводки',
+      description:
+        'Явный статус обводки: `error`, `success`, `warning` или не задан (тогда статус из `error` / `success`)',
     },
     helperText: { description: 'Текст под полем' },
     required: { control: 'boolean', description: 'Обязательное поле' },
     fullWidth: { control: 'boolean', description: 'На всю ширину' },
     readOnly: { control: 'boolean', description: 'Без открытия / disabled' },
+    onFocus: {
+      action: 'focus',
+      description:
+        'Фокус внутри оболочки `Dropdown` (панельные режимы) или `InputWrapper` вокруг `select` (`native`); `FocusEvent<HTMLDivElement>`',
+    },
+    onBlur: {
+      action: 'blur',
+      description: 'Потеря фокуса на оболочке поля',
+    },
     disabled: { control: 'boolean', description: 'Отключено' },
     skeleton: { control: 'boolean', description: 'Скелетон' },
     size: {
       control: { type: 'select' },
       options: [Size.SM, Size.MD, Size.LG, Size.XL],
-      description: 'Размер из дизайн-системы',
+      description: 'Размер поля; значения: `SM`, `MD`, `LG`, `XL`',
     },
     textAlign: {
       control: { type: 'select' },
       options: ['left', 'center', 'right'],
-      description: 'Выравнивание текста на триггере',
+      description: 'Выравнивание текста на триггере; значения: `left`, `center`, `right`',
     },
     isLoading: { control: 'boolean', description: 'Спиннер справа' },
     dropdownVariant: {
       control: 'radio',
       options: ['default', 'elevated', 'outlined'],
-      description: 'Вариант оформления панели (`Dropdown`)',
+      description: 'Вариант оформления панели `Dropdown`; значения: `default`, `elevated`, `outlined`',
     },
-    menuMaxHeight: { description: 'Максимальная высота панели (px или строка)' },
+    menuMaxHeight: {
+      description:
+        'Максимальная высота панели (px или строка); для скролла и `onMenuLoadMore` задайте ограничение по высоте',
+      table: {
+        type: { summary: 'CSS-строка или число (px)' },
+        defaultValue: { summary: 'undefined' },
+      },
+    },
+    virtualScroll: {
+      control: 'object',
+      description:
+        'Виртуальный скролл списка: `{ itemHeight: number | "auto" }`; при `"auto"` высота строки из темы для `size`',
+      table: {
+        type: { summary: 'DropdownVirtualScrollConfig | undefined' },
+      },
+    },
+    isMenuOpen: {
+      control: 'boolean',
+      description:
+        'Контролируемое открытие панели: задайте вместе с `onMenuOpenChange` и держите состояние снаружи',
+    },
+    onMenuOpenChange: {
+      action: 'menuOpenChange',
+      description: '`(isOpen: boolean) => void` — обновите `isMenuOpen` при контроле снаружи',
+    },
+    onOpenMenu: { description: 'Панель открыта' },
+    onCloseMenu: { description: 'Панель закрыта' },
+    onScrollMenu: {
+      description:
+        'Скролл контейнера списка; в данных события доступны метрики `scrollTop`, `scrollHeight`, `clientHeight`',
+    },
+    onMenuLoadMore: {
+      description:
+        'Догрузка при приближении к низу списка; в колбэке — `anchorFlatIndex`, `anchorValue`, `anchorId`',
+      table: {
+        type: {
+          summary: '(context) => void или Promise<void>',
+        },
+      },
+    },
+    menuLoadMoreThresholdPx: { description: 'Порог в px до низа для догрузки (по умолчанию 80)' },
+    menuHasMore: { description: 'Есть ли ещё порции данных' },
+    menuIsLoadingMore: { description: 'Блокировка повторного вызова догрузки' },
+    openMenuIconProps: {
+      control: 'object',
+      description:
+        'Частичные пропсы `Icon` для шеврона открытия меню (`name`, `size`, `color`, `className`). В `select` / `searchSelect` — у иконки в триггере и прокидывается в `Dropdown`; в `native` — только у иконки у поля.',
+      table: {
+        type: { summary: 'OpenMenuIconProps' },
+      },
+    },
+    clearIconProps: {
+      control: 'object',
+      description:
+        'Частичные пропсы `Icon` для крестиков сброса в триггере (`select` / `searchSelect`): удаление чипа, «очистить всё», `displayClearIcon`. По умолчанию `IconExClose`; мерж поверх вычисленного `size`.',
+      table: {
+        type: { summary: 'ClearIconProps' },
+      },
+    },
     dropdownInline: {
       description:
         '`Dropdown.inline`: по умолчанию `false` — меню в портале под триггером; `true` — внутри контейнера (overflow/тесты)',
     },
+    renderTopPanel: {
+      control: false,
+      description:
+        '`(props: DropdownTopPanelProps) => ReactNode` — блок над списком в панели (до поля поиска при `searchable`)',
+    },
+    renderBottomPanel: {
+      control: false,
+      description:
+        '`(props: DropdownTopPanelProps) => ReactNode` — блок под списком; при `multiple` кнопка «Выбрать все» ниже этой панели',
+    },
     tooltip: { description: 'Подсказка' },
-    tooltipType: { control: 'radio', options: ['tooltip', 'hint'] },
+    tooltipType: {
+      control: 'radio',
+      options: ['tooltip', 'hint'],
+      description: 'Тип подсказки: `tooltip` или `hint`',
+    },
     tooltipPosition: {
       control: { type: 'select' },
       options: ['top', 'bottom', 'left', 'right'],
+      description: 'Позиция подсказки; значения: `top`, `bottom`, `left`, `right`',
     },
     additionalLabel: { description: 'Доп. подпись' },
     extraText: { description: 'Доп. текст внизу' },
@@ -134,6 +343,50 @@ export const Default: Story = {
     options: manyOptions,
     placeholder: 'Выберите город',
     name: 'city',
+  },
+};
+
+/** Проп `openMenuIconProps`: частичные настройки `Icon` шеврона (цвет, `name`, `size` и т.д.). */
+export const OpenMenuIconProps: Story = {
+  args: {
+    options: manyOptions,
+    placeholder: 'Выберите город',
+    name: 'open-menu-icon',
+    label: 'Шеврон меню',
+    openMenuIconProps: {
+      color: '#1565c0',
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Панельные режимы: иконка в триггере и внутри `Dropdown`. `native`: только иконка у поля. В Controls можно править объект `openMenuIconProps` (например `{ "color": "#1565c0" }`).',
+      },
+    },
+  },
+};
+
+/** Проп `clearIconProps`: стилизация всех крестиков сброса в триггере (поле очистки при `displayClearIcon`). */
+export const ClearIconProps: Story = {
+  args: {
+    options: manyOptions,
+    placeholder: 'Выберите город',
+    name: 'clear-icon-props',
+    label: 'Крестик очистки',
+    value: 'moscow',
+    displayClearIcon: true,
+    clearIconProps: {
+      color: '#c62828',
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'При `displayClearIcon` и непустом значении — кнопка сброса до шеврона. Тот же `clearIconProps` применяется к «очистить всё» у мультиселекта и к кресту в чипе.',
+      },
+    },
   },
 };
 
@@ -166,6 +419,29 @@ export const SearchSelect: Story = {
   },
 };
 
+/** `searchSelect` + `multiple`: в закрытом меню — чипы, при открытом — поле фильтра и чекбоксы */
+export const SearchSelectMultiple: Story = {
+  render: () => {
+    const [value, setValue] = useState<string[]>(['moscow', 'spb']);
+    return (
+      <div style={{ maxWidth: 420 }}>
+        <Select
+          mode="searchSelect"
+          label="Города"
+          name="cities-search-multi"
+          multiple
+          options={manyOptions}
+          value={value}
+          onValueChange={(v) => setValue(v as string[])}
+          placeholder="Выберите города"
+          searchPlaceholder="Фильтр списка"
+          showMultiSelectionCountBadge={false}
+        />
+      </div>
+    );
+  },
+};
+
 export const WithLabel: Story = {
   args: {
     label: 'Город',
@@ -191,7 +467,7 @@ export const Controlled: Story = {
   },
 };
 
-/** Несколько значений; в триггере при выборе — «Выбрано: N», пустое состояние — плейсхолдер */
+/** Несколько значений: чипы в триггере, сортировка выбранных вверху списка, «Выбрать все» в подвале */
 export const MultiSelect: Story = {
   render: () => {
     const [value, setValue] = useState<string[]>(['ru', 'en']);
@@ -225,6 +501,199 @@ export const MultiSelectWithoutCountBadge: Story = {
         placeholder="Выберите языки"
       />
     );
+  },
+};
+
+/** Мультиселект с вложенными `options`: каскад, indeterminate у родителя, шевроны (`treeDefaultExpanded`). */
+export const TreeMultipleSelect: Story = {
+  render: () => {
+    const [value, setValue] = useState<string[]>([]);
+    return (
+      <div style={{ maxWidth: 440 }}>
+        <Select
+          label="Города по регионам"
+          name="cities-tree"
+          multiple
+          options={treeSelectOptions}
+          value={value}
+          onValueChange={(next) => setValue(next as string[])}
+          placeholder="Выберите города"
+          treeExpandable
+          treeDefaultExpanded="expanded"
+          disableSelectedOptionHighlight
+        />
+        {value.length > 0 ? (
+          <pre
+            style={{
+              marginTop: 12,
+              padding: 12,
+              background: '#f1f5f9',
+              borderRadius: 8,
+              fontSize: 12,
+              overflow: 'auto',
+            }}
+          >
+            {JSON.stringify(value, null, 2)}
+          </pre>
+        ) : null}
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Вложенные `options` у родительских строк превращаются в `nestedItems` в панели. Поведение выбора совпадает с примером групп-чекбоксов в меню (каскад, частичный выбор детей).',
+      },
+    },
+  },
+};
+
+/** Дерево опций: ветки по умолчанию свёрнуты. */
+export const TreeMultipleSelectCollapsed: Story = {
+  render: () => {
+    const [value, setValue] = useState<string[]>(['msk']);
+    return (
+      <div style={{ maxWidth: 440 }}>
+        <Select
+          label="Регионы (свёрнуто по умолчанию)"
+          name="cities-tree-collapsed"
+          multiple
+          options={treeSelectOptions}
+          value={value}
+          onValueChange={(next) => setValue(next as string[])}
+          placeholder="Выберите"
+          treeExpandable
+          treeDefaultExpanded="collapsed"
+          disableSelectedOptionHighlight
+        />
+      </div>
+    );
+  },
+};
+
+/** Контролируемое раскрытие веток панели. */
+export const TreeMultipleSelectControlledExpand: Story = {
+  render: () => {
+    const [value, setValue] = useState<string[]>([]);
+    const [expandedKeys, setExpandedKeys] = useState<string[]>(['m/region-nw']);
+    return (
+      <div style={{ maxWidth: 460 }}>
+        <p style={{ margin: '0 0 8px', fontSize: 13, color: '#64748b' }}>
+          Развёрнута ветка с ключом <code>m/region-nw</code> (вторая группа в списке).
+        </p>
+        <Select
+          label="Города (контроль шевронов)"
+          name="cities-tree-controlled-expand"
+          multiple
+          options={treeSelectOptions}
+          value={value}
+          onValueChange={(next) => setValue(next as string[])}
+          placeholder="Выберите города"
+          treeExpandable
+          treeExpandedKeys={expandedKeys}
+          onTreeExpandedKeysChange={setExpandedKeys}
+          disableSelectedOptionHighlight
+        />
+      </div>
+    );
+  },
+};
+
+const lazyPageSize = 12;
+const lazyTotalRows = 48;
+
+/** Догрузка `options` у нижней границы списка: `onMenuLoadMore` с якорем, меню остаётся открытым */
+export const SelectLazyLoadOnScroll: Story = {
+  render: () => {
+    const [options, setOptions] = useState<SelectOption[]>(() =>
+      Array.from({ length: lazyPageSize }, (_, i) => ({
+        value: `row-${i}`,
+        id: `srv-${i}`,
+        label: `Пункт ${i + 1}`,
+      })),
+    );
+    const [loadingMore, setLoadingMore] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
+    const [value, setValue] = useState('');
+    const [events, setEvents] = useState<string[]>([]);
+
+    const appendLog = (line: string) => {
+      setEvents((prev) => [...prev.slice(-8), line]);
+    };
+
+    const handleLoadMore = async (ctx: DropdownMenuLoadMoreContext) => {
+      appendLog(
+        `onMenuLoadMore: index=${ctx.anchorFlatIndex} value=${ctx.anchorValue} id=${ctx.anchorId ?? '—'}`,
+      );
+      setLoadingMore(true);
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve, 350);
+      });
+      setOptions((prev) => {
+        const start = prev.length;
+        if (start >= lazyTotalRows) {
+          setHasMore(false);
+          return prev;
+        }
+        const chunk: SelectOption[] = [];
+        for (let i = 0; i < lazyPageSize && start + i < lazyTotalRows; i += 1) {
+          const n = start + i;
+          chunk.push({ value: `row-${n}`, id: `srv-${n}`, label: `Пункт ${n + 1}` });
+        }
+        const next = [...prev, ...chunk];
+        if (next.length >= lazyTotalRows) {
+          setHasMore(false);
+        }
+        return next;
+      });
+      setLoadingMore(false);
+    };
+
+    return (
+      <div style={{ maxWidth: 400 }}>
+        <Select
+          label="Ленивая подгрузка"
+          name="lazy-scroll"
+          options={options}
+          value={value}
+          onValueChange={(v) => setValue(String(v))}
+          placeholder="Прокрутите список вниз"
+          menuMaxHeight={220}
+          searchable={false}
+          onOpenMenu={() => appendLog('onOpenMenu')}
+          onCloseMenu={() => appendLog('onCloseMenu')}
+          onScrollMenu={() => {
+            /* при необходимости — телеметрия скролла */
+          }}
+          onMenuLoadMore={handleLoadMore}
+          menuHasMore={hasMore}
+          menuIsLoadingMore={loadingMore}
+        />
+        <pre
+          style={{
+            marginTop: 12,
+            fontSize: 11,
+            lineHeight: 1.4,
+            maxHeight: 120,
+            overflow: 'auto',
+            background: '#f4f4f5',
+            padding: 8,
+            borderRadius: 8,
+          }}
+        >
+          {events.join('\n') || 'События появятся здесь'}
+        </pre>
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Паттерн бесконечной подгрузки: при приближении к низу вызывается `onMenuLoadMore` с индексом и полями последней строки (`value`, `id`); родитель дописывает `options`, скролл компенсируется внутри `Dropdown`. Укажите `menuMaxHeight`, иначе контейнер не скроллится.',
+      },
+    },
   },
 };
 
@@ -311,6 +780,37 @@ export const WithTooltip: Story = {
   },
 };
 
+/** Хинты у строк в открытом списке (`tooltip` + `tooltipType: 'hint'` на опции) */
+export const WithHintsInDropdownMenu: Story = {
+  args: {
+    label: 'Тариф',
+    options: [
+      {
+        value: 'free',
+        label: 'Free — старт без оплаты',
+        tooltip: 'До 100 запросов в месяц, общий пул на команду.',
+        tooltipType: 'hint',
+      },
+      {
+        value: 'pro',
+        label: 'Pro — для растущих команд',
+        tooltip: 'Безлимит запросов, приоритетная поддержка и расширенная аналитика.',
+        tooltipType: 'hint',
+      },
+    ],
+    placeholder: 'Откройте список и наведите на пункт',
+    name: 'plan-hints-menu',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'В `mode="select"` / `searchSelect` у каждой опции можно задать `tooltip` и `tooltipType: "hint"`: в открытом меню при наведении на строку показывается компонент `Hint` вместо тултипа.',
+      },
+    },
+  },
+};
+
 export const Loading: Story = {
   args: {
     label: 'Загрузка списка',
@@ -374,3 +874,4 @@ export const InFormWithSubmit: Story = {
     );
   },
 };
+

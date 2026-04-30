@@ -1,12 +1,21 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
+import { Size } from '../types/sizes';
 import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
 import { useKeyPress, useKeyPressSimple } from './useKeyPress';
+import {
+  AllExamplesContainer,
+  ButtonRow,
+  ButtonRowWrap,
+  ControlsRowWrap,
+  SectionContainer,
+  StatusContainer,
+} from './useKeyPress.stories.style';
 
 const meta: Meta = {
-  title: 'Hooks/useKeyPress',
+  title: 'UI Kit/Hooks/useKeyPress',
   parameters: {
     docs: {
       description: {
@@ -94,13 +103,13 @@ const BasicKeyPressDemo = () => {
         Базовое использование useKeyPress
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <SectionContainer>
         <Typography variant="body1" marginBottom="sm">
           Нажмите клавиши: Enter, Escape или Space
         </Typography>
-      </div>
+      </SectionContainer>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <StatusContainer>
         <Typography variant="body1" marginBottom="sm">
           <strong>Статус:</strong>
         </Typography>
@@ -108,7 +117,7 @@ const BasicKeyPressDemo = () => {
           Последняя нажатая клавиша: {lastKey || 'Нет'}
         </Typography>
         <Typography variant="body2">Всего нажатий: {keyCount}</Typography>
-      </div>
+      </StatusContainer>
     </Card>
   );
 };
@@ -169,30 +178,30 @@ const ModifierKeysDemo = () => {
         Комбинации с модификаторами
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <SectionContainer>
         <Typography variant="body1" marginBottom="sm">
           Попробуйте стандартные комбинации:
         </Typography>
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '8px' }}>
-          <Button size="sm" variant="outlined">
+        <ButtonRowWrap>
+          <Button size={Size.SM} variant="outlined">
             Ctrl+S
           </Button>
-          <Button size="sm" variant="outlined">
+          <Button size={Size.SM} variant="outlined">
             Ctrl+Z
           </Button>
-          <Button size="sm" variant="outlined">
+          <Button size={Size.SM} variant="outlined">
             Ctrl+A
           </Button>
-          <Button size="sm" variant="outlined">
+          <Button size={Size.SM} variant="outlined">
             Ctrl+C
           </Button>
-          <Button size="sm" variant="outlined">
+          <Button size={Size.SM} variant="outlined">
             Ctrl+V
           </Button>
-        </div>
-      </div>
+        </ButtonRowWrap>
+      </SectionContainer>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <StatusContainer>
         <Typography variant="body1" marginBottom="sm">
           <strong>Статус:</strong>
         </Typography>
@@ -200,7 +209,7 @@ const ModifierKeysDemo = () => {
           Последняя комбинация: {lastCombination || 'Нет'}
         </Typography>
         <Typography variant="body2">Всего комбинаций: {combinationCount}</Typography>
-      </div>
+      </StatusContainer>
     </Card>
   );
 };
@@ -224,21 +233,23 @@ const MultipleKeysDemo = () => {
         Множественные клавиши
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <SectionContainer>
         <Typography variant="body1" marginBottom="sm">
           Нажмите цифры от 1 до 5
         </Typography>
-      </div>
+      </SectionContainer>
 
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+      <SectionContainer>
+        <ButtonRow>
         {['1', '2', '3', '4', '5'].map(num => (
-          <Button key={num} size="sm" variant="outlined">
+          <Button key={num} size={Size.SM} variant="outlined">
             {num}
           </Button>
         ))}
-      </div>
+        </ButtonRow>
+      </SectionContainer>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <StatusContainer>
         <Typography variant="body1" marginBottom="sm">
           <strong>Статус:</strong>
         </Typography>
@@ -246,7 +257,7 @@ const MultipleKeysDemo = () => {
           Последняя нажатая цифра: {lastKey || 'Нет'}
         </Typography>
         <Typography variant="body2">Всего нажатий: {keyCount}</Typography>
-      </div>
+      </StatusContainer>
     </Card>
   );
 };
@@ -299,7 +310,7 @@ const EnabledDisabledDemo = () => {
         Управление состоянием useKeyPress
       </Typography>
 
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
+      <ControlsRowWrap>
         <Button
           variant={isEnabled ? 'primary' : 'outlined'}
           onClick={() => setIsEnabled(!isEnabled)}
@@ -309,22 +320,22 @@ const EnabledDisabledDemo = () => {
         <Button onClick={() => setKeyCount(0)} variant="outlined">
           Сбросить счетчик
         </Button>
-      </div>
+      </ControlsRowWrap>
 
-      <div style={{ marginBottom: '16px' }}>
+      <SectionContainer>
         <Typography variant="body1" marginBottom="sm">
           Нажмите стрелки для навигации
         </Typography>
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <ButtonRow>
           {['↑', '↓', '←', '→'].map(arrow => (
-            <Button key={arrow} size="sm" variant="outlined">
+            <Button key={arrow} size={Size.SM} variant="outlined">
               {arrow}
             </Button>
           ))}
-        </div>
-      </div>
+        </ButtonRow>
+      </SectionContainer>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <StatusContainer>
         <Typography variant="body1" marginBottom="sm">
           <strong>Статус:</strong>
         </Typography>
@@ -335,7 +346,7 @@ const EnabledDisabledDemo = () => {
           Последняя стрелка: {lastKey || 'Нет'}
         </Typography>
         <Typography variant="body2">Всего нажатий: {keyCount}</Typography>
-      </div>
+      </StatusContainer>
     </Card>
   );
 };
@@ -366,21 +377,23 @@ const SimpleKeyPressDemo = () => {
         useKeyPressSimple
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <SectionContainer>
         <Typography variant="body1" marginBottom="sm">
           Нажмите функциональные клавиши F1, F2, F3
         </Typography>
-      </div>
+      </SectionContainer>
 
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+      <SectionContainer>
+        <ButtonRow>
         {['F1', 'F2', 'F3'].map(key => (
-          <Button key={key} size="sm" variant="outlined">
+          <Button key={key} size={Size.SM} variant="outlined">
             {key}
           </Button>
         ))}
-      </div>
+        </ButtonRow>
+      </SectionContainer>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <StatusContainer>
         <Typography variant="body1" marginBottom="sm">
           <strong>Статус:</strong>
         </Typography>
@@ -388,7 +401,7 @@ const SimpleKeyPressDemo = () => {
           Последняя клавиша: {lastKey || 'Нет'}
         </Typography>
         <Typography variant="body2">Всего нажатий: {keyCount}</Typography>
-      </div>
+      </StatusContainer>
     </Card>
   );
 };
@@ -422,13 +435,13 @@ const PreventDefaultDemo = () => {
         preventDefault опция
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <SectionContainer>
         <Typography variant="body1" marginBottom="sm">
           Нажмите Tab - первое нажатие предотвратит стандартное поведение
         </Typography>
-      </div>
+      </SectionContainer>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <StatusContainer>
         <Typography variant="body1" marginBottom="sm">
           <strong>Статус:</strong>
         </Typography>
@@ -436,7 +449,7 @@ const PreventDefaultDemo = () => {
           Последняя клавиша: {lastKey || 'Нет'}
         </Typography>
         <Typography variant="body2">Всего нажатий: {keyCount}</Typography>
-      </div>
+      </StatusContainer>
     </Card>
   );
 };
@@ -467,13 +480,14 @@ export const PreventDefault: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <AllExamplesContainer>
       <BasicKeyPressDemo />
       <ModifierKeysDemo />
       <MultipleKeysDemo />
       <EnabledDisabledDemo />
-      <SimpleUsage />
+      <SimpleKeyPressDemo />
       <PreventDefaultDemo />
-    </div>
+    </AllExamplesContainer>
   ),
 };
+

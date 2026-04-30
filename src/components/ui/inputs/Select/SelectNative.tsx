@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useMemo, useState } from 'react';
+import React, { forwardRef, useCallback, useMemo, useRef, useState } from 'react';
 import { InputVariant, type SelectProps, type TooltipPosition } from '../../../../types/ui';
 import { Size } from '../../../../types/sizes';
 import { Icon } from '../../Icon/Icon';
@@ -19,7 +19,12 @@ import {
   RequiredIndicator,
 } from '../shared';
 import { StyledSelect, SelectChevronSlot } from './Select.style';
-import { getSelectChevronIconSize, getSelectStatus, getSelectUncontrolledDefaultValue } from './handlers';
+import {
+  getSelectChevronIconSize,
+  getSelectNativeValueFromElement,
+  getSelectStatus,
+  getSelectUncontrolledDefaultValue,
+} from './handlers';
 
 /**
  * Нативный `select` в оболочке полей ввода (`mode="native"`).
@@ -35,6 +40,7 @@ export const SelectNative = forwardRef<HTMLSelectElement, SelectProps>(
       value,
       defaultValue,
       onChange,
+      onSelectedChange,
       onFocus,
       onBlur,
       error,
@@ -65,11 +71,33 @@ export const SelectNative = forwardRef<HTMLSelectElement, SelectProps>(
       searchValue: _searchValue,
       defaultSearchValue: _defaultSearchValue,
       onSearch: _onSearch,
+      onInputChange: _onInputChange,
       searchFilter: _searchFilter,
+      searchFormat: _searchFormat,
+      clearInputValueAfterSelect: _clearInputValueAfterSelect,
       dropdownVariant: _dropdownVariant,
       menuMaxHeight: _menuMaxHeight,
+      virtualScroll: _virtualScroll,
       dropdownInline: _dropdownInline,
       showMultiSelectionCountBadge: _showMultiSelectionCountBadge,
+      showMultiSelectAll: _showMultiSelectAll,
+      showCheckbox: _showCheckbox,
+      moveSelectedOnTop: _moveSelectedOnTop,
+      displayClearIcon: _displayClearIcon,
+      onClearIconClick: _onClearIconClick,
+      isMenuOpen: _isMenuOpen,
+      onMenuOpenChange: _onMenuOpenChange,
+      onOpenMenu: _onOpenMenu,
+      onCloseMenu: _onCloseMenu,
+      onScrollMenu: _onScrollMenu,
+      onMenuLoadMore: _onMenuLoadMore,
+      menuLoadMoreThresholdPx: _menuLoadMoreThresholdPx,
+      menuHasMore: _menuHasMore,
+      menuIsLoadingMore: _menuIsLoadingMore,
+      openMenuIconProps,
+      clearIconProps: _clearIconProps,
+      renderTopPanel: _renderTopPanel,
+      renderBottomPanel: _renderBottomPanel,
       ...rest
     },
     ref,
@@ -90,31 +118,53 @@ export const SelectNative = forwardRef<HTMLSelectElement, SelectProps>(
       [placeholder, defaultValue, multiple],
     );
 
-    const handleFocus = useCallback(
-      (e: React.FocusEvent<HTMLSelectElement>) => {
-        setFocused(true);
-        onFocus?.(e);
+    const handleSelectFocus = useCallback(() => {
+      setFocused(true);
+    }, []);
+
+    const handleSelectBlur = useCallback(() => {
+      setFocused(false);
+    }, []);
+
+    const selectDisabled = disabled || readOnly || isLoading;
+
+    /** Ref на нативный `select`: клик по шеврону программно открывает список (область справа не входит в bbox `select`). */
+    const selectDomRef = useRef<HTMLSelectElement | null>(null);
+
+    const assignSelectRef = useCallback(
+      (element: HTMLSelectElement | null) => {
+        selectDomRef.current = element;
+        if (typeof ref === 'function') {
+          ref(element);
+        } else if (ref) {
+          (ref as React.MutableRefObject<HTMLSelectElement | null>).current = element;
+        }
       },
-      [onFocus],
+      [ref],
     );
 
-    const handleBlur = useCallback(
-      (e: React.FocusEvent<HTMLSelectElement>) => {
-        setFocused(false);
-        onBlur?.(e);
+    const handleNativeChevronMouseDown = useCallback(
+      (event: React.MouseEvent) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (selectDisabled) {
+          return;
+        }
+        const element = selectDomRef.current;
+        element?.focus();
+        element?.click();
       },
-      [onBlur],
+      [selectDisabled],
     );
+    const isMultiple = Boolean(multiple);
 
     const handleChange = useCallback(
       (e: React.ChangeEvent<HTMLSelectElement>) => {
         onChange?.(e);
+        onSelectedChange?.(getSelectNativeValueFromElement(e.currentTarget, isMultiple));
       },
-      [onChange],
+      [onChange, onSelectedChange, isMultiple],
     );
-
-    const selectDisabled = disabled || readOnly || isLoading;
-    const isMultiple = Boolean(multiple);
 
     const controlledValueProps = isControlled
       ? multiple
@@ -128,7 +178,7 @@ export const SelectNative = forwardRef<HTMLSelectElement, SelectProps>(
 
     const selectElement = (
       <StyledSelect
-        ref={ref}
+        ref={assignSelectRef}
         id={id}
         name={name}
         multiple={isMultiple}
@@ -140,8 +190,8 @@ export const SelectNative = forwardRef<HTMLSelectElement, SelectProps>(
         aria-required={required ? true : undefined}
         {...controlledValueProps}
         onChange={handleChange}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
+        onFocus={handleSelectFocus}
+        onBlur={handleSelectBlur}
         {...rest}
       >
         {placeholder && !isMultiple ? (
@@ -157,11 +207,18 @@ export const SelectNative = forwardRef<HTMLSelectElement, SelectProps>(
       </StyledSelect>
     );
 
+    // Скелетон только у поля; подписи остаются текстом (нет `<select>` для `htmlFor`)
     if (skeleton) {
       return (
-        <InputContainer fullWidth={fullWidth}>
-          {label ? <SkeletonEffect size={size} $layout="compact" /> : null}
-          <SkeletonEffect size={size} fullWidth={fullWidth} />
+        <InputContainer fullWidth={fullWidth} aria-busy="true">
+          {label ? (
+            <Label as="span">
+              {label}
+              {required ? <RequiredIndicator>*</RequiredIndicator> : null}
+            </Label>
+          ) : null}
+          {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
+          <SkeletonEffect size={size} fullWidth={fullWidth} role="presentation" />
         </InputContainer>
       );
     }
@@ -170,8 +227,13 @@ export const SelectNative = forwardRef<HTMLSelectElement, SelectProps>(
       <>
         {selectElement}
         {isLoading ? <LoadingSpinner size={size} /> : null}
-        <SelectChevronSlot aria-hidden>
-          <Icon name="IconPlainerChevronDown" size={chevronIconSize} color="currentColor" />
+        <SelectChevronSlot aria-hidden onMouseDown={handleNativeChevronMouseDown}>
+          <Icon
+            name="IconPlainerChevronDown"
+            size={chevronIconSize}
+            color="currentColor"
+            {...openMenuIconProps}
+          />
         </SelectChevronSlot>
       </>
     );
@@ -187,22 +249,48 @@ export const SelectNative = forwardRef<HTMLSelectElement, SelectProps>(
 
         {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
 
-        {tooltip && tooltipType === 'tooltip' ? (
-          <Tooltip content={tooltip} position={tooltipPosition as TooltipPosition}>
-            <InputWrapper
-              variant={InputVariant.SELECTOR}
-              size={size}
-              error={error}
-              success={success}
-              status={currentStatus}
-              fullWidth={fullWidth}
-              focused={focused}
-              readOnly={readOnly}
-              className={className}
+        {tooltip ? (
+          tooltipType === 'hint' ? (
+            <Hint
+              content={tooltip}
+              placement={tooltipPosition as HintPosition}
+              variant={HintVariant.DEFAULT}
             >
-              {inner}
-            </InputWrapper>
-          </Tooltip>
+              <InputWrapper
+                variant={InputVariant.SELECTOR}
+                size={size}
+                error={error}
+                success={success}
+                status={currentStatus}
+                fullWidth={fullWidth}
+                focused={focused}
+                readOnly={readOnly}
+                className={className}
+                onFocus={onFocus}
+                onBlur={onBlur}
+              >
+                {inner}
+              </InputWrapper>
+            </Hint>
+          ) : (
+            <Tooltip content={tooltip} position={tooltipPosition as TooltipPosition}>
+              <InputWrapper
+                variant={InputVariant.SELECTOR}
+                size={size}
+                error={error}
+                success={success}
+                status={currentStatus}
+                fullWidth={fullWidth}
+                focused={focused}
+                readOnly={readOnly}
+                className={className}
+                onFocus={onFocus}
+                onBlur={onBlur}
+              >
+                {inner}
+              </InputWrapper>
+            </Tooltip>
+          )
         ) : (
           <InputWrapper
             variant={InputVariant.SELECTOR}
@@ -214,20 +302,12 @@ export const SelectNative = forwardRef<HTMLSelectElement, SelectProps>(
             focused={focused}
             readOnly={readOnly}
             className={className}
+            onFocus={onFocus}
+            onBlur={onBlur}
           >
             {inner}
           </InputWrapper>
         )}
-
-        {tooltip && tooltipType === 'hint' ? (
-          <Hint
-            content={tooltip}
-            placement={tooltipPosition as HintPosition}
-            variant={HintVariant.DEFAULT}
-          >
-            {tooltip}
-          </Hint>
-        ) : null}
 
         {error ? <ErrorText>{error}</ErrorText> : null}
         {success ? <SuccessText>Успешно</SuccessText> : null}

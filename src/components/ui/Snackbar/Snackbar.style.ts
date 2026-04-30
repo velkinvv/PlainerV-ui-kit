@@ -63,7 +63,8 @@ export const SnackbarBar = styled.div<{ $tokens: SnackbarSurfaceTokens }>`
 `;
 
 /**
- * Текст сообщения
+ * Текст сообщения.
+ * `color: inherit` — иначе глобальное правило `p { color: theme.colors.text }` перебивает цвет с плашки и текст сливается с фоном.
  */
 export const SnackbarMessage = styled.p`
   flex: 1;
@@ -72,6 +73,7 @@ export const SnackbarMessage = styled.p`
   font-size: 14px;
   font-weight: 400;
   line-height: 1.45;
+  color: inherit;
 `;
 
 /**

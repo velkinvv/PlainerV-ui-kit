@@ -3,6 +3,34 @@ import { motion } from 'framer-motion';
 import type { CardProps } from '../../../types/ui';
 import { CardVariant } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
+import type { ThemeType } from '../../../types/theme';
+
+/**
+ * Нормализует входной размер карточки к ключам темы (`XS | SM | MD | LG | XL`).
+ * Поддерживает как enum-значения, так и строковые варианты в нижнем регистре из сторис.
+ * @param rawSize - входящее значение `size`/`padding` из пропсов карточки
+ */
+const resolveCardSizeKey = (rawSize: CardProps['size'] | CardProps['padding']): Size => {
+  if (typeof rawSize !== 'string' || rawSize.length === 0) {
+    return Size.MD;
+  }
+
+  const normalizedSize = rawSize.toUpperCase() as keyof typeof Size;
+  return Size[normalizedSize] ?? Size.MD;
+};
+
+/**
+ * Возвращает настройки размера карточки с безопасным fallback на `MD`.
+ * @param theme - активная тема styled-components
+ * @param rawSize - входящее значение `size`/`padding` из пропсов карточки
+ */
+const getCardSizeSettings = (
+  theme: ThemeType,
+  rawSize: CardProps['size'] | CardProps['padding'],
+): ThemeType['cards']['sizes'][Size] => {
+  const resolvedSize = resolveCardSizeKey(rawSize);
+  return theme.cards?.sizes?.[resolvedSize] ?? theme.cards.sizes[Size.MD];
+};
 
 /**
  * Стилизованная карточка
@@ -16,7 +44,7 @@ import { Size } from '../../../types/sizes';
 export const StyledCard = styled(motion.div)<CardProps>`
   background: ${({ theme }) => theme.cards.variants.elevated.background};
   color: ${({ theme }) => theme.cards.variants.elevated.color};
-  border-radius: ${({ theme, size = Size.MD }) => theme.cards.sizes[size].borderRadius};
+  border-radius: ${({ theme, size = Size.MD }) => getCardSizeSettings(theme, size).borderRadius};
   overflow: ${({ theme }) => theme.cards.settings.overflow};
   transition: ${({ theme }) => theme.cards.animations.transition};
   user-select: ${({ theme }) => theme.cards.settings.userSelect};
@@ -61,11 +89,11 @@ export const StyledCard = styled(motion.div)<CardProps>`
   }}
 
   ${({ theme, size = Size.MD }) => css`
-    min-height: ${theme.cards.sizes[size].minHeight};
+    min-height: ${getCardSizeSettings(theme, size).minHeight};
   `}
 
   ${({ theme, padding = Size.MD }) => css`
-    padding: ${theme.cards.sizes[padding].padding};
+    padding: ${getCardSizeSettings(theme, padding).padding};
   `}
 
   ${({ hoverable, clickable, theme, variant = CardVariant.ELEVATED }) =>

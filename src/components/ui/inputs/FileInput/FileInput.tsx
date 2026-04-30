@@ -89,8 +89,9 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
       size = Size.SM,
       buttonLabel = DEFAULT_BUTTON_LABEL,
       fileName,
-      showClearButton = false,
-      onClear,
+      displayClearIcon = false,
+      onClearIconClick,
+      clearIconProps,
       onChange,
       onFocus,
       onBlur,
@@ -167,7 +168,7 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
     }, [fileLayout, hasSelection]);
 
     const useFloatingClear = Boolean(
-      showClearButton && hasSelection && !disabled && effectiveFileLayout !== 'file',
+      displayClearIcon && hasSelection && !disabled && effectiveFileLayout !== 'file',
     );
 
     /** Обводка и курсор: очистка, кликабельное поле/dropzone, остальное из пропсов */
@@ -227,9 +228,9 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
           innerRef.current.value = '';
         }
         setInternalSummary('');
-        onClear?.();
+        onClearIconClick?.();
       },
-      [onClear],
+      [onClearIconClick],
     );
 
     const handleDragEnter = useCallback(
@@ -381,18 +382,30 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
                 onClick={handleClear}
                 aria-label="Удалить файл"
               >
-                <Icon name="IconExClose" size={IconSize.SM} color="currentColor" />
+                <Icon
+                  name="IconExClose"
+                  size={IconSize.SM}
+                  color="currentColor"
+                  {...clearIconProps}
+                />
               </FileCardRemoveButton>
             ) : null}
           </FileCardSide>
         </FileCardRow>
       );
 
+    // Скелетон только у поля; подписи остаются текстом (нет файлового инпута для `htmlFor`/`id`)
     if (skeleton) {
       return (
-        <InputContainer fullWidth={fullWidth}>
-          {label ? <SkeletonEffect size={size} $layout="compact" /> : null}
-          <SkeletonEffect size={size} fullWidth={fullWidth} />
+        <InputContainer fullWidth={fullWidth} aria-busy="true">
+          {label ? (
+            <Label as="span">
+              {label}
+              {required ? <RequiredIndicator>*</RequiredIndicator> : null}
+            </Label>
+          ) : null}
+          {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
+          <SkeletonEffect size={size} fullWidth={fullWidth} role="presentation" />
         </InputContainer>
       );
     }
@@ -408,7 +421,11 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
         {rowContent}
         {useFloatingClear ? (
           <ClearButton type="button" onClick={handleClear} aria-label="Очистить выбор файла">
-            <Icon name="IconExClose" size={getClearIconSizeForInputField(size)} />
+            <Icon
+              name="IconExClose"
+              size={getClearIconSizeForInputField(size)}
+              {...clearIconProps}
+            />
           </ClearButton>
         ) : null}
       </InputWrapper>

@@ -51,4 +51,20 @@ describe('Pagination', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Страница 4' }));
     expect(onPageChange).toHaveBeenCalledWith(4);
   });
+
+  it('в режиме compact не рендерит кнопки выбора других страниц и листает стрелками', () => {
+    wrap(<Pagination totalPages={8} defaultPage={2} variant="compact" />);
+    expect(screen.queryByRole('button', { name: 'Страница 3' })).toBeNull();
+    expect(screen.getByText('2')).toHaveAttribute('aria-current', 'page');
+    fireEvent.click(screen.getByRole('button', { name: 'Следующая страница' }));
+    expect(screen.getByText('3')).toHaveAttribute('aria-current', 'page');
+  });
+
+  it('в режиме compact вызывает onPageChange по стрелкам', () => {
+    const onPageChange = jest.fn();
+    wrap(<Pagination totalPages={5} defaultPage={3} variant="compact" onPageChange={onPageChange} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Предыдущая страница' }));
+    expect(onPageChange).toHaveBeenCalledWith(2);
+    expect(screen.getByText('2')).toHaveAttribute('aria-current', 'page');
+  });
 });

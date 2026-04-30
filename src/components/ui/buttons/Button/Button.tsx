@@ -3,9 +3,7 @@ import { clsx } from 'clsx';
 import { type ButtonProps, ButtonVariant } from '../../../../types/ui';
 import { Size } from '../../../../types/sizes';
 import { StyledButton, StyledLinkButton, LoadingContainer, LoadingSpinner } from './Button.style';
-import { getButtonAnimations } from '../../../../handlers/buttonThemeHandlers';
 import { mergeAnchorRel } from '../../../../handlers/linkHandlers';
-import { useTheme } from 'styled-components';
 import { Tooltip } from '../../Tooltip/Tooltip';
 
 export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
@@ -33,8 +31,6 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPr
     },
     ref,
   ) => {
-    const theme = useTheme();
-    const animations = getButtonAnimations(theme.buttons);
     const isAnchor = Boolean(href);
 
     const handleClick = useCallback(
@@ -100,8 +96,6 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPr
       'aria-disabled': isAnchor && (disabled || loading) ? true : undefined,
       className: clsx('ui-button', isAnchor ? 'ui-button--link' : null, className),
       onClick: handleClick,
-      whileHover: !disabled && !loading ? { scale: animations.hoverScale } : undefined,
-      whileTap: !disabled && !loading ? { scale: animations.tapScale } : undefined,
       ...props,
     };
 

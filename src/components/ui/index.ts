@@ -59,10 +59,25 @@ export type { DropdownProps } from '@/types/ui';
 export { Tabs } from './Tabs';
 export type { TabsProps } from '@/types/ui';
 export { TabsVariant } from '@/types/ui';
+export { TabItem } from './Tabs';
+export type { TabItemProps } from './Tabs';
+
+export {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuContext,
+  useNavigationMenuContext,
+  getNavigationMenuItemDisplayTitle,
+} from './NavigationMenu';
+export type {
+  NavigationMenuProps,
+  NavigationMenuItemProps,
+  NavigationMenuContextValue,
+} from './NavigationMenu';
+export { NavigationMenuActiveAppearance } from '@/types/ui';
 
 export { Menu, MenuItem } from './Menu';
 export type { MenuProps, MenuItemProps } from '@/types/ui';
-export { MenuActiveAppearance } from '@/types/ui';
 
 export {
   FloatingMenu,
@@ -144,6 +159,7 @@ export {
   clampTablePageZeroBased,
   toggleTableSortDirection,
   getSortChevronTones,
+  parseTablePageJumpInput,
 } from './Table';
 export type {
   TableContainerProps,
@@ -154,6 +170,7 @@ export type {
   TableRowProps,
   TableCellProps,
   TablePaginationProps,
+  TablePaginationToolbarAlign,
   TableSortLabelProps,
   TableSize,
   TableCellVariant,
@@ -161,14 +178,14 @@ export type {
 } from '@/types/ui';
 export type { TableSortChevronTone } from './Table';
 
-export { DataGrid } from './DataGrid';
+export { DataGrid } from './Table';
 export {
   dataGridSizeToTableSize,
   sliceRowsForPagination,
   getDataGridCellValue,
   reorderByIndex,
   toIdSet,
-} from './DataGrid';
+} from './Table';
 export type {
   DataGridProps,
   DataGridBaseRow,
@@ -199,21 +216,12 @@ export type { SwitchProps } from '@/types/ui';
 
 export { Toast, ToastProvider } from './Toast';
 export type { ToastProps } from './Toast';
-export type {
-  ToastType,
-  ToastItem,
-  ToastPlacement,
-  ShowToastOptions,
-} from '@/types/ui';
+export type { ToastType, ToastItem, ToastPlacement, ShowToastOptions } from '@/types/ui';
 export { ToastAppearance } from '@/types/ui';
 
 export { Snackbar, SnackbarProvider } from './Snackbar';
 export type { SnackbarProps } from './Snackbar';
-export type {
-  SnackbarItem,
-  SnackbarPlacement,
-  ShowSnackbarOptions,
-} from '@/types/ui';
+export type { SnackbarItem, SnackbarPlacement, ShowSnackbarOptions } from '@/types/ui';
 
 export { RadioButton, RadioButtonGroup } from './RadioButton';
 export type { RadioButtonProps, RadioButtonGroupProps, RadioButtonGroupOption } from '@/types/ui';

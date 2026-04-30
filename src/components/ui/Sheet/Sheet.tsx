@@ -8,7 +8,6 @@ import { IconSize } from '../../../types/sizes';
 import {
   useModalEscape,
   shouldCloseOnOverlayClick,
-  getModalMountNode,
   useModalFocus,
   useFocusTrap,
 } from '../Modal/handlers';
@@ -22,6 +21,9 @@ import {
   SheetBody,
 } from './Sheet.style';
 import { sheetOverlayMotion, getSheetPanelMotion, sheetSizeToCss } from './handlers';
+import { useOverlayVisibility } from '../../../hooks/useOverlayVisibility';
+import { useOverlayPortal } from '../../../hooks/useOverlayPortal';
+import { useOverlayPresentation } from '../../../hooks/useOverlayPresentation';
 
 const DEFAULT_PLACEMENT = 'bottom' as const;
 
@@ -58,6 +60,8 @@ export const Sheet = forwardRef<HTMLElement, SheetProps>(
       initialFocusRef,
       initialFocusSelector,
       headerSlot,
+      unmountOnClose = true,
+      lazy = true,
       className,
     },
     ref,
@@ -88,14 +92,12 @@ export const Sheet = forwardRef<HTMLElement, SheetProps>(
       }
     };
 
-    const mountNode = getModalMountNode(container, portalTargetId);
-
-    const overlayInlineStyle = useMemo(() => {
-      if (portalZIndex === undefined) {
-        return overlayStyle;
-      }
-      return { ...(overlayStyle || {}), zIndex: portalZIndex };
-    }, [overlayStyle, portalZIndex]);
+    const { mountNode, overlayInlineStyle } = useOverlayPortal({
+      container,
+      portalTargetId,
+      overlayStyle,
+      portalZIndex,
+    });
 
     const panelMotion = useMemo(() => getSheetPanelMotion(placement), [placement]);
 
@@ -115,62 +117,75 @@ export const Sheet = forwardRef<HTMLElement, SheetProps>(
       [placement, height],
     );
 
-    if (!mountNode) {
+    const { shouldRenderPortal, shouldRenderContent, isHidden } = useOverlayVisibility({
+      isOpen,
+      unmountOnClose,
+      lazy,
+    });
+
+    const { overlayPresentationStyle, ariaHidden } = useOverlayPresentation({
+      isOpen,
+      isHidden,
+      overlayInlineStyle,
+    });
+
+    if (!mountNode || !shouldRenderPortal) {
       return null;
     }
 
+    const sheetBody = (
+      <SheetOverlay
+        $sheetPlacement={placement}
+        $overlayVariant={overlayVariant}
+        initial={sheetOverlayMotion.initial}
+        animate={sheetOverlayMotion.animate}
+        exit={sheetOverlayMotion.exit}
+        transition={sheetOverlayMotion.transition}
+        onClick={handleOverlayClick}
+        className={overlayClassName}
+        style={overlayPresentationStyle}
+        data-sheet-overlay
+        aria-hidden={ariaHidden}
+      >
+        <SheetPanel
+          ref={setPanelRef}
+          $widthCss={widthCss}
+          $heightCss={heightCss}
+          $placement={placement}
+          tabIndex={-1}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={title ? titleId : undefined}
+          className={clsx('ui-sheet', className)}
+          initial={panelMotion.initial}
+          animate={panelMotion.animate}
+          exit={panelMotion.exit}
+          transition={panelMotion.transition}
+          onClick={event => event.stopPropagation()}
+        >
+          {headerSlot ? (
+            <SheetHeader>{headerSlot}</SheetHeader>
+          ) : (title || showCloseButton) && (
+            <SheetHeader>
+              {title ? <SheetTitle id={titleId}>{title}</SheetTitle> : null}
+              {!title && showCloseButton ? <SheetHeaderSpacer aria-hidden /> : null}
+              {showCloseButton ? (
+                <CloseButton type="button" onClick={onClose} aria-label="Закрыть">
+                  <Icon name="PhosphorX" size={IconSize.MD} color="#9E9E9E" />
+                </CloseButton>
+              ) : null}
+            </SheetHeader>
+          )}
+          <SheetBody ref={contentRef} tabIndex={-1}>
+            {children}
+          </SheetBody>
+        </SheetPanel>
+      </SheetOverlay>
+    );
+
     return createPortal(
       <AnimatePresence>
-        {isOpen ? (
-          <SheetOverlay
-            $sheetPlacement={placement}
-            $overlayVariant={overlayVariant}
-            initial={sheetOverlayMotion.initial}
-            animate={sheetOverlayMotion.animate}
-            exit={sheetOverlayMotion.exit}
-            transition={sheetOverlayMotion.transition}
-            onClick={handleOverlayClick}
-            className={overlayClassName}
-            style={overlayInlineStyle}
-            data-sheet-overlay
-          >
-            <SheetPanel
-              ref={setPanelRef}
-              $widthCss={widthCss}
-              $heightCss={heightCss}
-              $placement={placement}
-              tabIndex={-1}
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby={title ? titleId : undefined}
-              className={clsx('ui-sheet', className)}
-              initial={panelMotion.initial}
-              animate={panelMotion.animate}
-              exit={panelMotion.exit}
-              transition={panelMotion.transition}
-              onClick={e => e.stopPropagation()}
-            >
-              {headerSlot ? (
-                <SheetHeader>{headerSlot}</SheetHeader>
-              ) : (title || showCloseButton) && (
-                <SheetHeader>
-                  {title ? <SheetTitle id={titleId}>{title}</SheetTitle> : null}
-                  {!title && showCloseButton ? (
-                    <SheetHeaderSpacer aria-hidden />
-                  ) : null}
-                  {showCloseButton ? (
-                    <CloseButton type="button" onClick={onClose} aria-label="Закрыть">
-                      <Icon name="PhosphorX" size={IconSize.MD} color="#9E9E9E" />
-                    </CloseButton>
-                  ) : null}
-                </SheetHeader>
-              )}
-              <SheetBody ref={contentRef} tabIndex={-1}>
-                {children}
-              </SheetBody>
-            </SheetPanel>
-          </SheetOverlay>
-        ) : null}
+        {shouldRenderContent ? sheetBody : null}
       </AnimatePresence>,
       mountNode,
     );

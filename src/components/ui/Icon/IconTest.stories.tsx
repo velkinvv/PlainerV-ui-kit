@@ -1,11 +1,11 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Icon } from './Icon';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { IconSize } from '../../../types/sizes';
 
 const meta: Meta<typeof Icon> = {
-  title: 'Components/Icon/Test',
+  title: 'UI Kit/Data Display/Icon/Test',
   component: Icon,
   parameters: {
     layout: 'centered',
@@ -85,3 +85,4 @@ export const TestIcons: Story = {
     </div>
   ),
 };
+

@@ -122,11 +122,18 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       [displayCharacterCounter, maxLength, currentLength, characterCounterVisibilityThreshold],
     );
 
+    // Скелетон только у области поля; подписи остаются текстом (нет `<textarea>` для `htmlFor`)
     if (skeleton) {
       return (
-        <InputContainer fullWidth={fullWidth}>
-          {label && <SkeletonEffect size={Size.MD} />}
-          <SkeletonEffect size={Size.LG} />
+        <InputContainer fullWidth={fullWidth} aria-busy="true">
+          {label ? (
+            <Label as="span">
+              {label}
+              {required ? <RequiredIndicator>*</RequiredIndicator> : null}
+            </Label>
+          ) : null}
+          {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
+          <SkeletonEffect size={Size.LG} fullWidth={fullWidth} role="presentation" />
         </InputContainer>
       );
     }

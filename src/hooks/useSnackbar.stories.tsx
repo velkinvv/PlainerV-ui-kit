@@ -1,4 +1,4 @@
-import type { Decorator, Meta, StoryObj } from '@storybook/react';
+﻿import type { Decorator, Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
@@ -16,7 +16,7 @@ const withSnackbar: Decorator = (Story) => (
 );
 
 const meta: Meta = {
-  title: 'Hooks/useSnackbar',
+  title: 'UI Kit/Hooks/useSnackbar',
   decorators: [withSnackbar],
   parameters: {
     docs: {
@@ -86,3 +86,4 @@ const BasicDemo = () => {
 export const Default: Story = {
   render: () => <BasicDemo />,
 };
+

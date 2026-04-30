@@ -1,12 +1,12 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Sidebar } from './Sidebar';
-import type { SidebarItem, SidebarVariant } from '../../../types/ui';
+import { SidebarVariant, type SidebarItem } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
 import { IconSize } from '../../../types/sizes';
 
 const meta: Meta<typeof Sidebar> = {
-  title: 'Components/Sidebar',
+  title: 'UI Kit/Navigation/Sidebar',
   component: Sidebar,
   parameters: {
     layout: 'padded',
@@ -18,10 +18,34 @@ const meta: Meta<typeof Sidebar> = {
   },
   tags: ['autodocs'],
   argTypes: {
+    items: {
+      description: 'Пункты меню: id, label, icon, active, notificationCount, onClick',
+      control: false,
+      table: {
+        type: { summary: 'SidebarItem[]' },
+      },
+    },
+    logo: {
+      description: 'Блок логотипа в шапке',
+      control: false,
+      table: {
+        type: { summary: '{ icon?: ReactNode; title?: string }' },
+      },
+    },
     variant: {
       control: { type: 'select' },
-      options: ['expanded', 'collapsed'],
+      options: Object.values(SidebarVariant),
       description: 'Вариант отображения сайдбара',
+      table: {
+        type: { summary: 'expanded или collapsed (SidebarVariant)' },
+      },
+    },
+    onItemClick: {
+      description: 'Клик по пункту (в дополнение к собственному onClick у элемента)',
+      control: false,
+      table: {
+        type: { summary: '(item: SidebarItem) => void' },
+      },
     },
   },
 };
@@ -199,7 +223,7 @@ export const Interactive: Story = {
             title: 'ARS AIP',
           }}
           variant={variant}
-          onItemClick={item => console.log('Clicked:', item.id)}
+          onItemClick={(item) => console.log('Clicked:', item.id)}
         />
 
         <div
@@ -216,7 +240,7 @@ export const Interactive: Story = {
               <input
                 type="checkbox"
                 checked={variant === 'collapsed'}
-                onChange={e =>
+                onChange={(e) =>
                   setVariant(e.target.checked ? SidebarVariant.COLLAPSED : SidebarVariant.EXPANDED)
                 }
               />
@@ -336,3 +360,4 @@ export const LongLabels: Story = {
     );
   },
 };
+

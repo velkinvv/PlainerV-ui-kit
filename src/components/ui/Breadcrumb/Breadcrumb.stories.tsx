@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import { Breadcrumb } from './Breadcrumb';
 import { Icon } from '../Icon/Icon';
@@ -6,27 +6,45 @@ import { IconSize, Size } from '../../../types/sizes';
 import type { BreadcrumbItem } from '../../../types/ui';
 
 const meta: Meta<typeof Breadcrumb> = {
-  title: 'Components/Breadcrumb',
+  title: 'UI Kit/Navigation/Breadcrumb',
   component: Breadcrumb,
   parameters: {
     layout: 'padded',
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4882-9860',
-    },
     docs: {
       description: {
         component:
-          'Макет Figma: шеврон между пунктами, иконка слева, капсула у текущей страницы, сегмент «…» (`ellipsis`), `aria-current`, `rel` для `target="_blank"`.',
+          'Шеврон между пунктами, иконка слева, капсула у текущей страницы, сегмент «…» (`ellipsis`), `aria-current`, `rel` для `target="_blank"`.',
       },
     },
   },
   tags: ['autodocs'],
   argTypes: {
-    items: { description: 'Массив пунктов (`BreadcrumbItem[]`)' },
-    separator: { description: 'Кастомный разделитель между пунктами' },
-    ariaLabel: { description: '`aria-label` у `nav`' },
-    size: { control: 'select', options: [Size.SM, Size.MD, Size.LG] },
+    items: {
+      description:
+        'Массив пунктов: label, опционально href, onClick, icon, current, ellipsis, crumbStyle и др.',
+      control: false,
+      table: {
+        type: { summary: 'BreadcrumbItem[]' },
+      },
+    },
+    separator: {
+      description: 'Кастомный разделитель между пунктами',
+      control: false,
+      table: {
+        type: { summary: 'ReactNode или строка (рендерится между пунктами)' },
+      },
+    },
+    ariaLabel: {
+      description: '`aria-label` у `nav`',
+      table: { type: { summary: 'string' } },
+    },
+    size: {
+      control: 'select',
+      options: [Size.SM, Size.MD, Size.LG],
+      table: {
+        type: { summary: 'SM, MD или LG' },
+      },
+    },
   },
 };
 
@@ -62,10 +80,7 @@ export const TextSeparator: Story = {
 
 export const WithOnClick: Story = {
   args: {
-    items: [
-      { label: 'Раздел', onClick: () => undefined },
-      { label: 'Страница' },
-    ],
+    items: [{ label: 'Раздел', onClick: () => undefined }, { label: 'Страница' }],
   },
 };
 
@@ -78,8 +93,8 @@ export const ExternalBlank: Story = {
   },
 };
 
-/** Как в макете: дом + Главная, …, Новости, текущая «Новость» в капсуле */
-export const FigmaLayout: Story = {
+/** Дом, главная, «…», раздел и текущая страница в капсуле */
+export const RichBreadcrumbWithCapsule: Story = {
   render: () => (
     <Breadcrumb
       items={[
@@ -102,3 +117,4 @@ export const FigmaLayout: Story = {
     />
   ),
 };
+

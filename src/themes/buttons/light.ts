@@ -272,8 +272,8 @@ export const lightButtonTheme: ButtonTheme = {
   // Анимации и эффекты
   animations: {
     transition: 'all 0.2s ease-in-out',
-    hoverScale: 1.02,
-    tapScale: 0.98,
+    hoverScale: 1,
+    tapScale: 1,
     loadingSpinner: {
       size: '16px',
       color: neutral[10],

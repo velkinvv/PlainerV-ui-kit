@@ -9,6 +9,7 @@ import {
   PageButton,
   PaginationArrowButton,
   PaginationBar,
+  PaginationCompactCurrent,
   PaginationList,
   PaginationListItem,
   PaginationNav,
@@ -33,7 +34,8 @@ function paginationSizeToIconSize(size: Size | undefined): IconSize {
 }
 
 /**
- * Пагинация: плашка с номерами и разрывами «…», стрелки внутри контейнера (макет Figma).
+ * Пагинация: плашка с номерами и разрывами «…», по краям — контурные шевроны `PhosphorCaretLeft` / `PhosphorCaretRight` (макет Figma).
+ * Режим `variant="compact"`: только «назад», текущая страница (без клика по номеру), «вперёд».
  * Поддерживаются контролируемый (`page` + `onPageChange`) и неконтролируемый (`defaultPage`) режимы.
  * @param props - Пропсы `PaginationProps`.
  */
@@ -44,6 +46,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   onPageChange,
   siblingCount = 1,
   showPrevNext = true,
+  variant = 'default',
   size = Size.MD,
   disabled = false,
   ariaLabel = 'Пагинация',
@@ -83,11 +86,11 @@ export const Pagination: React.FC<PaginationProps> = ({
   );
 
   const segments = useMemo(() => {
-    if (totalPages < 1) {
+    if (totalPages < 1 || variant === 'compact') {
       return [];
     }
     return buildPaginationSegments(totalPages, currentPage, siblingCount);
-  }, [totalPages, currentPage, siblingCount]);
+  }, [totalPages, currentPage, siblingCount, variant]);
 
   const dim = getPaginationDimensions(size);
   const iconSize = paginationSizeToIconSize(size);
@@ -109,46 +112,61 @@ export const Pagination: React.FC<PaginationProps> = ({
             $radius={dim.borderRadius}
             onClick={() => setPage(currentPage - 1)}
           >
-            <Icon name="PhosphorArrowFatLineLeft" size={iconSize} color="currentColor" />
+            <Icon name="PhosphorCaretLeft" size={iconSize} color="currentColor" />
           </PaginationArrowButton>
         ) : null}
 
         <PaginationList $gap={dim.gap}>
-          {segments.map(seg => {
-            if (seg.kind === 'gap') {
+          {variant === 'compact' ? (
+            <PaginationListItem>
+              <PaginationCompactCurrent
+                aria-current="page"
+                aria-label={`Текущая страница ${currentPage} из ${totalPages}`}
+                $minW={dim.minWidth}
+                $minH={dim.minHeight}
+                $fontSize={dim.fontSize}
+                $radius={dim.borderRadius}
+              >
+                {currentPage}
+              </PaginationCompactCurrent>
+            </PaginationListItem>
+          ) : (
+            segments.map(seg => {
+              if (seg.kind === 'gap') {
+                return (
+                  <PaginationListItem key={seg.id}>
+                    <Ellipsis $minH={dim.minHeight} aria-hidden>
+                      …
+                    </Ellipsis>
+                  </PaginationListItem>
+                );
+              }
+              const isActive = seg.page === currentPage;
               return (
-                <PaginationListItem key={seg.id}>
-                  <Ellipsis $minH={dim.minHeight} aria-hidden>
-                    …
-                  </Ellipsis>
+                <PaginationListItem key={seg.page}>
+                  <PageButton
+                    type="button"
+                    disabled={disabled}
+                    $disabled={disabled}
+                    $active={isActive}
+                    $minW={dim.minWidth}
+                    $minH={dim.minHeight}
+                    $fontSize={dim.fontSize}
+                    $radius={dim.borderRadius}
+                    aria-label={`Страница ${seg.page}`}
+                    aria-current={isActive ? 'page' : undefined}
+                    onClick={() => {
+                      if (!isActive && !disabled) {
+                        setPage(seg.page);
+                      }
+                    }}
+                  >
+                    {seg.page}
+                  </PageButton>
                 </PaginationListItem>
               );
-            }
-            const isActive = seg.page === currentPage;
-            return (
-              <PaginationListItem key={seg.page}>
-                <PageButton
-                  type="button"
-                  disabled={disabled}
-                  $disabled={disabled}
-                  $active={isActive}
-                  $minW={dim.minWidth}
-                  $minH={dim.minHeight}
-                  $fontSize={dim.fontSize}
-                  $radius={dim.borderRadius}
-                  aria-label={`Страница ${seg.page}`}
-                  aria-current={isActive ? 'page' : undefined}
-                  onClick={() => {
-                    if (!isActive && !disabled) {
-                      setPage(seg.page);
-                    }
-                  }}
-                >
-                  {seg.page}
-                </PageButton>
-              </PaginationListItem>
-            );
-          })}
+            })
+          )}
         </PaginationList>
 
         {showPrevNext ? (
@@ -161,7 +179,7 @@ export const Pagination: React.FC<PaginationProps> = ({
             $radius={dim.borderRadius}
             onClick={() => setPage(currentPage + 1)}
           >
-            <Icon name="PhosphorArrowFatLineRight" size={iconSize} color="currentColor" />
+            <Icon name="PhosphorCaretRight" size={iconSize} color="currentColor" />
           </PaginationArrowButton>
         ) : null}
       </PaginationBar>

@@ -1,10 +1,10 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import { TextArea } from './TextArea';
 import { Form } from '../../Form';
 
 const meta: Meta<typeof TextArea> = {
-  title: 'Components/Inputs/TextArea',
+  title: 'UI Kit/Inputs/TextArea',
   component: TextArea,
   parameters: {
     layout: 'padded',
@@ -31,13 +31,19 @@ const meta: Meta<typeof TextArea> = {
   argTypes: {
     label: { description: 'Подпись над полем (`ReactNode`)' },
     placeholder: { description: 'Текст плейсхолдера' },
-    helperText: { description: 'Вспомогательный текст под полем (скрывается при error/success)' },
+    helperText: {
+      description: 'Вспомогательный текст под полем (скрывается при статусах `error` и `success`)',
+    },
     error: { description: 'Текст ошибки; также влияет на статус обводки' },
     success: { description: 'Успешное состояние (булево); показывает текст «Успешно»' },
     status: {
       control: { type: 'select' },
       options: [undefined, 'error', 'success', 'warning'],
-      description: 'Явный статус обводки (имеет приоритет над выводом из error/success)',
+      description:
+        'Явный статус обводки: `error`, `success`, `warning` или не задан (имеет приоритет над выводом из пропов `error` / `success`)',
+      table: {
+        type: { summary: 'error, success, warning или не задан (undefined)' },
+      },
     },
     required: { control: 'boolean', description: 'Обязательное поле (звёздочка у label)' },
     fullWidth: { control: 'boolean', description: 'Растянуть на ширину контейнера' },
@@ -66,7 +72,11 @@ const meta: Meta<typeof TextArea> = {
     tooltipType: {
       control: { type: 'radio' },
       options: ['tooltip', 'hint'],
-      description: '`tooltip` — обёртка вокруг поля; `hint` — отдельный Hint под полем',
+      description:
+        'Тип подсказки: `tooltip` — Tooltip-обёртка вокруг поля; `hint` — отдельный компонент Hint под полем',
+      table: {
+        type: { summary: 'tooltip или hint' },
+      },
     },
     tooltipPosition: {
       control: { type: 'select' },
@@ -88,8 +98,22 @@ const meta: Meta<typeof TextArea> = {
       control: { type: 'number', min: 0, max: 500, step: 1 },
       description: 'HTML maxLength; включает логику счётчика',
     },
-    value: { description: 'Контролируемое значение (строка)' },
-    onChange: { description: 'Обработчик изменения (`ChangeEvent<HTMLTextAreaElement>`)' },
+    value: {
+      description: 'Контролируемое значение (строка)',
+      table: {
+        type: { summary: 'string' },
+      },
+    },
+    onChange: {
+      description:
+        'Обработчик ввода; аргумент — нативное событие `change` у `textarea` (текст в `event.target.value`)',
+      table: {
+        type: {
+          summary:
+            'обработчик change у textarea: (event: React.ChangeEvent<HTMLTextAreaElement>) => void',
+        },
+      },
+    },
   },
 };
 
@@ -289,3 +313,4 @@ export const InFormWithSubmit: Story = {
     );
   },
 };
+

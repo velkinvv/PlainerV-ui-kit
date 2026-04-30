@@ -1,4 +1,4 @@
-import type { Decorator, Meta, StoryObj } from '@storybook/react';
+﻿import type { Decorator, Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
@@ -16,7 +16,7 @@ const withToast: Decorator = (Story) => (
   </ThemeProvider>
 );
 
-/** Провайдер с внешним видом «пилюля» по умолчанию (макет Figma) */
+/** Провайдер с внешним видом «пилюля» по умолчанию */
 const withPillToast: Decorator = (Story) => (
   <ThemeProvider>
     <ToastProvider defaultAppearance={ToastAppearance.PILL}>
@@ -26,13 +26,9 @@ const withPillToast: Decorator = (Story) => (
 );
 
 const meta: Meta = {
-  title: 'Hooks/useToast',
+  title: 'UI Kit/Hooks/useToast',
   decorators: [withToast],
   parameters: {
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4911-4334&t=eb4vmm0U8WfOr8yP-4',
-    },
     docs: {
       description: {
         component: `
@@ -56,8 +52,11 @@ import { ToastProvider, useToast, ToastAppearance } from '@velkinvv/plainerv';
 ## API
 
 - **toasts** — активные записи (\`ToastItem\`: \`id\`, \`type\`, \`message\`, \`title\`, \`duration\`, опционально \`appearance\`, \`actionLabel\`, \`onAction\`)
-- **showToast(message, type?, title?, duration?, options?)** — показать (\`duration\` по умолчанию 5000 мс, \`0\` — без автоскрытия). В \`options\` можно передать \`appearance\`, \`actionLabel\`, \`onAction\` (кнопка действия для вида «пилюля»; после клика вызывается \`onAction\` и toast закрывается).
+- **showToast(message, type?, title?, duration?, options?)** — показать (\`duration\` по умолчанию 5000 мс, \`0\` — без автоскрытия). В \`options\` можно передать \`appearance\`, \`actionLabel\`, \`onAction\`, \`toastId\`, \`preventDuplicate\`, \`dedupeStrategy\` (\`id\` | \`content\` | \`both\`).
 - **hideToast(id)** — закрыть по id
+- **updateToast(id, patch)** — обновить существующий toast
+- **isActiveToast(id)** — проверить, активен ли toast с id
+- **pauseToasts(id?) / playToasts(id?)** — пауза/возобновление таймера для одного или всех
 - **clearToasts()** — очистить всё
 
 Витрина карточки: **Components/Feedback/Toast** (компонент \`Toast\`).
@@ -249,7 +248,7 @@ const PillToastDemo = () => {
         Внешний вид «пилюля» (по умолчанию у провайдера)
       </Typography>
       <Typography variant="body2" marginBottom="md" style={{ color: '#616161' }}>
-        Типы как в макете Figma: иконка с glow, кнопка «Action» закрывает toast после колбэка.
+        Типы уведомлений: иконка с glow, кнопка «Action» закрывает toast после колбэка.
       </Typography>
 
       <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
@@ -382,6 +381,144 @@ const BulkOperationsDemo = () => {
   );
 };
 
+const AdvancedControlsDemo = () => {
+  const { showToast, updateToast, pauseToasts, playToasts, clearToasts, isActiveToast } = useToast();
+
+  const showPauseOnHover = () => {
+    showToast('Наведи мышку на карточку: таймер остановится.', 'info', 'Pause on hover', 7000, {
+      toastId: 'hover-demo',
+      pauseOnHover: true,
+      showProgressBar: true,
+    });
+  };
+
+  const showAndUpdate = () => {
+    showToast('Стартовала операция...', 'info', 'Update by id', 0, {
+      toastId: 'update-demo',
+      showProgressBar: false,
+    });
+
+    setTimeout(() => {
+      updateToast('update-demo', {
+        type: 'success',
+        title: 'Готово',
+        message: 'Toast обновлён по id без пересоздания.',
+        duration: 5000,
+        showProgressBar: true,
+      });
+    }, 1500);
+  };
+
+  const showWithoutDuplicate = () => {
+    showToast('Этот toast не дублируется при повторных кликах.', 'info', 'preventDuplicate', 5000, {
+      toastId: 'dedupe-demo',
+      preventDuplicate: true,
+      showProgressBar: true,
+    });
+  };
+
+  const showWithDedupeById = () => {
+    showToast('Дедупликация по id.', 'info', 'dedupe:id', 5000, {
+      toastId: 'dedupe-id-demo',
+      preventDuplicate: true,
+      dedupeStrategy: 'id',
+      showProgressBar: true,
+    });
+  };
+
+  const showWithDedupeByContent = () => {
+    showToast('Дедупликация по content.', 'info', 'dedupe:content', 5000, {
+      preventDuplicate: true,
+      dedupeStrategy: 'content',
+      showProgressBar: true,
+    });
+  };
+
+  const showWithDedupeByBoth = () => {
+    showToast('Дедупликация по both.', 'info', 'dedupe:both', 5000, {
+      toastId: 'dedupe-both-demo',
+      preventDuplicate: true,
+      dedupeStrategy: 'both',
+      showProgressBar: true,
+    });
+  };
+
+  return (
+    <Card padding="lg">
+      <Typography variant="h3" marginBottom="md">
+        Продвинутые функции
+      </Typography>
+
+      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
+        <Button onClick={showPauseOnHover}>Pause on hover</Button>
+        <Button onClick={showAndUpdate}>Update by id</Button>
+        <Button variant="outlined" onClick={() => pauseToasts()}>
+          Pause all
+        </Button>
+        <Button variant="outlined" onClick={() => playToasts()}>
+          Play all
+        </Button>
+        <Button variant="outlined" onClick={() => pauseToasts('hover-demo')}>
+          Pause one
+        </Button>
+        <Button variant="outlined" onClick={() => playToasts('hover-demo')}>
+          Play one
+        </Button>
+        <Button variant="outlined" onClick={showWithoutDuplicate}>
+          preventDuplicate
+        </Button>
+        <Button variant="outlined" onClick={showWithDedupeById}>
+          dedupe: id
+        </Button>
+        <Button variant="outlined" onClick={showWithDedupeByContent}>
+          dedupe: content
+        </Button>
+        <Button variant="outlined" onClick={showWithDedupeByBoth}>
+          dedupe: both
+        </Button>
+        <Button variant="outlined" onClick={clearToasts}>
+          Очистить
+        </Button>
+      </div>
+      <Typography variant="body2">
+        dedupe-demo активен: {isActiveToast('dedupe-demo') ? 'Да' : 'Нет'}
+      </Typography>
+      <Typography variant="body2">
+        dedupe-id-demo активен: {isActiveToast('dedupe-id-demo') ? 'Да' : 'Нет'}
+      </Typography>
+      <Typography variant="body2">
+        dedupe-both-demo активен: {isActiveToast('dedupe-both-demo') ? 'Да' : 'Нет'}
+      </Typography>
+    </Card>
+  );
+};
+
+const LimitAndStackDemo = () => {
+  const { showToast, clearToasts } = useToast();
+
+  const showMany = () => {
+    showToast('Первый', 'info', 'Queue #1', 6000);
+    showToast('Второй', 'success', 'Queue #2', 6000);
+    showToast('Третий', 'warning', 'Queue #3', 6000);
+    showToast('Четвертый', 'error', 'Queue #4', 6000);
+    showToast('Пятый', 'neutral', 'Queue #5', 6000);
+  };
+
+  return (
+    <Card padding="lg">
+      <Typography variant="h3" marginBottom="md">
+        limit + newestOnTop + stacked
+      </Typography>
+      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+        <Button onClick={showMany}>Показать 5 уведомлений</Button>
+        <Button variant="outlined" onClick={clearToasts}>
+          Очистить
+        </Button>
+      </div>
+    </Card>
+  );
+};
+
 export const BasicUsage: Story = {
   render: () => <BasicToastDemo />,
 };
@@ -403,6 +540,23 @@ export const BulkOperations: Story = {
   render: () => <BulkOperationsDemo />,
 };
 
+export const AdvancedControls: Story = {
+  render: () => <AdvancedControlsDemo />,
+};
+
+export const LimitedStack: Story = {
+  decorators: [
+    (Story) => (
+      <ThemeProvider>
+        <ToastProvider limit={3} newestOnTop stacked>
+          <Story />
+        </ToastProvider>
+      </ThemeProvider>
+    ),
+  ],
+  render: () => <LimitAndStackDemo />,
+};
+
 export const AllExamples: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -410,6 +564,8 @@ export const AllExamples: Story = {
       <ToastTypesDemo />
       <AutoHideDemo />
       <BulkOperationsDemo />
+      <AdvancedControlsDemo />
     </div>
   ),
 };
+

@@ -1,21 +1,24 @@
 import styled, { css } from 'styled-components';
 import { ThemeMode } from '@/types/theme';
+import { ButtonVariant } from '@/types/ui';
+import { getButtonVariant } from '@/handlers/buttonThemeHandlers';
 import grey from '@/variables/colors/grey';
-import { neutral } from '@/variables/colors/neutral';
 
 /**
  * Корневой `nav`: центрирует плашку пагинации.
+ * Ширина `auto`, чтобы не перекрывать соседние элементы в строке (например селект в `TablePagination`).
  */
 export const PaginationNav = styled.nav`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
+  width: auto;
+  max-width: 100%;
   font-family: ${({ theme }) => theme.fonts.primary};
 `;
 
 /**
- * Контейнер-плашка (макет Figma: светлая — белый фон, тёмная — ~#333, скруглённые края).
+ * Контейнер-плашка (макет: светлая — белая карточка; тёмная — нейтральная серая плашка, не синий фон страницы).
  */
 export const PaginationBar = styled.div`
   display: inline-flex;
@@ -26,7 +29,7 @@ export const PaginationBar = styled.div`
   gap: 2px;
   border-radius: 9999px;
   background: ${({ theme }) =>
-    theme.mode === ThemeMode.DARK ? '#333333' : theme.colors.backgroundSecondary};
+    theme.mode === ThemeMode.DARK ? grey[800] : theme.colors.backgroundSecondary};
 `;
 
 /**
@@ -89,14 +92,14 @@ export const PaginationArrowButton = styled.button<{
   }
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.primary};
+    outline: 2px solid ${({ theme }) => theme.colors.info};
     outline-offset: 2px;
   }
 `;
 
 /**
  * Кнопка номера страницы.
- * @property $active — текущая страница (синяя заливка и «glow» по макету)
+ * @property $active — текущая страница (яркая заливка `theme.colors.info` и лёгкое свечение по макету)
  * @property $disabled — глобальный disabled пагинации (все номера неактивны)
  */
 export const PageButton = styled.button<{
@@ -127,15 +130,19 @@ export const PageButton = styled.button<{
 
   ${({ theme, $active, $disabled }) => {
     const dark = theme.mode === ThemeMode.DARK;
-    const idleColor = dark ? neutral[10] : grey[900];
-    const primary = theme.colors.primary;
+    const labelColor = theme.colors.text;
+    const accentFill = theme.colors.info;
+    const accentFillHover = theme.colors.infoHover;
+    const primaryButtonStyles = getButtonVariant(theme.buttons, ButtonVariant.PRIMARY);
+    const labelOnAccent =
+      primaryButtonStyles.hover.color ?? primaryButtonStyles.color;
 
     if ($disabled) {
       return css`
         opacity: 0.45;
         cursor: not-allowed;
         pointer-events: none;
-        color: ${idleColor};
+        color: ${labelColor};
         background: transparent;
         box-shadow: none;
       `;
@@ -143,25 +150,25 @@ export const PageButton = styled.button<{
 
     if ($active) {
       return css`
-        color: #ffffff;
-        background: ${primary};
+        color: ${primaryButtonStyles.color};
+        background: ${accentFill};
         cursor: default;
         box-shadow:
-          0 0 0 1px color-mix(in srgb, ${primary} 45%, transparent),
-          0 4px 14px color-mix(in srgb, ${primary} 40%, transparent);
+          0 0 0 1px color-mix(in srgb, ${accentFill} 45%, transparent),
+          0 4px 14px color-mix(in srgb, ${accentFill} 40%, transparent);
 
         &:hover {
-          color: #ffffff;
-          background: ${primary};
+          color: ${labelOnAccent};
+          background: ${accentFillHover};
           box-shadow:
-            0 0 0 1px color-mix(in srgb, ${primary} 45%, transparent),
-            0 4px 14px color-mix(in srgb, ${primary} 40%, transparent);
+            0 0 0 1px color-mix(in srgb, ${accentFillHover} 45%, transparent),
+            0 4px 14px color-mix(in srgb, ${accentFillHover} 38%, transparent);
         }
       `;
     }
 
     return css`
-      color: ${idleColor};
+      color: ${labelColor};
       background: transparent;
       cursor: pointer;
 
@@ -174,9 +181,49 @@ export const PageButton = styled.button<{
       }
 
       &:focus-visible {
-        outline: 2px solid ${primary};
+        outline: 2px solid ${accentFill};
         outline-offset: 2px;
       }
+    `;
+  }}
+`;
+
+/**
+ * Текущая страница в режиме `compact` (не интерактивна; визуально как активная `PageButton`).
+ * @property $minW — мин. ширина
+ * @property $minH — мин. высота
+ * @property $fontSize — размер шрифта
+ * @property $radius — скругление
+ */
+export const PaginationCompactCurrent = styled.span<{
+  $minW: string;
+  $minH: string;
+  $fontSize: string;
+  $radius: string;
+}>`
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: ${({ $minW }) => $minW};
+  min-height: ${({ $minH }) => $minH};
+  padding: 0 4px;
+  border-radius: ${({ $radius }) => $radius};
+  font-size: ${({ $fontSize }) => $fontSize};
+  font-weight: 500;
+  line-height: 1.2;
+  user-select: none;
+
+  ${({ theme }) => {
+    const accentFill = theme.colors.info;
+    const primaryButtonStyles = getButtonVariant(theme.buttons, ButtonVariant.PRIMARY);
+
+    return css`
+      color: ${primaryButtonStyles.color};
+      background: ${accentFill};
+      box-shadow:
+        0 0 0 1px color-mix(in srgb, ${accentFill} 45%, transparent),
+        0 4px 14px color-mix(in srgb, ${accentFill} 40%, transparent);
     `;
   }}
 `;
@@ -196,5 +243,5 @@ export const Ellipsis = styled.span<{ $minH?: string }>`
   font-weight: 500;
   line-height: 1;
   user-select: none;
-  color: ${({ theme }) => (theme.mode === ThemeMode.DARK ? neutral[200] : grey[800])};
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;

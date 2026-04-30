@@ -1,10 +1,10 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import { BlurEffects } from './BlurEffects';
 import { blurClasses } from './blur';
 
 const meta: Meta<typeof BlurEffects> = {
-  title: 'Variables/Blur Effects',
+  title: 'UI Kit/Utils/Variables/Blur Effects',
   component: BlurEffects,
   parameters: {
     layout: 'padded',
@@ -237,3 +237,4 @@ export const AllBlurEffects: Story = {
     },
   },
 };
+

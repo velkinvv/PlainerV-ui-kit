@@ -8,6 +8,7 @@ import React, {
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import type {
   SnackbarItem,
   SnackbarContextValue,
@@ -115,14 +116,25 @@ export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
     typeof document !== 'undefined'
       ? createPortal(
           <SnackbarStack role="region" aria-label="Сообщения внизу экрана" $placement={placement}>
-            {snackbars.map((s) => (
-              <Snackbar
-                key={s.id}
-                snackbar={s}
-                onClose={hideSnackbar}
-                onActionClick={handleActionClick}
-              />
-            ))}
+            <AnimatePresence initial={false}>
+              {snackbars.map((snackbarItem) => (
+                <motion.div
+                  key={snackbarItem.id}
+                  layout
+                  style={{ width: '100%' }}
+                  initial={{ opacity: 0, y: 12, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                  transition={{ duration: 0.18, ease: 'easeOut' }}
+                >
+                  <Snackbar
+                    snackbar={snackbarItem}
+                    onClose={hideSnackbar}
+                    onActionClick={handleActionClick}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </SnackbarStack>,
           document.body,
         )

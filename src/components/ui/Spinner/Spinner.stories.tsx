@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Spinner } from './Spinner';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
@@ -6,7 +6,7 @@ import { Size } from '../../../types/sizes';
 import { SpinnerVariant } from '../../../types/ui';
 
 const meta: Meta<typeof Spinner> = {
-  title: 'Components/Spinner',
+  title: 'UI Kit/Feedback/Spinner',
   component: Spinner,
   parameters: {
     layout: 'padded',
@@ -17,7 +17,7 @@ const meta: Meta<typeof Spinner> = {
     },
   },
   decorators: [
-    Story => (
+    (Story) => (
       <ThemeProvider>
         <Story />
       </ThemeProvider>
@@ -32,6 +32,9 @@ const meta: Meta<typeof Spinner> = {
       control: { type: 'select' },
       options: [Size.XS, Size.SM, Size.MD, Size.LG, Size.XL],
       description: 'Размер спиннера',
+      table: {
+        type: { summary: 'Size: XS, SM, MD, LG, XL' },
+      },
     },
     color: {
       control: { type: 'color' },
@@ -44,33 +47,44 @@ const meta: Meta<typeof Spinner> = {
     },
     variant: {
       control: { type: 'select' },
-      options: ['circle', 'dots', 'bars', 'pulse'],
+      options: Object.values(SpinnerVariant),
       description: 'Визуальный вариант спиннера',
+      table: {
+        type: { summary: 'circle, dots, bars или pulse (SpinnerVariant)' },
+      },
     },
     speed: {
       control: { type: 'number', min: 0.1, max: 5, step: 0.1 },
       description: 'Скорость анимации в секундах',
+      table: { type: { summary: 'number (секунды)' } },
     },
     thickness: {
       control: { type: 'number', min: 1, max: 10, step: 1 },
       description: 'Толщина границы для circle варианта',
+      table: { type: { summary: 'number (px)' } },
     },
     label: {
       control: { type: 'text' },
       description: 'Текст рядом со спиннером',
+      table: { type: { summary: 'string' } },
     },
     labelPosition: {
       control: { type: 'select' },
       options: ['top', 'bottom', 'left', 'right'],
       description: 'Позиция текста относительно спиннера',
+      table: {
+        type: { summary: 'top, bottom, left или right' },
+      },
     },
     centered: {
       control: { type: 'boolean' },
       description: 'Центрировать спиннер в контейнере',
+      table: { type: { summary: 'boolean' } },
     },
     ariaLabel: {
       control: { type: 'text' },
       description: 'Текст для screen readers',
+      table: { type: { summary: 'string' } },
     },
   },
 };
@@ -331,7 +345,7 @@ export const VariantsComparison: Story = {
       <div>
         <h3 style={{ marginBottom: 16 }}>Все варианты в разных размерах</h3>
         <div style={{ display: 'flex', gap: 24, alignItems: 'center', flexWrap: 'wrap' }}>
-          {[Size.SM, Size.MD, Size.LG].map(size => (
+          {[Size.SM, Size.MD, Size.LG].map((size) => (
             <div key={size} style={{ textAlign: 'center' }}>
               <Spinner variant={SpinnerVariant.CIRCLE} size={size} />
               <p style={{ marginTop: '8px', fontSize: '12px' }}>{size}</p>
@@ -342,7 +356,7 @@ export const VariantsComparison: Story = {
       <div>
         <h3 style={{ marginBottom: 16 }}>Dots вариант</h3>
         <div style={{ display: 'flex', gap: 24, alignItems: 'center', flexWrap: 'wrap' }}>
-          {[Size.SM, Size.MD, Size.LG].map(size => (
+          {[Size.SM, Size.MD, Size.LG].map((size) => (
             <div key={size} style={{ textAlign: 'center' }}>
               <Spinner variant={SpinnerVariant.DOTS} size={size} />
               <p style={{ marginTop: '8px', fontSize: '12px' }}>{size}</p>
@@ -353,7 +367,7 @@ export const VariantsComparison: Story = {
       <div>
         <h3 style={{ marginBottom: 16 }}>Bars вариант</h3>
         <div style={{ display: 'flex', gap: 24, alignItems: 'center', flexWrap: 'wrap' }}>
-          {[Size.SM, Size.MD, Size.LG].map(size => (
+          {[Size.SM, Size.MD, Size.LG].map((size) => (
             <div key={size} style={{ textAlign: 'center' }}>
               <Spinner variant={SpinnerVariant.BARS} size={size} />
               <p style={{ marginTop: '8px', fontSize: '12px' }}>{size}</p>
@@ -364,7 +378,7 @@ export const VariantsComparison: Story = {
       <div>
         <h3 style={{ marginBottom: 16 }}>Pulse вариант</h3>
         <div style={{ display: 'flex', gap: 24, alignItems: 'center', flexWrap: 'wrap' }}>
-          {[Size.SM, Size.MD, Size.LG].map(size => (
+          {[Size.SM, Size.MD, Size.LG].map((size) => (
             <div key={size} style={{ textAlign: 'center' }}>
               <Spinner variant={SpinnerVariant.PULSE} size={size} />
               <p style={{ marginTop: '8px', fontSize: '12px' }}>{size}</p>
@@ -383,3 +397,4 @@ export const VariantsComparison: Story = {
     },
   },
 };
+

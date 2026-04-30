@@ -180,7 +180,7 @@ export const ModalHeader = styled.div<{ $variant: ModalVariant }>`
   justify-content: space-between;
   gap: 4px;
   width: 100%;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 
   ${({ theme, $variant }) => {
     const headerStyles = getModalComponentStyles(theme.modals).header;
@@ -252,12 +252,13 @@ export const CloseButton = styled.button`
   flex-shrink: 0;
   padding: 0;
   margin: 0;
-  width: 26px;
-  height: 26px;
 
   ${({ theme }) => {
     const closeButtonStyles = getModalComponentStyles(theme.modals).closeButton;
     return `
+      width: ${closeButtonStyles.width};
+      height: ${closeButtonStyles.height};
+      border-radius: ${closeButtonStyles.borderRadius};
       color: ${closeButtonStyles.color};
     `;
   }}
@@ -276,7 +277,12 @@ export const CloseButton = styled.button`
     }}
 
     svg {
-      color: #424242;
+      ${({ theme }) => {
+        const closeButtonStyles = getModalComponentStyles(theme.modals).closeButton;
+        return `
+          color: ${closeButtonStyles.hoverColor};
+        `;
+      }}
     }
   }
 
@@ -293,7 +299,7 @@ export const ModalContent = styled.div`
   flex: 1;
   overflow-y: auto;
   width: 100%;
-  margin-bottom: 16px;
+  margin-bottom: 0;
 
   ${({ theme }) => {
     const contentStyles = getModalComponentStyles(theme.modals).content;
@@ -364,7 +370,7 @@ export const ModalButtonContainer = styled.div`
   justify-content: flex-end;
   gap: 8px;
   width: 100%;
-  margin-top: 16px;
+  margin-top: 12px;
 `;
 
 export const ModalButtonsIcon = styled.div`

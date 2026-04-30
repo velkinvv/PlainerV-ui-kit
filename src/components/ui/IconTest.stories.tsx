@@ -1,9 +1,9 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { IconPlainerUser } from '../../icons/plainer';
 
 const meta: Meta = {
-  title: 'Components/Icon/Icon Test',
+  title: 'UI Kit/Data Display/Icon/Icon Test',
   parameters: {
     layout: 'centered',
   },
@@ -31,3 +31,4 @@ export const CustomColor: Story = {
     </div>
   ),
 };
+

@@ -1,21 +1,24 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import { Typography } from './Typography';
 
 const meta: Meta<typeof Typography> = {
-  title: 'Components/Typography',
+  title: 'UI Kit/Data Display/Typography',
   component: Typography,
   tags: ['autodocs'], // Включаем автоматическую генерацию документации
   parameters: {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Универсальный компонент для отображения текста с различными стилями. Вдохновлен Material-UI Typography.',
+        component: 'Универсальный компонент для отображения текста с различными стилями.',
       },
     },
   },
   argTypes: {
+    children: {
+      description: 'Текст или разметка',
+      table: { type: { summary: 'ReactNode' } },
+    },
     variant: {
       control: { type: 'select' },
       options: [
@@ -34,7 +37,13 @@ const meta: Meta<typeof Typography> = {
         'label',
         'inherit',
       ],
-      description: 'Вариант типографики',
+      description:
+        'Вариант типографики; значения: `h1`, `h2`, `h3`, `h4`, `h5`, `h6`, `body`, `bodySmall`, `bodyLarge`, `caption`, `button`, `input`, `label`, `inherit`',
+      table: {
+        type: {
+          summary: 'h1–h6, body, bodySmall, bodyLarge, caption, button, input, label или inherit',
+        },
+      },
     },
     color: {
       control: { type: 'select' },
@@ -51,37 +60,57 @@ const meta: Meta<typeof Typography> = {
         'textDisabled',
         'inherit',
       ],
-      description: 'Цвет текста',
+      description:
+        'Цвет текста; значения: `primary`, `secondary`, `success`, `warning`, `danger`, `info`, `text`, `textSecondary`, `textTertiary`, `textDisabled`, `inherit`',
+      table: {
+        type: {
+          summary:
+            'primary, secondary, success, warning, danger, info, text, textSecondary, textTertiary, textDisabled или inherit',
+        },
+      },
     },
     align: {
       control: { type: 'select' },
       options: ['left', 'center', 'right', 'justify', 'inherit'],
-      description: 'Выравнивание текста',
+      description: 'Выравнивание текста; значения: `left`, `center`, `right`, `justify`, `inherit`',
+      table: {
+        type: { summary: 'left, center, right, justify или inherit' },
+      },
     },
     decoration: {
       control: { type: 'select' },
       options: ['none', 'underline', 'line-through', 'inherit'],
-      description: 'Декорация текста',
+      description: 'Декорация текста; значения: `none`, `underline`, `line-through`, `inherit`',
+      table: {
+        type: { summary: 'none, underline, line-through или inherit' },
+      },
     },
     component: {
       control: 'text',
       description: 'HTML тег для рендеринга',
+      table: {
+        type: { summary: 'строка с именем элемента (например p, span, div)' },
+      },
     },
     noWrap: {
       control: 'boolean',
       description: 'Отключить перенос строк',
+      table: { type: { summary: 'boolean' } },
     },
     uppercase: {
       control: 'boolean',
       description: 'Сделать текст заглавными буквами',
+      table: { type: { summary: 'boolean' } },
     },
     lowercase: {
       control: 'boolean',
       description: 'Сделать текст строчными буквами',
+      table: { type: { summary: 'boolean' } },
     },
     capitalize: {
       control: 'boolean',
       description: 'Сделать первую букву заглавной',
+      table: { type: { summary: 'boolean' } },
     },
     fontWeight: {
       control: { type: 'select' },
@@ -96,22 +125,38 @@ const meta: Meta<typeof Typography> = {
         'extraBold',
         'black',
       ],
-      description: 'Жирность шрифта',
+      description:
+        'Жирность шрифта; значения: `thin`, `extraLight`, `light`, `regular`, `medium`, `semiBold`, `bold`, `extraBold`, `black`',
+      table: {
+        type: {
+          summary: 'thin, extraLight, light, regular, medium, semiBold, bold, extraBold или black',
+        },
+      },
     },
     fontSize: {
       control: { type: 'select' },
       options: ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl'],
-      description: 'Размер шрифта',
+      description:
+        'Размер шрифта; значения: `xs`, `sm`, `base`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl`',
+      table: {
+        type: { summary: 'xs … 5xl (токены размера из темы)' },
+      },
     },
     lineHeight: {
       control: { type: 'select' },
       options: ['tight', 'normal', 'relaxed', 'loose'],
-      description: 'Высота строки',
+      description: 'Высота строки; значения: `tight`, `normal`, `relaxed`, `loose`',
+      table: {
+        type: { summary: 'tight, normal, relaxed или loose' },
+      },
     },
     fontFamily: {
       control: { type: 'select' },
       options: ['primary', 'secondary', 'monospace'],
-      description: 'Семейство шрифтов',
+      description: 'Семейство шрифтов; значения: `primary`, `secondary`, `monospace`',
+      table: {
+        type: { summary: 'primary, secondary или monospace' },
+      },
     },
   },
 };
@@ -475,3 +520,4 @@ export const Interactive: Story = {
     },
   },
 };
+

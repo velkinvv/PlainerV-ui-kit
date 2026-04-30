@@ -1,12 +1,43 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
+import { Tag } from '../components/ui/Tag';
 import { Button } from '../components/ui/buttons/Button';
-import { Badge } from '../components/ui/Badge';
+
+const codeBlockContainerStyle: React.CSSProperties = {
+  backgroundColor: '#2d3748',
+  color: '#e2e8f0',
+  padding: '16px',
+  borderRadius: '6px',
+  fontFamily: 'Monaco, Consolas, "Courier New", monospace',
+  fontSize: '14px',
+  overflow: 'auto',
+  userSelect: 'text',
+  WebkitUserSelect: 'text',
+};
+
+const codeBlockPreStyle: React.CSSProperties = {
+  margin: 0,
+  whiteSpace: 'pre-wrap',
+  userSelect: 'text',
+  WebkitUserSelect: 'text',
+};
+
+const hookDescriptionStyle: React.CSSProperties = {
+  color: '#334155',
+  backgroundColor: '#e2e8f0',
+  border: '1px solid #cbd5e1',
+  borderRadius: '999px',
+  padding: '4px 10px',
+  display: 'inline-flex',
+  alignItems: 'center',
+  fontSize: '12px',
+  lineHeight: '16px',
+};
 
 const meta: Meta = {
-  title: 'Hooks/Overview',
+  title: 'UI Kit/Hooks/Overview',
   parameters: {
     docs: {
       description: {
@@ -255,11 +286,9 @@ const MyComponent = () => {
   return (
     <div>
       <button onClick={open}>Открыть модальное окно</button>
-      {isOpen && (
-        <Modal onClose={close}>
-          <div>Содержимое модального окна</div>
-        </Modal>
-      )}
+      <Modal isOpen={isOpen} onClose={close} lazy unmountOnClose>
+        <div>Содержимое модального окна</div>
+      </Modal>
     </div>
   );
 };`,
@@ -503,21 +532,13 @@ const SizeComponent = () => {
                   <Typography variant="h5" marginRight="sm">
                     {hook.name}
                   </Typography>
-                  <Badge variant="outlined">{hook.description}</Badge>
+                  <span style={hookDescriptionStyle}>{hook.description}</span>
                 </div>
 
                 <div
-                  style={{
-                    backgroundColor: '#2d3748',
-                    color: '#e2e8f0',
-                    padding: '16px',
-                    borderRadius: '6px',
-                    fontFamily: 'Monaco, Consolas, "Courier New", monospace',
-                    fontSize: '14px',
-                    overflow: 'auto',
-                  }}
+                  style={codeBlockContainerStyle}
                 >
-                  <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{hook.code}</pre>
+                  <pre style={codeBlockPreStyle}>{hook.code}</pre>
                 </div>
               </div>
             ))}
@@ -648,8 +669,9 @@ const MyComponent = () => {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
-              <Badge
-                variant="primary"
+              <Tag
+                colorVariant="primary"
+                appearance="filled"
                 style={{
                   marginRight: '12px',
                   minWidth: '24px',
@@ -660,7 +682,7 @@ const MyComponent = () => {
                 }}
               >
                 {index + 1}
-              </Badge>
+              </Tag>
               <Typography variant="h5">{practice.title}</Typography>
             </div>
 
@@ -670,17 +692,11 @@ const MyComponent = () => {
 
             <div
               style={{
-                backgroundColor: '#2d3748',
-                color: '#e2e8f0',
-                padding: '16px',
-                borderRadius: '6px',
-                fontFamily: 'Monaco, Consolas, "Courier New", monospace',
-                fontSize: '14px',
-                overflow: 'auto',
+                ...codeBlockContainerStyle,
                 marginBottom: '16px',
               }}
             >
-              <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{practice.code}</pre>
+              <pre style={codeBlockPreStyle}>{practice.code}</pre>
             </div>
 
             <Typography variant="body2" marginBottom="sm" style={{ fontWeight: 'bold' }}>
@@ -721,3 +737,4 @@ export const AllExamples: Story = {
     </div>
   ),
 };
+

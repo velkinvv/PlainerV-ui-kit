@@ -16,19 +16,22 @@
       "require": "./dist/index.cjs.js"
     },
     "./styles": "./dist/styles.css",
-    "./fonts/*": "./dist/fonts/*"
+    "./fonts/*": "./dist/styles/fonts/*"
   },
   "files": [
     "dist",
     "README.md",
     "LICENSE"
   ],
-  "sideEffects": false,
+  "sideEffects": [
+    "**/*.css"
+  ],
   "scripts": {
+    "clean": "npx --yes rimraf dist",
     "start": "PUBLIC_URL=/plainerv npm run dev",
-    "build": "cross-env NODE_ENV=production rollup -c",
-    "build:dev": "cross-env NODE_ENV=development rollup -c",
-    "dev": "rollup -c --watch",
+    "build": "npm run clean && cross-env NODE_ENV=production rollup -c rollup.config.mjs && node ./scripts/verify-package.mjs",
+    "build:dev": "npm run clean && cross-env NODE_ENV=development rollup -c rollup.config.mjs && node ./scripts/verify-package.mjs",
+    "dev": "rollup -c rollup.config.mjs --watch",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.{ts,tsx}\" --fix --cache",
@@ -38,7 +41,9 @@
     "fix-all": "npm run format && npm run lint:fix-all",
     "type-check": "tsc --noEmit",
     "prepare": "husky install",
+    "prestorybook": "npx --yes rimraf \"src/components/ui/table_pkg\"",
     "storybook": "storybook dev -p 6006",
+    "prebuild-storybook": "npx --yes rimraf \"src/components/ui/table_pkg\"",
     "build-storybook": "storybook build",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -47,6 +52,7 @@
     "analyze": "npm run build && echo Bundle analysis saved to dist/stats.html",
     "quality:check": "npm run type-check && npm run lint:check && npm run format:check",
     "quality:fix": "npm run fix-all && npm run type-check",
+    "prepack": "npm run build",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -83,19 +89,15 @@
     "dayjs": "^1.11.13",
     "framer-motion": "^11.0.0",
     "react-hook-form": "^7.48.0",
-    "styled-components": "^6.1.0",
-    "tailwind-merge": "^2.0.0"
+    "styled-components": "^6.1.0"
   },
   "devDependencies": {
-    "@reduxjs/toolkit": "^2.5.0",
     "@commitlint/cli": "^19.0.0",
     "@commitlint/config-conventional": "^19.0.0",
     "@rollup/plugin-commonjs": "^29.0.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.3.0",
-    "@rsbuild/core": "^1.4.15",
-    "@rsbuild/plugin-react": "^1.3.5",
     "@storybook/addon-docs": "^9.1.5",
     "@storybook/addon-links": "^9.1.5",
     "@storybook/addon-themes": "^9.1.5",
@@ -111,7 +113,6 @@
     "@types/styled-components": "^5.1.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
-    "autoprefixer": "^10.4.23",
     "cross-env": "^7.0.3",
     "eslint": "^9.0.0",
     "eslint-config-prettier": "^10.0.0",
@@ -126,7 +127,6 @@
     "jest-environment-jsdom": "^29.7.0",
     "lint-staged": "^15.0.0",
     "prettier": "^3.6.2",
-    "react-redux": "^9.2.0",
     "rollup": "^4.54.0",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
@@ -140,17 +140,7 @@
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
-    "react-dom": "^18.0.0 || ^19.0.0",
-    "@reduxjs/toolkit": "^2.0.0",
-    "react-redux": "^9.0.0"
-  },
-  "peerDependenciesMeta": {
-    "@reduxjs/toolkit": {
-      "optional": true
-    },
-    "react-redux": {
-      "optional": true
-    }
+    "react-dom": "^18.0.0 || ^19.0.0"
   },
   "lint-staged": {
     "*.{ts,tsx}": [

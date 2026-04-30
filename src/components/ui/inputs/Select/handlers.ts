@@ -2,9 +2,16 @@ import type { ReactNode } from 'react';
 import type {
   DropdownMenuGroup,
   DropdownMenuItemProps,
+  SearchFormat,
   SelectOption,
   SelectProps,
 } from '../../../../types/ui';
+import {
+  defaultDropdownSearchMatches,
+  getDropdownItemSearchHaystackParts,
+} from '../../../../handlers/dropdownSearchMatchHandlers';
+import { applyTreeMultiSelectionToValues } from '../../../../handlers/dropdownTreeSelectionHandlers';
+import { getChevronIconSizeForField } from '../../../../handlers/iconHandlers';
 import { Size, IconSize } from '../../../../types/sizes';
 
 /**
@@ -48,6 +55,22 @@ export const getSelectUncontrolledDefaultValue = (
 };
 
 /**
+ * Считывает выбранные значения с нативного `HTMLSelectElement` после `change`.
+ * @param element - элемент из `event.currentTarget`.
+ * @param multiple - признак `multiple` у селекта.
+ * @returns одна строка `value` или массив `value` выбранных опций.
+ */
+export const getSelectNativeValueFromElement = (
+  element: HTMLSelectElement,
+  multiple: boolean,
+): string | string[] => {
+  if (multiple) {
+    return Array.from(element.selectedOptions).map((option) => option.value);
+  }
+  return element.value;
+};
+
+/**
  * Преобразует опции селекта в элементы меню `Dropdown`.
  * @param options - Список опций компонента `Select`.
  * @returns Плоский список `DropdownMenuItemProps`.
@@ -57,7 +80,80 @@ export const mapSelectOptionsToDropdownItems = (options: SelectOption[]): Dropdo
     label: opt.label,
     value: opt.value,
     disabled: opt.disabled,
+    tooltip: opt.tooltip,
+    tooltipType: opt.tooltipType,
+    tooltipPosition: opt.tooltipPosition,
+    ...(opt.id !== undefined && opt.id !== '' ? { id: opt.id } : {}),
+    ...(opt.options?.length ? { nestedItems: mapSelectOptionsToDropdownItems(opt.options) } : {}),
   }));
+
+/**
+ * Есть ли у опций вложенные `options` (дерево).
+ * @param options - Корневые опции селекта.
+ */
+export const hasNestedSelectOptions = (options: SelectOption[]): boolean =>
+  options.some((option) => Boolean(option.options?.length));
+
+/**
+ * Плоский список опций для нативного `<option>` (родитель с детьми и листья).
+ * @param options - Иерархия опций.
+ */
+export const flattenNativeSelectOptions = (options: SelectOption[]): SelectOption[] => {
+  const result: SelectOption[] = [];
+  const walk = (nodes: SelectOption[]) => {
+    nodes.forEach((node) => {
+      if (node.options?.length) {
+        result.push(node);
+        walk(node.options);
+        return;
+      }
+      result.push(node);
+    });
+  };
+  walk(options);
+  return result;
+};
+
+/**
+ * Плоский список всех опций (родители и дети) для подписей чипов.
+ * @param options - Иерархия опций.
+ */
+export const flattenSelectOptionsForLabelLookup = (options: SelectOption[]): SelectOption[] => {
+  const result: SelectOption[] = [];
+  const walk = (nodes: SelectOption[]) => {
+    nodes.forEach((node) => {
+      result.push(node);
+      if (node.options?.length) {
+        walk(node.options);
+      }
+    });
+  };
+  walk(options);
+  return result;
+};
+
+/**
+ * Все выбираемые `value` в дереве (узел-ветка и листья), без отключённых поддеревьев.
+ * @param options - Иерархия опций.
+ */
+export const collectSelectableOptionValuesRecursive = (options: SelectOption[]): string[] => {
+  const values: string[] = [];
+  const walk = (nodes: SelectOption[]) => {
+    nodes.forEach((node) => {
+      if (node.disabled) {
+        return;
+      }
+      if (node.options?.length) {
+        values.push(node.value);
+        walk(node.options);
+        return;
+      }
+      values.push(node.value);
+    });
+  };
+  walk(options);
+  return values;
+};
 
 const isSelectDropdownMenuGroup = (
   entry: DropdownMenuItemProps | DropdownMenuGroup,
@@ -70,12 +166,14 @@ const isSelectDropdownMenuGroup = (
  * @param query - Строка поиска (как в поле ввода).
  * @param items - Плоский список или группы (группы сужаются по вложенным пунктам).
  * @param searchFilter - Необязательный кастомный фильтр `(query, item)`.
+ * @param searchFormat - Режим встроенного поиска при отсутствии `searchFilter` (`wholly` | `word`).
  * @returns Отфильтрованный список; при пустом `query` возвращает исходный `items`.
  */
 export const filterSelectItemsByQuery = (
   query: string,
   items: (DropdownMenuItemProps | DropdownMenuGroup)[],
   searchFilter?: (query: string, item: DropdownMenuItemProps) => boolean,
+  searchFormat?: SearchFormat,
 ): (DropdownMenuItemProps | DropdownMenuGroup)[] => {
   const normalized = query.trim().toLowerCase();
   if (!normalized) {
@@ -86,26 +184,40 @@ export const filterSelectItemsByQuery = (
     if (searchFilter) {
       return searchFilter(query, item);
     }
-    const description = item.description?.toLowerCase() ?? '';
-    const descriptionMatches = description.includes(normalized);
-    if (typeof item.label === 'string') {
-      return item.label.toLowerCase().includes(normalized) || descriptionMatches;
+    const parts = getDropdownItemSearchHaystackParts(item);
+    return defaultDropdownSearchMatches(query, searchFormat, parts);
+  };
+
+  const filterMenuItemSubtree = (item: DropdownMenuItemProps): DropdownMenuItemProps | null => {
+    if (!item.nestedItems?.length) {
+      return matchItem(item) ? item : null;
     }
-    if (typeof item.label === 'number') {
-      return String(item.label).toLowerCase().includes(normalized) || descriptionMatches;
+    const filteredNested = item.nestedItems
+      .map((childItem) => filterMenuItemSubtree(childItem))
+      .filter((entry): entry is DropdownMenuItemProps => Boolean(entry));
+    if (filteredNested.length > 0) {
+      return { ...item, nestedItems: filteredNested };
     }
-    return descriptionMatches;
+    if (matchItem(item)) {
+      return { ...item, nestedItems: item.nestedItems };
+    }
+    return null;
   };
 
   const next: (DropdownMenuItemProps | DropdownMenuGroup)[] = [];
   items.forEach((definition) => {
     if (isSelectDropdownMenuGroup(definition)) {
-      const matchedItems = definition.items.filter(matchItem);
+      const matchedItems = definition.items
+        .map((item) => filterMenuItemSubtree(item))
+        .filter((entry): entry is DropdownMenuItemProps => Boolean(entry));
       if (matchedItems.length > 0) {
         next.push({ ...definition, items: matchedItems });
       }
-    } else if (matchItem(definition)) {
-      next.push(definition);
+    } else {
+      const filteredItem = filterMenuItemSubtree(definition);
+      if (filteredItem) {
+        next.push(filteredItem);
+      }
     }
   });
   return next;
@@ -130,7 +242,7 @@ export const formatSelectOptionLabel = (label: ReactNode | undefined, value: str
  * @param value - Текущее значение (строка или массив при `multiple`).
  * @param multiple - Мультиселект.
  * @param placeholder - Текст при пустом выборе.
- * @returns Строка для кнопки-триггера; при `multiple` и ненулевом выборе — «Выбрано: N».
+ * @returns Строка для кнопки-триггера; при `multiple` и ненулевом выборе — «Выбрано: N» (для вспомогательной логики; в панели триггер с чипами не использует эту строку).
  */
 export const getSelectPanelTriggerText = (
   options: SelectOption[],
@@ -143,7 +255,6 @@ export const getSelectPanelTriggerText = (
     if (arr.length === 0) {
       return placeholder ?? '';
     }
-    // Формат триггера как в макете: «Выбрано: N» (мультиселект).
     return `Выбрано: ${arr.length}`;
   }
   const v = value === undefined || value === null ? '' : Array.isArray(value) ? '' : String(value);
@@ -173,8 +284,7 @@ export const getSelectTriggerShowsPlaceholder = (
     const arr = Array.isArray(value) ? value : value ? [String(value)] : [];
     return arr.length === 0;
   }
-  const v =
-    value === undefined || value === null ? '' : Array.isArray(value) ? '' : String(value);
+  const v = value === undefined || value === null ? '' : Array.isArray(value) ? '' : String(value);
   return v === '';
 };
 
@@ -193,14 +303,20 @@ export const getSelectMultiSelectedCount = (value: string | string[] | undefined
  * @param size - Размер из `SelectProps.size`.
  * @returns Значение `IconSize` для `Icon`.
  */
-export const getSelectChevronIconSize = (size: Size | undefined): IconSize => {
-  if (size === Size.SM || size === Size.XS) {
-    return IconSize.XS;
+/** @see getChevronIconSizeForField — единая шкала шеврона для селекта */
+export const getSelectChevronIconSize = (size: Size | undefined): IconSize =>
+  getChevronIconSizeForField(size);
+
+/**
+ * Размер иконки «очистить весь мультивыбор» в строке с чипами: компактно, без роста высоты поля
+ * (в отличие от `getClearIconSizeForInputField`, рассчитанного на полноразмерный clear у инпута).
+ * @param fieldSize - проп `Select.size`
+ */
+export const getSelectMultiClearAllIconSize = (fieldSize: Size | undefined): IconSize => {
+  if (fieldSize === Size.LG || fieldSize === Size.XL) {
+    return IconSize.SM;
   }
-  if (size === Size.LG || size === Size.XL) {
-    return IconSize.MD;
-  }
-  return IconSize.SM;
+  return IconSize.XS;
 };
 
 /**
@@ -256,4 +372,99 @@ export const applySelectPanelSelection = (
   }
   arr.push(key);
   return arr;
+};
+
+/**
+ * Мультивыбор по дереву опций (`nestedItems` в меню / `options` у `SelectOption`).
+ * @param current - Текущий массив выбранных значений.
+ * @param toggledValue - `value` узла, по которому кликнули.
+ * @param menuDefinitions - Текущее дерево пунктов панели (после фильтра поиска).
+ * @param checkedFromCheckbox - Если пришло из чекбокса: целевое `checked` (indeterminate даёт `false` — снять поддерево).
+ * @param fullMenuDefinitions - Полное дерево без фильтра поиска: нужно, чтобы каскад по родителю видел всех потомков, даже если в панели у родителя урезан `nestedItems`.
+ */
+export const applySelectPanelTreeSelection = (
+  current: string | string[] | undefined,
+  toggledValue: string | undefined,
+  menuDefinitions: DropdownMenuItemProps[],
+  checkedFromCheckbox?: boolean,
+  fullMenuDefinitions?: DropdownMenuItemProps[],
+): string[] => {
+  const selectedArray = Array.isArray(current) ? [...current] : current ? [String(current)] : [];
+  if (toggledValue === undefined || toggledValue === null) {
+    return selectedArray;
+  }
+  return applyTreeMultiSelectionToValues(
+    selectedArray,
+    toggledValue,
+    menuDefinitions,
+    checkedFromCheckbox,
+    fullMenuDefinitions?.length ? fullMenuDefinitions : null,
+  );
+};
+
+/** Одна «капсула» в триггере мультиселекта: значение и подпись для отображения. */
+export type MultiSelectChipEntry = { value: string; label: string };
+
+/**
+ * Подписи выбранных значений в порядке массива `value` (для чипов в триггере).
+ * @param options - Опции селекта.
+ * @param selectedOrder - Порядок выбранных `value` (как в состоянии поля).
+ * @returns Массив пар `value` / `label` для рендера чипов.
+ */
+export const getMultiSelectChipEntries = (
+  options: SelectOption[],
+  selectedOrder: string[],
+): MultiSelectChipEntry[] => {
+  const labelByValue = new Map<string, string>();
+  flattenSelectOptionsForLabelLookup(options).forEach((optionEntry) => {
+    labelByValue.set(
+      optionEntry.value,
+      formatSelectOptionLabel(optionEntry.label, optionEntry.value),
+    );
+  });
+  return selectedOrder.map((v) => ({
+    value: v,
+    label: labelByValue.get(v) ?? v,
+  }));
+};
+
+/**
+ * Значения опций без `disabled` (для «Выбрать все» и проверки «все выбраны»).
+ * @param options - Опции селекта.
+ * @returns Массив `value` доступных к выбору пунктов.
+ */
+export const getSelectableEnabledOptionValues = (options: SelectOption[]): string[] =>
+  collectSelectableOptionValuesRecursive(options);
+
+/**
+ * Сортирует пункты меню: сначала выбранные (в порядке `selectedOrder`), затем остальные в исходном порядке.
+ * @param items - Плоский список пунктов `Dropdown`.
+ * @param selectedOrder - Порядок выбранных значений.
+ * @returns Новый массив пунктов.
+ */
+export const reorderSelectDropdownItemsSelectedFirst = (
+  items: DropdownMenuItemProps[],
+  selectedOrder: string[],
+): DropdownMenuItemProps[] => {
+  if (items.some((item) => item.nestedItems?.length)) {
+    return items;
+  }
+  const orderIndex = new Map<string, number>();
+  selectedOrder.forEach((v, i) => {
+    orderIndex.set(v, i);
+  });
+  const selected: DropdownMenuItemProps[] = [];
+  const rest: DropdownMenuItemProps[] = [];
+  items.forEach((it) => {
+    const key = String(it.value ?? '');
+    if (orderIndex.has(key)) {
+      selected.push(it);
+    } else {
+      rest.push(it);
+    }
+  });
+  selected.sort(
+    (a, b) => (orderIndex.get(String(a.value)) ?? 0) - (orderIndex.get(String(b.value)) ?? 0),
+  );
+  return [...selected, ...rest];
 };

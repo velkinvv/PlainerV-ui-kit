@@ -1,12 +1,16 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import { RadioButton } from './RadioButton';
 import { Size, IconSize } from '../../../types/sizes';
-import { TooltipPosition, RadioButtonLabelPosition } from '../../../types/ui';
+import {
+  TooltipPosition,
+  RadioButtonLabelPosition,
+  RadioButtonVariant,
+} from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
 
 const meta: Meta<typeof RadioButton> = {
-  title: 'Components/RadioButton',
+  title: 'UI Kit/Inputs/RadioButton',
   component: RadioButton,
   parameters: {
     layout: 'padded',
@@ -37,6 +41,36 @@ const meta: Meta<typeof RadioButton> = {
     value: {
       control: 'text',
       description: 'Значение радио кнопки',
+    },
+    status: {
+      control: { type: 'select' },
+      options: [undefined, 'success', 'error', 'warning'],
+      description: 'Визуальный статус обводки и палитры',
+      table: {
+        type: { summary: '`success`, `error`, `warning` либо не задан' },
+      },
+    },
+    variant: {
+      control: { type: 'select' },
+      options: [RadioButtonVariant.FILLED, RadioButtonVariant.OUTLINE],
+      description: 'Вариант заливки',
+      table: {
+        type: { summary: '`filled` или `outline`' },
+      },
+    },
+    labelPosition: {
+      control: { type: 'select' },
+      options: [
+        RadioButtonLabelPosition.RIGHT,
+        RadioButtonLabelPosition.LEFT,
+        RadioButtonLabelPosition.TOP,
+        RadioButtonLabelPosition.BOTTOM,
+        RadioButtonLabelPosition.NONE,
+      ],
+      description: 'Позиция подписи относительно кружка',
+      table: {
+        type: { summary: '`right`, `left`, `top`, `bottom`, `none`' },
+      },
     },
   },
 };
@@ -537,3 +571,4 @@ export const ComplexExample: Story = {
     );
   },
 };
+

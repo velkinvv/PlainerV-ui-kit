@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Icon } from './Icon/Icon';
 import * as PlainerIconsModule from '../../icons/plainer';
@@ -38,7 +38,7 @@ const getIconVariant = (name: string): IconVariant => {
 };
 
 const meta: Meta<typeof Icon> = {
-  title: 'Components/Icon/Showcase',
+  title: 'UI Kit/Data Display/Icon/Showcase',
   component: Icon,
   parameters: {
     layout: 'padded',
@@ -302,3 +302,4 @@ export const AllIcons: Story = {
     },
   },
 };
+

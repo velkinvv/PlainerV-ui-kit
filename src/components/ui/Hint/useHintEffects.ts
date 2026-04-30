@@ -104,18 +104,17 @@ export const useHintScrollPosition = ({
       scrollableParents,
     });
 
-    // Обновляем позицию при прокрутке (с capture для всех элементов)
     window.addEventListener('scroll', handleScroll, true);
-    // Обновляем позицию при изменении размера окна
+    document.addEventListener('scroll', handleScroll, true);
     window.addEventListener('resize', updatePosition);
 
-    // Добавляем обработчики для всех прокручиваемых родителей
     scrollableParents.forEach(parent => {
       parent.addEventListener('scroll', handleScroll, true);
     });
 
     return () => {
       window.removeEventListener('scroll', handleScroll, true);
+      document.removeEventListener('scroll', handleScroll, true);
       window.removeEventListener('resize', updatePosition);
       scrollableParents.forEach(parent => {
         parent.removeEventListener('scroll', handleScroll, true);

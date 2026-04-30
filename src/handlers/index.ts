@@ -2,6 +2,8 @@ export * from './iconHandlers';
 export * from './tableSelectionHandlers';
 export * from './linkHandlers';
 export * from './uiHandlers';
+export * from './portalOverlayHandlers';
 export * from './dateHandlers';
 export * from './timeHandlers';
 export * from './dropdownThemeHandlers';
+export * from './dropdownSearchMatchHandlers';

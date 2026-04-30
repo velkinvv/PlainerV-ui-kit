@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import { Stepper } from './Stepper';
 import type { StepperLinearStep } from '../../../types/ui';
@@ -11,7 +11,7 @@ const linearSteps: StepperLinearStep[] = [
 ];
 
 const meta: Meta<typeof Stepper> = {
-  title: 'Components/Navigation/Stepper',
+  title: 'UI Kit/Navigation/Stepper',
   component: Stepper,
   decorators: [
     (Story) => (
@@ -22,24 +22,83 @@ const meta: Meta<typeof Stepper> = {
   ],
   parameters: {
     layout: 'padded',
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4806-10699',
-    },
     docs: {
       description: {
         component:
-          'Навигация по шагам по макетам Figma ([compact](https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4806-10699&t=cStO03cIis1M6Tar-4), [linear](https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4809-2458&t=cStO03cIis1M6Tar-4)): **compact** — кольцо с «N/M», заголовок и подзаголовок; **linear** — цепочка шагов с соединителями. Внешний вид `light` / `dark` — проп `appearance` или `ThemeProvider`. Для прогресса внутри формы см. также `Progress` (`variant="stepper"`).',
+          'Навигация по шагам: **compact** — кольцо с «N/M», заголовок и подзаголовок; **linear** — цепочка шагов с соединителями. Скругление панели и кнопки «назад» — `BorderRadiusHandler(theme.borderRadius)`. Внешний вид `light` / `dark` — проп `appearance` или `ThemeProvider`. Для прогресса внутри формы см. также `Progress` (`variant="stepper"`).',
       },
     },
   },
   tags: ['autodocs'],
+  argTypes: {
+    variant: {
+      control: { type: 'select' },
+      options: ['compact', 'linear'],
+      description:
+        'compact — кольцо с «текущий/всего», заголовок и подзаголовок; linear — шаги с соединителями',
+      table: {
+        type: { summary: 'compact или linear' },
+      },
+    },
+    appearance: {
+      control: { type: 'select' },
+      options: ['light', 'dark'],
+      description: 'Принудительная светлая или тёмная панель (иначе из темы)',
+      table: {
+        type: { summary: 'light или dark' },
+      },
+    },
+    fullWidth: {
+      control: 'boolean',
+      table: { type: { summary: 'boolean' } },
+    },
+    backButtonLabel: {
+      control: 'text',
+      table: { type: { summary: 'string' } },
+    },
+    onBack: {
+      control: false,
+      table: { type: { summary: '() => void (без колбэка кнопка «назад» скрыта)' } },
+    },
+    currentStep: {
+      description: 'Только для variant=compact: текущий шаг, счёт с 1',
+      control: 'number',
+      table: { type: { summary: 'number' } },
+    },
+    totalSteps: {
+      description: 'Только для variant=compact: всего шагов',
+      control: 'number',
+      table: { type: { summary: 'number' } },
+    },
+    title: {
+      description: 'Только для variant=compact: основная строка',
+      control: false,
+      table: { type: { summary: 'ReactNode' } },
+    },
+    subtitle: {
+      description: 'Только для variant=compact: вторая строка',
+      control: false,
+      table: { type: { summary: 'ReactNode' } },
+    },
+    steps: {
+      description: 'Только для variant=linear: список шагов',
+      control: false,
+      table: {
+        type: { summary: 'StepperLinearStep[] (title, опционально stepLabel)' },
+      },
+    },
+    activeStepIndex: {
+      description: 'Только для variant=linear: индекс активного шага с 0',
+      control: 'number',
+      table: { type: { summary: 'number' } },
+    },
+  },
 };
 
 export default meta;
 type Story = StoryObj<typeof Stepper>;
 
-/** Компактный вариант, тёмная «пилюля» */
+/** Компактный вариант, тёмная панель */
 export const CompactDark: Story = {
   render: () => (
     <Stepper
@@ -152,3 +211,4 @@ export const LinearCustomLabels: Story = {
     />
   ),
 };
+

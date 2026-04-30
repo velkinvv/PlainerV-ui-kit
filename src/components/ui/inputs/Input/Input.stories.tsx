@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import { Input } from './Input';
 import { Icon } from '../../Icon/Icon';
 import { Form, HiddenUsernameField } from '../../Form';
@@ -7,8 +7,11 @@ import { Size, IconSize } from '../../../../types/sizes';
 import { InputVariant } from '../../../../types/ui';
 
 const meta: Meta<typeof Input> = {
-  title: 'Components/Inputs/Input',
+  title: 'UI Kit/Inputs/Input',
   component: Input,
+  args: {
+    clearIconProps: {},
+  },
   parameters: {
     layout: 'padded',
     docs: {
@@ -19,28 +22,29 @@ const meta: Meta<typeof Input> = {
   },
   tags: ['autodocs'],
   decorators: [
-    (Story, context) => {
-      // Если это поле пароля, оборачиваем в Form
-      if (context.args?.type === 'password') {
-        return (
-          <Form formId={`story-${context.id}`}>
-            <Story />
-          </Form>
-        );
-      }
-      return <Story />;
-    },
+    (Story, context) => (
+      <Form formId={`story-${context.id}`}>
+        <Story />
+      </Form>
+    ),
   ],
   argTypes: {
     variant: {
       control: { type: 'select' },
       options: ['default', 'clear'],
-      description: 'Вариант поля: обычное или с акцентом на очистку (селектор и дата — в отдельных компонентах)',
+      description:
+        'Вариант поля; значения: `default` (обычное), `clear` (акцент на очистку; селектор и дата — в отдельных компонентах)',
+      table: {
+        type: { summary: 'default или clear (TextInputVariant)' },
+      },
     },
     size: {
       control: { type: 'select' },
-      options: ['sm', 'md', 'lg', 'xl'],
-      description: 'Размер поля ввода',
+      options: Object.values(Size),
+      description: 'Размер поля (токены отступов и высоты как у остальных полей)',
+      table: {
+        type: { summary: 'Size: XS, SM, MD, LG, XL' },
+      },
     },
     disabled: {
       control: { type: 'boolean' },
@@ -55,19 +59,71 @@ const meta: Meta<typeof Input> = {
       control: { type: 'boolean' },
       description: 'Полная ширина',
     },
-    showClearButton: {
+    displayClearIcon: {
       control: { type: 'boolean' },
-      description: 'Показывать кнопку очистки',
+      description: 'Показывать кнопку с крестиком очистки (`onClearIconClick` — сброс у родителя)',
+    },
+    onClearIconClick: {
+      action: 'clearIconClick',
+      description: 'Клик по очистке (после сброса локального состояния)',
+      table: {
+        type: { summary: '() => void' },
+      },
+    },
+    clearIconProps: {
+      control: 'object',
+      description:
+        'Частичные пропсы `Icon` для кнопки очистки при `displayClearIcon`. По умолчанию `IconExClose`; мерж поверх вычисленного `size`.',
+      table: {
+        type: { summary: 'ClearIconProps' },
+      },
     },
     textAlign: {
       control: { type: 'select' },
       options: ['left', 'center', 'right'],
-      description: 'Выравнивание текста',
+      description: 'Выравнивание текста; значения: `left`, `center`, `right`',
+      table: {
+        type: { summary: 'left, center или right' },
+      },
     },
-    clearIcon: {
-      control: { type: 'boolean' },
+    status: {
+      control: { type: 'select' },
+      options: ['error', 'success', 'warning'],
       description:
-        'Зарезервировано в API; для сброса значения используйте `showClearButton` и `onClear` (см. стори WithClearIcon)',
+        'Цвет обводки по статусу (без текста ошибки; для текста используйте error/helperText)',
+      table: {
+        type: { summary: 'error, success или warning' },
+      },
+    },
+    value: {
+      description: 'Контролируемое значение поля',
+      table: {
+        type: { summary: 'string (и прочие атрибуты нативного input из InputHTMLAttributes)' },
+      },
+    },
+    onChange: {
+      description: 'Нативное событие change у input',
+      table: {
+        type: {
+          summary: '(event: React.ChangeEvent<HTMLInputElement>) => void',
+        },
+      },
+    },
+    tooltipType: {
+      control: { type: 'radio' },
+      options: ['tooltip', 'hint'],
+      description: 'Тип подсказки вокруг поля',
+      table: {
+        type: { summary: 'tooltip или hint' },
+      },
+    },
+    tooltipPosition: {
+      control: { type: 'select' },
+      options: ['top', 'bottom', 'left', 'right'],
+      description: 'Позиция Tooltip или Hint',
+      table: {
+        type: { summary: 'top, bottom, left или right' },
+      },
     },
     displayCharacterCounter: {
       control: { type: 'boolean' },
@@ -145,7 +201,7 @@ export const WithSuccess: Story = {
         label="Email"
         placeholder="Введите email..."
         value={email}
-        onChange={e => setEmail(e.target.value)}
+        onChange={(e) => setEmail(e.target.value)}
         success={true}
       />
     );
@@ -161,10 +217,10 @@ export const Clear: Story = {
         label="Поиск"
         variant={InputVariant.CLEAR}
         placeholder="Поиск..."
-        showClearButton={true}
+        displayClearIcon
         value={q}
-        onChange={e => setQ(e.target.value)}
-        onClear={() => setQ('')}
+        onChange={(e) => setQ(e.target.value)}
+        onClearIconClick={() => setQ('')}
       />
     );
   },
@@ -348,7 +404,7 @@ export const AllVariants: Story = {
           label="С успехом"
           placeholder="Введите email..."
           value={okEmail}
-          onChange={e => setOkEmail(e.target.value)}
+          onChange={(e) => setOkEmail(e.target.value)}
           success={true}
         />
 
@@ -356,10 +412,10 @@ export const AllVariants: Story = {
           label="С очисткой"
           variant={InputVariant.CLEAR}
           placeholder="Поиск..."
-          showClearButton={true}
+          displayClearIcon
           value={search}
-          onChange={e => setSearch(e.target.value)}
-          onClear={() => setSearch('')}
+          onChange={(e) => setSearch(e.target.value)}
+          onClearIconClick={() => setSearch('')}
           rightIcon={<Icon name="IconExSearch" size={IconSize.MD} />}
         />
 
@@ -389,7 +445,7 @@ export const FormExample: Story = {
       setPassword2('');
     };
     return (
-      <Form formId="form-example" onSubmit={e => e.preventDefault()}>
+      <Form formId="form-example" onSubmit={(e) => e.preventDefault()}>
         <div
           style={{
             display: 'flex',
@@ -405,7 +461,7 @@ export const FormExample: Story = {
             leftIcon={<Icon name="IconExUser" size={IconSize.MD} />}
             autoComplete="given-name"
             value={name}
-            onChange={e => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
             required
           />
 
@@ -416,7 +472,7 @@ export const FormExample: Story = {
             type="email"
             autoComplete="email"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
 
@@ -428,7 +484,7 @@ export const FormExample: Story = {
             autoComplete="new-password"
             helperText="Минимум 8 символов"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             required
           />
 
@@ -440,7 +496,7 @@ export const FormExample: Story = {
             autoComplete="new-password"
             error={mismatch}
             value={password2}
-            onChange={e => setPassword2(e.target.value)}
+            onChange={(e) => setPassword2(e.target.value)}
           />
 
           <button type="button" onClick={reset} style={inputStoriesResetButtonStyle}>
@@ -462,17 +518,18 @@ export const WithClearIcon: Story = {
       <Input
         label="Кнопка очистки"
         placeholder="Введите текст..."
-        showClearButton
+        displayClearIcon
         value={text}
-        onChange={e => setText(e.target.value)}
-        onClear={() => setText('')}
+        onChange={(e) => setText(e.target.value)}
+        onClearIconClick={() => setText('')}
       />
     );
   },
   parameters: {
     docs: {
       description: {
-        story: 'Кнопка очистки (`showClearButton` + `onClear`) сбрасывает значение поля.',
+        story:
+          'Кнопка очистки: `displayClearIcon` + `onClearIconClick` сбрасывают значение у родителя.',
       },
     },
   },
@@ -509,7 +566,7 @@ export const LoadingDemo: Story = {
           placeholder="Введите текст..."
           isLoading={isLoading1}
           value={value1}
-          onChange={e => setValue1(e.target.value)}
+          onChange={(e) => setValue1(e.target.value)}
           leftIcon={<Icon name="IconPlainerPlus" size={IconSize.SM} />}
         />
 
@@ -518,7 +575,7 @@ export const LoadingDemo: Story = {
           placeholder="Введите текст..."
           isLoading={isLoading2}
           value={value2}
-          onChange={e => setValue2(e.target.value)}
+          onChange={(e) => setValue2(e.target.value)}
           leftIcon={<Icon name="IconPlainerUser" size={IconSize.SM} />}
         />
 
@@ -527,7 +584,7 @@ export const LoadingDemo: Story = {
           placeholder="Введите текст..."
           isLoading={isLoading3}
           value={value3}
-          onChange={e => setValue3(e.target.value)}
+          onChange={(e) => setValue3(e.target.value)}
           rightIcon={<Icon name="IconPlainerSearch" size={IconSize.SM} />}
         />
 
@@ -588,7 +645,7 @@ export const SkeletonDemo: Story = {
           placeholder="Введите текст..."
           skeleton={skeleton1}
           value={value1}
-          onChange={e => setValue1(e.target.value)}
+          onChange={(e) => setValue1(e.target.value)}
           leftIcon={<Icon name="IconPlainerPlus" size={IconSize.SM} />}
         />
 
@@ -597,7 +654,7 @@ export const SkeletonDemo: Story = {
           placeholder="Введите текст..."
           skeleton={skeleton2}
           value={value2}
-          onChange={e => setValue2(e.target.value)}
+          onChange={(e) => setValue2(e.target.value)}
           leftIcon={<Icon name="IconPlainerUser" size={IconSize.SM} />}
         />
 
@@ -606,7 +663,7 @@ export const SkeletonDemo: Story = {
           placeholder="Введите текст..."
           skeleton={skeleton3}
           value={value3}
-          onChange={e => setValue3(e.target.value)}
+          onChange={(e) => setValue3(e.target.value)}
           rightIcon={<Icon name="IconPlainerSearch" size={IconSize.SM} />}
         />
 
@@ -658,14 +715,14 @@ export const TooltipDemo: Story = {
           label="Обычный инпут"
           placeholder="Без подсказки"
           value={value1}
-          onChange={e => setValue1(e.target.value)}
+          onChange={(e) => setValue1(e.target.value)}
         />
 
         <Input
           label="Инпут с тултипом (сверху)"
           placeholder="Наведите курсор для показа тултипа"
           value={value2}
-          onChange={e => setValue2(e.target.value)}
+          onChange={(e) => setValue2(e.target.value)}
           tooltip="Это тултип с дополнительной информацией об инпуте"
           tooltipType="tooltip"
           tooltipPosition="top"
@@ -675,7 +732,7 @@ export const TooltipDemo: Story = {
           label="Инпут с хинтом (снизу)"
           placeholder="Наведите курсор для показа хинта"
           value={value3}
-          onChange={e => setValue3(e.target.value)}
+          onChange={(e) => setValue3(e.target.value)}
           tooltip="Это хинт с более подробной информацией и возможностью взаимодействия"
           tooltipType="hint"
           tooltipPosition="bottom"
@@ -685,7 +742,7 @@ export const TooltipDemo: Story = {
           label="Инпут с тултипом (слева)"
           placeholder="Тултип слева"
           value={value4}
-          onChange={e => setValue4(e.target.value)}
+          onChange={(e) => setValue4(e.target.value)}
           tooltip="Тултип слева от инпута"
           tooltipType="tooltip"
           tooltipPosition="left"
@@ -695,7 +752,7 @@ export const TooltipDemo: Story = {
           label="Инпут с хинтом (справа)"
           placeholder="Хинт справа"
           value={value5}
-          onChange={e => setValue5(e.target.value)}
+          onChange={(e) => setValue5(e.target.value)}
           tooltip="Хинт справа от инпута"
           tooltipType="hint"
           tooltipPosition="right"
@@ -705,7 +762,7 @@ export const TooltipDemo: Story = {
           label="Инпут с тултипом и иконкой"
           placeholder="Тултип с иконкой"
           value={value6}
-          onChange={e => setValue6(e.target.value)}
+          onChange={(e) => setValue6(e.target.value)}
           leftIcon={<Icon name="IconPlainerPlus" size={IconSize.SM} />}
           tooltip={
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -750,14 +807,14 @@ export const CharacterCounterDemo: Story = {
           label="Обычный инпут"
           placeholder="Без maxLength"
           value={value1}
-          onChange={e => setValue1(e.target.value)}
+          onChange={(e) => setValue1(e.target.value)}
         />
 
         <Input
           label="Инпут с счетчиком символов"
           placeholder="С maxLength и счетчиком"
           value={value2}
-          onChange={e => setValue2(e.target.value)}
+          onChange={(e) => setValue2(e.target.value)}
           maxLength={50}
           displayCharacterCounter={true}
         />
@@ -766,7 +823,7 @@ export const CharacterCounterDemo: Story = {
           label="Инпут без счетчика символов"
           placeholder="С maxLength но без счетчика"
           value={value3}
-          onChange={e => setValue3(e.target.value)}
+          onChange={(e) => setValue3(e.target.value)}
           maxLength={30}
           displayCharacterCounter={false}
         />
@@ -775,7 +832,7 @@ export const CharacterCounterDemo: Story = {
           label="Лимит 20 символов"
           placeholder="Счётчик при maxLength=20"
           value={value4}
-          onChange={e => setValue4(e.target.value)}
+          onChange={(e) => setValue4(e.target.value)}
           maxLength={20}
           displayCharacterCounter={true}
           helperText="Браузер не даст ввести больше 20 символов — счётчик показывает заполнение"
@@ -813,7 +870,7 @@ export const ExtraTextDemo: Story = {
           label="Обычный инпут"
           placeholder="Без дополнительного текста"
           value={value1}
-          onChange={e => setValue1(e.target.value)}
+          onChange={(e) => setValue1(e.target.value)}
           helperText="Это helper text"
         />
 
@@ -821,7 +878,7 @@ export const ExtraTextDemo: Story = {
           label="Инпут с extraText"
           placeholder="С дополнительным текстом"
           value={value2}
-          onChange={e => setValue2(e.target.value)}
+          onChange={(e) => setValue2(e.target.value)}
           helperText="Это helper text"
           extraText="Это дополнительный текст, который отображается ниже компонента"
         />
@@ -830,7 +887,7 @@ export const ExtraTextDemo: Story = {
           label="Только extraText"
           placeholder="Без helper text"
           value={value3}
-          onChange={e => setValue3(e.target.value)}
+          onChange={(e) => setValue3(e.target.value)}
           extraText="Только дополнительный текст без helper text"
         />
       </div>
@@ -865,7 +922,7 @@ export const DisableCopyingDemo: Story = {
           label="Обычный инпут"
           placeholder="Можно выделять и копировать текст"
           value={value1}
-          onChange={e => setValue1(e.target.value)}
+          onChange={(e) => setValue1(e.target.value)}
           helperText="Попробуйте выделить и скопировать текст (Ctrl+C)"
         />
 
@@ -873,7 +930,7 @@ export const DisableCopyingDemo: Story = {
           label="Защищенный инпут"
           placeholder="Нельзя выделять и копировать текст"
           value={value2}
-          onChange={e => setValue2(e.target.value)}
+          onChange={(e) => setValue2(e.target.value)}
           disableCopying={true}
           helperText="Попробуйте выделить и скопировать текст - не получится!"
         />
@@ -1071,7 +1128,7 @@ export const HandleInputDemo: Story = {
           label="Телефон (маска +7 (XXX) XXX-XX-XX)"
           placeholder="+7 (___) ___-__-__"
           value={value1}
-          onChange={e => setValue1(e.target.value)}
+          onChange={(e) => setValue1(e.target.value)}
           handleInput={phoneMask}
         />
 
@@ -1079,7 +1136,7 @@ export const HandleInputDemo: Story = {
           label="Номер карты (маска XXXX XXXX XXXX XXXX)"
           placeholder="____ ____ ____ ____"
           value={value2}
-          onChange={e => setValue2(e.target.value)}
+          onChange={(e) => setValue2(e.target.value)}
           handleInput={cardMask}
         />
 
@@ -1087,7 +1144,7 @@ export const HandleInputDemo: Story = {
           label="Сумма (форматирование с пробелами)"
           placeholder="0"
           value={value3}
-          onChange={e => setValue3(e.target.value)}
+          onChange={(e) => setValue3(e.target.value)}
           handleInput={amountMask}
         />
 
@@ -1095,7 +1152,7 @@ export const HandleInputDemo: Story = {
           label="ИНН (только цифры, макс 12)"
           placeholder="1234567890"
           value={value4}
-          onChange={e => setValue4(e.target.value)}
+          onChange={(e) => setValue4(e.target.value)}
           handleInput={innMask}
         />
 
@@ -1103,7 +1160,7 @@ export const HandleInputDemo: Story = {
           label="СНИЛС (маска XXX-XXX-XXX XX)"
           placeholder="123-456-789 12"
           value={value5}
-          onChange={e => setValue5(e.target.value)}
+          onChange={(e) => setValue5(e.target.value)}
           handleInput={snilsMask}
         />
       </div>
@@ -1138,7 +1195,7 @@ export const IgnoreMaskCharactersDemo: Story = {
           label="Обычный счетчик символов"
           placeholder="Введите дату..."
           value={value1}
-          onChange={e => setValue1(e.target.value)}
+          onChange={(e) => setValue1(e.target.value)}
           maxLength={10}
           displayCharacterCounter={true}
           ignoreMaskCharacters={false}
@@ -1149,7 +1206,7 @@ export const IgnoreMaskCharactersDemo: Story = {
           label="Счетчик без символов маски"
           placeholder="Введите дату..."
           value={value2}
-          onChange={e => setValue2(e.target.value)}
+          onChange={(e) => setValue2(e.target.value)}
           maxLength={8}
           displayCharacterCounter={true}
           ignoreMaskCharacters={true}
@@ -1208,7 +1265,7 @@ export const CharacterCounterThresholdDemo: Story = {
           label="Всегда видимый счетчик (threshold=0)"
           placeholder="Введите текст..."
           value={value1}
-          onChange={e => setValue1(e.target.value)}
+          onChange={(e) => setValue1(e.target.value)}
           maxLength={20}
           displayCharacterCounter={true}
           characterCounterVisibilityThreshold={0}
@@ -1219,7 +1276,7 @@ export const CharacterCounterThresholdDemo: Story = {
           label="Счетчик при 80% заполнения (threshold=0.8)"
           placeholder="Введите текст..."
           value={value2}
-          onChange={e => setValue2(e.target.value)}
+          onChange={(e) => setValue2(e.target.value)}
           maxLength={20}
           displayCharacterCounter={true}
           characterCounterVisibilityThreshold={0.8}
@@ -1230,7 +1287,7 @@ export const CharacterCounterThresholdDemo: Story = {
           label="Скрытый счетчик (threshold=1)"
           placeholder="Введите текст..."
           value={value3}
-          onChange={e => setValue3(e.target.value)}
+          onChange={(e) => setValue3(e.target.value)}
           maxLength={20}
           displayCharacterCounter={true}
           characterCounterVisibilityThreshold={1}
@@ -1295,7 +1352,7 @@ export const AdditionalLabelDemo: Story = {
           additionalLabel="Уникальный идентификатор для входа в систему"
           placeholder="Введите имя пользователя..."
           value={value1}
-          onChange={e => setValue1(e.target.value)}
+          onChange={(e) => setValue1(e.target.value)}
           helperText="Используйте только латинские буквы и цифры"
         />
 
@@ -1304,7 +1361,7 @@ export const AdditionalLabelDemo: Story = {
           additionalLabel="Основной адрес электронной почты"
           placeholder="example@domain.com"
           value={value2}
-          onChange={e => setValue2(e.target.value)}
+          onChange={(e) => setValue2(e.target.value)}
           type="email"
           helperText="На этот адрес будут приходить уведомления"
         />
@@ -1314,7 +1371,7 @@ export const AdditionalLabelDemo: Story = {
           additionalLabel="Международный формат с кодом страны"
           placeholder="+7 (999) 123-45-67"
           value={value3}
-          onChange={e => setValue3(e.target.value)}
+          onChange={(e) => setValue3(e.target.value)}
           type="tel"
           helperText="Используется для двухфакторной аутентификации"
         />
@@ -1394,7 +1451,7 @@ export const ReadOnlyComparison: Story = {
         <Input
           label="Обычное поле"
           value={editable}
-          onChange={e => setEditable(e.target.value)}
+          onChange={(e) => setEditable(e.target.value)}
           placeholder="Введите текст"
         />
         <Input
@@ -1433,14 +1490,14 @@ export const PasswordForm: Story = {
       setPassword2('');
     };
     return (
-      <Form formId="password-form" formName="passwordForm" onSubmit={e => e.preventDefault()}>
+      <Form formId="password-form" formName="passwordForm" onSubmit={(e) => e.preventDefault()}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <Input
             label="Имя пользователя"
             placeholder="Введите имя пользователя"
             autoComplete="username"
             value={username}
-            onChange={e => setUsername(e.target.value)}
+            onChange={(e) => setUsername(e.target.value)}
             required
           />
           <Input
@@ -1449,7 +1506,7 @@ export const PasswordForm: Story = {
             placeholder="Введите пароль..."
             autoComplete="new-password"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             required
           />
           <Input
@@ -1458,7 +1515,7 @@ export const PasswordForm: Story = {
             placeholder="Повторите пароль..."
             autoComplete="new-password"
             value={password2}
-            onChange={e => setPassword2(e.target.value)}
+            onChange={(e) => setPassword2(e.target.value)}
             required
           />
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
@@ -1506,14 +1563,14 @@ export const PasswordComparison: Story = {
           <h3 style={{ marginBottom: '16px', color: '#28a745' }}>
             ✅ Форма регистрации (новые пароли)
           </h3>
-          <Form formId="registration-form" onSubmit={e => e.preventDefault()}>
+          <Form formId="registration-form" onSubmit={(e) => e.preventDefault()}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <Input
                 label="Имя пользователя"
                 placeholder="Введите имя пользователя"
                 autoComplete="username"
                 value={regUser}
-                onChange={e => setRegUser(e.target.value)}
+                onChange={(e) => setRegUser(e.target.value)}
               />
               <Input
                 label="Пароль"
@@ -1521,7 +1578,7 @@ export const PasswordComparison: Story = {
                 placeholder="Введите пароль..."
                 autoComplete="new-password"
                 value={regPass}
-                onChange={e => setRegPass(e.target.value)}
+                onChange={(e) => setRegPass(e.target.value)}
               />
               <Input
                 label="Повторите пароль"
@@ -1529,7 +1586,7 @@ export const PasswordComparison: Story = {
                 placeholder="Повторите пароль..."
                 autoComplete="new-password"
                 value={regPass2}
-                onChange={e => setRegPass2(e.target.value)}
+                onChange={(e) => setRegPass2(e.target.value)}
               />
               <button
                 type="button"
@@ -1547,8 +1604,10 @@ export const PasswordComparison: Story = {
         </div>
 
         <div>
-          <h3 style={{ marginBottom: '16px', color: '#007bff' }}>✅ Форма входа (текущий пароль)</h3>
-          <Form formId="login-form" onSubmit={e => e.preventDefault()}>
+          <h3 style={{ marginBottom: '16px', color: '#007bff' }}>
+            ✅ Форма входа (текущий пароль)
+          </h3>
+          <Form formId="login-form" onSubmit={(e) => e.preventDefault()}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <HiddenUsernameField />
               <Input
@@ -1557,7 +1616,7 @@ export const PasswordComparison: Story = {
                 placeholder="Введите email"
                 autoComplete="email"
                 value={loginEmail}
-                onChange={e => setLoginEmail(e.target.value)}
+                onChange={(e) => setLoginEmail(e.target.value)}
               />
               <Input
                 label="Пароль"
@@ -1565,7 +1624,7 @@ export const PasswordComparison: Story = {
                 placeholder="Введите пароль"
                 autoComplete="current-password"
                 value={loginPass}
-                onChange={e => setLoginPass(e.target.value)}
+                onChange={(e) => setLoginPass(e.target.value)}
               />
               <button
                 type="button"
@@ -1610,7 +1669,7 @@ export const AutocompleteDemo: Story = {
       setFamily('');
     };
     return (
-      <Form formId="autocomplete-demo" onSubmit={e => e.preventDefault()}>
+      <Form formId="autocomplete-demo" onSubmit={(e) => e.preventDefault()}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <h3 style={{ marginBottom: '8px' }}>Демонстрация различных типов autocomplete</h3>
 
@@ -1622,7 +1681,7 @@ export const AutocompleteDemo: Story = {
             autoComplete="username"
             helperText="autocomplete='username'"
             value={username}
-            onChange={e => setUsername(e.target.value)}
+            onChange={(e) => setUsername(e.target.value)}
           />
 
           <Input
@@ -1632,7 +1691,7 @@ export const AutocompleteDemo: Story = {
             autoComplete="email"
             helperText="autocomplete='email'"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
           />
 
           <Input
@@ -1642,7 +1701,7 @@ export const AutocompleteDemo: Story = {
             autoComplete="new-password"
             helperText="autocomplete='new-password'"
             value={newPass}
-            onChange={e => setNewPass(e.target.value)}
+            onChange={(e) => setNewPass(e.target.value)}
           />
 
           <Input
@@ -1652,7 +1711,7 @@ export const AutocompleteDemo: Story = {
             autoComplete="current-password"
             helperText="autocomplete='current-password'"
             value={curPass}
-            onChange={e => setCurPass(e.target.value)}
+            onChange={(e) => setCurPass(e.target.value)}
           />
 
           <Input
@@ -1661,7 +1720,7 @@ export const AutocompleteDemo: Story = {
             autoComplete="given-name"
             helperText="autocomplete='given-name'"
             value={given}
-            onChange={e => setGiven(e.target.value)}
+            onChange={(e) => setGiven(e.target.value)}
           />
 
           <Input
@@ -1670,7 +1729,7 @@ export const AutocompleteDemo: Story = {
             autoComplete="family-name"
             helperText="autocomplete='family-name'"
             value={family}
-            onChange={e => setFamily(e.target.value)}
+            onChange={(e) => setFamily(e.target.value)}
           />
 
           <button type="button" onClick={resetAll} style={inputStoriesResetButtonStyle}>
@@ -1689,3 +1748,4 @@ export const AutocompleteDemo: Story = {
     },
   },
 };
+

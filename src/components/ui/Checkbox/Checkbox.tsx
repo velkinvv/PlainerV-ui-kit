@@ -36,6 +36,8 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
   ) => {
     const checkboxId = `checkbox-${Math.random().toString(36).substr(2, 9)}`;
     const inputRef = useRef<HTMLInputElement | null>(null);
+    /** После синтетического onChange в indeterminate нативный change иногда всё равно приходит с «включить» — один раз глушим. */
+    const skipNextNativeChangeRef = useRef(false);
 
     const setInputRef = useCallback(
       (node: HTMLInputElement | null) => {
@@ -59,31 +61,66 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
     }, [indeterminate]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (skipNextNativeChangeRef.current) {
+        skipNextNativeChangeRef.current = false;
+        return;
+      }
       if (!disabled && onChange) {
         onChange(event);
       }
     };
 
-    const handleLabelClick = () => {
+    /**
+     * Синтетический onChange (без второго нативного change): только там, где нативный клик по label не даёт нужного результата.
+     * @param nextChecked - целевое состояние `checked`
+     */
+    const emitSyntheticCheckboxChange = (nextChecked: boolean) => {
       if (!disabled && onChange) {
-        // При indeterminate клик по макету обычно выбирает все
-        if (indeterminate) {
-          onChange({
-            target: { checked: true },
-          } as React.ChangeEvent<HTMLInputElement>);
-          return;
-        }
-        const syntheticEvent = {
-          target: { checked: !checked },
-        } as React.ChangeEvent<HTMLInputElement>;
-        onChange(syntheticEvent);
+        onChange({
+          target: { checked: nextChecked },
+        } as React.ChangeEvent<HTMLInputElement>);
+      }
+    };
+
+    /**
+     * Клик по визуалу: при обычном состоянии нативный input (htmlFor) сам вызывает onChange через handleChange.
+     * Дублирующий синтетический onChange здесь давал два подряд вызова и ломал мультивыбор (двойной toggle листьев).
+     * В indeterminate блокируем default и явно шлём `checked: false` — «снять частичное выделение»
+     * (дерево мультиселекта, шапка таблицы: дальше onChange сам решает очистку/тоггл по своей логике).
+     */
+    const handleLabelClick = (event: React.MouseEvent<HTMLLabelElement>) => {
+      if (disabled || !onChange) {
+        return;
+      }
+      if (indeterminate) {
+        event.preventDefault();
+        skipNextNativeChangeRef.current = true;
+        emitSyntheticCheckboxChange(false);
+        queueMicrotask(() => {
+          if (skipNextNativeChangeRef.current) {
+            skipNextNativeChangeRef.current = false;
+          }
+        });
       }
     };
 
     const handleKeyDown = (event: React.KeyboardEvent) => {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
-        handleLabelClick();
+        if (disabled || !onChange) {
+          return;
+        }
+        if (indeterminate) {
+          skipNextNativeChangeRef.current = true;
+          emitSyntheticCheckboxChange(false);
+          queueMicrotask(() => {
+            if (skipNextNativeChangeRef.current) {
+              skipNextNativeChangeRef.current = false;
+            }
+          });
+          return;
+        }
+        emitSyntheticCheckboxChange(!checked);
       }
     };
 

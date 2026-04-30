@@ -754,8 +754,9 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
       disabledHours = [],
       disabledMinutes = [],
       disabledSeconds = [],
-      clearIcon = false,
+      displayClearIcon = false,
       onClearIconClick,
+      clearIconProps,
       textAlign = 'left',
       segmented = true, // По умолчанию используем сегментированный ввод
       format = 'HH:mm', // Формат отображения времени по умолчанию
@@ -1917,10 +1918,14 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                 {...props}
               />
             )}
-            {clearIcon && inputValue && !disabled && (
+            {displayClearIcon && inputValue && !disabled && (
               <IconWrapper size={size} style={{ marginLeft: 'auto' }}>
                 <IconButton onClick={handleClearIconClick}>
-                  <Icon name="IconPlainerClose" size={getClearIconSizeForInputField(size)} />
+                  <Icon
+                    name="IconPlainerClose"
+                    size={getClearIconSizeForInputField(size)}
+                    {...clearIconProps}
+                  />
                 </IconButton>
               </IconWrapper>
             )}

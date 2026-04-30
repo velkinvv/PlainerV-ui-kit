@@ -1,23 +1,45 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import { TimeInput } from './TimeInput';
 import { Size, IconSize } from '../../../../types/sizes';
 import { Icon } from '../../Icon/Icon';
 
 const meta: Meta<typeof TimeInput> = {
-  title: 'Components/Inputs/TimeInput',
+  title: 'UI Kit/Inputs/TimeInput',
   component: TimeInput,
   parameters: {
     layout: 'padded',
   },
   tags: ['autodocs'],
   argTypes: {
+    value: {
+      control: { type: 'text' },
+      description:
+        'При `range: false` — строка времени (например `14:30` или `14:30:00` с секундами). При `range: true` — объект `{ start: string; end: string }` в том же формате',
+      table: {
+        type: {
+          summary: 'строка при `range: false`; объект `{ start, end }` при `range: true`',
+        },
+      },
+    },
+    onChange: {
+      control: false,
+      description:
+        'Обработчик смены значения: при одиночном режиме получает строку; при `range: true` — объект `{ start, end }`',
+      table: {
+        type: {
+          summary: '(значение: строка или `{ start, end }`) => void',
+        },
+      },
+    },
     size: {
       control: { type: 'select' },
       options: Object.values(Size),
+      description: 'Размер поля; значения: `XS`, `SM`, `MD`, `LG`, `XL`',
     },
     range: {
       control: { type: 'boolean' },
+      description: 'Режим: `false` — одно время, `true` — диапазон (`start` / `end`)',
     },
     showSeconds: {
       control: { type: 'boolean' },
@@ -52,16 +74,25 @@ const meta: Meta<typeof TimeInput> = {
     },
     segmented: {
       control: { type: 'boolean' },
-      description: 'Режим ввода: true = сегментированный, false = обычный input',
+      description: 'Режим ввода: `true` — сегментированный ввод, `false` — обычный `input`',
     },
-    clearIcon: {
+    displayClearIcon: {
       control: { type: 'boolean' },
-      description: 'Показывать ли иконку очистки',
+      description: 'Показывать кнопку с крестиком очистки',
+    },
+    onClearIconClick: { action: 'clearIconClick', description: 'После сброса времени в компоненте' },
+    clearIconProps: {
+      control: 'object',
+      description:
+        'Частичные пропсы `Icon` для кнопки очистки при `displayClearIcon`. По умолчанию `IconPlainerClose`; мерж поверх вычисленного `size`.',
+      table: {
+        type: { summary: 'ClearIconProps' },
+      },
     },
     textAlign: {
       control: { type: 'select' },
       options: ['left', 'center', 'right'],
-      description: 'Выравнивание текста',
+      description: 'Выравнивание текста; значения: `left`, `center`, `right`',
     },
     displayCharacterCounter: {
       control: { type: 'boolean' },
@@ -80,6 +111,9 @@ const meta: Meta<typeof TimeInput> = {
       control: { type: 'text' },
       description: 'Дополнительное имя поля формы',
     },
+  },
+  args: {
+    clearIconProps: {},
   },
 };
 
@@ -310,7 +344,7 @@ export const WithClearIcon: Story = {
   args: {
     label: 'С иконкой очистки',
     placeholder: 'Выберите время',
-    clearIcon: true,
+    displayClearIcon: true,
     value: '14:30',
     onChange: value => console.log('Time changed:', value),
     onClearIconClick: () => console.log('Clear icon clicked'),
@@ -322,7 +356,7 @@ export const RangeWithClearIcon: Story = {
     label: 'Range с иконкой очистки',
     range: true,
     placeholder: 'Выберите диапазон времени',
-    clearIcon: true,
+    displayClearIcon: true,
     value: {
       start: '09:00',
       end: '17:30',
@@ -337,7 +371,7 @@ export const WithClearIconAndSeconds: Story = {
     label: 'С иконкой очистки и секундами',
     placeholder: 'Выберите время с секундами',
     showSeconds: true,
-    clearIcon: true,
+    displayClearIcon: true,
     value: '14:30:45',
     onChange: value => console.log('Time changed:', value),
     onClearIconClick: () => console.log('Clear icon clicked'),
@@ -2326,3 +2360,4 @@ export const AdditionalLabelDemo: Story = {
     },
   },
 };
+

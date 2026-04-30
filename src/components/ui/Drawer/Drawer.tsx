@@ -8,7 +8,6 @@ import { IconSize } from '../../../types/sizes';
 import {
   useModalEscape,
   shouldCloseOnOverlayClick,
-  getModalMountNode,
   useModalFocus,
   useFocusTrap,
 } from '../Modal/handlers';
@@ -22,6 +21,9 @@ import {
   DrawerBody,
 } from './Drawer.style';
 import { drawerOverlayMotion, getDrawerPanelMotion, drawerSizeToCss } from './handlers';
+import { useOverlayVisibility } from '../../../hooks/useOverlayVisibility';
+import { useOverlayPortal } from '../../../hooks/useOverlayPortal';
+import { useOverlayPresentation } from '../../../hooks/useOverlayPresentation';
 
 const DEFAULT_PLACEMENT = 'right' as const;
 
@@ -54,6 +56,8 @@ export const Drawer = forwardRef<HTMLElement, DrawerProps>(
       initialFocusRef,
       initialFocusSelector,
       headerSlot,
+      unmountOnClose = true,
+      lazy = true,
       className,
     },
     ref,
@@ -84,14 +88,12 @@ export const Drawer = forwardRef<HTMLElement, DrawerProps>(
       }
     };
 
-    const mountNode = getModalMountNode(container, portalTargetId);
-
-    const overlayInlineStyle = useMemo(() => {
-      if (portalZIndex === undefined) {
-        return overlayStyle;
-      }
-      return { ...(overlayStyle || {}), zIndex: portalZIndex };
-    }, [overlayStyle, portalZIndex]);
+    const { mountNode, overlayInlineStyle } = useOverlayPortal({
+      container,
+      portalTargetId,
+      overlayStyle,
+      portalZIndex,
+    });
 
     const panelMotion = useMemo(() => getDrawerPanelMotion(placement), [placement]);
 
@@ -111,62 +113,75 @@ export const Drawer = forwardRef<HTMLElement, DrawerProps>(
       [placement, height],
     );
 
-    if (!mountNode) {
+    const { shouldRenderPortal, shouldRenderContent, isHidden } = useOverlayVisibility({
+      isOpen,
+      unmountOnClose,
+      lazy,
+    });
+
+    const { overlayPresentationStyle, ariaHidden } = useOverlayPresentation({
+      isOpen,
+      isHidden,
+      overlayInlineStyle,
+    });
+
+    if (!mountNode || !shouldRenderPortal) {
       return null;
     }
 
+    const drawerBody = (
+      <DrawerOverlay
+        $drawerPlacement={placement}
+        $overlayVariant={overlayVariant}
+        initial={drawerOverlayMotion.initial}
+        animate={drawerOverlayMotion.animate}
+        exit={drawerOverlayMotion.exit}
+        transition={drawerOverlayMotion.transition}
+        onClick={handleOverlayClick}
+        className={overlayClassName}
+        style={overlayPresentationStyle}
+        data-drawer-overlay
+        aria-hidden={ariaHidden}
+      >
+        <DrawerPanel
+          ref={setPanelRef}
+          $widthCss={widthCss}
+          $heightCss={heightCss}
+          $placement={placement}
+          tabIndex={-1}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={title ? titleId : undefined}
+          className={clsx('ui-drawer', className)}
+          initial={panelMotion.initial}
+          animate={panelMotion.animate}
+          exit={panelMotion.exit}
+          transition={panelMotion.transition}
+          onClick={(event) => event.stopPropagation()}
+        >
+          {headerSlot ? (
+            <DrawerHeader>{headerSlot}</DrawerHeader>
+          ) : (title || showCloseButton) && (
+            <DrawerHeader>
+              {title ? <DrawerTitle id={titleId}>{title}</DrawerTitle> : null}
+              {!title && showCloseButton ? <DrawerHeaderSpacer aria-hidden /> : null}
+              {showCloseButton ? (
+                <CloseButton type="button" onClick={onClose} aria-label="Закрыть">
+                  <Icon name="PhosphorX" size={IconSize.MD} color="#9E9E9E" />
+                </CloseButton>
+              ) : null}
+            </DrawerHeader>
+          )}
+          <DrawerBody ref={contentRef} tabIndex={-1}>
+            {children}
+          </DrawerBody>
+        </DrawerPanel>
+      </DrawerOverlay>
+    );
+
     return createPortal(
       <AnimatePresence>
-        {isOpen ? (
-          <DrawerOverlay
-            $drawerPlacement={placement}
-            $overlayVariant={overlayVariant}
-            initial={drawerOverlayMotion.initial}
-            animate={drawerOverlayMotion.animate}
-            exit={drawerOverlayMotion.exit}
-            transition={drawerOverlayMotion.transition}
-            onClick={handleOverlayClick}
-            className={overlayClassName}
-            style={overlayInlineStyle}
-            data-drawer-overlay
-          >
-            <DrawerPanel
-              ref={setPanelRef}
-              $widthCss={widthCss}
-              $heightCss={heightCss}
-              $placement={placement}
-              tabIndex={-1}
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby={title ? titleId : undefined}
-              className={clsx('ui-drawer', className)}
-              initial={panelMotion.initial}
-              animate={panelMotion.animate}
-              exit={panelMotion.exit}
-              transition={panelMotion.transition}
-              onClick={e => e.stopPropagation()}
-            >
-              {headerSlot ? (
-                <DrawerHeader>{headerSlot}</DrawerHeader>
-              ) : (title || showCloseButton) && (
-                <DrawerHeader>
-                  {title ? <DrawerTitle id={titleId}>{title}</DrawerTitle> : null}
-                  {!title && showCloseButton ? (
-                    <DrawerHeaderSpacer aria-hidden />
-                  ) : null}
-                  {showCloseButton ? (
-                    <CloseButton type="button" onClick={onClose} aria-label="Закрыть">
-                      <Icon name="PhosphorX" size={IconSize.MD} color="#9E9E9E" />
-                    </CloseButton>
-                  ) : null}
-                </DrawerHeader>
-              )}
-              <DrawerBody ref={contentRef} tabIndex={-1}>
-                {children}
-              </DrawerBody>
-            </DrawerPanel>
-          </DrawerOverlay>
-        ) : null}
+        {shouldRenderContent ? drawerBody : null}
       </AnimatePresence>,
       mountNode,
     );

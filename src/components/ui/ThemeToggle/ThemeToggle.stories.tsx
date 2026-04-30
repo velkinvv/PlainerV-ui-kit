@@ -1,10 +1,10 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import { ThemeToggle } from './ThemeToggle';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import React from 'react';
 
 const meta: Meta<typeof ThemeToggle> = {
-  title: 'Components/ThemeToggle',
+  title: 'UI Kit/Utils/ThemeToggle',
   component: ThemeToggle,
   parameters: {
     layout: 'centered',
@@ -43,3 +43,4 @@ export const WithBackground: Story = {
     </div>
   ),
 };
+

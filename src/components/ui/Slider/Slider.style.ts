@@ -59,7 +59,7 @@ export const SliderTrackRail = styled.div`
 `;
 
 /**
- * Активный синий сегмент.
+ * Заполненная часть трека (яркий акцент `theme.colors.info`, не `primary` из палитры blue).
  * @property $leftPct - Начало в % от левого края
  * @property $widthPct - Ширина в %
  */
@@ -72,7 +72,7 @@ export const SliderTrackActive = styled.div<{ $leftPct: number; $widthPct: numbe
   height: 6px;
   margin-left: 0;
   border-radius: 4px;
-  background: ${({ theme }) => theme.colors.primary};
+  background: ${({ theme }) => theme.colors.info};
   z-index: 1;
   transition: ${TransitionHandler()};
   pointer-events: none;
@@ -93,19 +93,23 @@ export const SliderThumb = styled.button<{ $thumbPx: number; $disabled?: boolean
   padding: 0;
   border: none;
   border-radius: 50%;
-  background: ${({ theme }) => theme.colors.primary};
+  background: ${({ theme }) => theme.colors.info};
   transform: translate(-50%, -50%);
   cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'grab')};
   z-index: 2;
   box-shadow: 0 1px 3px ${({ theme }) => theme.colors.shadow};
   transition: ${TransitionHandler()};
 
+  &:hover:not(:disabled) {
+    background: ${({ theme }) => theme.colors.infoHover};
+  }
+
   &:active:not(:disabled) {
     cursor: grabbing;
   }
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.primary};
+    outline: 2px solid ${({ theme }) => theme.colors.info};
     outline-offset: 2px;
   }
 
