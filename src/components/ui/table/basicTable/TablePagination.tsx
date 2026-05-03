@@ -1,16 +1,20 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { clsx } from 'clsx';
-import type { TablePaginationProps } from '@/types/ui';
+import type { SelectOption, TablePaginationProps } from '@/types/ui';
 import { Size } from '@/types/sizes';
+import { Input } from '../../inputs/Input/Input';
+import { Select } from '../../inputs/Select/Select';
 import { Pagination } from '../../Pagination/Pagination';
 import { clampTablePageZeroBased, getTableTotalPages, parseTablePageJumpInput } from './handlers';
 import {
   TablePaginationRoot,
   TablePaginationRow,
   TablePaginationRowsSelect,
-  TablePaginationSelect,
+  TablePaginationSelectField,
+  TABLE_PAGINATION_ROWS_SELECT_INPUT_CLASS,
   TablePaginationPageJump,
-  TablePaginationPageJumpInput,
+  TablePaginationPageJumpField,
+  TABLE_PAGINATION_PAGE_JUMP_INPUT_CLASS,
 } from './Table.style';
 
 /**
@@ -29,6 +33,7 @@ import {
  * @param props.showPageJump - Поле ввода номера страницы слева от `Pagination` в порядке DOM; при реверсе визуально справа от плашки
  * @param props.labelPageJump - Подпись перед полем (по умолчанию «Страница:»)
  * @param props.size - Размер плашки номеров страниц
+ * @param props.embeddedInTableCard - Подвал как часть одной карточки с таблицей (разделитель сверху, без внешнего отступа)
  */
 export const TablePagination: React.FC<TablePaginationProps> = ({
   count,
@@ -50,6 +55,7 @@ export const TablePagination: React.FC<TablePaginationProps> = ({
   size = Size.MD,
   className,
   style,
+  embeddedInTableCard = false,
 }) => {
   const totalPages = useMemo(() => getTableTotalPages(count, rowsPerPage), [count, rowsPerPage]);
   const safePageZero = useMemo(() => clampTablePageZeroBased(page, totalPages), [page, totalPages]);
@@ -112,8 +118,34 @@ export const TablePagination: React.FC<TablePaginationProps> = ({
     [applyJumpDraft],
   );
 
+  /** Опции для `Select` (значения строк — строки для совместимости с контролируемым `value`). */
+  const rowsPerPageSelectOptions = useMemo<SelectOption[]>(
+    () =>
+      rowsPerPageOptions?.map(optionSize => ({
+        value: String(optionSize),
+        label: String(optionSize),
+      })) ?? [],
+    [rowsPerPageOptions],
+  );
+
+  /** Смена размера страницы: отдаём тот же контракт, что у нативного `select` (`event.target.value`). */
+  const handleRowsPerPageValueChange = useCallback(
+    (nextValue: string | string[]) => {
+      const valueString = String(Array.isArray(nextValue) ? nextValue[0] : nextValue);
+      onRowsPerPageChange?.({
+        target: { value: valueString } as HTMLSelectElement,
+        currentTarget: { value: valueString } as HTMLSelectElement,
+      } as React.ChangeEvent<HTMLSelectElement>);
+    },
+    [onRowsPerPageChange],
+  );
+
   return (
-    <TablePaginationRoot className={clsx(className)} style={style}>
+    <TablePaginationRoot
+      $embeddedInTableCard={embeddedInTableCard}
+      className={clsx(className)}
+      style={style}
+    >
       <TablePaginationRow
         $toolbarAlign={paginationToolbarAlign}
         $toolbarReverse={paginationToolbarReverse}
@@ -121,46 +153,53 @@ export const TablePagination: React.FC<TablePaginationProps> = ({
         {shouldShowRowsPerPageSelect && rowsPerPageOptions?.length ? (
           <TablePaginationRowsSelect $compact={isRowsSelectCompact}>
             <span>{resolvedRowsPerPageLabel}</span>
-            <TablePaginationSelect
-              $compact={isRowsSelectCompact}
-              value={rowsPerPage}
-              disabled={disabled}
-              onChange={event => {
-                onRowsPerPageChange?.(event);
-              }}
-              aria-label={rowsSelectAriaLabel}
-            >
-              {rowsPerPageOptions.map(optionSize => (
-                <option key={optionSize} value={optionSize}>
-                  {optionSize}
-                </option>
-              ))}
-            </TablePaginationSelect>
+            <TablePaginationSelectField $compact={isRowsSelectCompact}>
+              <Select
+                mode="select"
+                searchable={false}
+                options={rowsPerPageSelectOptions}
+                value={String(rowsPerPage)}
+                onValueChange={handleRowsPerPageValueChange}
+                disabled={disabled}
+                size={size}
+                fullWidth
+                textAlign="center"
+                className={TABLE_PAGINATION_ROWS_SELECT_INPUT_CLASS}
+                aria-label={rowsSelectAriaLabel}
+              />
+            </TablePaginationSelectField>
           </TablePaginationRowsSelect>
         ) : null}
 
         {shouldShowPageJump ? (
           <TablePaginationPageJump>
             <span>{resolvedLabelPageJump}</span>
-            <TablePaginationPageJumpInput
-              type="text"
-              inputMode="numeric"
-              autoComplete="off"
-              disabled={disabled}
-              value={jumpDraft}
-              onChange={event => {
-                setJumpDraft(event.target.value);
-              }}
-              onBlur={() => {
-                applyJumpDraft();
-              }}
-              onKeyDown={handleJumpKeyDown}
-              aria-label={
-                typeof resolvedLabelPageJump === 'string'
-                  ? `${resolvedLabelPageJump} номер от 1 до ${totalPages}`
-                  : 'Номер страницы'
-              }
-            />
+            <TablePaginationPageJumpField>
+              <Input
+                type="text"
+                inputMode="numeric"
+                autoComplete="off"
+                disabled={disabled}
+                value={jumpDraft}
+                onChange={event => {
+                  setJumpDraft(event.target.value);
+                }}
+                onBlur={() => {
+                  applyJumpDraft();
+                }}
+                onKeyDown={handleJumpKeyDown}
+                size={size}
+                fullWidth
+                textAlign="center"
+                displayCharacterCounter={false}
+                className={TABLE_PAGINATION_PAGE_JUMP_INPUT_CLASS}
+                aria-label={
+                  typeof resolvedLabelPageJump === 'string'
+                    ? `${resolvedLabelPageJump} номер от 1 до ${totalPages}`
+                    : 'Номер страницы'
+                }
+              />
+            </TablePaginationPageJumpField>
           </TablePaginationPageJump>
         ) : null}
 

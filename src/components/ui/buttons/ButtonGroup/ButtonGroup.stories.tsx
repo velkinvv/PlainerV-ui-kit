@@ -7,6 +7,7 @@ import { ThemeProvider } from '../../../../themes/ThemeProvider';
 import { ButtonVariant } from '@/types/ui';
 import { IconSize, Size } from '@/types/sizes';
 import { Icon } from '../../Icon/Icon';
+import { DOC_BUTTON_GROUP } from '@/components/ui/storyDocs/uiKitDocs';
 
 interface SelectableButtonGroupStoryProps extends React.ComponentProps<typeof ButtonGroup> {
   children: React.ReactNode;
@@ -57,8 +58,7 @@ const meta: Meta<typeof ButtonGroup> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Группа `Button` / `IconButton`: в режиме `attached` — `gap: 0`, скругления только на внешних углах первого и последнего сегмента, внутренние стыки с перекрытием −1px. Проп `size` задаёт внешний радиус (согласуйте с `size` у дочерних кнопок); `attachedShape="pill"` — капсула. У `IconButton` в склеенной группе задавайте `rounded={false}`.',
+        component: DOC_BUTTON_GROUP,
       },
     },
   },

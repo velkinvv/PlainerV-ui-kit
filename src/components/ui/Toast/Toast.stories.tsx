@@ -6,6 +6,7 @@ import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Toast } from './Toast';
 import { ToastProvider, useToast } from './ToastProvider';
 import { ToastAppearance, type ToastItem, type ToastPlacement } from '@/types/ui';
+import { DOC_TOAST } from '@/components/ui/storyDocs/uiKitDocs';
 
 const withTheme: Decorator = (Story) => (
   <ThemeProvider>
@@ -21,8 +22,7 @@ const meta: Meta<typeof Toast> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'По умолчанию — вид «пилюля» по макету Figma: пастельный фон и рамка цветом типа, иконка с glow, тёмный заголовок, вторичный текст, крестик в строке. Классика с полосой слева — `ToastAppearance.CARD`. `ThemeProvider` + `ToastProvider` + `useToast` (сторис **Hooks/useToast**).',
+        component: DOC_TOAST,
       },
     },
   },

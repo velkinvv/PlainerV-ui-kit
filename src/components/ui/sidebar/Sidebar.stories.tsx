@@ -4,6 +4,7 @@ import { Sidebar } from './Sidebar';
 import { SidebarVariant, type SidebarItem } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
 import { IconSize } from '../../../types/sizes';
+import { DOC_SIDEBAR } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Sidebar> = {
   title: 'UI Kit/Navigation/Sidebar',
@@ -12,7 +13,7 @@ const meta: Meta<typeof Sidebar> = {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Боковое меню с навигацией и различными состояниями',
+        component: DOC_SIDEBAR,
       },
     },
   },

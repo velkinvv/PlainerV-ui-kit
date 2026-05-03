@@ -5,6 +5,7 @@ import { TabItem, TabItemGroupList } from './TabItem';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { TabItemTextOrientation, TabItemTextPosition, TabsDirection } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
+import { DOC_TAB_ITEM } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof TabItem> = {
   title: 'UI Kit/Navigation/Tabs/TabItem',
@@ -13,8 +14,7 @@ const meta: Meta<typeof TabItem> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Компонент TabItem объединяет Trigger и Content в один компонент для упрощения использования вкладок.',
+        component: DOC_TAB_ITEM,
       },
     },
   },

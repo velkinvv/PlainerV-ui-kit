@@ -1,6 +1,7 @@
 import {
   clampTablePageZeroBased,
   getSortChevronTones,
+  getTableSortChevronColor,
   getTableTotalPages,
   parseTablePageJumpInput,
   toggleTableSortDirection,
@@ -28,6 +29,13 @@ describe('Table handlers', () => {
     expect(getSortChevronTones(false, 'asc')).toEqual({ up: 'idle', down: 'idle' });
     expect(getSortChevronTones(true, 'asc')).toEqual({ up: 'active', down: 'muted' });
     expect(getSortChevronTones(true, 'desc')).toEqual({ up: 'muted', down: 'active' });
+  });
+
+  it('getTableSortChevronColor возвращает цвет из темы по тону', () => {
+    const theme = { colors: { text: '#111', textTertiary: '#888', border: '#ccc' } };
+    expect(getTableSortChevronColor(theme, 'active')).toBe('#111');
+    expect(getTableSortChevronColor(theme, 'muted')).toBe('#888');
+    expect(getTableSortChevronColor(theme, 'idle')).toBe('#ccc');
   });
 
   it('parseTablePageJumpInput возвращает индекс с нуля (1-based ввод) или null', () => {

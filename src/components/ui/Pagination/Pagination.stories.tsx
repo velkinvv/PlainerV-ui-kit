@@ -5,6 +5,7 @@ import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Size } from '../../../types/sizes';
 import { Card } from '../Card';
 import { Typography } from '../Typography';
+import { DOC_PAGINATION } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Pagination> = {
   title: 'UI Kit/Navigation/Pagination',
@@ -20,8 +21,7 @@ const meta: Meta<typeof Pagination> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Плашка со скруглением: в светлой теме белый фон и текст из `theme.colors.text`; в тёмной — серая плашка (`grey[800]`) и светлый текст. Активная страница — `theme.colors.info` (яркий синий) и подпись как у primary-кнопки; стрелки внутри плашки.',
+        component: DOC_PAGINATION,
       },
     },
   },

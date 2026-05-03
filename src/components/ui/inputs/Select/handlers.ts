@@ -114,6 +114,36 @@ export const flattenNativeSelectOptions = (options: SelectOption[]): SelectOptio
   return result;
 };
 
+/** Не меньше стольки символов в одну строку по ширине панели (цифры «100», «25» без переноса). */
+const SELECT_PANEL_MENU_MIN_CHARACTER_SLOTS = 3;
+
+/**
+ * Нижняя граница ширины выпадающей панели по самой длинной подписи опции.
+ * Нужна, когда триггер уже контента (пагинация и т.п.): иначе `menuWidth` совпадает с триггером и текст ломается посимвольно из‑за узкой колонки.
+ * @param options - Иерархия опций селекта.
+ * @returns Оценка в пикселях (целое число).
+ */
+export function getSelectPanelMinMenuWidthPx(options: SelectOption[]): number {
+  const flat = flattenNativeSelectOptions(options);
+  if (flat.length === 0) {
+    return 0;
+  }
+  let maxCharacters = 1;
+  for (const option of flat) {
+    const labelContent = option.label;
+    const plainText =
+      typeof labelContent === 'string' || typeof labelContent === 'number'
+        ? String(labelContent)
+        : String(option.value ?? '');
+    maxCharacters = Math.max(maxCharacters, plainText.length);
+  }
+  const characterSlotsForWidth = Math.max(maxCharacters, SELECT_PANEL_MENU_MIN_CHARACTER_SLOTS);
+  /* 11px — запас для цифр/табличных шрифов; 3×11 + 56 ≈ 89px — три символа в одну строку без переноса */
+  const approximateCharacterWidthPx = 11;
+  const horizontalPaddingAndChromePx = 56;
+  return Math.ceil(characterSlotsForWidth * approximateCharacterWidthPx + horizontalPaddingAndChromePx);
+}
+
 /**
  * Плоский список всех опций (родители и дети) для подписей чипов.
  * @param options - Иерархия опций.

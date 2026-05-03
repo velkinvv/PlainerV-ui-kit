@@ -1,15 +1,36 @@
 ﻿import styled from 'styled-components';
+import { Button } from '../../buttons/Button/Button';
 
-/** ╨в╨╡╨║╤Б╤В-╨┐╨╛╨┤╤Б╨║╨░╨╖╨║╨░ ╨╜╨░╨┤ ╨┤╨╡╨╝╨╛ ╨▓ Storybook */
+/** Текст-подсказка над демо в Storybook */
 export const DataGridStoryHint = styled.p`
   margin: 0 0 12px;
   font-size: 14px;
   color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
-/** ╨Ю╨▒╤С╤А╤В╨║╨░ ╨┤╨╗╤П ╨║╨╜╨╛╨┐╨║╨╕ + ╤В╨░╨▒╨╗╨╕╤Ж╤Л ╨▓ ╤Б╤В╨╛╤А╨╕╤Б */
+/** Обёртка для кнопки и таблицы в сторис */
 export const DataGridStoryBlock = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
+`;
+
+/**
+ * Кнопка управления демо: не растягивается на всю ширину родителя (`flex-direction: column`).
+ */
+export const DataGridStoryControlButton = styled(Button)`
+  align-self: flex-start;
+`;
+
+/** Текст деталей в раскрытой строке (сторис ленивой загрузки) */
+export const DataGridStoryExpandedDetailLine = styled.p`
+  margin: 0;
+`;
+
+/** Подпись поля в панели фильтра сторис «Встроенная иконка фильтра» */
+export const DataGridStoryFilterFieldLabel = styled.label`
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;

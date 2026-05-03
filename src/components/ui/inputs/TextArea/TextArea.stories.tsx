@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { TextArea } from './TextArea';
 import { Form } from '../../Form';
+import { DOC_TEXTAREA } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof TextArea> = {
   title: 'UI Kit/Inputs/TextArea',
@@ -10,8 +11,7 @@ const meta: Meta<typeof TextArea> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Многострочное поле ввода с метками, состояниями, подсказкой (Tooltip или Hint), счётчиком символов при `maxLength`, блокировкой копирования/вставки и привязкой к `Form` через контекст.',
+        component: DOC_TEXTAREA,
       },
     },
   },

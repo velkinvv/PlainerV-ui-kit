@@ -4,6 +4,7 @@ import React from 'react';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Snackbar } from './Snackbar';
 import type { SnackbarItem } from '@/types/ui';
+import { DOC_SNACKBAR } from '@/components/ui/storyDocs/uiKitDocs';
 
 const withTheme: Decorator = (Story) => (
   <ThemeProvider>
@@ -19,8 +20,7 @@ const meta: Meta<typeof Snackbar> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Компактная полоса уведомления: тёмный фон, текст, опциональное действие. В приложении — `ThemeProvider` + `SnackbarProvider` + `useSnackbar` (сторис **Hooks/useSnackbar**).',
+        component: DOC_SNACKBAR,
       },
     },
   },

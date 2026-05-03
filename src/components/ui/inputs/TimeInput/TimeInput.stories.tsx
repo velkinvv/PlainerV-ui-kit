@@ -3,12 +3,18 @@ import React, { useState } from 'react';
 import { TimeInput } from './TimeInput';
 import { Size, IconSize } from '../../../../types/sizes';
 import { Icon } from '../../Icon/Icon';
+import { DOC_TIME_INPUT } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof TimeInput> = {
   title: 'UI Kit/Inputs/TimeInput',
   component: TimeInput,
   parameters: {
     layout: 'padded',
+    docs: {
+      description: {
+        component: DOC_TIME_INPUT,
+      },
+    },
   },
   tags: ['autodocs'],
   argTypes: {

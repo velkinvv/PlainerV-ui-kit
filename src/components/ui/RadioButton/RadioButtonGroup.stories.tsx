@@ -10,12 +10,18 @@ import {
   TooltipPosition,
 } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
+import { DOC_RADIO_BUTTON_GROUP } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof RadioButtonGroup> = {
   title: 'UI Kit/Inputs/RadioButtonGroup',
   component: RadioButtonGroup,
   parameters: {
     layout: 'padded',
+    docs: {
+      description: {
+        component: DOC_RADIO_BUTTON_GROUP,
+      },
+    },
   },
   tags: ['autodocs'],
   argTypes: {

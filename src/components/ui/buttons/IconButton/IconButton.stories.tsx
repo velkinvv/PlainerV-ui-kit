@@ -4,6 +4,7 @@ import { Icon } from '../../Icon/Icon';
 import React from 'react';
 import { IconSize, Size } from '../../../../types/sizes';
 import { ButtonVariant } from '../../../../types/ui';
+import { DOC_ICON_BUTTON } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof IconButton> = {
   title: 'UI Kit/Inputs/IconButton',
@@ -12,8 +13,9 @@ const meta: Meta<typeof IconButton> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Иконочная кнопка, дублирующая функционал Button. По умолчанию использует радиусы из темы, при `rounded=true` становится круглой.',
+        component: `${DOC_ICON_BUTTON}
+
+По умолчанию радиусы из темы; при **rounded=true** кнопка становится круглой.`,
       },
     },
   },

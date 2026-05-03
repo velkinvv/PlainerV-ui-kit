@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Stepper } from './Stepper';
 import type { StepperLinearStep } from '../../../types/ui';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
+import { DOC_STEPPER } from '@/components/ui/storyDocs/uiKitDocs';
 
 const linearSteps: StepperLinearStep[] = [
   { title: 'Наименование' },
@@ -24,8 +25,7 @@ const meta: Meta<typeof Stepper> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Навигация по шагам: **compact** — кольцо с «N/M», заголовок и подзаголовок; **linear** — цепочка шагов с соединителями. Скругление панели и кнопки «назад» — `BorderRadiusHandler(theme.borderRadius)`. Внешний вид `light` / `dark` — проп `appearance` или `ThemeProvider`. Для прогресса внутри формы см. также `Progress` (`variant="stepper"`).',
+        component: DOC_STEPPER,
       },
     },
   },

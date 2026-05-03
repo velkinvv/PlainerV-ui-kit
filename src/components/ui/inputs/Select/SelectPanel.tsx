@@ -61,6 +61,7 @@ import {
   applySelectPanelTreeSelection,
   filterSelectItemsByQuery,
   flattenNativeSelectOptions,
+  getSelectPanelMinMenuWidthPx,
   getMultiSelectChipEntries,
   getSelectableEnabledOptionValues,
   getSelectChevronIconSize,
@@ -384,9 +385,13 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
 
     useLayoutEffect(() => {
       if (menuOpen && containerRef.current) {
-        setMenuWidth(Math.round(containerRef.current.getBoundingClientRect().width));
+        const measuredTriggerWidthPx = Math.round(
+          containerRef.current.getBoundingClientRect().width,
+        );
+        const minimumMenuWidthFromOptionsPx = getSelectPanelMinMenuWidthPx(options);
+        setMenuWidth(Math.max(measuredTriggerWidthPx, minimumMenuWidthFromOptionsPx));
       }
-    }, [menuOpen, fullWidth]);
+    }, [menuOpen, fullWidth, options]);
 
     const setRefs = useCallback(
       (el: HTMLSelectElement | null) => {

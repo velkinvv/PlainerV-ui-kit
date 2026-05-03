@@ -4,6 +4,7 @@ import { Spinner } from './Spinner';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Size } from '../../../types/sizes';
 import { SpinnerVariant } from '../../../types/ui';
+import { DOC_SPINNER } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Spinner> = {
   title: 'UI Kit/Feedback/Spinner',
@@ -12,7 +13,7 @@ const meta: Meta<typeof Spinner> = {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Компонент спиннера для отображения состояния загрузки',
+        component: DOC_SPINNER,
       },
     },
   },

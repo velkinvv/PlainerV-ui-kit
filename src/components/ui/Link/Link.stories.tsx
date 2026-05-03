@@ -4,6 +4,7 @@ import { Link } from './Link';
 import { LinkMode } from '../../../types/ui';
 import { ButtonVariant } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
+import { DOC_LINK } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Link> = {
   title: 'UI Kit/Inputs/Link',
@@ -12,8 +13,7 @@ const meta: Meta<typeof Link> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Проп `mode`: значение `text` — стилизованный `<a>`; значение `button` — вид кнопки с `href` (те же `variant`, `size`, иконки). Для `target="_blank"` подмешивается безопасный `rel`.',
+        component: DOC_LINK,
       },
     },
   },

@@ -5,6 +5,7 @@ import { NavigationMenuItem } from './NavigationMenuItem';
 import { ThemeProvider } from '@/themes/ThemeProvider';
 import { NavigationMenuActiveAppearance } from '@/types/ui';
 import { Icon } from '../Icon/Icon';
+import { DOC_NAVIGATION_MENU } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof NavigationMenu> = {
   title: 'UI Kit/Navigation/NavigationMenu',
@@ -13,8 +14,7 @@ const meta: Meta<typeof NavigationMenu> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Вертикальное меню навигации: пункты с иконкой, бейджем и суффиксом; режимы expanded / collapsed. Не путать с выпадающим `Menu` (список действий).',
+        component: DOC_NAVIGATION_MENU,
       },
     },
   },

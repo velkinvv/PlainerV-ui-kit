@@ -4,6 +4,7 @@ import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Size } from '../../../types/sizes';
 import { DropdownMenu } from './DropdownMenu';
 import { DropdownMenuItem } from './DropdownMenuItem';
+import { DOC_DROPDOWN_MENU } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof DropdownMenu> = {
   title: 'UI Kit/Navigation/Dropdown/DropdownMenu',
@@ -21,8 +22,7 @@ const meta: Meta<typeof DropdownMenu> = {
   parameters: {
     docs: {
       description: {
-        component:
-          'Вспомогательные компоненты `DropdownMenu` и `DropdownMenuItem` для построения содержимого `Dropdown`. Меню оборачивает элементы и передаёт контекст для закрытия dropdown после выбора.',
+        component: DOC_DROPDOWN_MENU,
       },
     },
   },

@@ -11,6 +11,7 @@ import {
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { BadgeVariant } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
+import { DOC_BADGE } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Badge> = {
   title: 'UI Kit/Data Display/Badge',
@@ -19,7 +20,7 @@ const meta: Meta<typeof Badge> = {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Компонент бейджа для отображения статусов и меток согласно дизайн-системе',
+        component: DOC_BADGE,
       },
     },
   },

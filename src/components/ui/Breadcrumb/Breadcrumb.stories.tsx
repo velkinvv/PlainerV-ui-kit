@@ -4,6 +4,7 @@ import { Breadcrumb } from './Breadcrumb';
 import { Icon } from '../Icon/Icon';
 import { IconSize, Size } from '../../../types/sizes';
 import type { BreadcrumbItem } from '../../../types/ui';
+import { DOC_BREADCRUMB } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Breadcrumb> = {
   title: 'UI Kit/Navigation/Breadcrumb',
@@ -12,8 +13,7 @@ const meta: Meta<typeof Breadcrumb> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Шеврон между пунктами, иконка слева, капсула у текущей страницы, сегмент «…» (`ellipsis`), `aria-current`, `rel` для `target="_blank"`.',
+        component: DOC_BREADCRUMB,
       },
     },
   },

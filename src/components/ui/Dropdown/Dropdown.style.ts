@@ -100,10 +100,14 @@ export const DropdownContent = styled.div<{
   left: ${({ $position }) => $position.x}px;
   top: ${({ $position }) => $position.y}px;
 
-  /* Ширина меню, если задана */
+  /* Явная ширина панели: сбрасываем min/max из темы, иначе узкая ширина триггера не применяется к выпадашке (minWidth из темы dropdown). */
   ${({ $menuWidth }) =>
     $menuWidth !== undefined &&
-    `width: ${typeof $menuWidth === 'number' ? `${$menuWidth}px` : $menuWidth};`}
+    css`
+      min-width: 0;
+      max-width: none;
+      width: ${typeof $menuWidth === 'number' ? `${$menuWidth}px` : $menuWidth};
+    `}
 
   /* Максимальная высота меню, если задана */
   ${({ $menuMaxHeight }) =>
@@ -114,8 +118,9 @@ export const DropdownContent = styled.div<{
       overflow-x: hidden;
     `}
 
-  /* Стили для внутреннего контента, чтобы он не выходил за пределы */
+  /* Внутренний контент: min-width 0 — иначе flex/min-width у вложенных панелей (напр. фильтр колонки) обрезается при overflow:hidden */
   > * {
+    min-width: 0;
     max-width: 100%;
     box-sizing: border-box;
     word-wrap: break-word;
@@ -452,7 +457,8 @@ export const DropdownItemLabel = styled.span<{ $tone?: 'default' | 'danger' }>`
   font-weight: inherit;
   color: ${({ $tone }) => ($tone === 'danger' ? colors.red[600] : 'inherit')};
   display: block;
-  word-break: break-word;
+  word-break: normal;
+  overflow-wrap: break-word;
 `;
 
 export const DropdownItemDescription = styled.span`

@@ -13,10 +13,22 @@ import { TableRootProvider } from './TableContext';
  */
 export const Table = forwardRef<HTMLTableElement, TableProps>(
   (
-    { stickyHeader = false, size = 'md', striped = false, className, children, style, ...rest },
+    {
+      stickyHeader = false,
+      size = 'md',
+      striped = false,
+      columnDividers = true,
+      className,
+      children,
+      style,
+      ...rest
+    },
     ref,
   ) => {
-    const ctx = useMemo(() => ({ size, striped, stickyHeader }), [size, striped, stickyHeader]);
+    const ctx = useMemo(
+      () => ({ size, striped, stickyHeader, columnDividers }),
+      [size, striped, stickyHeader, columnDividers],
+    );
 
     return (
       <TableRootProvider value={ctx}>

@@ -8,6 +8,8 @@ type TableRootContextValue = {
   size: TableSize;
   striped: boolean;
   stickyHeader: boolean;
+  /** Тонкая вертикальная граница между колонками (кроме последней ячейки в строке) */
+  columnDividers: boolean;
 };
 
 const TableRootContext = createContext<TableRootContextValue | null>(null);
@@ -30,7 +32,7 @@ export function TableRootProvider({
 export function useTableRootContext(): TableRootContextValue {
   const ctx = useContext(TableRootContext);
   if (!ctx) {
-    return { size: 'md', striped: false, stickyHeader: false };
+    return { size: 'md', striped: false, stickyHeader: false, columnDividers: true };
   }
   return ctx;
 }

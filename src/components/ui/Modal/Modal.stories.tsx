@@ -35,6 +35,7 @@ import {
   VariantLabelButton,
   WarningIconCircle,
 } from './Modal.stories.style';
+import { DOC_MODAL } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Modal> = {
   title: 'UI Kit/Surfaces/Modal',
@@ -43,8 +44,7 @@ const meta: Meta<typeof Modal> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Компонент модального окна для отображения важной информации. Поддерживает единый lifecycle API: `isOpen`, `unmountOnClose` (по умолчанию `true`) и `lazy` (по умолчанию `true`).',
+        component: DOC_MODAL,
       },
     },
   },

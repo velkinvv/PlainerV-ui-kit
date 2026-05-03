@@ -4,6 +4,7 @@ import { Button } from './Button';
 import { Icon } from '../../Icon/Icon';
 import { Size, IconSize } from '../../../../types/sizes';
 import { ButtonVariant } from '../../../../types/ui';
+import { DOC_BUTTON } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Button> = {
   title: 'UI Kit/Inputs/Button',
@@ -12,7 +13,7 @@ const meta: Meta<typeof Button> = {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Обычная кнопка с различными вариантами стилизации',
+        component: DOC_BUTTON,
       },
     },
   },

@@ -14,12 +14,18 @@ import {
   RadioButtonVariant,
 } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
+import { DOC_RADIO_BUTTON } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof RadioButton> = {
   title: 'UI Kit/Inputs/RadioButton',
   component: RadioButton,
   parameters: {
     layout: 'padded',
+    docs: {
+      description: {
+        component: DOC_RADIO_BUTTON,
+      },
+    },
   },
   tags: ['autodocs'],
   argTypes: {

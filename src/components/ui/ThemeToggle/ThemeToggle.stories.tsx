@@ -2,12 +2,18 @@
 import { ThemeToggle } from './ThemeToggle';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import React from 'react';
+import { DOC_THEME_TOGGLE } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof ThemeToggle> = {
   title: 'UI Kit/Utils/ThemeToggle',
   component: ThemeToggle,
   parameters: {
     layout: 'centered',
+    docs: {
+      description: {
+        component: DOC_THEME_TOGGLE,
+      },
+    },
   },
   decorators: [
     Story => (

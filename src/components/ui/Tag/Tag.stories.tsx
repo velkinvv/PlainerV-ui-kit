@@ -18,6 +18,7 @@ import {
   TagStoriesMatrixColorRow,
   TagStoriesMatrixLabel,
 } from './Tag.stories.style';
+import { DOC_TAG } from '@/components/ui/storyDocs/uiKitDocs';
 
 const sampleIcon = <Icon name="IconExCopy" size={IconSize.XS} color="currentColor" />;
 
@@ -48,15 +49,7 @@ const meta: Meta<typeof Tag> = {
     layout: 'padded',
     docs: {
       description: {
-        component: `
-Компонент **Tag**: палитры семантики (\`neutral\`, \`primary\`, \`danger\`, …) плюс акценты **\`secondary\`, \`purple\`, \`teal\`, \`cyan\`, \`pink\`** и виды \`filled\` / \`outline\`.
-
-**\`statusDisplay="marker"\`** — цветной кружок статуса и нейтральная «пилюля»; **\`statusDisplay="surface"\`** (по умолчанию) — цвет всей поверхности. **\`customColors\`** — свой фон/обводка/hover (\`background\` даёт полностью кастомную пилюлю) и/или **\`marker\`** для цвета кружка в режиме marker. Вариант **\`colorVariant="custom"\`** без своего фона использует нейтральную палитру для текста, пока не заданы цвета в \`customColors\`.
-
-**Возможности:** размеры \`Size\`, иконки, клик, \`disabled\`, скелетон (\`skeleton\`).
-
-**Состояния в сторис:** обычный, отключённый, интерактивный, семантика, маркер vs surface, тултип при обрезке, кастомные цвета и маркер, нативная кнопка.
-`.trim(),
+        component: DOC_TAG,
       },
     },
   },

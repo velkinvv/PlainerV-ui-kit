@@ -7,6 +7,7 @@ import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { IconSize } from '../../../types/sizes';
 import type { IconVariant } from '../../../types/ui';
 import type { IconName } from '../../../icons';
+import { DOC_ICON_CATEGORIES } from '@/components/ui/storyDocs/uiKitDocs';
 
 // Функция для получения реально существующих иконок
 const getExistingIcons = () => {
@@ -56,7 +57,7 @@ const meta: Meta<typeof Icon> = {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Категории иконок Plainer и IconEx для удобного просмотра',
+        component: DOC_ICON_CATEGORIES,
       },
     },
   },

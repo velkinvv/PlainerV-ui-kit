@@ -3,10 +3,19 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Skeleton } from './Skeleton';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { SkeletonVariant, SkeletonGroupDirection } from '../../../types/ui';
+import { DOC_SKELETON } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Skeleton> = {
   title: 'UI Kit/Data Display/Skeleton',
   component: Skeleton,
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        component: DOC_SKELETON,
+      },
+    },
+  },
   decorators: [
     (Story) => (
       <ThemeProvider>

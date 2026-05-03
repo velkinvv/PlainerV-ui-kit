@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Card } from './Card';
 import { CardVariant } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
+import { DOC_CARD } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Card> = {
   title: 'UI Kit/Surfaces/Card',
@@ -11,7 +12,7 @@ const meta: Meta<typeof Card> = {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Компонент карточки для отображения контента',
+        component: DOC_CARD,
       },
     },
   },

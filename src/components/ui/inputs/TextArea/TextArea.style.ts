@@ -66,6 +66,7 @@ export const TextAreaSkeleton = styled.div.withConfig({
   position: relative;
   overflow: hidden;
   width: ${({ fullWidth }) => (fullWidth ? '100%' : '335px')};
+  max-width: 100%;
   padding: ${InputPaddingHandler(Size.LG)};
   border: 1px solid ${({ theme }) => theme.colors.borderSecondary};
   border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};

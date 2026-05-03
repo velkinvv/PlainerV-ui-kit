@@ -5,6 +5,7 @@ import { Progress, useProgress, useStepper } from './';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Size } from '../../../types/sizes';
 import type { ProgressStep } from '../../../types/ui';
+import { DOC_PROGRESS } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Progress> = {
   title: 'UI Kit/Data Display/Progress',
@@ -13,7 +14,7 @@ const meta: Meta<typeof Progress> = {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Компонент прогресса с линейным и круговым вариантами.',
+        component: DOC_PROGRESS,
       },
     },
   },

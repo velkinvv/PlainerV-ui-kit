@@ -17,11 +17,17 @@ import { Grid } from './Grid/Grid';
 import { GridItem } from './Grid/GridItem';
 import { Size } from '../../types/sizes';
 import { ButtonVariant, BadgeVariant } from '../../types/ui';
+import { DOC_THEME_SHOWCASE } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta = {
   title: 'UI Kit/Utils/Theme Showcase',
   parameters: {
     layout: 'fullscreen',
+    docs: {
+      description: {
+        component: DOC_THEME_SHOWCASE,
+      },
+    },
   },
 };
 

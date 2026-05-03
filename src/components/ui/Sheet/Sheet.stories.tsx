@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Sheet } from './Sheet';
 import { Button } from '../buttons/Button';
 import { ButtonVariant, type SheetPlacement } from '../../../types/ui';
+import { DOC_SHEET } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Sheet> = {
   title: 'UI Kit/Surfaces/Sheet',
@@ -11,8 +12,7 @@ const meta: Meta<typeof Sheet> = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component:
-          'Панель-лист как у `Drawer`, по умолчанию снизу (`placement="bottom"`), `safe-area-inset-bottom`, те же оверлей/фокус и lifecycle API (`isOpen`, `unmountOnClose`, `lazy`).',
+        component: DOC_SHEET,
       },
     },
   },

@@ -11,6 +11,7 @@ import {
   TabItemTextPosition,
 } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
+import { DOC_TABS } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Tabs> = {
   title: 'UI Kit/Navigation/Tabs',
@@ -19,7 +20,7 @@ const meta: Meta<typeof Tabs> = {
     layout: 'centered',
     docs: {
       description: {
-        component: 'Компонент вкладок для организации контента',
+        component: DOC_TABS,
       },
     },
   },

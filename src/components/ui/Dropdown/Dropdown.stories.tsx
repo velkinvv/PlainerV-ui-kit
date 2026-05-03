@@ -18,6 +18,7 @@ import { Size } from '../../../types/sizes';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { DropdownMenu } from './DropdownMenu';
 import { DropdownMenuItem } from './DropdownMenuItem';
+import { DOC_DROPDOWN } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Dropdown> = {
   title: 'UI Kit/Navigation/Dropdown',
@@ -30,7 +31,7 @@ const meta: Meta<typeof Dropdown> = {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Компонент выпадающего меню',
+        component: DOC_DROPDOWN,
       },
     },
   },

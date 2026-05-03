@@ -5,6 +5,7 @@ import { GridItem } from './GridItem';
 import { GridMode } from '../../../types/ui';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Card } from '../Card/Card';
+import { DOC_GRID } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Grid> = {
   title: 'UI Kit/Layout/Grid',
@@ -13,8 +14,7 @@ const meta: Meta<typeof Grid> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Адаптивный CSS Grid компонент с поддержкой полноэкранного режима, контейнера и вложенности. Поддерживает настройку колонок и строк под разные разрешения экранов.',
+        component: DOC_GRID,
       },
     },
   },

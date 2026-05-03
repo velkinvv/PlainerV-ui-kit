@@ -12,6 +12,7 @@ import {
 import { Icon } from '../Icon/Icon';
 import { NavigationMenu } from '../NavigationMenu/NavigationMenu';
 import { NavigationMenuItem } from '../NavigationMenu/NavigationMenuItem';
+import { DOC_FLOATING_MENU } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof FloatingMenu> = {
   title: 'UI Kit/Navigation/FloatingMenu',
@@ -29,8 +30,7 @@ const meta: Meta<typeof FloatingMenu> = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component:
-          'Плавающая панель инструментов: группы `FloatingMenu.Group`, разделитель `Divider`, пункты `GroupItem` с подсказкой и вложенным `NavigationMenu`. Закрепление по краю (`placement`) или перетаскивание (`draggable`).',
+        component: DOC_FLOATING_MENU,
       },
     },
   },

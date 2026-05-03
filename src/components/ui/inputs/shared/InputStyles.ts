@@ -112,6 +112,9 @@ export const InputWrapper = styled(motion.div).withConfig({
     $fileSurface ? '10px' : BorderRadiusHandler(theme.borderRadius)};
   transition: ${TransitionHandler()};
   width: ${({ fullWidth }) => (fullWidth ? '100%' : '335px')};
+  /* В узких контейнерах (Dropdown/Popover с menuWidth) не вылезать за padding — иначе обрезание при overflow:hidden */
+  max-width: 100%;
+  box-sizing: border-box;
 
   ${({ size, theme, $fileSurface }) => css`
     min-height: ${InputSizeHandler(size ?? theme.defaultInputSize)};
@@ -382,6 +385,7 @@ export const SkeletonEffect = styled.div.withConfig({
     return css`
       box-sizing: border-box;
       width: ${fullWidth ? '100%' : '335px'};
+      max-width: 100%;
       min-height: ${InputSizeHandler(size ?? theme.defaultInputSize)};
       padding: ${InputPaddingHandler(size ?? theme.defaultInputSize)};
       border: 1px solid ${theme.colors.borderSecondary};

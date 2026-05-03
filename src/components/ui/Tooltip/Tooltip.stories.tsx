@@ -6,6 +6,7 @@ import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Button } from '../buttons/Button/Button';
 import { Icon } from '../Icon/Icon';
 import { IconSize, Size } from '../../../types/sizes';
+import { DOC_TOOLTIP } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Tooltip> = {
   title: 'UI Kit/Feedback/Tooltip',
@@ -14,7 +15,7 @@ const meta: Meta<typeof Tooltip> = {
     layout: 'centered',
     docs: {
       description: {
-        component: 'Компонент подсказки с поддержкой различных позиций и анимаций',
+        component: DOC_TOOLTIP,
       },
     },
   },

@@ -1,8 +1,11 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { clsx } from 'clsx';
+import { useTheme } from 'styled-components';
 import type {
   DataGridBaseRow,
   DataGridColumn,
+  DataGridExpandedRowDataStatus,
+  DataGridExpandedRowRenderContext,
   DataGridPaginationModel,
   DataGridProps,
   DataGridRenderCellParams,
@@ -17,32 +20,57 @@ import { SpinnerVariant } from '@/types/ui';
 import { Icon } from '../../Icon/Icon';
 import {
   TableContainer,
+  TableContainerScroll,
   Table,
   TableHead,
   TableBody,
   TableRow,
   TableCell,
   TablePagination,
-  TableSortLabel,
 } from '../basicTable';
+import { normalizeTableHeaderMaxLines } from '../basicTable/tableHeaderClampHandlers';
 import {
+  applyDataGridColDragGhostPreview,
+  applyDataGridRowDragGhostPreview,
+  DATA_GRID_COL_DRAG_SHIFT_TRANSITION,
+  DATA_GRID_ROW_DRAG_SHIFT_TRANSITION,
   dataGridSizeToTableSize,
   getDataGridCellValue,
+  getDataGridColDragDisplacementPx,
+  getDataGridRowDragDisplacementPx,
+  resolveDataGridExpandedRowDataStatus,
   sliceRowsForPagination,
   toIdSet,
   reorderByIndex,
 } from './dataGridHandlers';
 import {
+  clampDataGridColumnResizeWidthPx,
+  DATA_GRID_COLUMN_RESIZE_FALLBACK_MAX_PX,
+  parseDataGridColumnMinWidthConstraintPx,
+  parseDataGridColumnWidthToPixels,
+} from './dataGridColumnResizeHandlers';
+import {
+  getDataGridSortCriterionIndexForField,
+  normalizeDataGridSortModel,
+  resolveNextDataGridSortModel,
+} from './dataGridSortModelHandlers';
+import {
   DataGridChevronWrap,
   DataGridExpandButton,
+  DataGridExpandedInner,
+  DataGridExpandedLoadingWrap,
+  DataGridExpandedSlot,
   DataGridLoadingOverlay,
   DataGridRoot,
   DataGridRowDragHandle,
+  DataGridColumnResizeHandle,
 } from './DataGrid.style';
+import { DataGridColumnHeaderContent } from './DataGridColumnHeaderContent';
 
 /**
  * Готовая таблица с колонками и строками из пропсов (композиция `Table*` + выбор + пагинация + сортировка).
- * @param props — см. `DataGridProps` в `types/ui.ts`
+ * @param props — см. `DataGridProps` в `types/ui.ts`: раскрытие строк, ресайз (`onColumnResize*`),
+ *   DnD колонок/строк (`onColumnDrag*`, `onRowDrag*`), клик по фильтру (`onColumnFilterClick` + `filterable` у колонки).
  */
 export function DataGrid<Row extends DataGridBaseRow>(props: DataGridProps<Row>): React.ReactElement {
   const {
@@ -71,21 +99,39 @@ export function DataGrid<Row extends DataGridBaseRow>(props: DataGridProps<Row>)
     rowsPerPageOptions = [5, 10, 25],
     sortModel,
     onSortChange,
+    multiColumnSort = false,
     stickyHeader = false,
     striped = true,
+    columnDividers = true,
     size = Size.MD,
+    headerMaxLines,
     isLoading = false,
     rowBackgroundColorByStatus,
     expandedRowIds,
-    onRowCollapseChange,
     getRowExpandable,
+    getExpandedRowDataStatus,
+    getExpandedRowLoading,
+    onExpandedRowOpen,
+    onExpandedRowChange,
     renderExpandedRow,
     renderRowWrapper,
     renderCell,
     enableColumnDrag = false,
+    onColumnDragStart,
     onColumnDragEnd,
+    onColumnOrderChange,
+    onColumnDragCancel,
+    enableColumnResize = false,
+    onColumnResizeStart,
+    onColumnResizeChange,
+    onColumnResize,
+    onColumnResizeEnd,
+    columnResizeMaxWidthPx,
     enableRowDrag = false,
+    onRowDragStart,
     onRowDragEnd,
+    onRowDragCancel,
+    onColumnFilterClick,
     hideFooter = false,
     elevated = true,
     tableAriaLabel,
@@ -94,6 +140,16 @@ export function DataGrid<Row extends DataGridBaseRow>(props: DataGridProps<Row>)
   } = props;
 
   const tableSize = useMemo(() => dataGridSizeToTableSize(size), [size]);
+  const multiColumnSortEnabled = Boolean(multiColumnSort);
+
+  const rawSortCriteria = useMemo(() => normalizeDataGridSortModel(sortModel ?? null), [sortModel]);
+
+  const displaySortCriteria = useMemo(() => {
+    if (!multiColumnSortEnabled && rawSortCriteria.length > 1) {
+      return rawSortCriteria.slice(0, 1);
+    }
+    return rawSortCriteria;
+  }, [rawSortCriteria, multiColumnSortEnabled]);
   const selectedSet = useMemo(() => toIdSet(selectedIds), [selectedIds]);
   const disabledSet = useMemo(() => toIdSet(disabledIds), [disabledIds]);
 
@@ -160,87 +216,334 @@ export function DataGrid<Row extends DataGridBaseRow>(props: DataGridProps<Row>)
   );
 
   const handleSortClick = useCallback(
-    (field: string, sortable?: boolean) => {
-      if (!sortable || !onSortChange) {
+    (field: string, sortableColumn?: boolean) => {
+      if (!sortableColumn || !onSortChange) {
         return;
       }
-      const cur = sortModel;
-      if (cur?.field === field) {
-        const nextDir = cur.direction === 'asc' ? 'desc' : 'asc';
-        onSortChange({ field, direction: nextDir });
-      } else {
-        onSortChange({ field, direction: 'asc' });
-      }
+      const nextModel = resolveNextDataGridSortModel({
+        current: sortModel ?? null,
+        field,
+        multiColumnSort: multiColumnSortEnabled,
+      });
+      onSortChange(nextModel);
     },
-    [onSortChange, sortModel],
+    [onSortChange, sortModel, multiColumnSortEnabled],
   );
 
   const setRowExpanded = useCallback(
     (rowId: string, expanded: boolean) => {
-      onRowCollapseChange?.(rowId, expanded);
+      const wasExpanded = expandedSet.has(rowId);
+      const nextExpandedSet = new Set(expandedSet);
+      if (expanded) {
+        nextExpandedSet.add(rowId);
+      } else {
+        nextExpandedSet.delete(rowId);
+      }
+      const nextExpandedIds = [...nextExpandedSet];
+
+      onExpandedRowChange?.({
+        rowId,
+        expanded,
+        expandedIds: nextExpandedIds,
+      });
+
+      if (expanded && !wasExpanded) {
+        const rowForOpen = visibleRows.find(visibleRow => getRowId(visibleRow) === rowId);
+        if (rowForOpen != null) {
+          onExpandedRowOpen?.(rowForOpen);
+        }
+      }
+
       if (expandedRowIds == null) {
-        setInternalExpanded(prev => {
-          const n = new Set(prev);
-          if (expanded) {
-            n.add(rowId);
-          } else {
-            n.delete(rowId);
-          }
-          return n;
-        });
+        setInternalExpanded(nextExpandedSet);
       }
     },
-    [expandedRowIds, onRowCollapseChange],
+    [
+      expandedRowIds,
+      expandedSet,
+      getRowId,
+      onExpandedRowChange,
+      onExpandedRowOpen,
+      visibleRows,
+    ],
   );
 
-  const [dragColFrom, setDragColFrom] = useState<number | null>(null);
-  const handleColDragStart = useCallback(
-    (index: number, disabled?: boolean) => {
-      if (!enableColumnDrag || disabled) {
+  const renderExpandedRowContent = useCallback(
+    (row: Row, dataStatus: DataGridExpandedRowDataStatus) => {
+      const context: DataGridExpandedRowRenderContext = {
+        dataStatus,
+        isLoading: dataStatus === 'loading',
+      };
+      if (dataStatus === 'loading') {
+        return (
+          <DataGridExpandedLoadingWrap aria-busy="true" aria-live="polite">
+            <Spinner variant={SpinnerVariant.DOTS} ariaLabel="Загрузка деталей строки" />
+          </DataGridExpandedLoadingWrap>
+        );
+      }
+      return renderExpandedRow?.(row, context) ?? null;
+    },
+    [renderExpandedRow],
+  );
+
+  const theme = useTheme();
+
+  const columnResizeMaxPx = columnResizeMaxWidthPx ?? DATA_GRID_COLUMN_RESIZE_FALLBACK_MAX_PX;
+  const showColumnResizeUi = Boolean(enableColumnResize && onColumnResize);
+
+  /** При `auto`-layout браузер перераспределяет ширину между колонками; `fixed` оставляет остальные на заданных `width`. */
+  const dataGridTableStyle = useMemo(
+    (): React.CSSProperties | undefined => (showColumnResizeUi ? { tableLayout: 'fixed' } : undefined),
+    [showColumnResizeUi],
+  );
+
+  const [columnResizePreview, setColumnResizePreview] = useState<{ field: string; widthPx: number } | null>(null);
+  const columnResizeSessionRef = useRef<{
+    field: string;
+    startClientX: number;
+    startWidthPx: number;
+    minPx: number;
+    maxPx: number;
+    pointerId: number;
+  } | null>(null);
+  const columnResizeLiveWidthRef = useRef(0);
+  const columnResizeBlockColDragRef = useRef(false);
+
+  useEffect(() => {
+    if (!enableColumnDrag || !showColumnResizeUi) {
+      return;
+    }
+    const onDragStartCapture = (event: DragEvent) => {
+      if (!columnResizeBlockColDragRef.current) {
         return;
       }
-      setDragColFrom(index);
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    };
+    document.addEventListener('dragstart', onDragStartCapture, true);
+    return () => {
+      document.removeEventListener('dragstart', onDragStartCapture, true);
+    };
+  }, [enableColumnDrag, showColumnResizeUi]);
+
+  const endColumnResizeGesture = useCallback(
+    (event: React.PointerEvent<HTMLButtonElement>, commit: boolean) => {
+      const session = columnResizeSessionRef.current;
+      if (!session || session.pointerId !== event.pointerId) {
+        return;
+      }
+      columnResizeSessionRef.current = null;
+      columnResizeBlockColDragRef.current = false;
+      const field = session.field;
+      const finalWidth = columnResizeLiveWidthRef.current;
+      setColumnResizePreview(null);
+      if (typeof event.currentTarget.releasePointerCapture === 'function') {
+        try {
+          event.currentTarget.releasePointerCapture(event.pointerId);
+        } catch {
+          /* снятие захвата уже выполнено браузером */
+        }
+      }
+      if (commit && onColumnResize) {
+        onColumnResize({ field, width: finalWidth });
+      }
+      onColumnResizeEnd?.({ field, width: finalWidth, committed: commit });
     },
-    [enableColumnDrag],
+    [onColumnResize, onColumnResizeEnd],
+  );
+
+  const handleColumnResizePointerDown = useCallback(
+    (event: React.PointerEvent<HTMLButtonElement>, col: DataGridColumn<Row>, headerCell: HTMLElement) => {
+      if (!showColumnResizeUi || col.disableResize) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      columnResizeBlockColDragRef.current = true;
+      const fieldStr = String(col.field);
+      const measuredWidth = headerCell.getBoundingClientRect().width;
+      const startWidthPx = parseDataGridColumnWidthToPixels(col.width, measuredWidth);
+      const minPx = parseDataGridColumnMinWidthConstraintPx(col.minWidth);
+      const startClamped = clampDataGridColumnResizeWidthPx(startWidthPx, minPx, columnResizeMaxPx);
+      columnResizeSessionRef.current = {
+        field: fieldStr,
+        startClientX: event.clientX,
+        startWidthPx: startClamped,
+        minPx,
+        maxPx: columnResizeMaxPx,
+        pointerId: event.pointerId,
+      };
+      columnResizeLiveWidthRef.current = startClamped;
+      setColumnResizePreview({ field: fieldStr, widthPx: startClamped });
+      onColumnResizeStart?.({ field: fieldStr, width: startClamped });
+      event.currentTarget.setPointerCapture(event.pointerId);
+    },
+    [columnResizeMaxPx, onColumnResizeStart, showColumnResizeUi],
+  );
+
+  const handleColumnResizePointerMove = useCallback((event: React.PointerEvent<HTMLButtonElement>) => {
+    const session = columnResizeSessionRef.current;
+    if (!session || session.pointerId !== event.pointerId) {
+      return;
+    }
+    const deltaX = event.clientX - session.startClientX;
+    const nextWidth = clampDataGridColumnResizeWidthPx(
+      session.startWidthPx + deltaX,
+      session.minPx,
+      session.maxPx,
+    );
+    columnResizeLiveWidthRef.current = nextWidth;
+    onColumnResizeChange?.({ field: session.field, width: nextWidth });
+    setColumnResizePreview(previous => {
+      if (previous?.field === session.field && previous.widthPx === nextWidth) {
+        return previous;
+      }
+      return { field: session.field, widthPx: nextWidth };
+    });
+  }, [onColumnResizeChange]);
+
+  const [dragColFrom, setDragColFrom] = useState<number | null>(null);
+  const [dragColOverIndex, setDragColOverIndex] = useState<number | null>(null);
+  const [dragColWidthPx, setDragColWidthPx] = useState(0);
+
+  const beginColDrag = useCallback(
+    (colIndex: number, sourceWidthPx: number) => {
+      if (!enableColumnDrag) {
+        return;
+      }
+      const columnAtStart = columns[colIndex];
+      const fieldAtStart = columnAtStart != null ? String(columnAtStart.field) : String(colIndex);
+      onColumnDragStart?.({ fromIndex: colIndex, field: fieldAtStart });
+      setDragColFrom(colIndex);
+      setDragColOverIndex(colIndex);
+      setDragColWidthPx(sourceWidthPx);
+    },
+    [columns, enableColumnDrag, onColumnDragStart],
+  );
+
+  const handleColDragOverTarget = useCallback(
+    (targetColIndex: number, event: React.DragEvent<HTMLElement>) => {
+      if (!enableColumnDrag || dragColFrom === null) {
+        return;
+      }
+      event.preventDefault();
+      event.dataTransfer.dropEffect = 'move';
+      setDragColOverIndex(previous => (previous === targetColIndex ? previous : targetColIndex));
+    },
+    [enableColumnDrag, dragColFrom],
   );
 
   const handleColDrop = useCallback(
     (toIndex: number) => {
-      if (dragColFrom == null || !onColumnDragEnd) {
+      if (dragColFrom == null) {
         return;
       }
-      if (dragColFrom !== toIndex) {
-        onColumnDragEnd(dragColFrom, toIndex);
+      const fromIndex = dragColFrom;
+      const movedColumn = columns[fromIndex];
+      const movedField = movedColumn != null ? String(movedColumn.field) : String(fromIndex);
+      if (fromIndex !== toIndex) {
+        onColumnDragEnd?.(fromIndex, toIndex);
+        onColumnOrderChange?.({ fromIndex, toIndex, field: movedField });
+      } else {
+        onColumnDragCancel?.();
       }
       setDragColFrom(null);
+      setDragColOverIndex(null);
+      setDragColWidthPx(0);
     },
-    [dragColFrom, onColumnDragEnd],
+    [columns, dragColFrom, onColumnDragCancel, onColumnDragEnd, onColumnOrderChange],
+  );
+
+  const buildColumnDragCellStyle = useCallback(
+    (colIndex: number, baseStyle: React.CSSProperties): React.CSSProperties => {
+      const shiftPx =
+        enableColumnDrag && dragColFrom !== null
+          ? getDataGridColDragDisplacementPx(colIndex, dragColFrom, dragColOverIndex, dragColWidthPx)
+          : 0;
+      const shiftPart: React.CSSProperties | undefined =
+        enableColumnDrag && dragColFrom !== null
+          ? {
+              ...(shiftPx !== 0 ? { transform: `translateX(${shiftPx}px)` } : {}),
+              transition: DATA_GRID_COL_DRAG_SHIFT_TRANSITION,
+            }
+          : undefined;
+      const sourceColumnPart: React.CSSProperties | undefined =
+        enableColumnDrag && dragColFrom === colIndex
+          ? {
+              opacity: 0.48,
+              outline: `2px dashed ${theme.colors.primary}`,
+              outlineOffset: -2,
+              position: 'relative',
+              zIndex: 2,
+              boxShadow: theme.boxShadow?.md ?? `0 8px 24px ${theme.colors.shadow}`,
+            }
+          : undefined;
+      return {
+        ...baseStyle,
+        ...(shiftPart ?? {}),
+        ...(sourceColumnPart ?? {}),
+      };
+    },
+    [
+      dragColFrom,
+      dragColOverIndex,
+      dragColWidthPx,
+      enableColumnDrag,
+      theme.boxShadow?.md,
+      theme.colors.primary,
+      theme.colors.shadow,
+    ],
   );
 
   const [dragRowFrom, setDragRowFrom] = useState<number | null>(null);
-  const handleRowDragStart = useCallback(
-    (index: number) => {
+  const [dragRowOverIndex, setDragRowOverIndex] = useState<number | null>(null);
+  const [dragRowHeightPx, setDragRowHeightPx] = useState(0);
+
+  const beginRowDrag = useCallback(
+    (rowIndex: number, sourceRowHeightPx: number) => {
       if (!enableRowDrag) {
         return;
       }
-      setDragRowFrom(index);
+      const rowAtStart = visibleRows[rowIndex];
+      const rowIdAtStart = rowAtStart != null ? getRowId(rowAtStart) : '';
+      onRowDragStart?.({ fromIndex: rowIndex, rowId: rowIdAtStart });
+      setDragRowFrom(rowIndex);
+      setDragRowOverIndex(rowIndex);
+      setDragRowHeightPx(sourceRowHeightPx);
     },
-    [enableRowDrag],
+    [enableRowDrag, getRowId, onRowDragStart, visibleRows],
+  );
+
+  const handleBodyRowDragOver = useCallback(
+    (targetRowIndex: number, event: React.DragEvent<HTMLTableRowElement>) => {
+      if (!enableRowDrag || dragRowFrom === null) {
+        return;
+      }
+      event.preventDefault();
+      event.dataTransfer.dropEffect = 'move';
+      setDragRowOverIndex(previous => (previous === targetRowIndex ? previous : targetRowIndex));
+    },
+    [enableRowDrag, dragRowFrom],
   );
 
   const handleRowDrop = useCallback(
     (toIndex: number) => {
-      if (dragRowFrom == null || !onRowDragEnd) {
+      if (dragRowFrom == null) {
         return;
       }
+      const fromIndex = dragRowFrom;
       const orderedIds = visibleRows.map(r => getRowId(r));
-      const nextOrder = reorderByIndex(orderedIds, dragRowFrom, toIndex);
-      if (dragRowFrom !== toIndex) {
-        onRowDragEnd(nextOrder);
+      const nextOrder = reorderByIndex(orderedIds, fromIndex, toIndex);
+      if (fromIndex !== toIndex) {
+        onRowDragEnd?.(nextOrder);
+      } else {
+        onRowDragCancel?.();
       }
       setDragRowFrom(null);
+      setDragRowOverIndex(null);
+      setDragRowHeightPx(0);
     },
-    [dragRowFrom, enableRowDrag, getRowId, onRowDragEnd, visibleRows],
+    [dragRowFrom, getRowId, onRowDragCancel, onRowDragEnd, visibleRows],
   );
 
   const colCount =
@@ -278,19 +581,36 @@ export function DataGrid<Row extends DataGridBaseRow>(props: DataGridProps<Row>)
       className={clsx(className)}
       style={style}
       onDragEnd={() => {
-        // Сброс при отпускании вне цели drop (нативный HTML5 DnD)
-        setDragColFrom(null);
-        setDragRowFrom(null);
+        // Сброс при отпускании вне цели drop (нативный HTML5 DnD): `drop` не вызван — уведомляем об отмене
+        setDragColFrom(previous => {
+          if (previous !== null) {
+            onColumnDragCancel?.();
+          }
+          return null;
+        });
+        setDragColOverIndex(null);
+        setDragColWidthPx(0);
+        setDragRowFrom(previous => {
+          if (previous !== null) {
+            onRowDragCancel?.();
+          }
+          return null;
+        });
+        setDragRowOverIndex(null);
+        setDragRowHeightPx(0);
       }}
     >
       <TableContainer elevated={elevated}>
-        <Table
-          id={tableId}
-          size={tableSize}
-          striped={striped}
-          stickyHeader={stickyHeader}
-          aria-label={tableAriaLabel}
-        >
+        <TableContainerScroll embeddedPaginationBelow={showPagination}>
+          <Table
+            id={tableId}
+            size={tableSize}
+            striped={striped}
+            columnDividers={columnDividers}
+            stickyHeader={stickyHeader}
+            aria-label={tableAriaLabel}
+            style={dataGridTableStyle}
+          >
           <TableHead>
             <TableRow>
               {enableRowDrag ? <TableCell padding="checkbox" aria-hidden /> : null}
@@ -313,46 +633,105 @@ export function DataGrid<Row extends DataGridBaseRow>(props: DataGridProps<Row>)
               {columns.map((col, colIndex) => {
                 const fieldStr = String(col.field);
                 const sortable = Boolean(col.sortable && onSortChange);
-                const active = sortModel?.field === fieldStr;
+                const sortCriterionIndex = getDataGridSortCriterionIndexForField(displaySortCriteria, fieldStr);
+                const headerSortActive = sortCriterionIndex >= 0;
+                const headerSortDirection = headerSortActive
+                  ? displaySortCriteria[sortCriterionIndex]?.direction ?? 'asc'
+                  : false;
+                const rawCriterionIndex = getDataGridSortCriterionIndexForField(rawSortCriteria, fieldStr);
+                const headerSortPriority =
+                  multiColumnSortEnabled &&
+                  rawSortCriteria.length > 1 &&
+                  rawCriterionIndex >= 0 &&
+                  headerSortActive
+                    ? rawCriterionIndex + 1
+                    : undefined;
+                const mergedHeaderMaxLinesRaw =
+                  col.headerMaxLines !== undefined ? col.headerMaxLines : headerMaxLines;
+                const columnHeaderClampLines = normalizeTableHeaderMaxLines(mergedHeaderMaxLinesRaw);
+                const showResizeHandle = showColumnResizeUi && !col.disableResize;
+                const widthForCell =
+                  columnResizePreview?.field === fieldStr ? columnResizePreview.widthPx : col.width;
                 const thStyle: React.CSSProperties = {};
-                if (col.width != null) {
-                  thStyle.width = col.width;
+                if (widthForCell != null) {
+                  thStyle.width = widthForCell;
                 }
                 if (col.minWidth != null) {
                   thStyle.minWidth = col.minWidth;
                 }
+                if (showResizeHandle) {
+                  thStyle.position = 'relative';
+                }
+                const headerAlign: 'left' | 'center' | 'right' =
+                  col.align === 'right' ? 'right' : col.align === 'center' ? 'center' : 'left';
+                const showFilterButton = Boolean(col.filterable && onColumnFilterClick);
+                const filterIconPosition = col.filterIconPosition ?? 'trailing';
                 return (
                   <TableCell
                     key={fieldStr}
-                    align={col.align === 'right' ? 'right' : col.align === 'center' ? 'center' : 'left'}
-                    activeColumn={active}
-                    style={thStyle}
+                    align={headerAlign}
+                    activeColumn={headerSortActive}
+                    headerMaxLines={mergedHeaderMaxLinesRaw}
+                    style={buildColumnDragCellStyle(colIndex, thStyle)}
                     draggable={enableColumnDrag && !col.disableReorder}
-                    onDragStart={() => {
-                      handleColDragStart(colIndex, col.disableReorder);
-                    }}
-                    onDragOver={e => {
-                      if (enableColumnDrag) {
-                        e.preventDefault();
+                    onDragStart={e => {
+                      if (!enableColumnDrag || col.disableReorder) {
+                        return;
                       }
+                      e.dataTransfer.effectAllowed = 'move';
+                      applyDataGridColDragGhostPreview(e);
+                      const width =
+                        e.currentTarget instanceof HTMLElement ? e.currentTarget.offsetWidth : 0;
+                      beginColDrag(colIndex, width);
                     }}
+                    onDragOver={e => handleColDragOverTarget(colIndex, e)}
                     onDrop={() => {
                       handleColDrop(colIndex);
                     }}
                   >
-                    {sortable ? (
-                      <TableSortLabel
-                        active={active}
-                        direction={active ? sortModel?.direction ?? 'asc' : false}
-                        onClick={() => {
-                          handleSortClick(fieldStr, sortable);
+                    <DataGridColumnHeaderContent
+                      field={fieldStr}
+                      headerFallback={col.headerName ?? fieldStr}
+                      sortable={sortable}
+                      sortActive={headerSortActive}
+                      sortDirection={headerSortDirection}
+                      sortPriority={headerSortPriority}
+                      onSortClick={() => {
+                        handleSortClick(fieldStr, sortable);
+                      }}
+                      mergedHeaderMaxLinesRaw={mergedHeaderMaxLinesRaw}
+                      columnHeaderClampLines={columnHeaderClampLines ?? null}
+                      headerAlign={headerAlign}
+                      showFilterButton={showFilterButton}
+                      filterApplied={Boolean(col.filterApplied)}
+                      filterIcon={col.filterIcon}
+                      filterIconProps={col.filterIconProps}
+                      filterIconPropsApplied={col.filterIconPropsApplied}
+                      onColumnFilterClick={onColumnFilterClick}
+                      filterIconPosition={filterIconPosition}
+                    />
+                    {showResizeHandle ? (
+                      <DataGridColumnResizeHandle
+                        type="button"
+                        tabIndex={-1}
+                        aria-label={`Изменить ширину колонки ${fieldStr}`}
+                        data-datagrid-col-resize-handle="true"
+                        onPointerDown={event => {
+                          const headerCell = event.currentTarget.parentElement;
+                          if (!(headerCell instanceof HTMLElement)) {
+                            return;
+                          }
+                          handleColumnResizePointerDown(event, col, headerCell);
                         }}
-                      >
-                        {col.headerName ?? fieldStr}
-                      </TableSortLabel>
-                    ) : (
-                      (col.headerName ?? fieldStr) as React.ReactNode
-                    )}
+                        onPointerMove={handleColumnResizePointerMove}
+                        onPointerUp={event => {
+                          endColumnResizeGesture(event, true);
+                        }}
+                        onPointerCancel={event => {
+                          endColumnResizeGesture(event, false);
+                        }}
+                      />
+                    ) : null}
                   </TableCell>
                 );
               })}
@@ -367,6 +746,29 @@ export function DataGrid<Row extends DataGridBaseRow>(props: DataGridProps<Row>)
               const rowStyle: React.CSSProperties | undefined = bg ? { backgroundColor: bg } : undefined;
               const expandable = getRowExpandable?.(row) ?? false;
               const expanded = expandedSet.has(rowId);
+              const expandedDataStatus = resolveDataGridExpandedRowDataStatus(row, {
+                getExpandedRowDataStatus,
+                getExpandedRowLoading,
+              });
+
+              const dragDisplacementPx =
+                enableRowDrag && dragRowFrom !== null
+                  ? getDataGridRowDragDisplacementPx(
+                      rowIndex,
+                      dragRowFrom,
+                      dragRowOverIndex,
+                      dragRowHeightPx,
+                    )
+                  : 0;
+              const rowDragShiftStyle: React.CSSProperties | undefined =
+                enableRowDrag && dragRowFrom !== null
+                  ? {
+                      ...(dragDisplacementPx !== 0 ? { transform: `translateY(${dragDisplacementPx}px)` } : {}),
+                      transition: DATA_GRID_ROW_DRAG_SHIFT_TRANSITION,
+                    }
+                  : undefined;
+              const mergedRowStyle: React.CSSProperties | undefined =
+                rowDragShiftStyle != null ? { ...rowStyle, ...rowDragShiftStyle } : rowStyle;
 
               const cells = (
                 <>
@@ -377,11 +779,16 @@ export function DataGrid<Row extends DataGridBaseRow>(props: DataGridProps<Row>)
                         draggable={!disabled}
                         onDragStart={e => {
                           e.dataTransfer.effectAllowed = 'move';
-                          handleRowDragStart(rowIndex);
+                          applyDataGridRowDragGhostPreview(e);
+                          const sourceRow = e.currentTarget.closest('tr');
+                          const sourceHeight =
+                            sourceRow instanceof HTMLElement ? sourceRow.offsetHeight : 0;
+                          beginRowDrag(rowIndex, sourceHeight);
                         }}
                         aria-label="Перетащить строку"
                       >
-                        <Icon name="IconExMoreSquare" size={IconSize.SM} color="currentColor" />
+                        {/* IconExDots — как в демо-колонке действий, без квадратной обводки у IconExMoreSquare */}
+                        <Icon name="IconExDots" size={IconSize.SM} color="currentColor" />
                       </DataGridRowDragHandle>
                     </TableCell>
                   ) : null}
@@ -425,17 +832,19 @@ export function DataGrid<Row extends DataGridBaseRow>(props: DataGridProps<Row>)
                           }}
                         >
                           <DataGridChevronWrap $open={expanded} aria-hidden>
-                            <Icon name="PhosphorArrowFatLineDown" size={IconSize.SM} color="currentColor" />
+                            <Icon name="IconPlainerChevronDown" size={IconSize.SM} color="currentColor" />
                           </DataGridChevronWrap>
                         </DataGridExpandButton>
                       ) : null}
                     </TableCell>
                   ) : null}
-                  {columns.map(col => {
+                  {columns.map((col, colIndex) => {
                     const fieldStr = String(col.field);
+                    const widthForBodyCell =
+                      columnResizePreview?.field === fieldStr ? columnResizePreview.widthPx : col.width;
                     const tdStyle: React.CSSProperties = {};
-                    if (col.width != null) {
-                      tdStyle.width = col.width;
+                    if (widthForBodyCell != null) {
+                      tdStyle.width = widthForBodyCell;
                     }
                     if (col.minWidth != null) {
                       tdStyle.minWidth = col.minWidth;
@@ -444,7 +853,11 @@ export function DataGrid<Row extends DataGridBaseRow>(props: DataGridProps<Row>)
                       <TableCell
                         key={fieldStr}
                         align={col.align === 'right' ? 'right' : col.align === 'center' ? 'center' : 'left'}
-                        style={tdStyle}
+                        style={buildColumnDragCellStyle(colIndex, tdStyle)}
+                        onDragOver={e => handleColDragOverTarget(colIndex, e)}
+                        onDrop={() => {
+                          handleColDrop(colIndex);
+                        }}
                       >
                         {renderCellValue(row, col, rowIndex)}
                       </TableCell>
@@ -458,18 +871,15 @@ export function DataGrid<Row extends DataGridBaseRow>(props: DataGridProps<Row>)
                   key={rowId}
                   selected={selected}
                   disabled={disabled}
-                  style={rowStyle}
+                  dragging={Boolean(enableRowDrag && dragRowFrom === rowIndex)}
+                  style={mergedRowStyle}
                   onClick={e => {
                     onRowClick?.(row, e);
                   }}
                   onDoubleClick={e => {
                     onRowDoubleClick?.(row, e);
                   }}
-                  onDragOver={e => {
-                    if (enableRowDrag) {
-                      e.preventDefault();
-                    }
-                  }}
+                  onDragOver={e => handleBodyRowDragOver(rowIndex, e)}
                   onDrop={() => {
                     if (enableRowDrag) {
                       handleRowDrop(rowIndex);
@@ -488,10 +898,33 @@ export function DataGrid<Row extends DataGridBaseRow>(props: DataGridProps<Row>)
               return (
                 <React.Fragment key={rowId}>
                   {wrappedMain}
-                  {expandable && expanded && renderExpandedRow ? (
-                    <TableRow>
-                      <TableCell colSpan={colCount} style={{ backgroundColor: bg }}>
-                        {renderExpandedRow(row)}
+                  {expandable && renderExpandedRow ? (
+                    <TableRow
+                      data-datagrid-expanded-detail=""
+                      style={{
+                        ...(rowDragShiftStyle ?? {}),
+                        borderBottom: expanded ? undefined : 'none',
+                      }}
+                      onDragOver={e => handleBodyRowDragOver(rowIndex, e)}
+                    >
+                      <TableCell
+                        colSpan={colCount}
+                        padding="none"
+                        style={{
+                          backgroundColor: bg,
+                          verticalAlign: 'top',
+                          padding: 0,
+                        }}
+                      >
+                        <DataGridExpandedSlot $open={expanded}>
+                          <DataGridExpandedInner
+                            $tableSize={tableSize}
+                            $open={expanded}
+                            aria-hidden={expanded ? undefined : true}
+                          >
+                            {renderExpandedRowContent(row, expandedDataStatus)}
+                          </DataGridExpandedInner>
+                        </DataGridExpandedSlot>
                       </TableCell>
                     </TableRow>
                   ) : null}
@@ -500,31 +933,33 @@ export function DataGrid<Row extends DataGridBaseRow>(props: DataGridProps<Row>)
             })}
           </TableBody>
         </Table>
-      </TableContainer>
+        </TableContainerScroll>
 
-      {showPagination && paginationModel ? (
-        <TablePagination
-          count={totalRows}
-          page={paginationModel.page}
-          rowsPerPage={paginationModel.pageSize}
-          rowsPerPageOptions={rowsPerPageOptions}
-          showRowsPerPageSelect={showRowsPerPageSelect}
-          rowsPerPageSelectVariant={rowsPerPageSelectVariant}
-          paginationVariant={paginationVariant}
-          paginationToolbarAlign={paginationToolbarAlign}
-          paginationToolbarReverse={paginationToolbarReverse}
-          showPageJump={showPageJump}
-          labelPageJump={labelPageJump}
-          onPageChange={(_e, pageZeroBased) => {
-            onPaginationChange?.({ ...paginationModel, page: pageZeroBased });
-          }}
-          onRowsPerPageChange={event => {
-            const nextPageSize = Number(event.target.value);
-            onPaginationChange?.({ page: 0, pageSize: nextPageSize });
-          }}
-          size={size}
-        />
-      ) : null}
+        {showPagination && paginationModel ? (
+          <TablePagination
+            count={totalRows}
+            page={paginationModel.page}
+            rowsPerPage={paginationModel.pageSize}
+            rowsPerPageOptions={rowsPerPageOptions}
+            showRowsPerPageSelect={showRowsPerPageSelect}
+            rowsPerPageSelectVariant={rowsPerPageSelectVariant}
+            paginationVariant={paginationVariant}
+            paginationToolbarAlign={paginationToolbarAlign}
+            paginationToolbarReverse={paginationToolbarReverse}
+            showPageJump={showPageJump}
+            labelPageJump={labelPageJump}
+            embeddedInTableCard
+            onPageChange={(_e, pageZeroBased) => {
+              onPaginationChange?.({ ...paginationModel, page: pageZeroBased });
+            }}
+            onRowsPerPageChange={event => {
+              const nextPageSize = Number(event.target.value);
+              onPaginationChange?.({ page: 0, pageSize: nextPageSize });
+            }}
+            size={size}
+          />
+        ) : null}
+      </TableContainer>
 
       {isLoading ? (
         <DataGridLoadingOverlay aria-busy="true" aria-live="polite">

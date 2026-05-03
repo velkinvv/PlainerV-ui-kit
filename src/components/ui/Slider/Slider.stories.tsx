@@ -13,6 +13,7 @@ import {
   SliderStoriesSizeRow,
   SliderStoriesStack,
 } from './Slider.stories.style';
+import { DOC_SLIDER } from '@/components/ui/storyDocs/uiKitDocs';
 
 const formatRub = (n: number) => `${new Intl.NumberFormat('ru-RU').format(n)} ₽`;
 
@@ -28,29 +29,7 @@ const meta: Meta<typeof Slider> = {
     layout: 'padded',
     docs: {
       description: {
-        component: `
-## Slider и RangeSlider
-
-Компоненты для выбора одного значения или диапазона на шкале. Визуально согласованы с полями ввода: лейблы, подсказки, ошибки и скелетон.
-
-### Размеры и трек
-- **\`size\`** (XS … XL) задаёт диаметр бегунка и толщину линий через \`getSliderThumbSizePx\` и \`getSliderTrackMetrics\`.
-- Явно: **\`trackRailHeightPx\`**, **\`trackActiveHeightPx\`** (пересчёт через \`resolveSliderTrackMetrics\`).
-
-### Поля как у Input
-**\`label\`**, **\`additionalLabel\`**, **\`helperText\`**, **\`extraText\`**, **\`error\`**, **\`success\`**, **\`required\`** — те же сценарии, что у \`Input\` / \`TextArea\`. Подсказка скрывается при \`error\` или \`success\`; цвет \`helperText\` можно усилить через **\`status\`** (см. ниже).
-
-### Состояния (**\`status\`**)
-- **\`error\` | \`success\` | \`warning\`** — цвет активной полосы и бегунков + тонкая обводка вокруг трека (аналог рамки поля с ошибкой).
-- Приоритет акцента: непустой **\`error\`** → затем **\`success: true\`** → затем **\`status\`** (\`resolveSliderAccentKind\`).
-- **\`disabled\`** — прежнее поведение (прозрачность бегунка).
-
-### Скелетон (**\`skeleton\`**)
-Плейсхолдер с шиммером вместо интерактивного трека; у контейнера с лейблом выставляется **\`aria-busy\`**. Поля «От / До» у range в режиме скелетона не показываются.
-
-### Цвет по умолчанию
-Акцент трека и бегунка: \`theme.colors.info\` / \`infoHover\`.
-`.trim(),
+        component: DOC_SLIDER,
       },
     },
   },

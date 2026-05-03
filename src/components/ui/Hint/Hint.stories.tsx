@@ -13,6 +13,7 @@ import { Button } from '../buttons/Button';
 import { ButtonVariant } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
 import { IconSize, Size } from '../../../types/sizes';
+import { DOC_HINT } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Hint> = {
   title: 'UI Kit/Feedback/Hint',
@@ -21,8 +22,7 @@ const meta: Meta<typeof Hint> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Компонент подсказки с поддержкой различных позиций и размеров. Использует стандартные цвета темы в отличие от Tooltip.',
+        component: DOC_HINT,
       },
     },
   },

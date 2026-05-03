@@ -1,10 +1,16 @@
 import styled, { css } from 'styled-components';
-import { ThemeMode } from '@/types/theme';
+import { BorderRadiusHandler } from '@/handlers/uiHandlers';
+import { tableInteractiveBorderRadiusFromTheme } from './tableThemeRadiusHandlers';
+import { Size } from '@/types/sizes';
+import { ThemeMode, type ThemeType } from '@/types/theme';
 import type { TablePaginationToolbarAlign, TableSize } from '@/types/ui';
-import type { TableSortChevronTone } from './handlers';
 
-/** Скругление контейнера таблицы по макету (~12px). */
-const TABLE_CONTAINER_RADIUS = '12px';
+/**
+ * Скругление контейнера таблицы-карточки из темы (как у `Card` размера MD).
+ * @param theme — активная тема styled-components
+ */
+const tableContainerBorderRadiusFromTheme = (theme: ThemeType): string =>
+  theme.cards?.sizes?.[Size.MD]?.borderRadius ?? BorderRadiusHandler(theme.borderRadius);
 
 /**
  * Вертикальные отступы ячейки по размеру таблицы.
@@ -22,19 +28,75 @@ function tableCellHorizontalPadding(size: TableSize): string {
   return size === 'sm' ? '12px' : '16px';
 }
 
-/** Обёртка с горизонтальным скроллом и «карточным» фоном. */
+/**
+ * Минимальная высота ячейки в `thead` и `tfoot` одной таблицы (по умолчанию совпадают: шапка с полужирным текстом и иконками сортировки не выше строки подвала).
+ * @param size - плотность таблицы `sm` | `md`
+ */
+function tableHeadFootCellMinHeight(size: TableSize): string {
+  return size === 'sm' ? '40px' : '48px';
+}
+
+/**
+ * Обёртка «карточки» таблицы: без горизонтального overflow — иначе по спецификации CSS
+ * вторая ось становится не `visible`, и обрезаются тени у футера/пагинации внутри карточки.
+ * Горизонтальный скролл выносите в `TableContainerScroll` только вокруг `<Table>`.
+ */
 export const TableContainerRoot = styled.div<{ $elevated: boolean }>`
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
-  overflow-x: auto;
-  border-radius: ${TABLE_CONTAINER_RADIUS};
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  border-radius: ${({ theme }) => tableContainerBorderRadiusFromTheme(theme)};
+  border: 1px solid ${({ theme }) => theme.colors.border};
   background: ${({ theme }) => theme.colors.card};
   ${({ theme, $elevated }) =>
     $elevated &&
     css`
       box-shadow: ${theme.boxShadow?.md ?? theme.colors.shadow};
+      /* Вертикальный зазор: у родителей с overflow (Canvas Storybook) иначе обрезается тень сверху/снизу. */
+      margin: 8px 0;
     `}
+`;
+
+/**
+ * Скругление + `overflow: hidden` у сетки: без клипа фон `thead` ломает верхний радиус карточки.
+ * Если сразу ниже идёт `TablePagination` с `embeddedInTableCard`, передайте `$embeddedPaginationBelow` —
+ * тогда скругление только сверху; иначе — со всех сторон (таблица без встроенного футера).
+ * Горизонтальный скролл — во внутреннем `TableContainerScrollTrack`.
+ */
+export const TableContainerScrollClip = styled.div.withConfig({
+  shouldForwardProp: prop => prop !== '$embeddedPaginationBelow',
+})<{ $embeddedPaginationBelow?: boolean }>`
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+
+  ${({ theme, $embeddedPaginationBelow }) =>
+    $embeddedPaginationBelow
+      ? css`
+          border-top-left-radius: ${tableContainerBorderRadiusFromTheme(theme)};
+          border-top-right-radius: ${tableContainerBorderRadiusFromTheme(theme)};
+          border-bottom-left-radius: 0;
+          border-bottom-right-radius: 0;
+        `
+      : css`
+          border-radius: ${tableContainerBorderRadiusFromTheme(theme)};
+        `}
+`;
+
+/**
+ * Горизонтальный скролл только для `<table>`. Родитель — `TableContainerScrollClip`.
+ */
+export const TableContainerScrollTrack = styled.div`
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  /* Совпадает со скруглением clip — корректнее стык плашки скролла и радиуса в WebKit/Chromium. */
+  border-radius: inherit;
 `;
 
 export const StyledTable = styled.table<{ $stickyHeader: boolean; $striped: boolean }>`
@@ -62,11 +124,31 @@ export const StyledTable = styled.table<{ $stickyHeader: boolean; $striped: bool
           ? 'rgba(255, 255, 255, 0.02)'
           : theme.colors.backgroundTertiary};
       }
+
+      /* Строка-деталь раскрытия не ломает подсчёт «зебры» у основных строк (см. DataGrid). */
+      @supports selector(:nth-child(odd of *)) {
+        tbody tr:nth-child(odd) {
+          background: transparent;
+        }
+        tbody tr:nth-child(odd of :not([data-datagrid-expanded-detail])) {
+          background: ${theme.mode === ThemeMode.DARK
+            ? 'rgba(255, 255, 255, 0.02)'
+            : theme.colors.backgroundTertiary};
+        }
+      }
     `}
 `;
 
+/** Шапка: отличный от строк и от «зебры» фон (`tbody` odd использует `backgroundTertiary`). */
 export const StyledThead = styled.thead`
-  background: ${({ theme }) => theme.colors.backgroundTertiary};
+  background: ${({ theme }) =>
+    theme.mode === ThemeMode.DARK
+      ? theme.colors.backgroundQuinary
+      : theme.colors.backgroundQuaternary};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.borderSecondary};
+  /* Скругление верхних углов шапки по токену карточки (визуально заметно при светлом фоне страницы). */
+  border-top-left-radius: ${({ theme }) => tableContainerBorderRadiusFromTheme(theme)};
+  border-top-right-radius: ${({ theme }) => tableContainerBorderRadiusFromTheme(theme)};
 `;
 
 export const StyledTbody = styled.tbody``;
@@ -80,8 +162,9 @@ export const StyledTr = styled.tr<{
   $selected: boolean;
   $disabled: boolean;
   $hoverable: boolean;
+  $dragging: boolean;
 }>`
-  ${({ $section, theme, $selected, $disabled, $hoverable }) =>
+  ${({ $section, theme, $selected, $disabled, $hoverable, $dragging }) =>
     $section === 'body' &&
     css`
       border-bottom: 1px solid ${theme.colors.border};
@@ -99,9 +182,24 @@ export const StyledTr = styled.tr<{
         pointer-events: none;
       `}
 
+      ${$dragging &&
+      !$disabled &&
+      css`
+        position: relative;
+        z-index: 2;
+        opacity: 0.48;
+        outline: 2px dashed ${theme.colors.primary};
+        outline-offset: -2px;
+        box-shadow: ${theme.boxShadow?.md ?? `0 8px 24px ${theme.colors.shadow}`};
+        background: ${theme.mode === ThemeMode.DARK
+          ? 'rgba(255, 255, 255, 0.06)'
+          : `color-mix(in srgb, ${theme.colors.primary} 14%, ${theme.colors.card})`};
+      `}
+
       ${$hoverable &&
       !$disabled &&
       !$selected &&
+      !$dragging &&
       css`
         transition: background-color 0.15s ease;
         &:hover {
@@ -125,14 +223,29 @@ const cellPadding = (size: TableSize, padding: 'normal' | 'checkbox' | 'none') =
 
 export const TableCellBase = styled('td').withConfig({
   shouldForwardProp: prop =>
-    !['$align', '$padding', '$isHead', '$size', '$activeSortColumn'].includes(String(prop)),
+    ![
+      '$align',
+      '$padding',
+      '$isHead',
+      '$isFooter',
+      '$size',
+      '$activeSortColumn',
+      '$headerMaxLines',
+      '$columnDividers',
+    ].includes(String(prop)),
 })<{
   $align: 'inherit' | 'left' | 'center' | 'right' | 'justify';
   $padding: 'normal' | 'checkbox' | 'none';
   $isHead: boolean;
+  /** Ячейка в `tfoot` — та же минимальная высота строки, что и у шапки */
+  $isFooter: boolean;
   $size: TableSize;
   /** Нижняя граница «активной» колонки в шапке (макет Figma). */
   $activeSortColumn?: boolean;
+  /** Число строк для `line-clamp` в шапке (только при $isHead) */
+  $headerMaxLines?: number;
+  /** Вертикальный разделитель справа от ячейки, кроме последней в строке */
+  $columnDividers?: boolean;
 }>`
   box-sizing: border-box;
   text-align: ${({ $align }) => ($align === 'inherit' ? 'start' : $align)};
@@ -142,6 +255,11 @@ export const TableCellBase = styled('td').withConfig({
   color: ${({ theme, $isHead }) => ($isHead ? theme.colors.textSecondary : theme.colors.text)};
   font-weight: ${({ theme, $isHead }) => ($isHead ? theme.fontWeights?.semiBold ?? 600 : theme.fontWeights?.regular ?? 400)};
   padding: ${({ $size, $padding }) => cellPadding($size, $padding)};
+  ${({ $isHead, $isFooter, $size }) =>
+    ($isHead || $isFooter) &&
+    css`
+      min-height: ${tableHeadFootCellMinHeight($size)};
+    `}
   border-bottom: ${({ $isHead, theme, $activeSortColumn }) =>
     $isHead
       ? $activeSortColumn
@@ -149,21 +267,40 @@ export const TableCellBase = styled('td').withConfig({
         : `1px solid ${theme.colors.border}`
       : 'none'};
 
-  ${({ $isHead, theme }) =>
+  ${({ $columnDividers, theme }) =>
+    $columnDividers &&
+    css`
+      &:not(:last-child) {
+        border-inline-end: 1px solid ${theme.colors.borderSecondary ?? theme.colors.border};
+      }
+    `}
+
+  ${({ $isHead, theme, $headerMaxLines }) =>
     $isHead &&
     css`
-      white-space: nowrap;
       &:first-of-type {
         border-top-left-radius: 0;
       }
+      ${$headerMaxLines != null && $headerMaxLines >= 1
+        ? css`
+            white-space: normal;
+            vertical-align: top;
+            min-width: 0;
+          `
+        : css`
+            white-space: nowrap;
+          `}
     `}
 `;
 
 export const TableSortLabelButton = styled.button.withConfig({
-  shouldForwardProp: prop => !['$disabled'].includes(String(prop)),
-})<{ $disabled?: boolean }>`
-  display: inline-flex;
-  align-items: center;
+  shouldForwardProp: prop => !['$disabled', '$headerClampLayout'].includes(String(prop)),
+})<{ $disabled?: boolean; $headerClampLayout?: boolean }>`
+  display: ${({ $headerClampLayout }) => ($headerClampLayout ? 'flex' : 'inline-flex')};
+  align-items: ${({ $headerClampLayout }) => ($headerClampLayout ? 'flex-start' : 'center')};
+  gap: ${({ $headerClampLayout }) => ($headerClampLayout ? '6px' : '0')};
+  width: ${({ $headerClampLayout }) => ($headerClampLayout ? '100%' : 'auto')};
+  min-width: ${({ $headerClampLayout }) => ($headerClampLayout ? '0' : 'auto')};
   margin: 0;
   padding: 0;
   border: 0;
@@ -176,7 +313,7 @@ export const TableSortLabelButton = styled.button.withConfig({
   &:focus-visible {
     outline: 2px solid ${({ theme }) => theme.colors.primary};
     outline-offset: 2px;
-    border-radius: 4px;
+    border-radius: ${({ theme }) => tableInteractiveBorderRadiusFromTheme(theme)};
   }
 
   ${({ $disabled }) =>
@@ -190,52 +327,36 @@ export const TableSortLabelButton = styled.button.withConfig({
 export const TableSortLabelInner = styled.span`
   display: inline-flex;
   align-items: center;
+  gap: 6px;
 `;
 
-/** Контейнер двух шевронов сортировки (вверх / вниз). */
-export const SortChevronStack = styled.span`
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1px;
-  margin-inline-start: 6px;
+/** Текст сортируемого заголовка при ограничении числа строк (`maxLines` у `TableSortLabel`). */
+export const TableSortLabelTextClamp = styled.span<{ $maxLines: number }>`
+  flex: 1 1 0;
+  min-width: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: ${({ $maxLines }) => $maxLines};
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  text-align: inherit;
 `;
 
-const chevronColor = (
-  theme: { colors: { text: string; textTertiary: string; border: string } },
-  tone: TableSortChevronTone,
-) => {
-  switch (tone) {
-    case 'active':
-      return theme.colors.text;
-    case 'muted':
-      return theme.colors.textTertiary;
-    case 'idle':
-    default:
-      return theme.colors.border;
-  }
-};
-
-/** Верхний шеврон (стрелка вверх). */
-export const SortChevronUp = styled.span<{ $tone: TableSortChevronTone }>`
-  width: 0;
-  height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-bottom: 5px solid ${({ theme, $tone }) => chevronColor(theme, $tone)};
+/** Заголовок без `TableSortLabel`: многострочный текст с обрезкой по числу строк. */
+export const TableCellHeadLineClamp = styled.div<{ $maxLines: number }>`
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: ${({ $maxLines }) => $maxLines};
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+  min-width: 0;
+  width: 100%;
 `;
 
-/** Нижний шеврон (стрелка вниз). */
-export const SortChevronDown = styled.span<{ $tone: TableSortChevronTone }>`
-  width: 0;
-  height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 5px solid ${({ theme, $tone }) => chevronColor(theme, $tone)};
-`;
-
-export const TablePaginationRoot = styled.div`
+export const TablePaginationRoot = styled.div<{ $embeddedInTableCard?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -244,6 +365,15 @@ export const TablePaginationRoot = styled.div`
   width: 100%;
   margin-top: 16px;
   font-family: ${({ theme }) => theme.fonts.primary};
+
+  ${({ $embeddedInTableCard, theme }) =>
+    $embeddedInTableCard &&
+    css`
+      margin-top: 0;
+      padding: 12px 16px;
+      border-top: 1px solid ${theme.colors.border};
+      box-sizing: border-box;
+    `}
 `;
 
 /**
@@ -289,14 +419,53 @@ export const TablePaginationRowsSelect = styled.label<{ $compact?: boolean }>`
   color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
-export const TablePaginationSelect = styled.select<{ $compact?: boolean }>`
-  font: inherit;
-  color: ${({ theme }) => theme.colors.text};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ $compact }) => ($compact ? '6px' : '8px')};
-  padding: ${({ $compact }) => ($compact ? '4px 8px' : '6px 10px')};
-  min-height: ${({ $compact }) => ($compact ? '28px' : 'auto')};
-  background: ${({ theme }) => theme.colors.input};
+/**
+ * Общая оболочка `InputWrapper` для селекта «строк на странице» и поля «Страница»:
+ * одинаковая высота, паддинги и шрифт числа (у Select текст в `button`, у Input — в `input`).
+ */
+function cssPaginationNumericControlShell(theme: ThemeType) {
+  return css`
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-height: 40px !important;
+    height: 40px !important;
+    padding: 6px 8px !important;
+    display: flex !important;
+    align-items: center !important;
+
+    & button,
+    & input {
+      font-family: ${theme.fonts.primary};
+      font-size: ${theme.fontSizes.sm};
+      font-weight: ${theme.fontWeights.regular};
+      line-height: 1.25;
+    }
+  `;
+}
+
+/**
+ * Класс для `Select` в пагинации: узкие отступы у обёртки поля (`InputWrapper`), без правок самого `Select`.
+ */
+export const TABLE_PAGINATION_ROWS_SELECT_INPUT_CLASS = 'plainerv-ui-table-pagination-rows-select';
+
+/**
+ * Обёртка над `Select` в футере пагинации: ограничение ширины и компактные отступы у триггера (число + шеврон).
+ * @property $compact — уже блок под подпись «На стр.:»
+ */
+export const TablePaginationSelectField = styled.div<{ $compact?: boolean }>`
+  flex: 0 1 auto;
+  min-width: 0;
+  width: max-content;
+  max-width: ${({ $compact }) => ($compact ? '3.5rem' : '4.25rem')};
+
+  & .${TABLE_PAGINATION_ROWS_SELECT_INPUT_CLASS} {
+    ${({ theme }) => cssPaginationNumericControlShell(theme)}
+  }
+
+  /* Шеврон справа — чуть ближе к цифре, чтобы ширина блока совпадала с макетом */
+  & .${TABLE_PAGINATION_ROWS_SELECT_INPUT_CLASS} > div:last-child {
+    margin-left: 4px !important;
+  }
 `;
 
 /** Подпись + поле «перейти к странице» (слева от плашки `Pagination`). */
@@ -308,26 +477,22 @@ export const TablePaginationPageJump = styled.label`
   color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
-/** Числовой ввод номера страницы (1-based, как в подписи к плашке). */
-export const TablePaginationPageJumpInput = styled.input`
-  box-sizing: border-box;
-  width: 3.25rem;
-  min-height: 36px;
-  font: inherit;
-  text-align: center;
-  color: ${({ theme }) => theme.colors.text};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: 8px;
-  padding: 6px 4px;
-  background: ${({ theme }) => theme.colors.input};
+/**
+ * Класс для `Input` прыжка по странице: сужаем `InputWrapper` (иначе дефолт ~335px).
+ */
+export const TABLE_PAGINATION_PAGE_JUMP_INPUT_CLASS = 'plainerv-ui-table-pagination-page-jump';
 
-  &:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
-  }
+/**
+ * Обёртка над полем «Страница:» — ширина и высота как у селекта «строк на странице» (тот же ряд футера).
+ */
+export const TablePaginationPageJumpField = styled.div`
+  flex: 0 1 auto;
+  min-width: 0;
+  width: max-content;
+  max-width: 4.25rem;
 
-  &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.primary};
-    outline-offset: 2px;
+  & .${TABLE_PAGINATION_PAGE_JUMP_INPUT_CLASS} {
+    ${({ theme }) => cssPaginationNumericControlShell(theme)}
+    max-width: 4rem;
   }
 `;

@@ -9,6 +9,7 @@ import { IconSize } from '../../types/sizes';
 import { sizeMap } from '../../handlers/iconHandlers';
 import type { IconVariant } from '../../types/ui';
 import type { IconName } from '../../icons';
+import { DOC_ICON_SHOWCASE } from '@/components/ui/storyDocs/uiKitDocs';
 
 // Функция для получения реально существующих иконок
 const getExistingIcons = () => {
@@ -44,7 +45,7 @@ const meta: Meta<typeof Icon> = {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Демонстрация иконок',
+        component: DOC_ICON_SHOWCASE,
       },
     },
   },

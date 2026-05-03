@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Switch } from './Switch';
 import { Size } from '../../../types/sizes';
+import { DOC_SWITCH } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Switch> = {
   title: 'UI Kit/Inputs/Switch',
@@ -10,8 +11,7 @@ const meta: Meta<typeof Switch> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Переключатель в стиле Plainer: трек, бегунок, подпись слева/справа, `role="switch"`, состояние ошибки.',
+        component: DOC_SWITCH,
       },
     },
   },

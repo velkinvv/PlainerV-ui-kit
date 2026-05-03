@@ -5,12 +5,18 @@ import { DateInput } from './DateInput';
 import { Size, IconSize } from '../../../../types/sizes';
 import type { DateTimeRange } from '../../../../types/ui';
 import { Icon } from '../../Icon/Icon';
+import { DOC_DATE_INPUT } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof DateInput> = {
   title: 'UI Kit/Inputs/DateInput',
   component: DateInput,
   parameters: {
     layout: 'padded',
+    docs: {
+      description: {
+        component: DOC_DATE_INPUT,
+      },
+    },
   },
   tags: ['autodocs'],
   argTypes: {

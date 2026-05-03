@@ -4,6 +4,7 @@ import { Grid } from './Grid';
 import { GridItem } from './GridItem';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Card } from '../Card/Card';
+import { DOC_GRID_ITEM } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof GridItem> = {
   title: 'UI Kit/Layout/GridItem',
@@ -12,8 +13,7 @@ const meta: Meta<typeof GridItem> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Компонент для управления расположением элементов внутри Grid. Позволяет задавать позицию, растяжение и выравнивание элементов в CSS Grid.',
+        component: DOC_GRID_ITEM,
       },
     },
   },

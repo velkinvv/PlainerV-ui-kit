@@ -4,12 +4,18 @@ import { Checkbox } from './Checkbox';
 import { CheckboxGroup as CheckboxGroupField } from './CheckboxGroup';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Size } from '../../../types/sizes';
+import { DOC_CHECKBOX } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Checkbox> = {
   title: 'UI Kit/Inputs/Checkbox',
   component: Checkbox,
   parameters: {
     layout: 'padded',
+    docs: {
+      description: {
+        component: DOC_CHECKBOX,
+      },
+    },
   },
   decorators: [
     (Story) => (

@@ -4,6 +4,7 @@ import { Menu } from './Menu';
 import { MenuItem } from './MenuItem';
 import { ThemeProvider } from '@/themes/ThemeProvider';
 import { Icon } from '../Icon/Icon';
+import { DOC_MENU } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Menu> = {
   title: 'UI Kit/Navigation/Menu',
@@ -12,8 +13,7 @@ const meta: Meta<typeof Menu> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Список действий с `role="menu"` (содержимое выпадающей панели). Позиционирование относительно кнопки — снаружи; здесь только панель и пункты.',
+        component: DOC_MENU,
       },
     },
   },

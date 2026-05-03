@@ -10,6 +10,7 @@ import { Hint } from '../Hint/Hint';
 import { sizeMap } from '../../../handlers/iconHandlers';
 import type { IconVariant } from '../../../types/ui';
 import type { IconName } from '../../../icons';
+import { DOC_ICON } from '@/components/ui/storyDocs/uiKitDocs';
 
 // Функция для получения реально существующих иконок
 const getExistingIcons = () => {
@@ -59,7 +60,7 @@ const meta: Meta<typeof Icon> = {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Компонент иконки с поддержкой библиотек Plainer, IconEx и Phosphor',
+        component: DOC_ICON,
       },
     },
   },

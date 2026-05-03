@@ -5,6 +5,7 @@ import { Form, HiddenUsernameField } from '../../Form';
 import React from 'react';
 import { Size, IconSize } from '../../../../types/sizes';
 import { InputVariant } from '../../../../types/ui';
+import { DOC_INPUT } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Input> = {
   title: 'UI Kit/Inputs/Input',
@@ -16,7 +17,7 @@ const meta: Meta<typeof Input> = {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Поле ввода с различными вариантами стилизации и состояниями',
+        component: DOC_INPUT,
       },
     },
   },

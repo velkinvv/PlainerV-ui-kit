@@ -17,6 +17,7 @@ import {
   TagStoriesCaptionTitle,
   TagStoriesCaptionCode,
 } from '../Tag/Tag.stories.style';
+import { DOC_DROPDOWN_TAG_TRIGGER } from '@/components/ui/storyDocs/uiKitDocs';
 
 const sampleItems: DropdownMenuItemProps[] = [
   { label: 'Редактировать', value: 'edit' },
@@ -58,8 +59,7 @@ const meta: Meta<typeof Dropdown> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Тег-триггер через `Dropdown`: `defaultTriggerKind="tag"`, подпись — `buttonProps.children`, оформление тега — `tagTriggerProps`.',
+        component: DOC_DROPDOWN_TAG_TRIGGER,
       },
     },
   },

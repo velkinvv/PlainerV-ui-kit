@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { AvatarGroup } from './AvatarGroup';
 import { AvatarGroupVariant, AvatarStatus } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
+import { DOC_AVATAR_GROUP } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof AvatarGroup> = {
   title: 'UI Kit/Data Display/AvatarGroup',
@@ -11,8 +12,7 @@ const meta: Meta<typeof AvatarGroup> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Компонент для группировки аватаров с тремя вариантами отображения: наложение (stack), в ряд (row) и в сетке (grid).',
+        component: DOC_AVATAR_GROUP,
       },
     },
   },

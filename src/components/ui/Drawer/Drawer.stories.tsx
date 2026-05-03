@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Drawer } from './Drawer';
 import { Button } from '../buttons/Button';
 import { ButtonVariant, type DrawerPlacement } from '../../../types/ui';
+import { DOC_DRAWER } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Drawer> = {
   title: 'UI Kit/Surfaces/Drawer',
@@ -11,8 +12,7 @@ const meta: Meta<typeof Drawer> = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component:
-          'Выдвижная панель с оверлеем: портал в `body`, фокус-ловушка, Escape, варианты подложки как у `Modal` (`overlayVariant`) и единый lifecycle API (`isOpen`, `unmountOnClose`, `lazy`).',
+        component: DOC_DRAWER,
       },
     },
   },

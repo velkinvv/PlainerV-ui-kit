@@ -9,6 +9,7 @@ import type { TableSortDirection } from '@/types/ui';
 import { ButtonVariant } from '@/types/ui';
 import {
   TableContainer,
+  TableContainerScroll,
   Table,
   TableHead,
   TableBody,
@@ -123,9 +124,9 @@ export function TableStoriesDataGridDemo(): React.ReactElement {
   }, []);
 
   return (
-    <>
-      <TableContainer elevated>
-        <Table striped size="md" aria-label="Демо таблицы с выбором строк и тегами">
+    <TableContainer elevated>
+      <TableContainerScroll embeddedPaginationBelow>
+      <Table striped size="md" aria-label="Демо таблицы с выбором строк и тегами">
           <TableHead>
             <TableRow>
               <TableCell padding="checkbox">
@@ -237,23 +238,24 @@ export function TableStoriesDataGridDemo(): React.ReactElement {
             </TableRow>
           </TableFooter>
         </Table>
-      </TableContainer>
+      </TableContainerScroll>
 
       <TablePagination
+        embeddedInTableCard
         count={sortedRows.length}
         page={safePage}
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[2, 3, 5]}
-        onPageChange={(_e, p) => {
-          setPage(p);
+        onPageChange={(_event, nextPageZeroBased) => {
+          setPage(nextPageZeroBased);
         }}
-        onRowsPerPageChange={e => {
-          const next = Number(e.target.value);
-          setRowsPerPage(next);
+        onRowsPerPageChange={changeEvent => {
+          const nextPageSize = Number(changeEvent.target.value);
+          setRowsPerPage(nextPageSize);
           setPage(0);
         }}
         size={Size.SM}
       />
-    </>
+    </TableContainer>
   );
 }

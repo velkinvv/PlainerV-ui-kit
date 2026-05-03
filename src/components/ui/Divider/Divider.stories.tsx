@@ -4,6 +4,7 @@ import { Divider } from './Divider';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { DividerOrientation } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
+import { DOC_DIVIDER } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Divider> = {
   title: 'UI Kit/Surfaces/Divider',
@@ -12,7 +13,7 @@ const meta: Meta<typeof Divider> = {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Компонент разделителя для визуального разделения контента',
+        component: DOC_DIVIDER,
       },
     },
   },

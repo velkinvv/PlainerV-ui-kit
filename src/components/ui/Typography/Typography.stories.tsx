@@ -1,6 +1,7 @@
 ﻿import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import { Typography } from './Typography';
+import { DOC_TYPOGRAPHY } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Typography> = {
   title: 'UI Kit/Data Display/Typography',
@@ -10,7 +11,7 @@ const meta: Meta<typeof Typography> = {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Универсальный компонент для отображения текста с различными стилями.',
+        component: DOC_TYPOGRAPHY,
       },
     },
   },

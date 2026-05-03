@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Pill } from './Pill';
 import { Size } from '../../../types/sizes';
 import type { PillStatus } from '../../../types/ui';
+import { DOC_PILL } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Pill> = {
   title: 'UI Kit/Data Display/Pill',
@@ -12,8 +13,7 @@ const meta: Meta<typeof Pill> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Чип с круглым индикатором слева: интерактивные состояния **default / hover / active / selected / disabled**, **`onChange(nextSelected)`** для контролируемого выбора (без `role="radio"` — переключение `!selected`, для радио — всегда `true`), семантические **статусы** (`status`: default, success, warning, danger, info), режим **loading** и **skeleton**. Размеры SM / MD / LG.',
+        component: DOC_PILL,
       },
     },
   },

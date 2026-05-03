@@ -7,8 +7,9 @@ import { useTableSection } from './TableContext';
 /**
  * ╨б╤В╤А╨╛╨║╨░ ╤В╨░╨▒╨╗╨╕╤Ж╤Л (`tr`).
  * @param props.selected - ╨Т╤Л╨▒╤А╨░╨╜╨╜╨░╤П ╤Б╤В╤А╨╛╨║╨░ (╤Д╨╛╨╜ ╨┐╨╛ ╨╝╨░╨║╨╡╤В╤Г)
- * @param props.hover - ╨Я╨╛╨┤╤Б╨▓╨╡╤В╨║╨░ ╨┐╤А╨╕ ╨╜╨░╨▓╨╡╨┤╨╡╨╜╨╕╨╕ (╨┐╨╛ ╤Г╨╝╨╛╨╗╤З╨░╨╜╨╕╤О `true` ╨┤╨╗╤П `tbody`)
- * @param props.disabled - ╨б╤В╤А╨╛╨║╨░ ╨╜╨╡╨░╨║╤В╨╕╨▓╨╜╨░ (╤Б╨╜╨╕╨╢╨╡╨╜╨╜╨░╤П ╨╜╨╡╨┐╤А╨╛╨╖╤А╨░╤З╨╜╨╛╤Б╤В╤М)
+ * @param props.hover — подсветка при наведении (по умолчанию true для `tbody`)
+ * @param props.disabled — строка неактивна (пониженная непрозрачность)
+ * @param props.dragging — строка перетаскивается (источник DnD)
  */
 export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
   (
@@ -16,6 +17,7 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
       selected = false,
       hover,
       disabled = false,
+      dragging = false,
       className,
       children,
       style,
@@ -36,9 +38,11 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
         $section={section}
         $selected={selected}
         $disabled={disabled}
-        $hoverable={hoverable && !disabled}
+        $dragging={dragging && isBody}
+        $hoverable={hoverable && !disabled && !(dragging && isBody)}
         data-selected={selected ? 'true' : undefined}
         data-disabled={disabled ? 'true' : undefined}
+        data-dragging={dragging && isBody ? 'true' : undefined}
         onClick={disabled ? undefined : onClick}
         {...rest}
       >

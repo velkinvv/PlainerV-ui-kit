@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { DropdownMenu } from './DropdownMenu';
 import { DropdownMenuItem } from './DropdownMenuItem';
+import { DOC_DROPDOWN_MENU_ITEM } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof DropdownMenuItem> = {
   title: 'UI Kit/Navigation/Dropdown/DropdownMenuItem',
@@ -17,8 +18,7 @@ const meta: Meta<typeof DropdownMenuItem> = {
   parameters: {
     docs: {
       description: {
-        component:
-          '`DropdownMenuItem` — атомарный элемент выпадающего меню. Поддерживает иконки, описание, правый слот с шорткатом/тегом, а также состояния `disabled`, `tone="danger"` и кастомный контент.',
+        component: DOC_DROPDOWN_MENU_ITEM,
       },
     },
   },

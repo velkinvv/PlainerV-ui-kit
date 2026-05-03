@@ -4,3 +4,4 @@
  */
 export * from './basicTable';
 export * from './dataGrid';
+export * from './columnFilter';

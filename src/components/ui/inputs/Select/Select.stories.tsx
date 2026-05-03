@@ -4,6 +4,7 @@ import { Select } from './Select';
 import type { DropdownMenuLoadMoreContext, SelectOption } from '../../../../types/ui';
 import { Form } from '../../Form';
 import { Size } from '../../../../types/sizes';
+import { DOC_SELECT } from '@/components/ui/storyDocs/uiKitDocs';
 
 const sampleOptions: SelectOption[] = [
   { value: 'ru', label: 'Русский' },
@@ -55,8 +56,7 @@ const meta: Meta<typeof Select> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'По умолчанию `mode="select"`: панель `Dropdown` (поиск в шапке панели по умолчанию, мультивыбор). `mode="searchSelect"`: фильтр в поле селекта, список по фокусу, без поиска в панели; поддерживается и `multiple` (в закрытом состоянии — чипы, при открытом — поле фильтра). `mode="native"` — нативный `select`.',
+        component: DOC_SELECT,
       },
     },
   },

@@ -27,6 +27,26 @@ export function getSortChevronTones(
 }
 
 /**
+ * Цвет штриха шеврона сортировки по тону (макет: активный / приглушённый / нейтральный).
+ * @param theme — тема с палитрой текста и границ
+ * @param tone — результат `getSortChevronTones`
+ */
+export function getTableSortChevronColor(
+  theme: { colors: { text: string; textTertiary: string; border: string } },
+  tone: TableSortChevronTone,
+): string {
+  switch (tone) {
+    case 'active':
+      return theme.colors.text;
+    case 'muted':
+      return theme.colors.textTertiary;
+    case 'idle':
+    default:
+      return theme.colors.border;
+  }
+}
+
+/**
  * Число страниц при заданном количестве записей и размере страницы (для пагинации с нумерацией с нуля).
  * @param count - Всего записей (>= 0)
  * @param rowsPerPage - Записей на странице (> 0)

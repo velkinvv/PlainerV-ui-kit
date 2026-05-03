@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { FileInput } from './FileInput';
 import { Form } from '../../Form';
 import { Size } from '../../../../types/sizes';
+import { DOC_FILE_INPUT } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof FileInput> = {
   title: 'UI Kit/Inputs/FileInput',
@@ -11,8 +12,7 @@ const meta: Meta<typeof FileInput> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          '`fileLayout` — `field` (текст + иконка загрузки), `dropzone` (пунктир, центр), `file` (карточка, прогресс/размер/крестик), `trigger` (кнопка «Выбрать файл»). Скрытый `input[type=file]`, `Form`.',
+        component: DOC_FILE_INPUT,
       },
     },
   },

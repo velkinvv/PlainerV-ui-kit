@@ -57,6 +57,9 @@ export { GridMode } from '@/types/ui';
 export { Dropdown } from './Dropdown';
 export type { DropdownProps } from '@/types/ui';
 
+export { Popover } from './Popover/Popover';
+export type { PopoverProps, PopoverVariant } from '@/types/ui';
+
 export { Tabs } from './Tabs';
 export type { TabsProps } from '@/types/ui';
 export { TabsVariant } from '@/types/ui';
@@ -148,6 +151,7 @@ export type { SliderProps, RangeSliderProps, SliderRangeValue } from '@/types/ui
 
 export {
   TableContainer,
+  TableContainerScroll,
   Table,
   TableHead,
   TableBody,
@@ -156,10 +160,12 @@ export {
   TableCell,
   TablePagination,
   TableSortLabel,
+  TableSortChevronIcon,
   getTableTotalPages,
   clampTablePageZeroBased,
   toggleTableSortDirection,
   getSortChevronTones,
+  getTableSortChevronColor,
   parseTablePageJumpInput,
 } from './Table';
 export type {
@@ -177,28 +183,50 @@ export type {
   TableCellVariant,
   TableSortDirection,
 } from '@/types/ui';
-export type { TableSortChevronTone } from './Table';
+export type { TableSortChevronTone, TableContainerScrollProps } from './Table';
 
 export { DataGrid } from './Table';
 export {
+  applyDataGridColDragGhostPreview,
+  applyDataGridRowDragGhostPreview,
+  DATA_GRID_COL_DRAG_FALLBACK_WIDTH_PX,
+  DATA_GRID_COL_DRAG_SHIFT_TRANSITION,
+  DATA_GRID_ROW_DRAG_FALLBACK_HEIGHT_PX,
+  DATA_GRID_ROW_DRAG_SHIFT_TRANSITION,
   dataGridSizeToTableSize,
+  getDataGridColDragDisplacementPx,
+  getDataGridRowDragDisplacementPx,
   sliceRowsForPagination,
   getDataGridCellValue,
   reorderByIndex,
   toIdSet,
+  resolveDataGridExpandedRowDataStatus,
+  normalizeDataGridSortModel,
+  resolveNextDataGridSortModel,
+  getDataGridSortCriterionIndexForField,
 } from './Table';
 export type {
   DataGridProps,
   DataGridBaseRow,
   DataGridRowId,
   DataGridColumn,
+  DataGridColumnFilterIconPosition,
+  DataGridColumnResizeParams,
   DataGridPaginationModel,
   DataGridPaginationMode,
+  DataGridSortCriterion,
   DataGridSortModel,
   DataGridSortDirection,
   DataGridRenderCellParams,
   DataGridRenderRowWrapperParams,
+  DataGridExpandedRowDataStatus,
+  DataGridExpandedRowRenderContext,
+  DataGridExpandedRowChangeParams,
+  ColumnFilterPanelProps,
+  ColumnFilterPanelPresentation,
 } from '@/types/ui';
+
+export { ColumnFilterPanel } from './Table';
 
 export { Icon } from './Icon';
 export type { IconProps } from '@/types/ui';

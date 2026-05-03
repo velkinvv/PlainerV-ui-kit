@@ -2,7 +2,7 @@ import type React from 'react';
 import type { Size, IconSize, ModalSize } from './sizes';
 import type { Target, Transition } from 'framer-motion';
 import type { IconName, icons } from '../icons';
-import type { ReactNode } from 'react';
+import type { HTMLAttributes, ReactNode } from 'react';
 
 /**
  * Базовые типы для UI компонентов
@@ -1248,6 +1248,60 @@ export type DropdownAlignSelf =
   | 'baseline';
 
 export type DropdownPositioningMode = 'default' | 'autoFlip' | 'autoFit';
+
+/** Вариант панели `Popover` (те же токены фона и обводки, что у `Dropdown`) */
+export type PopoverVariant = 'default' | 'elevated' | 'outlined';
+
+/**
+ * Плавающая панель произвольного содержимого у триггера.
+ * Радиусы, отступы, тень, типографика и z-index берутся из `theme.dropdowns` (как у выпадающего меню).
+ */
+export interface PopoverProps extends BaseComponentProps {
+  /** Область открытия: клик по обёртке переключает панель (дочерние элементы получают событие как обычно) */
+  trigger: ReactNode;
+  /** Содержимое панели (рендер в портале при открытии) */
+  children: ReactNode;
+  /** Контролируемое открытие */
+  open?: boolean;
+  /** Начальное состояние в неконтролируемом режиме */
+  defaultOpen?: boolean;
+  /** Изменение открытия */
+  onOpenChange?: (open: boolean) => void;
+  /** Размер: `theme.dropdowns.sizes[size]` — padding, `borderRadius`, шрифт, min/max ширина */
+  size?: Size;
+  /** Вариант: `theme.dropdowns.variants` */
+  variant?: PopoverVariant;
+  /** Подгонка к краям вьюпорта и вертикальный flip (как у `Dropdown`) */
+  positioningMode?: DropdownPositioningMode;
+  /** Корень `createPortal` (по умолчанию `document.body`) */
+  portalContainer?: HTMLElement | null;
+  /** Отступ панели от триггера, px */
+  offset?: number;
+  /** Закрытие по клавише Escape (по умолчанию `true`) */
+  closeOnEscape?: boolean;
+  /** Не открывать панель */
+  disabled?: boolean;
+  /** `className` корневой обёртки (триггер) */
+  className?: string;
+  /** `className` плавающей панели */
+  contentClassName?: string;
+  /** Клик вне триггера и панели (вызывается при закрытии снаружи) */
+  onClickOutside?: (event: Event) => void;
+  /** Для `inline`: позиционирование относительно этого элемента */
+  boundaryElement?: HTMLElement | null;
+  /** `position: absolute` внутри `boundaryElement` вместо `fixed` в портале */
+  inline?: boolean;
+  /** Ширина панели (перекрывает min/max из темы) */
+  contentWidth?: string | number;
+  /** Максимальная высота содержимого с вертикальным скроллом */
+  contentMaxHeight?: string | number;
+  /** Подпись панели для доступности (`aria-label` у контейнера панели) */
+  contentAriaLabel?: string;
+  /** Идентификатор корневой обёртки (триггер) */
+  id?: string;
+  /** Атрибут `data-testid` корневой обёртки */
+  dataTestId?: string;
+}
 
 export type DropdownCssMixin = string | number | false | DropdownCssMixin[] | undefined;
 
@@ -3457,7 +3511,8 @@ export interface TableContainerProps extends BaseComponentProps {
  * Нативная `<table>` + контекст размера и зебры для дочерних строк.
  * @property stickyHeader - Липкий заголовок (`thead th` с `position: sticky`)
  * @property size - Вертикальные отступы ячеек (`sm` | `md`)
- * @property striped - Чередование фона строк в `tbody`
+ * @property striped - Чередование фона строк в `tbody`; по умолчанию `false` — фон строк как у карточки
+ * @property columnDividers - Тонкая вертикальная линия между колонками (`border-inline-end` у ячеек, кроме последней в строке); по умолчанию `true`
  * @property className - Доп. класс
  * @property children - `TableHead`, `TableBody`, …
  * @property style - Инлайн-стили таблицы
@@ -3468,6 +3523,8 @@ export interface TableProps
   stickyHeader?: boolean;
   size?: TableSize;
   striped?: boolean;
+  /** Вертикальные разделители между колонками; по умолчанию включены */
+  columnDividers?: boolean;
   style?: React.CSSProperties;
 }
 
@@ -3505,11 +3562,13 @@ export interface TableFooterProps
  * @property selected - Подсветка выбранной строки (как в макете)
  * @property hover - Подсветка при наведении (по умолчанию true для body-строк)
  * @property disabled - Пониженная непрозрачность (disabled-состояние макета)
+ * @property dragging - Строка удерживается при перетаскивании (источник HTML5 DnD): приглушение и подсказка рамкой
  */
 export interface TableRowProps extends BaseComponentProps, React.HTMLAttributes<HTMLTableRowElement> {
   selected?: boolean;
   hover?: boolean;
   disabled?: boolean;
+  dragging?: boolean;
   style?: React.CSSProperties;
 }
 
@@ -3523,6 +3582,7 @@ export type TableCellVariant = 'head' | 'body' | 'footer';
  * @property variant - Влияет на тег по умолчанию: `head` → `th`, иначе `td`
  * @property padding - Узкая колонка чекбокса (`checkbox`), без отступов (`none`), обычная (`normal`)
  * @property activeColumn - Для шапки: усиленная нижняя граница активной сортируемой колонки (макет Figma)
+ * @property headerMaxLines - Только шапка: максимум строк текста с многоточием (`line-clamp`); без пропа — одна строка (`nowrap`)
  * @property colSpan / rowSpan / scope — стандартные атрибуты таблицы
  */
 export interface TableCellProps
@@ -3534,6 +3594,8 @@ export interface TableCellProps
   padding?: 'normal' | 'checkbox' | 'none';
   /** Подсветка активной колонки в `TableHead` */
   activeColumn?: boolean;
+  /** Для `th`: не больше заданного числа строк заголовка (обрезка с «…») */
+  headerMaxLines?: number;
   colSpan?: number;
   rowSpan?: number;
   scope?: string;
@@ -3553,10 +3615,10 @@ export type TablePaginationToolbarAlign = 'left' | 'center' | 'right';
  * @property paginationToolbarAlign - Выравнивание строки футера (селект строк, поле «страница», плашка страниц); по умолчанию `right`
  * @property paginationToolbarReverse - Обратный порядок элементов в строке (`Pagination` и поле страницы меняются местами с блоком «строк на странице»)
  * @property paginationVariant - `compact` — только стрелки и номер текущей страницы между ними
- * @property rowsPerPageOptions - Список допустимых размеров страницы для нативного `select` (если пусто/не задано — блок не показывается)
+ * @property rowsPerPageOptions - Список допустимых размеров страницы для селектора в футере (если пусто/не задано — блок не показывается)
  * @property showRowsPerPageSelect - Показывать ли выбор числа строк; по умолчанию `true`, если задан непустой `rowsPerPageOptions`. При `false` блок скрыт даже при наличии опций
  * @property rowsPerPageSelectVariant - `compact` — короткая подпись по умолчанию («На стр.:») и более компактный селект
- * @property onRowsPerPageChange - Событие смены `rowsPerPage` (`change` от внутреннего `select`)
+ * @property onRowsPerPageChange - Событие смены `rowsPerPage` (совместим с `change` нативного `select`: `event.target.value` — строка)
  * @property labelRowsPerPage - Подпись перед селектором размера страницы; если не задано — зависит от `rowsPerPageSelectVariant`
  * @property showRecordsTotal - Показывать «записей из {count}» после селектора; по умолчанию `true`, если задан `rowsPerPageOptions`
  * @property formatRecordsTotal - Кастомный текст итога; иначе «записей из N» с форматированием `ru-RU`
@@ -3595,6 +3657,11 @@ export interface TablePaginationProps extends BaseComponentProps {
   disabled?: boolean;
   size?: Size;
   style?: React.CSSProperties;
+  /**
+   * Рендер под гридом ячеек внутри той же «карточки», что и таблица: без внешнего отступа сверху,
+   * с разделителем и отступами как у подвала таблицы (например в `DataGrid`).
+   */
+  embeddedInTableCard?: boolean;
 }
 
 /** Направление сортировки колонки */
@@ -3607,6 +3674,7 @@ export type TableSortDirection = 'asc' | 'desc';
  * @property hideSortIcon - Скрыть иконку (только текст)
  * @property disabled - Отключить кнопку
  * @property onClick - Переключение сортировки снаружи
+ * @property maxLines - Максимум строк у текста заголовка рядом с иконкой сортировки (`line-clamp`)
  */
 export interface TableSortLabelProps
   extends BaseComponentProps,
@@ -3616,6 +3684,9 @@ export interface TableSortLabelProps
   hideSortIcon?: boolean;
   disabled?: boolean;
   style?: React.CSSProperties;
+  maxLines?: number;
+  /** При сортировке по нескольким полям: порядковый номер (1…n) рядом с шевронами */
+  sortPriority?: number;
 }
 
 // --- DataGrid (композиция над Table*) ---
@@ -3632,12 +3703,18 @@ export interface DataGridBaseRow {
 /** Направление сортировки в модели грида */
 export type DataGridSortDirection = 'asc' | 'desc';
 
-/** Активная сортировка (контролируемая модель) */
-export interface DataGridSortModel {
+/** Один критерий сортировки (поле + направление) */
+export interface DataGridSortCriterion {
   /** Имя поля из `columns[].field` */
   field: string;
   direction: DataGridSortDirection;
 }
+
+/**
+ * Модель сортировки грида: одно поле, несколько полей по убыванию приоритета или отсутствие сортировки.
+ * При `multiColumnSort` у `DataGrid` удобно передавать массив; при одиночной — объект или массив из одного элемента.
+ */
+export type DataGridSortModel = DataGridSortCriterion | readonly DataGridSortCriterion[] | null;
 
 /** Модель пагинации (номер страницы с нуля) */
 export interface DataGridPaginationModel {
@@ -3656,6 +3733,69 @@ export interface DataGridRenderCellParams<Row extends DataGridBaseRow = DataGrid
   rowIndex: number;
 }
 
+/** Параметры колбэка `onColumnResize`: какая колонка и новая ширина в пикселях (родитель обновляет `columns[].width`) */
+export interface DataGridColumnResizeParams {
+  /** Идентификатор колонки (как у `field` в `DataGridColumn`) */
+  field: string;
+  /** Новая ширина колонки в пикселях после отпускания ручки */
+  width: number;
+}
+
+/** Ширина колонки в процессе жеста ресайза (`onColumnResizeStart`, `onColumnResizeChange`) */
+export interface DataGridColumnResizeProgressParams {
+  field: string;
+  /** Ширина в px: исходная при старте или текущая при перетаскивании */
+  width: number;
+}
+
+/** Завершение жеста ресайза (отпускание с фиксацией или отмена) */
+export interface DataGridColumnResizeEndParams extends DataGridColumnResizeProgressParams {
+  /**
+   * `true` — отпускание ручки (`pointerup`); при этом, если задан `onColumnResize`, он будет вызван с этой шириной.
+   * `false` — `pointercancel` / прерывание без фиксации (`onColumnResize` не вызывается).
+   */
+  committed: boolean;
+}
+
+/** Старт перетаскивания заголовка колонки (`enableColumnDrag`) */
+export interface DataGridColumnDragStartParams {
+  /** Индекс колонки в текущем массиве `columns` */
+  fromIndex: number;
+  /** Поле колонки (`columns[].field`) */
+  field: string;
+}
+
+/** Успешная перестановка колонок (удобнее, чем только индексы у `onColumnDragEnd`) */
+export interface DataGridColumnOrderChangeParams {
+  fromIndex: number;
+  toIndex: number;
+  /** Поле переносимой колонки */
+  field: string;
+}
+
+/** Клик по встроенной кнопке фильтра в заголовке (`filterable` у колонки + `onColumnFilterClick` у грида) */
+export interface DataGridColumnFilterClickParams {
+  field: string;
+  nativeEvent: React.MouseEvent<HTMLButtonElement>;
+}
+
+/** Частичные пропсы `Icon` для встроенной иконки фильтра в заголовке колонки `DataGrid` */
+export type DataGridColumnFilterIconProps = Partial<Pick<IconProps, 'name' | 'size' | 'color' | 'className'>>;
+
+/**
+ * Горизонтальное расположение встроенной кнопки-фильтра в заголовке колонки (`filterable`).
+ * - `inlineTitle` — сразу после блока заголовка, без растягивания заголовка на всю ширину ячейки (компактная группа у края выравнивания).
+ * - `leading` — у левого края ячейки, перед текстом заголовка.
+ * - `trailing` — после заголовка; блок заголовка занимает свободное место, иконка у правого края ячейки (поведение по умолчанию).
+ */
+export type DataGridColumnFilterIconPosition = 'inlineTitle' | 'leading' | 'trailing';
+
+/** Старт перетаскивания строки за ручку (`enableRowDrag`) */
+export interface DataGridRowDragStartParams {
+  fromIndex: number;
+  rowId: DataGridRowId;
+}
+
 /** Описание колонки грида (поле, заголовок, рендер ячейки) */
 export interface DataGridColumn<Row extends DataGridBaseRow = DataGridBaseRow> {
   /** Ключ поля в строке (строка допускает вложенные пути через точку, напр. `user.name`) */
@@ -3672,6 +3812,22 @@ export interface DataGridColumn<Row extends DataGridBaseRow = DataGridBaseRow> {
   render?: (params: DataGridRenderCellParams<Row>) => ReactNode;
   /** Не участвует в перестановке колонок drag-and-drop */
   disableReorder?: boolean;
+  /** Не показывать ручку изменения ширины при `enableColumnResize` и `onColumnResize` */
+  disableResize?: boolean;
+  /** Максимум строк заголовка; перекрывает `headerMaxLines` у `DataGrid`, если задано */
+  headerMaxLines?: number;
+  /** Показать кнопку-иконку фильтра в заголовке; клик уходит в `onColumnFilterClick` у `DataGrid` */
+  filterable?: boolean;
+  /** У фильтруемой колонки: подсветка иконки (заливка `theme.colors.info`), если условие уже применено */
+  filterApplied?: boolean;
+  /** Свой узел внутри кнопки фильтра вместо стандартной `Icon`; приоритет над `filterIconProps` и `filterIconPropsApplied` */
+  filterIcon?: ReactNode;
+  /** Кастомизация встроенной иконки: `name`, `size`, `color`, `className` (мерж поверх `IconExFilter` + `IconSize.XS` + `currentColor`) */
+  filterIconProps?: DataGridColumnFilterIconProps;
+  /** Доп. мерж поверх `filterIconProps`, когда `filterApplied === true` (например другой `color` на фоне `info`) */
+  filterIconPropsApplied?: DataGridColumnFilterIconProps;
+  /** Расположение встроенной иконки фильтра; по умолчанию `trailing` */
+  filterIconPosition?: DataGridColumnFilterIconPosition;
 }
 
 /** Аргумент `renderRowWrapper`: обёртка над одной строкой `tr` */
@@ -3679,6 +3835,33 @@ export interface DataGridRenderRowWrapperParams<Row extends DataGridBaseRow = Da
   row: Row;
   /** Готовый элемент строки таблицы */
   children: React.ReactElement;
+}
+
+/**
+ * Статус данных внутри раскрывающейся подстроки (ленивая загрузка и ошибки).
+ * - `idle` — данные ещё не запрашивались или сброшены
+ * - `loading` — идёт загрузка только для этой подстроки
+ * - `ready` — данные готовы к отображению
+ * - `error` — ошибка загрузки (сообщение обычно в `renderExpandedRow`)
+ */
+export type DataGridExpandedRowDataStatus = 'idle' | 'loading' | 'ready' | 'error';
+
+/** Второй аргумент `renderExpandedRow`: статус и флаг загрузки для кастомного UI */
+export interface DataGridExpandedRowRenderContext {
+  /** Агрегированный статус данных подстроки */
+  dataStatus: DataGridExpandedRowDataStatus;
+  /** Эквивалент `dataStatus === 'loading'` — удобно при частичной подстановке пропсов */
+  isLoading: boolean;
+}
+
+/** Аргумент колбэка `onExpandedRowChange` */
+export interface DataGridExpandedRowChangeParams {
+  /** Строка, у которой изменилось раскрытие */
+  rowId: DataGridRowId;
+  /** Стало ли развёрнуто после действия пользователя */
+  expanded: boolean;
+  /** Полный список id раскрытых строк после этого изменения */
+  expandedIds: readonly DataGridRowId[];
 }
 
 /**
@@ -3702,13 +3885,23 @@ export interface DataGridRenderRowWrapperParams<Row extends DataGridBaseRow = Da
  * @property labelPageJump — Подпись к полю перехода к странице
  * @property rowsPerPageSelectVariant — `compact` для сокращённого блока «строк на странице»
  * @property paginationMode — Как интерпретировать `rows` при пагинации
- * @property sortModel + onSortChange — Контролируемая сортировка (только UI + колбэк; данные сортирует родитель)
+ * @property sortModel + onSortChange — Контролируемая сортировка (одно поле, массив критериев или `null`; данные сортирует родитель)
+ * @property multiColumnSort — Режим нескольких полей: клик добавляет asc → desc → снять; порядок в массиве — приоритет
  * @property rowBackgroundColorByStatus — Фон строки по данным строки
- * @property expandedRowIds + onRowCollapseChange + getRowExpandable + renderExpandedRow — раскрывающаяся подстрока
+ * @property expandedRowIds + onExpandedRowChange + getRowExpandable + renderExpandedRow — раскрывающаяся подстрока
+ * @property getExpandedRowDataStatus + getExpandedRowLoading + onExpandedRowOpen — ленивая загрузка и статусы области раскрытия (отдельно от `isLoading` таблицы)
  * @property renderRowWrapper — Обёртка над `TableRow` (должна сохранять один корневой `tr` или `Fragment` с одним `tr`)
  * @property renderCell — Глобальный рендер ячейки, если у колонки нет `render`
+ * @property onColumnDragStart / onColumnDragCancel / onColumnOrderChange — жизненный цикл DnD колонок (успешный drop по-прежнему в `onColumnDragEnd`)
  * @property onColumnDragEnd — Завершение перетаскивания заголовка колонки (индексы в текущем порядке `columns`)
+ * @property enableColumnResize + onColumnResize — изменение ширины колонки за правый край заголовка (контролируемо через `columns[].width`)
+ * @property onColumnResizeStart / onColumnResizeChange / onColumnResizeEnd — жизненный цикл жеста ресайза
+ * @property headerMaxLines — ограничение числа строк в заголовках колонок (`line-clamp`); у колонки можно задать своё `headerMaxLines`
+ * @property onRowDragStart / onRowDragCancel — старт и отмена DnD строк (итог в `onRowDragEnd`)
  * @property onRowDragEnd — Новый порядок id после перетаскивания строк (только при `enableRowDrag`)
+ * @property onColumnFilterClick — клик по встроенной иконке фильтра (`filterable` у колонки); положение иконки — `columns[].filterIconPosition`
+ * @property columnDividers — вертикальные разделители между колонками у вложенной `Table` (по умолчанию `true`)
+ * @property striped — зебра строк в `tbody`; в компоненте `DataGrid` по умолчанию `true`, у примитива `Table` — `false`
  * @property size — `Size` дизайн-системы → плотность `Table` и размеры контролов
  */
 export interface DataGridProps<Row extends DataGridBaseRow = DataGridBaseRow> extends BaseComponentProps {
@@ -3742,29 +3935,123 @@ export interface DataGridProps<Row extends DataGridBaseRow = DataGridBaseRow> ex
   rowsPerPageSelectVariant?: 'default' | 'compact';
   paginationMode?: DataGridPaginationMode;
   rowsPerPageOptions?: number[];
-  sortModel?: DataGridSortModel | null;
-  onSortChange?: (model: DataGridSortModel | null) => void;
+  sortModel?: DataGridSortModel;
+  onSortChange?: (model: DataGridSortModel) => void;
+  /** Сортировка по нескольким колонкам: модель — массив `DataGridSortCriterion` по приоритету (см. `sortModel`) */
+  multiColumnSort?: boolean;
   stickyHeader?: boolean;
+  /** Зебра в `tbody`; по умолчанию в `DataGrid` включена (`true`). Для фона строк как у карточки — `false`. */
   striped?: boolean;
+  /** Тонкие вертикальные разделители между колонками; по умолчанию `true` (прокидывается в `Table`) */
+  columnDividers?: boolean;
   /** Масштаб строк, шрифтов и контролов выбора */
   size?: Size;
+  /** Максимум строк текста в заголовке каждой колонки данных (сортировка — через `TableSortLabel.maxLines`) */
+  headerMaxLines?: number;
   isLoading?: boolean;
   /** Цвет фона строки; например по статусу из `row` */
   rowBackgroundColorByStatus?: (row: Row) => string | undefined;
   expandedRowIds?: ReadonlySet<DataGridRowId> | readonly DataGridRowId[];
-  onRowCollapseChange?: (rowId: DataGridRowId, expanded: boolean) => void;
   getRowExpandable?: (row: Row) => boolean;
-  renderExpandedRow?: (row: Row) => ReactNode;
+  /**
+   * Статус данных под раскрывающейся строкой. Если не задан, подстрока считается в состоянии `ready`,
+   * либо загрузкой управляет только `getExpandedRowLoading`.
+   */
+  getExpandedRowDataStatus?: (row: Row) => DataGridExpandedRowDataStatus;
+  /**
+   * Загрузка только области раскрытия (не перекрывает всю таблицу, в отличие от `isLoading`).
+   * Игнорируется, если передан `getExpandedRowDataStatus`.
+   */
+  getExpandedRowLoading?: (row: Row) => boolean;
+  /** Вызывается при развороте строки (удобно запустить ленивую подгрузку по `row.id`) */
+  onExpandedRowOpen?: (row: Row) => void;
+  /**
+   * Изменение раскрытия: какая строка, новое состояние и полный список раскрытых id (удобно для контролируемого `expandedRowIds` без ручного пересчёта).
+   */
+  onExpandedRowChange?: (params: DataGridExpandedRowChangeParams) => void;
+  renderExpandedRow?: (row: Row, context: DataGridExpandedRowRenderContext) => ReactNode;
   renderRowWrapper?: (params: DataGridRenderRowWrapperParams<Row>) => React.ReactElement;
   renderCell?: (params: DataGridRenderCellParams<Row>) => ReactNode;
   enableColumnDrag?: boolean;
+  /** Старт перетаскивания заголовка (индекс и поле колонки) */
+  onColumnDragStart?: (params: DataGridColumnDragStartParams) => void;
+  /** Успешный drop: индексы в текущем порядке `columns` до перестройки массива родителем */
   onColumnDragEnd?: (fromIndex: number, toIndex: number) => void;
+  /** То же перемещение, что и `onColumnDragEnd`, плюс `field` переносимой колонки */
+  onColumnOrderChange?: (params: DataGridColumnOrderChangeParams) => void;
+  /** Drag колонки завершён без смены позиции (drop на ту же колонку или отпускание вне цели) */
+  onColumnDragCancel?: () => void;
+  /**
+   * Ручка на правом краю заголовка колонки; ширину храните в `columns[].width`, обновляя по `onColumnResize`.
+   * Включает у `<table>` раскладку `table-layout: fixed`, чтобы при перетаскивании не пересчитывались ширины остальных колонок; для предсказуемости задавайте `width` данным колонкам.
+   */
+  enableColumnResize?: boolean;
+  /** Начало жеста: исходная ширина в px */
+  onColumnResizeStart?: (params: DataGridColumnResizeProgressParams) => void;
+  /** Перетаскивание ручки: предпросмотр ширины в px */
+  onColumnResizeChange?: (params: DataGridColumnResizeProgressParams) => void;
+  /** Вызывается после отпускания ручки; передайте обновлённые `columns` с новым `width` (число px) */
+  onColumnResize?: (params: DataGridColumnResizeParams) => void;
+  /** Конец жеста: `committed` — отпускание без отмены (`pointerup`); `onColumnResize` вызывается только при `committed && onColumnResize` */
+  onColumnResizeEnd?: (params: DataGridColumnResizeEndParams) => void;
+  /** Верхняя граница ширины при ресайзе (по умолчанию 2000px) */
+  columnResizeMaxWidthPx?: number;
   enableRowDrag?: boolean;
+  /** Старт перетаскивания строки за ручку (индекс на текущей странице и id строки) */
+  onRowDragStart?: (params: DataGridRowDragStartParams) => void;
   onRowDragEnd?: (orderedIds: DataGridRowId[]) => void;
+  /** Drop на ту же строку или отпускание вне цели без смены порядка */
+  onRowDragCancel?: () => void;
+  /** Клик по кнопке фильтра у колонки с `filterable: true` */
+  onColumnFilterClick?: (params: DataGridColumnFilterClickParams) => void;
   hideFooter?: boolean;
   elevated?: boolean;
   tableAriaLabel?: string;
   style?: React.CSSProperties;
+}
+
+/** Как рисуется корень панели: отдельная карточка или «плоский» слой внутри уже оформленного `Dropdown` */
+export type ColumnFilterPanelPresentation = 'elevatedCard' | 'embeddedInDropdown';
+
+/**
+ * Панель фильтра колонки таблицы: слот под любые контролы + футер «Применить» / «Очистить».
+ * Внутрь передавайте поля ввода и логику буфера фильтра самостоятельно (как в Admiral Data Table).
+ */
+export interface ColumnFilterPanelProps extends Omit<HTMLAttributes<HTMLElement>, 'children'> {
+  /** Содержимое области фильтра: DateInput, Select, чекбоксы и т.д. */
+  children: ReactNode;
+  /** Подтверждение условий фильтра (закрыть оверлей, записать значение в модель фильтра). */
+  onApply: () => void;
+  /** Сброс фильтра по колонке. */
+  onClear: () => void;
+  /**
+   * Клик по кнопке «Применить»: событие с кнопки (аналитика, `stopPropagation`, `data-*` из `event.currentTarget`).
+   * Вызывается перед `onApply`.
+   */
+  onApplyButtonClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  /**
+   * Клик по кнопке «Очистить»; вызывается перед `onClear`.
+   */
+  onClearButtonClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  /** Текст или элемент кнопки применения */
+  applyLabel?: ReactNode;
+  /** Текст или элемент кнопки сброса */
+  clearLabel?: ReactNode;
+  /** Плотность корня панели (токены карточки); кнопки футера рендерятся на ступень меньше. */
+  size?: Size;
+  /** Отключить обе кнопки футера */
+  disabled?: boolean;
+  /** Отключить только «Применить» */
+  applyDisabled?: boolean;
+  /** Отключить только «Очистить» */
+  clearDisabled?: boolean;
+  /** Две кнопки делят ширину футера поровну (\`flex: 1\`); при \`false\` — ширина по содержимому */
+  fullWidthButtons?: boolean;
+  /**
+   * `elevatedCard` (по умолчанию) — фон, тень и отступы как у карточки (отдельный блок, сторис по умолчанию).
+   * `embeddedInDropdown` — без второй «карточки» внутри `Dropdown`: только тело + футер, чтобы не дублировать обводку/тень контейнера меню и не обрезаться по ширине.
+   */
+  presentation?: ColumnFilterPanelPresentation;
 }
 
 // export type IconVariant = 'plainer' | 'iconex';

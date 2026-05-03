@@ -2,6 +2,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Accordion } from './Accordion';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
+import { DOC_ACCORDION } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Accordion> = {
   title: 'UI Kit/Feedback/Accordion',
@@ -10,8 +11,7 @@ const meta: Meta<typeof Accordion> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Компонент аккордеона для сворачиваемого контента. Поддерживает множественные элементы с уникальными ID, позиционирование (start/center/last), заголовки и подзаголовки. Использует переменные темы для цветов, шрифтов и радиусов.',
+        component: DOC_ACCORDION,
       },
     },
   },

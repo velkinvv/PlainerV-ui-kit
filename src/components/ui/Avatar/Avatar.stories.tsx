@@ -4,6 +4,7 @@ import { Avatar } from './Avatar';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Size } from '../../../types/sizes';
 import { AvatarState, AvatarStatus } from '../../../types/ui';
+import { DOC_AVATAR } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Avatar> = {
   title: 'UI Kit/Data Display/Avatar',
@@ -12,7 +13,7 @@ const meta: Meta<typeof Avatar> = {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Компонент аватара с поддержкой изображений и fallback',
+        component: DOC_AVATAR,
       },
     },
   },

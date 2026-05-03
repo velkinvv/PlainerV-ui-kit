@@ -4,6 +4,7 @@ import { Calendar } from './Calendar';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { darkTheme } from '../../../themes/themes';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
+import { DOC_CALENDAR } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Calendar> = {
   title: 'UI Kit/Inputs/Calendar',
@@ -19,8 +20,7 @@ const meta: Meta<typeof Calendar> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Календарь: сетка 7×6, подписи дней недели (`weekStartsOn`), выбор дня, стрелки месяца, выпадающий список месяца/года на базе `Dropdown`. Опции: `showDateRollers` — роллеры день/месяц/год; `monthYearLayout="split"` — два триггера месяц и год.',
+        component: DOC_CALENDAR,
       },
     },
   },
