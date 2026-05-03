@@ -300,6 +300,19 @@ export type Colors = {
   info: string; // Информация
   /** Hover для яркого info-акцента (палитра `colors.primary`, не путать с `colors.primary` в теме) */
   infoHover: string;
+  /**
+   * Акцент тега `Tag` при `colorVariant="primary"` (яркий синий; не slate из `colors.blue`).
+   * Задаётся в `lightColors` / `darkColors`.
+   */
+  tagPrimaryAccent: string;
+  /** Тег `Tag` — `colorVariant="purple"` */
+  tagAccentPurple: string;
+  /** Тег `Tag` — `colorVariant="teal"` */
+  tagAccentTeal: string;
+  /** Тег `Tag` — `colorVariant="cyan"` */
+  tagAccentCyan: string;
+  /** Тег `Tag` — `colorVariant="pink"` */
+  tagAccentPink: string;
 
   // Специальные цвета
   overlay: string; // Наложение

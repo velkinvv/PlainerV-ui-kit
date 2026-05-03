@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useEffect, useRef } from 'react';
+import React, { forwardRef, useCallback, useEffect, useId, useMemo, useRef } from 'react';
 import { clsx } from 'clsx';
 import type { CheckboxProps } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
@@ -10,13 +10,63 @@ import {
   CheckIcon,
   CheckboxLabel,
 } from './Checkbox.style';
+import {
+  AdditionalLabel,
+  ErrorText,
+  ExtraText,
+  HelperText,
+  InputContainer,
+  Label,
+  RequiredIndicator,
+  SuccessText,
+} from '../inputs/shared';
+
+/** Блок текстов под полем в том же порядке и с той же логикой, что у Input. */
+function renderTextsBelowCheckboxInput({
+  error,
+  success,
+  helperText,
+  extraText,
+  errorDomIdentifier,
+  helperDomIdentifier,
+  successDomIdentifier,
+}: {
+  error?: string;
+  success?: boolean;
+  helperText?: string;
+  extraText?: string;
+  errorDomIdentifier: string;
+  helperDomIdentifier: string;
+  successDomIdentifier: string;
+}): React.ReactNode {
+  return (
+    <>
+      {error ? <ErrorText id={errorDomIdentifier}>{error}</ErrorText> : null}
+      {success ? <SuccessText id={successDomIdentifier}>Успешно</SuccessText> : null}
+      {helperText && !error && !success ? (
+        <HelperText id={helperDomIdentifier}>{helperText}</HelperText>
+      ) : null}
+      {extraText ? <ExtraText>{extraText}</ExtraText> : null}
+    </>
+  );
+}
 
 /**
  * Чекбокс с опциональным `indeterminate` (частичный выбор в таблицах и т.п.).
+ * Подпись над полем (`fieldLabel` / `additionalLabel`) и тексты под полем — как у текстовых полей.
+ *
  * @param props.checked - Включён ли чекбокс
- * @param props.indeterminate - Промежуточное состояние (визуально зелёный фон и «минус»)
+ * @param props.indeterminate - Промежуточное состояние; для DOM `input.indeterminate`
  * @param props.onChange - Событие изменения
- * @param props.label - Подпись
+ * @param props.label - Подпись рядом с квадратом чекбокса
+ * @param props.fieldLabel - Подпись над элементом управления — аналог `label` из Input/TextArea
+ * @param props.additionalLabel - Строка под `fieldLabel`, как у Input
+ * @param props.formRequired - Звезда у `fieldLabel` и атрибут `required` у input
+ * @param props.fullWidth - Растянуть контейнер поля по ширине родителя
+ * @param props.error — сообщение об ошибке под полем
+ * @param props.success — успешное состояние («Успешно» под полем)
+ * @param props.helperText — подсказка под полем
+ * @param props.extraText — дополнительный текст под блоком ошибок/подсказок
  * @param props.disabled - Отключение
  * @param props.size - Размер
  */
@@ -27,17 +77,53 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       indeterminate = false,
       onChange,
       label,
+      fieldLabel,
+      additionalLabel,
+      formRequired = false,
+      fullWidth = false,
       disabled = false,
       size = Size.MD,
       className,
-      ...props
+      id: idProp,
+      error,
+      success = false,
+      helperText,
+      extraText,
+      ...restProps
     },
     ref,
   ) => {
-    const checkboxId = `checkbox-${Math.random().toString(36).substr(2, 9)}`;
+    const checkboxIdStable = useId();
+    const checkboxDomId = idProp ?? checkboxIdStable;
+    const checkboxErrorDomIdentifier = useId();
+    const checkboxHelperDomIdentifier = useId();
+    const checkboxSuccessDomIdentifier = useId();
     const inputRef = useRef<HTMLInputElement | null>(null);
     /** После синтетического onChange в indeterminate нативный change иногда всё равно приходит с «включить» — один раз глушим. */
     const skipNextNativeChangeRef = useRef(false);
+
+    const hasFooterTexts = Boolean(error || success || helperText || extraText);
+
+    const ariaDescribedByForInput = useMemo(() => {
+      const identifiers: string[] = [];
+      if (error) {
+        identifiers.push(checkboxErrorDomIdentifier);
+      }
+      if (success) {
+        identifiers.push(checkboxSuccessDomIdentifier);
+      }
+      if (helperText && !error && !success) {
+        identifiers.push(checkboxHelperDomIdentifier);
+      }
+      return identifiers.filter(Boolean).join(' ') || undefined;
+    }, [
+      checkboxErrorDomIdentifier,
+      checkboxHelperDomIdentifier,
+      checkboxSuccessDomIdentifier,
+      error,
+      helperText,
+      success,
+    ]);
 
     const setInputRef = useCallback(
       (node: HTMLInputElement | null) => {
@@ -70,10 +156,6 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       }
     };
 
-    /**
-     * Синтетический onChange (без второго нативного change): только там, где нативный клик по label не даёт нужного результата.
-     * @param nextChecked - целевое состояние `checked`
-     */
     const emitSyntheticCheckboxChange = (nextChecked: boolean) => {
       if (!disabled && onChange) {
         onChange({
@@ -82,12 +164,6 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       }
     };
 
-    /**
-     * Клик по визуалу: при обычном состоянии нативный input (htmlFor) сам вызывает onChange через handleChange.
-     * Дублирующий синтетический onChange здесь давал два подряд вызова и ломал мультивыбор (двойной toggle листьев).
-     * В indeterminate блокируем default и явно шлём `checked: false` — «снять частичное выделение»
-     * (дерево мультиселекта, шапка таблицы: дальше onChange сам решает очистку/тоггл по своей логике).
-     */
     const handleLabelClick = (event: React.MouseEvent<HTMLLabelElement>) => {
       if (disabled || !onChange) {
         return;
@@ -124,23 +200,26 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       }
     };
 
-    return (
+    const buildCheckboxBody = (containerClassSuffix?: string) => (
       <CheckboxContainer
-        htmlFor={checkboxId}
+        htmlFor={checkboxDomId}
         disabled={disabled}
-        className={clsx('ui-checkbox', className)}
+        className={clsx('ui-checkbox', containerClassSuffix)}
         onKeyDown={handleKeyDown}
         onClick={handleLabelClick}
         tabIndex={disabled ? -1 : 0}
       >
         <CheckboxInput
           ref={setInputRef}
-          id={checkboxId}
+          {...restProps}
+          id={checkboxDomId}
           type="checkbox"
           checked={checked}
           onChange={handleChange}
           disabled={disabled}
-          {...props}
+          required={Boolean(formRequired)}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={ariaDescribedByForInput}
         />
         <CheckboxBox checked={checked} indeterminate={indeterminate} disabled={disabled} size={size}>
           <CheckIcon checked={checked} indeterminate={indeterminate} size={size}>
@@ -183,6 +262,47 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         </CheckboxBox>
         {label ? <CheckboxLabel disabled={disabled}>{label}</CheckboxLabel> : null}
       </CheckboxContainer>
+    );
+
+    const footerTexts = hasFooterTexts
+      ? renderTextsBelowCheckboxInput({
+          error,
+          success,
+          helperText,
+          extraText,
+          errorDomIdentifier: checkboxErrorDomIdentifier,
+          helperDomIdentifier: checkboxHelperDomIdentifier,
+          successDomIdentifier: checkboxSuccessDomIdentifier,
+        })
+      : null;
+
+    /** Оболочка поля: заголовки, ширина и/или текстовые хвосты как у инпутов */
+    const useStructuredFieldWrapper =
+      Boolean(fieldLabel || additionalLabel || fullWidth || hasFooterTexts);
+
+    if (!useStructuredFieldWrapper) {
+      return (
+        <>
+          {buildCheckboxBody(className)}
+          {footerTexts}
+        </>
+      );
+    }
+
+    return (
+      <InputContainer fullWidth={fullWidth} className={clsx('ui-checkbox-field', className)}>
+        {fieldLabel ? (
+          <Label htmlFor={checkboxDomId}>
+            {fieldLabel}
+            {formRequired ? <RequiredIndicator>*</RequiredIndicator> : null}
+          </Label>
+        ) : null}
+
+        {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
+
+        {buildCheckboxBody(undefined)}
+        {footerTexts}
+      </InputContainer>
     );
   },
 );

@@ -33,7 +33,7 @@ const preview: Preview = {
   parameters: {
     options: {
       /**
-       * Порядок в сайдбаре: сначала группы (как в MUI), затем сторис внутри группы по фиксированному списку.
+       * Порядок в сайдбаре: сначала группы по названию, затем сторис внутри группы по фиксированному списку.
        */
       storySort: (firstStoryEntry, secondStoryEntry) => {
         const getStoryTitle = (storyEntry) => {

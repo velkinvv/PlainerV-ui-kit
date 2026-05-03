@@ -23,7 +23,10 @@ module.exports = {
     const withoutTablePkg = matchedPaths.filter(
       relativePath => !String(relativePath).replace(/\\/g, '/').includes('/table_pkg/'),
     );
-    return withoutTablePkg.map(relativePath => path.join('..', relativePath).replace(/\\/g, '/'));
+    /** Явные пути: подстраховка, если glob не подхватил файл сторис */
+    const forcedStoryPaths = ['src/components/ui/Dropdown/DropdownTagTrigger.stories.tsx'];
+    const mergedRelative = [...new Set([...withoutTablePkg, ...forcedStoryPaths])];
+    return mergedRelative.map(relativePath => path.join('..', relativePath).replace(/\\/g, '/'));
   },
   addons: ['@storybook/addon-links', '@storybook/addon-docs', '@storybook/addon-themes'],
   /** Полная таблица пропсов из TypeScript (в т.ч. `forwardRef` и поля из `SelectProps` / `DropdownProps`). */

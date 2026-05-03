@@ -50,6 +50,20 @@ const meta: Meta<typeof TextArea> = {
     readOnly: { control: 'boolean', description: 'Только чтение (серый фон, без resize)' },
     disabled: { control: 'boolean', description: 'Отключено' },
     skeleton: { control: 'boolean', description: 'Скелетон вместо поля' },
+    isLoading: { control: 'boolean', description: 'Показать индикатор загрузки в правой части поля' },
+    displayClearIcon: {
+      control: 'boolean',
+      description: 'Показывать кнопку очистки значения (для непустого и доступного поля)',
+    },
+    onClearIconClick: {
+      description: 'Колбэк при клике на кнопку очистки значения',
+      table: { type: { summary: '() => void' } },
+    },
+    clearIconProps: {
+      control: false,
+      description: 'Частичные пропсы иконки очистки',
+      table: { type: { summary: 'ClearIconProps' } },
+    },
     textAlign: {
       control: { type: 'select' },
       options: ['left', 'center', 'right'],
@@ -112,6 +126,18 @@ const meta: Meta<typeof TextArea> = {
           summary:
             'обработчик change у textarea: (event: React.ChangeEvent<HTMLTextAreaElement>) => void',
         },
+      },
+    },
+    onFocus: {
+      description: 'Колбэк фокуса поля',
+      table: {
+        type: { summary: '(event: React.FocusEvent<HTMLTextAreaElement>) => void' },
+      },
+    },
+    onBlur: {
+      description: 'Колбэк потери фокуса поля',
+      table: {
+        type: { summary: '(event: React.FocusEvent<HTMLTextAreaElement>) => void' },
       },
     },
   },
@@ -242,6 +268,31 @@ export const DisableCopying: Story = {
     defaultValue: 'Секретный текст',
     disableCopying: true,
     rows: 3,
+  },
+};
+
+export const WithClearButton: Story = {
+  render: () => {
+    const [value, setValue] = useState('Текст можно очистить кнопкой справа');
+    return (
+      <TextArea
+        label="Очистка значения"
+        value={value}
+        displayClearIcon
+        onChange={(event) => setValue(event.target.value)}
+        onClearIconClick={() => setValue('')}
+        rows={4}
+      />
+    );
+  },
+};
+
+export const Loading: Story = {
+  args: {
+    label: 'Загрузка',
+    placeholder: 'Данные подгружаются...',
+    isLoading: true,
+    rows: 4,
   },
 };
 

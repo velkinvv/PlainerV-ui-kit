@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react';
 import { clsx } from 'clsx';
 import { type IconButtonProps, ButtonVariant } from '../../../../types/ui';
 import { Size } from '../../../../types/sizes';
-import { StyledIconButton, LoadingSpinner } from './IconButton.style';
+import { StyledIconButton, LoadingSpinner, IconContentWrapper } from './IconButton.style';
 import { Tooltip } from '../../Tooltip/Tooltip';
 
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(function IconButton(
@@ -12,7 +12,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(functio
     disabled = false,
     loading = false,
     fullWidth = false,
-    rounded = true, // По умолчанию круглая
+    rounded = false, // По умолчанию радиус берётся из темы
     icon,
     showTooltip = false,
     tooltipText,
@@ -44,7 +44,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(functio
       onClick={onClick}
       {...props}
     >
-      {renderContent()}
+      <IconContentWrapper className="ui-icon-button-content">{renderContent()}</IconContentWrapper>
     </StyledIconButton>
   );
 

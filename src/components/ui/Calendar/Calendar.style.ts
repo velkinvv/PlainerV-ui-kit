@@ -32,10 +32,11 @@ const titleSize = (size: Size | undefined): string => {
 /**
  * Карточка календаря.
  * @property $size - Влияет на отступы и размер шрифта заголовка.
+ * @property $fullWidth - Ширина карточки 100% от контейнера; сетка дней распределяется по колонкам.
  */
 export const CalendarRoot = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['$size', '$embedded'].includes(prop),
-})<{ $size?: Size; $embedded?: boolean }>`
+  shouldForwardProp: (prop) => !['$size', '$embedded', '$fullWidth'].includes(prop),
+})<{ $size?: Size; $embedded?: boolean; $fullWidth?: boolean }>`
   box-sizing: border-box;
   padding: ${({ $size, $embedded }) => {
     if ($embedded) {
@@ -48,7 +49,13 @@ export const CalendarRoot = styled.div.withConfig({
   border: ${({ $embedded, theme }) =>
     $embedded ? 'none' : `1px solid ${theme.colors.border}`};
   box-shadow: ${({ $embedded, theme }) => ($embedded ? 'none' : theme.boxShadow.md)};
+  width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'auto')};
   max-width: 100%;
+  ${({ $fullWidth }) =>
+    $fullWidth &&
+    css`
+      min-width: 0;
+    `}
 `;
 
 /**
@@ -206,12 +213,17 @@ export const CalendarNavButton = styled.button.withConfig({
   }
 `;
 
-/** Строка заголовков дней недели; колонки совпадают с сеткой дней по ширине ячейки */
+/**
+ * Строка заголовков дней недели; колонки совпадают с сеткой дней по ширине ячейки.
+ * @property $fullWidth - Равномерное растягивание семи колонок на всю ширину карточки.
+ */
 export const CalendarWeekdays = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== '$size',
-})<{ $size?: Size }>`
+  shouldForwardProp: (prop) => !['$size', '$fullWidth'].includes(prop),
+})<{ $size?: Size; $fullWidth?: boolean }>`
   display: grid;
-  grid-template-columns: repeat(7, ${({ $size }) => dayCellSize($size)});
+  width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'auto')};
+  grid-template-columns: ${({ $fullWidth, $size }) =>
+    $fullWidth ? 'repeat(7, minmax(0, 1fr))' : `repeat(7, ${dayCellSize($size)})`};
   gap: 4px;
   margin-bottom: 6px;
 `;
@@ -225,12 +237,17 @@ export const CalendarWeekdayCell = styled.div`
   padding: 4px 0;
 `;
 
-/** Сетка дней: фиксированная ширина колонок, без растягивания во внешнем широком контейнере */
+/**
+ * Сетка дней: при `fullWidth` — семь колонок `1fr`; иначе фиксированная ширина ячеек.
+ * @property $fullWidth - Растягивание сетки по ширине родителя.
+ */
 export const CalendarGrid = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== '$size',
-})<{ $size?: Size }>`
+  shouldForwardProp: (prop) => !['$size', '$fullWidth'].includes(prop),
+})<{ $size?: Size; $fullWidth?: boolean }>`
   display: grid;
-  grid-template-columns: repeat(7, ${({ $size }) => dayCellSize($size)});
+  width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'auto')};
+  grid-template-columns: ${({ $fullWidth, $size }) =>
+    $fullWidth ? 'repeat(7, minmax(0, 1fr))' : `repeat(7, ${dayCellSize($size)})`};
   gap: 6px;
 `;
 
@@ -255,11 +272,13 @@ export const CalendarFooter = styled.div`
  * @property $inRange - День внутри диапазона (не граница).
  * @property $today - Сегодняшний день.
  * @property $disabled - Недоступен для выбора.
+ * @property $fullWidth - Кружок дня ограничен размером из темы и центрируется в растянутой ячейке сетки.
  */
 export const CalendarDayButton = styled.button.withConfig({
   shouldForwardProp: (prop) =>
     ![
       '$size',
+      '$fullWidth',
       '$inCurrentMonth',
       '$selected',
       '$today',
@@ -270,6 +289,7 @@ export const CalendarDayButton = styled.button.withConfig({
     ].includes(prop),
 })<{
   $size?: Size;
+  $fullWidth?: boolean;
   $inCurrentMonth: boolean;
   $selected: boolean;
   $today: boolean;
@@ -278,8 +298,19 @@ export const CalendarDayButton = styled.button.withConfig({
   $rangeStart?: boolean;
   $rangeEnd?: boolean;
 }>`
-  width: ${({ $size }) => dayCellSize($size)};
-  height: ${({ $size }) => dayCellSize($size)};
+  ${({ $size, $fullWidth }) =>
+    $fullWidth
+      ? css`
+          width: min(100%, ${dayCellSize($size)});
+          height: auto;
+          aspect-ratio: 1;
+          max-width: 100%;
+          justify-self: center;
+        `
+      : css`
+          width: ${dayCellSize($size)};
+          height: ${dayCellSize($size)};
+        `}
   margin: 0;
   padding: 0;
   box-sizing: border-box;

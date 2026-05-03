@@ -15,6 +15,8 @@ export const BadgeContainer = styled(motion.span)<BadgeProps>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  /* Вместе с симметричным padding из темы даёт ровный круг при фиксированных width/height */
+  box-sizing: border-box;
   font-family: ${({ theme }) => theme.badges.settings.fontFamily};
   font-weight: ${({ theme }) => theme.badges.settings.fontWeight};
   /* Всегда круглый Badge */

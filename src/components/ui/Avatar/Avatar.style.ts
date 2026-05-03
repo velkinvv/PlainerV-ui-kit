@@ -3,18 +3,45 @@ import { motion } from 'framer-motion';
 import { type AvatarProps, AvatarState, AvatarStatus } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 
+/** Поля вокруг круга при бейдже сообщений: бейдж остаётся в пределах бокса и не обрезается overflow у предков */
+const MESSAGE_BADGE_BLEED = '8px';
+
 /**
  * Враппер для аватара и статуса
  * @param size - размер аватара
+ * @param $hasMessageBadge - если true, размер бокса увеличен на поля, чтобы бейдж не выходил за границы (не клипался в Storybook и т.п.)
  */
-export const AvatarWrapper = styled.div<{ size?: Size }>`
+export const AvatarWrapper = styled.div<{ size?: Size; $hasMessageBadge?: boolean }>`
   position: relative;
   display: inline-block;
+  overflow: visible;
+  box-sizing: border-box;
 
-  ${({ theme, size = Size.MD }) => css`
-    width: ${theme.avatars.sizes[size].width};
-    height: ${theme.avatars.sizes[size].height};
-  `}
+  ${({ theme, size = Size.MD, $hasMessageBadge }) => {
+    const dimensions = theme.avatars.sizes[size];
+    if (!$hasMessageBadge) {
+      return css`
+        width: ${dimensions.width};
+        height: ${dimensions.height};
+      `;
+    }
+    const bleed = MESSAGE_BADGE_BLEED;
+    return css`
+      width: calc(${dimensions.width} + ${bleed} + ${bleed});
+      height: calc(${dimensions.height} + ${bleed} + ${bleed});
+      padding: ${bleed};
+    `;
+  }}
+`;
+
+/**
+ * Обёртка бейджа счётчика сообщений (абсолютное позиционирование в углу расширенного враппера)
+ */
+export const AvatarMessageBadgeAnchor = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: ${({ theme }) => theme.avatars.settings.zIndex.status};
 `;
 
 /**

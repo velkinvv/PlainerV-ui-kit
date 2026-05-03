@@ -61,6 +61,12 @@ export const darkColors: Colors = {
   dangerHover: colors.red[300], // Опасность при наведении
   info: colors.primary[400],
   infoHover: colors.primary[300],
+  /** Тег Tag `primary`: чуть глубже `info` в тёмной теме */
+  tagPrimaryAccent: colors.primary[600],
+  tagAccentPurple: colors.purple[400],
+  tagAccentTeal: colors.teal[400],
+  tagAccentCyan: colors.cyan[400],
+  tagAccentPink: colors.pink[400],
 
   // Специальные цвета
   overlay: 'rgba(0, 0, 0, 0.7)', // Наложение

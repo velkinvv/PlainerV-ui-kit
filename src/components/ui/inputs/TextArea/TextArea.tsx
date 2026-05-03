@@ -1,6 +1,8 @@
 import React, { forwardRef, useCallback, useMemo } from 'react';
 import type { TextAreaProps, TooltipPosition } from '../../../../types/ui';
 import { Size } from '../../../../types/sizes';
+import { getClearIconSizeForInputField } from '../../../../handlers/iconHandlers';
+import { Icon } from '../../Icon/Icon';
 import { Tooltip } from '../../Tooltip/Tooltip';
 import { Hint, HintVariant, type HintPosition } from '../../Hint/Hint';
 import { useFormContext } from '../../../../contexts/FormContext';
@@ -10,13 +12,16 @@ import {
   HelperText,
   ErrorText,
   SuccessText,
-  SkeletonEffect,
   AdditionalLabel,
   ExtraText,
   CharacterCounter,
   RequiredIndicator,
+  LoadingSpinner,
+  getInputDisplayValue,
+  shouldShowInputClearButton,
+  hasInputRightControls,
 } from '../shared';
-import { StyledTextArea, TextAreaWrapper } from './TextArea.style';
+import { StyledTextArea, TextAreaWrapper, TextAreaClearButton, TextAreaSkeleton } from './TextArea.style';
 import { getTextAreaCurrentLength, getTextAreaStatus, shouldShowTextAreaCounter } from './handlers';
 
 export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
@@ -32,6 +37,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       success,
       status,
       skeleton = false,
+      isLoading = false,
       disableCopying = false,
       extraText,
       tooltip,
@@ -46,7 +52,11 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       readOnly = false,
       required = false,
       textAlign = 'left',
+      displayClearIcon = false,
+      onClearIconClick,
+      clearIconProps,
       className,
+      id,
       resize = 'vertical',
       rows = 4,
       ...props
@@ -56,6 +66,10 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     const [focused, setFocused] = React.useState(false);
     const [internalValue, setInternalValue] = React.useState(value?.toString() || '');
     const formContext = useFormContext();
+    const textAreaId = useMemo(
+      () => id ?? `textarea-${Math.random().toString(36).slice(2, 10)}`,
+      [id],
+    );
 
     const currentStatus = useMemo(
       () => getTextAreaStatus(status, error, success),
@@ -105,7 +119,23 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       [disableCopying],
     );
 
-    const displayValue = value !== undefined ? value : internalValue;
+    /** Сброс значения и уведомление родителя (контролируемый режим обновляет `value` в `onClearIconClick`). */
+    const handleClear = useCallback(() => {
+      setInternalValue('');
+      onClearIconClick?.();
+    }, [onClearIconClick]);
+
+    const displayValue = getInputDisplayValue(value, internalValue);
+    const showClearButton = shouldShowInputClearButton({
+      displayClearIcon,
+      currentValue: displayValue,
+      disabled,
+      readOnly,
+    });
+    const hasRightControls = hasInputRightControls({
+      isLoading,
+      showClearButton,
+    });
     const maxLength = useMemo(() => props.maxLength || 0, [props.maxLength]);
     const currentLength = useMemo(
       () => getTextAreaCurrentLength(value, internalValue),
@@ -133,7 +163,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
             </Label>
           ) : null}
           {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
-          <SkeletonEffect size={Size.LG} fullWidth={fullWidth} role="presentation" />
+          <TextAreaSkeleton fullWidth={fullWidth} $rows={rows} role="presentation" />
         </InputContainer>
       );
     }
@@ -149,37 +179,100 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
 
         {additionalLabel && <AdditionalLabel>{additionalLabel}</AdditionalLabel>}
 
-        {tooltip && tooltipType === 'tooltip' ? (
-          <Tooltip content={tooltip} position={tooltipPosition as TooltipPosition}>
-            <TextAreaWrapper
-              size={Size.LG}
-              error={error}
-              success={success}
-              status={currentStatus}
-              fullWidth={fullWidth}
-              focused={focused}
-              readOnly={readOnly}
-              className={className}
-            >
-              <StyledTextArea
-                ref={ref}
-                value={displayValue}
-                onChange={handleChange}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-                placeholder={placeholder}
-                disabled={disabled}
+        {tooltip ? (
+          tooltipType === 'tooltip' ? (
+            <Tooltip content={tooltip} position={tooltipPosition as TooltipPosition}>
+              <TextAreaWrapper
+                size={Size.LG}
+                error={error}
+                success={success}
+                status={currentStatus}
+                fullWidth={fullWidth}
+                focused={focused}
                 readOnly={readOnly}
-                textAlign={textAlign}
-                onCopy={handleCopy}
-                onPaste={handlePaste}
-                form={formContext?.formId}
-                resize={resize}
-                rows={rows}
-                {...props}
-              />
-            </TextAreaWrapper>
-          </Tooltip>
+                className={className}
+              >
+                <StyledTextArea
+                  ref={ref}
+                  id={textAreaId}
+                  value={displayValue}
+                  onChange={handleChange}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  placeholder={placeholder}
+                  disabled={disabled}
+                  readOnly={readOnly}
+                  required={required}
+                  textAlign={textAlign}
+                  onCopy={handleCopy}
+                  onPaste={handlePaste}
+                  form={formContext?.formId}
+                  resize={resize}
+                  rows={rows}
+                  $hasRightControls={hasRightControls}
+                  {...props}
+                />
+                {isLoading && <LoadingSpinner size={Size.LG} />}
+                {showClearButton && (
+                  <TextAreaClearButton onClick={handleClear} type="button">
+                    <Icon
+                      name="IconExClose"
+                      size={getClearIconSizeForInputField(Size.SM)}
+                      {...clearIconProps}
+                    />
+                  </TextAreaClearButton>
+                )}
+              </TextAreaWrapper>
+            </Tooltip>
+          ) : (
+            <Hint
+              content={tooltip}
+              placement={tooltipPosition as HintPosition}
+              variant={HintVariant.DEFAULT}
+            >
+              <TextAreaWrapper
+                size={Size.LG}
+                error={error}
+                success={success}
+                status={currentStatus}
+                fullWidth={fullWidth}
+                focused={focused}
+                readOnly={readOnly}
+                className={className}
+              >
+                <StyledTextArea
+                  ref={ref}
+                  id={textAreaId}
+                  value={displayValue}
+                  onChange={handleChange}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  placeholder={placeholder}
+                  disabled={disabled}
+                  readOnly={readOnly}
+                  required={required}
+                  textAlign={textAlign}
+                  onCopy={handleCopy}
+                  onPaste={handlePaste}
+                  form={formContext?.formId}
+                  resize={resize}
+                  rows={rows}
+                  $hasRightControls={hasRightControls}
+                  {...props}
+                />
+                {isLoading && <LoadingSpinner size={Size.LG} />}
+                {showClearButton ? (
+                  <TextAreaClearButton onClick={handleClear} type="button">
+                    <Icon
+                      name="IconExClose"
+                      size={getClearIconSizeForInputField(Size.LG)}
+                      {...clearIconProps}
+                    />
+                  </TextAreaClearButton>
+                ) : null}
+              </TextAreaWrapper>
+            </Hint>
+          )
         ) : (
           <TextAreaWrapper
             size={Size.LG}
@@ -193,6 +286,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
           >
             <StyledTextArea
               ref={ref}
+              id={textAreaId}
               value={displayValue}
               onChange={handleChange}
               onFocus={handleFocus}
@@ -200,25 +294,27 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
               placeholder={placeholder}
               disabled={disabled}
               readOnly={readOnly}
+              required={required}
               textAlign={textAlign}
               onCopy={handleCopy}
               onPaste={handlePaste}
               form={formContext?.formId}
               resize={resize}
               rows={rows}
+              $hasRightControls={hasRightControls}
               {...props}
             />
+            {isLoading && <LoadingSpinner size={Size.LG} />}
+            {showClearButton && (
+              <TextAreaClearButton onClick={handleClear} type="button">
+                <Icon
+                  name="IconExClose"
+                  size={getClearIconSizeForInputField(Size.SM)}
+                  {...clearIconProps}
+                />
+              </TextAreaClearButton>
+            )}
           </TextAreaWrapper>
-        )}
-
-        {tooltip && tooltipType === 'hint' && (
-          <Hint
-            content={tooltip}
-            placement={tooltipPosition as HintPosition}
-            variant={HintVariant.DEFAULT}
-          >
-            {tooltip}
-          </Hint>
         )}
 
         {error && <ErrorText>{error}</ErrorText>}

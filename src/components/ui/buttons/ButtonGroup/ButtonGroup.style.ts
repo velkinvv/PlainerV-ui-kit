@@ -3,8 +3,11 @@ import type { ButtonGroupAttachedShape, ButtonGroupOrientation } from '@/types/u
 import { Size } from '@/types/sizes';
 import { getButtonGroupAttachedOuterRadius } from './handlers';
 
-/** Прямые потомки: нативная кнопка, ссылка-кнопка, motion.button от `Button`/`IconButton` */
-const attachedSegmentChildSelector = '& > button, & > a.ui-button';
+/**
+ * Прямые потомки в группе: `Button`, `IconButton`, ссылки-кнопки.
+ * Явно учитываем классы, чтобы правила применялись стабильно во всех сторис.
+ */
+const attachedSegmentChildSelector = '& > :is(.ui-button, .ui-icon-button, button, a.ui-button)';
 
 /**
  * Корневая обёртка группы кнопок.
@@ -30,11 +33,11 @@ export const ButtonGroupRoot = styled.div<{
   ${({ $attached, $orientation, $size, $attachedShape }) =>
     $attached &&
     css`
-      /* Обрезка по общему контуру, как в макете (единый прямоугольник / капсула) */
+      /* Единый контур группы, как в макете: кнопки визуально "прилипают". */
       border-radius: ${getButtonGroupAttachedOuterRadius($size, $attachedShape)};
-      overflow: hidden;
 
       ${attachedSegmentChildSelector} {
+        margin: 0 !important;
         border-radius: 0 !important;
         position: relative;
         z-index: 0;
@@ -48,7 +51,7 @@ export const ButtonGroupRoot = styled.div<{
       ${$orientation === 'horizontal'
         ? css`
             ${attachedSegmentChildSelector}:not(:first-of-type) {
-              margin-left: -1px;
+              border-left-width: 0;
             }
 
             ${attachedSegmentChildSelector}:first-of-type {
@@ -67,7 +70,7 @@ export const ButtonGroupRoot = styled.div<{
           `
         : css`
             ${attachedSegmentChildSelector}:not(:first-of-type) {
-              margin-top: -1px;
+              border-top-width: 0;
             }
 
             ${attachedSegmentChildSelector}:first-of-type {

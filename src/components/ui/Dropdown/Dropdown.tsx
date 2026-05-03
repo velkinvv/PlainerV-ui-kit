@@ -40,6 +40,7 @@ import {
   DropdownMenuFromDefinitions,
   type DropdownMenuFromDefinitionsProps,
 } from './DropdownMenuFromDefinitions';
+import { DefaultTriggerTag } from './DefaultTriggerTag';
 import {
   defaultDropdownSearchMatches,
   getDropdownItemSearchHaystackParts,
@@ -108,6 +109,10 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       triggerWrapClickToggle = true,
       fullWidth = false,
       openMenuIconProps,
+      defaultTriggerKind = 'button',
+      tagTriggerProps,
+      labelFromSelection = false,
+      tagTriggerShowChevron = true,
       treeExpandable,
       treeDefaultExpanded,
       treeExpandedKeys,
@@ -133,7 +138,8 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
     } | null>(null);
     /** Длина плоского списка при последнем вызове `onMenuLoadMore` (сброс при отходе от низа). */
     const loadMoreLastFiredAtLengthRef = useRef(-1);
-    const defaultTriggerRef = useRef<HTMLButtonElement>(null);
+    const defaultButtonTriggerRef = useRef<HTMLButtonElement | null>(null);
+    const defaultTagTriggerRef = useRef<HTMLElement | null>(null);
     const isSearchControlled = searchValue !== undefined;
     const [internalSearchValue, setInternalSearchValue] = useState(defaultSearchValue ?? '');
     const [asyncItems, setAsyncItems] = useState<DropdownMenuItemProps[] | null>(null);
@@ -398,7 +404,10 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       if (disableAutoFocus || disabled || skeleton) return;
       if (trigger) return;
 
-      const element = defaultTriggerRef.current;
+      const element =
+        defaultTriggerKind === 'tag'
+          ? defaultTagTriggerRef.current
+          : defaultButtonTriggerRef.current;
       if (!element) return;
 
       const rect = element.getBoundingClientRect();
@@ -410,7 +419,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       }
 
       element.focus();
-    }, [disableAutoFocus, disabled, skeleton, trigger]);
+    }, [disableAutoFocus, disabled, skeleton, trigger, defaultTriggerKind]);
 
     const currentSearchValue = searchable
       ? isSearchControlled
@@ -891,9 +900,26 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
             >
               {trigger}
             </div>
+          ) : defaultTriggerKind === 'tag' ? (
+            <DefaultTriggerTag
+              ref={defaultTagTriggerRef}
+              onToggle={handleTriggerClick}
+              buttonProps={buttonProps}
+              tagTriggerProps={tagTriggerProps}
+              skeleton={skeleton}
+              disabled={disabled}
+              fieldSize={size}
+              openMenuIconProps={openMenuIconProps}
+              items={items}
+              value={value}
+              multiSelection={multiSelection}
+              labelFromSelection={labelFromSelection}
+              tagTriggerShowChevron={tagTriggerShowChevron}
+              isMenuOpen={isOpen}
+            />
           ) : (
             <DefaultTriggerButton
-              ref={defaultTriggerRef}
+              ref={defaultButtonTriggerRef}
               onToggle={handleTriggerClick}
               buttonProps={buttonProps}
               skeleton={skeleton}

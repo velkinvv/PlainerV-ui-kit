@@ -13,7 +13,7 @@ const meta: Meta<typeof IconButton> = {
     docs: {
       description: {
         component:
-          'Круглая кнопка с иконками, дублирующая весь функционал Button. Поддерживает все варианты, размеры и состояния.',
+          'Иконочная кнопка, дублирующая функционал Button. По умолчанию использует радиусы из темы, при `rounded=true` становится круглой.',
       },
     },
   },
@@ -58,7 +58,7 @@ const meta: Meta<typeof IconButton> = {
     },
     rounded: {
       control: { type: 'boolean' },
-      description: 'Скругленные углы (по умолчанию true - круглая)',
+      description: 'Скругленные углы (по умолчанию false — радиус из темы; true — круглая)',
       table: { type: { summary: 'boolean' } },
     },
     showTooltip: {

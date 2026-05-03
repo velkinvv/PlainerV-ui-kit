@@ -217,13 +217,13 @@ const DateInputFieldStack = styled.div.withConfig({
 `;
 
 const CalendarPopup = styled.div.withConfig({
-  shouldForwardProp: prop => !['isOpen', 'size'].includes(prop),
-})<{ isOpen: boolean; size?: Size }>`
+  shouldForwardProp: prop => !['isOpen', 'size', '$calendarFullWidth'].includes(prop),
+})<{ isOpen: boolean; size?: Size; $calendarFullWidth?: boolean }>`
   position: absolute;
   top: 100%;
   left: 0;
-  /* По ширине календаря, без растягивания на всю ширину поля ввода */
-  width: max-content;
+  /* По умолчанию — ширина контента; опционально можно растянуть на ширину поля */
+  width: ${({ $calendarFullWidth }) => ($calendarFullWidth ? '100%' : 'max-content')};
   max-width: 100%;
   background: ${({ theme }) => theme.colors.backgroundSecondary};
   border: 2px solid ${({ theme }) => theme.colors.borderSecondary};
@@ -414,6 +414,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
       format = 'DD.MM.YYYY', // Формат отображения даты по умолчанию
       showDateRollers = false,
       calendarMonthYearLayout = 'combined',
+      calendarFullWidth = false,
       ...props
     },
     ref,
@@ -1370,7 +1371,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
           })()}
         </DateInputFieldStack>
 
-        <CalendarPopup isOpen={isOpen} size={size}>
+        <CalendarPopup isOpen={isOpen} size={size} $calendarFullWidth={calendarFullWidth}>
           {renderTopPanel && (
             <div style={{ padding: '16px', borderBottom: '1px solid #e0e0e0' }}>
               {renderTopPanel()}

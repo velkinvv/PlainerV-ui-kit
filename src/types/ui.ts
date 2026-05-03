@@ -428,6 +428,12 @@ export type ButtonGroupAttachedShape = 'segment' | 'pill';
  * @property size - Размер для расчёта внешнего радиуса в `attached` (совпадайте с `size` у дочерних `Button`)
  * @property attachedShape - `segment` — радиус от `size`; `pill` — внешние углы как у капсулы
  * @property fullWidth - Растянуть группу на ширину родителя (`display: flex`, `width: 100%`)
+ * @property selectable - Включает режим переключения активной кнопки по индексу
+ * @property activeIndex - Индекс активной кнопки (контролируемый режим)
+ * @property defaultActiveIndex - Стартовый индекс активной кнопки (неконтролируемый режим)
+ * @property onActiveIndexChange - Колбэк смены активного индекса
+ * @property activeButtonVariant - Вариант активной кнопки в режиме `selectable`
+ * @property inactiveButtonVariant - Вариант неактивных кнопок в режиме `selectable`
  * @property role - Роль контейнера (по умолчанию `group`)
  * @property ariaLabel - Подпись для `aria-label` (желательно для доступности)
  * @property className - CSS-класс на контейнере
@@ -440,6 +446,12 @@ export interface ButtonGroupProps extends Omit<BaseComponentProps, 'children'> {
   size?: Size;
   attachedShape?: ButtonGroupAttachedShape;
   fullWidth?: boolean;
+  selectable?: boolean;
+  activeIndex?: number;
+  defaultActiveIndex?: number;
+  onActiveIndexChange?: (activeButtonIndex: number) => void;
+  activeButtonVariant?: ButtonVariant;
+  inactiveButtonVariant?: ButtonVariant;
   role?: string;
   ariaLabel?: string;
 }
@@ -502,7 +514,11 @@ export interface InputProps extends BaseInputProps {
  * @property textAlign - Выравнивание текста
  * @property readOnly - Поле только для чтения
  * @property skeleton - Состояние skeleton
+ * @property isLoading - Показать индикатор загрузки в правой части поля
  * @property disableCopying - Отключает возможность вставки/копирования
+ * @property displayClearIcon - Показывать кнопку очистки значения
+ * @property onClearIconClick - Колбэк очистки значения
+ * @property clearIconProps - Частичные пропсы иконки очистки
  * @property extraText - Дополнительный текст под полем
  * @property tooltip - Текст/контент подсказки
  * @property tooltipType - Тип подсказки (`tooltip` или `hint`)
@@ -525,7 +541,11 @@ export interface TextAreaProps
   textAlign?: TextAlign;
   readOnly?: boolean;
   skeleton?: boolean;
+  isLoading?: boolean;
   disableCopying?: boolean;
+  displayClearIcon?: boolean;
+  onClearIconClick?: () => void;
+  clearIconProps?: ClearIconProps;
   extraText?: string;
   tooltip?: React.ReactNode;
   tooltipType?: 'tooltip' | 'hint';
@@ -628,11 +648,48 @@ export interface BadgeProps extends BaseComponentProps {
   onClick?: () => void;
 }
 
-/** Цветовая схема тега (макет Figma) */
-export type TagColorVariant = 'neutral' | 'danger' | 'info' | 'success' | 'warning';
+/**
+ * Цветовая схема тега (семантика из темы + расширенные акценты).
+ * `custom` — только вместе с {@link TagCustomColors} (поверхность и/или маркер).
+ */
+export type TagColorVariant =
+  | 'neutral'
+  | 'secondary'
+  | 'primary'
+  | 'danger'
+  | 'info'
+  | 'success'
+  | 'warning'
+  | 'purple'
+  | 'teal'
+  | 'cyan'
+  | 'pink'
+  | 'custom';
+
+/**
+ * Кастомные цвета тега: полная поверхность (`background`) и/или только маркер (`marker`).
+ * Значения — любые допустимые в CSS цвета (в т.ч. из своей темы приложения).
+ */
+export type TagCustomColors = {
+  /** Заливка пилюли (если задано — включается режим полностью кастомной поверхности) */
+  background?: string;
+  border?: string;
+  backgroundHover?: string;
+  /** Цвет текста */
+  color?: string;
+  /** Цвет кружка в режиме `statusDisplay="marker"` (перекрывает цвет из `colorVariant`) */
+  marker?: string;
+};
 
 /** Вид заливки: мягкий фон или контрастная обводка */
 export type TagAppearance = 'filled' | 'outline';
+
+/**
+ * Как показать семантику цвета — заливка всей «пилюли» или цветная метка слева:
+ * - **surface** — вся «пилюля» окрашена (`filled` / `outline`)
+ * - **marker** — нейтральный фон тега и цветной кружок-статус слева от текста
+ */
+export type TagStatusDisplay = 'surface' | 'marker';
 
 /**
  * Тег (pill с текстом/иконками): нейтральный, ошибка, инфо, успех, предупреждение × filled / outline.
@@ -644,33 +701,94 @@ export type TagAppearance = 'filled' | 'outline';
  * @property rightIcon - Иконка справа от текста
  * @property onClick - Кликабельный тег (`role="button"`, клавиатура)
  * @property disabled - Неактивное состояние
+ * @property skeleton - Плейсхолдер загрузки (шиммер, `aria-busy`; текст и иконки не рендерятся)
+ * @property skeletonWidth - Ширина скелетона в px (если не задана — по размеру `size`)
+ * @property statusDisplay - Семантика через заливку всего тега или через цветную метку-кружок (`marker`)
+ * @property width / maxWidth - Явная ширина / ограничение (для обрезки текста с тултипом)
+ * @property as - Корневой элемент: `span` | `button` | `div` (для клика удобнее `button`)
+ * @property customColors — полная кастомизация поверхности и/или маркера (см. {@link TagCustomColors}); при `colorVariant="custom"` ожидается хотя бы `background` или только `marker` для точечной метки
+ * @property hideBorder - Скрыть видимую обводку (surface)
+ * @property tooltipWhenTruncated - Показывать `Tooltip`, если текст не помещается (нужен `maxWidth` или `width`)
+ * @property tooltipContent - Текст тултипа при обрезании (иначе — строковые `children`)
  */
 export interface TagProps extends BaseComponentProps, Omit<React.HTMLAttributes<HTMLSpanElement>, 'children'> {
   children?: React.ReactNode;
   colorVariant?: TagColorVariant;
   appearance?: TagAppearance;
+  /** Статус через заливку всего тега или через цветной маркер слева */
+  statusDisplay?: TagStatusDisplay;
   size?: Size;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
-  onClick?: React.MouseEventHandler<HTMLSpanElement>;
+  onClick?: React.MouseEventHandler<HTMLElement>;
   disabled?: boolean;
+  skeleton?: boolean;
+  /** Ширина полоски скелетона в пикселях */
+  skeletonWidth?: number;
+  /** Фиксированная ширина тега */
+  width?: number | string;
+  /** Максимальная ширина (часто вместе с `tooltipWhenTruncated`) */
+  maxWidth?: number | string;
+  /** Корневой тег для доступности (`button` + `type="button"` при клике) */
+  as?: 'span' | 'button' | 'div';
+  /** Кастомные цвета поверхности и/или маркера */
+  customColors?: TagCustomColors;
+  /** Убрать видимую рамку (surface) */
+  hideBorder?: boolean;
+  /** Тултип при переполнении текста */
+  tooltipWhenTruncated?: boolean;
+  /** Содержимое тултипа при обрезке (если не строковые children) */
+  tooltipContent?: React.ReactNode;
 }
+
+/**
+ * Встроенный триггер `Dropdown` без кастомного `trigger`: стандартная кнопка или тег-пилюля (`Tag`).
+ */
+export type DropdownDefaultTriggerKind = 'button' | 'tag';
+
+/**
+ * Пропсы тега при `defaultTriggerKind="tag"` (подпись триггера — `buttonProps.children`).
+ */
+export type DropdownTagTriggerProps = Omit<TagProps, 'children' | 'onClick' | 'as' | 'disabled' | 'skeleton'>;
+
+/**
+ * Семантический акцент Pill: граница, текст и индикатор в выбранном состоянии (вместо `primary`).
+ */
+export type PillStatus = 'default' | 'success' | 'warning' | 'danger' | 'info';
 
 /**
  * Чип «Pill» с круглым индикатором слева (макет Figma: default / hover / active / selected / disabled).
  * @property children - Подпись (например «Pill»)
- * @property selected - Выбранное состояние (синий акцент, заполненный индикатор)
+ * @property selected - Выбранное состояние (акцент темы / статуса, заполненный индикатор)
  * @property size - Размер: SM / MD / LG
  * @property disabled - Неактивное состояние
+ * @property status - Семантический статус (цвет выбранного состояния и шеврона загрузки)
+ * @property loading - Загрузка: блокировка клика, `aria-busy`, индикатор-спиннер вместо точки
+ * @property skeleton - Плейсхолдер загрузки вместо кнопки (`span`, не интерактивен)
+ * @property skeletonWidth - Ширина полоски скелетона в px (иначе по размеру)
  * @property className - Дополнительный CSS-класс
- * Остальные пропсы передаются на нативную кнопку (`type="button"` по умолчанию).
+ * Остальные пропсы передаются на нативную кнопку (`type="button"` по умолчанию) или на корень скелетона.
  */
 export interface PillProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'size'>,
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'size' | 'onChange'>,
     BaseComponentProps {
   children: React.ReactNode;
   selected?: boolean;
   size?: Size;
+  /**
+   * Смена выбранного состояния по клику: передаётся **новое** значение `selected` для подъёма в родитель.
+   * Без `role="radio"`: `nextSelected = !selected` (переключатель). С `role="radio"`: всегда `true` (выбран этот пункт группы).
+   * Вызывается перед `onClick`. Не вызывается при `disabled`, `loading`, `skeleton`.
+   */
+  onChange?: (nextSelected: boolean, event: React.MouseEvent<HTMLButtonElement>) => void;
+  /** Семантический акцент для выбранного состояния и спиннера при `loading` */
+  status?: PillStatus;
+  /** Неактивен для указателя, `aria-busy`, спиннер в индикаторе */
+  loading?: boolean;
+  /** Режим скелетона: полоска-шиммер вместо кнопки */
+  skeleton?: boolean;
+  /** Ширина скелетона в px (по умолчанию от `size`) */
+  skeletonWidth?: number;
 }
 
 /** Значение диапазона для `RangeSlider`: [нижняя граница, верхняя граница] */
@@ -687,8 +805,19 @@ export type SliderRangeValue = readonly [number, number];
  * @property formatMinLabel - Текст над левым концом трека
  * @property formatMaxLabel - Текст над правым концом трека
  * @property showValueLabel - Показывать число под бегунком(ами)
- * @property size - Размер бегунка (SM / MD / LG)
- * Цвет активного трека и бегунка: `theme.colors.info` / `infoHover` (яркий синий UI, как тултип и пагинация).
+ * @property size - Масштаб слайдера: бегунок (12–28 px) и толщина трека (`getSliderTrackMetrics` / `resolveSliderTrackMetrics`)
+ * @property trackRailHeightPx - Толщина серой линии трека (px); при отсутствии — из `size`
+ * @property trackActiveHeightPx - Толщина синего сегмента (px); при отсутствии — из `size`
+ * @property label - Основной лейбл над треком (как у `Input`)
+ * @property additionalLabel - Дополнительная подпись под `label`
+ * @property error - Сообщение об ошибке под слайдером
+ * @property success - Успешное состояние (текст «Успешно»)
+ * @property helperText - Подсказка (скрывается при `error` / `success`)
+ * @property extraText - Дополнительный текст внизу (как `extraText` у инпута)
+ * @property required - Обязательное поле (звёздочка у `label`)
+ * @property skeleton - Плейсхолдер загрузки вместо трека (`aria-busy` на контейнере с лейблом)
+ * @property status - Акцент трека/бегунка и тонкая обводка: `error` | `success` | `warning` (с `error` / `success` как у `Input`)
+ * Цвет по умолчанию: `theme.colors.info` / `infoHover` (яркий синий UI, как тултип и пагинация).
  */
 export interface SliderBaseProps extends BaseComponentProps {
   min?: number;
@@ -701,6 +830,28 @@ export interface SliderBaseProps extends BaseComponentProps {
   formatMaxLabel?: (max: number) => string;
   showValueLabel?: boolean;
   size?: Size;
+  /** Толщина серой «рельсы» (px); иначе по `size` */
+  trackRailHeightPx?: number;
+  /** Толщина синей активной полоски (px); иначе по `size` */
+  trackActiveHeightPx?: number;
+  /** Основной лейбл над треком */
+  label?: ReactNode;
+  /** Дополнительная подпись под основным лейблом */
+  additionalLabel?: string;
+  /** Текст ошибки под слайдером */
+  error?: string;
+  /** Успешное состояние */
+  success?: boolean;
+  /** Вспомогательный текст */
+  helperText?: string;
+  /** Дополнительный текст под блоком */
+  extraText?: string;
+  /** Обязательное поле */
+  required?: boolean;
+  /** Скелетон вместо бегунков и интерактива */
+  skeleton?: boolean;
+  /** Акцент рамки и заливки трека / бегунков */
+  status?: 'error' | 'success' | 'warning';
 }
 
 /**
@@ -1298,6 +1449,21 @@ export interface DropdownProps extends BaseComponentProps {
    * При кастомном `trigger` не применяется.
    */
   openMenuIconProps?: OpenMenuIconProps;
+  /**
+   * Встроенный триггер без кастомного `trigger`: кнопка (`button`) или тег (`tag`).
+   * Текст — `buttonProps.children`; при `tag` оформление — поле {@link tagTriggerProps}.
+   */
+  defaultTriggerKind?: DropdownDefaultTriggerKind;
+  /** Пропсы тега при `defaultTriggerKind="tag"` */
+  tagTriggerProps?: DropdownTagTriggerProps;
+  /**
+   * При `defaultTriggerKind="tag"`: подставить на триггер `label` выбранного пункта из `items` (одиночный выбор).
+   */
+  labelFromSelection?: boolean;
+  /**
+   * При `defaultTriggerKind="tag"`: показывать шеврон из {@link openMenuIconProps}, если в {@link tagTriggerProps} не задан `rightIcon`.
+   */
+  tagTriggerShowChevron?: boolean;
   children?: React.ReactElement<DropdownMenuProps> | React.ReactNode;
   /**
    * Дерево пунктов (`nestedItems`): каскадный мультивыбор и раскрытие веток (как у групп-чекбоксов в меню).
@@ -1850,6 +2016,7 @@ export type CalendarMonthYearLayout = 'combined' | 'split';
  * @property weekdays — ровно 7 подписей столбцов (иначе из `Intl` по `locale` и `weekStartsOn`).
  * @property footer — блок под сеткой (кнопки «Очистить» / «Применить» и т.п.).
  * @property embedded — компактный вид без лишней тени (внутри попапа `DateInput`).
+ * @property fullWidth — растянуть календарь на всю ширину контейнера.
  * @property onDayMouseEnter / onDayMouseLeave — наведение на день (предпросмотр конца диапазона в `DateInput`).
  * @property showDateRollers — три колонки «день — месяц — год» над сеткой (макет Figma «роллеры»).
  * @property monthYearLayout — один выпадающий список или два триггера месяц / год.
@@ -1888,6 +2055,7 @@ export interface CalendarProps
   weekdays?: string[];
   footer?: React.ReactNode;
   embedded?: boolean;
+  fullWidth?: boolean;
   onDayMouseEnter?: (date: Date) => void;
   onDayMouseLeave?: () => void;
   showDateRollers?: boolean;
@@ -2685,20 +2853,61 @@ export interface PaginationProps extends BaseComponentProps {
  * Пропсы чекбокса
  * @property checked - Отмечен ли чекбокс
  * @property onChange - Обработчик изменения
- * @property label - Метка (`ReactNode`)
+ * @property label - Подпись рядом с квадратом чекбокса
+ * @property fieldLabel - Подпись над чекбоксом — те же стили и семантика, что `label` у Input/TextArea
+ * @property additionalLabel - Строка под `fieldLabel`, как `additionalLabel` у Input
+ * @property formRequired - Индикатор * у `fieldLabel` и атрибут `required` у `input`
+ * @property fullWidth - Растянуть контейнер поля на всю доступную ширину
  * @property disabled - Отключить чекбокс
  * @property size - Размер чекбокса
  * @property error - Сообщение об ошибке
  * @property indeterminate - Промежуточное состояние (частичный выбор); для DOM `input.indeterminate`
  */
 export interface CheckboxProps extends BaseComponentProps {
+  /** Идентификатор DOM для `input` (иначе задаётся автоматически) */
+  id?: string;
   checked?: boolean;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   label?: ReactNode;
+  /** Подпись над элементом управления — аналог `label` из Input/TextArea */
+  fieldLabel?: ReactNode;
+  /** Строка под `fieldLabel` — как `additionalLabel` у Input */
+  additionalLabel?: ReactNode;
+  /** Звезда обязательности у `fieldLabel` и атрибут `required` на `input` */
+  formRequired?: boolean;
+  fullWidth?: boolean;
   disabled?: boolean;
   size?: Size;
   error?: string;
+  /** Успешное состояние — строка «Успешно» под полем, как у Input */
+  success?: boolean;
+  /** Подсказка под элементом управления — как `helperText` у Input */
+  helperText?: string;
+  /** Дополнительный текст ниже блока ошибок/подсказок — как `extraText` у Input */
+  extraText?: string;
   indeterminate?: boolean;
+}
+
+/**
+ * Группа чекбоксов с общей подписью (как `label`/`additionalLabel` у полей ввода).
+ * @property label - заголовок группы над списком
+ * @property additionalLabel — вторая строка под заголовком
+ * @property required — индикатор * у заголовка
+ * @property fullWidth — растянуть на ширину контейнера
+ * @property helperText — текст под группой
+ * @property error — ошибка группы
+ * @property children — элементы управления (`Checkbox`)
+ */
+export interface CheckboxGroupProps extends BaseComponentProps {
+  label?: ReactNode;
+  additionalLabel?: ReactNode;
+  required?: boolean;
+  fullWidth?: boolean;
+  helperText?: string;
+  error?: string;
+  success?: boolean;
+  extraText?: string;
+  children: ReactNode;
 }
 
 /**
@@ -2754,16 +2963,32 @@ export enum RadioButtonLabelPosition {
 }
 
 export interface RadioButtonProps extends BaseComponentProps {
+  /** Идентификатор DOM для `input` (иначе задаётся автоматически) */
+  id?: string;
   checked?: boolean;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onClick?: (event: React.MouseEvent<HTMLLabelElement>) => void; // Обработчик клика по кнопке или лейблу
+  /** Подпись рядом с кружком опции */
   label?: ReactNode;
+  /** Подпись над радиокнопкой — аналог верхнего `label` у Input/TextArea */
+  fieldLabel?: ReactNode;
+  /** Строка под `fieldLabel`, как `additionalLabel` у Input */
+  additionalLabel?: ReactNode;
+  /** Звезда у `fieldLabel` и усиление доступности через `required` на `input` */
+  formRequired?: boolean;
   disabled?: boolean;
   size?: Size;
   name?: string;
   value?: string;
   error?: string; // Сообщение об ошибке
-  helperText?: string; // Вспомогательный текст, отображаемый под радиокнопкой
+  helperText?: string; // Вспомогательный текст под радиокнопкой — как helperText у Input
+  /** Успешное состояние поля («Успешно» под контролом), порядок как у Input */
+  success?: boolean;
+  /**
+   * Текст под полем целиком — аналог `extraText` у Input (ниже ошибки/хелпа).
+   * Не путать с `extraText` у строки опции рядом с лейблом.
+   */
+  extraFooterText?: string;
   tooltip?: React.ReactNode; // Подсказка, отображаемая при наведении
   tooltipPosition?: TooltipPosition; // Позиция подсказки
   required?: boolean; // Показывает индикатор обязательности поля
@@ -2803,7 +3028,8 @@ export interface RadioButtonGroupOption
  * @property value - Активное значение (value выбранной опции)
  * @property onChange - Обработчик изменения значения
  * @property onClick - Обработчик клика по опции
- * @property label - Лейбл для всей группы
+ * @property label - Лейбл для всей группы (как `label` у Input)
+ * @property additionalLabel - Строка под заголовком группы
  * @property disabled - Отключить всю группу
  * @property readOnly - Только для чтения (вся группа)
  * @property orientation - Ориентация группы: horizontal или vertical
@@ -2820,6 +3046,8 @@ export interface RadioButtonGroupProps extends BaseComponentProps {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void; // Обработчик изменения
   onClick?: (value: string, option: RadioButtonGroupOption) => void; // Обработчик клика
   label?: ReactNode; // Лейбл для всей группы
+  /** Строка под заголовком группы (`additionalLabel` как у Input) */
+  additionalLabel?: ReactNode;
   disabled?: boolean; // Отключить всю группу
   readOnly?: boolean; // Только для чтения (вся группа)
   orientation?: RadioButtonGroupOrientation; // Ориентация группы
@@ -2829,6 +3057,9 @@ export interface RadioButtonGroupProps extends BaseComponentProps {
   labelPosition?: RadioButtonLabelPosition; // Позиция лейбла для радиокнопок в группе
   error?: string | string[]; // Сообщение об ошибке для группы (строка) или отдельных опций (массив)
   helperText?: string; // Вспомогательный текст для группы
+  success?: boolean; // Успешное состояние группы («Успешно»), как у Input
+  /** Текст под всем блоком сообщений группы — как `extraText` у Input */
+  extraText?: string;
   required?: boolean; // Показывает, что группа обязательна для заполнения
   tooltip?: React.ReactNode; // Подсказка для группы радиокнопок
   tooltipPosition?: TooltipPosition; // Позиция подсказки
@@ -2910,6 +3141,8 @@ export interface DatePickerProps extends Omit<BaseInputProps, 'value' | 'onChang
   showDateRollers?: boolean;
   /** Два триггера «месяц» и «год» в шапке календаря вместо одного списка */
   calendarMonthYearLayout?: CalendarMonthYearLayout;
+  /** Растянуть выпадающий календарь на ширину поля ввода */
+  calendarFullWidth?: boolean;
 }
 
 /**

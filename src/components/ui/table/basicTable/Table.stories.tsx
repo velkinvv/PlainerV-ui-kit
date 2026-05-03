@@ -32,7 +32,7 @@ const meta: Meta<typeof Table> = {
     docs: {
       description: {
         component:
-          '╨Я╤А╨╕╨╝╨╕╤В╨╕╨▓╤Л ╤В╨░╨▒╨╗╨╕╤Ж╤Л ╨┐╨╛ ╤Б╤В╤А╤Г╨║╤В╤Г╤А╨╡ MUI Table: ╨║╨╛╨╜╤В╨╡╨╣╨╜╨╡╤А, ╤Б╨╡╨║╤Ж╨╕╨╕, ╤Б╤В╤А╨╛╨║╨╕, ╤П╤З╨╡╨╣╨║╨╕, ╤Б╨╛╤А╤В╨╕╤А╨╛╨▓╨║╨░ ╨▓ ╤И╨░╨┐╨║╨╡, ╨┐╨░╨│╨╕╨╜╨░╤Ж╨╕╤П. ╨б╤В╨╛╤А╨╕╤Б ┬лDataGridLike┬╗ тАФ ╤З╨╡╨║╨▒╨╛╨║╤Б╤Л, ╤В╨╡╨│╨╕, ╨░╨▓╨░╤В╨░╤А, ╨╝╨╡╨╜╤О ╤Б╤В╤А╨╛╨║╨╕ ╨╕ ╨┐╨╛╨┤╨▓╨░╨╗ ╨║╨░╨║ ╨▓ ╨╝╨░╨║╨╡╤В╨╡ Figma.',
+          'Примитивы таблицы: контейнер, секции, строки, ячейки, сортировка в шапке, пагинация. Сторис «DataGridLike» — чекбоксы, теги, аватар, меню строки и подвал по макету Figma.',
       },
     },
   },
@@ -54,7 +54,7 @@ const sampleRows: Row[] = [
 ];
 
 /**
- * ╨С╨░╨╖╨╛╨▓╨░╤П ╤В╨░╨▒╨╗╨╕╤Ж╨░ + ╨┐╨░╨│╨╕╨╜╨░╤Ж╨╕╤П (╤Б╤В╤А╨░╨╜╨╕╤Ж╨░ ╤Б ╨╜╤Г╨╗╤П, ╨║╨░╨║ ╨▓ MUI).
+ * Базовая таблица и пагинация (номер страницы с нуля).
  */
 export const Basic: Story = {
   render: () => {
@@ -70,7 +70,7 @@ export const Basic: Story = {
     return (
       <>
         <TableContainer elevated>
-          <Table size="md" striped aria-label="╨Я╤А╨╕╨╝╨╡╤А ╤В╨░╨▒╨╗╨╕╤Ж╤Л">
+          <Table size="md" striped aria-label="Пример таблицы">
             <TableHead>
               <TableRow>
                 <TableCell>Dessert</TableCell>
@@ -88,7 +88,7 @@ export const Basic: Story = {
             <TableFooter>
               <TableRow>
                 <TableCell colSpan={2} align="center" style={{ padding: '16px' }}>
-                  ╨Ч╨░╨│╤А╤Г╨╖╨╕╤В╤М ╨▒╨╛╨╗╤М╤И╨╡
+                  Загрузить больше
                 </TableCell>
               </TableRow>
             </TableFooter>
@@ -116,14 +116,14 @@ export const Basic: Story = {
 };
 
 /**
- * ╨Я╨╛╨╗╨╜╨░╤П ╨║╨╛╨╝╨┐╨╛╨╖╨╕╤Ж╨╕╤П: `Checkbox`, `Tag`, `Avatar`, `IconButton`, ┬л╨Ч╨░╨│╤А╤Г╨╖╨╕╤В╤М ╨▒╨╛╨╗╤М╤И╨╡┬╗, `TablePagination`.
+ * Полная композиция: `Checkbox`, `Tag`, `Avatar`, `IconButton`, «Загрузить больше», `TablePagination`.
  */
 export const DataGridLike: Story = {
   render: () => <TableStoriesDataGridDemo />,
 };
 
 /**
- * ╨б╨╛╤А╤В╨╕╤А╨╛╨▓╨║╨░ ╨▓ ╤И╨░╨┐╨║╨╡ (`TableSortLabel`) ╨╕ ╨▓╤Л╨┤╨╡╨╗╨╡╨╜╨╜╨░╤П ╤Б╤В╤А╨╛╨║╨░.
+ * Сортировка в шапке (`TableSortLabel`) и выделенная строка.
  */
 export const SortableHead: Story = {
   render: () => {
@@ -189,7 +189,7 @@ export const SortableHead: Story = {
             ))}
             <TableRow disabled>
               <TableCell colSpan={2}>
-                ╨Э╨╡╨░╨║╤В╨╕╨▓╨╜╨░╤П ╤Б╤В╤А╨╛╨║╨░ (disabled)
+                Неактивная строка (disabled)
               </TableCell>
             </TableRow>
           </TableBody>

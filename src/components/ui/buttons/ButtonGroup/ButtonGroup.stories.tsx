@@ -8,9 +8,44 @@ import { ButtonVariant } from '@/types/ui';
 import { IconSize, Size } from '@/types/sizes';
 import { Icon } from '../../Icon/Icon';
 
+interface SelectableButtonGroupStoryProps extends React.ComponentProps<typeof ButtonGroup> {
+  children: React.ReactNode;
+  initialActiveButtonIndex?: number;
+}
+
+/**
+ * Внутренний шаблон для историй: включает переключение активной кнопки по клику.
+ * @param children - Дочерние кнопки группы.
+ * @param initialActiveButtonIndex - Изначально активная кнопка.
+ * @param buttonGroupProps - Остальные пропсы `ButtonGroup`.
+ */
+const SelectableButtonGroupStory = ({
+  children,
+  initialActiveButtonIndex = 0,
+  ...buttonGroupProps
+}: SelectableButtonGroupStoryProps) => {
+  const [activeButtonIndex, setActiveButtonIndex] = React.useState(initialActiveButtonIndex);
+
+  return (
+    <ButtonGroup
+      selectable
+      activeIndex={activeButtonIndex}
+      onActiveIndexChange={setActiveButtonIndex}
+      {...buttonGroupProps}
+    >
+      {children}
+    </ButtonGroup>
+  );
+};
+
 const meta: Meta<typeof ButtonGroup> = {
   title: 'UI Kit/Inputs/ButtonGroup',
   component: ButtonGroup,
+  args: {
+    attached: true,
+    size: Size.MD,
+    attachedShape: 'segment',
+  },
   decorators: [
     (Story) => (
       <ThemeProvider>
@@ -61,6 +96,23 @@ const meta: Meta<typeof ButtonGroup> = {
       control: 'boolean',
       table: { type: { summary: 'boolean' } },
     },
+    selectable: {
+      control: 'boolean',
+      description: 'Режим переключения активной кнопки по клику',
+      table: { type: { summary: 'boolean' } },
+    },
+    activeButtonVariant: {
+      control: 'select',
+      options: [...Object.values(ButtonVariant)],
+      description: 'Вариант активной кнопки в режиме selectable',
+      table: { type: { summary: 'ButtonVariant' } },
+    },
+    inactiveButtonVariant: {
+      control: 'select',
+      options: [...Object.values(ButtonVariant)],
+      description: 'Вариант неактивных кнопок в режиме selectable',
+      table: { type: { summary: 'ButtonVariant' } },
+    },
     ariaLabel: {
       description: 'Подпись для `aria-label` на контейнере',
       table: { type: { summary: 'string' } },
@@ -78,41 +130,75 @@ type Story = StoryObj<typeof ButtonGroup>;
 
 export const Default: Story = {
   render: () => (
-    <ButtonGroup ariaLabel="Действия с записью">
-      <Button variant={ButtonVariant.OUTLINE}>Изменить</Button>
-      <Button variant={ButtonVariant.OUTLINE}>Копировать</Button>
-      <Button variant={ButtonVariant.DANGER}>Удалить</Button>
-    </ButtonGroup>
+    <SelectableButtonGroupStory
+      attached
+      size={Size.MD}
+      activeButtonVariant={ButtonVariant.PRIMARY}
+      inactiveButtonVariant={ButtonVariant.OUTLINE}
+      ariaLabel="Переключение действия"
+    >
+      <Button size={Size.MD}>Изменить</Button>
+      <Button size={Size.MD}>Копировать</Button>
+      <Button size={Size.MD}>Применить</Button>
+    </SelectableButtonGroupStory>
   ),
 };
 
 export const Attached: Story = {
   render: () => (
-    <ButtonGroup attached size={Size.MD} ariaLabel="Режим attached">
-      <Button variant={ButtonVariant.SECONDARY} size={Size.MD}>
+    <SelectableButtonGroupStory
+      attached
+      size={Size.MD}
+      activeButtonVariant={ButtonVariant.SECONDARY}
+      inactiveButtonVariant={ButtonVariant.OUTLINE}
+      ariaLabel="Режим attached"
+    >
+      <Button size={Size.MD}>
         День
       </Button>
-      <Button variant={ButtonVariant.SECONDARY} size={Size.MD}>
+      <Button size={Size.MD}>
         Неделя
       </Button>
-      <Button variant={ButtonVariant.SECONDARY} size={Size.MD}>
+      <Button size={Size.MD}>
         Месяц
       </Button>
-    </ButtonGroup>
+    </SelectableButtonGroupStory>
   ),
 };
 
 /** Как на скрине: primary + outline, два сегмента */
 export const AttachedPrimaryOutline: Story = {
   render: () => (
-    <ButtonGroup attached size={Size.MD} ariaLabel="Вид">
-      <Button variant={ButtonVariant.PRIMARY} size={Size.MD}>
+    <SelectableButtonGroupStory
+      attached
+      size={Size.MD}
+      activeButtonVariant={ButtonVariant.PRIMARY}
+      inactiveButtonVariant={ButtonVariant.OUTLINE}
+      ariaLabel="Вид"
+    >
+      <Button size={Size.MD}>
         Список
       </Button>
-      <Button variant={ButtonVariant.OUTLINE} size={Size.MD}>
+      <Button size={Size.MD}>
         Сетка
       </Button>
-    </ButtonGroup>
+    </SelectableButtonGroupStory>
+  ),
+};
+
+export const Selectable: Story = {
+  render: () => (
+    <SelectableButtonGroupStory
+      attached
+      size={Size.MD}
+      activeButtonVariant={ButtonVariant.PRIMARY}
+      inactiveButtonVariant={ButtonVariant.OUTLINE}
+      ariaLabel="Переключение режима отображения"
+    >
+      <Button size={Size.MD}>День</Button>
+      <Button size={Size.MD}>Неделя</Button>
+      <Button size={Size.MD}>Месяц</Button>
+    </SelectableButtonGroupStory>
   ),
 };
 
@@ -120,30 +206,48 @@ export const AttachedPrimaryOutline: Story = {
 export const AttachedSizes: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <ButtonGroup attached size={Size.SM} ariaLabel="SM">
-        <Button variant={ButtonVariant.SECONDARY} size={Size.SM}>
+      <SelectableButtonGroupStory
+        attached
+        size={Size.SM}
+        activeButtonVariant={ButtonVariant.PRIMARY}
+        inactiveButtonVariant={ButtonVariant.OUTLINE}
+        ariaLabel="SM"
+      >
+        <Button size={Size.SM}>
           Button
         </Button>
-        <Button variant={ButtonVariant.PRIMARY} size={Size.SM}>
+        <Button size={Size.SM}>
           Button
         </Button>
-      </ButtonGroup>
-      <ButtonGroup attached size={Size.MD} ariaLabel="MD">
-        <Button variant={ButtonVariant.SECONDARY} size={Size.MD}>
+      </SelectableButtonGroupStory>
+      <SelectableButtonGroupStory
+        attached
+        size={Size.MD}
+        activeButtonVariant={ButtonVariant.PRIMARY}
+        inactiveButtonVariant={ButtonVariant.OUTLINE}
+        ariaLabel="MD"
+      >
+        <Button size={Size.MD}>
           Button
         </Button>
-        <Button variant={ButtonVariant.PRIMARY} size={Size.MD}>
+        <Button size={Size.MD}>
           Button
         </Button>
-      </ButtonGroup>
-      <ButtonGroup attached size={Size.LG} ariaLabel="LG">
-        <Button variant={ButtonVariant.SECONDARY} size={Size.LG}>
+      </SelectableButtonGroupStory>
+      <SelectableButtonGroupStory
+        attached
+        size={Size.LG}
+        activeButtonVariant={ButtonVariant.PRIMARY}
+        inactiveButtonVariant={ButtonVariant.OUTLINE}
+        ariaLabel="LG"
+      >
+        <Button size={Size.LG}>
           Button
         </Button>
-        <Button variant={ButtonVariant.PRIMARY} size={Size.LG}>
+        <Button size={Size.LG}>
           Button
         </Button>
-      </ButtonGroup>
+      </SelectableButtonGroupStory>
     </div>
   ),
 };
@@ -151,14 +255,21 @@ export const AttachedSizes: Story = {
 /** Капсула (`attachedShape="pill"`) */
 export const AttachedPill: Story = {
   render: () => (
-    <ButtonGroup attached attachedShape="pill" size={Size.MD} ariaLabel="Pill">
-      <Button variant={ButtonVariant.SECONDARY} size={Size.MD}>
+    <SelectableButtonGroupStory
+      attached
+      attachedShape="pill"
+      size={Size.MD}
+      activeButtonVariant={ButtonVariant.PRIMARY}
+      inactiveButtonVariant={ButtonVariant.OUTLINE}
+      ariaLabel="Pill"
+    >
+      <Button size={Size.MD}>
         Опция A
       </Button>
-      <Button variant={ButtonVariant.SECONDARY} size={Size.MD}>
+      <Button size={Size.MD}>
         Опция B
       </Button>
-    </ButtonGroup>
+    </SelectableButtonGroupStory>
   ),
 };
 
@@ -166,87 +277,110 @@ export const AttachedPill: Story = {
 export const AttachedWithIcons: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      <ButtonGroup attached size={Size.MD} ariaLabel="Текст и стрелка справа">
+      <SelectableButtonGroupStory
+        attached
+        size={Size.MD}
+        activeButtonVariant={ButtonVariant.PRIMARY}
+        inactiveButtonVariant={ButtonVariant.OUTLINE}
+        ariaLabel="Текст и стрелка справа"
+      >
         <Button
-          variant={ButtonVariant.SECONDARY}
           size={Size.MD}
           iconEnd={<Icon name="IconPlainerArrowRight" size={IconSize.SM} />}
         >
           Button
         </Button>
-        <Button
-          variant={ButtonVariant.PRIMARY}
-          size={Size.MD}
-          iconEnd={<Icon name="IconPlainerArrowRight" size={IconSize.SM} />}
-        >
+        <Button size={Size.MD} iconEnd={<Icon name="IconPlainerArrowRight" size={IconSize.SM} />}>
           Button
         </Button>
-      </ButtonGroup>
-      <ButtonGroup attached size={Size.MD} ariaLabel="Стрелка слева от текста">
+      </SelectableButtonGroupStory>
+      <SelectableButtonGroupStory
+        attached
+        size={Size.MD}
+        activeButtonVariant={ButtonVariant.PRIMARY}
+        inactiveButtonVariant={ButtonVariant.OUTLINE}
+        ariaLabel="Стрелка слева от текста"
+      >
         <Button
-          variant={ButtonVariant.SECONDARY}
           size={Size.MD}
           iconStart={<Icon name="IconPlainerArrowRight" size={IconSize.SM} />}
         >
           Button
         </Button>
         <Button
-          variant={ButtonVariant.PRIMARY}
           size={Size.MD}
           iconStart={<Icon name="IconPlainerArrowRight" size={IconSize.SM} />}
         >
           Button
         </Button>
-      </ButtonGroup>
+      </SelectableButtonGroupStory>
     </div>
   ),
 };
 
 export const Vertical: Story = {
   render: () => (
-    <ButtonGroup orientation="vertical" ariaLabel="Вертикальная группа">
-      <Button variant={ButtonVariant.OUTLINE} size={Size.SM}>
+    <SelectableButtonGroupStory
+      attached
+      orientation="vertical"
+      size={Size.SM}
+      activeButtonVariant={ButtonVariant.PRIMARY}
+      inactiveButtonVariant={ButtonVariant.OUTLINE}
+      ariaLabel="Вертикальная группа"
+    >
+      <Button size={Size.SM}>
         Вверх
       </Button>
-      <Button variant={ButtonVariant.OUTLINE} size={Size.SM}>
+      <Button size={Size.SM}>
         Вниз
       </Button>
-    </ButtonGroup>
+    </SelectableButtonGroupStory>
   ),
 };
 
 export const WithIconButtons: Story = {
   render: () => (
-    <ButtonGroup attached size={Size.SM} ariaLabel="Форматирование">
+    <SelectableButtonGroupStory
+      attached
+      size={Size.SM}
+      activeButtonVariant={ButtonVariant.PRIMARY}
+      inactiveButtonVariant={ButtonVariant.OUTLINE}
+      ariaLabel="Форматирование"
+    >
       <IconButton
-        variant={ButtonVariant.OUTLINE}
         size={Size.SM}
         rounded={false}
         aria-label="Жирный"
         icon={<Icon name="PhosphorPushPin" size={IconSize.SM} />}
       />
       <IconButton
-        variant={ButtonVariant.OUTLINE}
         size={Size.SM}
         rounded={false}
         aria-label="Курсив"
         icon={<Icon name="PhosphorBookmarkSimple" size={IconSize.SM} />}
       />
-    </ButtonGroup>
+    </SelectableButtonGroupStory>
   ),
 };
 
 export const FullWidth: Story = {
   render: () => (
     <div style={{ maxWidth: 480 }}>
-      <ButtonGroup fullWidth ariaLabel="Полная ширина">
-        <Button variant={ButtonVariant.PRIMARY} fullWidth>
+      <SelectableButtonGroupStory
+        attached
+        fullWidth
+        size={Size.MD}
+        activeButtonVariant={ButtonVariant.PRIMARY}
+        inactiveButtonVariant={ButtonVariant.OUTLINE}
+        ariaLabel="Полная ширина"
+      >
+        <Button size={Size.MD}>
           Сохранить
         </Button>
-        <Button variant={ButtonVariant.OUTLINE} fullWidth>
+        <Button size={Size.MD}>
           Отмена
         </Button>
-      </ButtonGroup>
+      </SelectableButtonGroupStory>
     </div>
   ),
 };
@@ -255,15 +389,66 @@ export const FullWidth: Story = {
 export const AttachedFullWidth: Story = {
   render: () => (
     <div style={{ maxWidth: 400 }}>
-      <ButtonGroup attached fullWidth size={Size.MD} ariaLabel="Две равные колонки">
-        <Button variant={ButtonVariant.SECONDARY} size={Size.MD}>
+      <SelectableButtonGroupStory
+        attached
+        fullWidth
+        size={Size.MD}
+        activeButtonVariant={ButtonVariant.PRIMARY}
+        inactiveButtonVariant={ButtonVariant.OUTLINE}
+        ariaLabel="Две равные колонки"
+      >
+        <Button size={Size.MD}>
           Нет
         </Button>
-        <Button variant={ButtonVariant.PRIMARY} size={Size.MD}>
+        <Button size={Size.MD}>
           Да
         </Button>
-      </ButtonGroup>
+      </SelectableButtonGroupStory>
     </div>
   ),
+};
+
+export const AllButtonVariants: Story = {
+  render: () => {
+    const allButtonVariants: ButtonVariant[] = [
+      ButtonVariant.PRIMARY,
+      ButtonVariant.SECONDARY,
+      ButtonVariant.OUTLINE,
+      ButtonVariant.LINE,
+      ButtonVariant.GHOST,
+      ButtonVariant.DANGER,
+      ButtonVariant.SUCCESS,
+      ButtonVariant.WARNING,
+      ButtonVariant.SKELETON,
+    ];
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {allButtonVariants.map((buttonVariant) => (
+          (() => {
+            const inactiveVariantForRow =
+              buttonVariant === ButtonVariant.GHOST || buttonVariant === ButtonVariant.LINE
+                ? buttonVariant
+                : ButtonVariant.OUTLINE;
+
+            return (
+          <SelectableButtonGroupStory
+            key={`all-variants-${buttonVariant}`}
+            attached
+            size={Size.MD}
+            activeButtonVariant={buttonVariant}
+            inactiveButtonVariant={inactiveVariantForRow}
+            ariaLabel={`Вариант ${buttonVariant}`}
+          >
+            <Button size={Size.MD}>Button</Button>
+            <Button size={Size.MD}>Button</Button>
+            <Button size={Size.MD}>Button</Button>
+          </SelectableButtonGroupStory>
+            );
+          })()
+        ))}
+      </div>
+    );
+  },
 };
 

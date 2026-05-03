@@ -1,7 +1,9 @@
 ﻿import type { Meta, StoryObj } from '@storybook/react';
+import { fn } from '@storybook/test';
 import React, { useState } from 'react';
 import { Pill } from './Pill';
 import { Size } from '../../../types/sizes';
+import type { PillStatus } from '../../../types/ui';
 
 const meta: Meta<typeof Pill> = {
   title: 'UI Kit/Data Display/Pill',
@@ -11,23 +13,42 @@ const meta: Meta<typeof Pill> = {
     docs: {
       description: {
         component:
-          'Чип с круглым индикатором слева: default, hover, active, selected, disabled. Размеры SM / MD / LG.',
+          'Чип с круглым индикатором слева: интерактивные состояния **default / hover / active / selected / disabled**, **`onChange(nextSelected)`** для контролируемого выбора (без `role="radio"` — переключение `!selected`, для радио — всегда `true`), семантические **статусы** (`status`: default, success, warning, danger, info), режим **loading** и **skeleton**. Размеры SM / MD / LG.',
       },
     },
   },
   tags: ['autodocs'],
   argTypes: {
     children: {
-      description: 'Подпись',
+      description: 'Подпись рядом с индикатором (в режиме `skeleton` не видна)',
       table: { type: { summary: 'ReactNode' } },
     },
     selected: {
-      description: 'Выбранное состояние',
+      description: 'Выбранное состояние (акцент по `status`)',
       table: { type: { summary: 'boolean' } },
     },
     disabled: {
       description: 'Отключено',
       table: { type: { summary: 'boolean' } },
+    },
+    status: {
+      control: { type: 'select' },
+      options: ['default', 'success', 'warning', 'danger', 'info'],
+      description:
+        'Семантический акцент для выбранного состояния и верхней дуги спиннера при `loading`',
+      table: { type: { summary: 'PillStatus' } },
+    },
+    loading: {
+      description: 'Загрузка: `aria-busy`, спиннер, без клика',
+      table: { type: { summary: 'boolean' } },
+    },
+    skeleton: {
+      description: 'Шиммер вместо кнопки',
+      table: { type: { summary: 'boolean' } },
+    },
+    skeletonWidth: {
+      description: 'Ширина скелетона в px',
+      table: { type: { summary: 'number' } },
     },
     size: {
       control: { type: 'select' },
@@ -36,6 +57,18 @@ const meta: Meta<typeof Pill> = {
       table: {
         type: { summary: 'Size: SM, MD или LG' },
       },
+    },
+    onChange: {
+      action: 'onChange',
+      description:
+        '`(nextSelected, event) => void` — новое значение выбора: без `role="radio"` это `!selected`, для радио всегда `true`',
+      table: {
+        type: { summary: '(nextSelected: boolean, event: MouseEvent) => void' },
+      },
+    },
+    onClick: {
+      action: 'onClick',
+      description: 'Нативный клик; вызывается после `onChange`',
     },
   },
 };
@@ -47,6 +80,8 @@ export const Default: Story = {
   args: {
     children: 'Pill',
     size: Size.MD,
+    status: 'default',
+    onChange: fn(),
   },
 };
 
@@ -62,6 +97,77 @@ export const Disabled: Story = {
     children: 'Pill',
     disabled: true,
   },
+};
+
+/** Семантические статусы в выбранном состоянии (акцент границы, текста, точки). */
+export const StatusVariants: Story = {
+  name: 'Статусы (selected)',
+  render: () => {
+    const statuses: PillStatus[] = ['default', 'success', 'warning', 'danger', 'info'];
+    return (
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
+        {statuses.map((pillStatus) => (
+          <Pill key={pillStatus} selected status={pillStatus}>
+            {pillStatus}
+          </Pill>
+        ))}
+      </div>
+    );
+  },
+};
+
+/** Невыбранный ряд — внешний вид одинаковый; акцент статуса проявляется после выбора. */
+export const StatusUnselected: Story = {
+  name: 'Статусы (не выбраны)',
+  render: () => {
+    const statuses: PillStatus[] = ['default', 'success', 'warning', 'danger', 'info'];
+    return (
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
+        {statuses.map((pillStatus) => (
+          <Pill key={pillStatus} selected={false} status={pillStatus}>
+            {pillStatus}
+          </Pill>
+        ))}
+      </div>
+    );
+  },
+};
+
+/** Загрузка: спиннер в индикаторе, клик недоступен, `aria-busy`. */
+export const Loading: Story = {
+  args: {
+    children: 'Сохранение…',
+    loading: true,
+    selected: true,
+    status: 'info',
+  },
+};
+
+/** Скелетон вместо чипа (например до прихода подписи с сервера). */
+export const Skeleton: Story = {
+  args: {
+    children: '—',
+    skeleton: true,
+    size: Size.MD,
+  },
+};
+
+/** Скелетон кастомной ширины */
+export const SkeletonWidths: Story = {
+  name: 'Скелетон — ширины',
+  render: () => (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'center' }}>
+      <Pill skeleton skeletonWidth={72} size={Size.SM}>
+        —
+      </Pill>
+      <Pill skeleton size={Size.MD}>
+        —
+      </Pill>
+      <Pill skeleton skeletonWidth={140} size={Size.LG}>
+        —
+      </Pill>
+    </div>
+  ),
 };
 
 /** Сетка состояний: строки — размеры, колонки — default / hover / active / selected / disabled */
@@ -81,38 +187,39 @@ export const StatesMatrix: Story = {
           }}
         >
           <span />
-          {cols.map((c) => (
-            <span key={c} style={{ fontSize: 12, color: '#888' }}>
-              {c}
+          {cols.map((columnLabel) => (
+            <span key={columnLabel} style={{ fontSize: 12, color: '#888' }}>
+              {columnLabel}
             </span>
           ))}
-          {sizes.map((sz) => (
-            <React.Fragment key={sz}>
-              <span style={{ fontSize: 12, color: '#888' }}>{sz}</span>
-              <Pill size={sz}>Pill</Pill>
-              <Pill size={sz}>Pill</Pill>
-              <Pill size={sz}>Pill</Pill>
-              <Pill size={sz} selected>
+          {sizes.map((sizeValue) => (
+            <React.Fragment key={sizeValue}>
+              <span style={{ fontSize: 12, color: '#888' }}>{sizeValue}</span>
+              <Pill size={sizeValue}>Pill</Pill>
+              <Pill size={sizeValue}>Pill</Pill>
+              <Pill size={sizeValue}>Pill</Pill>
+              <Pill size={sizeValue} selected>
                 Pill
               </Pill>
-              <Pill size={sz} disabled>
+              <Pill size={sizeValue} disabled>
                 Pill
               </Pill>
             </React.Fragment>
           ))}
         </div>
         <p style={{ fontSize: 12, color: '#666', maxWidth: 560 }}>
-          Колонки Hover / Active в Storybook совпадают с Default — интерактивные состояния
-          проверяйте наведением и удержанием мыши на первых трёх кнопках в строке.
+          Колонки Hover / Active в Storybook совпадают с Default — интерактивные состояния проверяйте
+          наведением и удержанием мыши на первых трёх кнопках в строке.
         </p>
       </div>
     );
   },
 };
 
+/** Группа радиокнопок (`role="radiogroup"`): `onChange(true)` фиксирует выбранный пункт. */
 export const RadioGroup: Story = {
   render: () => {
-    const [v, setV] = useState('b');
+    const [value, setValue] = useState('b');
     return (
       <div
         role="radiogroup"
@@ -120,7 +227,16 @@ export const RadioGroup: Story = {
         style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}
       >
         {(['a', 'b', 'c'] as const).map((id) => (
-          <Pill key={id} role="radio" selected={v === id} onClick={() => setV(id)}>
+          <Pill
+            key={id}
+            role="radio"
+            selected={value === id}
+            onChange={(nextSelected) => {
+              if (nextSelected) {
+                setValue(id);
+              }
+            }}
+          >
             Вариант {id}
           </Pill>
         ))}
@@ -129,3 +245,18 @@ export const RadioGroup: Story = {
   },
 };
 
+/** Одиночный переключатель: `onChange` получает `!selected`. */
+export const ControlledToggle: Story = {
+  name: 'Контролируемое переключение (onChange)',
+  render: function ControlledToggleRender() {
+    const [isSelected, setIsSelected] = useState(false);
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'flex-start' }}>
+        <Pill selected={isSelected} onChange={(nextSelected) => setIsSelected(nextSelected)}>
+          {isSelected ? 'Включено' : 'Выключено'}
+        </Pill>
+        <span style={{ fontSize: 12, color: '#64748b' }}>selected = {String(isSelected)}</span>
+      </div>
+    );
+  },
+};

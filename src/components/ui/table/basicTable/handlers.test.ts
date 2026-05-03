@@ -7,7 +7,7 @@ import {
 } from './handlers';
 
 describe('Table handlers', () => {
-  it('getTableTotalPages считает страницы как в MUI', () => {
+  it('getTableTotalPages считает число страниц для списка и размера страницы', () => {
     expect(getTableTotalPages(0, 10)).toBe(1);
     expect(getTableTotalPages(10, 10)).toBe(1);
     expect(getTableTotalPages(11, 10)).toBe(2);

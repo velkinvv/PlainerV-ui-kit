@@ -1036,7 +1036,6 @@ export const SmartPositioning: Story = {
       <div style={{ alignSelf: 'flex-start' }}>
         <Dropdown
           positioningMode="autoFlip"
-          defaultOpen
           buttonProps={{ children: 'Auto flip вниз/вверх', variant: ButtonVariant.PRIMARY }}
           items={[
             { label: 'Верхний пункт' },
@@ -1048,7 +1047,6 @@ export const SmartPositioning: Story = {
       <div style={{ alignSelf: 'flex-end' }}>
         <Dropdown
           positioningMode="autoFit"
-          defaultOpen
           buttonProps={{ children: 'Auto fit по краям', variant: ButtonVariant.SECONDARY }}
           items={[
             { label: 'Элемент 1', description: 'Смещение по оси X' },
@@ -1063,7 +1061,7 @@ export const SmartPositioning: Story = {
     docs: {
       description: {
         story:
-          '`positioningMode` демонстрирует автоматическое изменение положения: `autoFlip` открывает меню вверх при недостатке места снизу, а `autoFit` дополнительно удерживает меню внутри горизонтальных границ.',
+          '`positioningMode` демонстрирует автоматическое изменение положения: `autoFlip` открывает меню вверх при недостатке места снизу, а `autoFit` дополнительно удерживает меню внутри горизонтальных границ. Откройте каждое меню кликом по кнопке, чтобы увидеть позиционирование.',
       },
     },
   },

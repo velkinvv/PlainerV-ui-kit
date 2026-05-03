@@ -1,4 +1,5 @@
 ﻿import type { Meta, StoryObj } from '@storybook/react';
+import type { RadioButtonGroupOption } from '../../../types/ui';
 import React, { useState } from 'react';
 import { RadioButtonGroup } from './RadioButtonGroup';
 import { Size, IconSize } from '../../../types/sizes';
@@ -7,7 +8,6 @@ import {
   RadioButtonVariant,
   RadioButtonLabelPosition,
   TooltipPosition,
-  type RadioButtonGroupOption,
 } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
 
@@ -63,6 +63,22 @@ const meta: Meta<typeof RadioButtonGroup> = {
         },
       },
     },
+    additionalLabel: {
+      control: 'text',
+      description: 'Вторая строка под заголовком группы (как additionalLabel у Input)',
+    },
+    helperText: {
+      control: 'text',
+      description: 'Вспомогательный текст под группой (не показывается при ошибке группы или success)',
+    },
+    success: {
+      control: 'boolean',
+      description: 'Успешное состояние группы (текст «Успешно» под опциями, как у Input)',
+    },
+    extraText: {
+      control: 'text',
+      description: 'Дополнительная строка под сообщениями группы (как extraText у Input)',
+    },
   },
 };
 
@@ -101,6 +117,7 @@ export const GroupHorizontal: RadioButtonGroupStory = {
         value={value}
         onChange={e => setValue(e.target.value)}
         label="Горизонтальное расположение"
+        additionalLabel="Та же дополнительная строка подписи, что и у текстовых полей."
         orientation={RadioButtonGroupOrientation.HORIZONTAL}
       />
     );
@@ -388,6 +405,180 @@ export const GroupWithHelperText: RadioButtonGroupStory = {
   },
 };
 
+export const GroupWithHelperAndExtraText: RadioButtonGroupStory = {
+  render: () => {
+    const [value, setValue] = useState('option1');
+
+    return (
+      <RadioButtonGroup
+        options={basicOptions}
+        value={value}
+        onChange={e => setValue(e.target.value)}
+        label="Способ доставки"
+        helperText="От выбора зависит срок и стоимость."
+        extraText="Бесплатная доставка от 3000 ₽ по городу."
+      />
+    );
+  },
+};
+
+export const GroupWithSuccessAndExtraText: RadioButtonGroupStory = {
+  render: () => {
+    const [value, setValue] = useState('option2');
+
+    return (
+      <RadioButtonGroup
+        options={basicOptions}
+        value={value}
+        onChange={e => setValue(e.target.value)}
+        label="План подписки"
+        success
+        extraText="Изменения вступят в силу со следующего расчётного периода."
+      />
+    );
+  },
+};
+
+/** Общая ошибка группы и `extraText` снизу (подсказка к ошибке не показывается — только extra). */
+export const GroupWithErrorAndFooterExtra: RadioButtonGroupStory = {
+  render: () => {
+    const [value, setValue] = useState('');
+
+    return (
+      <RadioButtonGroup
+        options={basicOptions}
+        value={value}
+        onChange={e => setValue(e.target.value)}
+        label="Согласие на обработку"
+        error="Нужно выбрать один из вариантов."
+        extraText="Подробнее в политике конфиденциальности в подвале страницы."
+        required
+      />
+    );
+  },
+};
+
+/** Только групповой `extraText` без helper и success — как нейтральное примечание к форме. */
+export const GroupFooterExtraTextOnly: RadioButtonGroupStory = {
+  render: () => {
+    const [value, setValue] = useState('option1');
+
+    return (
+      <RadioButtonGroup
+        options={basicOptions}
+        value={value}
+        onChange={e => setValue(e.target.value)}
+        label="Частота рассылки"
+        extraText="Письма можно отключить в любой момент в настройках профиля."
+      />
+    );
+  },
+};
+
+/** Только успех без дополнительной строки — строка «Успешно» под опциями. */
+export const GroupWithSuccessOnly: RadioButtonGroupStory = {
+  render: () => {
+    const [value, setValue] = useState('option1');
+
+    return (
+      <RadioButtonGroup
+        options={basicOptions}
+        value={value}
+        onChange={e => setValue(e.target.value)}
+        label="Регион"
+        success
+      />
+    );
+  },
+};
+
+/** Группа с tooltip на заголовке, helper, групповым `extraText` и тарифами с `extraText` у опций. */
+export const GroupWithTooltipHelperAndFooterExtra: RadioButtonGroupStory = {
+  render: () => {
+    const [value, setValue] = useState('plan2');
+
+    const tariffOptions: RadioButtonGroupOption[] = [
+      { value: 'plan1', label: 'Старт', extraText: '0 ₽' },
+      { value: 'plan2', label: 'Бизнес', extraText: '1 490 ₽ / мес' },
+      { value: 'plan3', label: 'Enterprise', extraText: 'по запросу' },
+    ];
+
+    return (
+      <RadioButtonGroup
+        options={tariffOptions}
+        value={value}
+        onChange={e => setValue(e.target.value)}
+        label="Тариф"
+        tooltip="Тариф влияет на лимиты API и количество мест."
+        tooltipPosition={TooltipPosition.TOP}
+        helperText="Смена тарифа не прерывает текущий оплаченный период."
+        extraText="НДС включён в цену для юрлиц РФ."
+        orientation={RadioButtonGroupOrientation.VERTICAL}
+      />
+    );
+  },
+};
+
+/**
+ * Витрина: несколько групп с разными комбинациями нижних текстов (как у `Input`).
+ */
+function RadioButtonGroupFooterShowcaseDemo() {
+  const [valueErrorExtra, setValueErrorExtra] = useState('');
+  const [valueHelperExtra, setValueHelperExtra] = useState('option2');
+  const [valueSuccessExtra, setValueSuccessExtra] = useState('option3');
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '40px', maxWidth: '520px' }}>
+      <section aria-labelledby="rg-showcase-error-extra">
+        <h3 id="rg-showcase-error-extra" style={{ margin: '0 0 12px', fontSize: '15px', fontWeight: 600 }}>
+          Ошибка + extraText
+        </h3>
+        <RadioButtonGroup
+          options={basicOptions}
+          value={valueErrorExtra}
+          onChange={e => setValueErrorExtra(e.target.value)}
+          label="Пример 1"
+          error={valueErrorExtra ? undefined : 'Сделайте выбор'}
+          extraText="Дополнительное пояснение под ошибкой."
+          orientation={RadioButtonGroupOrientation.VERTICAL}
+        />
+      </section>
+
+      <section aria-labelledby="rg-showcase-helper-extra">
+        <h3 id="rg-showcase-helper-extra" style={{ margin: '0 0 12px', fontSize: '15px', fontWeight: 600 }}>
+          helperText + extraText
+        </h3>
+        <RadioButtonGroup
+          options={basicOptions}
+          value={valueHelperExtra}
+          onChange={e => setValueHelperExtra(e.target.value)}
+          label="Пример 2"
+          helperText="Обычная подсказка под группой."
+          extraText="Второстепенная строка внизу."
+        />
+      </section>
+
+      <section aria-labelledby="rg-showcase-success-extra">
+        <h3 id="rg-showcase-success-extra" style={{ margin: '0 0 12px', fontSize: '15px', fontWeight: 600 }}>
+          success + extraText
+        </h3>
+        <RadioButtonGroup
+          options={basicOptions}
+          value={valueSuccessExtra}
+          onChange={e => setValueSuccessExtra(e.target.value)}
+          label="Пример 3"
+          success
+          extraText="Успех: helper скрыт, эта строка остаётся."
+        />
+      </section>
+    </div>
+  );
+}
+
+export const GroupFooterTextsShowcase: RadioButtonGroupStory = {
+  render: () => <RadioButtonGroupFooterShowcaseDemo />,
+};
+
 export const GroupWithRequired: RadioButtonGroupStory = {
   render: () => {
     const [value, setValue] = useState('');
@@ -487,6 +678,7 @@ export const GroupComplexNew: RadioButtonGroupStory = {
         onChange={e => setValue(e.target.value)}
         label="Выберите тарифный план"
         helperText="Выберите подходящий для вас тарифный план"
+        extraText="Иконки и подписи опций — из макета; эта строка — групповой extraText, как у Input."
         required
         tooltip="Тарифные планы различаются по функциональности и цене"
         tooltipPosition={TooltipPosition.TOP}

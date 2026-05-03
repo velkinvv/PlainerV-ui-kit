@@ -10,6 +10,7 @@ import {
   SliderTrackWrap,
   SliderTrackHit,
   SliderTrackRail,
+  SliderTrackRingWrap,
   SliderTrackActive,
   SliderThumb,
   SliderValuesRow,
@@ -23,11 +24,17 @@ import {
   clientXToSliderValue,
   formatSliderNumberRu,
   getSliderThumbSizePx,
+  getSliderValueLabelRootPaddingHorizontalPx,
+  resolveSliderTrackMetrics,
   sortAndClampRange,
   mergeRangeAfterThumbMove,
   pickCloserThumbIndex,
   parseManualSliderNumber,
+  resolveSliderAccentKind,
+  sliderThumbLeftCalcCss,
 } from './handlers';
+import { SliderFieldShell } from './SliderFieldShell';
+import { SliderSkeletonRange } from './SliderSkeleton';
 
 const defaultFormat = (n: number) => formatSliderNumberRu(n);
 
@@ -39,6 +46,9 @@ const defaultFormat = (n: number) => formatSliderNumberRu(n);
  * @param props.onChange - Новая пара значений
  * @param props.showManualInputs - Показать два `Input` под шкалой
  * @param props.fromInputPlaceholder / toInputPlaceholder / currencySuffix / nameFrom / nameTo — см. типы
+ * @param props.trackRailHeightPx / trackActiveHeightPx — опциональная толщина линий трека
+ * @param props.label / additionalLabel / helperText / extraText / error / success / required — как у инпутов
+ * @param props.skeleton / status — скелетон и акцент (см. типы)
  */
 export const RangeSlider: React.FC<RangeSliderProps> = ({
   value: valueProp,
@@ -54,6 +64,17 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
   formatMaxLabel = defaultFormat,
   showValueLabel = true,
   size = Size.MD,
+  trackRailHeightPx,
+  trackActiveHeightPx,
+  label,
+  additionalLabel,
+  error,
+  success,
+  helperText,
+  extraText,
+  required,
+  skeleton = false,
+  status,
   className,
   showManualInputs = false,
   fromInputPlaceholder,
@@ -115,16 +136,27 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
   const phFrom = fromInputPlaceholder ?? `От ${formatSliderNumberRu(min)}`;
   const phTo = toInputPlaceholder ?? `До ${formatSliderNumberRu(max)} ₽`;
 
+  /** Диаметр бегунка — нужен для инсета трека и координат pointer (см. `sliderThumbLeftCalcCss`). */
+  const thumbPx = getSliderThumbSizePx(size);
+  const thumbInsetPx = thumbPx / 2;
+  const track = useMemo(
+    () => resolveSliderTrackMetrics(size, { trackRailHeightPx, trackActiveHeightPx }),
+    [size, trackRailHeightPx, trackActiveHeightPx],
+  );
+  const valueLabelRootPadPx = showValueLabel
+    ? getSliderValueLabelRootPaddingHorizontalPx(thumbPx)
+    : 0;
+
   const updateFromClientX = useCallback(
     (clientX: number, thumbIndex: 0 | 1) => {
       const rect = trackRef.current?.getBoundingClientRect();
       if (!rect?.width) {
         return;
       }
-      const raw = clientXToSliderValue(clientX, rect, min, max, step);
+      const raw = clientXToSliderValue(clientX, rect, min, max, step, thumbPx);
       setCommittedPair(mergeRangeAfterThumbMove(thumbIndex, raw, low, high, min, max, step));
     },
-    [high, low, max, min, setCommittedPair, step],
+    [high, low, max, min, setCommittedPair, step, thumbPx],
   );
 
   const onTrackPointerDown = useCallback(
@@ -136,11 +168,11 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
       if (!rect?.width) {
         return;
       }
-      const idx = pickCloserThumbIndex(e.clientX, rect, low, high, min, max, step);
-      const raw = clientXToSliderValue(e.clientX, rect, min, max, step);
+      const idx = pickCloserThumbIndex(e.clientX, rect, low, high, min, max, step, thumbPx);
+      const raw = clientXToSliderValue(e.clientX, rect, min, max, step, thumbPx);
       setCommittedPair(mergeRangeAfterThumbMove(idx, raw, low, high, min, max, step));
     },
-    [disabled, high, low, max, min, setCommittedPair, step],
+    [disabled, high, low, max, min, setCommittedPair, step, thumbPx],
   );
 
   const makeThumbDown = useCallback(
@@ -225,7 +257,6 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
   const pctHigh = valueToPercent(high, min, max);
   const activeLeft = pctLow;
   const activeWidth = Math.max(0, pctHigh - pctLow);
-  const thumbPx = getSliderThumbSizePx(size);
 
   const currencyIcon = useMemo(
     () => <span aria-hidden="true">{currencySuffix}</span>,
@@ -250,61 +281,139 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
     setCommittedPair(mergeRangeAfterThumbMove(1, n, low, high, min, max, step));
   }, [formatValue, high, low, max, min, setCommittedPair, step, toText]);
 
-  return (
-    <SliderRoot className={clsx('ui-range-slider', className)} $fullWidth={fullWidth}>
+  const hasFieldChrome = useMemo(
+    () =>
+      label != null ||
+      Boolean(additionalLabel) ||
+      Boolean(error) ||
+      success === true ||
+      Boolean(helperText) ||
+      Boolean(extraText) ||
+      required === true,
+    [additionalLabel, error, extraText, helperText, label, required, success],
+  );
+
+  const accentKind = useMemo(
+    () => resolveSliderAccentKind(error, success, status),
+    [error, success, status],
+  );
+
+  const helperTextStatus = useMemo(() => {
+    if (error || success) {
+      return undefined;
+    }
+    if (status === 'warning' || status === 'success' || status === 'error') {
+      return status;
+    }
+    return undefined;
+  }, [error, success, status]);
+
+  if (skeleton) {
+    return (
+      <SliderFieldShell
+        enabled={hasFieldChrome}
+        className={hasFieldChrome ? className : undefined}
+        label={label}
+        additionalLabel={additionalLabel}
+        error={error}
+        success={success}
+        helperText={helperText}
+        extraText={extraText}
+        required={required}
+        fullWidth={fullWidth}
+        skeleton
+        helperStatus={helperTextStatus}
+      >
+        <SliderSkeletonRange size={size} fullWidth={fullWidth} showValueLabel={showValueLabel} />
+      </SliderFieldShell>
+    );
+  }
+
+  const sliderBody = (
+    <SliderRoot
+      className={clsx('ui-range-slider', !hasFieldChrome && className)}
+      $fullWidth={fullWidth}
+      $valueLabelPadPx={valueLabelRootPadPx}
+    >
       <SliderScaleRow>
         <SliderScaleLabel>{formatMinLabel(min)}</SliderScaleLabel>
         <SliderScaleLabel>{formatMaxLabel(max)}</SliderScaleLabel>
       </SliderScaleRow>
-      <SliderTrackWrap ref={trackRef}>
-        <SliderTrackHit onPointerDown={onTrackPointerDown} />
-        <SliderTrackRail aria-hidden />
-        <SliderTrackActive $leftPct={activeLeft} $widthPct={activeWidth} aria-hidden />
-        <SliderThumb
-          type="button"
-          id={`${reactId}-t0`}
-          $thumbPx={thumbPx}
-          $disabled={disabled}
-          disabled={disabled}
-          style={{ left: `${pctLow}%`, zIndex: 2 }}
-          aria-valuemin={min}
-          aria-valuemax={max}
-          aria-valuenow={low}
-          aria-valuetext={formatValue(low)}
-          role="slider"
-          tabIndex={disabled ? -1 : 0}
-          onPointerDown={makeThumbDown(0)}
-          onPointerMove={onThumbPointerMove}
-          onPointerUp={onThumbPointerUp}
-          onPointerCancel={onThumbPointerUp}
-          onKeyDown={makeThumbKeyDown(0)}
-        />
-        <SliderThumb
-          type="button"
-          id={`${reactId}-t1`}
-          $thumbPx={thumbPx}
-          $disabled={disabled}
-          disabled={disabled}
-          style={{ left: `${pctHigh}%`, zIndex: 2 }}
-          aria-valuemin={min}
-          aria-valuemax={max}
-          aria-valuenow={high}
-          aria-valuetext={formatValue(high)}
-          role="slider"
-          tabIndex={disabled ? -1 : 0}
-          onPointerDown={makeThumbDown(1)}
-          onPointerMove={onThumbPointerMove}
-          onPointerUp={onThumbPointerUp}
-          onPointerCancel={onThumbPointerUp}
-          onKeyDown={makeThumbKeyDown(1)}
-        />
-      </SliderTrackWrap>
+      <SliderTrackRingWrap $accent={accentKind}>
+        <SliderTrackWrap ref={trackRef} $trackWrapHeightPx={track.trackWrapHeightPx}>
+          <SliderTrackHit
+            $thumbInsetPx={thumbInsetPx}
+            $hitHeightPx={track.hitHeightPx}
+            onPointerDown={onTrackPointerDown}
+          />
+          <SliderTrackRail
+            $thumbInsetPx={thumbInsetPx}
+            $railHeightPx={track.railHeightPx}
+            aria-hidden
+          />
+          <SliderTrackActive
+            $leftPct={activeLeft}
+            $widthPct={activeWidth}
+            $thumbInsetPx={thumbInsetPx}
+            $thumbSizePx={thumbPx}
+            $activeHeightPx={track.activeHeightPx}
+            $accent={accentKind}
+            aria-hidden
+          />
+          <SliderThumb
+            type="button"
+            id={`${reactId}-t0`}
+            $thumbPx={thumbPx}
+            $accent={accentKind}
+            $disabled={disabled}
+            disabled={disabled}
+            style={{ left: sliderThumbLeftCalcCss(thumbPx, pctLow), zIndex: 2 }}
+            aria-valuemin={min}
+            aria-valuemax={max}
+            aria-valuenow={low}
+            aria-valuetext={formatValue(low)}
+            role="slider"
+            tabIndex={disabled ? -1 : 0}
+            onPointerDown={makeThumbDown(0)}
+            onPointerMove={onThumbPointerMove}
+            onPointerUp={onThumbPointerUp}
+            onPointerCancel={onThumbPointerUp}
+            onKeyDown={makeThumbKeyDown(0)}
+          />
+          <SliderThumb
+            type="button"
+            id={`${reactId}-t1`}
+            $thumbPx={thumbPx}
+            $accent={accentKind}
+            $disabled={disabled}
+            disabled={disabled}
+            style={{ left: sliderThumbLeftCalcCss(thumbPx, pctHigh), zIndex: 2 }}
+            aria-valuemin={min}
+            aria-valuemax={max}
+            aria-valuenow={high}
+            aria-valuetext={formatValue(high)}
+            role="slider"
+            tabIndex={disabled ? -1 : 0}
+            onPointerDown={makeThumbDown(1)}
+            onPointerMove={onThumbPointerMove}
+            onPointerUp={onThumbPointerUp}
+            onPointerCancel={onThumbPointerUp}
+            onKeyDown={makeThumbKeyDown(1)}
+          />
+        </SliderTrackWrap>
+      </SliderTrackRingWrap>
       {showValueLabel ? (
         <SliderValuesRow>
-          <SliderValueLabel style={{ left: `${pctLow}%` }} $disabled={disabled}>
+          <SliderValueLabel
+            style={{ left: sliderThumbLeftCalcCss(thumbPx, pctLow) }}
+            $disabled={disabled}
+          >
             {formatValue(low)}
           </SliderValueLabel>
-          <SliderValueLabel style={{ left: `${pctHigh}%` }} $disabled={disabled}>
+          <SliderValueLabel
+            style={{ left: sliderThumbLeftCalcCss(thumbPx, pctHigh) }}
+            $disabled={disabled}
+          >
             {formatValue(high)}
           </SliderValueLabel>
         </SliderValuesRow>
@@ -317,7 +426,7 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
             disabled={disabled}
             placeholder={phFrom}
             value={fromText}
-            onChange={e => setFromText(e.target?.value ?? '')}
+            onChange={(e) => setFromText(e.target?.value ?? '')}
             onBlur={commitFromInput}
             rightIcon={currencyIcon}
           />
@@ -327,13 +436,31 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
             disabled={disabled}
             placeholder={phTo}
             value={toText}
-            onChange={e => setToText(e.target?.value ?? '')}
+            onChange={(e) => setToText(e.target?.value ?? '')}
             onBlur={commitToInput}
             rightIcon={currencyIcon}
           />
         </RangeSliderInputsRow>
       ) : null}
     </SliderRoot>
+  );
+
+  return (
+    <SliderFieldShell
+      enabled={hasFieldChrome}
+      className={hasFieldChrome ? className : undefined}
+      label={label}
+      additionalLabel={additionalLabel}
+      error={error}
+      success={success}
+      helperText={helperText}
+      extraText={extraText}
+      required={required}
+      fullWidth={fullWidth}
+      helperStatus={helperTextStatus}
+    >
+      {sliderBody}
+    </SliderFieldShell>
   );
 };
 

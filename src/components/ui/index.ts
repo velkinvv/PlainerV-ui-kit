@@ -22,7 +22,8 @@ export { Badge } from './Badge';
 export type { BadgeProps } from '@/types/ui';
 
 export { Tag } from './Tag';
-export type { TagProps, TagColorVariant, TagAppearance } from '@/types/ui';
+export type { TagProps, TagColorVariant, TagAppearance, TagStatusDisplay, TagCustomColors } from '@/types/ui';
+
 export { Breadcrumb } from './Breadcrumb';
 export type { BreadcrumbProps, BreadcrumbItem } from '@/types/ui';
 
@@ -139,7 +140,7 @@ export { Divider } from './Divider';
 export type { DividerProps } from '@/types/ui';
 
 export { Pill } from './Pill';
-export type { PillProps } from '@/types/ui';
+export type { PillProps, PillStatus } from '@/types/ui';
 export type { PillGeometry } from './Pill';
 
 export { Slider, RangeSlider } from './Slider';
@@ -208,8 +209,8 @@ export type { ThemeToggleProps } from '@/types/ui';
 export { Sidebar } from './sidebar';
 export type { SidebarProps } from '@/types/ui';
 
-export { Checkbox } from './Checkbox';
-export type { CheckboxProps } from '@/types/ui';
+export { Checkbox, CheckboxGroup } from './Checkbox';
+export type { CheckboxProps, CheckboxGroupProps } from '@/types/ui';
 
 export { Switch } from './Switch';
 export type { SwitchProps } from '@/types/ui';

@@ -24,11 +24,49 @@ describe('Slider', () => {
     fireEvent.keyDown(thumb, { key: 'ArrowRight' });
     expect(fn).toHaveBeenCalled();
   });
+
+  it('показывает лейбл и helperText как у инпута', () => {
+    renderWithTheme(
+      <Slider
+        min={0}
+        max={10}
+        defaultValue={5}
+        label="Громкость"
+        helperText="Подсказка под ползунком"
+        formatMinLabel={() => '0'}
+        formatMaxLabel={() => '10'}
+      />,
+    );
+    expect(screen.getByText('Громкость')).toBeInTheDocument();
+    expect(screen.getByText('Подсказка под ползунком')).toBeInTheDocument();
+  });
+
+  it('в режиме скелетона не показывает slider и ставит aria-busy на контейнер поля при лейбле', () => {
+    const { container } = renderWithTheme(
+      <Slider
+        skeleton
+        label="Загрузка"
+        min={0}
+        max={100}
+        formatMinLabel={() => '0'}
+        formatMaxLabel={() => '100'}
+      />,
+    );
+    expect(screen.queryByRole('slider')).not.toBeInTheDocument();
+    const busyRoot = container.querySelector('[aria-busy="true"]');
+    expect(busyRoot).not.toBeNull();
+    expect(screen.getByText('Загрузка')).toBeInTheDocument();
+  });
 });
 
 describe('RangeSlider', () => {
   it('рендерит два slider', () => {
     renderWithTheme(<RangeSlider min={0} max={100} defaultValue={[20, 80]} />);
     expect(screen.getAllByRole('slider')).toHaveLength(2);
+  });
+
+  it('в режиме скелетона не показывает бегунки', () => {
+    renderWithTheme(<RangeSlider skeleton min={0} max={100} formatMinLabel={() => ''} formatMaxLabel={() => ''} />);
+    expect(screen.queryByRole('slider')).not.toBeInTheDocument();
   });
 });

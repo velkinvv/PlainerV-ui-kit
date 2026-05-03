@@ -62,6 +62,12 @@ export const lightColors: Colors = {
   /* Яркий синий UI (календарь, инфо); не colors.blue — там тёмные брендовые оттенки */
   info: colors.primary[500],
   infoHover: colors.primary[600],
+  /** Тег Tag `primary`: насыщенный синий (отличается от `info`) */
+  tagPrimaryAccent: colors.primary[600],
+  tagAccentPurple: colors.purple[600],
+  tagAccentTeal: colors.teal[600],
+  tagAccentCyan: colors.cyan[600],
+  tagAccentPink: colors.pink[600],
 
   // Специальные цвета
   overlay: 'rgba(0, 0, 0, 0.5)', // Наложение

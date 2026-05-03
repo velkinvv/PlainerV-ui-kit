@@ -357,10 +357,11 @@ const TimePickerPopup = styled.div.withConfig({
   position: absolute;
   top: 100%;
   left: 0;
-  right: 0;
+  width: max-content;
+  max-width: 100%;
   background: ${({ theme }) => theme.colors.backgroundSecondary};
   border: 2px solid ${({ theme }) => theme.colors.borderSecondary};
-  border-radius: ${BorderRadiusHandler(Size.SM)};
+  border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 1000;
   opacity: ${({ isOpen }) => (isOpen ? 1 : 0)};
@@ -368,8 +369,7 @@ const TimePickerPopup = styled.div.withConfig({
   transform: ${({ isOpen }) => (isOpen ? 'translateY(0)' : 'translateY(-10px)')};
   transition: ${TransitionHandler()};
   margin-top: 4px;
-  min-width: ${({ showSeconds }) => (showSeconds ? '300px' : '200px')};
-  max-width: ${({ showSeconds }) => (showSeconds ? '300px' : '200px')};
+  min-width: ${({ showSeconds }) => (showSeconds ? '300px' : '280px')};
 `;
 
 const _TimePickerHeader = styled.div`
@@ -422,6 +422,7 @@ const TimeColumnContent = styled.div`
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  padding: 4px 0;
 `;
 
 const TimeOption = styled.button.withConfig({
@@ -431,9 +432,13 @@ const TimeOption = styled.button.withConfig({
   isCurrent: boolean;
   isDisabled: boolean;
 }>`
-  width: 100%;
-  padding: 8px 12px;
-  border: none;
+  width: calc(100% - 16px);
+  min-height: 32px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
+  margin: 2px auto;
+  box-sizing: border-box;
   background: ${({ theme, isDisabled }) =>
     isDisabled ? theme.colors.backgroundTertiary : 'transparent'};
   color: ${({ theme, isSelected, isDisabled }) =>
@@ -445,18 +450,22 @@ const TimeOption = styled.button.withConfig({
   cursor: ${({ isDisabled }) => (isDisabled ? 'not-allowed' : 'pointer')};
   transition: ${TransitionHandler()};
   font-size: 14px;
+  font-weight: 500;
   text-align: center;
   position: relative;
   opacity: ${({ isDisabled }) => (isDisabled ? 0.5 : 1)};
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover:not(:disabled) {
     background: ${({ theme }) => theme.colors.backgroundTertiary};
+    border-color: ${({ theme }) => theme.colors.borderSecondary};
   }
 
-  &:focus {
-    outline: none;
-    background: ${({ theme, isDisabled }) =>
-      isDisabled ? theme.colors.backgroundTertiary : theme.colors.backgroundTertiary};
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.primary};
+    outline-offset: 1px;
   }
 
   ${({ isSelected, theme, isDisabled }) =>
@@ -464,6 +473,7 @@ const TimeOption = styled.button.withConfig({
     !isDisabled &&
     `
     background: ${theme.colors.primary} !important;
+    border-color: ${theme.colors.primary} !important;
     color: ${theme.colors.backgroundSecondary} !important;
   `}
 
@@ -514,13 +524,18 @@ const RangePickerContainer = styled.div.withConfig({
   display: flex;
   flex-direction: column;
   flex: 1;
-  border: 2px solid
-    ${({ theme, isActive }) => (isActive ? theme.colors.primary : theme.colors.border)};
-  border-radius: ${BorderRadiusHandler(Size.SM)};
+  border: 1px solid
+    ${({ theme, isActive }) =>
+      isActive
+        ? (theme.buttons?.variants?.primary?.background ?? theme.colors.primary)
+        : theme.colors.borderSecondary};
+  border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
+  overflow: hidden;
   background: ${({ theme, isActive }) =>
     isActive ? theme.colors.backgroundSecondary : theme.colors.backgroundTertiary};
   transition: ${TransitionHandler()};
   cursor: pointer;
+  box-shadow: none;
 `;
 
 const RangePickerHeader = styled.div`

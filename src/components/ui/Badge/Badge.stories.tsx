@@ -1,6 +1,13 @@
 ﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Badge } from './Badge';
+import {
+  BadgeStoriesSizesRoot,
+  BadgeStoriesSizeFigure,
+  BadgeStoriesSizeCaption,
+  BadgeStoriesSizeTitle,
+  BadgeStoriesSizeProp,
+} from './BadgeStories.style';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { BadgeVariant } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
@@ -194,23 +201,34 @@ export const AllVariants: Story = {
 };
 
 export const AllSizes: Story = {
-  render: () => (
-    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-      <Badge variant={BadgeVariant.DEFAULT} isDot={true} />
-      <Badge variant={BadgeVariant.DEFAULT} size={Size.XS}>
-        3
-      </Badge>
-      <Badge variant={BadgeVariant.DEFAULT} size={Size.SM}>
-        3
-      </Badge>
-      <Badge variant={BadgeVariant.DEFAULT} size={Size.MD}>
-        3
-      </Badge>
-      <Badge variant={BadgeVariant.DEFAULT} size={Size.LG}>
-        3
-      </Badge>
-    </div>
-  ),
+  name: 'Все размеры',
+  render: () => {
+    const textSizes = [Size.XS, Size.SM, Size.MD, Size.LG, Size.XL] as const;
+
+    return (
+      <BadgeStoriesSizesRoot aria-label="Размеры Badge: точка и перечисление Size">
+        <BadgeStoriesSizeFigure>
+          <BadgeStoriesSizeCaption>
+            <BadgeStoriesSizeTitle>Точка</BadgeStoriesSizeTitle>
+            <BadgeStoriesSizeProp>isDot</BadgeStoriesSizeProp>
+          </BadgeStoriesSizeCaption>
+          <Badge variant={BadgeVariant.DEFAULT} isDot />
+        </BadgeStoriesSizeFigure>
+
+        {textSizes.map((badgeSize) => (
+          <BadgeStoriesSizeFigure key={badgeSize}>
+            <BadgeStoriesSizeCaption>
+              <BadgeStoriesSizeTitle>{badgeSize}</BadgeStoriesSizeTitle>
+              <BadgeStoriesSizeProp>{`size={Size.${badgeSize}}`}</BadgeStoriesSizeProp>
+            </BadgeStoriesSizeCaption>
+            <Badge variant={BadgeVariant.DEFAULT} size={badgeSize}>
+              3
+            </Badge>
+          </BadgeStoriesSizeFigure>
+        ))}
+      </BadgeStoriesSizesRoot>
+    );
+  },
   parameters: {
     layout: 'padded',
   },

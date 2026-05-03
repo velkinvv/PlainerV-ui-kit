@@ -70,6 +70,11 @@ const meta: Meta<typeof Calendar> = {
       description: 'Разметка переключателя месяца и года',
       table: { type: { summary: '`combined` или `split`' } },
     },
+    fullWidth: {
+      control: { type: 'boolean' },
+      description: 'Растянуть календарь на всю ширину контейнера',
+      table: { type: { summary: 'boolean' } },
+    },
   },
 };
 
@@ -97,6 +102,33 @@ export const Uncontrolled: Story = {
     defaultValue: new Date(2025, 8, 18),
     defaultVisibleMonth: new Date(2025, 8, 1),
     showTitle: true,
+  },
+};
+
+export const FullWidth: Story = {
+  parameters: {
+    layout: 'fullscreen',
+  },
+  render: () => {
+    const [value, setValue] = useState<Date | null>(new Date(2025, 8, 18));
+    return (
+      <div
+        style={{
+          boxSizing: 'border-box',
+          width: '100%',
+          minHeight: '100vh',
+          padding: 24,
+        }}
+      >
+        <Calendar
+          value={value}
+          onChange={setValue}
+          defaultVisibleMonth={new Date(2025, 8, 1)}
+          fullWidth
+          showTitle
+        />
+      </div>
+    );
   },
 };
 

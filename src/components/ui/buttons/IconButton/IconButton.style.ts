@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import type { IconButtonProps } from '../../../../types/ui';
 import { ButtonVariant } from '../../../../types/ui';
 import { Size } from '../../../../types/sizes';
+import { getButtonSize } from '../../../../handlers/buttonThemeHandlers';
 
 /**
  * Стилизованная иконка-кнопка
@@ -16,10 +17,12 @@ import { Size } from '../../../../types/sizes';
 export const StyledIconButton = styled(motion.button).withConfig({
   shouldForwardProp: prop => !['variant', 'size', 'loading', 'fullWidth', 'rounded'].includes(prop),
 })<IconButtonProps>`
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border: none;
+  padding: 0;
   cursor: pointer;
   position: relative;
   overflow: hidden;
@@ -28,6 +31,7 @@ export const StyledIconButton = styled(motion.button).withConfig({
   text-decoration: none;
   outline: none;
   gap: 0;
+  line-height: 0;
 
   /* Базовые стили (fallback) - только для не-skeleton вариантов */
   ${({ variant }) =>
@@ -77,13 +81,13 @@ export const StyledIconButton = styled(motion.button).withConfig({
   }}
 
   /* Форма кнопки */
-  ${({ rounded }) =>
+  ${({ rounded, size = Size.MD, theme }) =>
     rounded
       ? css`
           border-radius: 50%;
         `
       : css`
-          border-radius: 8px;
+          border-radius: ${getButtonSize(theme?.buttons, size).borderRadius};
         `}
 
   /* Растягивание на всю ширину */
@@ -113,10 +117,8 @@ export const StyledIconButton = styled(motion.button).withConfig({
         color: ${variantStyles.color || '#9ca3af80'};
         border: ${variantStyles.border || '2px solid #d1d5db'};
 
-        /* Размытие иконки для skeleton эффекта */
-        svg,
-        img {
-          filter: blur(1px);
+        /* В skeleton-режиме оставляем прозрачность без blur, чтобы не было оптического смещения центра. */
+        .ui-icon-button-content {
           opacity: 0.7;
         }
 
@@ -133,10 +135,7 @@ export const StyledIconButton = styled(motion.button).withConfig({
           color: ${variantStyles.hover?.color || '#9ca3af80'};
           border: ${variantStyles.hover?.border || '2px solid #d1d5db'};
 
-          /* Размытие иконки для skeleton эффекта */
-          svg,
-          img {
-            filter: blur(1px);
+          .ui-icon-button-content {
             opacity: 0.7;
           }
         }
@@ -154,10 +153,7 @@ export const StyledIconButton = styled(motion.button).withConfig({
           color: ${variantStyles.active?.color || '#9ca3af80'};
           border: ${variantStyles.active?.border || '2px solid #d1d5db'};
 
-          /* Размытие иконки для skeleton эффекта */
-          svg,
-          img {
-            filter: blur(1px);
+          .ui-icon-button-content {
             opacity: 0.7;
           }
         }
@@ -182,10 +178,7 @@ export const StyledIconButton = styled(motion.button).withConfig({
           opacity: 0.6;
           cursor: not-allowed;
 
-          /* Размытие иконки для skeleton эффекта */
-          svg,
-          img {
-            filter: blur(1px);
+          .ui-icon-button-content {
             opacity: 0.7;
           }
         }
@@ -235,6 +228,28 @@ export const StyledIconButton = styled(motion.button).withConfig({
 
   /* Анимации */
   transition: ${({ theme }) => theme?.buttons?.animations?.transition || 'all 0.2s ease-in-out'};
+`;
+
+/**
+ * Контейнер иконки, который жёстко центрирует контент по обеим осям.
+ */
+export const IconContentWrapper = styled.span`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  pointer-events: none;
+
+  > svg,
+  > img {
+    display: block;
+    margin: 0;
+    flex-shrink: 0;
+  }
 `;
 
 /**

@@ -33,4 +33,22 @@ describe('Tag', () => {
     );
     expect(screen.getByText('Tag')).toBeInTheDocument();
   });
+
+  it('скелетон: aria-busy и текст не показывается', () => {
+    const { container } = renderWithTheme(<Tag skeleton>Не показывать</Tag>);
+    expect(screen.queryByText('Не показывать')).not.toBeInTheDocument();
+    expect(container.querySelector('[aria-busy="true"]')).not.toBeNull();
+    expect(container.querySelector('.ui-tag--skeleton')).not.toBeNull();
+  });
+
+  it('as="button" рендерит нативную кнопку', () => {
+    renderWithTheme(
+      <Tag as="button" onClick={() => undefined}>
+        Действие
+      </Tag>,
+    );
+    const buttonElement = screen.getByRole('button', { name: 'Действие' });
+    expect(buttonElement.tagName).toBe('BUTTON');
+    expect(buttonElement).toHaveAttribute('type', 'button');
+  });
 });

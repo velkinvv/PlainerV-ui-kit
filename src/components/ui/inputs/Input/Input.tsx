@@ -23,6 +23,8 @@ import {
   ExtraText,
   CharacterCounter,
   RequiredIndicator,
+  getInputDisplayValue,
+  shouldShowInputClearButton,
 } from '../shared';
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -245,7 +247,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     }
 
     // Определяем содержимое для отображения
-    const displayValue = value !== undefined ? value : internalValue;
+    const displayValue = getInputDisplayValue(value, String(internalValue ?? ''));
+    const showClearButton = shouldShowInputClearButton({
+      displayClearIcon,
+      currentValue: displayValue,
+      disabled,
+      readOnly,
+    });
 
     return (
       <InputContainer fullWidth={fullWidth}>
@@ -260,65 +268,129 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {/* Дополнительный лейбл */}
         {additionalLabel && <AdditionalLabel>{additionalLabel}</AdditionalLabel>}
 
-        {/* Обертка инпута с тултипом */}
-        {tooltip && tooltipType === 'tooltip' ? (
-          <Tooltip content={tooltip} position={tooltipPosition as TooltipPosition}>
-            <InputWrapper
-              variant={variant}
-              size={size}
-              error={error}
-              success={success}
-              status={currentStatus}
-              fullWidth={fullWidth}
-              focused={focused}
-              readOnly={readOnly}
-              className={className}
-            >
-              {leftIcon && (
-                <IconContainer $position="left" size={size}>
-                  {leftIcon}
-                </IconContainer>
-              )}
-
-              <StyledInput
-                ref={ref}
-                id={inputId}
-                type={type}
-                value={displayValue}
-                onChange={handleChange}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-                placeholder={placeholder}
-                disabled={disabled}
+        {/* Обертка инпута с подсказкой */}
+        {tooltip ? (
+          tooltipType === 'tooltip' ? (
+            <Tooltip content={tooltip} position={tooltipPosition as TooltipPosition}>
+              <InputWrapper
+                variant={variant}
+                size={size}
+                error={error}
+                success={success}
+                status={currentStatus}
+                fullWidth={fullWidth}
+                focused={focused}
                 readOnly={readOnly}
-                required={required}
-                textAlign={textAlign}
-                onCopy={handleCopy}
-                onPaste={handlePaste}
-                form={formContext?.formId}
-                autoComplete={getAutocompleteValue()}
-                {...props}
-              />
+                className={className}
+              >
+                {leftIcon && (
+                  <IconContainer $position="left" size={size}>
+                    {leftIcon}
+                  </IconContainer>
+                )}
 
-              {rightIcon && (
-                <IconContainer $position="right" size={size}>
-                  {rightIcon}
-                </IconContainer>
-              )}
+                <StyledInput
+                  ref={ref}
+                  id={inputId}
+                  type={type}
+                  value={displayValue}
+                  onChange={handleChange}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  placeholder={placeholder}
+                  disabled={disabled}
+                  readOnly={readOnly}
+                  required={required}
+                  textAlign={textAlign}
+                  onCopy={handleCopy}
+                  onPaste={handlePaste}
+                  form={formContext?.formId}
+                  autoComplete={getAutocompleteValue()}
+                  {...props}
+                />
 
-              {isLoading && <LoadingSpinner size={size} />}
+                {rightIcon && (
+                  <IconContainer $position="right" size={size}>
+                    {rightIcon}
+                  </IconContainer>
+                )}
 
-              {displayClearIcon && displayValue && !disabled && !readOnly && (
-                <ClearButton onClick={handleClear} type="button">
-                  <Icon
-                    name="IconExClose"
-                    size={getClearIconSizeForInputField(size)}
-                    {...clearIconProps}
-                  />
-                </ClearButton>
-              )}
-            </InputWrapper>
-          </Tooltip>
+                {isLoading && <LoadingSpinner size={size} />}
+
+                {showClearButton && (
+                  <ClearButton onClick={handleClear} type="button">
+                    <Icon
+                      name="IconExClose"
+                      size={getClearIconSizeForInputField(size)}
+                      {...clearIconProps}
+                    />
+                  </ClearButton>
+                )}
+              </InputWrapper>
+            </Tooltip>
+          ) : (
+            <Hint
+              content={tooltip}
+              placement={tooltipPosition as HintPosition}
+              variant={HintVariant.DEFAULT}
+            >
+              <InputWrapper
+                variant={variant}
+                size={size}
+                error={error}
+                success={success}
+                status={currentStatus}
+                fullWidth={fullWidth}
+                focused={focused}
+                readOnly={readOnly}
+                className={className}
+              >
+                {leftIcon && (
+                  <IconContainer $position="left" size={size}>
+                    {leftIcon}
+                  </IconContainer>
+                )}
+
+                <StyledInput
+                  ref={ref}
+                  id={inputId}
+                  type={type}
+                  value={displayValue}
+                  onChange={handleChange}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  placeholder={placeholder}
+                  disabled={disabled}
+                  readOnly={readOnly}
+                  required={required}
+                  textAlign={textAlign}
+                  onCopy={handleCopy}
+                  onPaste={handlePaste}
+                  form={formContext?.formId}
+                  autoComplete={getAutocompleteValue()}
+                  {...props}
+                />
+
+                {rightIcon && (
+                  <IconContainer $position="right" size={size}>
+                    {rightIcon}
+                  </IconContainer>
+                )}
+
+                {isLoading && <LoadingSpinner size={size} />}
+
+                {showClearButton && (
+                  <ClearButton onClick={handleClear} type="button">
+                    <Icon
+                      name="IconExClose"
+                      size={getClearIconSizeForInputField(size)}
+                      {...clearIconProps}
+                    />
+                  </ClearButton>
+                )}
+              </InputWrapper>
+            </Hint>
+          )
         ) : (
           <InputWrapper
             variant={variant}
@@ -365,7 +437,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
             {isLoading && <LoadingSpinner size={size} />}
 
-            {displayClearIcon && displayValue && !disabled && !readOnly && (
+            {showClearButton && (
               <ClearButton onClick={handleClear} type="button">
                 <Icon
                   name="IconExClose"
@@ -375,17 +447,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               </ClearButton>
             )}
           </InputWrapper>
-        )}
-
-        {/* Хинт */}
-        {tooltip && tooltipType === 'hint' && (
-          <Hint
-            content={tooltip}
-            placement={tooltipPosition as HintPosition}
-            variant={HintVariant.DEFAULT}
-          >
-            {tooltip}
-          </Hint>
         )}
 
         {/* Вспомогательные тексты */}

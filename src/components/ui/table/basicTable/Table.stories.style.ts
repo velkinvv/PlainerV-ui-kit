@@ -1,7 +1,7 @@
 ﻿import styled from 'styled-components';
 import { TableCell } from './TableCell';
 
-/** ╨У╨╛╤А╨╕╨╖╨╛╨╜╤В╨░╨╗╤М╨╜╤Л╨╣ ╤А╤П╨┤ ╨▓╨╜╤Г╤В╤А╨╕ ╤П╤З╨╡╨╣╨║╨╕ (╨░╨▓╨░╤В╨░╤А + ╤В╨╡╨║╤Б╤В, ╨╕ ╤В.╨┐.). */
+/** Горизонтальный ряд внутри ячейки (аватар + текст, и т.п.). */
 export const StoryTableInline = styled.div`
   display: inline-flex;
   align-items: center;
@@ -9,8 +9,8 @@ export const StoryTableInline = styled.div`
 `;
 
 /**
- * ╨Ъ╨╜╨╛╨┐╨║╨░ ┬л╨Ч╨░╨│╤А╤Г╨╖╨╕╤В╤М ╨▒╨╛╨╗╤М╤И╨╡┬╗ ╨▓ ╨┐╨╛╨┤╨▓╨░╨╗╨╡ ╤В╨░╨▒╨╗╨╕╤Ж╤Л (╨║╨░╨║ ╤Б╤Б╤Л╨╗╨║╨░ ╤Б ╨╕╨║╨╛╨╜╨║╨╛╨╣ ╤И╨╡╨▓╤А╨╛╨╜╨░).
- * @param $disabled тАФ ╨▓╨╕╨╖╤Г╨░╨╗╤М╨╜╨╛ ╨┐╤А╨╕╨│╨╗╤Г╤И╨╕╤В╤М (╨╛╨┐╤Ж╨╕╨╛╨╜╨░╨╗╤М╨╜╨╛ ╨┤╨╗╤П ╤Б╤В╨╛╤А╨╕╤Б)
+ * Кнопка «Загрузить больше» в подвале таблицы (как ссылка с иконкой шеврона).
+ * @param $disabled — визуально приглушить (опционально для сторис)
  */
 export const StoryTableLoadMore = styled.button<{ $disabled?: boolean }>`
   display: inline-flex;
@@ -40,7 +40,7 @@ export const StoryTableLoadMore = styled.button<{ $disabled?: boolean }>`
   }
 `;
 
-/** ╨п╤З╨╡╨╣╨║╨░ ╨┐╨╛╨┤╨▓╨░╨╗╨░ ╨╜╨░ ╨▓╤Б╤О ╤И╨╕╤А╨╕╨╜╤Г ╨┐╨╛╨┤ ┬л╨Ч╨░╨│╤А╤Г╨╖╨╕╤В╤М ╨▒╨╛╨╗╤М╤И╨╡┬╗. */
+/** Ячейка подвала на всю ширину под «Загрузить больше». */
 export const StoryTableLoadMoreCell = styled(TableCell).attrs({
   colSpan: 7,
   align: 'center',
@@ -48,7 +48,7 @@ export const StoryTableLoadMoreCell = styled(TableCell).attrs({
   padding: 16px 12px;
 `;
 
-/** ╨б╤З╤С╤В╤З╨╕╨║ ╨║╨╗╨╕╨║╨╛╨▓ ╤А╤П╨┤╨╛╨╝ ╤Б ╨┐╨╛╨┤╨┐╨╕╤Б╤М╤О (╨┤╨╗╤П ╤Б╤В╨╛╤А╨╕╤Б). */
+/** Счётчик кликов рядом с подписью (для сторис). */
 export const StoryLoadMoreHint = styled.span`
   margin-left: 4px;
   font-size: 12px;

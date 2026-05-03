@@ -14,7 +14,7 @@ import {
 } from './Table.style';
 
 /**
- * Пагинация в духе MUI: `page` с нуля, `count` всего записей, опционально выбор `rowsPerPage`.
+ * Пагинация таблицы: `page` с нуля, `count` — всего записей, опционально выбор `rowsPerPage`.
  * Внутри используется `Pagination` (1-based страницы).
  * @param props.count - Всего элементов
  * @param props.page - Текущая страница с нуля

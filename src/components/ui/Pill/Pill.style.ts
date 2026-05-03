@@ -1,17 +1,41 @@
 import styled, { css } from 'styled-components';
+import type { DefaultTheme } from 'styled-components';
 import { TransitionHandler } from '../../../handlers/uiHandlers';
 import type { PillGeometry } from './handlers';
+import type { PillStatus } from '../../../types/ui';
 import { ThemeMode } from '../../../types/theme';
 
 /**
- * Корневая кнопка Pill (default / hover / active / selected / disabled).
+ * Акцентный цвет Pill по семантическому статусу (выбранное состояние, спиннер).
+ *
+ * @param theme — тема styled-components
+ * @param status — статус (`default` — primary)
+ */
+export const resolvePillAccent = (theme: DefaultTheme, status: PillStatus | undefined): string => {
+  switch (status ?? 'default') {
+    case 'success':
+      return theme.colors.success;
+    case 'warning':
+      return theme.colors.warning;
+    case 'danger':
+      return theme.colors.danger;
+    case 'info':
+      return theme.colors.info;
+    default:
+      return theme.colors.primary;
+  }
+};
+
+/**
+ * Корневая кнопка Pill (default / hover / active / selected / disabled / loading).
  * @property $g - Геометрия из `getPillGeometry`
  * @property $selected - Выбранное состояние
+ * @property $status - Семантический акцент выбранного состояния
  */
 export const PillRoot = styled.button
   .withConfig({
-    shouldForwardProp: prop => prop !== '$g' && prop !== '$selected',
-  })<{ $g: PillGeometry; $selected?: boolean }>`
+    shouldForwardProp: prop => prop !== '$g' && prop !== '$selected' && prop !== '$status',
+  })<{ $g: PillGeometry; $selected?: boolean; $status?: PillStatus }>`
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -54,14 +78,14 @@ export const PillRoot = styled.button
           `}
   }
 
-  ${({ $selected, theme }) =>
+  ${({ $selected, theme, $status }) =>
     $selected &&
     css`
-      border-color: ${theme.colors.primary};
-      color: ${theme.colors.primary};
+      border-color: ${resolvePillAccent(theme, $status)};
+      color: ${resolvePillAccent(theme, $status)};
       background: ${theme.mode === ThemeMode.DARK
-        ? `color-mix(in srgb, ${theme.colors.primary} 22%, ${theme.colors.input})`
-        : `color-mix(in srgb, ${theme.colors.primary} 10%, ${theme.colors.input})`};
+        ? `color-mix(in srgb, ${resolvePillAccent(theme, $status)} 22%, ${theme.colors.input})`
+        : `color-mix(in srgb, ${resolvePillAccent(theme, $status)} 10%, ${theme.colors.input})`};
     `}
 
   &:disabled {
@@ -83,11 +107,13 @@ export const PillRoot = styled.button
  * @property $g - Геометрия
  * @property $selected - Выбрано
  * @property $disabled - Отключено
+ * @property $status - Цвет кольца и точки в выбранном состоянии
  */
 export const PillIndicator = styled.span
   .withConfig({
-    shouldForwardProp: prop => prop !== '$g' && prop !== '$selected' && prop !== '$disabled',
-  })<{ $g: PillGeometry; $selected?: boolean; $disabled?: boolean }>`
+    shouldForwardProp: prop =>
+      prop !== '$g' && prop !== '$selected' && prop !== '$disabled' && prop !== '$status',
+  })<{ $g: PillGeometry; $selected?: boolean; $disabled?: boolean; $status?: PillStatus }>`
   position: relative;
   flex-shrink: 0;
   width: ${({ $g }) => $g.indicator}px;
@@ -110,11 +136,11 @@ export const PillIndicator = styled.span
       background: transparent;
     `}
 
-  ${({ $disabled, $selected, theme, $g }) =>
+  ${({ $disabled, $selected, theme, $g, $status }) =>
     !$disabled &&
     $selected &&
     css`
-      border: ${$g.ringWidth}px solid ${theme.colors.primary};
+      border: ${$g.ringWidth}px solid ${resolvePillAccent(theme, $status)};
       background: transparent;
     `}
 
@@ -127,14 +153,40 @@ export const PillIndicator = styled.span
     border-radius: 50%;
     width: ${({ $g }) => $g.dot}px;
     height: ${({ $g }) => $g.dot}px;
-    ${({ $selected, $disabled, theme }) =>
+    ${({ $selected, $disabled, theme, $status }) =>
       $selected && !$disabled
         ? css`
-            background: ${theme.colors.primary};
+            background: ${resolvePillAccent(theme, $status)};
           `
         : css`
             display: none;
           `}
+  }
+`;
+
+/**
+ * Спиннер в слоте индикатора при `loading` (полоска кольца с акцентом статуса).
+ * @property $g — диаметр как у индикатора
+ * @property $status — цвет активной дуги
+ */
+export const PillLoadingIndicator = styled.span
+  .withConfig({
+    shouldForwardProp: prop => prop !== '$g' && prop !== '$status',
+  })<{ $g: PillGeometry; $status?: PillStatus }>`
+  flex-shrink: 0;
+  width: ${({ $g }) => $g.indicator}px;
+  height: ${({ $g }) => $g.indicator}px;
+  border-radius: 50%;
+  box-sizing: border-box;
+  border: ${({ $g }) => Math.max(1, Math.round($g.ringWidth))}px solid
+    ${({ theme }) => theme.colors.borderSecondary};
+  border-top-color: ${({ theme, $status }) => resolvePillAccent(theme, $status)};
+  animation: ui-pill-loading-spin 0.7s linear infinite;
+
+  @keyframes ui-pill-loading-spin {
+    to {
+      transform: rotate(360deg);
+    }
   }
 `;
 

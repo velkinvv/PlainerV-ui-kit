@@ -70,6 +70,7 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
       weekdays: weekdaysProp,
       footer,
       embedded = false,
+      fullWidth = false,
       onDayMouseEnter,
       onDayMouseLeave,
       showDateRollers = false,
@@ -281,6 +282,7 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
         className={className}
         $size={size}
         $embedded={embedded}
+        $fullWidth={fullWidth}
         role="group"
         aria-label="Календарь"
       >
@@ -370,13 +372,13 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
           />
         ) : null}
 
-        <CalendarWeekdays $size={size}>
+        <CalendarWeekdays $size={size} $fullWidth={fullWidth}>
           {weekdayLabels.map((wd, i) => (
             <CalendarWeekdayCell key={`${wd}-${i}`}>{wd}</CalendarWeekdayCell>
           ))}
         </CalendarWeekdays>
 
-        <CalendarGrid $size={size}>
+        <CalendarGrid $size={size} $fullWidth={fullWidth}>
           {cells.map((cell, idx) => {
             const dayOnly = new Date(
               cell.date.getFullYear(),
@@ -402,6 +404,7 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
                 key={idx}
                 type="button"
                 $size={size}
+                $fullWidth={fullWidth}
                 $inCurrentMonth={cell.inCurrentMonth}
                 $selected={Boolean(isSel)}
                 $inRange={rangeFlags.inRange}

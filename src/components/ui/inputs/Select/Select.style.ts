@@ -85,7 +85,7 @@ export const SelectMultiTriggerRoot = styled.div.withConfig({
   flex-wrap: nowrap;
   align-items: center;
   gap: 4px;
-  overflow-x: auto;
+  overflow-x: hidden;
   overflow-y: hidden;
   box-sizing: border-box;
   border: none;
@@ -97,8 +97,6 @@ export const SelectMultiTriggerRoot = styled.div.withConfig({
   cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
   padding: 0;
   opacity: ${({ $disabled }) => ($disabled ? 0.6 : 1)};
-  scrollbar-width: thin;
-
   &:focus-visible {
     outline: none;
   }
@@ -191,18 +189,18 @@ export const SelectMultiClearAllBtn = styled.button.withConfig({
   cursor: pointer;
   color: ${({ theme }) => theme.colors.textSecondary};
   transition: color 0.15s ease;
+  box-sizing: border-box;
+  width: 22px;
+  height: 22px;
+  line-height: 0;
 
   ${({ $compact }) =>
     $compact
       ? css`
           padding: 0;
-          width: 22px;
-          height: 22px;
-          box-sizing: border-box;
-          line-height: 0;
         `
       : css`
-          padding: 4px;
+          padding: 0;
         `}
 
   &:disabled {

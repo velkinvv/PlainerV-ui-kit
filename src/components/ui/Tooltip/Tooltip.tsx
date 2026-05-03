@@ -12,6 +12,13 @@ export interface TooltipState {
   placement: TooltipPosition;
 }
 
+interface TooltipBounds {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+}
+
 export const Tooltip: React.FC<TooltipProps> = forwardRef<HTMLDivElement, TooltipProps>(
   (
     {
@@ -32,53 +39,172 @@ export const Tooltip: React.FC<TooltipProps> = forwardRef<HTMLDivElement, Toolti
     });
 
     const triggerRef = useRef<HTMLDivElement>(null);
+    const tooltipRef = useRef<HTMLDivElement>(null);
     const timeoutRef = useRef<NodeJS.Timeout>();
 
-    // Функция для вычисления позиции tooltip
-    const calculatePosition = useCallback((placement: TooltipPosition) => {
-      if (!triggerRef.current) return { x: 0, y: 0 };
+    const viewportPadding = 8;
+    const tooltipOffset = 8;
 
-      const rect = triggerRef.current.getBoundingClientRect();
-      const offset = 8; // Отступ от элемента
+    const getPositionForPlacement = useCallback(
+      (triggerRect: DOMRect, placement: TooltipPosition): { x: number; y: number } => {
+        if (placement === TooltipPosition.TOP) {
+          return {
+            x: triggerRect.left + triggerRect.width / 2,
+            y: triggerRect.top - tooltipOffset,
+          };
+        }
+        if (placement === TooltipPosition.BOTTOM) {
+          return {
+            x: triggerRect.left + triggerRect.width / 2,
+            y: triggerRect.bottom + tooltipOffset,
+          };
+        }
+        if (placement === TooltipPosition.LEFT) {
+          return {
+            x: triggerRect.left - tooltipOffset,
+            y: triggerRect.top + triggerRect.height / 2,
+          };
+        }
 
-      let x = 0;
-      let y = 0;
+        return {
+          x: triggerRect.right + tooltipOffset,
+          y: triggerRect.top + triggerRect.height / 2,
+        };
+      },
+      [],
+    );
 
-      // Определяем основное направление
-      if (placement === TooltipPosition.TOP) {
-        // Для top позиции tooltip должен быть выше элемента
-        y = rect.top - offset;
-        x = rect.left + rect.width / 2; // центрируем по горизонтали
-      } else if (placement === TooltipPosition.BOTTOM) {
-        // Для bottom позиции tooltip должен быть ниже элемента
-        y = rect.bottom + offset;
-        x = rect.left + rect.width / 2; // центрируем по горизонтали
-      } else if (placement === TooltipPosition.LEFT) {
-        // Для left позиции tooltip должен быть слева от элемента
-        x = rect.left - offset;
-        y = rect.top + rect.height / 2; // центрируем по вертикали
-      } else if (placement === TooltipPosition.RIGHT) {
-        // Для right позиции tooltip должен быть справа от элемента
-        x = rect.right + offset;
-        y = rect.top + rect.height / 2; // центрируем по вертикали
-      }
+    const getTooltipBounds = useCallback(
+      (
+        tooltipPosition: { x: number; y: number },
+        placement: TooltipPosition,
+        tooltipSize: { width: number; height: number },
+      ): TooltipBounds => {
+        if (placement === TooltipPosition.TOP) {
+          return {
+            left: tooltipPosition.x - tooltipSize.width / 2,
+            right: tooltipPosition.x + tooltipSize.width / 2,
+            top: tooltipPosition.y - tooltipSize.height,
+            bottom: tooltipPosition.y,
+          };
+        }
+        if (placement === TooltipPosition.BOTTOM) {
+          return {
+            left: tooltipPosition.x - tooltipSize.width / 2,
+            right: tooltipPosition.x + tooltipSize.width / 2,
+            top: tooltipPosition.y,
+            bottom: tooltipPosition.y + tooltipSize.height,
+          };
+        }
+        if (placement === TooltipPosition.LEFT) {
+          return {
+            left: tooltipPosition.x - tooltipSize.width,
+            right: tooltipPosition.x,
+            top: tooltipPosition.y - tooltipSize.height / 2,
+            bottom: tooltipPosition.y + tooltipSize.height / 2,
+          };
+        }
 
-      return { x, y };
-    }, []);
+        return {
+          left: tooltipPosition.x,
+          right: tooltipPosition.x + tooltipSize.width,
+          top: tooltipPosition.y - tooltipSize.height / 2,
+          bottom: tooltipPosition.y + tooltipSize.height / 2,
+        };
+      },
+      [],
+    );
+
+    const clampPositionToViewport = useCallback(
+      (
+        tooltipPosition: { x: number; y: number },
+        placement: TooltipPosition,
+        tooltipSize: { width: number; height: number },
+      ): { x: number; y: number } => {
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        const bounds = getTooltipBounds(tooltipPosition, placement, tooltipSize);
+
+        if (bounds.left < viewportPadding) {
+          tooltipPosition.x += viewportPadding - bounds.left;
+        }
+        if (bounds.right > viewportWidth - viewportPadding) {
+          tooltipPosition.x -= bounds.right - (viewportWidth - viewportPadding);
+        }
+        if (bounds.top < viewportPadding) {
+          tooltipPosition.y += viewportPadding - bounds.top;
+        }
+        if (bounds.bottom > viewportHeight - viewportPadding) {
+          tooltipPosition.y -= bounds.bottom - (viewportHeight - viewportPadding);
+        }
+
+        return tooltipPosition;
+      },
+      [getTooltipBounds],
+    );
+
+    const resolveTooltipGeometry = useCallback(
+      (preferredPlacement: TooltipPosition) => {
+        if (!triggerRef.current) {
+          return {
+            placement: preferredPlacement,
+            position: { x: 0, y: 0 },
+          };
+        }
+
+        const triggerRect = triggerRef.current.getBoundingClientRect();
+        const tooltipRect = tooltipRef.current?.getBoundingClientRect();
+        const tooltipSize = {
+          width: tooltipRect?.width ?? 220,
+          height: tooltipRect?.height ?? 40,
+        };
+        const fallbackPlacementMap: Record<TooltipPosition, TooltipPosition> = {
+          [TooltipPosition.TOP]: TooltipPosition.BOTTOM,
+          [TooltipPosition.BOTTOM]: TooltipPosition.TOP,
+          [TooltipPosition.LEFT]: TooltipPosition.RIGHT,
+          [TooltipPosition.RIGHT]: TooltipPosition.LEFT,
+        };
+
+        const preferredPosition = getPositionForPlacement(triggerRect, preferredPlacement);
+        const preferredBounds = getTooltipBounds(preferredPosition, preferredPlacement, tooltipSize);
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        const hasOverflowOnPrimaryAxis =
+          (preferredPlacement === TooltipPosition.TOP &&
+            preferredBounds.top < viewportPadding) ||
+          (preferredPlacement === TooltipPosition.BOTTOM &&
+            preferredBounds.bottom > viewportHeight - viewportPadding) ||
+          (preferredPlacement === TooltipPosition.LEFT &&
+            preferredBounds.left < viewportPadding) ||
+          (preferredPlacement === TooltipPosition.RIGHT &&
+            preferredBounds.right > viewportWidth - viewportPadding);
+
+        const resolvedPlacement = hasOverflowOnPrimaryAxis
+          ? fallbackPlacementMap[preferredPlacement]
+          : preferredPlacement;
+        const resolvedPosition = getPositionForPlacement(triggerRect, resolvedPlacement);
+
+        return {
+          placement: resolvedPlacement,
+          position: clampPositionToViewport(resolvedPosition, resolvedPlacement, tooltipSize),
+        };
+      },
+      [clampPositionToViewport, getPositionForPlacement, getTooltipBounds],
+    );
 
     // Показать tooltip
     const showTooltip = useCallback(() => {
       if (disabled) return;
 
       timeoutRef.current = setTimeout(() => {
-        const newPosition = calculatePosition(position);
+        const tooltipGeometry = resolveTooltipGeometry(position);
         setTooltipState({
           isVisible: true,
-          position: newPosition,
-          placement: position,
+          position: tooltipGeometry.position,
+          placement: tooltipGeometry.placement,
         });
       }, delay);
-    }, [disabled, delay, position, calculatePosition]);
+    }, [disabled, delay, position, resolveTooltipGeometry]);
 
     // Скрыть tooltip
     const hideTooltip = useCallback(() => {
@@ -116,16 +242,48 @@ export const Tooltip: React.FC<TooltipProps> = forwardRef<HTMLDivElement, Toolti
 
     // Обновляем позицию при изменении размера окна
     useEffect(() => {
-      const handleResize = () => {
+      const updateTooltipPosition = () => {
         if (tooltipState.isVisible) {
-          const newPosition = calculatePosition(tooltipState.placement);
-          setTooltipState(prev => ({ ...prev, position: newPosition }));
+          const tooltipGeometry = resolveTooltipGeometry(position);
+          setTooltipState(prev => ({
+            ...prev,
+            position: tooltipGeometry.position,
+            placement: tooltipGeometry.placement,
+          }));
         }
       };
 
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
-    }, [tooltipState.isVisible, tooltipState.placement, calculatePosition]);
+      window.addEventListener('resize', updateTooltipPosition);
+      window.addEventListener('scroll', updateTooltipPosition, true);
+      return () => {
+        window.removeEventListener('resize', updateTooltipPosition);
+        window.removeEventListener('scroll', updateTooltipPosition, true);
+      };
+    }, [tooltipState.isVisible, position, resolveTooltipGeometry]);
+
+    // После монтирования тултипа пересчитываем точные координаты по реальным размерам.
+    useEffect(() => {
+      if (!tooltipState.isVisible) {
+        return;
+      }
+
+      const tooltipGeometry = resolveTooltipGeometry(position);
+      setTooltipState(prev => {
+        if (
+          prev.placement === tooltipGeometry.placement &&
+          prev.position.x === tooltipGeometry.position.x &&
+          prev.position.y === tooltipGeometry.position.y
+        ) {
+          return prev;
+        }
+
+        return {
+          ...prev,
+          position: tooltipGeometry.position,
+          placement: tooltipGeometry.placement,
+        };
+      });
+    }, [tooltipState.isVisible, position, resolveTooltipGeometry]);
 
     return (
       <>
@@ -144,6 +302,7 @@ export const Tooltip: React.FC<TooltipProps> = forwardRef<HTMLDivElement, Toolti
         {tooltipState.isVisible &&
           createPortal(
             <TooltipContent
+              ref={tooltipRef}
               data-tooltip-content
               $position={tooltipState.position}
               $placement={tooltipState.placement}

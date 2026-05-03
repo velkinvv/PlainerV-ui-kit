@@ -13,6 +13,7 @@ import {
   AvatarText,
   AvatarIcon,
   CloseButton,
+  AvatarMessageBadgeAnchor,
 } from './Avatar.style';
 
 // Функция для получения иконки по состоянию
@@ -215,8 +216,14 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
       );
     };
 
+    const hasMessageBadge = Boolean(messageCount && messageCount > 0);
+
     const avatarContent = (
-      <AvatarWrapper size={size} className={clsx('ui-avatar-wrapper', className)}>
+      <AvatarWrapper
+        size={size}
+        $hasMessageBadge={hasMessageBadge}
+        className={clsx('ui-avatar-wrapper', className)}
+      >
         <AvatarContainer
           ref={ref}
           size={size}
@@ -229,24 +236,17 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
         >
           {renderContent()}
         </AvatarContainer>
-        {/* Badge с количеством сообщений рендерится вне AvatarContainer, чтобы не обрезаться overflow: hidden */}
-        {messageCount && messageCount > 0 && (
-          <div
-            style={{
-              position: 'absolute',
-              top: '-6px',
-              right: '-6px',
-              zIndex: 100,
-            }}
-          >
+        {/* Badge с количеством сообщений вне AvatarContainer (у него overflow: hidden); враппер с полями — см. AvatarWrapper.$hasMessageBadge */}
+        {hasMessageBadge && (
+          <AvatarMessageBadgeAnchor>
             <Badge
               variant={getBadgeVariantByStatus(status)}
               size={size === Size.LG ? Size.MD : Size.SM}
               rounded={true}
             >
-              {messageCount > 99 ? '99+' : messageCount}
+              {(messageCount ?? 0) > 99 ? '99+' : messageCount ?? 0}
             </Badge>
-          </div>
+          </AvatarMessageBadgeAnchor>
         )}
       </AvatarWrapper>
     );

@@ -9,6 +9,7 @@ import {
   SliderTrackWrap,
   SliderTrackHit,
   SliderTrackRail,
+  SliderTrackRingWrap,
   SliderTrackActive,
   SliderThumb,
   SliderValuesRow,
@@ -22,7 +23,13 @@ import {
   clientXToSliderValue,
   formatSliderNumberRu,
   getSliderThumbSizePx,
+  getSliderValueLabelRootPaddingHorizontalPx,
+  resolveSliderTrackMetrics,
+  resolveSliderAccentKind,
+  sliderThumbLeftCalcCss,
 } from './handlers';
+import { SliderFieldShell } from './SliderFieldShell';
+import { SliderSkeletonSingle } from './SliderSkeleton';
 
 const defaultFormat = (n: number) => formatSliderNumberRu(n);
 
@@ -35,6 +42,9 @@ const defaultFormat = (n: number) => formatSliderNumberRu(n);
  * @param props.min / max / step - Шкала (по умолчанию 0 / 100 / 1)
  * @param props.formatValue / formatMinLabel / formatMaxLabel - Тексты подписей
  * @param props.showValueLabel - Показывать число под бегунком (по умолчанию true)
+ * @param props.trackRailHeightPx / trackActiveHeightPx — опциональная толщина линий (см. типы)
+ * @param props.label / additionalLabel / helperText / extraText / error / success / required — как у инпутов
+ * @param props.skeleton / status — скелетон и визуальный акцент (см. типы)
  * @param props.disabled / fullWidth / size / className / name — см. типы
  */
 export const Slider: React.FC<SliderProps> = ({
@@ -51,6 +61,17 @@ export const Slider: React.FC<SliderProps> = ({
   formatMaxLabel = defaultFormat,
   showValueLabel = true,
   size = Size.MD,
+  trackRailHeightPx,
+  trackActiveHeightPx,
+  label,
+  additionalLabel,
+  error,
+  success,
+  helperText,
+  extraText,
+  required,
+  skeleton = false,
+  status,
   className,
   name,
 }) => {
@@ -68,7 +89,19 @@ export const Slider: React.FC<SliderProps> = ({
 
   const [internal, setInternal] = useState(initial);
   const isControlled = valueProp !== undefined;
-  const value = isControlled ? snapSliderToStep(clampSliderValue(valueProp ?? min, min, max), min, max, step) : internal;
+  const value = isControlled
+    ? snapSliderToStep(clampSliderValue(valueProp ?? min, min, max), min, max, step)
+    : internal;
+
+  const thumbPx = getSliderThumbSizePx(size);
+  const thumbInsetPx = thumbPx / 2;
+  const track = useMemo(
+    () => resolveSliderTrackMetrics(size, { trackRailHeightPx, trackActiveHeightPx }),
+    [size, trackRailHeightPx, trackActiveHeightPx],
+  );
+  const valueLabelRootPadPx = showValueLabel
+    ? getSliderValueLabelRootPaddingHorizontalPx(thumbPx)
+    : 0;
 
   const setCommittedValue = useCallback(
     (nextRaw: number) => {
@@ -87,9 +120,9 @@ export const Slider: React.FC<SliderProps> = ({
       if (!rect?.width) {
         return;
       }
-      setCommittedValue(clientXToSliderValue(clientX, rect, min, max, step));
+      setCommittedValue(clientXToSliderValue(clientX, rect, min, max, step, thumbPx));
     },
-    [max, min, setCommittedValue, step],
+    [max, min, setCommittedValue, step, thumbPx],
   );
 
   const onTrackPointerDown = useCallback(
@@ -166,47 +199,140 @@ export const Slider: React.FC<SliderProps> = ({
   );
 
   const pct = valueToPercent(value, min, max);
-  const thumbPx = getSliderThumbSizePx(size);
 
-  return (
-    <SliderRoot className={clsx('ui-slider', className)} $fullWidth={fullWidth}>
-      {name ? <SliderHiddenInput name={name} value={String(value)} readOnly aria-hidden tabIndex={-1} /> : null}
+  const hasFieldChrome = useMemo(
+    () =>
+      label != null ||
+      Boolean(additionalLabel) ||
+      Boolean(error) ||
+      success === true ||
+      Boolean(helperText) ||
+      Boolean(extraText) ||
+      required === true,
+    [additionalLabel, error, extraText, helperText, label, required, success],
+  );
+
+  const accentKind = useMemo(
+    () => resolveSliderAccentKind(error, success, status),
+    [error, success, status],
+  );
+
+  const helperTextStatus = useMemo(() => {
+    if (error || success) {
+      return undefined;
+    }
+    if (status === 'warning' || status === 'success' || status === 'error') {
+      return status;
+    }
+    return undefined;
+  }, [error, success, status]);
+
+  if (skeleton) {
+    return (
+      <SliderFieldShell
+        enabled={hasFieldChrome}
+        className={hasFieldChrome ? className : undefined}
+        label={label}
+        additionalLabel={additionalLabel}
+        error={error}
+        success={success}
+        helperText={helperText}
+        extraText={extraText}
+        required={required}
+        fullWidth={fullWidth}
+        skeleton
+        helperStatus={helperTextStatus}
+      >
+        <SliderSkeletonSingle size={size} fullWidth={fullWidth} showValueLabel={showValueLabel} />
+      </SliderFieldShell>
+    );
+  }
+
+  const sliderBody = (
+    <SliderRoot
+      className={clsx('ui-slider', !hasFieldChrome && className)}
+      $fullWidth={fullWidth}
+      $valueLabelPadPx={valueLabelRootPadPx}
+    >
+      {name ? (
+        <SliderHiddenInput name={name} value={String(value)} readOnly aria-hidden tabIndex={-1} />
+      ) : null}
       <SliderScaleRow>
         <SliderScaleLabel>{formatMinLabel(min)}</SliderScaleLabel>
         <SliderScaleLabel>{formatMaxLabel(max)}</SliderScaleLabel>
       </SliderScaleRow>
-      <SliderTrackWrap ref={trackRef}>
-        <SliderTrackHit onPointerDown={onTrackPointerDown} />
-        <SliderTrackRail aria-hidden />
-        <SliderTrackActive $leftPct={0} $widthPct={pct} aria-hidden />
-        <SliderThumb
-          type="button"
-          id={thumbId}
-          $thumbPx={thumbPx}
-          $disabled={disabled}
-          disabled={disabled}
-          style={{ left: `${pct}%` }}
-          aria-valuemin={min}
-          aria-valuemax={max}
-          aria-valuenow={value}
-          aria-valuetext={formatValue(value)}
-          role="slider"
-          tabIndex={disabled ? -1 : 0}
-          onPointerDown={onThumbPointerDown}
-          onPointerMove={onThumbPointerMove}
-          onPointerUp={onThumbPointerUp}
-          onPointerCancel={onThumbPointerUp}
-          onKeyDown={onThumbKeyDown}
-        />
-      </SliderTrackWrap>
+      <SliderTrackRingWrap $accent={accentKind}>
+        <SliderTrackWrap ref={trackRef} $trackWrapHeightPx={track.trackWrapHeightPx}>
+          <SliderTrackHit
+            $thumbInsetPx={thumbInsetPx}
+            $hitHeightPx={track.hitHeightPx}
+            onPointerDown={onTrackPointerDown}
+          />
+          <SliderTrackRail
+            $thumbInsetPx={thumbInsetPx}
+            $railHeightPx={track.railHeightPx}
+            aria-hidden
+          />
+          <SliderTrackActive
+            $leftPct={0}
+            $widthPct={pct}
+            $thumbInsetPx={thumbInsetPx}
+            $thumbSizePx={thumbPx}
+            $activeHeightPx={track.activeHeightPx}
+            $accent={accentKind}
+            aria-hidden
+          />
+          <SliderThumb
+            type="button"
+            id={thumbId}
+            $thumbPx={thumbPx}
+            $accent={accentKind}
+            $disabled={disabled}
+            disabled={disabled}
+            style={{ left: sliderThumbLeftCalcCss(thumbPx, pct) }}
+            aria-valuemin={min}
+            aria-valuemax={max}
+            aria-valuenow={value}
+            aria-valuetext={formatValue(value)}
+            role="slider"
+            tabIndex={disabled ? -1 : 0}
+            onPointerDown={onThumbPointerDown}
+            onPointerMove={onThumbPointerMove}
+            onPointerUp={onThumbPointerUp}
+            onPointerCancel={onThumbPointerUp}
+            onKeyDown={onThumbKeyDown}
+          />
+        </SliderTrackWrap>
+      </SliderTrackRingWrap>
       {showValueLabel ? (
         <SliderValuesRow aria-hidden={false}>
-          <SliderValueLabel style={{ left: `${pct}%` }} $disabled={disabled}>
+          <SliderValueLabel
+            style={{ left: sliderThumbLeftCalcCss(thumbPx, pct) }}
+            $disabled={disabled}
+          >
             {formatValue(value)}
           </SliderValueLabel>
         </SliderValuesRow>
       ) : null}
     </SliderRoot>
+  );
+
+  return (
+    <SliderFieldShell
+      enabled={hasFieldChrome}
+      className={hasFieldChrome ? className : undefined}
+      label={label}
+      additionalLabel={additionalLabel}
+      error={error}
+      success={success}
+      helperText={helperText}
+      extraText={extraText}
+      required={required}
+      fullWidth={fullWidth}
+      helperStatus={helperTextStatus}
+    >
+      {sliderBody}
+    </SliderFieldShell>
   );
 };
 

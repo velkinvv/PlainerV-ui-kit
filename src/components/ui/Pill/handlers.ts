@@ -65,3 +65,39 @@ export const getPillGeometry = (size: Size = Size.MD): PillGeometry => {
       };
   }
 };
+
+/**
+ * Ширина скелетона Pill по умолчанию (подпись ~3–4 символа).
+ *
+ * @param size — размер чипа
+ */
+export const getPillSkeletonDefaultWidthPx = (size: Size): number => {
+  switch (size) {
+    case Size.SM:
+      return 76;
+    case Size.LG:
+      return 108;
+    case Size.XS:
+    case Size.MD:
+    default:
+      return 88;
+  }
+};
+
+/**
+ * Минимальная высота блока скелетона по вертикали (согласовано с отступами и типографикой).
+ *
+ * @param size — размер чипа
+ */
+export const getPillSkeletonMinHeightPx = (size: Size): number => {
+  switch (size) {
+    case Size.SM:
+      return 28;
+    case Size.LG:
+      return 40;
+    case Size.XS:
+    case Size.MD:
+    default:
+      return 34;
+  }
+};

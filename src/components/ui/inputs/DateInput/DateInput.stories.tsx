@@ -83,6 +83,10 @@ const meta: Meta<typeof DateInput> = {
       description:
         'Шапка календаря в попапе: `combined` — один список «месяц + год»; `split` — отдельные триггеры месяца и года',
     },
+    calendarFullWidth: {
+      control: { type: 'boolean' },
+      description: 'Растянуть выпадающий календарь на ширину поля ввода',
+    },
     displayCharacterCounter: {
       control: { type: 'boolean' },
       description: 'Показывать счетчик символов при наличии maxLength',
@@ -131,6 +135,21 @@ export const RangeMode: Story = {
     label: 'Диапазон дат',
     placeholder: 'Выберите диапазон дат',
   },
+};
+
+export const CalendarFullWidth: Story = {
+  name: 'Calendar Full Width (Popup = Input Width)',
+  args: {
+    label: 'Календарь на всю ширину поля',
+    placeholder: 'Откройте календарь',
+    fullWidth: true,
+    calendarFullWidth: true,
+  },
+  render: (args) => (
+    <div style={{ maxWidth: 420 }}>
+      <DateInput {...args} />
+    </div>
+  ),
 };
 
 export const WithValue: Story = {
