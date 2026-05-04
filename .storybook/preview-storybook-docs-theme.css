@@ -1,0 +1,83 @@
+/**
+ * Страница «Docs» рендерится в том же iframe превью, что и Canvas.
+ * `@storybook/addon-themes` выставляет на `<html>` атрибут `data-theme="light" | "dark"`.
+ * Блоки автодоков (Propstable, описание, заголовки) по умолчанию светлые — без этих правил
+ * при тёмном shell остаётся «белое» тело документации.
+ *
+ * Цвета приближены к `darkColors` UI-kit (фон страницы `colors.dark[700]`).
+ */
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+html[data-theme='dark'] body,
+html[data-theme='dark'] #root {
+  background-color: #06090e !important;
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+
+html[data-theme='dark'] #root {
+  min-height: 100%;
+}
+
+/* Обёртки MDX / Docs (классы Storybook 8+) */
+html[data-theme='dark'] .sbdocs,
+html[data-theme='dark'] .sbdocs-wrapper,
+html[data-theme='dark'] .sbdocs-content {
+  background-color: #06090e !important;
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+
+html[data-theme='dark'] .sbdocs h1,
+html[data-theme='dark'] .sbdocs h2,
+html[data-theme='dark'] .sbdocs h3,
+html[data-theme='dark'] .sbdocs h4 {
+  color: rgba(255, 255, 255, 0.96) !important;
+}
+
+html[data-theme='dark'] .sbdocs p,
+html[data-theme='dark'] .sbdocs li {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+/* Таблица свойств (ArgTypes) */
+html[data-theme='dark'] .docblock-argstable,
+html[data-theme='dark'] table.docblock-argstable {
+  background-color: #0e1012 !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+html[data-theme='dark'] .docblock-argstable th,
+html[data-theme='dark'] .docblock-argstable td,
+html[data-theme='dark'] table.docblock-argstable th,
+html[data-theme='dark'] table.docblock-argstable td {
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: inherit !important;
+}
+
+html[data-theme='dark'] .docblock-argstable svg {
+  opacity: 0.9;
+}
+
+/* Встроенный блок со сторис на странице Docs */
+html[data-theme='dark'] .docs-story {
+  background-color: #06090e !important;
+}
+
+/* Подсветка кода в документации */
+html[data-theme='dark'] .prismjs,
+html[data-theme='dark'] pre.prismjs,
+html[data-theme='dark'] .docblock-source pre {
+  background: #121417 !important;
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+
+/* Ссылки в тексте Docs */
+html[data-theme='dark'] .sbdocs a {
+  color: #8ba8d6;
+}
+
+html[data-theme='dark'] .sbdocs a:hover {
+  color: #b6c9e5;
+}

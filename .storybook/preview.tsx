@@ -4,6 +4,7 @@ import { withThemeByDataAttribute } from '@storybook/addon-themes';
 import { withStorybookUiKitTheme } from './withStorybookUiKitTheme';
 import { withStoryCanvasRoom } from './withStoryCanvasRoom';
 import './preview-storybook-overlays.css';
+import './preview-storybook-docs-theme.css';
 
 const themeAddonAnnotations = addonThemes();
 
@@ -29,6 +30,7 @@ function getInitialStorybookThemeGlobal(): 'light' | 'dark' {
  * Оформление shell (сайдбар, хедер) — в `.storybook/manager.ts` через палитру UI-kit.
  *
  * `withStoryCanvasRoom` — см. файл декоратора: место под абсолютные попапы на Canvas и в Docs.
+ * `preview-storybook-docs-theme.css` — тёмная подложка и текст для страницы **Docs** (автодоки не наследуют фон от UI-kit).
  *
  * Выпадающие меню / Hint / Tooltip рендерятся через `createPortal` в `document.body` текущего документа
  * и `position: fixed`. Портал в `window.top.document` не используется: стили styled-components

@@ -13,6 +13,12 @@ export interface TableContainerScrollProps {
    * чтобы снизу тоже применялся радиус карточки.
    */
   embeddedPaginationBelow?: boolean;
+  /**
+   * Макс. высота зоны с вертикальным скроллом внутри трека (`TableContainerScrollTrack`).
+   * Нужно для липкой шапки: без этого внешний контейнер с `overflow: auto` и трек с `overflow-x: auto`
+   * дают неверный scroll-ancestor для `position: sticky`. Число трактуется как пиксели.
+   */
+  scrollAreaMaxHeight?: string | number;
 }
 
 /**
@@ -23,13 +29,14 @@ export function TableContainerScroll({
   children,
   className,
   embeddedPaginationBelow = false,
+  scrollAreaMaxHeight,
 }: TableContainerScrollProps): React.ReactElement {
   return (
     <TableContainerScrollClip
       className={clsx(className)}
       $embeddedPaginationBelow={embeddedPaginationBelow}
     >
-      <TableContainerScrollTrack>{children}</TableContainerScrollTrack>
+      <TableContainerScrollTrack $scrollAreaMaxHeight={scrollAreaMaxHeight}>{children}</TableContainerScrollTrack>
     </TableContainerScrollClip>
   );
 }

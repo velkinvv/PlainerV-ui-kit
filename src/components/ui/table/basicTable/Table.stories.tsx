@@ -458,14 +458,13 @@ export const StickyHeader: Story = {
     docs: {
       description: {
         story:
-          'У `Table` включён `stickyHeader`. Обёртка с фиксированной высотой и `overflow: auto` создаёт вертикальный скролл; заголовки остаются на месте.',
+          'У `Table` включён `stickyHeader`. Вертикальный скролл задаётся через `scrollAreaMaxHeight` у `TableContainerScroll` (один scroll-контейнер с таблицей), иначе липкость ломается.',
       },
     },
   },
   render: () => (
-    <div style={{ maxHeight: 220, overflow: 'auto', borderRadius: 12 }}>
-      <TableContainer elevated={false}>
-        <TableContainerScroll>
+    <TableContainer elevated={false}>
+      <TableContainerScroll scrollAreaMaxHeight={220}>
         <Table stickyHeader striped size="md" aria-label="Таблица со липкой шапкой">
           <TableHead>
             <TableRow>
@@ -482,9 +481,8 @@ export const StickyHeader: Story = {
             ))}
           </TableBody>
         </Table>
-        </TableContainerScroll>
-      </TableContainer>
-    </div>
+      </TableContainerScroll>
+    </TableContainer>
   ),
 };
 

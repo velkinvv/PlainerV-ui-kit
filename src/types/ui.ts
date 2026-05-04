@@ -3716,6 +3716,11 @@ export interface DataGridSortCriterion {
  */
 export type DataGridSortModel = DataGridSortCriterion | readonly DataGridSortCriterion[] | null;
 
+/**
+ * Вариант фона шапки `DataGrid`: `default` — токен шапки таблицы (обычно серый); `card` — фон карточки (обычно белый).
+ */
+export type DataGridTableHeaderVariant = 'default' | 'card';
+
 /** Модель пагинации (номер страницы с нуля) */
 export interface DataGridPaginationModel {
   page: number;
@@ -3893,6 +3898,9 @@ export interface DataGridExpandedRowChangeParams {
  * @property paginationMode — Как интерпретировать `rows` при пагинации
  * @property sortModel + onSortChange — Контролируемая сортировка (одно поле, массив критериев или `null`; данные сортирует родитель)
  * @property multiColumnSort — Режим нескольких полей: клик добавляет asc → desc → снять; порядок в массиве — приоритет
+ * @property scrollAreaMaxHeight — Макс. высота зоны прокрутки сетки (пробрасывается в `TableContainerScroll`); для корректной липкой шапки вместо внешней обёртки с `overflow: auto`
+ * @property tableHeaderVariant — Тон фона шапки и панели `headerToolbar`: `default` (серый из темы) или `card` (фон карточки)
+ * @property tableHeaderBackground — Произвольный цвет фона шапки (приоритет над `tableHeaderVariant`)
  * @property rowBackgroundColorByStatus — Фон строки по данным строки
  * @property expandedRowIds — контролируемый набор id развёрнутых строк (`Set` или массив); без пропа раскрытие хранится внутри грида
  * @property onExpandedRowChange — уведомление о клике по раскрытию: аргумент `{ rowId, expanded, expandedIds }` (не использовать удалённое имя `onRowCollapseChange`)
@@ -3908,6 +3916,9 @@ export interface DataGridExpandedRowChangeParams {
  * @property onRowDragStart / onRowDragCancel — старт и отмена DnD строк (итог в `onRowDragEnd`)
  * @property onRowDragEnd — Новый порядок id после перетаскивания строк (только при `enableRowDrag`)
  * @property onColumnFilterClick — клик по встроенной иконке фильтра (`filterable` у колонки); положение иконки — `columns[].filterIconPosition`
+ * @property headerToolbar — дополнительная строка в `thead` над заголовками колонок (слот для иконок-действий)
+ * @property headerToolbarAlign — выравнивание содержимого строки `headerToolbar` (flex `justify-content`)
+ * @property headerToolbarAriaLabel — подпись для `role="toolbar"` у строки-дополнения шапки
  * @property columnDividers — вертикальные разделители между колонками у вложенной `Table` (по умолчанию `true`)
  * @property striped — зебра строк в `tbody`; в компоненте `DataGrid` по умолчанию `true`, у примитива `Table` — `false`
  * @property size — `Size` дизайн-системы → плотность `Table` и размеры контролов
@@ -3948,6 +3959,22 @@ export interface DataGridProps<Row extends DataGridBaseRow = DataGridBaseRow> ex
   /** Сортировка по нескольким колонкам: модель — массив `DataGridSortCriterion` по приоритету (см. `sortModel`) */
   multiColumnSort?: boolean;
   stickyHeader?: boolean;
+  /**
+   * Максимальная высота области с вертикальным скроллом вокруг таблицы (число — пиксели).
+   * Пробрасывается в `TableContainerScroll` как `scrollAreaMaxHeight`: один scroll-контейнер с горизонтальным
+   * скроллом широкой сетки, без конфликта с `position: sticky` у шапки (см. примитив `Table`).
+   */
+  scrollAreaMaxHeight?: string | number;
+  /**
+   * Тон фона шапки (`thead`) и панели `headerToolbar`: `default` — `theme.tables.header.background`;
+   * `card` — `theme.tables.shell.background` (визуально как белая карточка).
+   */
+  tableHeaderVariant?: DataGridTableHeaderVariant;
+  /**
+   * Произвольный цвет фона шапки и панели иконок (`headerToolbar`), например `#f5f5f5` или `color-mix(...)`.
+   * Непустая строка перекрывает `tableHeaderVariant`.
+   */
+  tableHeaderBackground?: string;
   /** Зебра в `tbody`; по умолчанию в `DataGrid` включена (`true`). Для фона строк как у карточки — `false`. */
   striped?: boolean;
   /** Тонкие вертикальные разделители между колонками; по умолчанию `true` (прокидывается в `Table`) */
@@ -4016,6 +4043,21 @@ export interface DataGridProps<Row extends DataGridBaseRow = DataGridBaseRow> ex
   onRowDragCancel?: () => void;
   /** Клик по кнопке фильтра у колонки с `filterable: true` */
   onColumnFilterClick?: (params: DataGridColumnFilterClickParams) => void;
+  /**
+   * Слот «подшапки»: строка в `thead` **выше** строки с названиями колонок; одна ячейка на всю ширину (`colSpan`).
+   * Передавайте ряд `IconButton`, группы действий и т.п. (настройки, экспорт, история изменений, документация).
+   */
+  headerToolbar?: ReactNode;
+  /**
+   * Выравнивание содержимого `headerToolbar` по горизонтали (`justify-content` у flex-контейнера).
+   * @defaultValue 'end'
+   */
+  headerToolbarAlign?: 'start' | 'end' | 'center' | 'space-between';
+  /**
+   * Краткая подпись для доступности (`aria-label` у контейнера с `role="toolbar"`).
+   * Если не задана, используется нейтральная подпись по умолчанию в компоненте.
+   */
+  headerToolbarAriaLabel?: string;
   hideFooter?: boolean;
   elevated?: boolean;
   tableAriaLabel?: string;

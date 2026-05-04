@@ -22,9 +22,9 @@ import {
   DataGridStoryExpandedDetailLine,
   DataGridStoryFilterFieldLabel,
   DataGridStoryHint,
-  DataGridStoryScrollArea,
 } from './DataGrid.stories.style';
 import { ColumnFilterPanel } from '../columnFilter/ColumnFilterPanel';
+import { IconButton } from '../../buttons';
 import { Icon } from '../../Icon/Icon';
 import { Input } from '../../inputs/Input/Input';
 import { DATAGRID_DOC } from '../storyDocs/documentation';
@@ -96,7 +96,20 @@ const meta: Meta<typeof DataGrid> = {
       description:
         '`client` — грид режет `rows` по странице; `server` — в `rows` уже текущая порция, `totalRows` с сервера.',
     },
-    stickyHeader: { description: 'Липкая шапка при вертикальном скролле родителя.' },
+    stickyHeader: { description: 'Липкая шапка при вертикальном скролле (задайте `scrollAreaMaxHeight` или внешний предок со скроллом без конфликта с треком таблицы).' },
+    scrollAreaMaxHeight: {
+      description:
+        'Макс. высота зоны с вертикальным скроллом вокруг сетки (пробрасывается в `TableContainerScroll`); для `stickyHeader` удобнее, чем обёртка `div` с `overflow: auto`.',
+    },
+    tableHeaderVariant: {
+      control: 'select',
+      options: ['default', 'card'],
+      description:
+        'Фон шапки: `default` — серый (`theme.tables.header`); `card` — как фон карточки, обычно белый (`theme.tables.shell`).',
+    },
+    tableHeaderBackground: {
+      description: 'Кастомный фон шапки и панели `headerToolbar` (перекрывает `tableHeaderVariant`), например `#e8f4ff`.',
+    },
     striped: {
       description:
         'Зебра строк в `tbody`. У `DataGrid` по умолчанию **включена**; передайте `false`, чтобы фон строк совпадал с карточкой (см. сторис **ClientPaginationPlainBody**).',
@@ -106,6 +119,18 @@ const meta: Meta<typeof DataGrid> = {
     elevated: { description: 'Тень карточки (`TableContainer`).' },
     hideFooter: { description: 'Скрыть блок пагинации под таблицей.' },
     tableAriaLabel: { description: '`aria-label` для `<table>`.' },
+    headerToolbar: {
+      description:
+        'Дополнительная строка над заголовками колонок: контент в одной ячейке на всю ширину (`IconButton`, группы действий).',
+    },
+    headerToolbarAlign: {
+      control: 'select',
+      options: ['start', 'end', 'center', 'space-between'],
+      description: 'Горизонтальное выравнивание содержимого `headerToolbar`.',
+    },
+    headerToolbarAriaLabel: {
+      description: '`aria-label` для `role="toolbar"` у строки дополнительных действий.',
+    },
     style: { description: 'Инлайн-стиль корневого контейнера грида.' },
     isLoading: { description: 'Глобальный оверлей загрузки над таблицей.' },
     rowBackgroundColorByStatus: { description: '(row) => CSS-цвет фона строки или undefined.' },
@@ -224,8 +249,7 @@ export const ClientPagination: Story = {
 };
 
 /**
- * Без зебры и с липкой шапкой: `striped={false}` + `stickyHeader`.
- * Обёртка с `max-height` и `overflow: auto` — чтобы шапка «прилипала» при прокрутке (как `Table › StickyHeader`).
+ * Без зебры и с липкой шапкой: `striped={false}` + `stickyHeader` + `scrollAreaMaxHeight` (как `Table › StickyHeader`).
  */
 export const ClientPaginationPlainBody: Story = {
   name: 'Без зебры и липкая шапка',
@@ -233,7 +257,7 @@ export const ClientPaginationPlainBody: Story = {
     docs: {
       description: {
         story:
-          'Ровный фон строк (`striped={false}`) и липкая шапка (`stickyHeader`). Родитель с **ограниченной высотой** и вертикальным скроллом — иначе `position: sticky` у заголовка не проявляется. На странице показаны все демо-строки (`pageSize` = числу строк), чтобы появилась прокрутка.',
+          'Ровный фон строк (`striped={false}`) и липкая шапка (`stickyHeader` + `scrollAreaMaxHeight={320}`). На странице показаны все демо-строки (`pageSize` = числу строк), чтобы появилась прокрутка внутри трека.',
       },
     },
   },
@@ -246,29 +270,28 @@ export const ClientPaginationPlainBody: Story = {
     const sorted = useMemo(() => sortRows(TABLE_STORY_DEMO_ROWS, sortModel), [sortModel]);
 
     return (
-      <DataGridStoryScrollArea>
-        <DataGrid<DataGridStoryDemoRow>
-          tableId="story-data-grid-plain-body"
-          columns={demoColumns}
-          rows={sorted}
-          totalRows={sorted.length}
-          displayRowSelectionColumn
-          multiselect
-          selectedIds={selectedIds}
-          disabledIds={demoDisabledRowIds}
-          onRowSelectionChange={ids => {
-            setSelectedIds(ids);
-          }}
-          sortModel={sortModel}
-          onSortChange={setSortModel}
-          paginationModel={pagination}
-          onPaginationChange={setPagination}
-          paginationMode="client"
-          stickyHeader
-          striped={false}
-          size={Size.MD}
-        />
-      </DataGridStoryScrollArea>
+      <DataGrid<DataGridStoryDemoRow>
+        tableId="story-data-grid-plain-body"
+        columns={demoColumns}
+        rows={sorted}
+        totalRows={sorted.length}
+        displayRowSelectionColumn
+        multiselect
+        selectedIds={selectedIds}
+        disabledIds={demoDisabledRowIds}
+        onRowSelectionChange={ids => {
+          setSelectedIds(ids);
+        }}
+        sortModel={sortModel}
+        onSortChange={setSortModel}
+        paginationModel={pagination}
+        onPaginationChange={setPagination}
+        paginationMode="client"
+        stickyHeader
+        scrollAreaMaxHeight={320}
+        striped={false}
+        size={Size.MD}
+      />
     );
   },
 };
@@ -323,7 +346,7 @@ export const StickyHeaderWithScroll: Story = {
     docs: {
       description: {
         story:
-          '`stickyHeader` при зебре по умолчанию (`striped` не задаётся). Обёртка с `max-height` и `overflow: auto`; `pageSize` равен числу демо-строк — прокрутка по телу таблицы, шапка остаётся видимой.',
+          '`stickyHeader` + `scrollAreaMaxHeight={320}` при зебре по умолчанию (`striped` не задаётся). `pageSize` равен числу демо-строк — прокрутка по телу таблицы внутри трека, шапка остаётся видимой.',
       },
     },
   },
@@ -336,28 +359,27 @@ export const StickyHeaderWithScroll: Story = {
     const sorted = useMemo(() => sortRows(TABLE_STORY_DEMO_ROWS, sortModel), [sortModel]);
 
     return (
-      <DataGridStoryScrollArea>
-        <DataGrid<DataGridStoryDemoRow>
-          tableId="story-data-grid-sticky-zebra-scroll"
-          columns={demoColumns}
-          rows={sorted}
-          totalRows={sorted.length}
-          displayRowSelectionColumn
-          multiselect
-          selectedIds={selectedIds}
-          disabledIds={demoDisabledRowIds}
-          onRowSelectionChange={ids => {
-            setSelectedIds(ids);
-          }}
-          sortModel={sortModel}
-          onSortChange={setSortModel}
-          paginationModel={pagination}
-          onPaginationChange={setPagination}
-          paginationMode="client"
-          stickyHeader
-          size={Size.MD}
-        />
-      </DataGridStoryScrollArea>
+      <DataGrid<DataGridStoryDemoRow>
+        tableId="story-data-grid-sticky-zebra-scroll"
+        columns={demoColumns}
+        rows={sorted}
+        totalRows={sorted.length}
+        displayRowSelectionColumn
+        multiselect
+        selectedIds={selectedIds}
+        disabledIds={demoDisabledRowIds}
+        onRowSelectionChange={ids => {
+          setSelectedIds(ids);
+        }}
+        sortModel={sortModel}
+        onSortChange={setSortModel}
+        paginationModel={pagination}
+        onPaginationChange={setPagination}
+        paginationMode="client"
+        stickyHeader
+        scrollAreaMaxHeight={320}
+        size={Size.MD}
+      />
     );
   },
 };
@@ -806,6 +828,157 @@ export const HeaderMaxLines: Story = {
           sortModel={sortModel}
           onSortChange={setSortModel}
           size={Size.MD}
+        />
+      </DataGridStoryBlock>
+    );
+  },
+};
+
+/**
+ * Дополнительная строка над названиями колонок: слот `headerToolbar` для иконок (история, документация и др.).
+ */
+export const HeaderToolbar: Story = {
+  name: 'Панель иконок над шапкой',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`headerToolbar`: строка над заголовками колонок (`thead`), фон панели совпадает с фоном шапки (`tableHeaderVariant` / `tableHeaderBackground`). По умолчанию серый тон шапки. Пример: настройки, экспорт, **история** (`IconExTimeCircle`), **документация** (`IconExBook`). Обработчики — в Actions.',
+      },
+    },
+  },
+  render: () => {
+    const [sortModel, setSortModel] = useState<DataGridSortModel | null>({ field: 'user', direction: 'asc' });
+
+    return (
+      <DataGridStoryBlock>
+        <DataGridStoryHint>
+          Первая строка шапки — слот для действий; ниже — обычные заголовки колонок с сортировкой и фильтром при необходимости.
+        </DataGridStoryHint>
+        <DataGrid<DataGridStoryDemoRow>
+          tableId="story-data-grid-header-toolbar"
+          columns={demoColumns}
+          rows={TABLE_STORY_DEMO_ROWS}
+          totalRows={TABLE_STORY_DEMO_ROWS.length}
+          sortModel={sortModel}
+          onSortChange={setSortModel}
+          size={Size.MD}
+          headerToolbarAriaLabel="Панель действий над таблицей"
+          headerToolbar={
+            <>
+              <IconButton
+                variant={ButtonVariant.GHOST}
+                size={Size.SM}
+                aria-label="Настройки таблицы"
+                showTooltip
+                tooltipText="Настройки таблицы"
+                icon={<Icon name="IconExSettings" size={IconSize.SM} color="currentColor" />}
+                onClick={fn()}
+              />
+              <IconButton
+                variant={ButtonVariant.GHOST}
+                size={Size.SM}
+                aria-label="Экспорт в файл"
+                showTooltip
+                tooltipText="Экспорт в файл"
+                icon={<Icon name="IconExDocument2" size={IconSize.SM} color="currentColor" />}
+                onClick={fn()}
+              />
+              <IconButton
+                variant={ButtonVariant.GHOST}
+                size={Size.SM}
+                aria-label="Обновить данные"
+                showTooltip
+                tooltipText="Обновить данные"
+                icon={<Icon name="IconExTimer" size={IconSize.SM} color="currentColor" />}
+                onClick={fn()}
+              />
+              <IconButton
+                variant={ButtonVariant.GHOST}
+                size={Size.SM}
+                aria-label="Закрыть или сбросить"
+                showTooltip
+                tooltipText="Закрыть"
+                icon={<Icon name="IconExClose" size={IconSize.SM} color="currentColor" />}
+                onClick={fn()}
+              />
+              <IconButton
+                variant={ButtonVariant.GHOST}
+                size={Size.SM}
+                aria-label="История изменений"
+                showTooltip
+                tooltipText="История изменений"
+                icon={<Icon name="IconExTimeCircle" size={IconSize.SM} color="currentColor" />}
+                onClick={fn()}
+              />
+              <IconButton
+                variant={ButtonVariant.GHOST}
+                size={Size.SM}
+                aria-label="Документация"
+                showTooltip
+                tooltipText="Документация"
+                icon={<Icon name="IconExBook" size={IconSize.SM} color="currentColor" />}
+                onClick={fn()}
+              />
+            </>
+          }
+        />
+      </DataGridStoryBlock>
+    );
+  },
+};
+
+/**
+ * Та же панель иконок, но фон шапки «как у карточки» (белый): `tableHeaderVariant="card"`.
+ */
+export const HeaderToolbarCardSurface: Story = {
+  name: 'Панель иконок: шапка как у карточки (белая)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`tableHeaderVariant="card"` — `theme.tables.shell.background` для шапки и панели `headerToolbar` (в светлой теме обычно совпадает с телом таблицы).',
+      },
+    },
+  },
+  render: () => {
+    const [sortModel, setSortModel] = useState<DataGridSortModel | null>({ field: 'user', direction: 'asc' });
+
+    return (
+      <DataGridStoryBlock>
+        <DataGridStoryHint>Сравните с **Панель иконок над шапкой** (`tableHeaderVariant` по умолчанию — серый тон шапки).</DataGridStoryHint>
+        <DataGrid<DataGridStoryDemoRow>
+          tableId="story-data-grid-header-toolbar-card"
+          columns={demoColumns}
+          rows={TABLE_STORY_DEMO_ROWS}
+          totalRows={TABLE_STORY_DEMO_ROWS.length}
+          sortModel={sortModel}
+          onSortChange={setSortModel}
+          size={Size.MD}
+          tableHeaderVariant="card"
+          headerToolbarAriaLabel="Панель действий над таблицей"
+          headerToolbar={
+            <>
+              <IconButton
+                variant={ButtonVariant.GHOST}
+                size={Size.SM}
+                aria-label="Настройки таблицы"
+                showTooltip
+                tooltipText="Настройки таблицы"
+                icon={<Icon name="IconExSettings" size={IconSize.SM} color="currentColor" />}
+                onClick={fn()}
+              />
+              <IconButton
+                variant={ButtonVariant.GHOST}
+                size={Size.SM}
+                aria-label="Экспорт в файл"
+                showTooltip
+                tooltipText="Экспорт в файл"
+                icon={<Icon name="IconExDocument2" size={IconSize.SM} color="currentColor" />}
+                onClick={fn()}
+              />
+            </>
+          }
         />
       </DataGridStoryBlock>
     );

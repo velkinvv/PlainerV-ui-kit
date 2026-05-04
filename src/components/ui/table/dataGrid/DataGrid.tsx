@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { useTheme } from 'styled-components';
+import type { ThemeType } from '@/types/theme';
 import type {
   DataGridBaseRow,
   DataGridColumn,
@@ -29,6 +30,7 @@ import {
   TablePagination,
 } from '../basicTable';
 import { normalizeTableHeaderMaxLines } from '../basicTable/tableHeaderClampHandlers';
+import { PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR } from '../basicTable/tableThemeRadiusHandlers';
 import {
   applyDataGridColDragGhostPreview,
   applyDataGridRowDragGhostPreview,
@@ -64,14 +66,20 @@ import {
   DataGridRoot,
   DataGridRowDragHandle,
   DataGridColumnResizeHandle,
+  DataGridHeaderToolbarInner,
+  DATA_GRID_HEADER_TOOLBAR_STICKY_TOP_OFFSET,
 } from './DataGrid.style';
 import { DataGridColumnHeaderContent } from './DataGridColumnHeaderContent';
+import { resolveDataGridTableHeaderBackground } from './dataGridTableHeaderSurfaceHandlers';
 
 /**
  * Готовая таблица с колонками и строками из пропсов (композиция `Table*` + выбор + пагинация + сортировка).
  * @param props — см. `DataGridProps` в `types/ui.ts`: раскрытие строк (`expandedRowIds`, `onExpandedRowChange` с объектом
  *   `{ rowId, expanded, expandedIds }`; не `onRowCollapseChange`), ресайз (`onColumnResize*`),
- *   DnD колонок/строк (`onColumnDrag*`, `onRowDrag*`), клик по фильтру (`onColumnFilterClick` + `filterable` у колонки).
+ *   DnD колонок/строк (`onColumnDrag*`, `onRowDrag*`), клик по фильтру (`onColumnFilterClick` + `filterable` у колонки),
+ *   дополнительная строка над заголовками колонок (`headerToolbar`, `headerToolbarAlign`, `headerToolbarAriaLabel`),
+ *   высота области скролла (`scrollAreaMaxHeight` → `TableContainerScroll`) для липкой шапки,
+ *   тон шапки (`tableHeaderVariant`, `tableHeaderBackground`) для согласования с панелью `headerToolbar`.
  */
 export function DataGrid<Row extends DataGridBaseRow>(props: DataGridProps<Row>): React.ReactElement {
   const {
@@ -102,6 +110,9 @@ export function DataGrid<Row extends DataGridBaseRow>(props: DataGridProps<Row>)
     onSortChange,
     multiColumnSort = false,
     stickyHeader = false,
+    scrollAreaMaxHeight,
+    tableHeaderVariant = 'default',
+    tableHeaderBackground,
     striped = true,
     columnDividers = true,
     size = Size.MD,
@@ -133,6 +144,9 @@ export function DataGrid<Row extends DataGridBaseRow>(props: DataGridProps<Row>)
     onRowDragEnd,
     onRowDragCancel,
     onColumnFilterClick,
+    headerToolbar,
+    headerToolbarAlign = 'end',
+    headerToolbarAriaLabel,
     hideFooter = false,
     elevated = true,
     tableAriaLabel,
@@ -287,16 +301,24 @@ export function DataGrid<Row extends DataGridBaseRow>(props: DataGridProps<Row>)
     [renderExpandedRow],
   );
 
-  const theme = useTheme();
+  const theme = useTheme() as ThemeType;
 
   const columnResizeMaxPx = columnResizeMaxWidthPx ?? DATA_GRID_COLUMN_RESIZE_FALLBACK_MAX_PX;
   const showColumnResizeUi = Boolean(enableColumnResize && onColumnResize);
 
-  /** При `auto`-layout браузер перераспределяет ширину между колонками; `fixed` оставляет остальные на заданных `width`. */
-  const dataGridTableStyle = useMemo(
-    (): React.CSSProperties | undefined => (showColumnResizeUi ? { tableLayout: 'fixed' } : undefined),
-    [showColumnResizeUi],
+  /** Единый фон шапки колонок и панели `headerToolbar` (серый / белый из темы или кастом). */
+  const resolvedTableHeaderBackground = useMemo(
+    () => resolveDataGridTableHeaderBackground(theme, tableHeaderVariant, tableHeaderBackground),
+    [theme, tableHeaderVariant, tableHeaderBackground],
   );
+
+  /** При `auto`-layout браузер перераспределяет ширину между колонками; `fixed` оставляет остальные на заданных `width`. */
+  const dataGridTableStyle = useMemo((): React.CSSProperties => {
+    return {
+      [PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR]: resolvedTableHeaderBackground,
+      ...(showColumnResizeUi ? { tableLayout: 'fixed' as const } : {}),
+    } as React.CSSProperties;
+  }, [showColumnResizeUi, resolvedTableHeaderBackground]);
 
   const [columnResizePreview, setColumnResizePreview] = useState<{ field: string; widthPx: number } | null>(null);
   const columnResizeSessionRef = useRef<{
@@ -577,10 +599,39 @@ export function DataGrid<Row extends DataGridBaseRow>(props: DataGridProps<Row>)
 
   const showPagination = Boolean(paginationModel && onPaginationChange && !hideFooter);
 
+  const headerToolbarFlexAlign = useMemo(():
+    | 'flex-start'
+    | 'flex-end'
+    | 'center'
+    | 'space-between' => {
+    switch (headerToolbarAlign) {
+      case 'start':
+        return 'flex-start';
+      case 'center':
+        return 'center';
+      case 'space-between':
+        return 'space-between';
+      case 'end':
+      default:
+        return 'flex-end';
+    }
+  }, [headerToolbarAlign]);
+
+  const showHeaderToolbar = headerToolbar != null;
+
+  /** Второй ряд липкой шапки (заголовки колонок) смещается ниже строки `headerToolbar`. */
+  const rootStyleWithStickyToolbar =
+    stickyHeader && showHeaderToolbar
+      ? ({
+          ...style,
+          ['--plainer-sticky-thead-second-row-top' as string]: DATA_GRID_HEADER_TOOLBAR_STICKY_TOP_OFFSET,
+        } as React.CSSProperties)
+      : style;
+
   return (
     <DataGridRoot
       className={clsx(className)}
-      style={style}
+      style={rootStyleWithStickyToolbar}
       onDragEnd={() => {
         // Сброс при отпускании вне цели drop (нативный HTML5 DnD): `drop` не вызван — уведомляем об отмене
         setDragColFrom(previous => {
@@ -602,7 +653,10 @@ export function DataGrid<Row extends DataGridBaseRow>(props: DataGridProps<Row>)
       }}
     >
       <TableContainer elevated={elevated}>
-        <TableContainerScroll embeddedPaginationBelow={showPagination}>
+        <TableContainerScroll
+          embeddedPaginationBelow={showPagination}
+          scrollAreaMaxHeight={scrollAreaMaxHeight}
+        >
           <Table
             id={tableId}
             size={tableSize}
@@ -613,6 +667,24 @@ export function DataGrid<Row extends DataGridBaseRow>(props: DataGridProps<Row>)
             style={dataGridTableStyle}
           >
           <TableHead>
+            {showHeaderToolbar ? (
+              <TableRow>
+                <TableCell
+                  colSpan={colCount}
+                  padding="none"
+                  style={{ verticalAlign: 'middle', borderBottom: 'none' }}
+                >
+                  <DataGridHeaderToolbarInner
+                    $align={headerToolbarFlexAlign}
+                    $background={resolvedTableHeaderBackground}
+                    role="toolbar"
+                    aria-label={headerToolbarAriaLabel ?? 'Дополнительные действия таблицы'}
+                  >
+                    {headerToolbar}
+                  </DataGridHeaderToolbarInner>
+                </TableCell>
+              </TableRow>
+            ) : null}
             <TableRow>
               {enableRowDrag ? <TableCell padding="checkbox" aria-hidden /> : null}
               {displayRowSelectionColumn ? (

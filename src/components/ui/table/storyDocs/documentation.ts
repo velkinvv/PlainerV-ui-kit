@@ -21,7 +21,7 @@ export const TABLE_KIT_DOC = `
 
 ### TableContainerScroll
 
-Обёртка из двух слоёв: внешний — верхние скругления как у карточки и \`overflow: hidden\` (чтобы фон \`thead\` не «срезал» радиус), внутренний — \`overflow-x: auto\` только вокруг \`<Table>\`. \`<TablePagination />\` держите **снаружи** \`TableContainerScroll\` (но внутри \`TableContainer\`), чтобы не клипались тени кнопок страниц.
+Обёртка из двух слоёв: внешний — скругления как у карточки и \`overflow: visible\` (чтобы \`position: sticky\` у шапки не ломался), внутренний — трек: \`overflow-x: auto\`, по вертикали по умолчанию \`overflow-y: clip\` (чтобы трек не становился вертикальным scroll-контейнером и не «крал» липкость у внешнего скролла). Для липкой шапки с ограниченной высотой передайте \`scrollAreaMaxHeight\` — вертикальный скролл будет внутри трека. \`<TablePagination />\` держите **снаружи** \`TableContainerScroll\` (но внутри \`TableContainer\`), чтобы не клипались тени кнопок страниц.
 
 **Как использовать:** \`TableContainer\` → \`TableContainerScroll\` → \`Table\`; при встроенной пагинации — сестра \`TablePagination\` с \`embeddedInTableCard\` и проп \`embeddedPaginationBelow\` у \`TableContainerScroll\` (скругление только сверху у сетки). Без футера проп не передавайте — скругление углов со всех сторон, как у цельной карточки.
 
@@ -33,11 +33,12 @@ export const TABLE_KIT_DOC = `
 
 | Проп | Тип | Зачем |
 |------|-----|--------|
-| \`stickyHeader\` | \`boolean\` | Липкая шапка: \`thead th\` с \`position: sticky\` при вертикальном скролле родителя. Задайте родителю \`max-height\` + \`overflow: auto\`. |
+| \`stickyHeader\` | \`boolean\` | Липкая шапка: \`thead th\` с \`position: sticky\`. Вертикальная прокрутка с фиксированной высотой: проп \`scrollAreaMaxHeight\` у \`TableContainerScroll\` (один scroll-контейнер вместе с таблицей) или внешний предок со скроллом **без** «двойного» трека \`overflow-x: auto\` + \`overflow-y: auto\` на той же ветке. |
 | \`size\` | \`'sm' \\| 'md'\` | Плотность отступов ячеек (\`md\` по умолчанию). |
 | \`striped\` | \`boolean\` | По умолчанию **\`false\`**: фон строк \`tbody\` как у карточки, без чередования. **\`true\`** — зебра (см. сторис **PlainBody** без пропа и **Basic** с \`striped\`). |
 | \`columnDividers\` | \`boolean\` | Тонкая вертикальная линия между колонками (\`border-inline-end\` у всех ячеек строки, кроме последней). По умолчанию \`true\`; \`false\` — без разделителей. |
 | \`aria-label\` | строка | Доступность: краткое название таблицы для скринридеров. |
+| \`style\` | — | На \`<table>\` можно задать CSS-переменную \`--plainer-table-header-background\` для фона шапки (\`thead\`, липкие \`th\`). В \`DataGrid\` это задаётся через \`tableHeaderVariant\` / \`tableHeaderBackground\`. |
 
 Остальные атрибуты HTML-таблицы (\`role\`, \`id\`, …) пробрасываются на \`<table>\`.
 
@@ -132,7 +133,7 @@ export const TABLE_KIT_DOC = `
 export const DATAGRID_DOC = `
 ### Назначение
 
-Готовая таблица на базе примитивов \`Table*\`: колонки, строки, выбор, сортировка, пагинация, загрузка, раскрытие строк, перетаскивание колонок/строк (опционально), изменение ширины колонок за ручку на заголовке (опционально), **колбэки жизненного цикла** ресайза (\`onColumnResizeStart\` / \`Change\` / \`End\`), DnD (\`onColumnDragStart\`, \`onColumnOrderChange\`, \`onColumnDragCancel\`, \`onRowDragStart\`, \`onRowDragCancel\`) и **встроенная иконка фильтра** (\`columns[].filterable\`, \`columns[].filterIconPosition\`, \`onColumnFilterClick\`). Данные и бизнес-логика остаются у родителя: грид отдаёт колбэки и отображает переданные \`rows\`.
+Готовая таблица на базе примитивов \`Table*\`: колонки, строки, выбор, сортировка, пагинация, загрузка, раскрытие строк, **дополнительная строка над заголовками колонок** (\`headerToolbar\` — иконки настроек, экспорта, истории, документации и т.д.), перетаскивание колонок/строк (опционально), изменение ширины колонок за ручку на заголовке (опционально), **колбэки жизненного цикла** ресайза (\`onColumnResizeStart\` / \`Change\` / \`End\`), DnD (\`onColumnDragStart\`, \`onColumnOrderChange\`, \`onColumnDragCancel\`, \`onRowDragStart\`, \`onRowDragCancel\`) и **встроенная иконка фильтра** (\`columns[].filterable\`, \`columns[].filterIconPosition\`, \`onColumnFilterClick\`). Данные и бизнес-логика остаются у родителя: грид отдаёт колбэки и отображает переданные \`rows\`.
 
 Подвал \`TablePagination\` по умолчанию рендерится **внутри** той же карточки, что и сетка (\`embeddedInTableCard\`), общая обводка и фон с \`TableContainer\`.
 
@@ -210,6 +211,9 @@ export const DATAGRID_DOC = `
 | Проп | Зачем |
 |------|--------|
 | \`stickyHeader\` | Липкая шапка. |
+| \`scrollAreaMaxHeight\` | Макс. высота зоны с вертикальным скроллом (прокидывается в \`TableContainerScroll\`); удобно вместе со \`stickyHeader\`, см. примитив \`Table\`. |
+| \`tableHeaderVariant\` | \`default\` — серый фон шапки из темы; \`card\` — фон карточки (обычно белый). Панель \`headerToolbar\` того же цвета. |
+| \`tableHeaderBackground\` | Кастомный цвет фона шапки и \`headerToolbar\` (приоритет над \`tableHeaderVariant\`). |
 | \`striped\` | Зебра в \`tbody\`. |
 | \`columnDividers\` | Вертикальные разделители между колонками у вложенной \`Table\` (по умолчанию \`true\`). |
 | \`headerMaxLines\` | Максимум строк текста в заголовках **данных** колонок (\`line-clamp\`); сортируемые колонки получают \`maxLines\` у \`TableSortLabel\`, несортируемые — обёртку \`TableCellHeadLineClamp\`. У колонки можно задать своё \`headerMaxLines\`. |
@@ -218,6 +222,9 @@ export const DATAGRID_DOC = `
 | \`rowBackgroundColorByStatus\` | \`(row) => цвет\` — фон строки по данным (статусы). |
 | \`tableAriaLabel\` | \`aria-label\` таблицы. |
 | \`style\` | Инлайн-стиль корня грида. |
+| \`headerToolbar\` | Слот над строкой с названиями колонок: первая строка \`thead\`, одна ячейка на всю ширину (\`colSpan\`), удобно для **IconButton** (настройки, экспорт, **история**, **документация** и т.д.). |
+| \`headerToolbarAlign\` | Горизонтальное выравнивание содержимого \`headerToolbar\`: \`start\` \| \`end\` (**по умолчанию**) \| \`center\` \| \`space-between\`. |
+| \`headerToolbarAriaLabel\` | Подпись для доступности (\`aria-label\` у контейнера с \`role="toolbar"\`); если не задана — нейтральная строка по умолчанию в компоненте. |
 
 ### События строк
 
@@ -286,9 +293,9 @@ export const DATAGRID_DOC = `
 | Сторис | Что показывает |
 |--------|----------------|
 | **ClientPagination** | \`paginationMode="client"\`, сортировка, мультивыбор, липкая шапка (зебра по умолчанию у грида). |
-| **Без зебры и липкая шапка** (\`ClientPaginationPlainBody\`) | \`striped={false}\` + \`stickyHeader\`; обёртка с \`max-height\` и \`overflow: auto\`; все демо-строки на странице — видна прокрутка и «липкая» шапка. |
+| **Без зебры и липкая шапка** (\`ClientPaginationPlainBody\`) | \`striped={false}\` + \`stickyHeader\` + \`scrollAreaMaxHeight\`; все демо-строки на странице — прокрутка внутри трека и «липкая» шапка. |
 | **Без зебры (без липкой шапки)** (\`PlainBodyNoStickyHeader\`) | Только \`striped={false}\`; \`stickyHeader\` не включается; пагинация по 3 строки. |
-| **Липкая шапка (зебра, прокрутка)** (\`StickyHeaderWithScroll\`) | Зебра по умолчанию + \`stickyHeader\`; та же обёртка со скроллом и полный список строк на странице. |
+| **Липкая шапка (зебра, прокрутка)** (\`StickyHeaderWithScroll\`) | Зебра по умолчанию + \`stickyHeader\` + \`scrollAreaMaxHeight\`; полный список строк на странице. |
 | **MultiColumnSort** | \`multiColumnSort\` + массив в \`sortModel\`; приоритеты 1, 2 у шевронов. |
 | **CompactPaginationHideRowsSelect** | \`paginationVariant="compact"\`, \`showRowsPerPageSelect={false}\`. |
 | **PaginationToolbarCentered** | \`paginationToolbarAlign="center"\`. |
@@ -300,6 +307,8 @@ export const DATAGRID_DOC = `
 | **ColumnReorder** | \`enableColumnDrag\`, \`onColumnDragEnd\`, плюс \`onColumnDragStart\`, \`onColumnOrderChange\`, \`onColumnDragCancel\` (см. сторис — лог в Actions). |
 | **ColumnResize** | \`enableColumnResize\`, \`onColumnResize\`, \`onColumnResizeStart\`, \`onColumnResizeChange\`, \`onColumnResizeEnd\`, контролируемые \`columns[].width\`. |
 | **HeaderMaxLines** | \`headerMaxLines\` у грида и длинные \`headerName\` (в т.ч. несортируемая колонка). |
+| **HeaderToolbar** | \`headerToolbar\`: панель иконок над заголовками колонок; фон совпадает с шапкой (\`tableHeaderVariant\` / \`tableHeaderBackground\`). |
+| **Панель иконок: шапка как у карточки** (\`HeaderToolbarCardSurface\`) | \`tableHeaderVariant="card"\` — белый (shell) фон шапки и панели. |
 | **ColumnFilterInHeader** | \`headerName\` с фильтром (\`ColumnFilterPanel\`); дублирует **Table › Column filters › DataGridWithTextFilterInHeader**. |
 | **BuiltinColumnFilterIcon** | \`filterable\` у колонки + \`onColumnFilterClick\`; панель фильтра под таблицей. |
 | **Иконка фильтра: позиция в заголовке** | \`columns[].filterIconPosition\`: \`leading\`, \`inlineTitle\`, \`trailing\` (по умолчанию). |

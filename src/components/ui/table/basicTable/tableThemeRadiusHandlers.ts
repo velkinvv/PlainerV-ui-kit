@@ -1,5 +1,11 @@
 import type { ThemeType } from '@/types/theme';
 
+/**
+ * Имя CSS-переменной фона шапки (`thead`, липкие `th`). Задаётся на `<table>` из `DataGrid` или вручную.
+ * Fallback в стилях — `theme.tables.header.background`.
+ */
+export const PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR = '--plainer-table-header-background';
+
 /** Запасной радиус, если в теме нет `tables` (например, устаревший мок). */
 const TABLE_THEME_FALLBACK_BORDER_RADIUS = '12px';
 

@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { tableBorderRadiusFromTheme } from './tableThemeRadiusHandlers';
+import { PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR, tableBorderRadiusFromTheme } from './tableThemeRadiusHandlers';
 import type { ThemeType } from '@/types/theme';
 import type { TablePaginationToolbarAlign, TableSize } from '@/types/ui';
 
@@ -52,10 +52,12 @@ export const TableContainerRoot = styled.div<{ $elevated: boolean }>`
 `;
 
 /**
- * Скругление + `overflow: hidden` у сетки: без клипа фон `thead` ломает верхний радиус карточки.
+ * Скругление углов сетки. Раньше здесь стояло `overflow: hidden` — оно **ломает** `position: sticky` у `thead`
+ * относительно родителя со скроллом (липкая шапка «уезжает» вместе с телом). Для корректного sticky
+ * нужен `overflow: visible` по вертикали; горизонтальный скролл широкой таблицы остаётся в `TableContainerScrollTrack`.
+ * Если заметите артефакты скругления на очень широких таблицах — можно точечно добавить `clip-path` к теме.
  * Если сразу ниже идёт `TablePagination` с `embeddedInTableCard`, передайте `$embeddedPaginationBelow` —
  * тогда скругление только сверху; иначе — со всех сторон (таблица без встроенного футера).
- * Горизонтальный скролл — во внутреннем `TableContainerScrollTrack`.
  */
 export const TableContainerScrollClip = styled.div.withConfig({
   shouldForwardProp: prop => prop !== '$embeddedPaginationBelow',
@@ -63,7 +65,7 @@ export const TableContainerScrollClip = styled.div.withConfig({
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
 
   ${({ theme, $embeddedPaginationBelow }) =>
     $embeddedPaginationBelow
@@ -80,30 +82,75 @@ export const TableContainerScrollClip = styled.div.withConfig({
 
 /**
  * Горизонтальный скролл только для `<table>`. Родитель — `TableContainerScrollClip`.
+ * Без `max-height`: `overflow-y: clip` вместе с `overflow-x: auto` — иначе по CSS вторая ось
+ * превращается в `auto`, трек становится вертикальным scroll-контейнером, и `position: sticky` у
+ * `th` цепляется к треку (высота ≈ таблицы), а внешний `overflow: auto` крутит всю разметку — шапка «уезжает».
+ * С `max-height` — единая область `overflow: auto` внутри трека, липкая шапка относительно неё.
  */
-export const TableContainerScrollTrack = styled.div`
+export const TableContainerScrollTrack = styled.div.withConfig({
+  shouldForwardProp: prop => prop !== '$scrollAreaMaxHeight',
+})<{
+  /**
+   * Максимальная высота области с вертикальным скроллом (число — пиксели). Без пропа вертикальная
+   * прокрутка ожидается у внешнего предка; трек не должен «красть» липкость у шапки.
+   */
+  $scrollAreaMaxHeight?: string | number;
+}>`
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
-  overflow-x: auto;
-  /* Совпадает со скруглением clip — корректнее стык плашки скролла и радиуса в WebKit/Chromium. */
   border-radius: inherit;
+
+  ${({ $scrollAreaMaxHeight }) =>
+    $scrollAreaMaxHeight != null && $scrollAreaMaxHeight !== ''
+      ? css`
+          max-height: ${typeof $scrollAreaMaxHeight === 'number'
+            ? `${$scrollAreaMaxHeight}px`
+            : $scrollAreaMaxHeight};
+          overflow: auto;
+        `
+      : css`
+          overflow-x: auto;
+          overflow-y: clip;
+        `}
 `;
 
 export const StyledTable = styled.table<{ $stickyHeader: boolean; $striped: boolean }>`
   width: 100%;
-  border-collapse: collapse;
   border-spacing: 0;
   font-family: ${({ theme }) => theme.fonts.primary};
   color: ${({ theme }) => theme.tables.cell.text};
 
   ${({ $stickyHeader }) =>
+    $stickyHeader
+      ? css`
+          /* border-collapse: collapse ломает position: sticky у th в WebKit/Chromium. */
+          border-collapse: separate;
+        `
+      : css`
+          border-collapse: collapse;
+        `}
+
+  ${({ $stickyHeader, theme }) =>
     $stickyHeader &&
     css`
-      thead th {
+      /*
+       * Две строки в thead (например панель headerToolbar + заголовки колонок в DataGrid):
+       * первая липнет к верху, вторая — ниже первой (смещение — CSS-переменная plainer-sticky-thead-second-row-top в DataGrid).
+       * У ячеек явный фон — иначе при прокрутке контент «просвечивает» под sticky.
+       */
+      thead tr:first-child th {
         position: sticky;
         top: 0;
+        z-index: 3;
+        background: ${`var(${PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR}, ${theme.tables.header.background})`};
+      }
+
+      thead tr:nth-child(2) th {
+        position: sticky;
+        top: var(--plainer-sticky-thead-second-row-top, 0px);
         z-index: 2;
+        background: ${`var(${PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR}, ${theme.tables.header.background})`};
       }
     `}
 
@@ -126,9 +173,10 @@ export const StyledTable = styled.table<{ $stickyHeader: boolean; $striped: bool
     `}
 `;
 
-/** Шапка: фон и границы из `theme.tables`. */
+/** Шапка: фон и границы из `theme.tables` (фон можно переопределить через CSS-переменную на `<table>`). */
 export const StyledThead = styled.thead`
-  background: ${({ theme }) => theme.tables.header.background};
+  background: ${({ theme }) =>
+    `var(${PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR}, ${theme.tables.header.background})`};
   border-bottom: ${({ theme }) => theme.tables.header.borderBottom};
   /* Скругление верхних углов совпадает с клипом и единым токеном theme.tables.borderRadius. */
   border-top-left-radius: ${({ theme }) => tableBorderRadiusFromTheme(theme)};

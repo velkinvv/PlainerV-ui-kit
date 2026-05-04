@@ -2,10 +2,37 @@
 import type { DataGridColumnFilterIconPosition } from '@/types/ui';
 import { tableBorderRadiusFromTheme } from '../basicTable/tableThemeRadiusHandlers';
 
+/**
+ * Смещение второй строки липкой шапки вниз от первой (строка `headerToolbar`).
+ * Должно совпадать с фактической высотой первой строки `thead` (примерно min-height слота + отступы).
+ */
+export const DATA_GRID_HEADER_TOOLBAR_STICKY_TOP_OFFSET = '48px';
+
 /** Контейнер таблицы с возможностью наложения оверлея загрузки */
 export const DataGridRoot = styled.div`
   position: relative;
   width: 100%;
+`;
+
+/**
+ * Внутренняя область строки `headerToolbar`: иконки и прочие действия над заголовками колонок.
+ * @property $align — `justify-content` (соответствует `headerToolbarAlign` у грида)
+ * @property $background — фон панели; совпадает с фоном шапки колонок (`tableHeaderVariant` / `tableHeaderBackground` у грида)
+ */
+export const DataGridHeaderToolbarInner = styled.div<{
+  $align: 'flex-start' | 'flex-end' | 'center' | 'space-between';
+  $background: string;
+}>`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: ${({ $align }) => $align};
+  gap: 4px;
+  box-sizing: border-box;
+  min-height: 36px;
+  padding: 6px 12px;
+  background: ${({ $background }) => $background};
+  border-bottom: ${({ theme }) => theme.tables.cell.headBorderBottom};
 `;
 
 /** Полупрозрачный оверлей при `isLoading` */
