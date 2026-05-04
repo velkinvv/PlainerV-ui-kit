@@ -1,36 +1,31 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Grid } from './Grid';
 import { GridItem } from './GridItem';
 import { GridMode } from '../../../types/ui';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Card } from '../Card/Card';
+import { DOC_GRID } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Grid> = {
-  title: 'Components/Grid',
+  title: 'UI Kit/Layout/Grid',
   component: Grid,
   parameters: {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Адаптивный CSS Grid компонент с поддержкой полноэкранного режима, контейнера и вложенности. Поддерживает настройку колонок и строк под разные разрешения экранов.',
+        component: DOC_GRID,
       },
     },
   },
-  decorators: [
-    Story => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   argTypes: {
     mode: {
       control: { type: 'select' },
       options: [...Object.values(GridMode)],
       description: 'Режим отображения',
+      table: {
+        type: { summary: '`fullscreen` или `container`' },
+      },
     },
     container: {
       control: { type: 'boolean' },
@@ -39,22 +34,37 @@ const meta: Meta<typeof Grid> = {
     columns: {
       control: 'object',
       description: 'Количество колонок (число, строка или объект с брейкпоинтами)',
+      table: {
+        type: { summary: 'число, CSS-строка или объект `GridBreakpoint`' },
+      },
     },
     rows: {
       control: 'object',
       description: 'Количество строк (число, строка или объект с брейкпоинтами)',
+      table: {
+        type: { summary: 'число, CSS-строка или объект `GridBreakpoint`' },
+      },
     },
     gap: {
       control: 'object',
       description: 'Отступы между элементами',
+      table: {
+        type: { summary: 'число, CSS-строка или объект `GridBreakpoint`' },
+      },
     },
     rowGap: {
       control: 'object',
       description: 'Отступы между строками',
+      table: {
+        type: { summary: 'число, CSS-строка или объект `GridBreakpoint`' },
+      },
     },
     columnGap: {
       control: 'object',
       description: 'Отступы между колонками',
+      table: {
+        type: { summary: 'число, CSS-строка или объект `GridBreakpoint`' },
+      },
     },
     justifyContent: {
       control: { type: 'select' },
@@ -496,3 +506,4 @@ export const AllFeatures: Story = {
     },
   },
 };
+

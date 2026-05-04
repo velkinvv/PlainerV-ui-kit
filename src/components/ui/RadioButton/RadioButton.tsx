@@ -1,4 +1,4 @@
-import React, { forwardRef, useMemo } from 'react';
+import React, { forwardRef, useId, useMemo, useRef } from 'react';
 import styled from 'styled-components';
 import {
   RadioContainerWrapper,
@@ -10,8 +10,6 @@ import {
   RadioExtraText,
   RadioIconContainer,
   RadioRequiredIndicator,
-  RadioErrorText,
-  RadioHelperText,
   RadioWrapper,
 } from './RadioButton.style';
 
@@ -24,6 +22,16 @@ import {
 } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 import { Tooltip } from '../Tooltip/Tooltip';
+import {
+  AdditionalLabel,
+  ErrorText,
+  ExtraText,
+  HelperText,
+  InputContainer,
+  Label,
+  RequiredIndicator,
+  SuccessText,
+} from '../inputs/shared';
 
 const RadioInput = styled.input`
   position: absolute;
@@ -102,10 +110,15 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
       value,
       variant = RadioButtonVariant.FILLED, // По умолчанию filled вариант
       extraText,
+      fieldLabel,
+      additionalLabel,
+      formRequired = false,
       readOnly = false,
       labelPosition = RadioButtonLabelPosition.RIGHT, // По умолчанию справа
       error,
       helperText,
+      success = false,
+      extraFooterText,
       tooltip,
       tooltipPosition = TooltipPosition.TOP,
       required = false,
@@ -114,13 +127,18 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
       fullWidth = false,
       status,
       className,
+      id: idProp,
       ...props
     },
     ref,
   ) => {
-    const radioId = useMemo(() => `radio-${Math.random().toString(36).substr(2, 9)}`, []);
-    const errorId = useMemo(() => `radio-error-${Math.random().toString(36).substr(2, 9)}`, []);
-    const helperId = useMemo(() => `radio-helper-${Math.random().toString(36).substr(2, 9)}`, []);
+    /** Подавляет второй click по input после клика по подписи (label → программный click на radio). */
+    const suppressNextInputClickRef = useRef(false);
+    const stableRadioUid = useId();
+    const radioDomId = idProp ?? stableRadioUid;
+    const radioFooterErrorIdentifier = useId();
+    const radioFooterHelperIdentifier = useId();
+    const radioFooterSuccessIdentifier = useId();
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       if (!disabled && !readOnly && onChange) {
@@ -129,28 +147,44 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
     };
 
     const handleLabelClick = (event: React.MouseEvent<HTMLDivElement>) => {
-      if (!disabled && !readOnly) {
+      if (disabled || readOnly) return;
+
+      const target = event.target as HTMLElement | null;
+
+      if (target instanceof HTMLInputElement && target.type === 'radio') {
+        if (suppressNextInputClickRef.current) {
+          suppressNextInputClickRef.current = false;
+          return;
+        }
         if (onClick) {
           onClick(event as unknown as React.MouseEvent<HTMLLabelElement>);
         }
-        if (onChange) {
+        return;
+      }
+
+      suppressNextInputClickRef.current = true;
+      requestAnimationFrame(() => {
+        suppressNextInputClickRef.current = false;
+      });
+
+      if (onClick) {
+        onClick(event as unknown as React.MouseEvent<HTMLLabelElement>);
+      }
+      // onChange при клике мышью не дублируем: срабатывает нативно через <label htmlFor>
+    };
+
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (readOnly || !(event.key === 'Enter' || event.key === ' ')) return;
+      event.preventDefault();
+      if (disabled || readOnly) return;
+      if (onClick) {
+        onClick(event as unknown as React.MouseEvent<HTMLLabelElement>);
+      }
+      if (onChange) {
         const syntheticEvent = {
           target: { checked: true, value },
         } as React.ChangeEvent<HTMLInputElement>;
         onChange(syntheticEvent);
-        }
-      }
-    };
-
-    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-      if (!readOnly && (event.key === 'Enter' || event.key === ' ')) {
-        event.preventDefault();
-        // Создаём синтетическое событие для onClick
-        const syntheticClickEvent = {
-          ...event,
-          currentTarget: event.currentTarget,
-        } as unknown as React.MouseEvent<HTMLDivElement>;
-        handleLabelClick(syntheticClickEvent);
       }
     };
 
@@ -160,10 +194,24 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
     // Формируем aria-describedby
     const ariaDescribedBy = useMemo(() => {
       const ids: string[] = [];
-      if (error) ids.push(errorId);
-      if (helperText && !error) ids.push(helperId);
+      if (error) {
+        ids.push(radioFooterErrorIdentifier);
+      }
+      if (success) {
+        ids.push(radioFooterSuccessIdentifier);
+      }
+      if (helperText && !error && !success) {
+        ids.push(radioFooterHelperIdentifier);
+      }
       return ids.length > 0 ? ids.join(' ') : undefined;
-    }, [error, helperText, errorId, helperId]);
+    }, [
+      error,
+      helperText,
+      radioFooterErrorIdentifier,
+      radioFooterHelperIdentifier,
+      radioFooterSuccessIdentifier,
+      success,
+    ]);
 
     // Определяем, где показывать иконки
     const showLeftIcon =
@@ -172,21 +220,29 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
         labelPosition === RadioButtonLabelPosition.NONE);
     const showRightIcon = rightIcon && labelPosition === RadioButtonLabelPosition.LEFT;
 
+    const hasFooterMessages = Boolean(error || success || helperText || extraFooterText);
+
+    const useFieldShell =
+      Boolean(fieldLabel) ||
+      Boolean(additionalLabel) ||
+      Boolean(fullWidth) ||
+      hasFooterMessages;
+
     const radioContent = (
       <RadioContainerWrapper
         data-label-position={labelPosition}
         data-full-width={fullWidth}
         disabled={disabled}
         readOnly={readOnly}
-        className={clsx('ui-radio-button', className)}
+        className={clsx('ui-radio-button', useFieldShell ? undefined : className)}
         onKeyDown={handleKeyDown}
         onClick={handleLabelClick}
         tabIndex={disabled || readOnly ? -1 : 0}
       >
-        <RadioContainer htmlFor={radioId} disabled={disabled} readOnly={readOnly}>
+        <RadioContainer htmlFor={radioDomId} disabled={disabled} readOnly={readOnly}>
         <RadioInput
           ref={ref}
-          id={radioId}
+          id={radioDomId}
           type="radio"
           name={name}
           value={value}
@@ -194,8 +250,9 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
           onChange={handleChange}
           disabled={disabled}
             readOnly={readOnly}
-            aria-invalid={error ? 'true' : undefined}
-            aria-required={required ? 'true' : undefined}
+            required={required || Boolean(formRequired)}
+            aria-invalid={error ? true : undefined}
+            aria-required={required || Boolean(formRequired) ? 'true' : undefined}
             aria-disabled={disabled ? 'true' : undefined}
             aria-describedby={ariaDescribedBy}
           {...props}
@@ -234,7 +291,7 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
       </RadioContainerWrapper>
     );
 
-    return (
+    const radioChrome = (
       <RadioWrapper data-full-width={fullWidth}>
         {tooltip ? (
           <Tooltip content={tooltip} position={tooltipPosition}>
@@ -243,9 +300,34 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
         ) : (
           radioContent
         )}
-        {error && <RadioErrorText id={errorId}>{error}</RadioErrorText>}
-        {helperText && !error && <RadioHelperText id={helperId}>{helperText}</RadioHelperText>}
+        {error ? <ErrorText id={radioFooterErrorIdentifier}>{error}</ErrorText> : null}
+        {success ? (
+          <SuccessText id={radioFooterSuccessIdentifier}>Успешно</SuccessText>
+        ) : null}
+        {helperText && !error && !success ? (
+          <HelperText id={radioFooterHelperIdentifier}>{helperText}</HelperText>
+        ) : null}
+        {extraFooterText ? <ExtraText>{extraFooterText}</ExtraText> : null}
       </RadioWrapper>
+    );
+
+    if (!useFieldShell) {
+      return radioChrome;
+    }
+
+    return (
+      <InputContainer fullWidth={fullWidth} className={clsx('ui-radio-button-field', className)}>
+        {fieldLabel ? (
+          <Label htmlFor={radioDomId}>
+            {fieldLabel}
+            {formRequired ? <RequiredIndicator>*</RequiredIndicator> : null}
+          </Label>
+        ) : null}
+
+        {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
+
+        {radioChrome}
+      </InputContainer>
     );
   },
 );

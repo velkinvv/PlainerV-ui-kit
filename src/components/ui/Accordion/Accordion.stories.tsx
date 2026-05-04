@@ -1,40 +1,41 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Accordion } from './Accordion';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
+import { DOC_ACCORDION } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Accordion> = {
-  title: 'Components/Accordion',
+  title: 'UI Kit/Feedback/Accordion',
   component: Accordion,
   parameters: {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Компонент аккордеона для сворачиваемого контента, стилизованный согласно макету Figma. Поддерживает множественные элементы с уникальными ID, позиционирование (start/center/last), заголовки и подзаголовки. Использует переменные темы для цветов, шрифтов и радиусов.',
+        component: DOC_ACCORDION,
       },
     },
   },
-  decorators: [
-    Story => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   argTypes: {
     defaultOpen: {
       control: { type: 'boolean' },
       description: 'Открыт по умолчанию',
+      table: { type: { summary: 'boolean' } },
     },
     allowMultiple: {
       control: { type: 'boolean' },
       description: 'Позволяет открывать несколько элементов одновременно',
+      table: { type: { summary: 'boolean' } },
     },
     autoClose: {
       control: { type: 'boolean' },
       description: 'Автоматически закрывать другие элементы при открытии нового',
+      table: { type: { summary: 'boolean' } },
+    },
+    onChange: {
+      description: 'Сообщает об открытии или закрытии секции',
+      table: {
+        type: { summary: '(isOpen: boolean) => void' },
+      },
     },
   },
 };
@@ -523,3 +524,4 @@ export const AutoCloseWithMultiple: Story = {
     },
   },
 };
+

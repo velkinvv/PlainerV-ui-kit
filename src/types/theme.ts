@@ -298,6 +298,21 @@ export type Colors = {
   danger: string; // Опасность
   dangerHover: string; // Опасность при наведении
   info: string; // Информация
+  /** Hover для яркого info-акцента (палитра `colors.primary`, не путать с `colors.primary` в теме) */
+  infoHover: string;
+  /**
+   * Акцент тега `Tag` при `colorVariant="primary"` (яркий синий; не slate из `colors.blue`).
+   * Задаётся в `lightColors` / `darkColors`.
+   */
+  tagPrimaryAccent: string;
+  /** Тег `Tag` — `colorVariant="purple"` */
+  tagAccentPurple: string;
+  /** Тег `Tag` — `colorVariant="teal"` */
+  tagAccentTeal: string;
+  /** Тег `Tag` — `colorVariant="cyan"` */
+  tagAccentCyan: string;
+  /** Тег `Tag` — `colorVariant="pink"` */
+  tagAccentPink: string;
 
   // Специальные цвета
   overlay: string; // Наложение
@@ -1631,6 +1646,61 @@ export type CardTheme = {
 };
 
 /**
+ * Тема примитивов `Table` / `DataGrid`: скругления, оболочка-карточка, шапка, зебра, строки, пагинация, оверлей загрузки.
+ */
+export type TableTheme = {
+  /** Единое скругление оболочки, клипа, верхних углов шапки, нижних углов встроенной пагинации и мелких контролов. */
+  borderRadius: string;
+  shell: {
+    /** Обводка внешней карточки таблицы */
+    border: string;
+    /** Фон карточки таблицы */
+    background: string;
+  };
+  header: {
+    background: string;
+    borderBottom: string;
+  };
+  /** Визуальный подвал таблицы (`tfoot`) */
+  footerSection: {
+    background: string;
+  };
+  cell: {
+    /** Цвет текста в ячейках тела */
+    text: string;
+    /** Цвет текста в ячейках шапки */
+    textHead: string;
+    /** Нижняя граница ячейки шапки (обычная колонка) */
+    headBorderBottom: string;
+    /** Нижняя граница ячейки активной колонки сортировки */
+    headActiveSortBorderBottom: string;
+    /** Вертикальный разделитель между колонками шапки */
+    headColumnDivider: string;
+  };
+  body: {
+    /** Граница между строками `tbody` */
+    rowBorder: string;
+  };
+  zebra: {
+    oddRowBackground: string;
+  };
+  row: {
+    selectedBackground: string;
+    hoverBackground: string;
+    draggingBackground: string;
+    draggingOutline: string;
+    draggingBoxShadow: string;
+  };
+  pagination: {
+    borderTop: string;
+    textSecondary: string;
+  };
+  loadingOverlay: {
+    background: string;
+  };
+};
+
+/**
  * Тип темы для Hint компонента
  * Определяет все настройки стилизации подсказок
  */
@@ -2151,7 +2221,7 @@ export type ThemeType = {
   zIndex: ZIndexType; // Z-index значения
   globalSize: Size; // Глобальный размер
   mode: ThemeMode; // Режим темы (светлая/темная)
-  defaultInputSize: Size; // Размер полей ввода по умолчанию
+  defaultInputSize: Size; // Размер полей ввода по умолчанию (`Size.SM` в темах)
   defaultButtonSize: Size; // Размер кнопок по умолчанию
   boxShadow: BoxShadowType; // Тени
   blur: BlurType; // Размытие
@@ -2161,6 +2231,7 @@ export type ThemeType = {
   avatars: AvatarTheme; // Тема для аватаров
   avatarGroups: AvatarGroupTheme; // Тема для групп аватаров
   cards: CardTheme; // Тема для карточек
+  tables: TableTheme; // Тема для таблицы и DataGrid
   dropdowns: DropdownTheme; // Тема для dropdown
   hints: HintTheme; // Тема для подсказок
   modals: ModalTheme; // Тема для модальных окон

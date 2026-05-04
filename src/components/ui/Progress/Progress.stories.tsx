@@ -1,29 +1,22 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 import { Progress, useProgress, useStepper } from './';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Size } from '../../../types/sizes';
 import type { ProgressStep } from '../../../types/ui';
+import { DOC_PROGRESS } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Progress> = {
-  title: 'Components/Progress',
+  title: 'UI Kit/Data Display/Progress',
   component: Progress,
   parameters: {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Компонент прогресса с линейным и круговым вариантами согласно макету.',
+        component: DOC_PROGRESS,
       },
     },
   },
-  decorators: [
-    Story => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   args: {
     value: 64,
@@ -39,21 +32,41 @@ const meta: Meta<typeof Progress> = {
   argTypes: {
     variant: {
       control: { type: 'select' },
-      options: ['linear', 'circle', 'circle-info', 'stepper', 'stepper-circle'],
-      description: 'Тип прогресс-бара в соответствии с макетом',
+      options: [
+        'linear',
+        'circle',
+        'circle-info',
+        'stepper',
+        'stepper-circle',
+        'buffer',
+        'segmented',
+      ],
+      description: 'Тип прогресс-бара',
+      table: {
+        type: {
+          summary: 'linear, circle, circle-info, stepper, stepper-circle, buffer или segmented',
+        },
+      },
     },
     value: {
       control: { type: 'range', min: 0, max: 100, step: 1 },
       description: 'Текущее значение (0-100)',
+      table: {
+        type: { summary: 'number (доля заполнения при max по умолчанию 100)' },
+      },
     },
     max: {
       control: { type: 'number', min: 1 },
       description: 'Максимальное значение, используемое для расчёта процента',
+      table: { type: { summary: 'number' } },
     },
     size: {
       control: { type: 'select' },
       options: [Size.XS, Size.SM, Size.MD, Size.LG, Size.XL],
       description: 'Размер прогресс-бара (высота для линейного, диаметр для кругового)',
+      table: {
+        type: { summary: 'Size: XS, SM, MD, LG, XL' },
+      },
     },
     thickness: {
       control: { type: 'number', min: 4, max: 20, step: 1 },
@@ -91,7 +104,10 @@ const meta: Meta<typeof Progress> = {
       control: { type: 'select' },
       options: ['await', 'loading', 'success', 'error'],
       description:
-        'Состояние прогресса: await - ожидание, loading - загрузка, success - успешно завершено, error - ошибка',
+        'Состояние прогресса; допустимые значения: `await` (ожидание), `loading` (загрузка), `success` (успех), `error` (ошибка)',
+      table: {
+        type: { summary: 'await, loading, success или error' },
+      },
     },
     applyStatusColorsToText: {
       control: { type: 'boolean' },
@@ -101,10 +117,18 @@ const meta: Meta<typeof Progress> = {
     onStatusChange: {
       control: false,
       description: 'Колбек, вызываемый при изменении статуса',
+      table: {
+        type: {
+          summary: '(status: await, loading, success или error) => void',
+        },
+      },
     },
     onComplete: {
       control: false,
       description: 'Колбек, вызываемый при достижении 100% прогресса',
+      table: {
+        type: { summary: '() => void' },
+      },
     },
     indeterminate: {
       control: { type: 'boolean' },
@@ -154,6 +178,9 @@ const meta: Meta<typeof Progress> = {
     onStepClick: {
       control: false,
       description: 'Колбек, вызываемый при клике на шаг в степпере',
+      table: {
+        type: { summary: '(stepIndex: number) => void' },
+      },
     },
     showGradient: {
       control: { type: 'boolean' },
@@ -171,10 +198,16 @@ const meta: Meta<typeof Progress> = {
     onRetry: {
       control: false,
       description: 'Колбек для повтора при ошибке',
+      table: {
+        type: { summary: '() => void' },
+      },
     },
     onPause: {
       control: false,
       description: 'Колбек для паузы/возобновления',
+      table: {
+        type: { summary: '() => void' },
+      },
     },
     paused: {
       control: { type: 'boolean' },
@@ -192,6 +225,9 @@ const meta: Meta<typeof Progress> = {
       control: { type: 'select' },
       options: ['horizontal', 'vertical'],
       description: 'Ориентация степпера: horizontal (по умолчанию) или vertical',
+      table: {
+        type: { summary: 'horizontal или vertical' },
+      },
     },
     steps: {
       control: false,
@@ -217,7 +253,7 @@ export const Linear: Story = {
     value: 55,
     showValueLabel: true,
   },
-  render: args => (
+  render: (args) => (
     <div style={{ padding: '24px', maxWidth: 360 }}>
       <Progress {...args} />
     </div>
@@ -226,7 +262,7 @@ export const Linear: Story = {
     docs: {
       description: {
         story:
-          'Линейный прогресс. В макете показаны два варианта фона (светлый и тёмный), но сам компонент один — просто меняется цвет подложки/трек через пропы.',
+          'Линейный прогресс. Для светлого и тёмного фона используется один компонент — меняются цвет подложки и трека через пропы.',
       },
     },
   },
@@ -239,7 +275,7 @@ export const LinearWithLabel: Story = {
     label: 'Готовность дизайна',
     showValueLabel: true,
   },
-  render: args => (
+  render: (args) => (
     <div style={{ padding: '24px', maxWidth: 360 }}>
       <Progress {...args} />
     </div>
@@ -248,7 +284,7 @@ export const LinearWithLabel: Story = {
     docs: {
       description: {
         story:
-          'Тот же компонент, но с подписью. Для тёмного фона можно подобрать подходящий `trackColor`, как на макете.',
+          'Тот же компонент, но с подписью. Для тёмного фона можно подобрать подходящий `trackColor`.',
       },
     },
   },
@@ -419,7 +455,7 @@ export const StepperAllSizes: Story = {
     ];
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-        {Object.values(Size).map(size => (
+        {Object.values(Size).map((size) => (
           <div key={size}>
             <p style={{ marginBottom: '8px', fontSize: '14px', fontWeight: 600 }}>Размер: {size}</p>
             <Progress variant="stepper" steps={steps} activeStep={1} size={size} />
@@ -470,7 +506,7 @@ export const StepperCircularAllSizes: Story = {
     ];
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-        {Object.values(Size).map(size => (
+        {Object.values(Size).map((size) => (
           <div key={size}>
             <p style={{ marginBottom: '8px', fontSize: '14px', fontWeight: 600 }}>Размер: {size}</p>
             <Progress variant="stepper-circle" steps={steps} activeStep={1} size={size} />
@@ -529,7 +565,7 @@ export const OnComplete: Story = {
 
     React.useEffect(() => {
       if (value < 100) {
-        const timer = setTimeout(() => setValue(prev => prev + 10), 500);
+        const timer = setTimeout(() => setValue((prev) => prev + 10), 500);
         return () => clearTimeout(timer);
       }
     }, [value]);
@@ -567,7 +603,7 @@ export const AnimatedProgress: Story = {
 
     React.useEffect(() => {
       if (value < 100) {
-        const timer = setTimeout(() => setValue(prev => prev + 5), 200);
+        const timer = setTimeout(() => setValue((prev) => prev + 5), 200);
         return () => clearTimeout(timer);
       }
     }, [value]);
@@ -880,7 +916,7 @@ export const WithRetry: Story = {
     React.useEffect(() => {
       if (status === 'loading') {
         const timer = setInterval(() => {
-          setValue(prev => {
+          setValue((prev) => {
             if (prev >= 100) {
               setStatus('success');
               return 100;
@@ -934,7 +970,7 @@ export const WithPause: Story = {
     React.useEffect(() => {
       if (!paused) {
         const timer = setInterval(() => {
-          setValue(prev => Math.min(prev + 1, 100));
+          setValue((prev) => Math.min(prev + 1, 100));
         }, 100);
 
         return () => clearInterval(timer);
@@ -1020,13 +1056,13 @@ export const StepperWithIcons: Story = {
         />
         <div style={{ display: 'flex', gap: '8px' }}>
           <button
-            onClick={() => setActiveStep(prev => Math.max(0, prev - 1))}
+            onClick={() => setActiveStep((prev) => Math.max(0, prev - 1))}
             disabled={activeStep === 0}
           >
             Назад
           </button>
           <button
-            onClick={() => setActiveStep(prev => Math.min(steps.length, prev + 1))}
+            onClick={() => setActiveStep((prev) => Math.min(steps.length, prev + 1))}
             disabled={activeStep === steps.length}
           >
             Вперед
@@ -1087,13 +1123,13 @@ export const StepperAllSteps: Story = {
         />
         <div style={{ display: 'flex', gap: '8px' }}>
           <button
-            onClick={() => setActiveStep(prev => Math.max(0, prev - 1))}
+            onClick={() => setActiveStep((prev) => Math.max(0, prev - 1))}
             disabled={activeStep === 0}
           >
             Назад
           </button>
           <button
-            onClick={() => setActiveStep(prev => Math.min(steps.length, prev + 1))}
+            onClick={() => setActiveStep((prev) => Math.min(steps.length, prev + 1))}
             disabled={activeStep === steps.length}
           >
             Вперед
@@ -1134,13 +1170,13 @@ export const VerticalStepper: Story = {
         />
         <div style={{ display: 'flex', gap: '8px' }}>
           <button
-            onClick={() => setActiveStep(prev => Math.max(0, prev - 1))}
+            onClick={() => setActiveStep((prev) => Math.max(0, prev - 1))}
             disabled={activeStep === 0}
           >
             Назад
           </button>
           <button
-            onClick={() => setActiveStep(prev => Math.min(steps.length, prev + 1))}
+            onClick={() => setActiveStep((prev) => Math.min(steps.length, prev + 1))}
             disabled={activeStep === steps.length}
           >
             Вперед
@@ -1239,8 +1275,8 @@ export const WithEstimatedTime: Story = {
     React.useEffect(() => {
       if (value < 100) {
         const timer = setTimeout(() => {
-          setValue(prev => prev + 5);
-          setEstimatedTime(prev => Math.max(0, prev - 1.5));
+          setValue((prev) => prev + 5);
+          setEstimatedTime((prev) => Math.max(0, prev - 1.5));
         }, 200);
         return () => clearTimeout(timer);
       }
@@ -1272,7 +1308,7 @@ export const WithSpeed: Story = {
     React.useEffect(() => {
       if (value < 100) {
         const timer = setTimeout(() => {
-          setValue(prev => prev + 2);
+          setValue((prev) => prev + 2);
           // Имитация изменения скорости
           const speeds = ['2.5 MB/s', '3.1 MB/s', '2.8 MB/s', '3.5 MB/s'];
           setSpeed(speeds[Math.floor(Math.random() * speeds.length)]);
@@ -1301,8 +1337,8 @@ export const WithTimeAndSpeed: Story = {
     React.useEffect(() => {
       if (value < 100) {
         const timer = setTimeout(() => {
-          setValue(prev => prev + 3);
-          setEstimatedTime(prev => Math.max(0, prev - 0.75));
+          setValue((prev) => prev + 3);
+          setEstimatedTime((prev) => Math.max(0, prev - 0.75));
           const speeds = ['2.5 MB/s', '3.1 MB/s', '2.8 MB/s', '3.5 MB/s'];
           setSpeed(speeds[Math.floor(Math.random() * speeds.length)]);
         }, 200);
@@ -1342,7 +1378,7 @@ export const CustomStyling: Story = {
       borderRadius: '8px',
     },
   },
-  render: args => {
+  render: (args) => {
     return (
       <div>
         <Progress {...args} />
@@ -1395,13 +1431,13 @@ export const StepperWithClickableSteps: Story = {
         />
         <div style={{ display: 'flex', gap: '8px' }}>
           <button
-            onClick={() => setActiveStep(prev => Math.max(0, prev - 1))}
+            onClick={() => setActiveStep((prev) => Math.max(0, prev - 1))}
             disabled={activeStep === 0}
           >
             Назад
           </button>
           <button
-            onClick={() => setActiveStep(prev => Math.min(steps.length, prev + 1))}
+            onClick={() => setActiveStep((prev) => Math.min(steps.length, prev + 1))}
             disabled={activeStep === steps.length}
           >
             Вперед
@@ -1549,13 +1585,13 @@ export const StepperInteractive: Story = {
         />
         <div style={{ display: 'flex', gap: '8px' }}>
           <button
-            onClick={() => setActiveStep(prev => Math.max(0, prev - 1))}
+            onClick={() => setActiveStep((prev) => Math.max(0, prev - 1))}
             disabled={activeStep === 0}
           >
             Назад
           </button>
           <button
-            onClick={() => setActiveStep(prev => Math.min(steps.length, prev + 1))}
+            onClick={() => setActiveStep((prev) => Math.min(steps.length, prev + 1))}
             disabled={activeStep === steps.length}
           >
             Вперед
@@ -1620,7 +1656,7 @@ export const StatusChangeCallback: Story = {
 
     React.useEffect(() => {
       const timer = setInterval(() => {
-        setValue(prev => {
+        setValue((prev) => {
           if (prev >= 100) {
             clearInterval(timer);
             return 100;
@@ -1709,8 +1745,7 @@ export const DashboardExample: Story = {
     controls: { exclude: /.*/ },
     docs: {
       description: {
-        story:
-          'Комбинация всех вариантов компонента прогресса на одной панели, как в макете [Figma](https://www.figma.com/design/nXAzUL74f5DbMpolFYlKl7/%D0%9F%D1%80%D0%BE%D0%B5%D0%BA%D1%82--Copy-?node-id=4911-2725&t=NLAcnpyF3r9axGyO-4).',
+        story: 'Комбинация всех вариантов компонента прогресса на одной панели.',
       },
     },
   },
@@ -1722,7 +1757,7 @@ export const AnimatedLinear: Story = {
 
     React.useEffect(() => {
       const timer = setInterval(() => {
-        setProgress(prev => {
+        setProgress((prev) => {
           if (prev >= 100) {
             clearInterval(timer);
             return 100;
@@ -1744,3 +1779,4 @@ export const AnimatedLinear: Story = {
     controls: { exclude: /.*/ },
   },
 };
+

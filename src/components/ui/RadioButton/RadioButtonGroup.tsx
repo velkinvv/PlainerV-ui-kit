@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useId, useMemo } from 'react';
 import styled from 'styled-components';
 import { clsx } from 'clsx';
 import type { RadioButtonGroupProps } from '../../../types/ui';
@@ -6,10 +6,15 @@ import { RadioButtonGroupOrientation, TooltipPosition } from '../../../types/ui'
 import { RadioButton } from './RadioButton';
 import { Tooltip } from '../Tooltip/Tooltip';
 import {
-  RadioErrorText,
-  RadioHelperText,
-  RadioRequiredIndicator,
-} from './RadioButton.style';
+  AdditionalLabel,
+  ErrorText,
+  ExtraText,
+  HelperText,
+  InputContainer,
+  Label,
+  RequiredIndicator,
+  SuccessText,
+} from '../inputs/shared';
 
 /**
  * Контейнер для группы радиокнопок
@@ -35,36 +40,6 @@ const GroupContainer = styled.div<{
     const fullWidth = props['data-full-width'];
     return fullWidth ? '100%' : 'auto';
   }};
-`;
-
-const GroupWrapper = styled.div<{ 'data-full-width'?: boolean }>`
-  display: flex;
-  flex-direction: column;
-  width: ${props => {
-    const fullWidth = props['data-full-width'];
-    return fullWidth ? '100%' : 'auto';
-  }};
-`;
-
-/**
- * Лейбл для группы радиокнопок
- */
-const GroupLabel = styled.label`
-  display: flex;
-  align-items: center;
-  font-family: ${({ theme }) => theme.radioButton.typography.label.fontFamily};
-  font-size: ${({ theme }) => theme.radioButton.typography.label.fontSize};
-  font-weight: 500;
-  color: ${({ theme }) => theme.radioButton.typography.label.color};
-  margin-bottom: ${({ theme }) => theme.radioButton.spacing.groupLabel};
-`;
-
-const GroupErrorText = styled(RadioErrorText)`
-  margin-top: ${({ theme }) => theme.radioButton.spacing.errorText};
-`;
-
-const GroupHelperText = styled(RadioHelperText)`
-  margin-top: ${({ theme }) => theme.radioButton.spacing.helperText};
 `;
 
 /**
@@ -113,6 +88,9 @@ const GroupHelperText = styled(RadioHelperText)`
  * />
  * ```
  *
+ * Под блоком опций поддерживаются тексты как у `Input`: `error` → `success` («Успешно») →
+ * `helperText` (скрывается при ошибке или успехе) → `extraText`.
+ *
  * @example С tooltip и fullWidth
  * ```tsx
  * <RadioButtonGroup
@@ -133,6 +111,7 @@ export const RadioButtonGroup = React.memo<RadioButtonGroupProps>(
     onChange,
     onClick,
     label,
+    additionalLabel,
     disabled = false,
     readOnly = false,
     orientation = RadioButtonGroupOrientation.HORIZONTAL,
@@ -142,6 +121,8 @@ export const RadioButtonGroup = React.memo<RadioButtonGroupProps>(
     labelPosition,
     error,
     helperText,
+    success = false,
+    extraText,
     required = false,
     tooltip,
     tooltipPosition = TooltipPosition.TOP,
@@ -154,10 +135,12 @@ export const RadioButtonGroup = React.memo<RadioButtonGroupProps>(
       return groupName || `radio-group-${Math.random().toString(36).substr(2, 9)}`;
     }, [groupName]);
 
-    // Генерируем уникальные ID для ошибок и подсказок
-    const groupErrorId = useMemo(() => `radio-group-error-${Math.random().toString(36).substr(2, 9)}`, []);
-    const groupHelperId = useMemo(() => `radio-group-helper-${Math.random().toString(36).substr(2, 9)}`, []);
-    const groupLabelId = useMemo(() => `radio-group-label-${Math.random().toString(36).substr(2, 9)}`, []);
+    // Стабильные id для связи radiogroup с подписью и нижними текстами (ошибка / успех / helper)
+    const groupLabelHeadingId = useId();
+    const groupSecondaryCaptionId = useId();
+    const groupErrorDomId = useId();
+    const groupSuccessDomId = useId();
+    const groupHelperDomId = useId();
 
     // Определяем, является ли error массивом или строкой
     const isErrorArray = Array.isArray(error);
@@ -167,10 +150,17 @@ export const RadioButtonGroup = React.memo<RadioButtonGroupProps>(
     // Формируем aria-describedby для группы
     const ariaDescribedBy = useMemo(() => {
       const ids: string[] = [];
-      if (groupError) ids.push(groupErrorId);
-      if (helperText && !groupError) ids.push(groupHelperId);
+      if (groupError) {
+        ids.push(groupErrorDomId);
+      }
+      if (success) {
+        ids.push(groupSuccessDomId);
+      }
+      if (helperText && !groupError && !success) {
+        ids.push(groupHelperDomId);
+      }
       return ids.length > 0 ? ids.join(' ') : undefined;
-    }, [groupError, helperText, groupErrorId, groupHelperId]);
+    }, [groupError, success, helperText, groupErrorDomId, groupHelperDomId, groupSuccessDomId]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       if (!disabled && !readOnly && onChange) {
@@ -184,16 +174,28 @@ export const RadioButtonGroup = React.memo<RadioButtonGroupProps>(
       }
     };
 
-    const labelContent = label && (
-      <GroupLabel id={groupLabelId}>
+    const labelledByTokensForRadiogroup: string[] = [];
+    if (label) {
+      labelledByTokensForRadiogroup.push(groupLabelHeadingId);
+    }
+    if (additionalLabel) {
+      labelledByTokensForRadiogroup.push(groupSecondaryCaptionId);
+    }
+    const radiogroupAriaLabelledBy =
+      labelledByTokensForRadiogroup.length > 0
+        ? labelledByTokensForRadiogroup.join(' ')
+        : undefined;
+
+    const labelContent = label ? (
+      <Label id={groupLabelHeadingId}>
         {label}
-        {required && <RadioRequiredIndicator>*</RadioRequiredIndicator>}
-      </GroupLabel>
-    );
+        {required ? <RequiredIndicator>*</RequiredIndicator> : null}
+      </Label>
+    ) : null;
 
     return (
-      <GroupWrapper
-        data-full-width={fullWidth}
+      <InputContainer
+        fullWidth={fullWidth}
         className={clsx('ui-radio-button-group', className)}
         {...props}
       >
@@ -204,11 +206,14 @@ export const RadioButtonGroup = React.memo<RadioButtonGroupProps>(
         ) : (
           labelContent
         )}
+        {additionalLabel ? (
+          <AdditionalLabel id={groupSecondaryCaptionId}>{additionalLabel}</AdditionalLabel>
+        ) : null}
         <GroupContainer
           data-orientation={orientation}
           data-full-width={fullWidth}
           role="radiogroup"
-          aria-labelledby={label ? groupLabelId : undefined}
+          aria-labelledby={radiogroupAriaLabelledBy}
           aria-describedby={ariaDescribedBy}
           aria-required={required ? 'true' : undefined}
           aria-disabled={disabled ? 'true' : undefined}
@@ -241,9 +246,16 @@ export const RadioButtonGroup = React.memo<RadioButtonGroupProps>(
             );
           })}
         </GroupContainer>
-        {groupError && <GroupErrorText id={groupErrorId}>{groupError}</GroupErrorText>}
-        {helperText && !groupError && <GroupHelperText id={groupHelperId}>{helperText}</GroupHelperText>}
-      </GroupWrapper>
+        {groupError ? <ErrorText id={groupErrorDomId}>{groupError}</ErrorText> : null}
+
+        {success ? <SuccessText id={groupSuccessDomId}>Успешно</SuccessText> : null}
+
+        {helperText && !groupError && !success ? (
+          <HelperText id={groupHelperDomId}>{helperText}</HelperText>
+        ) : null}
+
+        {extraText ? <ExtraText>{extraText}</ExtraText> : null}
+      </InputContainer>
     );
   },
 );

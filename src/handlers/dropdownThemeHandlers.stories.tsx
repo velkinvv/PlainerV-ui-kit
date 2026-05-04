@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import { Size } from '../types/sizes';
 import { lightTheme, darkTheme } from '../themes/themes';
@@ -15,7 +15,7 @@ import {
 } from './dropdownThemeHandlers';
 
 const meta: Meta = {
-  title: 'Handlers/Dropdown Theme Handlers',
+  title: 'UI Kit/Utils/Handlers/Dropdown Theme Handlers',
   parameters: {
     layout: 'padded',
     docs: {
@@ -317,3 +317,4 @@ const DropdownItem = ({ size, state, children }) => {
     </div>
   ),
 };
+

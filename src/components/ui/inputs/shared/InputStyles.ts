@@ -73,7 +73,9 @@ export const RightLabel = styled(AbsoluteLabel)`
 
 export const InputWrapper = styled(motion.div).withConfig({
   shouldForwardProp: prop =>
-    !['error', 'success', 'fullWidth', 'focused', 'status', 'readOnly'].includes(prop),
+    !['error', 'success', 'fullWidth', 'focused', 'status', 'readOnly', '$fileSurface', '$dragActive'].includes(
+      prop,
+    ),
 })<{
   variant?: InputVariant;
   size?: Size;
@@ -83,32 +85,58 @@ export const InputWrapper = styled(motion.div).withConfig({
   focused?: boolean;
   status?: 'error' | 'success' | 'warning';
   readOnly?: boolean;
+  /** Режимы `FileInput`: поле, пунктирная зона или карточка файла (макет Figma) */
+  $fileSurface?: 'field' | 'dropzone' | 'file';
+  /** Подсветка зоны при перетаскивании файла */
+  $dragActive?: boolean;
 }>`
   position: relative;
   display: flex;
   align-items: center;
-  background: ${({ theme }) => theme.colors.backgroundSecondary};
+  background: ${({ theme, $fileSurface }) =>
+    $fileSurface ? theme.colors.input : theme.colors.backgroundSecondary};
   border: 1px solid
-    ${({ theme, status }) => {
-      if (status === 'error') return theme.colors.danger;
+    ${({ theme, status, error, $dragActive }) => {
+      if ($dragActive) {
+        return theme.colors.primary;
+      }
+      /* Текст ошибки без status — тоже красная рамка (как в DateInput WithError) */
+      if (status === 'error' || Boolean(error)) return theme.colors.danger;
       if (status === 'success') return theme.colors.success;
       if (status === 'warning') return theme.colors.warning;
       return theme.colors.borderSecondary;
     }};
-  border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
+  border-style: ${({ $fileSurface }) => ($fileSurface === 'dropzone' ? 'dashed' : 'solid')};
+  /* У FileInput в макете скругление ~10px, не «пилюля» общих инпутов */
+  border-radius: ${({ theme, $fileSurface }) =>
+    $fileSurface ? '10px' : BorderRadiusHandler(theme.borderRadius)};
   transition: ${TransitionHandler()};
   width: ${({ fullWidth }) => (fullWidth ? '100%' : '335px')};
+  /* В узких контейнерах (Dropdown/Popover с menuWidth) не вылезать за padding — иначе обрезание при overflow:hidden */
+  max-width: 100%;
+  box-sizing: border-box;
 
-  ${({ size, theme }) => css`
+  ${({ size, theme, $fileSurface }) => css`
     min-height: ${InputSizeHandler(size ?? theme.defaultInputSize)};
     padding: ${InputPaddingHandler(size ?? theme.defaultInputSize)};
+    ${$fileSurface === 'dropzone' &&
+    css`
+      min-height: calc(${InputSizeHandler(size ?? theme.defaultInputSize)} * 2.35);
+      align-items: stretch;
+    `}
+    ${$fileSurface === 'file' &&
+    css`
+      min-height: calc(${InputSizeHandler(size ?? theme.defaultInputSize)} * 1.45);
+      align-items: stretch;
+    `}
   `}
 
-  ${({ focused, theme }) =>
+  ${({ focused, theme, status, error }) =>
     focused &&
     css`
-      border-color: ${theme.colors.primary};
-      box-shadow: 0 0 0 2px ${theme.colors.primary}20;
+      border-color: ${status === 'error' || Boolean(error) ? theme.colors.danger : theme.colors.primary};
+      box-shadow: 0 0 0 2px
+        ${status === 'error' || Boolean(error) ? `${theme.colors.danger}33` : `${theme.colors.primary}20`};
     `}
 
   ${({ readOnly }) =>
@@ -145,8 +173,8 @@ export const InputWrapper = styled(motion.div).withConfig({
   }}
 
   &:hover:not(:disabled):not([readonly]) {
-    border-color: ${({ theme, status }) => {
-      if (status === 'error') return theme.colors.danger;
+    border-color: ${({ theme, status, error }) => {
+      if (status === 'error' || Boolean(error)) return theme.colors.danger;
       if (status === 'success') return theme.colors.success;
       if (status === 'warning') return theme.colors.warning;
       return theme.colors.primary;
@@ -263,7 +291,6 @@ export const ClearButton = styled.button`
   transition: ${TransitionHandler()};
 
   &:hover {
-    background: ${({ theme }) => theme.colors.backgroundTertiary};
     color: ${({ theme }) => theme.colors.text};
   }
 
@@ -314,9 +341,20 @@ export const LoadingSpinner = styled.div<{ size?: Size }>`
   }
 `;
 
+/**
+ * Плейсхолдер загрузки: в режиме `field` совпадает с габаритами `InputWrapper` (ширина, min-height, padding, рамка).
+ *
+ * @param size — размер поля (`Size`, как у инпута)
+ * @param fullWidth — при `true` ширина `100%`, иначе как у обёртки — `335px`
+ * @param $layout — `field` (по умолчанию) или `compact` (короткая полоска под лейбл в skeleton-режиме)
+ */
 export const SkeletonEffect = styled.div.withConfig({
-  shouldForwardProp: prop => !['size'].includes(prop),
-})<{ size?: Size }>`
+  shouldForwardProp: prop => !['size', 'fullWidth', '$layout'].includes(prop),
+})<{
+  size?: Size;
+  fullWidth?: boolean;
+  $layout?: 'field' | 'compact';
+}>`
   position: relative;
   display: flex;
   align-items: center;
@@ -328,29 +366,32 @@ export const SkeletonEffect = styled.div.withConfig({
   );
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s infinite;
-  border: 2px solid ${({ theme }) => theme.colors.borderSecondary};
-  border-radius: ${BorderRadiusHandler(Size.SM)};
   transition: ${TransitionHandler()};
-  min-height: ${({ size }) => {
-    switch (size) {
-      case Size.SM:
-        return '32px';
-      case Size.LG:
-        return '48px';
-      default:
-        return '40px';
+
+  ${({ theme, size, fullWidth, $layout }) => {
+    const layout = $layout ?? 'field';
+    if (layout === 'compact') {
+      return css`
+        box-sizing: border-box;
+        width: 40%;
+        max-width: 200px;
+        min-height: 14px;
+        height: 14px;
+        padding: 0;
+        border: 1px solid ${theme.colors.borderSecondary};
+        border-radius: ${BorderRadiusHandler(theme.borderRadius)};
+      `;
     }
-  }};
-  padding: ${({ size }) => {
-    switch (size) {
-      case Size.SM:
-        return '6px 12px';
-      case Size.LG:
-        return '12px 16px';
-      default:
-        return '8px 12px';
-    }
-  }};
+    return css`
+      box-sizing: border-box;
+      width: ${fullWidth ? '100%' : '335px'};
+      max-width: 100%;
+      min-height: ${InputSizeHandler(size ?? theme.defaultInputSize)};
+      padding: ${InputPaddingHandler(size ?? theme.defaultInputSize)};
+      border: 1px solid ${theme.colors.borderSecondary};
+      border-radius: ${BorderRadiusHandler(theme.borderRadius)};
+    `;
+  }}
 
   @keyframes skeleton-loading {
     0% {

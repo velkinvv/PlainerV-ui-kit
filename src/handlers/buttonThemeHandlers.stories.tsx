@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
+import { useTheme as useStyledTheme } from 'styled-components';
 import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
-import { useTheme } from '../themes/ThemeProvider';
 import {
   getButtonSize,
   getButtonVariant,
@@ -18,7 +18,7 @@ import { Size } from '../types/sizes';
 import { ButtonVariant } from '../types/ui';
 
 const meta: Meta = {
-  title: 'Handlers/Button Theme Handlers',
+  title: 'UI Kit/Utils/Handlers/Button Theme Handlers',
   parameters: {
     docs: {
       description: {
@@ -52,7 +52,7 @@ type Story = StoryObj<typeof meta>;
 
 // Компонент для демонстрации размеров кнопок
 const ButtonSizesDemo = () => {
-  const theme = useTheme();
+  const theme = useStyledTheme();
   const [selectedSize, setSelectedSize] = useState<Size>(Size.MD);
 
   const sizes = [Size.SM, Size.MD, Size.LG, Size.XL];
@@ -69,8 +69,16 @@ const ButtonSizesDemo = () => {
         <Typography variant="body1" marginBottom="sm">
           Выберите размер:
         </Typography>
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          {sizes.map(size => (
+        <div
+          style={{
+            display: 'flex',
+            gap: '8px',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          {sizes.map((size) => (
             <Button
               key={size}
               variant={selectedSize === size ? 'primary' : 'outlined'}
@@ -97,13 +105,13 @@ const ButtonSizesDemo = () => {
 
 // Компонент для демонстрации вариантов кнопок
 const ButtonVariantsDemo = () => {
-  const theme = useTheme();
+  const theme = useStyledTheme();
   const [selectedVariant, setSelectedVariant] = useState<ButtonVariant>(ButtonVariant.PRIMARY);
 
   const variants = [
     ButtonVariant.PRIMARY,
     ButtonVariant.SECONDARY,
-    ButtonVariant.OUTLINED,
+    ButtonVariant.OUTLINE,
     ButtonVariant.GHOST,
     ButtonVariant.DANGER,
     ButtonVariant.SUCCESS,
@@ -123,7 +131,7 @@ const ButtonVariantsDemo = () => {
           Выберите вариант:
         </Typography>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          {variants.map(variant => (
+          {variants.map((variant) => (
             <Button key={variant} variant={variant} onClick={() => setSelectedVariant(variant)}>
               {variant}
             </Button>
@@ -145,7 +153,7 @@ const ButtonVariantsDemo = () => {
 
 // Компонент для демонстрации состояний кнопок
 const ButtonStatesDemo = () => {
-  const theme = useTheme();
+  const theme = useStyledTheme();
   const [selectedVariant, setSelectedVariant] = useState<ButtonVariant>(ButtonVariant.PRIMARY);
   const [selectedState, setSelectedState] = useState<
     'default' | 'hover' | 'active' | 'focus' | 'disabled'
@@ -154,7 +162,7 @@ const ButtonStatesDemo = () => {
   const variants = [
     ButtonVariant.PRIMARY,
     ButtonVariant.SECONDARY,
-    ButtonVariant.OUTLINED,
+    ButtonVariant.OUTLINE,
     ButtonVariant.DANGER,
   ];
 
@@ -194,7 +202,7 @@ const ButtonStatesDemo = () => {
           Выберите вариант:
         </Typography>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
-          {variants.map(variant => (
+          {variants.map((variant) => (
             <Button
               key={variant}
               variant={variant}
@@ -210,7 +218,7 @@ const ButtonStatesDemo = () => {
           Выберите состояние:
         </Typography>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          {states.map(state => (
+          {states.map((state) => (
             <Button
               key={state.key}
               variant={selectedState === state.key ? 'primary' : 'outlined'}
@@ -239,7 +247,7 @@ const ButtonStatesDemo = () => {
 
 // Компонент для демонстрации анимаций и настроек
 const ButtonAnimationsDemo = () => {
-  const theme = useTheme();
+  const theme = useStyledTheme();
 
   const animations = getButtonAnimations(theme.buttons);
   const settings = getButtonSettings(theme.buttons);
@@ -279,7 +287,7 @@ const ButtonAnimationsDemo = () => {
 
 // Компонент для демонстрации практического использования
 const ButtonHandlersUsageDemo = () => {
-  const theme = useTheme();
+  const theme = useStyledTheme();
   const [customVariant, setCustomVariant] = useState<ButtonVariant>(ButtonVariant.PRIMARY);
   const [customSize, setCustomSize] = useState<Size>(Size.MD);
 
@@ -306,12 +314,12 @@ const ButtonHandlersUsageDemo = () => {
             </Typography>
             <select
               value={customVariant}
-              onChange={e => setCustomVariant(e.target.value as ButtonVariant)}
+              onChange={(e) => setCustomVariant(e.target.value as ButtonVariant)}
               style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
             >
               <option value={ButtonVariant.PRIMARY}>Primary</option>
               <option value={ButtonVariant.SECONDARY}>Secondary</option>
-              <option value={ButtonVariant.OUTLINED}>Outlined</option>
+              <option value={ButtonVariant.OUTLINE}>Outlined</option>
               <option value={ButtonVariant.DANGER}>Danger</option>
             </select>
           </div>
@@ -322,7 +330,7 @@ const ButtonHandlersUsageDemo = () => {
             </Typography>
             <select
               value={customSize}
-              onChange={e => setCustomSize(e.target.value as Size)}
+              onChange={(e) => setCustomSize(e.target.value as Size)}
               style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
             >
               <option value={Size.SM}>Small</option>
@@ -440,3 +448,4 @@ export const AllExamples: Story = {
     </div>
   ),
 };
+

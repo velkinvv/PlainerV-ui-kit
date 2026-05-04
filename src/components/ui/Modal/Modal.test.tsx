@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ThemeProvider } from '../../../../themes/ThemeProvider';
+import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Modal } from './Modal';
 
 /**
@@ -81,7 +81,7 @@ describe('Modal', () => {
     );
 
     // Ищем кнопку закрытия (обычно это кнопка с иконкой закрытия)
-    const closeButton = screen.getByRole('button', { name: /close/i });
+    const closeButton = screen.getByRole('button', { name: 'Закрыть' });
     if (closeButton) {
       fireEvent.click(closeButton);
       expect(handleClose).toHaveBeenCalled();

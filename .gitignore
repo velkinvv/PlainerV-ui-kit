@@ -45,6 +45,9 @@ coverage/
 storybook-static/
 .out/
 
+# Остаток промежуточного переноса Table/DataGrid (не коммитить — дублирует сторис)
+src/components/ui/table_pkg/
+
 # Другое
 *.pem
 .eslintcache
@@ -67,3 +70,6 @@ Thumbs.db
 
 # Локальные настройки
 .local/
+
+# Локальные npm-пакеты (сборка tgz рядом с package)
+*.tgz

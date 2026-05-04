@@ -1,9 +1,10 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import { Button } from '../components/ui/buttons/Button';
 import { Input } from '../components/ui/inputs/Input';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
+import { Calendar as UICalendar } from '../components/ui/Calendar/Calendar';
 import {
   parseDate,
   formatDateForDisplay,
@@ -11,18 +12,14 @@ import {
   toISODateString,
   getCurrentDate,
   isToday,
-  getDaysInMonth,
-  getMonthYearDisplay,
-  getWeekdayNames,
   isInRange,
   isRangeStart,
   isRangeEnd,
-  isCurrentMonth,
   isValidDate,
 } from './dateHandlers';
 
 const meta: Meta = {
-  title: 'Handlers/Date Handlers',
+  title: 'UI Kit/Utils/Handlers/Date Handlers',
   parameters: {
     docs: {
       description: {
@@ -194,17 +191,9 @@ const DateRangeDemo = () => {
 
 // Компонент для демонстрации календарных функций
 const CalendarDemo = () => {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const days = getDaysInMonth(currentDate);
-  const weekdays = getWeekdayNames();
-
-  const nextMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
-  };
-
-  const prevMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
-  };
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  const [visibleMonth, setVisibleMonth] = useState<Date>(new Date());
+  const isSelectedDateToday = selectedDate ? isToday(selectedDate) : false;
 
   return (
     <Card padding="lg">
@@ -212,60 +201,26 @@ const CalendarDemo = () => {
         Календарные функции
       </Typography>
 
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '16px',
-        }}
-      >
-        <Button onClick={prevMonth}>←</Button>
-        <Typography variant="h4">{getMonthYearDisplay(currentDate)}</Typography>
-        <Button onClick={nextMonth}>→</Button>
-      </div>
-
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(7, 1fr)',
-          gap: '4px',
-          marginBottom: '16px',
-        }}
-      >
-        {weekdays.map(day => (
-          <div key={day} style={{ textAlign: 'center', padding: '8px', fontWeight: 'bold' }}>
-            {day}
-          </div>
-        ))}
-        {days.map((day, index) => {
-          const isCurrentMonth = isCurrentMonth(day, currentDate);
-          const isTodayDate = isToday(day);
-
-          return (
-            <div
-              key={index}
-              style={{
-                padding: '8px',
-                textAlign: 'center',
-                backgroundColor: isTodayDate ? '#007bff' : isCurrentMonth ? '#f8f9fa' : '#e9ecef',
-                color: isTodayDate ? 'white' : isCurrentMonth ? 'black' : '#6c757d',
-                borderRadius: '4px',
-                cursor: 'pointer',
-              }}
-            >
-              {day.getDate()}
-            </div>
-          );
-        })}
+      <div style={{ marginBottom: '16px' }}>
+        <UICalendar
+          value={selectedDate}
+          onChange={setSelectedDate}
+          visibleMonth={visibleMonth}
+          onVisibleMonthChange={setVisibleMonth}
+          showTitle
+        />
       </div>
 
       <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
         <Typography variant="body2" marginBottom="xs">
           <strong>Текущая дата:</strong> {getCurrentDate().toLocaleDateString()}
         </Typography>
+        <Typography variant="body2" marginBottom="xs">
+          <strong>Выбранная дата:</strong>{' '}
+          {selectedDate ? selectedDate.toLocaleDateString() : 'Не выбрана'}
+        </Typography>
         <Typography variant="body2">
-          <strong>Сегодня:</strong> {isToday(currentDate) ? 'Да' : 'Нет'}
+          <strong>Выбранная дата сегодня:</strong> {isSelectedDateToday ? 'Да' : 'Нет'}
         </Typography>
       </div>
     </Card>
@@ -298,3 +253,4 @@ export const AllExamples: Story = {
     </div>
   ),
 };
+

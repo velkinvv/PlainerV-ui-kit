@@ -1,13 +1,23 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
 import { Modal } from '../components/ui/Modal';
+import { ButtonVariant } from '../types/ui';
 import { useModal } from './useModal';
+import {
+  AllExamplesContainer,
+  ColoredTriggerButton,
+  ModalsStateGrid,
+  ModalsTriggerContainer,
+  ModalStateCard,
+  StoryControlsContainer,
+  StoryStateContainer,
+} from './useModal.stories.style';
 
 const meta: Meta = {
-  title: 'Hooks/useModal',
+  title: 'UI Kit/Hooks/useModal',
   parameters: {
     docs: {
       description: {
@@ -51,7 +61,7 @@ const BasicModalDemo = () => {
         Базовое использование useModal
       </Typography>
 
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+      <StoryControlsContainer>
         <Button onClick={open}>Открыть модальное окно</Button>
         <Button onClick={close} disabled={!isOpen}>
           Закрыть модальное окно
@@ -59,30 +69,33 @@ const BasicModalDemo = () => {
         <Button onClick={toggle} variant="outlined">
           {isOpen ? 'Закрыть' : 'Открыть'}
         </Button>
-      </div>
+      </StoryControlsContainer>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <StoryStateContainer>
         <Typography variant="body2">
           <strong>Состояние:</strong> {isOpen ? 'Открыто' : 'Закрыто'}
         </Typography>
-      </div>
+      </StoryStateContainer>
 
-      <Modal isOpen={isOpen} onClose={close}>
-        <Card padding="lg" style={{ maxWidth: '400px' }}>
-          <Typography variant="h4" marginBottom="md">
-            Модальное окно
-          </Typography>
-          <Typography variant="body1" marginBottom="lg">
-            Это пример модального окна, управляемого через useModal хук.
-          </Typography>
-          <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-            <Button variant="outlined" onClick={close}>
-              Отмена
-            </Button>
-            <Button onClick={close}>ОК</Button>
-          </div>
-        </Card>
-      </Modal>
+      <Modal
+        isOpen={isOpen}
+        onClose={close}
+        title="Modal Window"
+        description="Lorem ipsum dolor sit amet consectetur. Sit enim pretium ac eu porttitor interdum eu leo."
+        buttons={[
+          {
+            label: 'Okey',
+            onClick: close,
+            placement: 'secondary',
+          },
+          {
+            label: 'Button',
+              variant: ButtonVariant.OUTLINE,
+            onClick: close,
+            placement: 'primary',
+          },
+        ]}
+      />
     </Card>
   );
 };
@@ -97,7 +110,7 @@ const InitialStateDemo = () => {
         useModal с начальным состоянием
       </Typography>
 
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+      <StoryControlsContainer>
         <Button onClick={open}>Открыть</Button>
         <Button onClick={close} disabled={!isOpen}>
           Закрыть
@@ -105,32 +118,36 @@ const InitialStateDemo = () => {
         <Button onClick={toggle} variant="outlined">
           Переключить
         </Button>
-      </div>
+      </StoryControlsContainer>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <StoryStateContainer>
         <Typography variant="body2">
           <strong>Состояние:</strong> {isOpen ? 'Открыто' : 'Закрыто'}
         </Typography>
         <Typography variant="body2" marginTop="xs">
           <strong>Начальное состояние:</strong> true (открыто)
         </Typography>
-      </div>
+      </StoryStateContainer>
 
-      <Modal isOpen={isOpen} onClose={close}>
-        <Card padding="lg" style={{ maxWidth: '400px' }}>
-          <Typography variant="h4" marginBottom="md">
-            Модальное окно с начальным состоянием
-          </Typography>
-          <Typography variant="body1" marginBottom="lg">
-            Это модальное окно было открыто при инициализации.
-          </Typography>
-          <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-            <Button variant="outlined" onClick={close}>
-              Закрыть
-            </Button>
-          </div>
-        </Card>
-      </Modal>
+      <Modal
+        isOpen={isOpen}
+        onClose={close}
+        title="Modal Window"
+        description="Lorem ipsum dolor sit amet consectetur. Sit enim pretium ac eu porttitor interdum eu leo."
+        buttons={[
+          {
+            label: 'Okey',
+            onClick: close,
+            placement: 'secondary',
+          },
+          {
+            label: 'Button',
+              variant: ButtonVariant.OUTLINE,
+            onClick: close,
+            placement: 'primary',
+          },
+        ]}
+      />
     </Card>
   );
 };
@@ -153,51 +170,51 @@ const MultipleModalsDemo = () => {
         Множественные модальные окна
       </Typography>
 
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
-        {modals.map((modal, index) => (
-          <Button key={index} onClick={modal.hook.open} style={{ backgroundColor: modal.color }}>
-            Открыть {index + 1}
-          </Button>
-        ))}
-      </div>
-
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '12px',
-          marginBottom: '16px',
-        }}
-      >
-        {modals.map((modal, index) => (
-          <div
-            key={index}
-            style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}
+      <ModalsTriggerContainer>
+        {modals.map((modal, modalIndex) => (
+          <ColoredTriggerButton
+            key={modalIndex}
+            onClick={modal.hook.open}
+            $backgroundColor={modal.color}
           >
+            Открыть {modalIndex + 1}
+          </ColoredTriggerButton>
+        ))}
+      </ModalsTriggerContainer>
+
+      <ModalsStateGrid>
+        {modals.map((modal, modalIndex) => (
+          <ModalStateCard key={modalIndex}>
             <Typography variant="body2" marginBottom="xs">
-              <strong>Модальное окно {index + 1}:</strong>
+              <strong>Модальное окно {modalIndex + 1}:</strong>
             </Typography>
             <Typography variant="body2">{modal.hook.isOpen ? 'Открыто' : 'Закрыто'}</Typography>
-          </div>
+          </ModalStateCard>
         ))}
-      </div>
+      </ModalsStateGrid>
 
-      {modals.map((modal, index) => (
-        <Modal key={index} isOpen={modal.hook.isOpen} onClose={modal.hook.close}>
-          <Card padding="lg" style={{ maxWidth: '400px' }}>
-            <Typography variant="h4" marginBottom="md" style={{ color: modal.color }}>
-              {modal.title}
-            </Typography>
-            <Typography variant="body1" marginBottom="lg">
-              Это {index + 1}-е модальное окно. Каждое управляется своим экземпляром useModal.
-            </Typography>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-              <Button variant="outlined" onClick={modal.hook.close}>
-                Закрыть
-              </Button>
-            </div>
-          </Card>
-        </Modal>
+      {modals.map((modal, modalIndex) => (
+        <Modal
+          key={modalIndex}
+          isOpen={modal.hook.isOpen}
+          onClose={modal.hook.close}
+          title="Modal Window"
+          description="Lorem ipsum dolor sit amet consectetur. Sit enim pretium ac eu porttitor interdum eu leo."
+          buttons={[
+            {
+              label: 'Okey',
+              onClick: modal.hook.close,
+              placement: 'secondary',
+            },
+            {
+              label: 'Button',
+              variant: ButtonVariant.OUTLINE,
+              onClick: modal.hook.close,
+              placement: 'primary',
+            },
+          ]}
+          modalVariant={modalIndex === 0 ? 'default' : modalIndex === 1 ? 'success' : 'danger'}
+        />
       ))}
     </Card>
   );
@@ -219,7 +236,7 @@ const IntegrationDemo = () => {
         Интеграция с другими хуками
       </Typography>
 
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+      <StoryControlsContainer>
         <Button onClick={handleOpen}>Открыть (счетчик: {counter})</Button>
         <Button onClick={close} disabled={!isOpen}>
           Закрыть
@@ -227,33 +244,36 @@ const IntegrationDemo = () => {
         <Button onClick={toggle} variant="outlined">
           Переключить
         </Button>
-      </div>
+      </StoryControlsContainer>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <StoryStateContainer>
         <Typography variant="body2" marginBottom="xs">
           <strong>Состояние:</strong> {isOpen ? 'Открыто' : 'Закрыто'}
         </Typography>
         <Typography variant="body2">
           <strong>Количество открытий:</strong> {counter}
         </Typography>
-      </div>
+      </StoryStateContainer>
 
-      <Modal isOpen={isOpen} onClose={close}>
-        <Card padding="lg" style={{ maxWidth: '400px' }}>
-          <Typography variant="h4" marginBottom="md">
-            Интеграция с useState
-          </Typography>
-          <Typography variant="body1" marginBottom="lg">
-            Это модальное окно было открыто {counter} раз(а). useModal легко интегрируется с другими
-            хуками React.
-          </Typography>
-          <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-            <Button variant="outlined" onClick={close}>
-              Закрыть
-            </Button>
-          </div>
-        </Card>
-      </Modal>
+      <Modal
+        isOpen={isOpen}
+        onClose={close}
+        title="Modal Window"
+        description={`Lorem ipsum dolor sit amet consectetur. Opened ${counter} times.`}
+        buttons={[
+          {
+            label: 'Okey',
+            onClick: close,
+            placement: 'secondary',
+          },
+          {
+            label: 'Button',
+              variant: ButtonVariant.OUTLINE,
+            onClick: close,
+            placement: 'primary',
+          },
+        ]}
+      />
     </Card>
   );
 };
@@ -276,11 +296,12 @@ export const Integration: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <AllExamplesContainer>
       <BasicModalDemo />
       <InitialStateDemo />
       <MultipleModalsDemo />
       <IntegrationDemo />
-    </div>
+    </AllExamplesContainer>
   ),
 };
+

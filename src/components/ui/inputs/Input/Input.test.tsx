@@ -30,6 +30,29 @@ describe('Input', () => {
     expect(handleChange).toHaveBeenCalled();
   });
 
+  it('применяет handleInput к вводу (маска)', () => {
+    const onChange = jest.fn();
+    renderWithTheme(
+      <Input
+        label="Код"
+        onChange={onChange}
+        handleInput={(v, pos) => ({
+          value: v.replace(/\D/g, ''),
+          cursorPosition: Math.min(pos, v.replace(/\D/g, '').length),
+        })}
+      />,
+    );
+
+    const input = screen.getByLabelText('Код');
+    fireEvent.change(input, { target: { value: 'a1b2', selectionStart: 4 } });
+
+    expect(onChange).toHaveBeenCalled();
+    expect(
+      (onChange.mock.calls[0]?.[0] as React.ChangeEvent<HTMLInputElement>)?.target?.value,
+    ).toBe('12');
+    expect(input).toHaveValue('12');
+  });
+
   it('показывает ошибку', () => {
     renderWithTheme(
       <Input label="Email" error="Неверный email" />
@@ -43,7 +66,7 @@ describe('Input', () => {
       <Input label="Email" success="Email валиден" />
     );
 
-    expect(screen.getByText('Email валиден')).toBeInTheDocument();
+    expect(screen.getByText('Успешно')).toBeInTheDocument();
   });
 
   it('показывает helper text', () => {
@@ -92,7 +115,7 @@ describe('Input', () => {
       <Input label="Email" required />
     );
 
-    const input = screen.getByLabelText('Email');
+    const input = screen.getByRole('textbox', { name: /Email/ });
     expect(input).toBeRequired();
   });
 });

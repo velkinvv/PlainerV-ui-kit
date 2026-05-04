@@ -1,14 +1,14 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Icon } from './Icon/Icon';
 import * as PlainerIconsModule from '../../icons/plainer';
 import * as IconExIconsModule from '../../icons/iconex';
-import { ThemeProvider } from '../../themes/ThemeProvider';
 import { Hint } from './Hint/Hint';
 import { IconSize } from '../../types/sizes';
 import { sizeMap } from '../../handlers/iconHandlers';
 import type { IconVariant } from '../../types/ui';
 import type { IconName } from '../../icons';
+import { DOC_ICON_SHOWCASE } from '@/components/ui/storyDocs/uiKitDocs';
 
 // Функция для получения реально существующих иконок
 const getExistingIcons = () => {
@@ -38,23 +38,16 @@ const getIconVariant = (name: string): IconVariant => {
 };
 
 const meta: Meta<typeof Icon> = {
-  title: 'Components/Icon/Showcase',
+  title: 'UI Kit/Data Display/Icon/Showcase',
   component: Icon,
   parameters: {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Демонстрация иконок',
+        component: DOC_ICON_SHOWCASE,
       },
     },
   },
-  decorators: [
-    Story => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
 };
 
@@ -302,3 +295,4 @@ export const AllIcons: Story = {
     },
   },
 };
+

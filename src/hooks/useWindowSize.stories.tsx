@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
-import { Badge } from '../components/ui/Badge';
+import { Tag } from '../components/ui/Tag';
 import { useWindowSize, useScreenSize, useAvailableSize } from './useWindowSize';
 
 const meta: Meta = {
-  title: 'Hooks/useWindowSize',
+  title: 'UI Kit/Hooks/useWindowSize',
   parameters: {
     docs: {
       description: {
@@ -52,6 +52,16 @@ const { width, height } = useAvailableSize();
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+/**
+ * Отображает статус диапазона ширины окна.
+ * @param isActive - Активен ли диапазон.
+ */
+const renderWindowRangeStatusTag = (isActive: boolean) => (
+  <Tag colorVariant={isActive ? 'success' : 'neutral'} appearance={isActive ? 'filled' : 'outline'}>
+    {isActive ? 'Активно' : 'Неактивно'}
+  </Tag>
+);
 
 // Компонент для демонстрации базового использования
 const BasicWindowSizeDemo = () => {
@@ -175,33 +185,25 @@ const ResponsiveDemo = () => {
           <Typography variant="body2" style={{ fontSize: '12px' }}>
             Mobile ≤ 768px
           </Typography>
-          <Badge variant={width <= 768 ? 'success' : 'outlined'} size="sm">
-            {width <= 768 ? 'Активно' : 'Неактивно'}
-          </Badge>
+          {renderWindowRangeStatusTag(width <= 768)}
         </div>
         <div style={{ padding: '8px', backgroundColor: '#f8f9fa', borderRadius: '4px', textAlign: 'center' }}>
           <Typography variant="body2" style={{ fontSize: '12px' }}>
             Tablet 769-1024px
           </Typography>
-          <Badge variant={width > 768 && width <= 1024 ? 'success' : 'outlined'} size="sm">
-            {width > 768 && width <= 1024 ? 'Активно' : 'Неактивно'}
-          </Badge>
+          {renderWindowRangeStatusTag(width > 768 && width <= 1024)}
         </div>
         <div style={{ padding: '8px', backgroundColor: '#f8f9fa', borderRadius: '4px', textAlign: 'center' }}>
           <Typography variant="body2" style={{ fontSize: '12px' }}>
             Desktop 1025-1440px
           </Typography>
-          <Badge variant={width > 1024 && width <= 1440 ? 'success' : 'outlined'} size="sm">
-            {width > 1024 && width <= 1440 ? 'Активно' : 'Неактивно'}
-          </Badge>
+          {renderWindowRangeStatusTag(width > 1024 && width <= 1440)}
         </div>
         <div style={{ padding: '8px', backgroundColor: '#f8f9fa', borderRadius: '4px', textAlign: 'center' }}>
           <Typography variant="body2" style={{ fontSize: '12px' }}>
-            Large > 1440px
+            Large {'>'} 1440px
           </Typography>
-          <Badge variant={width > 1440 ? 'success' : 'outlined'} size="sm">
-            {width > 1440 ? 'Активно' : 'Неактивно'}
-          </Badge>
+          {renderWindowRangeStatusTag(width > 1440)}
         </div>
       </div>
 
@@ -373,11 +375,9 @@ const OrientationDemo = () => {
             <strong>Портретная</strong>
           </Typography>
           <Typography variant="body2" style={{ fontSize: '12px' }}>
-            Высота > Ширины
+            Высота {'>'} Ширины
           </Typography>
-          <Badge variant={isPortrait ? 'success' : 'outlined'} style={{ marginTop: '8px' }}>
-            {isPortrait ? 'Активно' : 'Неактивно'}
-          </Badge>
+          <div style={{ marginTop: '8px' }}>{renderWindowRangeStatusTag(isPortrait)}</div>
         </div>
 
         <div style={{
@@ -393,11 +393,9 @@ const OrientationDemo = () => {
             <strong>Альбомная</strong>
           </Typography>
           <Typography variant="body2" style={{ fontSize: '12px' }}>
-            Ширина > Высоты
+            Ширина {'>'} Высоты
           </Typography>
-          <Badge variant={isLandscape ? 'success' : 'outlined'} style={{ marginTop: '8px' }}>
-            {isLandscape ? 'Активно' : 'Неактивно'}
-          </Badge>
+          <div style={{ marginTop: '8px' }}>{renderWindowRangeStatusTag(isLandscape)}</div>
         </div>
 
         <div style={{
@@ -415,9 +413,7 @@ const OrientationDemo = () => {
           <Typography variant="body2" style={{ fontSize: '12px' }}>
             Ширина = Высота
           </Typography>
-          <Badge variant={isSquare ? 'success' : 'outlined'} style={{ marginTop: '8px' }}>
-            {isSquare ? 'Активно' : 'Неактивно'}
-          </Badge>
+          <div style={{ marginTop: '8px' }}>{renderWindowRangeStatusTag(isSquare)}</div>
         </div>
       </div>
 
@@ -543,3 +539,4 @@ export const AllExamples: Story = {
     </div>
   ),
 };
+

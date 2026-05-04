@@ -1,12 +1,12 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Icon } from './Icon';
 import * as PlainerIconsModule from '../../../icons/plainer';
 import * as IconExIconsModule from '../../../icons/iconex';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { IconSize } from '../../../types/sizes';
 import type { IconVariant } from '../../../types/ui';
 import type { IconName } from '../../../icons';
+import { DOC_ICON_CATEGORIES } from '@/components/ui/storyDocs/uiKitDocs';
 
 // Функция для получения реально существующих иконок
 const getExistingIcons = () => {
@@ -29,7 +29,9 @@ const getExistingIcons = () => {
 // Функция для проверки существования иконки
 const iconExists = (name: string, variant: IconVariant): boolean => {
   if (variant === 'plainer') {
-    const plainerIconName = `IconPlainer${name}` as keyof typeof PlainerIconsModule;
+    const plainerIconName = (
+      name.startsWith('IconPlainer') ? name : `IconPlainer${name}`
+    ) as keyof typeof PlainerIconsModule;
     return !!(
       PlainerIconsModule[plainerIconName] &&
       typeof PlainerIconsModule[plainerIconName] === 'function'
@@ -37,7 +39,8 @@ const iconExists = (name: string, variant: IconVariant): boolean => {
   }
 
   if (variant === 'iconEx') {
-    const iconexIconName = `IconEx${name}` as keyof typeof IconExIconsModule;
+    const iconexIconName = (name.startsWith('IconEx') ? name : `IconEx${name}`) as keyof
+      typeof IconExIconsModule;
     return !!(
       IconExIconsModule[iconexIconName] && typeof IconExIconsModule[iconexIconName] === 'function'
     );
@@ -47,23 +50,16 @@ const iconExists = (name: string, variant: IconVariant): boolean => {
 };
 
 const meta: Meta<typeof Icon> = {
-  title: 'Components/Icon/Categories',
+  title: 'UI Kit/Data Display/Icon/Categories',
   component: Icon,
   parameters: {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Категории иконок Plainer и IconEx для удобного просмотра',
+        component: DOC_ICON_CATEGORIES,
       },
     },
   },
-  decorators: [
-    Story => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
 };
 
@@ -164,10 +160,12 @@ const IconGrid = ({
 // Категории иконок
 const iconCategories = {
   navigation: {
-    plainer: ['IconPlainerArrowUp', 'IconPlainerArrowRight', 'IconPlainerArrowLeft'].filter(name =>
+    plainer: ['ArrowUp', 'ArrowRight', 'ArrowLeft', 'ChevronDown'].filter(name =>
       iconExists(name, 'plainer'),
     ) as IconName[],
-    iconex: ['IconExArrowDown'].filter(name => iconExists(name, 'iconEx')) as IconName[],
+    iconex: ['IconExHome', 'IconExBurger', 'IconExLocation', 'IconExLink'].filter(name =>
+      iconExists(name, 'iconEx'),
+    ) as IconName[],
   },
   user: {
     plainer: ['IconPlainerUser'].filter(name => iconExists(name, 'plainer')) as IconName[],
@@ -318,7 +316,6 @@ const iconCategories = {
       'IconExScale',
       'IconExScanner',
       'IconExCilPen',
-      'IconExFigma',
       'IconExBrowser',
       'IconExScreen',
       'IconExLaptop',
@@ -511,3 +508,4 @@ export const NatureIcons: Story = {
     <IconGrid icons={iconCategories.nature.iconex} variant="iconEx" title="Иконки природы" />
   ),
 };
+

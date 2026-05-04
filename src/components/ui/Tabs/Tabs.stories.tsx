@@ -1,34 +1,28 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Tabs } from './Tabs';
 import { TabItem } from './TabItem';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import {
   TabsDirection,
   TabsVerticalPosition,
+  TabsVariant,
   TabItemTextOrientation,
   TabItemTextPosition,
 } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
+import { DOC_TABS } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Tabs> = {
-  title: 'Components/Tabs',
+  title: 'UI Kit/Navigation/Tabs',
   component: Tabs,
   parameters: {
     layout: 'centered',
     docs: {
       description: {
-        component: 'Компонент вкладок для организации контента',
+        component: DOC_TABS,
       },
     },
   },
-  decorators: [
-    Story => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   argTypes: {
     defaultActiveTab: {
@@ -45,7 +39,7 @@ const meta: Meta<typeof Tabs> = {
       description:
         'Направление отображения табов. HORIZONTAL - табы сверху, контент снизу. VERTICAL - табы слева/справа, контент рядом.',
       table: {
-        type: { summary: 'TabsDirection' },
+        type: { summary: '"horizontal", "vertical"' },
         defaultValue: { summary: 'HORIZONTAL' },
       },
     },
@@ -56,8 +50,18 @@ const meta: Meta<typeof Tabs> = {
         'Позиция табов в вертикальном режиме. START - табы слева от контента (по умолчанию). END - табы справа от контента. Применяется только при direction=VERTICAL.',
       if: { arg: 'direction', eq: TabsDirection.VERTICAL },
       table: {
-        type: { summary: 'TabsVerticalPosition' },
+        type: { summary: '"start", "end"' },
         defaultValue: { summary: 'START' },
+      },
+    },
+    variant: {
+      control: { type: 'select' },
+      options: [TabsVariant.PILL, TabsVariant.LINE],
+      description:
+        'PILL — сегментированный трек. LINE — линия-индикатор. Если не задан: горизонтально pill, вертикально line.',
+      table: {
+        type: { summary: '"pill", "line"' },
+        defaultValue: { summary: 'undefined (авто)' },
       },
     },
     onChange: {
@@ -91,6 +95,61 @@ const meta: Meta<typeof Tabs> = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+/** Сегменты, иконки и бейджи */
+export const PillSegmentedWithIconsAndBadge: Story = {
+  args: {
+    defaultActiveTab: 'inbox',
+    children: (
+      <>
+        <Tabs.List>
+          <TabItem
+            value="inbox"
+            label="Входящие"
+            iconStart={<Icon name="IconExHome" size="md" />}
+            badge={3}
+          >
+            <div style={{ padding: '16px' }}>Контент «Входящие»</div>
+          </TabItem>
+          <TabItem value="folders" label="Папки" iconEnd={<Icon name="IconExSettings" size="md" />}>
+            <div style={{ padding: '16px' }}>Контент «Папки»</div>
+          </TabItem>
+          <TabItem
+            value="archive"
+            label="Архив"
+            iconStart={<Icon name="IconExUser" size="md" />}
+            badge={12}
+          >
+            <div style={{ padding: '16px' }}>Контент «Архив»</div>
+          </TabItem>
+        </Tabs.List>
+      </>
+    ),
+  },
+  parameters: {
+    layout: 'padded',
+  },
+};
+
+/** Горизонтальные табы с нижней линией (явный variant=LINE) */
+export const LineHorizontal: Story = {
+  args: {
+    variant: TabsVariant.LINE,
+    children: (
+      <>
+        <Tabs.List>
+          <TabItem value="a" label="Вкладка A">
+            <div style={{ padding: '16px' }}>Контент A</div>
+          </TabItem>
+          <TabItem value="b" label="Вкладка B">
+            <div style={{ padding: '16px' }}>Контент B</div>
+          </TabItem>
+        </Tabs.List>
+      </>
+    ),
+  },
+  parameters: { layout: 'padded' },
+};
 
 export const Default: Story = {
   args: {
@@ -764,3 +823,4 @@ export const VerticalTabsOnRightWithVerticalText: Story = {
     },
   },
 };
+

@@ -1,57 +1,67 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Tabs } from './Tabs';
 import { TabItem, TabItemGroupList } from './TabItem';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { TabItemTextOrientation, TabItemTextPosition, TabsDirection } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
+import { DOC_TAB_ITEM } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof TabItem> = {
-  title: 'Components/Tabs/TabItem',
+  title: 'UI Kit/Navigation/Tabs/TabItem',
   component: TabItem,
   parameters: {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Компонент TabItem объединяет Trigger и Content в один компонент для упрощения использования вкладок.',
+        component: DOC_TAB_ITEM,
       },
     },
   },
-  decorators: [
-    Story => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   argTypes: {
     value: {
       control: { type: 'text' },
       description: 'Уникальное значение вкладки',
+      table: {
+        type: { summary: 'string' },
+      },
     },
     label: {
       control: { type: 'text' },
       description: 'Текст для кнопки вкладки',
+      table: {
+        type: { summary: 'string' },
+      },
     },
     textOrientation: {
       control: { type: 'select' },
       options: [TabItemTextOrientation.HORIZONTAL, TabItemTextOrientation.VERTICAL],
-      description: 'Ориентация текста (горизонтальная/вертикальная)',
+      description: 'Ориентация текста; значения: `horizontal`, `vertical`',
+      table: {
+        type: { summary: 'horizontal или vertical (TabItemTextOrientation)' },
+      },
     },
     textPosition: {
       control: { type: 'select' },
       options: [TabItemTextPosition.LEFT, TabItemTextPosition.RIGHT],
-      description: 'Позиция текста в вертикальном режиме (left/right)',
+      description: 'Позиция текста в вертикальном режиме; значения: `left`, `right`',
+      table: {
+        type: { summary: 'left или right (TabItemTextPosition)' },
+      },
     },
     triggerClassName: {
       control: { type: 'text' },
       description: 'Класс для кнопки вкладки',
+      table: {
+        type: { summary: 'string' },
+      },
     },
     contentClassName: {
       control: { type: 'text' },
       description: 'Класс для содержимого вкладки',
+      table: {
+        type: { summary: 'string' },
+      },
     },
   },
 };
@@ -392,3 +402,4 @@ export const WithGroup: Story = {
     },
   },
 };
+

@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
-import { Badge } from '../components/ui/Badge';
+import { Tag } from '../components/ui/Tag';
 import {
   useMediaQuery,
   useIsMobile,
@@ -17,7 +17,7 @@ import {
 } from './useMediaQuery';
 
 const meta: Meta = {
-  title: 'Hooks/useMediaQuery',
+  title: 'UI Kit/Hooks/useMediaQuery',
   parameters: {
     docs: {
       description: {
@@ -61,6 +61,23 @@ const isDesktop = useIsDesktop();
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+/**
+ * Компактный статус для демо-блоков media query.
+ * Использует Tag вместо Badge, чтобы длинные подписи помещались и не обрезались.
+ * @param isActive - Активно ли текущее условие
+ * @param activeLabel - Подпись в активном состоянии
+ * @param inactiveLabel - Подпись в неактивном состоянии
+ */
+const renderMediaQueryStatusTag = (
+  isActive: boolean,
+  activeLabel: string = 'Активно',
+  inactiveLabel: string = 'Неактивно',
+) => (
+  <Tag colorVariant={isActive ? 'success' : 'neutral'} appearance={isActive ? 'filled' : 'outline'}>
+    {isActive ? activeLabel : inactiveLabel}
+  </Tag>
+);
+
 // Компонент для демонстрации базового использования
 const BasicMediaQueryDemo = () => {
   const isSmallScreen = useMediaQuery('(max-width: 600px)');
@@ -101,9 +118,7 @@ const BasicMediaQueryDemo = () => {
           <Typography variant="body2" marginBottom="xs">
             ≤ 600px
           </Typography>
-          <Badge variant={isSmallScreen ? 'success' : 'outlined'}>
-            {isSmallScreen ? 'Активно' : 'Неактивно'}
-          </Badge>
+          {renderMediaQueryStatusTag(isSmallScreen)}
         </div>
 
         <div
@@ -120,9 +135,7 @@ const BasicMediaQueryDemo = () => {
           <Typography variant="body2" marginBottom="xs">
             601px - 1024px
           </Typography>
-          <Badge variant={isMediumScreen ? 'success' : 'outlined'}>
-            {isMediumScreen ? 'Активно' : 'Неактивно'}
-          </Badge>
+          {renderMediaQueryStatusTag(isMediumScreen)}
         </div>
 
         <div
@@ -139,9 +152,7 @@ const BasicMediaQueryDemo = () => {
           <Typography variant="body2" marginBottom="xs">
             ≥ 1025px
           </Typography>
-          <Badge variant={isLargeScreen ? 'success' : 'outlined'}>
-            {isLargeScreen ? 'Активно' : 'Неактивно'}
-          </Badge>
+          {renderMediaQueryStatusTag(isLargeScreen)}
         </div>
       </div>
 
@@ -202,7 +213,7 @@ const PredefinedHooksDemo = () => {
           <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
             ≤ 768px
           </Typography>
-          <Badge variant={isMobile ? 'success' : 'outlined'}>{isMobile ? 'Да' : 'Нет'}</Badge>
+          {renderMediaQueryStatusTag(isMobile, 'Да', 'Нет')}
         </div>
 
         <div
@@ -219,7 +230,7 @@ const PredefinedHooksDemo = () => {
           <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
             769px - 1024px
           </Typography>
-          <Badge variant={isTablet ? 'success' : 'outlined'}>{isTablet ? 'Да' : 'Нет'}</Badge>
+          {renderMediaQueryStatusTag(isTablet, 'Да', 'Нет')}
         </div>
 
         <div
@@ -236,7 +247,7 @@ const PredefinedHooksDemo = () => {
           <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
             ≥ 1025px
           </Typography>
-          <Badge variant={isDesktop ? 'success' : 'outlined'}>{isDesktop ? 'Да' : 'Нет'}</Badge>
+          {renderMediaQueryStatusTag(isDesktop, 'Да', 'Нет')}
         </div>
 
         <div
@@ -253,9 +264,7 @@ const PredefinedHooksDemo = () => {
           <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
             ≥ 1440px
           </Typography>
-          <Badge variant={isLargeScreen ? 'success' : 'outlined'}>
-            {isLargeScreen ? 'Да' : 'Нет'}
-          </Badge>
+          {renderMediaQueryStatusTag(isLargeScreen, 'Да', 'Нет')}
         </div>
       </div>
 
@@ -317,9 +326,7 @@ const OrientationDemo = () => {
           <Typography variant="body1" marginBottom="xs">
             <strong>Портретная</strong>
           </Typography>
-          <Badge variant={isPortrait ? 'success' : 'outlined'}>
-            {isPortrait ? 'Активно' : 'Неактивно'}
-          </Badge>
+          {renderMediaQueryStatusTag(isPortrait)}
         </div>
 
         <div
@@ -336,9 +343,7 @@ const OrientationDemo = () => {
           <Typography variant="body1" marginBottom="xs">
             <strong>Альбомная</strong>
           </Typography>
-          <Badge variant={isLandscape ? 'success' : 'outlined'}>
-            {isLandscape ? 'Активно' : 'Неактивно'}
-          </Badge>
+          {renderMediaQueryStatusTag(isLandscape)}
         </div>
       </div>
 
@@ -397,9 +402,7 @@ const DeviceSupportDemo = () => {
           <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
             Поддержка наведения
           </Typography>
-          <Badge variant={supportsHover ? 'success' : 'outlined'}>
-            {supportsHover ? 'Поддерживается' : 'Не поддерживается'}
-          </Badge>
+          {renderMediaQueryStatusTag(supportsHover, 'Поддерживается', 'Не поддерживается')}
         </div>
 
         <div
@@ -419,9 +422,7 @@ const DeviceSupportDemo = () => {
           <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
             Сенсорное управление
           </Typography>
-          <Badge variant={supportsTouch ? 'success' : 'outlined'}>
-            {supportsTouch ? 'Поддерживается' : 'Не поддерживается'}
-          </Badge>
+          {renderMediaQueryStatusTag(supportsTouch, 'Поддерживается', 'Не поддерживается')}
         </div>
       </div>
 
@@ -560,9 +561,7 @@ const CustomMediaQueryDemo = () => {
           <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
             prefers-color-scheme: dark
           </Typography>
-          <Badge variant={isDarkMode ? 'success' : 'outlined'}>
-            {isDarkMode ? 'Включена' : 'Выключена'}
-          </Badge>
+          {renderMediaQueryStatusTag(isDarkMode, 'Включена', 'Выключена')}
         </div>
 
         <div
@@ -579,9 +578,7 @@ const CustomMediaQueryDemo = () => {
           <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
             prefers-contrast: high
           </Typography>
-          <Badge variant={isHighContrast ? 'success' : 'outlined'}>
-            {isHighContrast ? 'Включен' : 'Выключен'}
-          </Badge>
+          {renderMediaQueryStatusTag(isHighContrast, 'Включен', 'Выключен')}
         </div>
 
         <div
@@ -598,9 +595,7 @@ const CustomMediaQueryDemo = () => {
           <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
             prefers-reduced-motion: reduce
           </Typography>
-          <Badge variant={isReducedMotion ? 'success' : 'outlined'}>
-            {isReducedMotion ? 'Включено' : 'Выключено'}
-          </Badge>
+          {renderMediaQueryStatusTag(isReducedMotion, 'Включено', 'Выключено')}
         </div>
 
         <div
@@ -617,9 +612,7 @@ const CustomMediaQueryDemo = () => {
           <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
             print
           </Typography>
-          <Badge variant={isPrint ? 'success' : 'outlined'}>
-            {isPrint ? 'Активно' : 'Неактивно'}
-          </Badge>
+          {renderMediaQueryStatusTag(isPrint)}
         </div>
       </div>
 
@@ -678,3 +671,4 @@ export const AllExamples: Story = {
     </div>
   ),
 };
+

@@ -1,5 +1,7 @@
-import type { configureStore } from '@reduxjs/toolkit';
-import { useDispatch, useSelector, type TypedUseSelectorHook } from 'react-redux';
+/**
+ * Общие типы для API/DTO — без зависимости от Redux.
+ * Типизированные хуки store (`useDispatch`/`useSelector`) объявляйте в приложении-потребителе.
+ */
 
 // Базовые типы для API ответов
 export interface ApiResponse<T = unknown> {
@@ -76,14 +78,6 @@ export interface AuthState {
   error: string | null;
 }
 
-// Утилиты для создания типизированных хуков
-export type AppDispatch = ReturnType<typeof configureStore>['dispatch'];
-export type RootState = ReturnType<typeof configureStore>['getState'];
-
-export const useAppDispatch = () => useDispatch<AppDispatch>();
-export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
-
-// Типы для RTK Query
 export interface QueryParams {
   page?: number;
   limit?: number;
@@ -93,7 +87,6 @@ export interface QueryParams {
   filters?: Record<string, unknown>;
 }
 
-// Типы для API endpoints
 export interface ApiEndpoint {
   url: string;
   method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';

@@ -1,21 +1,19 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import { ThemeToggle } from './ThemeToggle';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import React from 'react';
+import { DOC_THEME_TOGGLE } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof ThemeToggle> = {
-  title: 'Components/ThemeToggle',
+  title: 'UI Kit/Utils/ThemeToggle',
   component: ThemeToggle,
   parameters: {
     layout: 'centered',
+    docs: {
+      description: {
+        component: DOC_THEME_TOGGLE,
+      },
+    },
   },
-  decorators: [
-    Story => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
 };
 
@@ -43,3 +41,4 @@ export const WithBackground: Story = {
     </div>
   ),
 };
+

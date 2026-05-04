@@ -39,6 +39,8 @@ export const CheckboxInput = styled.input`
  */
 export const CheckboxBox = styled.div<{
   checked: boolean;
+  /** Промежуточное состояние: визуально как «включённый», с полоской вместо галочки */
+  indeterminate?: boolean;
   disabled?: boolean;
   size?: Size;
 }>`
@@ -72,8 +74,8 @@ export const CheckboxBox = styled.div<{
   }}
 
   /* Border согласно макету */
-  border: ${({ checked, disabled, theme }) => {
-      if (checked) {
+  border: ${({ checked, indeterminate, disabled, theme }) => {
+      if (checked || indeterminate) {
         // Активный checkbox не имеет границы согласно макету
         return 'none';
       }
@@ -86,19 +88,19 @@ export const CheckboxBox = styled.div<{
     }};
 
   /* Border radius: пропорционально размеру, 4px для inactive, 6px для active согласно макету (MD) */
-  border-radius: ${({ checked, size = Size.MD }) => {
-    const baseRadius = checked ? 6 : 4; // Базовый радиус для MD (20px)
+  border-radius: ${({ checked, indeterminate, size = Size.MD }) => {
+    const baseRadius = checked || indeterminate ? 6 : 4; // Базовый радиус для MD (20px)
     const scale = size === Size.SM ? 0.8 : size === Size.LG ? 1.2 : 1; // Масштаб относительно MD
     return `${baseRadius * scale}px`;
   }};
 
   /* Background согласно макету */
-  background: ${({ theme, checked, disabled }) => {
+  background: ${({ theme, checked, indeterminate, disabled }) => {
     if (disabled) {
       // Disabled background: Gray_02 / 2O (#F5F5F5) для светлой, Gray_02/7O (#757575) для темной
       return theme.mode === ThemeMode.DARK ? grey[600] : grey[100];
     }
-    if (checked) {
+    if (checked || indeterminate) {
       // Active background: Success/600 main (#7FCD43)
       return success[600];
     }
@@ -113,11 +115,11 @@ export const CheckboxBox = styled.div<{
 
   /* Hover состояние */
   &:hover {
-    ${({ disabled, checked, theme }) =>
+    ${({ disabled, checked, indeterminate, theme }) =>
       !disabled &&
       css`
-        border-color: ${checked ? success[600] : grey[300]};
-        background: ${checked ? success[500] : theme.mode === ThemeMode.DARK ? neutral[800] : neutral[10]};
+        border-color: ${checked || indeterminate ? success[600] : grey[300]};
+        background: ${checked || indeterminate ? success[500] : theme.mode === ThemeMode.DARK ? neutral[800] : neutral[10]};
       `}
   }
 
@@ -126,8 +128,8 @@ export const CheckboxBox = styled.div<{
   &:focus-visible {
     outline: 2px solid ${success.bg}; /* Success/bg (#E9FADC) */
     outline-offset: 2px;
-    border-radius: ${({ checked, size = Size.MD }) => {
-      const baseRadius = checked ? 6 : 4;
+    border-radius: ${({ checked, indeterminate, size = Size.MD }) => {
+      const baseRadius = checked || indeterminate ? 6 : 4;
       const scale = size === Size.SM ? 0.8 : size === Size.LG ? 1.2 : 1;
       return `${baseRadius * scale}px`;
     }};
@@ -139,8 +141,8 @@ export const CheckboxBox = styled.div<{
  * @param checked - состояние выбора
  * @param size - размер чекбокса (SM=10px, MD=12px, LG=14px - пропорционально размеру чекбокса)
  */
-export const CheckIcon = styled.div<{ checked: boolean; size?: Size }>`
-  opacity: ${({ checked }) => (checked ? 1 : 0)};
+export const CheckIcon = styled.div<{ checked: boolean; indeterminate?: boolean; size?: Size }>`
+  opacity: ${({ checked, indeterminate }) => (checked || indeterminate ? 1 : 0)};
   transition: ${TransitionHandler()};
   color: ${neutral[10]}; /* Белый цвет для иконки */
   display: flex;

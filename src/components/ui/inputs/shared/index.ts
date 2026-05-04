@@ -42,3 +42,6 @@ export {
   getInputPadding,
   getInputMinHeight,
 } from './InputStyles';
+
+// Общие хелперы поведения для Input/TextArea
+export { getInputDisplayValue, shouldShowInputClearButton, hasInputRightControls } from './handlers';

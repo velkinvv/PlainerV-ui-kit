@@ -10,6 +10,22 @@ interface ThemeContextProps {
   toggle: () => void;
 }
 
+interface ThemeProviderProps {
+  children: React.ReactNode;
+  /**
+   * Применять ли глобальные стили библиотеки (`GlobalStyles`).
+   * Для внешних приложений, где уже есть собственные глобальные стили (например docs),
+   * лучше отключать, чтобы избежать перезаписи базовой типографики и layout.
+   */
+  applyGlobalStyles?: boolean;
+  /**
+   * Начальный режим темы с сервера (SSR), например из cookie — совпадает с `data-theme` на `<html>`
+   * и устраняет рассинхрон гидрации с первым чтением `localStorage` на клиенте.
+   * Если не передан — используется ключ `storybook-theme` в `localStorage`, затем светлая тема.
+   */
+  initialMode?: ThemeMode;
+}
+
 const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
 
 export const useTheme = () => {
@@ -18,7 +34,11 @@ export const useTheme = () => {
   return ctx;
 };
 
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ThemeProvider: React.FC<ThemeProviderProps> = ({
+  children,
+  applyGlobalStyles = true,
+  initialMode,
+}) => {
   // Инициализируем тему из localStorage или по умолчанию
   const getInitialTheme = (): ThemeMode => {
     if (typeof window !== 'undefined') {
@@ -29,7 +49,12 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return ThemeMode.LIGHT;
   };
 
-  const [mode, setMode] = useState<ThemeMode>(getInitialTheme);
+  const [mode, setMode] = useState<ThemeMode>(() => {
+    if (initialMode !== undefined) {
+      return initialMode;
+    }
+    return getInitialTheme();
+  });
 
   const theme = useMemo(() => (mode === ThemeMode.LIGHT ? lightTheme : darkTheme), [mode]);
 
@@ -37,36 +62,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const themeWithType = useMemo(() => ({ ...theme, type: theme.mode }), [theme]);
 
-  // Синхронизация с темой Storybook
-  useEffect(() => {
-    const handleThemeChange = (event: { theme: string }) => {
-      const newTheme = event.theme;
-      if (newTheme === 'dark') {
-        setMode(ThemeMode.DARK);
-      } else if (newTheme === 'light') {
-        setMode(ThemeMode.LIGHT);
-      }
-    };
-
-    // Слушаем события от аддона Storybook
-    if (typeof window !== 'undefined') {
-      const storybookWindow = window as unknown as {
-        __STORYBOOK_ADDONS_CHANNEL__?: {
-          on: (event: string, handler: (event: { theme: string }) => void) => void;
-          off: (event: string, handler: (event: { theme: string }) => void) => void;
-        };
-      };
-      const channel = storybookWindow.__STORYBOOK_ADDONS_CHANNEL__;
-      if (!channel) {
-        return;
-      }
-      channel.on('THEME_CHANGED', handleThemeChange);
-
-      return () => {
-        channel.off('THEME_CHANGED', handleThemeChange);
-      };
-    }
-  }, []);
+  // Синхронизация с тулбаром тем Storybook: см. `.storybook/withStorybookUiKitTheme.tsx` (глобал `theme` в декораторе).
 
   // Обновляем localStorage при изменении темы
   useEffect(() => {
@@ -79,7 +75,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   return (
     <ThemeContext.Provider value={{ mode, setMode, toggle }}>
       <StyledThemeProvider theme={themeWithType}>
-        <GlobalStyles />
+        {applyGlobalStyles ? <GlobalStyles /> : null}
         {children}
       </StyledThemeProvider>
     </ThemeContext.Provider>

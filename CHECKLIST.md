@@ -24,11 +24,13 @@
 ### 3. Базовые тесты
 - [x] Обновить `jest.setup.js`
 - [x] Тесты для Button
+- [x] Тесты для ButtonGroup
 - [x] Тесты для Input
 - [x] Тесты для Modal
 - [x] Тесты для Dropdown
 - [x] Тесты для useModal
 - [x] Тесты для useToast
+- [x] Тесты для useSnackbar
 - [x] Тесты для useDebounce
 - [x] Тесты для useLocalStorage
 - [x] Тесты для useClickOutside
@@ -98,7 +100,8 @@
 - [ ] Select (отдельно от Dropdown)
 - [ ] Table/DataTable
 - [ ] Breadcrumbs
-- [ ] Pagination
+- [x] Pagination
+- [x] FloatingMenu
 - [ ] Stepper/Wizard
 
 ### 12. Улучшение accessibility

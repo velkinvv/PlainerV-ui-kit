@@ -33,9 +33,6 @@ export default {
     'dayjs',
     'clsx',
     'react-hook-form',
-    'tailwind-merge',
-    '@reduxjs/toolkit',
-    'react-redux',
   ],
   plugins: [
     peerDepsExternal(),
@@ -57,6 +54,14 @@ export default {
     }),
     copy({
       targets: [
+        {
+          src: 'src/styles/fonts.css',
+          dest: 'dist/styles',
+        },
+        {
+          src: 'src/variables/fonts/montserrat/**/*',
+          dest: 'dist/styles/fonts/montserrat',
+        },
         {
           src: 'src/variables/fonts/montserrat/**/*',
           dest: 'dist/fonts/montserrat',

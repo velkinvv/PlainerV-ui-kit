@@ -1,19 +1,21 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import { IconButton } from './IconButton';
 import { Icon } from '../../Icon/Icon';
 import React from 'react';
 import { IconSize, Size } from '../../../../types/sizes';
 import { ButtonVariant } from '../../../../types/ui';
+import { DOC_ICON_BUTTON } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof IconButton> = {
-  title: 'Components/Buttons/IconButton',
+  title: 'UI Kit/Inputs/IconButton',
   component: IconButton,
   parameters: {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Круглая кнопка с иконками, дублирующая весь функционал Button. Поддерживает все варианты, размеры и состояния.',
+        component: `${DOC_ICON_BUTTON}
+
+По умолчанию радиусы из темы; при **rounded=true** кнопка становится круглой.`,
       },
     },
   },
@@ -22,40 +24,54 @@ const meta: Meta<typeof IconButton> = {
     variant: {
       control: { type: 'select' },
       options: [...Object.values(ButtonVariant)],
-      description: 'Вариант стилизации кнопки (дублирует ButtonVariant)',
+      description:
+        'Вариант стилизации (как у `Button`); значения: `primary`, `secondary`, `outline`, `ghost`, `danger`, `success`, `warning`, `line`, `skeleton`',
+      table: {
+        type: { summary: 'ButtonVariant (см. список в control)' },
+      },
     },
     size: {
       control: { type: 'select' },
       options: [...Object.values(Size)],
-      description: 'Размер кнопки',
+      description: 'Размер кнопки; значения: `XS`, `SM`, `MD`, `LG`, `XL`',
+      table: {
+        type: { summary: 'Size: XS, SM, MD, LG, XL' },
+      },
     },
     icon: {
       control: false,
       description: 'Иконка кнопки (обязательная)',
+      table: { type: { summary: 'ReactNode' } },
     },
     loading: {
       control: { type: 'boolean' },
       description: 'Состояние загрузки',
+      table: { type: { summary: 'boolean' } },
     },
     disabled: {
       control: { type: 'boolean' },
       description: 'Отключенное состояние',
+      table: { type: { summary: 'boolean' } },
     },
     fullWidth: {
       control: { type: 'boolean' },
       description: 'Растянуть на всю ширину',
+      table: { type: { summary: 'boolean' } },
     },
     rounded: {
       control: { type: 'boolean' },
-      description: 'Скругленные углы (по умолчанию true - круглая)',
+      description: 'Скругленные углы (по умолчанию false — радиус из темы; true — круглая)',
+      table: { type: { summary: 'boolean' } },
     },
     showTooltip: {
       control: { type: 'boolean' },
       description: 'Показывать тултип',
+      table: { type: { summary: 'boolean' } },
     },
     tooltipText: {
       control: { type: 'text' },
       description: 'Текст тултипа',
+      table: { type: { summary: 'string' } },
     },
   },
 };
@@ -352,3 +368,4 @@ export const AllVariants: Story = {
     },
   },
 };
+

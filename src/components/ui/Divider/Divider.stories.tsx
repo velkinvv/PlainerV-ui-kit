@@ -1,39 +1,38 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Divider } from './Divider';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { DividerOrientation } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
+import { DOC_DIVIDER } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Divider> = {
-  title: 'Components/Divider',
+  title: 'UI Kit/Surfaces/Divider',
   component: Divider,
   parameters: {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Компонент разделителя для визуального разделения контента',
+        component: DOC_DIVIDER,
       },
     },
   },
-  decorators: [
-    Story => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   argTypes: {
     orientation: {
       control: { type: 'select' },
       options: [...Object.values(DividerOrientation)],
       description: 'Ориентация разделителя',
+      table: {
+        type: { summary: 'horizontal или vertical (DividerOrientation)' },
+      },
     },
     size: {
       control: { type: 'select' },
       options: [...Object.values(Size)],
       description: 'Размер разделителя',
+      table: {
+        type: { summary: 'Size: XS, SM, MD, LG, XL' },
+      },
     },
   },
 };
@@ -203,3 +202,4 @@ export const InList: Story = {
     layout: 'padded',
   },
 };
+

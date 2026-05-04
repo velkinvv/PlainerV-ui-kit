@@ -1,5 +1,5 @@
-import { renderHook } from '@testing-library/react';
-import { render, screen } from '@testing-library/react';
+import React from 'react';
+import { fireEvent, renderHook, render, screen } from '@testing-library/react';
 import { useClickOutside } from './useClickOutside';
 
 describe('useClickOutside', () => {
@@ -28,7 +28,8 @@ describe('useClickOutside', () => {
     render(<TestComponent />);
 
     const outside = screen.getByTestId('outside');
-    outside.click();
+    // Хук слушает mousedown/touchstart на document, а не click
+    fireEvent.mouseDown(outside);
 
     expect(handler).toHaveBeenCalled();
   });
@@ -47,7 +48,7 @@ describe('useClickOutside', () => {
     render(<TestComponent />);
 
     const inside = screen.getByTestId('inside');
-    inside.click();
+    fireEvent.mouseDown(inside);
 
     expect(handler).not.toHaveBeenCalled();
   });
@@ -69,7 +70,7 @@ describe('useClickOutside', () => {
     render(<TestComponent />);
 
     const outside = screen.getByTestId('outside');
-    outside.click();
+    fireEvent.mouseDown(outside);
 
     expect(handler).not.toHaveBeenCalled();
   });

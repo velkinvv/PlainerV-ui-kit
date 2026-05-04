@@ -1,46 +1,51 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import { Input } from './Input';
 import { Icon } from '../../Icon/Icon';
 import { Form, HiddenUsernameField } from '../../Form';
 import React from 'react';
 import { Size, IconSize } from '../../../../types/sizes';
 import { InputVariant } from '../../../../types/ui';
+import { DOC_INPUT } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Input> = {
-  title: 'Components/Inputs/Input',
+  title: 'UI Kit/Inputs/Input',
   component: Input,
+  args: {
+    clearIconProps: {},
+  },
   parameters: {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Поле ввода с различными вариантами стилизации и состояниями',
+        component: DOC_INPUT,
       },
     },
   },
   tags: ['autodocs'],
   decorators: [
-    (Story, context) => {
-      // Если это поле пароля, оборачиваем в Form
-      if (context.args?.type === 'password') {
-        return (
-          <Form formId={`story-${context.id}`}>
-            <Story />
-          </Form>
-        );
-      }
-      return <Story />;
-    },
+    (Story, context) => (
+      <Form formId={`story-${context.id}`}>
+        <Story />
+      </Form>
+    ),
   ],
   argTypes: {
     variant: {
       control: { type: 'select' },
-      options: ['default', 'selector', 'date', 'clear'],
-      description: 'Вариант поля ввода',
+      options: ['default', 'clear'],
+      description:
+        'Вариант поля; значения: `default` (обычное), `clear` (акцент на очистку; селектор и дата — в отдельных компонентах)',
+      table: {
+        type: { summary: 'default или clear (TextInputVariant)' },
+      },
     },
     size: {
       control: { type: 'select' },
-      options: ['sm', 'md', 'lg', 'xl'],
-      description: 'Размер поля ввода',
+      options: Object.values(Size),
+      description: 'Размер поля (токены отступов и высоты как у остальных полей)',
+      table: {
+        type: { summary: 'Size: XS, SM, MD, LG, XL' },
+      },
     },
     disabled: {
       control: { type: 'boolean' },
@@ -55,18 +60,71 @@ const meta: Meta<typeof Input> = {
       control: { type: 'boolean' },
       description: 'Полная ширина',
     },
-    showClearButton: {
+    displayClearIcon: {
       control: { type: 'boolean' },
-      description: 'Показывать кнопку очистки',
+      description: 'Показывать кнопку с крестиком очистки (`onClearIconClick` — сброс у родителя)',
+    },
+    onClearIconClick: {
+      action: 'clearIconClick',
+      description: 'Клик по очистке (после сброса локального состояния)',
+      table: {
+        type: { summary: '() => void' },
+      },
+    },
+    clearIconProps: {
+      control: 'object',
+      description:
+        'Частичные пропсы `Icon` для кнопки очистки при `displayClearIcon`. По умолчанию `IconExClose`; мерж поверх вычисленного `size`.',
+      table: {
+        type: { summary: 'ClearIconProps' },
+      },
     },
     textAlign: {
       control: { type: 'select' },
       options: ['left', 'center', 'right'],
-      description: 'Выравнивание текста',
+      description: 'Выравнивание текста; значения: `left`, `center`, `right`',
+      table: {
+        type: { summary: 'left, center или right' },
+      },
     },
-    clearIcon: {
-      control: { type: 'boolean' },
-      description: 'Показывать иконку очистки',
+    status: {
+      control: { type: 'select' },
+      options: ['error', 'success', 'warning'],
+      description:
+        'Цвет обводки по статусу (без текста ошибки; для текста используйте error/helperText)',
+      table: {
+        type: { summary: 'error, success или warning' },
+      },
+    },
+    value: {
+      description: 'Контролируемое значение поля',
+      table: {
+        type: { summary: 'string (и прочие атрибуты нативного input из InputHTMLAttributes)' },
+      },
+    },
+    onChange: {
+      description: 'Нативное событие change у input',
+      table: {
+        type: {
+          summary: '(event: React.ChangeEvent<HTMLInputElement>) => void',
+        },
+      },
+    },
+    tooltipType: {
+      control: { type: 'radio' },
+      options: ['tooltip', 'hint'],
+      description: 'Тип подсказки вокруг поля',
+      table: {
+        type: { summary: 'tooltip или hint' },
+      },
+    },
+    tooltipPosition: {
+      control: { type: 'select' },
+      options: ['top', 'bottom', 'left', 'right'],
+      description: 'Позиция Tooltip или Hint',
+      table: {
+        type: { summary: 'top, bottom, left или right' },
+      },
     },
     displayCharacterCounter: {
       control: { type: 'boolean' },
@@ -90,6 +148,16 @@ const meta: Meta<typeof Input> = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+/** Кнопка сброса полей в интерактивных сторис */
+const inputStoriesResetButtonStyle: React.CSSProperties = {
+  padding: '8px 16px',
+  marginTop: '12px',
+  border: '1px solid #ccc',
+  borderRadius: '4px',
+  background: 'white',
+  cursor: 'pointer',
+};
 
 // Основные варианты
 export const Default: Story = {
@@ -127,46 +195,35 @@ export const WithError: Story = {
 };
 
 export const WithSuccess: Story = {
-  args: {
-    label: 'Email',
-    placeholder: 'Введите email...',
-    value: 'user@example.com',
-    success: true,
-    onChange: () => {
-      /* Пустая функция для демонстрации */
-    },
+  render: () => {
+    const [email, setEmail] = React.useState('user@example.com');
+    return (
+      <Input
+        label="Email"
+        placeholder="Введите email..."
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        success={true}
+      />
+    );
   },
 };
 
 // Варианты
-export const Selector: Story = {
-  args: {
-    label: 'Выберите опцию',
-    variant: InputVariant.SELECTOR,
-    placeholder: 'Выберите...',
-    rightIcon: <Icon name="IconPlainerArrowUp" size={IconSize.MD} />,
-  },
-};
-
-export const Date: Story = {
-  args: {
-    label: 'Дата рождения',
-    variant: InputVariant.DATE,
-    type: 'date',
-    rightIcon: <Icon name="IconExCalendar" size={IconSize.MD} />,
-  },
-};
-
 export const Clear: Story = {
-  args: {
-    label: 'Поиск',
-    variant: InputVariant.CLEAR,
-    placeholder: 'Поиск...',
-    showClearButton: true,
-    value: 'Поисковый запрос',
-    onChange: () => {
-      /* Пустая функция для демонстрации */
-    },
+  render: () => {
+    const [q, setQ] = React.useState('Поисковый запрос');
+    return (
+      <Input
+        label="Поиск"
+        variant={InputVariant.CLEAR}
+        placeholder="Поиск..."
+        displayClearIcon
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        onClearIconClick={() => setQ('')}
+      />
+    );
   },
 };
 
@@ -263,10 +320,7 @@ export const TextAlignLeft: Story = {
     label: 'Выравнивание по левому краю',
     placeholder: 'Текст слева...',
     textAlign: 'left',
-    value: 'Текст выровнен по левому краю',
-    onChange: () => {
-      /* Пустая функция для демонстрации */
-    },
+    defaultValue: 'Текст выровнен по левому краю',
   },
 };
 
@@ -275,10 +329,7 @@ export const TextAlignCenter: Story = {
     label: 'Выравнивание по центру',
     placeholder: 'Текст по центру...',
     textAlign: 'center',
-    value: 'Текст по центру',
-    onChange: () => {
-      /* Пустая функция для демонстрации */
-    },
+    defaultValue: 'Текст по центру',
   },
 };
 
@@ -287,10 +338,7 @@ export const TextAlignRight: Story = {
     label: 'Выравнивание по правому краю',
     placeholder: 'Текст справа...',
     textAlign: 'right',
-    value: 'Текст справа',
-    onChange: () => {
-      /* Пустая функция для демонстрации */
-    },
+    defaultValue: 'Текст справа',
   },
 };
 
@@ -308,30 +356,21 @@ export const TextAlignComparison: Story = {
         label="По левому краю (по умолчанию)"
         placeholder="Введите текст..."
         textAlign="left"
-        value="Текст слева"
-        onChange={() => {
-          /* Пустая функция для демонстрации */
-        }}
+        defaultValue="Текст слева"
       />
 
       <Input
         label="По центру"
         placeholder="Введите текст..."
         textAlign="center"
-        value="Текст по центру"
-        onChange={() => {
-          /* Пустая функция для демонстрации */
-        }}
+        defaultValue="Текст по центру"
       />
 
       <Input
         label="По правому краю"
         placeholder="Введите текст..."
         textAlign="right"
-        value="Текст справа"
-        onChange={() => {
-          /* Пустая функция для демонстрации */
-        }}
+        defaultValue="Текст справа"
       />
     </div>
   ),
@@ -342,135 +381,156 @@ export const TextAlignComparison: Story = {
 
 // Комплексные примеры
 export const AllVariants: Story = {
-  render: () => (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '24px',
-        width: '400px',
-      }}
-    >
-      <Input
-        label="Обычное поле"
-        placeholder="Введите текст..."
-        helperText="Это обычное поле ввода"
-      />
-
-      <Input label="С ошибкой" placeholder="Введите email..." error="Неверный формат email" />
-
-      <Input
-        label="С успехом"
-        placeholder="Введите email..."
-        value="user@example.com"
-        success={true}
-        onChange={() => {
-          /* Пустая функция для демонстрации */
+  render: () => {
+    const [okEmail, setOkEmail] = React.useState('user@example.com');
+    const [search, setSearch] = React.useState('Поисковый запрос');
+    return (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '24px',
+          width: '400px',
         }}
-      />
+      >
+        <Input
+          label="Обычное поле"
+          placeholder="Введите текст..."
+          helperText="Это обычное поле ввода"
+        />
 
-      <Input
-        label="Селектор"
-        variant={InputVariant.SELECTOR}
-        placeholder="Выберите опцию..."
-        rightIcon={<Icon name="IconPlainerArrowDown" size={IconSize.MD} />}
-      />
+        <Input label="С ошибкой" placeholder="Введите email..." error="Неверный формат email" />
 
-      <Input
-        label="Дата"
-        variant={InputVariant.DATE}
-        type="date"
-        rightIcon={<Icon name="IconExCalendar" size={IconSize.MD} />}
-      />
+        <Input
+          label="С успехом"
+          placeholder="Введите email..."
+          value={okEmail}
+          onChange={(e) => setOkEmail(e.target.value)}
+          success={true}
+        />
 
-      <Input
-        label="С очисткой"
-        variant={InputVariant.CLEAR}
-        placeholder="Поиск..."
-        showClearButton={true}
-        value="Поисковый запрос"
-        onChange={() => {
-          /* Пустая функция для демонстрации */
-        }}
-        rightIcon={<Icon name="IconExSearch" size={IconSize.MD} />}
-      />
+        <Input
+          label="С очисткой"
+          variant={InputVariant.CLEAR}
+          placeholder="Поиск..."
+          displayClearIcon
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          onClearIconClick={() => setSearch('')}
+          rightIcon={<Icon name="IconExSearch" size={IconSize.MD} />}
+        />
 
-      <Input label="Отключенное" placeholder="Недоступно..." disabled={true} />
-    </div>
-  ),
+        <Input label="Отключенное" placeholder="Недоступно..." disabled={true} />
+      </div>
+    );
+  },
   parameters: {
     layout: 'padded',
   },
 };
 
 export const FormExample: Story = {
-  render: () => (
-    <Form formId="form-example" onSubmit={e => e.preventDefault()}>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
-        <HiddenUsernameField />
-        <Input
-          label="Имя"
-          placeholder="Введите имя..."
-          leftIcon={<Icon name="IconExUser" size={IconSize.MD} />}
-          autoComplete="given-name"
-          required
-        />
+  render: () => {
+    const [name, setName] = React.useState('');
+    const [email, setEmail] = React.useState('');
+    const [password, setPassword] = React.useState('');
+    const [password2, setPassword2] = React.useState('');
+    const mismatch =
+      password2.length > 0 && password.length > 0 && password !== password2
+        ? 'Пароли не совпадают'
+        : undefined;
+    const reset = () => {
+      setName('');
+      setEmail('');
+      setPassword('');
+      setPassword2('');
+    };
+    return (
+      <Form formId="form-example" onSubmit={(e) => e.preventDefault()}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px',
+            width: '400px',
+          }}
+        >
+          <HiddenUsernameField />
+          <Input
+            label="Имя"
+            placeholder="Введите имя..."
+            leftIcon={<Icon name="IconExUser" size={IconSize.MD} />}
+            autoComplete="given-name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
 
-        <Input
-          label="Email"
-          placeholder="Введите email..."
-          leftIcon={<Icon name="IconExMail" size={IconSize.MD} />}
-          type="email"
-          autoComplete="email"
-          required
-        />
+          <Input
+            label="Email"
+            placeholder="Введите email..."
+            leftIcon={<Icon name="IconExMail" size={IconSize.MD} />}
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
 
-        <Input
-          label="Пароль"
-          placeholder="Введите пароль..."
-          leftIcon={<Icon name="IconExLock" size={IconSize.MD} />}
-          type="password"
-          autoComplete="new-password"
-          helperText="Минимум 8 символов"
-          required
-        />
+          <Input
+            label="Пароль"
+            placeholder="Введите пароль..."
+            leftIcon={<Icon name="IconExLock" size={IconSize.MD} />}
+            type="password"
+            autoComplete="new-password"
+            helperText="Минимум 8 символов"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
 
-        <Input
-          label="Подтвердите пароль"
-          placeholder="Повторите пароль..."
-          leftIcon={<Icon name="IconExLock" size={IconSize.MD} />}
-          type="password"
-          autoComplete="new-password"
-          error="Пароли не совпадают"
-        />
-      </div>
-    </Form>
-  ),
+          <Input
+            label="Подтвердите пароль"
+            placeholder="Повторите пароль..."
+            leftIcon={<Icon name="IconExLock" size={IconSize.MD} />}
+            type="password"
+            autoComplete="new-password"
+            error={mismatch}
+            value={password2}
+            onChange={(e) => setPassword2(e.target.value)}
+          />
+
+          <button type="button" onClick={reset} style={inputStoriesResetButtonStyle}>
+            Очистить форму
+          </button>
+        </div>
+      </Form>
+    );
+  },
   parameters: {
     layout: 'padded',
   },
 };
 
 export const WithClearIcon: Story = {
-  args: {
-    label: 'С иконкой очистки',
-    placeholder: 'Введите текст...',
-    clearIcon: true,
-    value: 'Пример текста',
-    onChange: value => console.log('Input changed:', value),
-    onClearIconClick: () => console.log('Clear icon clicked'),
+  render: () => {
+    const [text, setText] = React.useState('Пример текста');
+    return (
+      <Input
+        label="Кнопка очистки"
+        placeholder="Введите текст..."
+        displayClearIcon
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        onClearIconClick={() => setText('')}
+      />
+    );
   },
   parameters: {
     docs: {
       description: {
-        story: 'Input с иконкой очистки, которая появляется при наличии текста.',
+        story:
+          'Кнопка очистки: `displayClearIcon` + `onClearIconClick` сбрасывают значение у родителя.',
       },
     },
   },
@@ -507,7 +567,7 @@ export const LoadingDemo: Story = {
           placeholder="Введите текст..."
           isLoading={isLoading1}
           value={value1}
-          onChange={e => setValue1(e.target.value)}
+          onChange={(e) => setValue1(e.target.value)}
           leftIcon={<Icon name="IconPlainerPlus" size={IconSize.SM} />}
         />
 
@@ -516,7 +576,7 @@ export const LoadingDemo: Story = {
           placeholder="Введите текст..."
           isLoading={isLoading2}
           value={value2}
-          onChange={e => setValue2(e.target.value)}
+          onChange={(e) => setValue2(e.target.value)}
           leftIcon={<Icon name="IconPlainerUser" size={IconSize.SM} />}
         />
 
@@ -525,7 +585,7 @@ export const LoadingDemo: Story = {
           placeholder="Введите текст..."
           isLoading={isLoading3}
           value={value3}
-          onChange={e => setValue3(e.target.value)}
+          onChange={(e) => setValue3(e.target.value)}
           rightIcon={<Icon name="IconPlainerSearch" size={IconSize.SM} />}
         />
 
@@ -586,7 +646,7 @@ export const SkeletonDemo: Story = {
           placeholder="Введите текст..."
           skeleton={skeleton1}
           value={value1}
-          onChange={e => setValue1(e.target.value)}
+          onChange={(e) => setValue1(e.target.value)}
           leftIcon={<Icon name="IconPlainerPlus" size={IconSize.SM} />}
         />
 
@@ -595,7 +655,7 @@ export const SkeletonDemo: Story = {
           placeholder="Введите текст..."
           skeleton={skeleton2}
           value={value2}
-          onChange={e => setValue2(e.target.value)}
+          onChange={(e) => setValue2(e.target.value)}
           leftIcon={<Icon name="IconPlainerUser" size={IconSize.SM} />}
         />
 
@@ -604,7 +664,7 @@ export const SkeletonDemo: Story = {
           placeholder="Введите текст..."
           skeleton={skeleton3}
           value={value3}
-          onChange={e => setValue3(e.target.value)}
+          onChange={(e) => setValue3(e.target.value)}
           rightIcon={<Icon name="IconPlainerSearch" size={IconSize.SM} />}
         />
 
@@ -628,7 +688,7 @@ export const SkeletonDemo: Story = {
     docs: {
       description: {
         story:
-          'Демонстрация skeleton эффекта в Input. При skeleton=true отображается анимированный placeholder, заменяющий весь компонент инпута. Полезно для отображения состояния загрузки.',
+          'При skeleton=true анимированный плейсхолдер показывается только на поле ввода; label и additionalLabel остаются видимым текстом.',
       },
     },
   },
@@ -639,6 +699,9 @@ export const TooltipDemo: Story = {
     const [value1, setValue1] = React.useState('Обычный инпут');
     const [value2, setValue2] = React.useState('Инпут с тултипом');
     const [value3, setValue3] = React.useState('Инпут с хинтом');
+    const [value4, setValue4] = React.useState('');
+    const [value5, setValue5] = React.useState('');
+    const [value6, setValue6] = React.useState('');
 
     return (
       <div
@@ -653,14 +716,14 @@ export const TooltipDemo: Story = {
           label="Обычный инпут"
           placeholder="Без подсказки"
           value={value1}
-          onChange={e => setValue1(e.target.value)}
+          onChange={(e) => setValue1(e.target.value)}
         />
 
         <Input
           label="Инпут с тултипом (сверху)"
           placeholder="Наведите курсор для показа тултипа"
           value={value2}
-          onChange={e => setValue2(e.target.value)}
+          onChange={(e) => setValue2(e.target.value)}
           tooltip="Это тултип с дополнительной информацией об инпуте"
           tooltipType="tooltip"
           tooltipPosition="top"
@@ -670,7 +733,7 @@ export const TooltipDemo: Story = {
           label="Инпут с хинтом (снизу)"
           placeholder="Наведите курсор для показа хинта"
           value={value3}
-          onChange={e => setValue3(e.target.value)}
+          onChange={(e) => setValue3(e.target.value)}
           tooltip="Это хинт с более подробной информацией и возможностью взаимодействия"
           tooltipType="hint"
           tooltipPosition="bottom"
@@ -679,10 +742,8 @@ export const TooltipDemo: Story = {
         <Input
           label="Инпут с тултипом (слева)"
           placeholder="Тултип слева"
-          value=""
-          onChange={() => {
-            /* Пустая функция для демонстрации */
-          }}
+          value={value4}
+          onChange={(e) => setValue4(e.target.value)}
           tooltip="Тултип слева от инпута"
           tooltipType="tooltip"
           tooltipPosition="left"
@@ -691,10 +752,8 @@ export const TooltipDemo: Story = {
         <Input
           label="Инпут с хинтом (справа)"
           placeholder="Хинт справа"
-          value=""
-          onChange={() => {
-            /* Пустая функция для демонстрации */
-          }}
+          value={value5}
+          onChange={(e) => setValue5(e.target.value)}
           tooltip="Хинт справа от инпута"
           tooltipType="hint"
           tooltipPosition="right"
@@ -703,10 +762,8 @@ export const TooltipDemo: Story = {
         <Input
           label="Инпут с тултипом и иконкой"
           placeholder="Тултип с иконкой"
-          value=""
-          onChange={() => {
-            /* Пустая функция для демонстрации */
-          }}
+          value={value6}
+          onChange={(e) => setValue6(e.target.value)}
           leftIcon={<Icon name="IconPlainerPlus" size={IconSize.SM} />}
           tooltip={
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -736,6 +793,7 @@ export const CharacterCounterDemo: Story = {
     const [value1, setValue1] = React.useState('Обычный инпут');
     const [value2, setValue2] = React.useState('Инпут с счетчиком');
     const [value3, setValue3] = React.useState('Инпут без счетчика');
+    const [value4, setValue4] = React.useState('');
 
     return (
       <div
@@ -750,14 +808,14 @@ export const CharacterCounterDemo: Story = {
           label="Обычный инпут"
           placeholder="Без maxLength"
           value={value1}
-          onChange={e => setValue1(e.target.value)}
+          onChange={(e) => setValue1(e.target.value)}
         />
 
         <Input
           label="Инпут с счетчиком символов"
           placeholder="С maxLength и счетчиком"
           value={value2}
-          onChange={e => setValue2(e.target.value)}
+          onChange={(e) => setValue2(e.target.value)}
           maxLength={50}
           displayCharacterCounter={true}
         />
@@ -766,20 +824,19 @@ export const CharacterCounterDemo: Story = {
           label="Инпут без счетчика символов"
           placeholder="С maxLength но без счетчика"
           value={value3}
-          onChange={e => setValue3(e.target.value)}
+          onChange={(e) => setValue3(e.target.value)}
           maxLength={30}
           displayCharacterCounter={false}
         />
 
         <Input
-          label="Инпут с превышением лимита"
-          placeholder="Попробуйте ввести больше 20 символов"
-          value=""
-          onChange={() => {
-            /* Пустая функция для демонстрации */
-          }}
+          label="Лимит 20 символов"
+          placeholder="Счётчик при maxLength=20"
+          value={value4}
+          onChange={(e) => setValue4(e.target.value)}
           maxLength={20}
           displayCharacterCounter={true}
+          helperText="Браузер не даст ввести больше 20 символов — счётчик показывает заполнение"
         />
       </div>
     );
@@ -799,6 +856,7 @@ export const ExtraTextDemo: Story = {
   render: () => {
     const [value1, setValue1] = React.useState('Обычный инпут');
     const [value2, setValue2] = React.useState('Инпут с дополнительным текстом');
+    const [value3, setValue3] = React.useState('');
 
     return (
       <div
@@ -813,7 +871,7 @@ export const ExtraTextDemo: Story = {
           label="Обычный инпут"
           placeholder="Без дополнительного текста"
           value={value1}
-          onChange={e => setValue1(e.target.value)}
+          onChange={(e) => setValue1(e.target.value)}
           helperText="Это helper text"
         />
 
@@ -821,7 +879,7 @@ export const ExtraTextDemo: Story = {
           label="Инпут с extraText"
           placeholder="С дополнительным текстом"
           value={value2}
-          onChange={e => setValue2(e.target.value)}
+          onChange={(e) => setValue2(e.target.value)}
           helperText="Это helper text"
           extraText="Это дополнительный текст, который отображается ниже компонента"
         />
@@ -829,10 +887,8 @@ export const ExtraTextDemo: Story = {
         <Input
           label="Только extraText"
           placeholder="Без helper text"
-          value=""
-          onChange={() => {
-            /* Пустая функция для демонстрации */
-          }}
+          value={value3}
+          onChange={(e) => setValue3(e.target.value)}
           extraText="Только дополнительный текст без helper text"
         />
       </div>
@@ -867,7 +923,7 @@ export const DisableCopyingDemo: Story = {
           label="Обычный инпут"
           placeholder="Можно выделять и копировать текст"
           value={value1}
-          onChange={e => setValue1(e.target.value)}
+          onChange={(e) => setValue1(e.target.value)}
           helperText="Попробуйте выделить и скопировать текст (Ctrl+C)"
         />
 
@@ -875,7 +931,7 @@ export const DisableCopyingDemo: Story = {
           label="Защищенный инпут"
           placeholder="Нельзя выделять и копировать текст"
           value={value2}
-          onChange={e => setValue2(e.target.value)}
+          onChange={(e) => setValue2(e.target.value)}
           disableCopying={true}
           helperText="Попробуйте выделить и скопировать текст - не получится!"
         />
@@ -1073,7 +1129,7 @@ export const HandleInputDemo: Story = {
           label="Телефон (маска +7 (XXX) XXX-XX-XX)"
           placeholder="+7 (___) ___-__-__"
           value={value1}
-          onChange={e => setValue1(e.target.value)}
+          onChange={(e) => setValue1(e.target.value)}
           handleInput={phoneMask}
         />
 
@@ -1081,7 +1137,7 @@ export const HandleInputDemo: Story = {
           label="Номер карты (маска XXXX XXXX XXXX XXXX)"
           placeholder="____ ____ ____ ____"
           value={value2}
-          onChange={e => setValue2(e.target.value)}
+          onChange={(e) => setValue2(e.target.value)}
           handleInput={cardMask}
         />
 
@@ -1089,7 +1145,7 @@ export const HandleInputDemo: Story = {
           label="Сумма (форматирование с пробелами)"
           placeholder="0"
           value={value3}
-          onChange={e => setValue3(e.target.value)}
+          onChange={(e) => setValue3(e.target.value)}
           handleInput={amountMask}
         />
 
@@ -1097,7 +1153,7 @@ export const HandleInputDemo: Story = {
           label="ИНН (только цифры, макс 12)"
           placeholder="1234567890"
           value={value4}
-          onChange={e => setValue4(e.target.value)}
+          onChange={(e) => setValue4(e.target.value)}
           handleInput={innMask}
         />
 
@@ -1105,7 +1161,7 @@ export const HandleInputDemo: Story = {
           label="СНИЛС (маска XXX-XXX-XXX XX)"
           placeholder="123-456-789 12"
           value={value5}
-          onChange={e => setValue5(e.target.value)}
+          onChange={(e) => setValue5(e.target.value)}
           handleInput={snilsMask}
         />
       </div>
@@ -1116,7 +1172,7 @@ export const HandleInputDemo: Story = {
     docs: {
       description: {
         story:
-          'Демонстрация handleInput для создания масок ввода. Позволяет изменять значение поля и позицию курсора до отображения в следующем цикле рендеринга. Примеры: телефон, карта, сумма, ИНН, СНИЛС.',
+          'Демонстрация `handleInput` в `Input`: маски и форматирование применяются при вводе (цифры телефона, карты и т.д.).',
       },
     },
   },
@@ -1140,7 +1196,7 @@ export const IgnoreMaskCharactersDemo: Story = {
           label="Обычный счетчик символов"
           placeholder="Введите дату..."
           value={value1}
-          onChange={e => setValue1(e.target.value)}
+          onChange={(e) => setValue1(e.target.value)}
           maxLength={10}
           displayCharacterCounter={true}
           ignoreMaskCharacters={false}
@@ -1151,7 +1207,7 @@ export const IgnoreMaskCharactersDemo: Story = {
           label="Счетчик без символов маски"
           placeholder="Введите дату..."
           value={value2}
-          onChange={e => setValue2(e.target.value)}
+          onChange={(e) => setValue2(e.target.value)}
           maxLength={8}
           displayCharacterCounter={true}
           ignoreMaskCharacters={true}
@@ -1210,7 +1266,7 @@ export const CharacterCounterThresholdDemo: Story = {
           label="Всегда видимый счетчик (threshold=0)"
           placeholder="Введите текст..."
           value={value1}
-          onChange={e => setValue1(e.target.value)}
+          onChange={(e) => setValue1(e.target.value)}
           maxLength={20}
           displayCharacterCounter={true}
           characterCounterVisibilityThreshold={0}
@@ -1221,7 +1277,7 @@ export const CharacterCounterThresholdDemo: Story = {
           label="Счетчик при 80% заполнения (threshold=0.8)"
           placeholder="Введите текст..."
           value={value2}
-          onChange={e => setValue2(e.target.value)}
+          onChange={(e) => setValue2(e.target.value)}
           maxLength={20}
           displayCharacterCounter={true}
           characterCounterVisibilityThreshold={0.8}
@@ -1232,7 +1288,7 @@ export const CharacterCounterThresholdDemo: Story = {
           label="Скрытый счетчик (threshold=1)"
           placeholder="Введите текст..."
           value={value3}
-          onChange={e => setValue3(e.target.value)}
+          onChange={(e) => setValue3(e.target.value)}
           maxLength={20}
           displayCharacterCounter={true}
           characterCounterVisibilityThreshold={1}
@@ -1297,7 +1353,7 @@ export const AdditionalLabelDemo: Story = {
           additionalLabel="Уникальный идентификатор для входа в систему"
           placeholder="Введите имя пользователя..."
           value={value1}
-          onChange={e => setValue1(e.target.value)}
+          onChange={(e) => setValue1(e.target.value)}
           helperText="Используйте только латинские буквы и цифры"
         />
 
@@ -1306,7 +1362,7 @@ export const AdditionalLabelDemo: Story = {
           additionalLabel="Основной адрес электронной почты"
           placeholder="example@domain.com"
           value={value2}
-          onChange={e => setValue2(e.target.value)}
+          onChange={(e) => setValue2(e.target.value)}
           type="email"
           helperText="На этот адрес будут приходить уведомления"
         />
@@ -1316,7 +1372,7 @@ export const AdditionalLabelDemo: Story = {
           additionalLabel="Международный формат с кодом страны"
           placeholder="+7 (999) 123-45-67"
           value={value3}
-          onChange={e => setValue3(e.target.value)}
+          onChange={(e) => setValue3(e.target.value)}
           type="tel"
           helperText="Используется для двухфакторной аутентификации"
         />
@@ -1389,23 +1445,31 @@ export const ReadOnlyWithIcon: Story = {
 };
 
 export const ReadOnlyComparison: Story = {
-  render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      <Input label="Обычное поле" value="Можно редактировать" placeholder="Введите текст" />
-      <Input
-        label="Поле только для чтения"
-        value="Нельзя редактировать"
-        readOnly={true}
-        helperText="Текст обычного цвета, серый фон"
-      />
-      <Input
-        label="Отключенное поле"
-        value="Полностью отключено"
-        disabled={true}
-        helperText="Текст серого цвета, полностью неактивно"
-      />
-    </div>
-  ),
+  render: () => {
+    const [editable, setEditable] = React.useState('Можно редактировать');
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <Input
+          label="Обычное поле"
+          value={editable}
+          onChange={(e) => setEditable(e.target.value)}
+          placeholder="Введите текст"
+        />
+        <Input
+          label="Поле только для чтения"
+          value="Нельзя редактировать"
+          readOnly={true}
+          helperText="Текст обычного цвета, серый фон"
+        />
+        <Input
+          label="Отключенное поле"
+          value="Полностью отключено"
+          disabled={true}
+          helperText="Текст серого цвета, полностью неактивно"
+        />
+      </div>
+    );
+  },
   parameters: {
     docs: {
       description: {
@@ -1417,52 +1481,66 @@ export const ReadOnlyComparison: Story = {
 };
 
 export const PasswordForm: Story = {
-  render: () => (
-    <Form
-      formId="password-form"
-      formName="passwordForm"
-      onSubmit={e => {
-        e.preventDefault();
-        console.log('Форма отправлена');
-      }}
-    >
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <Input
-          label="Имя пользователя"
-          placeholder="Введите имя пользователя"
-          autoComplete="username"
-          required
-        />
-        <Input
-          label="Пароль"
-          type="password"
-          placeholder="Введите пароль..."
-          autoComplete="new-password"
-          required
-        />
-        <Input
-          label="Повторите пароль"
-          type="password"
-          placeholder="Повторите пароль..."
-          autoComplete="new-password"
-          required
-        />
-        <button
-          type="submit"
-          style={{
-            padding: '8px 16px',
-            backgroundColor: '#007bff',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
-          Отправить
-        </button>
-      </div>
-    </Form>
-  ),
+  render: () => {
+    const [username, setUsername] = React.useState('');
+    const [password, setPassword] = React.useState('');
+    const [password2, setPassword2] = React.useState('');
+    const reset = () => {
+      setUsername('');
+      setPassword('');
+      setPassword2('');
+    };
+    return (
+      <Form formId="password-form" formName="passwordForm" onSubmit={(e) => e.preventDefault()}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <Input
+            label="Имя пользователя"
+            placeholder="Введите имя пользователя"
+            autoComplete="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+          <Input
+            label="Пароль"
+            type="password"
+            placeholder="Введите пароль..."
+            autoComplete="new-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <Input
+            label="Повторите пароль"
+            type="password"
+            placeholder="Повторите пароль..."
+            autoComplete="new-password"
+            value={password2}
+            onChange={(e) => setPassword2(e.target.value)}
+            required
+          />
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <button
+              type="submit"
+              style={{
+                padding: '8px 16px',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+              }}
+            >
+              Отправить
+            </button>
+            <button type="button" onClick={reset} style={inputStoriesResetButtonStyle}>
+              Очистить
+            </button>
+          </div>
+        </div>
+      </Form>
+    );
+  },
   parameters: {
     docs: {
       description: {
@@ -1474,52 +1552,97 @@ export const PasswordForm: Story = {
 };
 
 export const PasswordComparison: Story = {
-  render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-      <div>
-        <h3 style={{ marginBottom: '16px', color: '#28a745' }}>
-          ✅ Форма регистрации (новые пароли)
-        </h3>
-        <Form formId="registration-form" onSubmit={e => e.preventDefault()}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <Input
-              label="Имя пользователя"
-              placeholder="Введите имя пользователя"
-              autoComplete="username"
-            />
-            <Input
-              label="Пароль"
-              type="password"
-              placeholder="Введите пароль..."
-              autoComplete="new-password"
-            />
-            <Input
-              label="Повторите пароль"
-              type="password"
-              placeholder="Повторите пароль..."
-              autoComplete="new-password"
-            />
-          </div>
-        </Form>
-      </div>
+  render: () => {
+    const [regUser, setRegUser] = React.useState('');
+    const [regPass, setRegPass] = React.useState('');
+    const [regPass2, setRegPass2] = React.useState('');
+    const [loginEmail, setLoginEmail] = React.useState('');
+    const [loginPass, setLoginPass] = React.useState('');
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+        <div>
+          <h3 style={{ marginBottom: '16px', color: '#28a745' }}>
+            ✅ Форма регистрации (новые пароли)
+          </h3>
+          <Form formId="registration-form" onSubmit={(e) => e.preventDefault()}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <Input
+                label="Имя пользователя"
+                placeholder="Введите имя пользователя"
+                autoComplete="username"
+                value={regUser}
+                onChange={(e) => setRegUser(e.target.value)}
+              />
+              <Input
+                label="Пароль"
+                type="password"
+                placeholder="Введите пароль..."
+                autoComplete="new-password"
+                value={regPass}
+                onChange={(e) => setRegPass(e.target.value)}
+              />
+              <Input
+                label="Повторите пароль"
+                type="password"
+                placeholder="Повторите пароль..."
+                autoComplete="new-password"
+                value={regPass2}
+                onChange={(e) => setRegPass2(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  setRegUser('');
+                  setRegPass('');
+                  setRegPass2('');
+                }}
+                style={inputStoriesResetButtonStyle}
+              >
+                Очистить
+              </button>
+            </div>
+          </Form>
+        </div>
 
-      <div>
-        <h3 style={{ marginBottom: '16px', color: '#007bff' }}>✅ Форма входа (текущий пароль)</h3>
-        <Form formId="login-form" onSubmit={e => e.preventDefault()}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <HiddenUsernameField />
-            <Input label="Email" type="email" placeholder="Введите email" autoComplete="email" />
-            <Input
-              label="Пароль"
-              type="password"
-              placeholder="Введите пароль"
-              autoComplete="current-password"
-            />
-          </div>
-        </Form>
+        <div>
+          <h3 style={{ marginBottom: '16px', color: '#007bff' }}>
+            ✅ Форма входа (текущий пароль)
+          </h3>
+          <Form formId="login-form" onSubmit={(e) => e.preventDefault()}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <HiddenUsernameField />
+              <Input
+                label="Email"
+                type="email"
+                placeholder="Введите email"
+                autoComplete="email"
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
+              />
+              <Input
+                label="Пароль"
+                type="password"
+                placeholder="Введите пароль"
+                autoComplete="current-password"
+                value={loginPass}
+                onChange={(e) => setLoginPass(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  setLoginEmail('');
+                  setLoginPass('');
+                }}
+                style={inputStoriesResetButtonStyle}
+              >
+                Очистить
+              </button>
+            </div>
+          </Form>
+        </div>
       </div>
-    </div>
-  ),
+    );
+  },
   parameters: {
     docs: {
       description: {
@@ -1531,60 +1654,92 @@ export const PasswordComparison: Story = {
 };
 
 export const AutocompleteDemo: Story = {
-  render: () => (
-    <Form formId="autocomplete-demo" onSubmit={e => e.preventDefault()}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <h3 style={{ marginBottom: '8px' }}>Демонстрация различных типов autocomplete</h3>
+  render: () => {
+    const [username, setUsername] = React.useState('');
+    const [email, setEmail] = React.useState('');
+    const [newPass, setNewPass] = React.useState('');
+    const [curPass, setCurPass] = React.useState('');
+    const [given, setGiven] = React.useState('');
+    const [family, setFamily] = React.useState('');
+    const resetAll = () => {
+      setUsername('');
+      setEmail('');
+      setNewPass('');
+      setCurPass('');
+      setGiven('');
+      setFamily('');
+    };
+    return (
+      <Form formId="autocomplete-demo" onSubmit={(e) => e.preventDefault()}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <h3 style={{ marginBottom: '8px' }}>Демонстрация различных типов autocomplete</h3>
 
-        <HiddenUsernameField />
+          <HiddenUsernameField />
 
-        <Input
-          label="Имя пользователя"
-          placeholder="Введите имя пользователя"
-          autoComplete="username"
-          helperText="autocomplete='username'"
-        />
+          <Input
+            label="Имя пользователя"
+            placeholder="Введите имя пользователя"
+            autoComplete="username"
+            helperText="autocomplete='username'"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
 
-        <Input
-          label="Email"
-          type="email"
-          placeholder="Введите email"
-          autoComplete="email"
-          helperText="autocomplete='email'"
-        />
+          <Input
+            label="Email"
+            type="email"
+            placeholder="Введите email"
+            autoComplete="email"
+            helperText="autocomplete='email'"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
 
-        <Input
-          label="Новый пароль"
-          type="password"
-          placeholder="Введите новый пароль"
-          autoComplete="new-password"
-          helperText="autocomplete='new-password'"
-        />
+          <Input
+            label="Новый пароль"
+            type="password"
+            placeholder="Введите новый пароль"
+            autoComplete="new-password"
+            helperText="autocomplete='new-password'"
+            value={newPass}
+            onChange={(e) => setNewPass(e.target.value)}
+          />
 
-        <Input
-          label="Текущий пароль"
-          type="password"
-          placeholder="Введите текущий пароль"
-          autoComplete="current-password"
-          helperText="autocomplete='current-password'"
-        />
+          <Input
+            label="Текущий пароль"
+            type="password"
+            placeholder="Введите текущий пароль"
+            autoComplete="current-password"
+            helperText="autocomplete='current-password'"
+            value={curPass}
+            onChange={(e) => setCurPass(e.target.value)}
+          />
 
-        <Input
-          label="Имя"
-          placeholder="Введите имя"
-          autoComplete="given-name"
-          helperText="autocomplete='given-name'"
-        />
+          <Input
+            label="Имя"
+            placeholder="Введите имя"
+            autoComplete="given-name"
+            helperText="autocomplete='given-name'"
+            value={given}
+            onChange={(e) => setGiven(e.target.value)}
+          />
 
-        <Input
-          label="Фамилия"
-          placeholder="Введите фамилию"
-          autoComplete="family-name"
-          helperText="autocomplete='family-name'"
-        />
-      </div>
-    </Form>
-  ),
+          <Input
+            label="Фамилия"
+            placeholder="Введите фамилию"
+            autoComplete="family-name"
+            helperText="autocomplete='family-name'"
+            value={family}
+            onChange={(e) => setFamily(e.target.value)}
+          />
+
+          <button type="button" onClick={resetAll} style={inputStoriesResetButtonStyle}>
+            Очистить все поля
+          </button>
+        </div>
+      </Form>
+    );
+  },
   parameters: {
     docs: {
       description: {
@@ -1594,3 +1749,4 @@ export const AutocompleteDemo: Story = {
     },
   },
 };
+

@@ -20,18 +20,18 @@ export const IconExClose: React.FC<IconComponentProps> = ({
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <rect x="2" y="2" width="20" height="20" rx="5" stroke={color} strokeWidth="1.5" />
+      {/* Крестик на почти весь viewBox — иначе без «рамки» линии выглядели крошечными при любом IconSize */}
       <path
-        d="M9.8787 14.1215L14.1213 9.87891"
+        d="M6 18L18 6"
         stroke={color}
-        strokeWidth="1.5"
+        strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
-        d="M9.8787 9.87894L14.1213 14.1216"
+        d="M6 6L18 18"
         stroke={color}
-        strokeWidth="1.5"
+        strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
       />

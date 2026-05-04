@@ -6,6 +6,7 @@ export { IconPlainerArrowRight } from './ArrowRight';
 export { IconPlainerArrowLeft } from './ArrowLeft';
 export { IconPlainerArrowUp } from './ArrowUp';
 export { IconPlainerArrowDown } from './ArrowDown';
+export { IconPlainerChevronDown } from './ChevronDown';
 export { IconPlainerDollar } from './Dollar';
 export { IconPlainerPercent } from './Percent';
 export { IconPlainerSun } from './Sun';

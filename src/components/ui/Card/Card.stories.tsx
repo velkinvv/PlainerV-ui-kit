@@ -1,17 +1,18 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Card } from './Card';
 import { CardVariant } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
+import { DOC_CARD } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Card> = {
-  title: 'Components/Card',
+  title: 'UI Kit/Surfaces/Card',
   component: Card,
   parameters: {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Компонент карточки для отображения контента',
+        component: DOC_CARD,
       },
     },
   },
@@ -21,28 +22,40 @@ const meta: Meta<typeof Card> = {
       control: { type: 'select' },
       options: [...Object.values(CardVariant)],
       description: 'Вариант стилизации карточки',
+      table: {
+        type: { summary: 'CardVariant: elevated, outlined или filled' },
+      },
     },
     size: {
       control: { type: 'select' },
       options: [...Object.values(Size)],
       description: 'Размер карточки',
+      table: {
+        type: { summary: 'Size: XS, SM, MD, LG, XL' },
+      },
     },
     padding: {
       control: { type: 'select' },
       options: [...Object.values(Size)],
       description: 'Внутренние отступы',
+      table: {
+        type: { summary: 'Size: XS, SM, MD, LG, XL' },
+      },
     },
     hoverable: {
       control: { type: 'boolean' },
       description: 'Эффект при наведении',
+      table: { type: { summary: 'boolean' } },
     },
     clickable: {
       control: { type: 'boolean' },
       description: 'Кликабельность',
+      table: { type: { summary: 'boolean' } },
     },
     fullWidth: {
       control: { type: 'boolean' },
       description: 'Полная ширина',
+      table: { type: { summary: 'boolean' } },
     },
   },
 };
@@ -68,7 +81,7 @@ export const Elevated: Story = {
       <div>
         <h3>Elevated Card</h3>
         <p>This card has an enhanced elevated shadow effect with subtle border.</p>
-        <p>Updated according to Figma design specifications.</p>
+        <p>Карточка с усиленной тенью и лёгкой обводкой.</p>
       </div>
     ),
   },
@@ -209,7 +222,7 @@ export const WithImage: Story = {
   },
 };
 
-// Новая история для демонстрации карточки новости в соответствии с макетом Figma
+// Карточка новости — составной пример
 export const NewsCard: Story = {
   render: () => (
     <Card
@@ -522,8 +535,8 @@ export const NewsCard: Story = {
   },
 };
 
-// Специальная история для демонстрации Card в соответствии с макетом Figma
-export const FigmaDesign: Story = {
+// Две карточки: календарь и список дел
+export const CompositeCardsShowcase: Story = {
   render: () => (
     <div
       style={{
@@ -533,7 +546,7 @@ export const FigmaDesign: Story = {
         maxWidth: '800px',
       }}
     >
-      {/* Календарь - как в макете */}
+      {/* Календарь */}
       <Card
         variant={CardVariant.ELEVATED}
         style={{
@@ -623,7 +636,7 @@ export const FigmaDesign: Story = {
               }}
             >
               {/* Дни недели */}
-              {['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map(day => (
+              {['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map((day) => (
                 <div
                   key={day}
                   style={{
@@ -678,7 +691,7 @@ export const FigmaDesign: Story = {
         </div>
       </Card>
 
-      {/* Список дел - как в макете */}
+      {/* Список дел */}
       <Card
         variant={CardVariant.ELEVATED}
         style={{
@@ -830,7 +843,7 @@ export const FigmaDesign: Story = {
           ></div>
 
           {/* Обычные элементы */}
-          {[1, 2, 3].map(i => (
+          {[1, 2, 3].map((i) => (
             <div
               key={i}
               style={{
@@ -976,3 +989,4 @@ export const AllSizes: Story = {
     layout: 'padded',
   },
 };
+

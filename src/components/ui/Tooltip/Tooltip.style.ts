@@ -25,8 +25,10 @@ export const TooltipContent = styled.div<{
   $size: Size;
 }>`
   position: fixed;
-  background: ${({ theme }) => theme.colors.primary}; // Primary/500 main из макета
-  color: #ffffff; // Белый текст из макета
+  /* Фон и стрелка: theme.colors.info (яркий синий), не theme.colors.primary (палитра blue — тёмная) */
+  background: ${({ theme }) => theme.colors.info};
+  /* Белый текст на ярком info */
+  color: #ffffff;
   border-radius: 16px; // Border radius из макета
   font-family: ${({ theme }) => theme.fonts.primary}; // Montserrat из макета
   font-weight: 500; // Medium из макета
@@ -122,8 +124,8 @@ export const TooltipContent = styled.div<{
     opacity: ${({ $isVisible }) => ($isVisible ? 1 : 0)};
     transition: opacity 0.2s ease-in-out;
 
-    ${({ $placement }) => {
-      const arrowColor = '#2196F3'; // Primary/500 main из макета
+    ${({ theme, $placement }) => {
+      const arrowColor = theme.colors.info;
 
       if ($placement === TooltipPosition.TOP) {
         return css`

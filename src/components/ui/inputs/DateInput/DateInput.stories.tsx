@@ -1,22 +1,34 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import { fn } from '@storybook/test';
 import { DateInput } from './DateInput';
 import { Size, IconSize } from '../../../../types/sizes';
 import type { DateTimeRange } from '../../../../types/ui';
 import { Icon } from '../../Icon/Icon';
+import { DOC_DATE_INPUT } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof DateInput> = {
-  title: 'Components/Inputs/DateInput',
+  title: 'UI Kit/Inputs/DateInput',
   component: DateInput,
   parameters: {
     layout: 'padded',
+    docs: {
+      description: {
+        component: DOC_DATE_INPUT,
+      },
+    },
   },
   tags: ['autodocs'],
   argTypes: {
     value: {
       control: 'text',
-      description: 'Значение даты (для single mode) или диапазона (для range mode)',
+      description:
+        'При `range: false` — строка даты в формате поля (как в `format`). При `range: true` — объект `{ start: string; end: string }` с границами диапазона',
+      table: {
+        type: {
+          summary: 'строка при `range: false`; объект `{ start, end }` при `range: true`',
+        },
+      },
     },
     label: {
       control: 'text',
@@ -33,11 +45,13 @@ const meta: Meta<typeof DateInput> = {
     size: {
       control: { type: 'select' },
       options: [Size.SM, Size.MD, Size.LG],
-      description: 'Размер поля ввода',
+      description:
+        'Размер поля; в сторис доступны `SM`, `MD`, `LG` (полный набор — все значения `Size`)',
     },
     range: {
       control: 'boolean',
-      description: 'Режим работы: false = одиночная дата, true = диапазон',
+      description:
+        'Режим: `false` — одна дата (строка в `value`), `true` — диапазон (объект `{ start, end }` в `value`)',
     },
     showIcon: {
       control: 'boolean',
@@ -46,15 +60,38 @@ const meta: Meta<typeof DateInput> = {
     textAlign: {
       control: { type: 'select' },
       options: ['left', 'center', 'right'],
-      description: 'Выравнивание текста',
+      description: 'Выравнивание текста; значения: `left`, `center`, `right`',
     },
-    clearIcon: {
+    displayClearIcon: {
       control: { type: 'boolean' },
-      description: 'Показывать иконку очистки',
+      description: 'Показывать кнопку с крестиком очистки',
+    },
+    onClearIconClick: { action: 'clearIconClick', description: 'После сброса даты в компоненте' },
+    clearIconProps: {
+      control: 'object',
+      description:
+        'Частичные пропсы `Icon` для кнопки очистки при `displayClearIcon`. По умолчанию `IconPlainerClose`; мерж поверх вычисленного `size`.',
+      table: {
+        type: { summary: 'ClearIconProps' },
+      },
     },
     segmented: {
       control: { type: 'boolean' },
-      description: 'Режим ввода: true = сегментированный, false = обычный input',
+      description: 'Режим ввода: `true` — сегментированный ввод, `false` — обычный `input`',
+    },
+    showDateRollers: {
+      control: { type: 'boolean' },
+      description: 'Роллеры день/месяц/год над сеткой в попапе календаря',
+    },
+    calendarMonthYearLayout: {
+      control: { type: 'select' },
+      options: ['combined', 'split'],
+      description:
+        'Шапка календаря в попапе: `combined` — один список «месяц + год»; `split` — отдельные триггеры месяца и года',
+    },
+    calendarFullWidth: {
+      control: { type: 'boolean' },
+      description: 'Растянуть выпадающий календарь на ширину поля ввода',
     },
     displayCharacterCounter: {
       control: { type: 'boolean' },
@@ -76,6 +113,7 @@ const meta: Meta<typeof DateInput> = {
   },
   args: {
     onChange: fn(),
+    clearIconProps: {},
   },
 };
 
@@ -103,6 +141,21 @@ export const RangeMode: Story = {
     label: 'Диапазон дат',
     placeholder: 'Выберите диапазон дат',
   },
+};
+
+export const CalendarFullWidth: Story = {
+  name: 'Calendar Full Width (Popup = Input Width)',
+  args: {
+    label: 'Календарь на всю ширину поля',
+    placeholder: 'Откройте календарь',
+    fullWidth: true,
+    calendarFullWidth: true,
+  },
+  render: (args) => (
+    <div style={{ maxWidth: 420 }}>
+      <DateInput {...args} />
+    </div>
+  ),
 };
 
 export const WithValue: Story = {
@@ -170,9 +223,31 @@ export const Interactive: Story = {
   },
 };
 
+/** Попап с роллерами и раздельными триггерами месяц/год */
+export const WithRollersAndSplitHeader: Story = {
+  render: () => {
+    const [value, setValue] = useState('');
+
+    const handleChange = (newValue: string | DateTimeRange) => {
+      setValue(typeof newValue === 'string' ? newValue : '');
+    };
+
+    return (
+      <DateInput
+        label="Дата (роллеры + месяц/год отдельно)"
+        value={value}
+        onChange={handleChange}
+        showDateRollers
+        calendarMonthYearLayout="split"
+        placeholder="Откройте календарь по иконке"
+      />
+    );
+  },
+};
+
 export const RangeInteractive: Story = {
   render: () => {
-    const [range, setRange] = useState<DateTimeRange>({ start: '', end: '' });
+    const [range, setRange] = useState({ start: '', end: '' });
 
     const handleChange = (newValue: string | DateTimeRange) => {
       if (typeof newValue === 'object') {
@@ -275,7 +350,7 @@ export const FormExample: Story = {
       endDate: '',
       eventDate: '',
     });
-    const [errors, setErrors] = useState<Record<string, string>>({});
+    const [errors, setErrors] = useState({} as Record<string, string>);
 
     const handleSubmit = () => {
       const newErrors: Record<string, string> = {};
@@ -304,27 +379,27 @@ export const FormExample: Story = {
           <DateInput
             label="Дата начала"
             value={formData.startDate}
-            onChange={value => {
-              setFormData(prev => ({ ...prev, startDate: value as string }));
-              setErrors(prev => ({ ...prev, startDate: '' }));
+            onChange={(value) => {
+              setFormData((prev) => ({ ...prev, startDate: value as string }));
+              setErrors((prev) => ({ ...prev, startDate: '' }));
             }}
             error={errors.startDate}
           />
           <DateInput
             label="Дата окончания"
             value={formData.endDate}
-            onChange={value => {
-              setFormData(prev => ({ ...prev, endDate: value as string }));
-              setErrors(prev => ({ ...prev, endDate: '' }));
+            onChange={(value) => {
+              setFormData((prev) => ({ ...prev, endDate: value as string }));
+              setErrors((prev) => ({ ...prev, endDate: '' }));
             }}
             error={errors.endDate}
           />
           <DateInput
             label="Дата события"
             value={formData.eventDate}
-            onChange={value => {
-              setFormData(prev => ({ ...prev, eventDate: value as string }));
-              setErrors(prev => ({ ...prev, eventDate: '' }));
+            onChange={(value) => {
+              setFormData((prev) => ({ ...prev, eventDate: value as string }));
+              setErrors((prev) => ({ ...prev, eventDate: '' }));
             }}
             error={errors.eventDate}
           />
@@ -417,7 +492,7 @@ export const TextAlignComparison: Story = {
           placeholder="Выберите дату"
           textAlign="left"
           value={leftDate}
-          onChange={value => setLeftDate(value as string)}
+          onChange={(value) => setLeftDate(value as string)}
         />
 
         <DateInput
@@ -425,7 +500,7 @@ export const TextAlignComparison: Story = {
           placeholder="Выберите дату"
           textAlign="center"
           value={centerDate}
-          onChange={value => setCenterDate(value as string)}
+          onChange={(value) => setCenterDate(value as string)}
         />
 
         <DateInput
@@ -433,7 +508,7 @@ export const TextAlignComparison: Story = {
           placeholder="Выберите дату"
           textAlign="right"
           value={rightDate}
-          onChange={value => setRightDate(value as string)}
+          onChange={(value) => setRightDate(value as string)}
         />
       </div>
     );
@@ -451,15 +526,15 @@ export const TextAlignComparison: Story = {
 
 export const RangeTextAlignComparison: Story = {
   render: () => {
-    const [leftRange, setLeftRange] = useState<DateTimeRange>({
+    const [leftRange, setLeftRange] = useState({
       start: '2024-01-01',
       end: '2024-01-31',
     });
-    const [centerRange, setCenterRange] = useState<DateTimeRange>({
+    const [centerRange, setCenterRange] = useState({
       start: '2024-01-01',
       end: '2024-01-31',
     });
-    const [rightRange, setRightRange] = useState<DateTimeRange>({
+    const [rightRange, setRightRange] = useState({
       start: '2024-01-01',
       end: '2024-01-31',
     });
@@ -479,7 +554,7 @@ export const RangeTextAlignComparison: Story = {
           placeholder="Выберите диапазон дат"
           textAlign="left"
           value={leftRange}
-          onChange={value => setLeftRange(value as DateTimeRange)}
+          onChange={(value) => setLeftRange(value as DateTimeRange)}
         />
 
         <DateInput
@@ -488,7 +563,7 @@ export const RangeTextAlignComparison: Story = {
           placeholder="Выберите диапазон дат"
           textAlign="center"
           value={centerRange}
-          onChange={value => setCenterRange(value as DateTimeRange)}
+          onChange={(value) => setCenterRange(value as DateTimeRange)}
         />
 
         <DateInput
@@ -497,7 +572,7 @@ export const RangeTextAlignComparison: Story = {
           placeholder="Выберите диапазон дат"
           textAlign="right"
           value={rightRange}
-          onChange={value => setRightRange(value as DateTimeRange)}
+          onChange={(value) => setRightRange(value as DateTimeRange)}
         />
       </div>
     );
@@ -516,7 +591,7 @@ export const WithClearIcon: Story = {
   args: {
     label: 'С иконкой очистки',
     placeholder: 'Выберите дату',
-    clearIcon: true,
+    displayClearIcon: true,
     value: '2024-01-15',
     onChange: fn(),
     onClearIconClick: () => console.log('Clear icon clicked'),
@@ -741,7 +816,7 @@ export const InputModeComparison: Story = {
           <h3>Обычный режим</h3>
           <DateInput
             value={regularValue}
-            onChange={value => setRegularValue(value as string)}
+            onChange={(value) => setRegularValue(value as string)}
             label="Обычный DateInput"
             placeholder="Введите дату"
             segmented={false}
@@ -751,7 +826,7 @@ export const InputModeComparison: Story = {
           <h3>Сегментированный режим</h3>
           <DateInput
             value={segmentedValue}
-            onChange={value => setSegmentedValue(value as string)}
+            onChange={(value) => setSegmentedValue(value as string)}
             label="Сегментированный DateInput"
             placeholder="Выберите дату"
             segmented={true}
@@ -830,7 +905,7 @@ export const SegmentedTextAlignDemo: Story = {
           placeholder="Выберите дату"
           textAlign="left"
           value={leftDate}
-          onChange={value => setLeftDate(value as string)}
+          onChange={(value) => setLeftDate(value as string)}
         />
 
         <DateInput
@@ -839,7 +914,7 @@ export const SegmentedTextAlignDemo: Story = {
           placeholder="Выберите дату"
           textAlign="center"
           value={centerDate}
-          onChange={value => setCenterDate(value as string)}
+          onChange={(value) => setCenterDate(value as string)}
         />
 
         <DateInput
@@ -848,7 +923,7 @@ export const SegmentedTextAlignDemo: Story = {
           placeholder="Выберите дату"
           textAlign="right"
           value={rightDate}
-          onChange={value => setRightDate(value as string)}
+          onChange={(value) => setRightDate(value as string)}
         />
       </div>
     );
@@ -886,7 +961,7 @@ export const DateFormatDemo: Story = {
           placeholder="Выберите дату"
           format="DD.MM.YYYY"
           value={date1}
-          onChange={value => setDate1(value as string)}
+          onChange={(value) => setDate1(value as string)}
         />
 
         <DateInput
@@ -894,7 +969,7 @@ export const DateFormatDemo: Story = {
           placeholder="Выберите дату"
           format="MM/DD/YYYY"
           value={date2}
-          onChange={value => setDate2(value as string)}
+          onChange={(value) => setDate2(value as string)}
         />
 
         <DateInput
@@ -902,7 +977,7 @@ export const DateFormatDemo: Story = {
           placeholder="Выберите дату"
           format="YYYY-MM-DD"
           value={date3}
-          onChange={value => setDate3(value as string)}
+          onChange={(value) => setDate3(value as string)}
         />
 
         <DateInput
@@ -910,7 +985,7 @@ export const DateFormatDemo: Story = {
           placeholder="Выберите дату"
           format="DD MMM YYYY"
           value={date4}
-          onChange={value => setDate4(value as string)}
+          onChange={(value) => setDate4(value as string)}
         />
 
         <DateInput
@@ -918,7 +993,7 @@ export const DateFormatDemo: Story = {
           placeholder="Выберите дату"
           format="dddd, DD MMMM YYYY"
           value={date5}
-          onChange={value => setDate5(value as string)}
+          onChange={(value) => setDate5(value as string)}
         />
       </div>
     );
@@ -955,7 +1030,7 @@ export const SegmentedDateFormatDemo: Story = {
           placeholder="Выберите дату"
           format="DD.MM.YYYY"
           value={date1}
-          onChange={value => setDate1(value as string)}
+          onChange={(value) => setDate1(value as string)}
         />
 
         <DateInput
@@ -964,7 +1039,7 @@ export const SegmentedDateFormatDemo: Story = {
           placeholder="Выберите дату"
           format="MM/DD/YYYY"
           value={date2}
-          onChange={value => setDate2(value as string)}
+          onChange={(value) => setDate2(value as string)}
         />
 
         <DateInput
@@ -973,7 +1048,7 @@ export const SegmentedDateFormatDemo: Story = {
           placeholder="Выберите дату"
           format="YYYY-MM-DD"
           value={date3}
-          onChange={value => setDate3(value as string)}
+          onChange={(value) => setDate3(value as string)}
         />
       </div>
     );
@@ -991,15 +1066,15 @@ export const SegmentedDateFormatDemo: Story = {
 
 export const RangeDateFormatDemo: Story = {
   render: () => {
-    const [range1, setRange1] = useState<DateTimeRange>({
+    const [range1, setRange1] = useState({
       start: '2024-01-01',
       end: '2024-01-15',
     });
-    const [range2, setRange2] = useState<DateTimeRange>({
+    const [range2, setRange2] = useState({
       start: '2024-01-01',
       end: '2024-01-15',
     });
-    const [range3, setRange3] = useState<DateTimeRange>({
+    const [range3, setRange3] = useState({
       start: '2024-01-01',
       end: '2024-01-15',
     });
@@ -1019,7 +1094,7 @@ export const RangeDateFormatDemo: Story = {
           placeholder="Выберите диапазон дат"
           format="DD.MM.YYYY"
           value={range1}
-          onChange={value => setRange1(value as DateTimeRange)}
+          onChange={(value) => setRange1(value as DateTimeRange)}
         />
 
         <DateInput
@@ -1028,7 +1103,7 @@ export const RangeDateFormatDemo: Story = {
           placeholder="Выберите диапазон дат"
           format="MM/DD/YYYY"
           value={range2}
-          onChange={value => setRange2(value as DateTimeRange)}
+          onChange={(value) => setRange2(value as DateTimeRange)}
         />
 
         <DateInput
@@ -1037,7 +1112,7 @@ export const RangeDateFormatDemo: Story = {
           placeholder="Выберите диапазон дат"
           format="YYYY-MM-DD"
           value={range3}
-          onChange={value => setRange3(value as DateTimeRange)}
+          onChange={(value) => setRange3(value as DateTimeRange)}
         />
       </div>
     );
@@ -1090,7 +1165,7 @@ export const CustomIconDemo: Story = {
           label="Стандартная иконка календаря"
           placeholder="Выберите дату"
           value={date1}
-          onChange={value => setDate1(value as string)}
+          onChange={(value) => setDate1(value as string)}
         />
 
         <DateInput
@@ -1098,7 +1173,7 @@ export const CustomIconDemo: Story = {
           placeholder="Выберите дату"
           icon={<Icon name="IconPlainerSun" size={IconSize.SM} />}
           value={date2}
-          onChange={value => setDate2(value as string)}
+          onChange={(value) => setDate2(value as string)}
         />
 
         <DateInput
@@ -1106,7 +1181,7 @@ export const CustomIconDemo: Story = {
           placeholder="Выберите дату"
           icon={<Icon name="IconPlainerMoon" size={IconSize.SM} />}
           value={date3}
-          onChange={value => setDate3(value as string)}
+          onChange={(value) => setDate3(value as string)}
         />
 
         <DateInput
@@ -1114,7 +1189,7 @@ export const CustomIconDemo: Story = {
           placeholder="Выберите дату"
           icon={<Icon name="IconPlainerPlus" size={IconSize.SM} />}
           value={date4}
-          onChange={value => setDate4(value as string)}
+          onChange={(value) => setDate4(value as string)}
         />
       </div>
     );
@@ -1150,7 +1225,7 @@ export const SegmentedCustomIconDemo: Story = {
           placeholder="Выберите дату"
           icon={<Icon name="IconPlainerSun" size={IconSize.SM} />}
           value={date1}
-          onChange={value => setDate1(value as string)}
+          onChange={(value) => setDate1(value as string)}
         />
 
         <DateInput
@@ -1159,7 +1234,7 @@ export const SegmentedCustomIconDemo: Story = {
           placeholder="Выберите дату"
           icon={<Icon name="IconPlainerMoon" size={IconSize.SM} />}
           value={date2}
-          onChange={value => setDate2(value as string)}
+          onChange={(value) => setDate2(value as string)}
         />
       </div>
     );
@@ -1176,11 +1251,11 @@ export const SegmentedCustomIconDemo: Story = {
 
 export const RangeCustomIconDemo: Story = {
   render: () => {
-    const [range1, setRange1] = useState<DateTimeRange>({
+    const [range1, setRange1] = useState({
       start: '2024-01-01',
       end: '2024-01-15',
     });
-    const [range2, setRange2] = useState<DateTimeRange>({
+    const [range2, setRange2] = useState({
       start: '2024-01-01',
       end: '2024-01-15',
     });
@@ -1200,7 +1275,7 @@ export const RangeCustomIconDemo: Story = {
           placeholder="Выберите диапазон дат"
           icon={<Icon name="IconPlainerSun" size={IconSize.SM} />}
           value={range1}
-          onChange={value => setRange1(value as DateTimeRange)}
+          onChange={(value) => setRange1(value as DateTimeRange)}
         />
 
         <DateInput
@@ -1209,7 +1284,7 @@ export const RangeCustomIconDemo: Story = {
           placeholder="Выберите диапазон дат"
           icon={<Icon name="IconPlainerMoon" size={IconSize.SM} />}
           value={range2}
-          onChange={value => setRange2(value as DateTimeRange)}
+          onChange={(value) => setRange2(value as DateTimeRange)}
         />
       </div>
     );
@@ -1243,7 +1318,7 @@ export const BottomPanelDemo: Story = {
           label="С информационной панелью"
           placeholder="Выберите дату"
           value={date1}
-          onChange={value => setDate1(value as string)}
+          onChange={(value) => setDate1(value as string)}
           renderBottomPanel={() => (
             <div style={{ fontSize: '12px', color: '#666' }}>
               💡 Выберите дату для планирования встречи
@@ -1255,7 +1330,7 @@ export const BottomPanelDemo: Story = {
           label="С кнопками действий"
           placeholder="Выберите дату"
           value={date2}
-          onChange={value => setDate2(value as string)}
+          onChange={(value) => setDate2(value as string)}
           renderBottomPanel={() => (
             <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
               <button
@@ -1292,7 +1367,7 @@ export const BottomPanelDemo: Story = {
           label="С кастомным контентом"
           placeholder="Выберите дату"
           value={date3}
-          onChange={value => setDate3(value as string)}
+          onChange={(value) => setDate3(value as string)}
           renderBottomPanel={() => (
             <div style={{ textAlign: 'center' }}>
               <div
@@ -1324,7 +1399,7 @@ export const BottomPanelDemo: Story = {
 
 export const RangeBottomPanelDemo: Story = {
   render: () => {
-    const [range, setRange] = useState<DateTimeRange>({
+    const [range, setRange] = useState({
       start: '2024-01-01',
       end: '2024-01-15',
     });
@@ -1343,7 +1418,7 @@ export const RangeBottomPanelDemo: Story = {
           label="Диапазон с информационной панелью"
           placeholder="Выберите диапазон дат"
           value={range}
-          onChange={value => setRange(value as DateTimeRange)}
+          onChange={(value) => setRange(value as DateTimeRange)}
           renderBottomPanel={() => (
             <div style={{ fontSize: '12px', color: '#666' }}>
               📊 Выберите период для анализа данных
@@ -1382,7 +1457,7 @@ export const TopPanelDemo: Story = {
           label="С информационной панелью сверху"
           placeholder="Выберите дату"
           value={date1}
-          onChange={value => setDate1(value as string)}
+          onChange={(value) => setDate1(value as string)}
           renderTopPanel={() => (
             <div style={{ fontSize: '12px', color: '#666' }}>
               📅 Выберите дату для планирования встречи
@@ -1394,7 +1469,7 @@ export const TopPanelDemo: Story = {
           label="С кнопками быстрого выбора сверху"
           placeholder="Выберите дату"
           value={date2}
-          onChange={value => setDate2(value as string)}
+          onChange={(value) => setDate2(value as string)}
           renderTopPanel={() => (
             <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
               <button
@@ -1431,7 +1506,7 @@ export const TopPanelDemo: Story = {
           label="С кастомным контентом сверху"
           placeholder="Выберите дату"
           value={date3}
-          onChange={value => setDate3(value as string)}
+          onChange={(value) => setDate3(value as string)}
           renderTopPanel={() => (
             <div style={{ textAlign: 'center' }}>
               <div
@@ -1478,7 +1553,7 @@ export const TopAndBottomPanelsDemo: Story = {
           label="С панелями сверху и снизу"
           placeholder="Выберите дату"
           value={date}
-          onChange={value => setDate(value as string)}
+          onChange={(value) => setDate(value as string)}
           renderTopPanel={() => (
             <div style={{ fontSize: '12px', color: '#666', textAlign: 'center' }}>
               📅 Выберите дату для планирования
@@ -1524,7 +1599,7 @@ export const StatusDemo: Story = {
           label="Обычное состояние"
           placeholder="Выберите дату"
           value={date1}
-          onChange={value => setDate1(value as string)}
+          onChange={(value) => setDate1(value as string)}
         />
 
         <DateInput
@@ -1532,7 +1607,7 @@ export const StatusDemo: Story = {
           placeholder="Выберите дату"
           status="error"
           value={date2}
-          onChange={value => setDate2(value as string)}
+          onChange={(value) => setDate2(value as string)}
         />
 
         <DateInput
@@ -1540,7 +1615,7 @@ export const StatusDemo: Story = {
           placeholder="Выберите дату"
           status="success"
           value={date3}
-          onChange={value => setDate3(value as string)}
+          onChange={(value) => setDate3(value as string)}
         />
 
         <DateInput
@@ -1548,7 +1623,7 @@ export const StatusDemo: Story = {
           placeholder="Выберите дату"
           status="warning"
           value={date4}
-          onChange={value => setDate4(value as string)}
+          onChange={(value) => setDate4(value as string)}
         />
       </div>
     );
@@ -1585,7 +1660,7 @@ export const SegmentedStatusDemo: Story = {
           placeholder="Выберите дату"
           status="error"
           value={date1}
-          onChange={value => setDate1(value as string)}
+          onChange={(value) => setDate1(value as string)}
         />
 
         <DateInput
@@ -1594,7 +1669,7 @@ export const SegmentedStatusDemo: Story = {
           placeholder="Выберите дату"
           status="success"
           value={date2}
-          onChange={value => setDate2(value as string)}
+          onChange={(value) => setDate2(value as string)}
         />
 
         <DateInput
@@ -1603,7 +1678,7 @@ export const SegmentedStatusDemo: Story = {
           placeholder="Выберите дату"
           status="warning"
           value={date3}
-          onChange={value => setDate3(value as string)}
+          onChange={(value) => setDate3(value as string)}
         />
       </div>
     );
@@ -1620,15 +1695,15 @@ export const SegmentedStatusDemo: Story = {
 
 export const RangeStatusDemo: Story = {
   render: () => {
-    const [range1, setRange1] = useState<DateTimeRange>({
+    const [range1, setRange1] = useState({
       start: '2024-01-01',
       end: '2024-01-15',
     });
-    const [range2, setRange2] = useState<DateTimeRange>({
+    const [range2, setRange2] = useState({
       start: '2024-01-01',
       end: '2024-01-15',
     });
-    const [range3, setRange3] = useState<DateTimeRange>({
+    const [range3, setRange3] = useState({
       start: '2024-01-01',
       end: '2024-01-15',
     });
@@ -1648,7 +1723,7 @@ export const RangeStatusDemo: Story = {
           placeholder="Выберите диапазон дат"
           status="error"
           value={range1}
-          onChange={value => setRange1(value as DateTimeRange)}
+          onChange={(value) => setRange1(value as DateTimeRange)}
         />
 
         <DateInput
@@ -1657,7 +1732,7 @@ export const RangeStatusDemo: Story = {
           placeholder="Выберите диапазон дат"
           status="success"
           value={range2}
-          onChange={value => setRange2(value as DateTimeRange)}
+          onChange={(value) => setRange2(value as DateTimeRange)}
         />
 
         <DateInput
@@ -1666,7 +1741,7 @@ export const RangeStatusDemo: Story = {
           placeholder="Выберите диапазон дат"
           status="warning"
           value={range3}
-          onChange={value => setRange3(value as DateTimeRange)}
+          onChange={(value) => setRange3(value as DateTimeRange)}
         />
       </div>
     );
@@ -1712,7 +1787,7 @@ export const LoadingDemo: Story = {
           placeholder="Выберите дату"
           isLoading={isLoading1}
           value={date1}
-          onChange={value => setDate1(value as string)}
+          onChange={(value) => setDate1(value as string)}
         />
 
         <DateInput
@@ -1720,7 +1795,7 @@ export const LoadingDemo: Story = {
           placeholder="Выберите дату"
           isLoading={isLoading2}
           value={date2}
-          onChange={value => setDate2(value as string)}
+          onChange={(value) => setDate2(value as string)}
         />
 
         <DateInput
@@ -1728,7 +1803,7 @@ export const LoadingDemo: Story = {
           placeholder="Выберите дату"
           isLoading={isLoading3}
           value={date3}
-          onChange={value => setDate3(value as string)}
+          onChange={(value) => setDate3(value as string)}
         />
 
         <button
@@ -1788,7 +1863,7 @@ export const SkeletonDemo: Story = {
           placeholder="Выберите дату"
           skeleton={skeleton1}
           value={date1}
-          onChange={value => setDate1(value as string)}
+          onChange={(value) => setDate1(value as string)}
         />
 
         <DateInput
@@ -1796,7 +1871,7 @@ export const SkeletonDemo: Story = {
           placeholder="Выберите дату"
           skeleton={skeleton2}
           value={date2}
-          onChange={value => setDate2(value as string)}
+          onChange={(value) => setDate2(value as string)}
         />
 
         <DateInput
@@ -1804,7 +1879,7 @@ export const SkeletonDemo: Story = {
           placeholder="Выберите дату"
           skeleton={skeleton3}
           value={date3}
-          onChange={value => setDate3(value as string)}
+          onChange={(value) => setDate3(value as string)}
         />
 
         <button
@@ -1852,14 +1927,14 @@ export const TooltipDemo: Story = {
           label="Обычный DateInput"
           placeholder="Без подсказки"
           value={date1}
-          onChange={value => setDate1(value as string)}
+          onChange={(value) => setDate1(value as string)}
         />
 
         <DateInput
           label="DateInput с тултипом (сверху)"
           placeholder="Наведите курсор для показа тултипа"
           value={date2}
-          onChange={value => setDate2(value as string)}
+          onChange={(value) => setDate2(value as string)}
           tooltip="Это тултип с дополнительной информацией о выборе даты"
           tooltipType="tooltip"
           tooltipPosition="top"
@@ -1869,7 +1944,7 @@ export const TooltipDemo: Story = {
           label="DateInput с хинтом (снизу)"
           placeholder="Наведите курсор для показа хинта"
           value={date3}
-          onChange={value => setDate3(value as string)}
+          onChange={(value) => setDate3(value as string)}
           tooltip="Это хинт с подробной информацией о формате даты и доступных действиях"
           tooltipType="hint"
           tooltipPosition="bottom"
@@ -1949,14 +2024,14 @@ export const CharacterCounterDemo: Story = {
           label="Обычный DateInput"
           placeholder="Без maxLength"
           value={date1}
-          onChange={value => setDate1(value as string)}
+          onChange={(value) => setDate1(value as string)}
         />
 
         <DateInput
           label="DateInput с счетчиком символов"
           placeholder="С maxLength и счетчиком"
           value={date2}
-          onChange={value => setDate2(value as string)}
+          onChange={(value) => setDate2(value as string)}
           maxLength={20}
           displayCharacterCounter={true}
         />
@@ -1965,7 +2040,7 @@ export const CharacterCounterDemo: Story = {
           label="DateInput без счетчика символов"
           placeholder="С maxLength но без счетчика"
           value={date3}
-          onChange={value => setDate3(value as string)}
+          onChange={(value) => setDate3(value as string)}
           maxLength={15}
           displayCharacterCounter={false}
         />
@@ -2012,7 +2087,7 @@ export const InputBehaviorDemo: Story = {
           label="Исправленный DateInput"
           placeholder="Попробуйте ввести дату по частям"
           value={date1}
-          onChange={value => setDate1(value as string)}
+          onChange={(value) => setDate1(value as string)}
           helperText="Теперь можно вводить дату по частям без автоматического заполнения"
         />
 
@@ -2020,7 +2095,7 @@ export const InputBehaviorDemo: Story = {
           label="DateInput с Backspace"
           placeholder="Попробуйте удалить символы Backspace"
           value={date2}
-          onChange={value => setDate2(value as string)}
+          onChange={(value) => setDate2(value as string)}
           helperText="Backspace и Delete теперь работают корректно"
         />
 
@@ -2081,14 +2156,14 @@ export const ExtraTextDemo: Story = {
           label="Обычный DateInput"
           placeholder="Без дополнительного текста"
           value={date1}
-          onChange={value => setDate1(value as string)}
+          onChange={(value) => setDate1(value as string)}
         />
 
         <DateInput
           label="DateInput с extraText"
           placeholder="С дополнительным текстом"
           value={date2}
-          onChange={value => setDate2(value as string)}
+          onChange={(value) => setDate2(value as string)}
           extraText="Это дополнительный текст для DateInput, который отображается ниже компонента"
         />
 
@@ -2134,7 +2209,7 @@ export const DisableCopyingDemo: Story = {
           label="Обычный DateInput"
           placeholder="Можно выделять и копировать дату"
           value={date1}
-          onChange={value => setDate1(value as string)}
+          onChange={(value) => setDate1(value as string)}
           helperText="Попробуйте выделить и скопировать дату (Ctrl+C)"
         />
 
@@ -2142,7 +2217,7 @@ export const DisableCopyingDemo: Story = {
           label="Защищенный DateInput"
           placeholder="Нельзя выделять и копировать дату"
           value={date2}
-          onChange={value => setDate2(value as string)}
+          onChange={(value) => setDate2(value as string)}
           disableCopying={true}
           helperText="Попробуйте выделить и скопировать дату - не получится!"
         />
@@ -2254,7 +2329,7 @@ export const HandleInputDemo: Story = {
           label="Дата с маской DD.MM.YYYY"
           placeholder="ДД.ММ.ГГГГ"
           value={date1}
-          onChange={value => setDate1(value as string)}
+          onChange={(value) => setDate1(value as string)}
           handleInput={dateMask}
         />
 
@@ -2262,7 +2337,7 @@ export const HandleInputDemo: Story = {
           label="Дата с автоматическими разделителями"
           placeholder="ДД.ММ.ГГГГ"
           value={date2}
-          onChange={value => setDate2(value as string)}
+          onChange={(value) => setDate2(value as string)}
           handleInput={autoDateMask}
         />
       </div>
@@ -2297,7 +2372,7 @@ export const IgnoreMaskCharactersDemo: Story = {
           label="Обычный счетчик символов"
           placeholder="Введите дату..."
           value={date1}
-          onChange={value => setDate1(value as string)}
+          onChange={(value) => setDate1(value as string)}
           maxLength={10}
           displayCharacterCounter={true}
           ignoreMaskCharacters={false}
@@ -2308,7 +2383,7 @@ export const IgnoreMaskCharactersDemo: Story = {
           label="Счетчик без символов маски"
           placeholder="Введите дату..."
           value={date2}
-          onChange={value => setDate2(value as string)}
+          onChange={(value) => setDate2(value as string)}
           maxLength={8}
           displayCharacterCounter={true}
           ignoreMaskCharacters={true}
@@ -2367,7 +2442,7 @@ export const CharacterCounterThresholdDemo: Story = {
           label="Всегда видимый счетчик (threshold=0)"
           placeholder="Введите дату..."
           value={date1}
-          onChange={value => setDate1(value as string)}
+          onChange={(value) => setDate1(value as string)}
           maxLength={10}
           displayCharacterCounter={true}
           characterCounterVisibilityThreshold={0}
@@ -2378,7 +2453,7 @@ export const CharacterCounterThresholdDemo: Story = {
           label="Счетчик при 80% заполнения (threshold=0.8)"
           placeholder="Введите дату..."
           value={date2}
-          onChange={value => setDate2(value as string)}
+          onChange={(value) => setDate2(value as string)}
           maxLength={10}
           displayCharacterCounter={true}
           characterCounterVisibilityThreshold={0.8}
@@ -2389,7 +2464,7 @@ export const CharacterCounterThresholdDemo: Story = {
           label="Скрытый счетчик (threshold=1)"
           placeholder="Введите дату..."
           value={date3}
-          onChange={value => setDate3(value as string)}
+          onChange={(value) => setDate3(value as string)}
           maxLength={10}
           displayCharacterCounter={true}
           characterCounterVisibilityThreshold={1}
@@ -2454,7 +2529,7 @@ export const AdditionalLabelDemo: Story = {
           additionalLabel="Укажите дату в формате ДД.ММ.ГГГГ"
           placeholder="Введите дату рождения..."
           value={date1}
-          onChange={value => setDate1(value as string)}
+          onChange={(value) => setDate1(value as string)}
           helperText="Используется для расчета возраста и персональных предложений"
         />
 
@@ -2463,7 +2538,7 @@ export const AdditionalLabelDemo: Story = {
           additionalLabel="Первый день отпускного периода"
           placeholder="Выберите дату..."
           value={date2}
-          onChange={value => setDate2(value as string)}
+          onChange={(value) => setDate2(value as string)}
           helperText="Отпуск должен начинаться не ранее чем через 2 недели"
         />
 
@@ -2472,7 +2547,7 @@ export const AdditionalLabelDemo: Story = {
           additionalLabel="Дата истечения срока действия"
           placeholder="Введите дату..."
           value={date3}
-          onChange={value => setDate3(value as string)}
+          onChange={(value) => setDate3(value as string)}
           helperText="Документ должен быть действителен на момент подачи заявления"
         />
 
@@ -2508,3 +2583,4 @@ export const AdditionalLabelDemo: Story = {
     },
   },
 };
+

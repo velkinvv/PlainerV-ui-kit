@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
@@ -6,7 +6,7 @@ import { Typography } from '../components/ui/Typography';
 import { useClickOutside } from './useClickOutside';
 
 const meta: Meta = {
-  title: 'Hooks/useClickOutside',
+  title: 'UI Kit/Hooks/useClickOutside',
   parameters: {
     docs: {
       description: {
@@ -479,3 +479,4 @@ export const AllExamples: Story = {
     </div>
   ),
 };
+

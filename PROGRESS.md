@@ -53,11 +53,14 @@
 ### 3. Базовые тесты ✅
 - ✅ Обновлен `jest.setup.js`
 - ✅ Тесты для Button
+- ✅ Тесты для ButtonGroup
 - ✅ Тесты для Input
 - ✅ Тесты для Modal
 - ✅ Тесты для Dropdown
+- ✅ Тесты для Pagination
 - ✅ Тесты для useModal
 - ✅ Тесты для useToast
+- ✅ Тесты для useSnackbar
 - ✅ Тесты для useDebounce
 - ✅ Тесты для useLocalStorage
 - ✅ Тесты для useClickOutside

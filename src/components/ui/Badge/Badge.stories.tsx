@@ -1,39 +1,45 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Badge } from './Badge';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
+import {
+  BadgeStoriesSizesRoot,
+  BadgeStoriesSizeFigure,
+  BadgeStoriesSizeCaption,
+  BadgeStoriesSizeTitle,
+  BadgeStoriesSizeProp,
+} from './BadgeStories.style';
 import { BadgeVariant } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
+import { DOC_BADGE } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Badge> = {
-  title: 'Components/Badge',
+  title: 'UI Kit/Data Display/Badge',
   component: Badge,
   parameters: {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Компонент бейджа для отображения статусов и меток согласно дизайн-системе',
+        component: DOC_BADGE,
       },
     },
   },
-  decorators: [
-    Story => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   argTypes: {
     variant: {
       control: { type: 'select' },
       options: [...Object.values(BadgeVariant)],
       description: 'Вариант стилизации бейджа',
+      table: {
+        type: { summary: 'BadgeVariant (см. список в control)' },
+      },
     },
     size: {
       control: { type: 'select' },
       options: [...Object.values(Size)],
       description: 'Размер бейджа',
+      table: {
+        type: { summary: 'Size: XS, SM, MD, LG, XL' },
+      },
     },
     isDot: {
       control: { type: 'boolean' },
@@ -49,7 +55,7 @@ const meta: Meta<typeof Badge> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Основные варианты согласно макету
+// Основные варианты
 export const Default: Story = {
   args: {
     children: '3',
@@ -113,7 +119,7 @@ export const Info: Story = {
   },
 };
 
-// Размеры согласно макету
+// Размеры
 export const Dot: Story = {
   args: {
     variant: BadgeVariant.DEFAULT,
@@ -125,7 +131,7 @@ export const Small: Story = {
   args: {
     children: '3',
     variant: BadgeVariant.DEFAULT,
-    size: Size.XS, // sm в макете
+    size: Size.XS,
   },
 };
 
@@ -133,7 +139,7 @@ export const Medium: Story = {
   args: {
     children: '3',
     variant: BadgeVariant.DEFAULT,
-    size: Size.SM, // md в макете
+    size: Size.SM,
   },
 };
 
@@ -141,7 +147,7 @@ export const Large: Story = {
   args: {
     children: '3',
     variant: BadgeVariant.DEFAULT,
-    size: Size.MD, // lg в макете
+    size: Size.MD,
   },
 };
 
@@ -149,7 +155,7 @@ export const ExtraLarge: Story = {
   args: {
     children: '3',
     variant: BadgeVariant.DEFAULT,
-    size: Size.LG, // xl в макете
+    size: Size.LG,
   },
 };
 
@@ -167,7 +173,7 @@ export const Clickable: Story = {
   },
 };
 
-// Демонстрация всех вариантов согласно макету
+// Демонстрация всех вариантов
 export const AllVariants: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
@@ -188,23 +194,34 @@ export const AllVariants: Story = {
 };
 
 export const AllSizes: Story = {
-  render: () => (
-    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-      <Badge variant={BadgeVariant.DEFAULT} isDot={true} />
-      <Badge variant={BadgeVariant.DEFAULT} size={Size.XS}>
-        3
-      </Badge>
-      <Badge variant={BadgeVariant.DEFAULT} size={Size.SM}>
-        3
-      </Badge>
-      <Badge variant={BadgeVariant.DEFAULT} size={Size.MD}>
-        3
-      </Badge>
-      <Badge variant={BadgeVariant.DEFAULT} size={Size.LG}>
-        3
-      </Badge>
-    </div>
-  ),
+  name: 'Все размеры',
+  render: () => {
+    const textSizes = [Size.XS, Size.SM, Size.MD, Size.LG, Size.XL] as const;
+
+    return (
+      <BadgeStoriesSizesRoot aria-label="Размеры Badge: точка и перечисление Size">
+        <BadgeStoriesSizeFigure>
+          <BadgeStoriesSizeCaption>
+            <BadgeStoriesSizeTitle>Точка</BadgeStoriesSizeTitle>
+            <BadgeStoriesSizeProp>isDot</BadgeStoriesSizeProp>
+          </BadgeStoriesSizeCaption>
+          <Badge variant={BadgeVariant.DEFAULT} isDot />
+        </BadgeStoriesSizeFigure>
+
+        {textSizes.map((badgeSize) => (
+          <BadgeStoriesSizeFigure key={badgeSize}>
+            <BadgeStoriesSizeCaption>
+              <BadgeStoriesSizeTitle>{badgeSize}</BadgeStoriesSizeTitle>
+              <BadgeStoriesSizeProp>{`size={Size.${badgeSize}}`}</BadgeStoriesSizeProp>
+            </BadgeStoriesSizeCaption>
+            <Badge variant={BadgeVariant.DEFAULT} size={badgeSize}>
+              3
+            </Badge>
+          </BadgeStoriesSizeFigure>
+        ))}
+      </BadgeStoriesSizesRoot>
+    );
+  },
   parameters: {
     layout: 'padded',
   },
@@ -258,3 +275,4 @@ export const NumberLimiting: Story = {
     layout: 'padded',
   },
 };
+

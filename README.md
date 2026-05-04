@@ -76,25 +76,54 @@ function MyComponent() {
 ### Основные UI компоненты
 
 - **Button** - Кнопки с различными вариантами и состояниями
+- **ButtonGroup** - Группа `Button` / `IconButton` (`orientation`, `attached`, `fullWidth`, `aria-label`)
+- **Link** - Ссылка `mode="text"` (стилизованный `<a>`) или `mode="button"` (тот же `Button` с `href`)
 - **Input** - Поля ввода с валидацией и различными типами
+- **TextArea** - Многострочное поле ввода (состояния, подсказки, счётчик при `maxLength`, `Form`)
+- **FileInput** - Выбор файла (скрытый `input[type=file]`, триггер, подпись, очистка, `Form`)
 - **Card** - Карточки для контента
 - **Modal** - Модальные окна
+- **Drawer** - Выдвижная панель (портал, оверлей как у `Modal`, `placement`, фокус-ловушка)
+- **Sheet** - Панель-лист как `Drawer`, по умолчанию снизу (`placement="bottom"`), `safe-area` для нижнего края
 - **Icon** - Иконки (Lucide React + Plainer иконки)
 - **ThemeToggle** - Переключатель темы
 
 ### Формы
 
-- **Form** - Компоненты для работы с формами
+- **Form** - Обёртка `<form>` и контекст для `Input` / `TextArea` / `FileInput` / `Select` (атрибут `form` у полей)
 - **Checkbox** - Чекбоксы
+- **Switch** - Переключатель (трек + бегунок, подпись, ошибка)
 - **Radio** - Радио кнопки
 - **DateInput** - Поля ввода даты
+- **Calendar** — сетка месяца (локаль `locale`, `weekStartsOn`, `minDate` / `maxDate`, выпадающий месяц/год на `Dropdown`, режимы `headerMode`, контроль `value` / `visibleMonth`)
 - **TimeInput** - Поля ввода времени
+- **Select** — `mode="select"`: панель как у `Dropdown` (поиск, мультивыбор) + скрытый `select` для форм; `mode="native"` — нативный список
 
 ### Навигация
 
 - **Sidebar** - Боковая панель навигации
 - **Tabs** - Вкладки
+- **Breadcrumb** - «Хлебные крошки» (`nav` + `ol`, `aria-current`, разделитель, `Size`)
+- **Stepper** - Шаги навигации по макету: `variant="compact"` (кольцо «N/M», заголовок, подзаголовок, `onBack`) или `variant="linear"` (кружки, подписи «Шаг N», соединители); `appearance` / тема, `fullWidth`
+- **Pagination** - Номера страниц с разрывами «…», стрелки назад/вперёд, контролируемый и неконтролируемый режимы (`totalPages`, `page` / `defaultPage`, `onPageChange`, `siblingCount`, `showPrevNext`, `size`)
+- **Menu** — вертикальная навигация (`Menu` + `MenuItem`), бейдж, collapsed; для панели инструментов поверх холста — **FloatingMenu**
+- **FloatingMenu** — плавающая панель инструментов внизу/по краю экрана (`FloatingMenuPlacement`), перетаскивание (`draggable`, `dragSource`, `DragHandle`), группы `FloatingMenu.Group` (`variant: inset`), разделитель `Divider`, пункт `GroupItem` (иконка, `active`, `tooltip`, вложенное `Menu` через `dropdownContent`, открытие по `dropdownTrigger`: click | hover)
 - **Dropdown** - Выпадающие меню
+
+```tsx
+import { ThemeProvider, Pagination } from '@velkinvv/plainerv';
+
+<ThemeProvider>
+  <Pagination
+    totalPages={24}
+    page={currentPage}
+    onPageChange={setCurrentPage}
+    siblingCount={1}
+    showPrevNext
+    ariaLabel="Страницы списка"
+  />
+</ThemeProvider>
+```
 
 ### Отображение данных
 
@@ -108,7 +137,33 @@ function MyComponent() {
 
 - **Tooltip** - Подсказки
 - **Hint** - Расширенные подсказки
+- **Toast** + **ToastProvider** / **useToast** - Стек уведомлений (портал в `body`, типы success/error/warning/info)
+- **Snackbar** + **SnackbarProvider** / **useSnackbar** - Компактные полосы внизу экрана, опциональное действие и таймер (портал в `body`)
 - **Modal** - Модальные окна
+- **Drawer** - Выдвижная панель (оверлей, Escape, стороны `left` | `right` | `top` | `bottom`)
+- **Sheet** - Те же пропсы, что у `Drawer`; дефолт — нижний лист и высота `min(50vh, 560px)`
+
+#### Toast и Snackbar в приложении
+
+Оба стека рендерятся в `document.body`. Нужны **`ThemeProvider`** (тема для styled-компонентов) и провайдер уведомлений. Их удобно вложить в корень; порядок вложенности произвольный, если оба провайдера оборачивают одно и то же дерево.
+
+```tsx
+import { ThemeProvider, ToastProvider, SnackbarProvider } from '@velkinvv/plainerv';
+
+function Root() {
+  return (
+    <ThemeProvider>
+      <ToastProvider placement="top-right">
+        <SnackbarProvider placement="bottom-center">
+          <App />
+        </SnackbarProvider>
+      </ToastProvider>
+    </ThemeProvider>
+  );
+}
+```
+
+**Storybook:** `Hooks/useToast`, `Hooks/useSnackbar`, `Components/Feedback/Toast`, `Components/Feedback/Snackbar`, `Components/Navigation/Pagination`, `Components/Navigation/FloatingMenu`, `Components/Buttons/ButtonGroup`.
 - **Accordion** - Аккордеоны
 
 ## 🎨 Иконки

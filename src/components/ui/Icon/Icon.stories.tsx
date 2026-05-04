@@ -1,15 +1,15 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Icon } from './Icon';
 import * as PlainerIconsModule from '../../../icons/plainer';
 import * as IconExIconsModule from '../../../icons/iconex';
 import * as PhosphorIconsModule from '../../../icons/phosphor/regular';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { IconSize } from '../../../types/sizes';
 import { Hint } from '../Hint/Hint';
 import { sizeMap } from '../../../handlers/iconHandlers';
 import type { IconVariant } from '../../../types/ui';
 import type { IconName } from '../../../icons';
+import { DOC_ICON } from '@/components/ui/storyDocs/uiKitDocs';
 
 // Функция для получения реально существующих иконок
 const getExistingIcons = () => {
@@ -53,23 +53,16 @@ const getIconVariant = (name: string): IconVariant => {
 };
 
 const meta: Meta<typeof Icon> = {
-  title: ' Components/Icon',
+  title: 'UI Kit/Data Display/Icon',
   component: Icon,
   parameters: {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Компонент иконки с поддержкой библиотек Plainer, IconEx и Phosphor',
+        component: DOC_ICON,
       },
     },
   },
-  decorators: [
-    Story => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   argTypes: {
     name: {
@@ -487,6 +480,7 @@ export const PlainerIcons: Story = {
       'IconPlainerArrowRight',
       'IconPlainerArrowLeft',
       'IconPlainerArrowDown',
+      'IconPlainerChevronDown',
       'IconPlainerDollar',
       'IconPlainerPercent',
       'IconPlainerSun',
@@ -603,7 +597,6 @@ export const IconExIcons: Story = {
       'IconExEdit1',
       'IconExEdit2',
       'IconExEye',
-      'IconExFigma',
       'IconExFilter',
       'IconExFilter2',
       'IconExFire',
@@ -963,3 +956,4 @@ export const IconColors: Story = {
     </div>
   ),
 };
+

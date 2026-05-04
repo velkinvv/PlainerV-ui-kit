@@ -1,12 +1,31 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
-import { Button } from '../components/ui/buttons/Button';
 import { Badge } from '../components/ui/Badge';
+import {
+  SectionDescription,
+  HandlersGrid,
+  HandlerCard,
+  HandlerCardHeader,
+  HandlerFeaturesList,
+  HandlerFeatureListItem,
+  PrinciplesBox,
+  ExamplesList,
+  ExampleCard,
+  ExampleHeader,
+  MutedDescriptionText,
+  CodeBlock,
+  CodePre,
+  IntegrationStepsList,
+  IntegrationStepCard,
+  IntegrationStepHeader,
+  StepBadge,
+  AllExamplesWrapper,
+} from './Handlers.stories.style';
 
 const meta: Meta = {
-  title: 'Handlers/Overview',
+  title: 'UI Kit/Utils/Handlers/Overview',
   parameters: {
     docs: {
       description: {
@@ -112,79 +131,70 @@ const HandlersOverview = () => {
         Обзор хендлеров
       </Typography>
 
-      <div style={{ marginBottom: '24px' }}>
+      <SectionDescription>
         <Typography variant="body1" marginBottom="md">
           Хендлеры предоставляют утилитарные функции для работы с различными типами данных и
           операциями.
         </Typography>
-      </div>
+      </SectionDescription>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '16px',
-          marginBottom: '24px',
-        }}
-      >
+      <HandlersGrid>
         {handlers.map((handler, index) => (
-          <div
+          <HandlerCard
             key={index}
-            style={{
-              padding: '20px',
-              backgroundColor: handler.color,
-              border: `2px solid ${handler.borderColor}`,
-              borderRadius: '12px',
-            }}
+            $backgroundColor={handler.color}
+            $borderColor={handler.borderColor}
           >
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
-              <Typography variant="h4" style={{ marginRight: '12px' }}>
+            <HandlerCardHeader>
+              <Typography variant="h4" marginRight="sm">
                 {handler.icon}
               </Typography>
               <Typography variant="h4">{handler.name}</Typography>
-            </div>
+            </HandlerCardHeader>
 
-            <Typography variant="body1" marginBottom="md" style={{ color: '#666' }}>
-              {handler.description}
-            </Typography>
+            <MutedDescriptionText>
+              <Typography variant="body1" marginBottom="md">
+                {handler.description}
+              </Typography>
+            </MutedDescriptionText>
 
-            <Typography variant="body2" marginBottom="sm" style={{ fontWeight: 'bold' }}>
+            <Typography variant="body2" marginBottom="sm" fontWeight="bold">
               Основные возможности:
             </Typography>
 
-            <ul style={{ margin: 0, paddingLeft: '20px' }}>
+            <HandlerFeaturesList>
               {handler.features.map((feature, featureIndex) => (
-                <li key={featureIndex} style={{ marginBottom: '4px' }}>
+                <HandlerFeatureListItem key={featureIndex}>
                   <Typography variant="body2">{feature}</Typography>
-                </li>
+                </HandlerFeatureListItem>
               ))}
-            </ul>
-          </div>
+            </HandlerFeaturesList>
+          </HandlerCard>
         ))}
-      </div>
+      </HandlersGrid>
 
-      <div style={{ padding: '16px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <PrinciplesBox>
         <Typography variant="body1" marginBottom="sm">
           <strong>Общие принципы:</strong>
         </Typography>
-        <ul style={{ margin: 0, paddingLeft: '20px' }}>
-          <li style={{ marginBottom: '4px' }}>
+        <HandlerFeaturesList>
+          <HandlerFeatureListItem>
             <Typography variant="body2">Единообразный API для всех хендлеров</Typography>
-          </li>
-          <li style={{ marginBottom: '4px' }}>
+          </HandlerFeatureListItem>
+          <HandlerFeatureListItem>
             <Typography variant="body2">Поддержка различных форматов данных</Typography>
-          </li>
-          <li style={{ marginBottom: '4px' }}>
+          </HandlerFeatureListItem>
+          <HandlerFeatureListItem>
             <Typography variant="body2">Валидация и обработка ошибок</Typography>
-          </li>
-          <li style={{ marginBottom: '4px' }}>
+          </HandlerFeatureListItem>
+          <HandlerFeatureListItem>
             <Typography variant="body2">TypeScript типизация</Typography>
-          </li>
+          </HandlerFeatureListItem>
           <li>
             <Typography variant="body2">Оптимизация производительности</Typography>
           </li>
-        </ul>
-      </div>
+        </HandlerFeaturesList>
+      </PrinciplesBox>
     </Card>
   );
 };
@@ -251,46 +261,30 @@ const MyComponent = () => {
         Примеры использования
       </Typography>
 
-      <div style={{ marginBottom: '24px' }}>
+      <SectionDescription>
         <Typography variant="body1" marginBottom="md">
           Практические примеры использования хендлеров в приложениях.
         </Typography>
-      </div>
+      </SectionDescription>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <ExamplesList>
         {examples.map((example, index) => (
-          <div
-            key={index}
-            style={{
-              padding: '20px',
-              backgroundColor: '#f8f9fa',
-              border: '1px solid #dee2e6',
-              borderRadius: '8px',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
-              <Typography variant="h5" marginRight="sm">
+          <ExampleCard key={index}>
+            <ExampleHeader>
+              <Typography variant="h5" marginBottom="xs">
                 {example.title}
               </Typography>
-              <Badge variant="outlined">{example.description}</Badge>
-            </div>
+              <MutedDescriptionText>
+                <Typography variant="body2">{example.description}</Typography>
+              </MutedDescriptionText>
+            </ExampleHeader>
 
-            <div
-              style={{
-                backgroundColor: '#2d3748',
-                color: '#e2e8f0',
-                padding: '16px',
-                borderRadius: '6px',
-                fontFamily: 'Monaco, Consolas, "Courier New", monospace',
-                fontSize: '14px',
-                overflow: 'auto',
-              }}
-            >
-              <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{example.code}</pre>
-            </div>
-          </div>
+            <CodeBlock>
+              <CodePre>{example.code}</CodePre>
+            </CodeBlock>
+          </ExampleCard>
         ))}
-      </div>
+      </ExamplesList>
     </Card>
   );
 };
@@ -303,13 +297,15 @@ const HandlersIntegrationGuide = () => {
       title: 'Импорт хендлеров',
       description: 'Импортируйте необходимые хендлеры в ваш компонент',
       code: `import { parseDate, formatDateForDisplay } from '@/handlers/dateHandlers';
-import { useModal, useToast } from '@/hooks';`,
+import { useModal, useToast } from '@/hooks';
+// useToast: в корне приложения оберните дерево в ThemeProvider + ToastProvider`,
     },
     {
       step: 2,
       title: 'Использование в компонентах',
       description: 'Используйте хендлеры в логике ваших компонентов',
-      code: `const MyComponent = () => {
+      code: `// Компонент должен рендериться внутри ToastProvider (и ThemeProvider)
+const MyComponent = () => {
   const { showToast } = useToast();
 
   const handleDateChange = (dateString: string) => {
@@ -360,60 +356,37 @@ const handleDateParse = (input: string): DateParseResult => {
         Руководство по интеграции
       </Typography>
 
-      <div style={{ marginBottom: '24px' }}>
+      <SectionDescription>
         <Typography variant="body1" marginBottom="md">
           Пошаговое руководство по интеграции хендлеров в ваши приложения.
         </Typography>
-      </div>
+      </SectionDescription>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <IntegrationStepsList>
         {integrationSteps.map((step, index) => (
-          <div
-            key={index}
-            style={{
-              padding: '20px',
-              backgroundColor: '#f8f9fa',
-              border: '1px solid #dee2e6',
-              borderRadius: '8px',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+          <IntegrationStepCard key={index}>
+            <IntegrationStepHeader>
               <Badge
                 variant="primary"
-                style={{
-                  marginRight: '12px',
-                  minWidth: '24px',
-                  height: '24px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
+                as={StepBadge}
               >
                 {step.step}
               </Badge>
               <Typography variant="h5">{step.title}</Typography>
-            </div>
+            </IntegrationStepHeader>
 
-            <Typography variant="body1" marginBottom="md" style={{ color: '#666' }}>
-              {step.description}
-            </Typography>
+            <MutedDescriptionText>
+              <Typography variant="body1" marginBottom="md">
+                {step.description}
+              </Typography>
+            </MutedDescriptionText>
 
-            <div
-              style={{
-                backgroundColor: '#2d3748',
-                color: '#e2e8f0',
-                padding: '16px',
-                borderRadius: '6px',
-                fontFamily: 'Monaco, Consolas, "Courier New", monospace',
-                fontSize: '14px',
-                overflow: 'auto',
-              }}
-            >
-              <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{step.code}</pre>
-            </div>
-          </div>
+            <CodeBlock>
+              <CodePre>{step.code}</CodePre>
+            </CodeBlock>
+          </IntegrationStepCard>
         ))}
-      </div>
+      </IntegrationStepsList>
     </Card>
   );
 };
@@ -432,10 +405,11 @@ export const IntegrationGuide: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <AllExamplesWrapper>
       <HandlersOverview />
       <HandlersUsageExamples />
       <HandlersIntegrationGuide />
-    </div>
+    </AllExamplesWrapper>
   ),
 };
+

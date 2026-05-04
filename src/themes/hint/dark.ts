@@ -105,7 +105,8 @@ export const darkHintTheme: HintTheme = {
   // Дополнительные настройки
   settings: {
     maxWidth: 300,
-    zIndex: 1000,
+    /** Согласовано с `ZIndexHandler('hint')`: над панелью `Dropdown` (~9999) */
+    zIndex: 11600,
     pointerEvents: 'auto',
     userSelect: 'none',
     whiteSpace: 'normal',

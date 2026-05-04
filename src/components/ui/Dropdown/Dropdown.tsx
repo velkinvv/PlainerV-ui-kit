@@ -10,6 +10,8 @@ import {
   type DropdownMenuGroup,
 } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
+import { getChevronIconSizeForField } from '../../../handlers/iconHandlers';
+import { Icon } from '../Icon/Icon';
 import {
   DropdownContainer,
   DropdownContent,
@@ -20,29 +22,29 @@ import {
   DropdownBottomPanel,
   DropdownSearchContainer,
   DropdownSearchInput,
-  DropdownGroupHeader,
-  DropdownGroupTitle,
-  DropdownGroupDescription,
 } from './Dropdown.style';
 import { DropdownMenu } from './DropdownMenu';
-import { DropdownMenuItem } from './DropdownMenuItem';
 import { Button } from '../buttons/Button/Button';
 import {
   calculateDropdownPosition,
   normalizeDropdownValue,
-  getMenuItemKey,
   handleClickOutsideEvent,
   findScrollableParents,
   removeScrollListeners,
   getFocusableElements,
   getFocusableElementIndex,
+  flattenDropdownDefinitions,
+  isDropdownGroup,
 } from './handlers';
-
-const isDropdownGroup = (
-  entry: DropdownMenuItemProps | DropdownMenuGroup,
-): entry is DropdownMenuGroup => {
-  return Array.isArray((entry as DropdownMenuGroup)?.items);
-};
+import {
+  DropdownMenuFromDefinitions,
+  type DropdownMenuFromDefinitionsProps,
+} from './DropdownMenuFromDefinitions';
+import { DefaultTriggerTag } from './DefaultTriggerTag';
+import {
+  defaultDropdownSearchMatches,
+  getDropdownItemSearchHaystackParts,
+} from '../../../handlers/dropdownSearchMatchHandlers';
 
 export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
   (
@@ -57,12 +59,20 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       value,
       isMenuOpen,
       onMenuOpenChange,
+      onMenuOpened,
+      onMenuClosed,
+      onMenuScroll,
+      onMenuLoadMore,
+      menuLoadMoreThresholdPx = 80,
+      menuHasMore,
+      menuIsLoadingMore,
       disabled = false,
       targetElement,
       className,
       size = Size.MD,
       variant = 'default',
       multiSelection = false,
+      showCheckbox,
       disableSelectedOptionHighlight = false,
       virtualScroll,
       onSelect,
@@ -71,6 +81,8 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       renderBottomPanel,
       disableAutoFocus = false,
       onClickOutside,
+      onFocus,
+      onBlur,
       menuWidth,
       menuMaxHeight,
       alignSelf,
@@ -83,7 +95,9 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       searchValue,
       defaultSearchValue = '',
       onSearch,
+      onSearchInputChange,
       searchFilter,
+      searchFormat,
       enableKeyboardNavigation = true,
       loadItems,
       onLoadItemsError,
@@ -91,6 +105,19 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       emptyMessage = 'Нет данных',
       renderErrorState,
       inline = false,
+      menuDensity = 'default',
+      triggerWrapClickToggle = true,
+      fullWidth = false,
+      openMenuIconProps,
+      defaultTriggerKind = 'button',
+      tagTriggerProps,
+      labelFromSelection = false,
+      tagTriggerShowChevron = true,
+      treeExpandable,
+      treeDefaultExpanded,
+      treeExpandedKeys,
+      onTreeExpandedKeysChange,
+      lookupTreeMenuItemByValue,
     },
     _ref,
   ) => {
@@ -103,7 +130,16 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
     const [shouldRender, setShouldRender] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const menuRef = useRef<HTMLDivElement>(null);
-    const defaultTriggerRef = useRef<HTMLButtonElement>(null);
+    /** Восстановление скролла после догрузки пунктов (элемент, который реально скроллился). */
+    const scrollRestoreRef = useRef<{
+      el: HTMLElement;
+      prevScrollHeight: number;
+      prevScrollTop: number;
+    } | null>(null);
+    /** Длина плоского списка при последнем вызове `onMenuLoadMore` (сброс при отходе от низа). */
+    const loadMoreLastFiredAtLengthRef = useRef(-1);
+    const defaultButtonTriggerRef = useRef<HTMLButtonElement | null>(null);
+    const defaultTagTriggerRef = useRef<HTMLElement | null>(null);
     const isSearchControlled = searchValue !== undefined;
     const [internalSearchValue, setInternalSearchValue] = useState(defaultSearchValue ?? '');
     const [asyncItems, setAsyncItems] = useState<DropdownMenuItemProps[] | null>(null);
@@ -167,9 +203,14 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
         if (!isControlled) {
           setInternalIsOpen(newIsOpen);
         }
+        if (newIsOpen) {
+          onMenuOpened?.();
+        } else {
+          onMenuClosed?.();
+        }
         onMenuOpenChange?.(newIsOpen);
       },
-      [isControlled, onMenuOpenChange],
+      [isControlled, onMenuOpenChange, onMenuOpened, onMenuClosed],
     );
 
     // Функция для вычисления позиции dropdown
@@ -341,11 +382,9 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
         });
       };
 
-      // Обрабатываем скролл window, document и body
       window.addEventListener('scroll', handleScroll, true);
       document.addEventListener('scroll', handleScroll, true);
 
-      // Также обрабатываем скролл всех прокручиваемых родительских элементов
       const scrollableElements = findScrollableParents(dropdownRef.current);
       scrollableElements.forEach(element => {
         if (element instanceof HTMLElement) {
@@ -354,7 +393,8 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       });
 
       return () => {
-        // Удаляем обработчики со всех элементов
+        window.removeEventListener('scroll', handleScroll, true);
+        document.removeEventListener('scroll', handleScroll, true);
         removeScrollListeners(scrollableElements, handleScroll);
       };
     }, [isOpen, calculatePosition]);
@@ -364,7 +404,10 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       if (disableAutoFocus || disabled || skeleton) return;
       if (trigger) return;
 
-      const element = defaultTriggerRef.current;
+      const element =
+        defaultTriggerKind === 'tag'
+          ? defaultTagTriggerRef.current
+          : defaultButtonTriggerRef.current;
       if (!element) return;
 
       const rect = element.getBoundingClientRect();
@@ -376,7 +419,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       }
 
       element.focus();
-    }, [disableAutoFocus, disabled, skeleton, trigger]);
+    }, [disableAutoFocus, disabled, skeleton, trigger, defaultTriggerKind]);
 
     const currentSearchValue = searchable
       ? isSearchControlled
@@ -389,9 +432,9 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
         if (!isSearchControlled) {
           setInternalSearchValue(value);
         }
-        onSearch?.(value);
+        onSearch?.(value, searchFormat);
       },
-      [isSearchControlled, onSearch],
+      [isSearchControlled, onSearch, searchFormat],
     );
 
     const handleRetryLoadItems = React.useCallback(() => {
@@ -428,6 +471,34 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
 
     const normalizedSearchQuery = currentSearchValue.trim().toLowerCase();
 
+    /** Список из `<DropdownMenuFromDefinitions definitions={...} />` — тот же источник, что и `items`, для поиска и догрузки. */
+    const definitionsFromMenuChild = React.useMemo(() => {
+      const nodes = React.Children.toArray(children);
+      for (const node of nodes) {
+        if (
+          React.isValidElement(node) &&
+          (node.type as React.ComponentType) === DropdownMenuFromDefinitions
+        ) {
+          return (node.props as DropdownMenuFromDefinitionsProps).definitions;
+        }
+      }
+      return undefined;
+    }, [children]);
+
+    /** Откуда берётся список: проп `items` / `asyncItems` или дочерний `DropdownMenuFromDefinitions`. */
+    const itemListSourceKind = React.useMemo<'props' | 'child' | 'none'>(() => {
+      if (items) {
+        return 'props';
+      }
+      if (asyncItems) {
+        return 'props';
+      }
+      if (definitionsFromMenuChild !== undefined) {
+        return 'child';
+      }
+      return 'none';
+    }, [items, asyncItems, definitionsFromMenuChild]);
+
     const resolvedDefinitions = React.useMemo<
       (DropdownMenuItemProps | DropdownMenuGroup)[] | null
     >(() => {
@@ -437,8 +508,11 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       if (asyncItems) {
         return [...asyncItems];
       }
+      if (definitionsFromMenuChild !== undefined) {
+        return definitionsFromMenuChild;
+      }
       return null;
-    }, [items, asyncItems]);
+    }, [items, asyncItems, definitionsFromMenuChild]);
 
     const doesItemMatchSearch = React.useCallback(
       (item: DropdownMenuItemProps) => {
@@ -446,11 +520,10 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
         if (searchFilter) {
           return searchFilter(currentSearchValue, item);
         }
-        const label = item.label?.toLowerCase() ?? '';
-        const description = item.description?.toLowerCase() ?? '';
-        return label.includes(normalizedSearchQuery) || description.includes(normalizedSearchQuery);
+        const parts = getDropdownItemSearchHaystackParts(item);
+        return defaultDropdownSearchMatches(currentSearchValue, searchFormat, parts);
       },
-      [searchable, normalizedSearchQuery, searchFilter, currentSearchValue],
+      [searchable, normalizedSearchQuery, searchFilter, currentSearchValue, searchFormat],
     );
 
     const filteredDefinitions = React.useMemo(() => {
@@ -471,99 +544,225 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       return next;
     }, [resolvedDefinitions, searchable, normalizedSearchQuery, doesItemMatchSearch]);
 
-    const menuFromItems = React.useMemo(() => {
-      const sourceDefinitions = filteredDefinitions ?? resolvedDefinitions;
-      if (!sourceDefinitions || sourceDefinitions.length === 0) {
+    /** Скролл списка (в т.ч. вложенного при virtual scroll) + опциональная догрузка у нижней границы. */
+    const handleMenuScrollCapture = React.useCallback(
+      (event: React.UIEvent<HTMLDivElement>) => {
+        const raw = event.target;
+        if (!(raw instanceof HTMLElement)) {
+          return;
+        }
+        if (raw.scrollHeight <= raw.clientHeight + 1) {
+          return;
+        }
+
+        onMenuScroll?.({
+          scrollTop: raw.scrollTop,
+          scrollHeight: raw.scrollHeight,
+          clientHeight: raw.clientHeight,
+        });
+
+        if (!onMenuLoadMore || menuHasMore === false || menuIsLoadingMore) {
+          return;
+        }
+
+        const threshold = menuLoadMoreThresholdPx ?? 80;
+        const distance = raw.scrollHeight - raw.scrollTop - raw.clientHeight;
+
+        if (distance > threshold * 3) {
+          loadMoreLastFiredAtLengthRef.current = -1;
+        }
+        if (distance >= threshold) {
+          return;
+        }
+
+        const definitionsList = filteredDefinitions ?? resolvedDefinitions;
+        if (!definitionsList?.length) {
+          return;
+        }
+        const flat = flattenDropdownDefinitions(definitionsList);
+        if (flat.length === 0) {
+          return;
+        }
+
+        if (loadMoreLastFiredAtLengthRef.current === flat.length) {
+          return;
+        }
+
+        const last = flat[flat.length - 1];
+        const anchorValue =
+          last.value !== undefined && last.value !== null ? String(last.value) : '';
+        if (!anchorValue) {
+          return;
+        }
+
+        loadMoreLastFiredAtLengthRef.current = flat.length;
+        scrollRestoreRef.current = {
+          el: raw,
+          prevScrollHeight: raw.scrollHeight,
+          prevScrollTop: raw.scrollTop,
+        };
+
+        void Promise.resolve(
+          onMenuLoadMore({
+            direction: 'end',
+            anchorFlatIndex: flat.length - 1,
+            anchorValue,
+            anchorId: last.id,
+            scrollTop: raw.scrollTop,
+            scrollHeight: raw.scrollHeight,
+            clientHeight: raw.clientHeight,
+          }),
+        ).catch(() => {
+          loadMoreLastFiredAtLengthRef.current = -1;
+          scrollRestoreRef.current = null;
+        });
+      },
+      [
+        onMenuScroll,
+        onMenuLoadMore,
+        menuHasMore,
+        menuIsLoadingMore,
+        menuLoadMoreThresholdPx,
+        filteredDefinitions,
+        resolvedDefinitions,
+      ],
+    );
+
+    useLayoutEffect(() => {
+      const pending = scrollRestoreRef.current;
+      if (!pending?.el.isConnected) {
+        scrollRestoreRef.current = null;
+        return;
+      }
+      const { el, prevScrollHeight, prevScrollTop } = pending;
+      const delta = el.scrollHeight - prevScrollHeight;
+      if (delta !== 0) {
+        el.scrollTop = prevScrollTop + delta;
+      }
+      scrollRestoreRef.current = null;
+    }, [filteredDefinitions, resolvedDefinitions, items, asyncItems, definitionsFromMenuChild]);
+
+    useEffect(() => {
+      if (!isOpen) {
+        loadMoreLastFiredAtLengthRef.current = -1;
+        scrollRestoreRef.current = null;
+      }
+    }, [isOpen]);
+
+    /** Сборка меню из `items` / `asyncItems`; при списке только из `children` рендер идёт через `cloneElement` ниже. */
+    const menuBodyFromItems = React.useMemo(() => {
+      if (itemListSourceKind !== 'props') {
         return null;
       }
-
-      const hasGroups = sourceDefinitions.some(isDropdownGroup);
-      const effectiveVirtualScroll = hasGroups ? undefined : virtualScroll;
-      const pinnedTop = sourceDefinitions.filter(
-        definition => isDropdownGroup(definition) && definition.pinned === 'top',
-      );
-      const pinnedBottom = sourceDefinitions.filter(
-        definition => isDropdownGroup(definition) && definition.pinned === 'bottom',
-      );
-      const middle = sourceDefinitions.filter(
-        definition => !isDropdownGroup(definition) || !definition.pinned,
-      );
-
-      let itemIndex = 0;
-      const renderMenuItem = (item: DropdownMenuItemProps) => {
-        const key = getMenuItemKey(item, itemIndex);
-        itemIndex += 1;
-        return <DropdownMenuItem key={key} {...item} />;
-      };
-
-      const renderGroup = (group: DropdownMenuGroup, key: string) => (
-        <React.Fragment key={key}>
-          {(group.title || group.description) && (
-            <DropdownGroupHeader>
-              {group.title && <DropdownGroupTitle>{group.title}</DropdownGroupTitle>}
-              {group.description && (
-                <DropdownGroupDescription>{group.description}</DropdownGroupDescription>
-              )}
-            </DropdownGroupHeader>
-          )}
-          {group.items.map(renderMenuItem)}
-        </React.Fragment>
-      );
-
-      const renderDefinitions = (
-        definitions: (DropdownMenuItemProps | DropdownMenuGroup)[],
-        section: string,
-      ) =>
-        definitions.map((definition, index) =>
-          isDropdownGroup(definition)
-            ? renderGroup(definition, `group-${section}-${index}`)
-            : renderMenuItem(definition),
-        );
-
+      const sourceDefinitions = filteredDefinitions ?? resolvedDefinitions;
+      if (!sourceDefinitions?.length) {
+        return null;
+      }
       return (
-        <DropdownMenu
+        <DropdownMenuFromDefinitions
+          definitions={sourceDefinitions}
+          onItemSelect={handleItemSelect}
           value={normalizedValue}
           onActivateItem={onActivateItem}
           multiSelection={multiSelection}
+          showCheckbox={showCheckbox}
           disableSelectedOptionHighlight={disableSelectedOptionHighlight}
-          virtualScroll={effectiveVirtualScroll}
+          virtualScroll={virtualScroll}
           size={size}
-        >
-          {renderDefinitions(pinnedTop, 'pinned-top')}
-          {renderDefinitions(middle, 'regular')}
-          {renderDefinitions(pinnedBottom, 'pinned-bottom')}
-        </DropdownMenu>
+          menuDensity={menuDensity}
+          treeExpandable={treeExpandable}
+          treeDefaultExpanded={treeDefaultExpanded}
+          treeExpandedKeys={treeExpandedKeys}
+          onTreeExpandedKeysChange={onTreeExpandedKeysChange}
+          lookupTreeMenuItemByValue={lookupTreeMenuItemByValue}
+        />
       );
     }, [
+      itemListSourceKind,
       filteredDefinitions,
       resolvedDefinitions,
+      handleItemSelect,
       normalizedValue,
       onActivateItem,
       multiSelection,
+      showCheckbox,
       disableSelectedOptionHighlight,
       virtualScroll,
       size,
+      menuDensity,
+      treeExpandable,
+      treeDefaultExpanded,
+      treeExpandedKeys,
+      onTreeExpandedKeysChange,
+      lookupTreeMenuItemByValue,
     ]);
 
-    const renderChildren = React.useMemo(() => {
-      const content = menuFromItems ?? children;
-      if (!content) return null;
+    const injectDropdownMenuShellProps = React.useCallback(
+      (
+        child: React.ReactElement<DropdownMenuProps | DropdownMenuFromDefinitionsProps>,
+      ): React.ReactElement => {
+        const isFromDefinitionsMenu =
+          (child.type as React.ComponentType) === DropdownMenuFromDefinitions;
+        return React.cloneElement(child, {
+          onItemSelect: handleItemSelect,
+          value: normalizedValue,
+          onActivateItem,
+          multiSelection,
+          showCheckbox,
+          disableSelectedOptionHighlight,
+          virtualScroll,
+          size,
+          menuDensity,
+          treeExpandable,
+          ...(isFromDefinitionsMenu ? { treeDefaultExpanded } : {}),
+          treeExpandedKeys,
+          onTreeExpandedKeysChange,
+          lookupTreeMenuItemByValue,
+        } as Record<string, unknown>);
+      },
+      [
+        handleItemSelect,
+        normalizedValue,
+        onActivateItem,
+        multiSelection,
+        showCheckbox,
+        disableSelectedOptionHighlight,
+        virtualScroll,
+        size,
+        menuDensity,
+        treeExpandable,
+        treeDefaultExpanded,
+        treeExpandedKeys,
+        onTreeExpandedKeysChange,
+        lookupTreeMenuItemByValue,
+      ],
+    );
 
-      return React.Children.map(content as React.ReactNode, child => {
+    const renderChildren = React.useMemo(() => {
+      if (menuBodyFromItems) {
+        return menuBodyFromItems;
+      }
+      if (!children) {
+        return null;
+      }
+      return React.Children.map(children as React.ReactNode, child => {
         if (!React.isValidElement(child)) {
           return child;
         }
 
         if ((child.type as React.ComponentType) === DropdownMenu) {
-          return React.cloneElement(child as React.ReactElement<DropdownMenuProps>, {
-            onItemSelect: handleItemSelect,
-            value: normalizedValue,
-            onActivateItem,
-            multiSelection,
-            disableSelectedOptionHighlight,
-            virtualScroll,
-            size,
-          });
+          return injectDropdownMenuShellProps(
+            child as React.ReactElement<DropdownMenuProps>,
+          ) as React.ReactElement<DropdownMenuProps>;
+        }
+
+        if ((child.type as React.ComponentType) === DropdownMenuFromDefinitions) {
+          const sourceDefinitions = filteredDefinitions ?? resolvedDefinitions ?? [];
+          const withFilteredDefinitions = React.cloneElement(
+            child as React.ReactElement<DropdownMenuFromDefinitionsProps>,
+            { definitions: sourceDefinitions },
+          );
+          return injectDropdownMenuShellProps(withFilteredDefinitions);
         }
 
         type GenericElementProps = Record<string, unknown> & {
@@ -580,17 +779,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
           },
         });
       });
-    }, [
-      children,
-      menuFromItems,
-      handleItemSelect,
-      normalizedValue,
-      onActivateItem,
-      multiSelection,
-      disableSelectedOptionHighlight,
-      virtualScroll,
-      size,
-    ]);
+    }, [menuBodyFromItems, children, handleItemSelect, injectDropdownMenuShellProps]);
 
     const isAsyncLoading = shouldUseAsyncItems && asyncStatus === 'loading';
     const isAsyncError = shouldUseAsyncItems && asyncStatus === 'error';
@@ -612,7 +801,17 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
     const emptyStateView = renderEmptyState?.() ?? (
       <DropdownEmptyState>{emptyMessage}</DropdownEmptyState>
     );
-    const hasDeclarativeItems = Boolean(items || asyncItems);
+    const hasDefinitionsMenuChild = React.useMemo(
+      () =>
+        React.Children.toArray(children).some(
+          node =>
+            React.isValidElement(node) &&
+            (node.type as React.ComponentType) === DropdownMenuFromDefinitions,
+        ),
+      [children],
+    );
+
+    const hasDeclarativeItems = Boolean(items || asyncItems || hasDefinitionsMenuChild);
 
     const dropdownBody = combinedLoading ? (
       <DropdownLoadingState role="status" aria-live="polite">
@@ -641,6 +840,10 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
         })
       : null;
 
+    /** В `inline` меню внутри контейнера — колбэки только на корне; в портале панель вне DOM-дерева триггера — дублируем на `DropdownContent`. */
+    const dropdownContentFocusProps: Pick<DropdownProps, 'onFocus' | 'onBlur'> | Record<string, never> =
+      inline ? {} : { onFocus, onBlur };
+
     const dropdownContent = (
       <DropdownContent
         ref={menuRef}
@@ -652,7 +855,10 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
         $menuMaxHeight={menuMaxHeight}
         $dropContainerCssMixin={dropContainerCssMixin}
         $inline={inline}
+        $menuDensity={menuDensity}
         style={dropContainerStyle}
+        onScrollCapture={onMenuScroll || onMenuLoadMore ? handleMenuScrollCapture : undefined}
+        {...dropdownContentFocusProps}
       >
         {topPanel && <DropdownTopPanel>{topPanel}</DropdownTopPanel>}
         {searchable && !combinedLoading && (
@@ -661,7 +867,10 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
               type="search"
               value={currentSearchValue}
               placeholder={searchPlaceholder}
-              onChange={event => handleSearchChange(event.target.value)}
+              onChange={(event) => {
+                handleSearchChange(event.target.value);
+                onSearchInputChange?.(event);
+              }}
             />
           </DropdownSearchContainer>
         )}
@@ -675,22 +884,48 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
         <DropdownContainer
           ref={dropdownRef}
           $alignSelf={alignSelf}
+          $fullWidth={fullWidth}
           className={clsx('ui-dropdown', className, { 'ui-dropdown--disabled': disabled })}
+          onFocus={onFocus}
+          onBlur={onBlur}
         >
           {trigger ? (
             <div
-              onClick={handleTriggerClick}
-              style={{ cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.6 : 1 }}
+              onClick={triggerWrapClickToggle ? handleTriggerClick : undefined}
+              style={{
+                cursor: disabled ? 'not-allowed' : 'pointer',
+                opacity: disabled ? 0.6 : 1,
+                ...(fullWidth ? { width: '100%', display: 'block', boxSizing: 'border-box' as const } : {}),
+              }}
             >
               {trigger}
             </div>
+          ) : defaultTriggerKind === 'tag' ? (
+            <DefaultTriggerTag
+              ref={defaultTagTriggerRef}
+              onToggle={handleTriggerClick}
+              buttonProps={buttonProps}
+              tagTriggerProps={tagTriggerProps}
+              skeleton={skeleton}
+              disabled={disabled}
+              fieldSize={size}
+              openMenuIconProps={openMenuIconProps}
+              items={items}
+              value={value}
+              multiSelection={multiSelection}
+              labelFromSelection={labelFromSelection}
+              tagTriggerShowChevron={tagTriggerShowChevron}
+              isMenuOpen={isOpen}
+            />
           ) : (
             <DefaultTriggerButton
-              ref={defaultTriggerRef}
+              ref={defaultButtonTriggerRef}
               onToggle={handleTriggerClick}
               buttonProps={buttonProps}
               skeleton={skeleton}
               disabled={disabled}
+              fieldSize={size}
+              openMenuIconProps={openMenuIconProps}
             />
           )}
           {shouldRender && inline && dropdownContent}
@@ -712,10 +947,16 @@ interface DefaultTriggerButtonProps {
   buttonProps?: DropdownProps['buttonProps'];
   skeleton?: boolean;
   disabled?: boolean;
+  /** Размер строки `Dropdown` — для шеврона рядом с дефолтной кнопкой */
+  fieldSize?: Size;
+  openMenuIconProps?: DropdownProps['openMenuIconProps'];
 }
 
 const DefaultTriggerButton = React.forwardRef<HTMLButtonElement, DefaultTriggerButtonProps>(
-  ({ onToggle, buttonProps, skeleton = false, disabled = false }, ref) => {
+  (
+    { onToggle, buttonProps, skeleton = false, disabled = false, fieldSize = Size.MD, openMenuIconProps },
+    ref,
+  ) => {
     const {
       children,
       onClick,
@@ -735,6 +976,15 @@ const DefaultTriggerButton = React.forwardRef<HTMLButtonElement, DefaultTriggerB
       onClick?.(event);
     };
 
+    const openMenuIcon = (
+      <Icon
+        name="IconPlainerChevronDown"
+        size={getChevronIconSizeForField(fieldSize)}
+        color="currentColor"
+        {...openMenuIconProps}
+      />
+    );
+
     return (
       <Button
         {...(restButtonProps as React.ComponentProps<typeof Button>)}
@@ -744,6 +994,7 @@ const DefaultTriggerButton = React.forwardRef<HTMLButtonElement, DefaultTriggerB
         size={size}
         fullWidth={fullWidth}
         disabled={isDisabled}
+        iconEnd={openMenuIcon}
       >
         {children ?? 'Открыть меню'}
       </Button>

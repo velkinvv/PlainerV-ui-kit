@@ -1,51 +1,75 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { AvatarGroup } from './AvatarGroup';
 import { AvatarGroupVariant, AvatarStatus } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
+import { DOC_AVATAR_GROUP } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof AvatarGroup> = {
-  title: 'Components/AvatarGroup',
+  title: 'UI Kit/Data Display/AvatarGroup',
   component: AvatarGroup,
   parameters: {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Компонент для группировки аватаров с тремя вариантами отображения: наложение (stack), в ряд (row) и в сетке (grid).',
+        component: DOC_AVATAR_GROUP,
       },
     },
   },
   argTypes: {
+    avatars: {
+      description: 'Список аватаров (пропсы Avatar без обёртки)',
+      control: false,
+      table: {
+        type: { summary: 'AvatarProps[]' },
+      },
+    },
     variant: {
       control: { type: 'select' },
       options: [AvatarGroupVariant.STACK, AvatarGroupVariant.ROW, AvatarGroupVariant.GRID],
       description: 'Вариант отображения группы аватаров',
+      table: {
+        type: { summary: 'stack (наложение), row (в ряд) или grid (сетка)' },
+      },
     },
     maxVisible: {
       control: { type: 'number', min: 1, max: 10 },
       description: 'Максимальное количество видимых аватаров',
+      table: { type: { summary: 'number (1–10)' } },
     },
     size: {
       control: { type: 'select' },
       options: [Size.SM, Size.MD, Size.LG],
       description: 'Размер аватаров',
+      table: {
+        type: { summary: 'Size (в сторис обычно SM, MD или LG)' },
+      },
     },
     spacing: {
       control: { type: 'number', min: 0, max: 20 },
       description: 'Отступ между аватарами (для row варианта)',
+      table: { type: { summary: 'number (px)' } },
     },
     showTooltip: {
       control: { type: 'boolean' },
       description: 'Показывать ли тултипы для аватаров',
+      table: { type: { summary: 'boolean' } },
     },
     onCounterClick: {
       action: 'onCounterClick',
       description: 'Обработчик клика по счетчику дополнительных аватаров',
+      table: {
+        type: {
+          summary: '(remainingAvatars: AvatarProps[]) => void',
+        },
+      },
     },
     onAvatarSelect: {
       action: 'onAvatarSelect',
       description: 'Колбек на выбор аватара (по клику или нажатию клавиши)',
+      table: {
+        type: { summary: '(avatarId: string) => void' },
+      },
     },
   },
   tags: ['autodocs'],
@@ -244,7 +268,7 @@ export const WithoutImages: Story = {
 // Интерактивные аватары
 export const Interactive: Story = {
   args: {
-    avatars: sampleAvatars.map(avatar => ({
+    avatars: sampleAvatars.map((avatar) => ({
       ...avatar,
       onClick: () => alert(`Клик по аватару: ${avatar.userName}`),
     })),
@@ -609,3 +633,4 @@ export const WithMessages: Story = {
     </div>
   ),
 };
+

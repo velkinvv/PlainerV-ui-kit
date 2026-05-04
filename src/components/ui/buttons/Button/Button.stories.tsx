@@ -1,18 +1,19 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Button } from './Button';
 import { Icon } from '../../Icon/Icon';
 import { Size, IconSize } from '../../../../types/sizes';
 import { ButtonVariant } from '../../../../types/ui';
+import { DOC_BUTTON } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Button> = {
-  title: 'Components/Buttons/Button',
+  title: 'UI Kit/Inputs/Button',
   component: Button,
   parameters: {
     layout: 'padded',
     docs: {
       description: {
-        component: 'Обычная кнопка с различными вариантами стилизации',
+        component: DOC_BUTTON,
       },
     },
   },
@@ -21,12 +22,19 @@ const meta: Meta<typeof Button> = {
     variant: {
       control: { type: 'select' },
       options: [...Object.values(ButtonVariant)],
-      description: 'Вариант стилизации кнопки',
+      description:
+        'Вариант стилизации; значения: `primary`, `secondary`, `outline`, `ghost`, `danger`, `success`, `warning`, `line`, `skeleton`',
+      table: {
+        type: { summary: 'ButtonVariant (см. список в control)' },
+      },
     },
     size: {
       control: { type: 'select' },
       options: [...Object.values(Size)],
-      description: 'Размер кнопки',
+      description: 'Размер кнопки; значения: `XS`, `SM`, `MD`, `LG`, `XL`',
+      table: {
+        type: { summary: 'Size: XS, SM, MD, LG, XL' },
+      },
     },
     loading: {
       control: { type: 'boolean' },
@@ -532,3 +540,4 @@ export const IconVariations: Story = {
     },
   },
 };
+

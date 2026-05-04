@@ -2,7 +2,13 @@ import type { DropdownTheme } from '../../../types/theme';
 import type { Size } from '../../../types/sizes';
 import { getDropdownItemStyles } from '../../../handlers/dropdownThemeHandlers';
 import type React from 'react';
-import type { DropdownPositioningMode, DropdownVirtualScrollConfig } from '../../../types/ui';
+import type {
+  DropdownMenuGroup,
+  DropdownMenuItemProps,
+  DropdownPositioningMode,
+  DropdownVirtualScrollConfig,
+} from '../../../types/ui';
+import { HintPosition, TooltipPosition } from '../../../types/ui';
 
 /**
  * Вычисляет высоту элемента dropdown из темы
@@ -264,42 +270,45 @@ export const calculateDropdownPosition = ({
   let x = triggerRect.left;
   let y = triggerRect.bottom + offset;
 
-  if (!menuRect || mode === 'default') {
-    return { x, y };
-  }
+  // Flip / горизонтальная подгонка только при известных размерах меню и не в режиме `default`
+  if (menuRect && mode !== 'default') {
+    const menuHeight = menuRect.height;
+    const menuWidth = menuRect.width;
+    const spaceBelow = viewportHeight - triggerRect.bottom;
+    const spaceAbove = triggerRect.top;
 
-  const menuHeight = menuRect.height;
-  const menuWidth = menuRect.width;
-  const spaceBelow = viewportHeight - triggerRect.bottom;
-  const spaceAbove = triggerRect.top;
+    const shouldFlipVertically =
+      menuHeight > 0 &&
+      spaceBelow < menuHeight + offset &&
+      (mode === 'autoFit' || spaceAbove >= menuHeight + offset || spaceAbove > spaceBelow);
 
-  const shouldFlipVertically =
-    menuHeight > 0 &&
-    spaceBelow < menuHeight + offset &&
-    (mode === 'autoFit' || spaceAbove >= menuHeight + offset || spaceAbove > spaceBelow);
-
-  if (shouldFlipVertically) {
-    y = clamp(triggerRect.top - menuHeight - offset, offset, viewportHeight - menuHeight - offset);
-  } else if (triggerRect.bottom + menuHeight + offset > viewportHeight) {
-    y = clamp(viewportHeight - menuHeight - offset, offset, triggerRect.bottom + offset);
-  }
-
-  if (mode === 'autoFit' && menuWidth > 0) {
-    const maxX = viewportWidth - menuWidth - offset;
-    if (triggerRect.left + menuWidth > viewportWidth) {
-      x = clamp(maxX, offset, triggerRect.right - menuWidth);
+    if (shouldFlipVertically) {
+      y = clamp(triggerRect.top - menuHeight - offset, offset, viewportHeight - menuHeight - offset);
+    } else if (triggerRect.bottom + menuHeight + offset > viewportHeight) {
+      y = clamp(viewportHeight - menuHeight - offset, offset, triggerRect.bottom + offset);
     }
-    if (x < offset) {
-      x = offset;
+
+    if (mode === 'autoFit' && menuWidth > 0) {
+      const maxX = viewportWidth - menuWidth - offset;
+      if (triggerRect.left + menuWidth > viewportWidth) {
+        x = clamp(maxX, offset, triggerRect.right - menuWidth);
+      }
+      if (x < offset) {
+        x = offset;
+      }
     }
   }
 
+  // Внутренний режим (`inline`): координаты должны быть относительно boundary, иначе `absolute`
+  // получает значения вьюпорта и меню «улетает» (как у Select с панелью внутри формы).
   if (boundaryElement) {
     const boundaryRect = boundaryElement.getBoundingClientRect();
     x -= boundaryRect.left;
     y -= boundaryRect.top;
-    x = clamp(x, 0, (boundaryElement.clientWidth || viewportWidth) - (menuRect?.width ?? 0));
-    y = clamp(y, 0, (boundaryElement.clientHeight || viewportHeight) - (menuRect?.height ?? 0));
+    if (menuRect && menuRect.width > 0 && menuRect.height > 0) {
+      x = clamp(x, 0, (boundaryElement.clientWidth || viewportWidth) - menuRect.width);
+      y = clamp(y, 0, (boundaryElement.clientHeight || viewportHeight) - menuRect.height);
+    }
   }
 
   return { x, y };
@@ -352,15 +361,21 @@ export const normalizeDropdownValue = <T>(
 
 /**
  * Создает ключ для элемента меню
- * @param item - элемент меню
+ * @param item - элемент меню (`value` и/или `label` для ключа; `label` нестрокового типа не используется как ключ)
  * @param index - индекс элемента
  * @returns ключ для React
  */
 export const getMenuItemKey = (
-  item: { value?: unknown; label?: string },
+  item: { value?: unknown; label?: React.ReactNode },
   index: number,
 ): React.Key => {
-  return (item.value as React.Key) ?? item.label ?? index;
+  if (item.value !== undefined && item.value !== null) {
+    return item.value as React.Key;
+  }
+  if (typeof item.label === 'string' || typeof item.label === 'number') {
+    return item.label;
+  }
+  return index;
 };
 
 /**
@@ -481,4 +496,54 @@ export const getVirtualScrollItemStyles = (topPosition: number): React.CSSProper
     left: 0,
     right: 0,
   };
+};
+
+/**
+ * Проверяет, что запись — группа с вложенными пунктами (`items`), а не одиночный пункт.
+ * @param entry - элемент списка определений меню
+ */
+export const isDropdownGroup = (
+  entry: DropdownMenuItemProps | DropdownMenuGroup,
+): entry is DropdownMenuGroup => {
+  return Array.isArray((entry as DropdownMenuGroup)?.items);
+};
+
+/**
+ * Разворачивает группы и одиночные пункты в один плоский список (порядок: как в дереве).
+ * @param definitions - Элементы меню или группы
+ * @returns Плоский массив пунктов
+ */
+export const flattenDropdownDefinitions = (
+  definitions: (DropdownMenuItemProps | DropdownMenuGroup)[] | null | undefined,
+): DropdownMenuItemProps[] => {
+  if (!definitions?.length) {
+    return [];
+  }
+  const out: DropdownMenuItemProps[] = [];
+  definitions.forEach((def) => {
+    if (isDropdownGroup(def)) {
+      def.items.forEach((item) => out.push(item));
+    } else {
+      out.push(def);
+    }
+  });
+  return out;
+};
+
+/**
+ * Позиция `Hint` для пункта меню: значения совпадают с `TooltipPosition` для сторон света.
+ * @param tooltipPosition - значение из пропса пункта (`top` | `bottom` | `left` | `right`)
+ */
+export const mapTooltipPositionToHintPlacement = (tooltipPosition: TooltipPosition): HintPosition => {
+  switch (tooltipPosition) {
+    case TooltipPosition.BOTTOM:
+      return HintPosition.BOTTOM;
+    case TooltipPosition.LEFT:
+      return HintPosition.LEFT;
+    case TooltipPosition.RIGHT:
+      return HintPosition.RIGHT;
+    case TooltipPosition.TOP:
+    default:
+      return HintPosition.TOP;
+  }
 };

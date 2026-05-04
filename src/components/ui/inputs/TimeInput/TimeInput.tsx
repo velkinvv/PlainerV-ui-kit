@@ -3,7 +3,12 @@ import styled from 'styled-components';
 import { clsx } from 'clsx';
 import type { TimeInputProps } from '../../../../types/ui';
 import { ButtonVariant, TooltipPosition } from '../../../../types/ui';
-import { BorderRadiusHandler, TransitionHandler } from '../../../../handlers/uiHandlers';
+import {
+  BorderRadiusHandler,
+  TransitionHandler,
+  InputSizeHandler,
+  InputPaddingHandler,
+} from '../../../../handlers/uiHandlers';
 import {
   parseTime,
   formatTimeForDisplay,
@@ -24,11 +29,13 @@ import {
   isTimeRangeStart,
   isTimeRangeEnd,
 } from '../../../../handlers/timeHandlers';
+import { getClearIconSizeForInputField } from '../../../../handlers/iconHandlers';
 import { Size, IconSize } from '../../../../types/sizes';
 import { Icon } from '../../Icon/Icon';
 import { Tooltip } from '../../Tooltip/Tooltip';
 import { Hint, HintPosition, HintVariant } from '../../Hint/Hint';
 import { Button } from '../../buttons/Button';
+import { SkeletonEffect } from '../shared';
 
 // Стилизованные компоненты
 const Container = styled.div.withConfig({
@@ -77,65 +84,6 @@ const LoadingSpinner = styled.div<{ size?: Size }>`
   }
 `;
 
-const SkeletonEffect = styled.div.withConfig({
-  shouldForwardProp: prop => !['size'].includes(prop),
-})<{ size?: Size }>`
-  position: relative;
-  display: flex;
-  align-items: center;
-  background: linear-gradient(
-    90deg,
-    ${({ theme }) => theme.colors.backgroundTertiary} 25%,
-    ${({ theme }) => theme.colors.borderSecondary} 50%,
-    ${({ theme }) => theme.colors.backgroundTertiary} 75%
-  );
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite;
-  border: 2px solid ${({ theme }) => theme.colors.borderSecondary};
-  border-radius: ${BorderRadiusHandler(Size.SM)};
-  transition: ${TransitionHandler()};
-  min-height: ${({ size }) => {
-    switch (size) {
-      case Size.SM:
-        return '32px';
-      case Size.LG:
-        return '48px';
-      default:
-        return '40px';
-    }
-  }};
-  padding: ${({ size }) => {
-    switch (size) {
-      case Size.SM:
-        return '4px 8px';
-      case Size.LG:
-        return '8px 16px';
-      default:
-        return '6px 12px';
-    }
-  }};
-  margin-top: ${({ size }) => {
-    switch (size) {
-      case Size.SM:
-        return '4px';
-      case Size.LG:
-        return '8px';
-      default:
-        return '6px';
-    }
-  }};
-  width: 100%;
-
-  @keyframes skeleton-loading {
-    0% {
-      background-position: 200% 0;
-    }
-    100% {
-      background-position: -200% 0;
-    }
-  }
-`;
-
 const InputWrapper = styled.div.withConfig({
   shouldForwardProp: prop => !['focused', 'error', 'status'].includes(prop),
 })<{
@@ -148,7 +96,7 @@ const InputWrapper = styled.div.withConfig({
   position: relative;
   display: flex;
   align-items: center;
-  border: 2px solid
+  border: 1px solid
     ${({ theme, focused, error, disabled, status }) => {
       if (disabled) return theme.colors.borderTertiary;
       if (error) return theme.colors.danger;
@@ -158,40 +106,14 @@ const InputWrapper = styled.div.withConfig({
       if (focused) return theme.colors.primary;
       return theme.colors.borderSecondary;
     }};
-  border-radius: ${BorderRadiusHandler(Size.SM)};
+  border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
   background: ${({ theme, disabled }) =>
     disabled ? theme.colors.backgroundTertiary : theme.colors.backgroundSecondary};
   transition: ${TransitionHandler()};
-  min-height: ${({ size }) => {
-    switch (size) {
-      case Size.SM:
-        return '32px';
-      case Size.LG:
-        return '48px';
-      default:
-        return '40px';
-    }
-  }};
-  padding: ${({ size }) => {
-    switch (size) {
-      case Size.SM:
-        return '4px 8px';
-      case Size.LG:
-        return '8px 16px';
-      default:
-        return '6px 12px';
-    }
-  }};
-  margin-top: ${({ size }) => {
-    switch (size) {
-      case Size.SM:
-        return '4px';
-      case Size.LG:
-        return '6px';
-      default:
-        return '5px';
-    }
-  }};
+  width: 100%;
+  box-sizing: border-box;
+  min-height: ${({ size, theme }) => InputSizeHandler(size ?? theme.defaultInputSize)};
+  padding: ${({ size, theme }) => InputPaddingHandler(size ?? theme.defaultInputSize)};
 
   &:hover {
     border-color: ${({ theme, focused, error, disabled, status }) => {
@@ -292,7 +214,7 @@ const _Label = styled.label.withConfig({
   font-size: ${({ size }) => {
     switch (size) {
       case Size.SM:
-        return '10px';
+        return '12px';
       case Size.LG:
         return '14px';
       default:
@@ -337,7 +259,7 @@ const LeftLabel = styled(AbsoluteLabel)`
   font-size: ${({ size }) => {
     switch (size) {
       case Size.SM:
-        return '10px';
+        return '12px';
       case Size.LG:
         return '14px';
       default:
@@ -435,10 +357,11 @@ const TimePickerPopup = styled.div.withConfig({
   position: absolute;
   top: 100%;
   left: 0;
-  right: 0;
+  width: max-content;
+  max-width: 100%;
   background: ${({ theme }) => theme.colors.backgroundSecondary};
   border: 2px solid ${({ theme }) => theme.colors.borderSecondary};
-  border-radius: ${BorderRadiusHandler(Size.SM)};
+  border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 1000;
   opacity: ${({ isOpen }) => (isOpen ? 1 : 0)};
@@ -446,8 +369,7 @@ const TimePickerPopup = styled.div.withConfig({
   transform: ${({ isOpen }) => (isOpen ? 'translateY(0)' : 'translateY(-10px)')};
   transition: ${TransitionHandler()};
   margin-top: 4px;
-  min-width: ${({ showSeconds }) => (showSeconds ? '300px' : '200px')};
-  max-width: ${({ showSeconds }) => (showSeconds ? '300px' : '200px')};
+  min-width: ${({ showSeconds }) => (showSeconds ? '300px' : '280px')};
 `;
 
 const _TimePickerHeader = styled.div`
@@ -500,6 +422,7 @@ const TimeColumnContent = styled.div`
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  padding: 4px 0;
 `;
 
 const TimeOption = styled.button.withConfig({
@@ -509,9 +432,13 @@ const TimeOption = styled.button.withConfig({
   isCurrent: boolean;
   isDisabled: boolean;
 }>`
-  width: 100%;
-  padding: 8px 12px;
-  border: none;
+  width: calc(100% - 16px);
+  min-height: 32px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
+  margin: 2px auto;
+  box-sizing: border-box;
   background: ${({ theme, isDisabled }) =>
     isDisabled ? theme.colors.backgroundTertiary : 'transparent'};
   color: ${({ theme, isSelected, isDisabled }) =>
@@ -523,18 +450,22 @@ const TimeOption = styled.button.withConfig({
   cursor: ${({ isDisabled }) => (isDisabled ? 'not-allowed' : 'pointer')};
   transition: ${TransitionHandler()};
   font-size: 14px;
+  font-weight: 500;
   text-align: center;
   position: relative;
   opacity: ${({ isDisabled }) => (isDisabled ? 0.5 : 1)};
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover:not(:disabled) {
     background: ${({ theme }) => theme.colors.backgroundTertiary};
+    border-color: ${({ theme }) => theme.colors.borderSecondary};
   }
 
-  &:focus {
-    outline: none;
-    background: ${({ theme, isDisabled }) =>
-      isDisabled ? theme.colors.backgroundTertiary : theme.colors.backgroundTertiary};
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.primary};
+    outline-offset: 1px;
   }
 
   ${({ isSelected, theme, isDisabled }) =>
@@ -542,6 +473,7 @@ const TimeOption = styled.button.withConfig({
     !isDisabled &&
     `
     background: ${theme.colors.primary} !important;
+    border-color: ${theme.colors.primary} !important;
     color: ${theme.colors.backgroundSecondary} !important;
   `}
 
@@ -592,13 +524,18 @@ const RangePickerContainer = styled.div.withConfig({
   display: flex;
   flex-direction: column;
   flex: 1;
-  border: 2px solid
-    ${({ theme, isActive }) => (isActive ? theme.colors.primary : theme.colors.border)};
-  border-radius: ${BorderRadiusHandler(Size.SM)};
+  border: 1px solid
+    ${({ theme, isActive }) =>
+      isActive
+        ? (theme.buttons?.variants?.primary?.background ?? theme.colors.primary)
+        : theme.colors.borderSecondary};
+  border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
+  overflow: hidden;
   background: ${({ theme, isActive }) =>
     isActive ? theme.colors.backgroundSecondary : theme.colors.backgroundTertiary};
   transition: ${TransitionHandler()};
   cursor: pointer;
+  box-shadow: none;
 `;
 
 const RangePickerHeader = styled.div`
@@ -802,7 +739,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
       label,
       placeholder,
       disabled = false,
-      size = Size.MD,
+      size = Size.SM,
       error,
       className,
       range = false,
@@ -832,8 +769,9 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
       disabledHours = [],
       disabledMinutes = [],
       disabledSeconds = [],
-      clearIcon = false,
+      displayClearIcon = false,
       onClearIconClick,
+      clearIconProps,
       textAlign = 'left',
       segmented = true, // По умолчанию используем сегментированный ввод
       format = 'HH:mm', // Формат отображения времени по умолчанию
@@ -1932,7 +1870,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
           </div>
         )}
         {skeleton ? (
-          <SkeletonEffect size={size} />
+          <SkeletonEffect size={size} fullWidth />
         ) : (
           <InputWrapper
             focused={isFocused}
@@ -1995,14 +1933,13 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                 {...props}
               />
             )}
-            {clearIcon && inputValue && !disabled && (
+            {displayClearIcon && inputValue && !disabled && (
               <IconWrapper size={size} style={{ marginLeft: 'auto' }}>
                 <IconButton onClick={handleClearIconClick}>
                   <Icon
                     name="IconPlainerClose"
-                    size={
-                      size === Size.SM ? IconSize.XS : size === Size.LG ? IconSize.MD : IconSize.SM
-                    }
+                    size={getClearIconSizeForInputField(size)}
+                    {...clearIconProps}
                   />
                 </IconButton>
               </IconWrapper>

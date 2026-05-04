@@ -1,7 +1,8 @@
 import React, { forwardRef, useCallback, useMemo } from 'react';
 import type { InputProps, TooltipPosition } from '../../../../types/ui';
 import { InputVariant } from '../../../../types/ui';
-import { Size, IconSize } from '../../../../types/sizes';
+import { getClearIconSizeForInputField } from '../../../../handlers/iconHandlers';
+import { Size } from '../../../../types/sizes';
 import { Icon } from '../../Icon/Icon';
 import { Tooltip } from '../../Tooltip/Tooltip';
 import { Hint, HintVariant, type HintPosition } from '../../Hint/Hint';
@@ -22,6 +23,8 @@ import {
   ExtraText,
   CharacterCounter,
   RequiredIndicator,
+  getInputDisplayValue,
+  shouldShowInputClearButton,
 } from '../shared';
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -34,13 +37,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       onFocus,
       onBlur,
       variant = InputVariant.DEFAULT,
-      size = Size.MD,
+      size = Size.SM,
       error,
       success,
       status,
       isLoading = false,
       skeleton = false,
-      handleInput: _handleInput,
+      handleInput,
       disableCopying = false,
       extraText,
       tooltip,
@@ -57,17 +60,22 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       required = false,
       type = 'text',
       textAlign = 'left',
-      clearIcon: _clearIcon = false,
-      onClearIconClick: _onClearIconClick,
+      displayClearIcon = false,
+      onClearIconClick,
+      clearIconProps,
       leftIcon,
       rightIcon,
-      onClear,
-      showClearButton,
       className,
+      id,
       ...props
     },
     ref,
   ) => {
+    const inputId = useMemo(
+      () => id ?? `input-${Math.random().toString(36).slice(2, 10)}`,
+      [id],
+    );
+
     const [focused, setFocused] = React.useState(false);
     const [internalValue, setInternalValue] = React.useState(value || '');
 
@@ -146,17 +154,46 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
     const handleChange = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = e.target.value;
+        const target = e.target;
+        let newValue = target.value;
+        let cursorPosition = target.selectionStart ?? newValue.length;
+
+        // Маска / форматирование: внешний обработчик задаёт значение и позицию курсора
+        if (handleInput) {
+          const result = handleInput(newValue, cursorPosition);
+          newValue = result.value;
+          cursorPosition = result.cursorPosition;
+
+          setInternalValue(newValue);
+
+          // Позиция курсора после подстановки маски (после обновления значения в DOM)
+          window.setTimeout(() => {
+            if (target.setSelectionRange) {
+              target.setSelectionRange(cursorPosition, cursorPosition);
+            }
+          }, 0);
+
+          const syntheticEvent = {
+            ...e,
+            target: { ...target, value: newValue },
+            currentTarget: { ...e.currentTarget, value: newValue },
+          } as React.ChangeEvent<HTMLInputElement>;
+
+          onChange?.(syntheticEvent);
+          return;
+        }
+
         setInternalValue(newValue);
         onChange?.(e);
       },
-      [onChange],
+      [onChange, handleInput],
     );
 
+    /** Сброс значения и уведомление родителя (контролируемый режим — обновить `value` в `onClearIconClick`). */
     const handleClear = useCallback(() => {
       setInternalValue('');
-      onClear?.();
-    }, [onClear]);
+      onClearIconClick?.();
+    }, [onClearIconClick]);
 
     // Обработчики для отключения копирования/вставки
     const handleCopy = useCallback(
@@ -193,24 +230,36 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       [displayCharacterCounter, maxLength, currentLength, characterCounterVisibilityThreshold],
     );
 
-    // Если это скелетон
+    // Скелетон только у поля ввода; подпись и доп. лейбл остаются обычным текстом (`as="span"` — нет реального `<input>` для `htmlFor`)
     if (skeleton) {
       return (
-        <InputContainer fullWidth={fullWidth}>
-          {label && <SkeletonEffect size={size} />}
-          <SkeletonEffect size={size} />
+        <InputContainer fullWidth={fullWidth} aria-busy="true">
+          {label && (
+            <Label as="span">
+              {label}
+              {required && <RequiredIndicator>*</RequiredIndicator>}
+            </Label>
+          )}
+          {additionalLabel && <AdditionalLabel>{additionalLabel}</AdditionalLabel>}
+          <SkeletonEffect size={size} fullWidth={fullWidth} role="presentation" />
         </InputContainer>
       );
     }
 
     // Определяем содержимое для отображения
-    const displayValue = value !== undefined ? value : internalValue;
+    const displayValue = getInputDisplayValue(value, String(internalValue ?? ''));
+    const showClearButton = shouldShowInputClearButton({
+      displayClearIcon,
+      currentValue: displayValue,
+      disabled,
+      readOnly,
+    });
 
     return (
       <InputContainer fullWidth={fullWidth}>
         {/* Лейбл */}
         {label && (
-          <Label>
+          <Label htmlFor={inputId}>
             {label}
             {required && <RequiredIndicator>*</RequiredIndicator>}
           </Label>
@@ -219,59 +268,129 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {/* Дополнительный лейбл */}
         {additionalLabel && <AdditionalLabel>{additionalLabel}</AdditionalLabel>}
 
-        {/* Обертка инпута с тултипом */}
-        {tooltip && tooltipType === 'tooltip' ? (
-          <Tooltip content={tooltip} position={tooltipPosition as TooltipPosition}>
-            <InputWrapper
-              variant={variant}
-              size={size}
-              error={error}
-              success={success}
-              status={currentStatus}
-              fullWidth={fullWidth}
-              focused={focused}
-              readOnly={readOnly}
-              className={className}
-            >
-              {leftIcon && (
-                <IconContainer $position="left" size={size}>
-                  {leftIcon}
-                </IconContainer>
-              )}
-
-              <StyledInput
-                ref={ref}
-                type={type}
-                value={displayValue}
-                onChange={handleChange}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-                placeholder={placeholder}
-                disabled={disabled}
+        {/* Обертка инпута с подсказкой */}
+        {tooltip ? (
+          tooltipType === 'tooltip' ? (
+            <Tooltip content={tooltip} position={tooltipPosition as TooltipPosition}>
+              <InputWrapper
+                variant={variant}
+                size={size}
+                error={error}
+                success={success}
+                status={currentStatus}
+                fullWidth={fullWidth}
+                focused={focused}
                 readOnly={readOnly}
-                textAlign={textAlign}
-                onCopy={handleCopy}
-                onPaste={handlePaste}
-                form={formContext?.formId}
-                autoComplete={getAutocompleteValue()}
-                {...props}
-              />
+                className={className}
+              >
+                {leftIcon && (
+                  <IconContainer $position="left" size={size}>
+                    {leftIcon}
+                  </IconContainer>
+                )}
 
-              {rightIcon && (
-                <IconContainer $position="right" size={size}>
-                  {rightIcon}
-                </IconContainer>
-              )}
+                <StyledInput
+                  ref={ref}
+                  id={inputId}
+                  type={type}
+                  value={displayValue}
+                  onChange={handleChange}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  placeholder={placeholder}
+                  disabled={disabled}
+                  readOnly={readOnly}
+                  required={required}
+                  textAlign={textAlign}
+                  onCopy={handleCopy}
+                  onPaste={handlePaste}
+                  form={formContext?.formId}
+                  autoComplete={getAutocompleteValue()}
+                  {...props}
+                />
 
-              {isLoading && <LoadingSpinner size={size} />}
+                {rightIcon && (
+                  <IconContainer $position="right" size={size}>
+                    {rightIcon}
+                  </IconContainer>
+                )}
 
-              {showClearButton && displayValue && !disabled && !readOnly && (
-                <ClearButton onClick={handleClear} type="button">
-                  <Icon name="IconExClose" size={IconSize.SM} />
-                </ClearButton>
-              )}
-            </InputWrapper>
-          </Tooltip>
+                {isLoading && <LoadingSpinner size={size} />}
+
+                {showClearButton && (
+                  <ClearButton onClick={handleClear} type="button">
+                    <Icon
+                      name="IconExClose"
+                      size={getClearIconSizeForInputField(size)}
+                      {...clearIconProps}
+                    />
+                  </ClearButton>
+                )}
+              </InputWrapper>
+            </Tooltip>
+          ) : (
+            <Hint
+              content={tooltip}
+              placement={tooltipPosition as HintPosition}
+              variant={HintVariant.DEFAULT}
+            >
+              <InputWrapper
+                variant={variant}
+                size={size}
+                error={error}
+                success={success}
+                status={currentStatus}
+                fullWidth={fullWidth}
+                focused={focused}
+                readOnly={readOnly}
+                className={className}
+              >
+                {leftIcon && (
+                  <IconContainer $position="left" size={size}>
+                    {leftIcon}
+                  </IconContainer>
+                )}
+
+                <StyledInput
+                  ref={ref}
+                  id={inputId}
+                  type={type}
+                  value={displayValue}
+                  onChange={handleChange}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  placeholder={placeholder}
+                  disabled={disabled}
+                  readOnly={readOnly}
+                  required={required}
+                  textAlign={textAlign}
+                  onCopy={handleCopy}
+                  onPaste={handlePaste}
+                  form={formContext?.formId}
+                  autoComplete={getAutocompleteValue()}
+                  {...props}
+                />
+
+                {rightIcon && (
+                  <IconContainer $position="right" size={size}>
+                    {rightIcon}
+                  </IconContainer>
+                )}
+
+                {isLoading && <LoadingSpinner size={size} />}
+
+                {showClearButton && (
+                  <ClearButton onClick={handleClear} type="button">
+                    <Icon
+                      name="IconExClose"
+                      size={getClearIconSizeForInputField(size)}
+                      {...clearIconProps}
+                    />
+                  </ClearButton>
+                )}
+              </InputWrapper>
+            </Hint>
+          )
         ) : (
           <InputWrapper
             variant={variant}
@@ -292,6 +411,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
             <StyledInput
               ref={ref}
+              id={inputId}
               type={type}
               value={displayValue}
               onChange={handleChange}
@@ -300,6 +420,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               placeholder={placeholder}
               disabled={disabled}
               readOnly={readOnly}
+              required={required}
               textAlign={textAlign}
               onCopy={handleCopy}
               onPaste={handlePaste}
@@ -316,23 +437,16 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
             {isLoading && <LoadingSpinner size={size} />}
 
-            {showClearButton && displayValue && !disabled && !readOnly && (
+            {showClearButton && (
               <ClearButton onClick={handleClear} type="button">
-                <Icon name="IconExClose" size={IconSize.SM} />
+                <Icon
+                  name="IconExClose"
+                  size={getClearIconSizeForInputField(size)}
+                  {...clearIconProps}
+                />
               </ClearButton>
             )}
           </InputWrapper>
-        )}
-
-        {/* Хинт */}
-        {tooltip && tooltipType === 'hint' && (
-          <Hint
-            content={tooltip}
-            placement={tooltipPosition as HintPosition}
-            variant={HintVariant.DEFAULT}
-          >
-            {tooltip}
-          </Hint>
         )}
 
         {/* Вспомогательные тексты */}

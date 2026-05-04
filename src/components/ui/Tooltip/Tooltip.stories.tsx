@@ -1,30 +1,23 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Tooltip } from './Tooltip';
 import { ButtonVariant, TooltipPosition } from '../../../types/ui';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Button } from '../buttons/Button/Button';
 import { Icon } from '../Icon/Icon';
 import { IconSize, Size } from '../../../types/sizes';
+import { DOC_TOOLTIP } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Tooltip> = {
-  title: 'Components/Tooltip',
+  title: 'UI Kit/Feedback/Tooltip',
   component: Tooltip,
   parameters: {
     layout: 'centered',
     docs: {
       description: {
-        component: 'Компонент подсказки с поддержкой различных позиций и анимаций',
+        component: DOC_TOOLTIP,
       },
     },
   },
-  decorators: [
-    Story => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   argTypes: {
     content: {
@@ -35,11 +28,17 @@ const meta: Meta<typeof Tooltip> = {
       control: { type: 'select' },
       options: Object.values(TooltipPosition),
       description: 'Позиция подсказки',
+      table: {
+        type: { summary: 'top, bottom, left, right (TooltipPosition)' },
+      },
     },
     size: {
       control: { type: 'select' },
       options: Object.values(Size),
       description: 'Размер подсказки',
+      table: {
+        type: { summary: 'Size: XS, SM, MD, LG, XL' },
+      },
     },
     delay: {
       control: { type: 'number', min: 0, max: 1000, step: 50 },
@@ -276,7 +275,7 @@ export const Sizes: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Демонстрация различных размеров подсказок согласно макету Figma',
+        story: 'Демонстрация различных размеров подсказок',
       },
     },
   },
@@ -318,3 +317,4 @@ export const ArrowDemo: Story = {
     },
   },
 };
+

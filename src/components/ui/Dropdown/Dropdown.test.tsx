@@ -1,8 +1,9 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ThemeProvider } from '../../../../themes/ThemeProvider';
+import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Dropdown } from './Dropdown';
 import { Button } from '../buttons/Button/Button';
+import { Size } from '../../../types/sizes';
 
 /**
  * Обертка с темой для тестов
@@ -62,7 +63,7 @@ describe('Dropdown', () => {
     const item = screen.getByText('Пункт 1');
     fireEvent.click(item);
 
-    expect(handleSelect).toHaveBeenCalledWith('1');
+    expect(handleSelect).toHaveBeenCalledWith('1', expect.any(Object));
   });
 
   it('закрывается при выборе элемента', () => {
@@ -99,5 +100,38 @@ describe('Dropdown', () => {
 
     const searchInput = screen.getByPlaceholderText(/поиск/i);
     expect(searchInput).toBeInTheDocument();
+  });
+
+  it('открывает меню при клике на дефолтный триггер в режиме tag', () => {
+    renderWithTheme(
+      <Dropdown
+        defaultTriggerKind="tag"
+        buttonProps={{ children: 'Тег-меню' }}
+        tagTriggerProps={{ size: Size.SM, colorVariant: 'neutral', appearance: 'filled' }}
+        size={Size.SM}
+        items={items}
+        onSelect={jest.fn()}
+      />
+    );
+
+    fireEvent.click(screen.getByText('Тег-меню'));
+    expect(screen.getByText('Пункт 1')).toBeInTheDocument();
+  });
+
+  it('показывает подпись выбранного пункта при labelFromSelection и defaultTriggerKind tag', () => {
+    renderWithTheme(
+      <Dropdown
+        defaultTriggerKind="tag"
+        labelFromSelection
+        value="2"
+        buttonProps={{ children: 'запасной' }}
+        tagTriggerProps={{ size: Size.SM, colorVariant: 'neutral', appearance: 'filled' }}
+        size={Size.SM}
+        items={items}
+        onSelect={jest.fn()}
+      />
+    );
+
+    expect(screen.getByText('Пункт 2')).toBeInTheDocument();
   });
 });

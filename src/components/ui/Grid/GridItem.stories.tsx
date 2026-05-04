@@ -1,46 +1,50 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Grid } from './Grid';
 import { GridItem } from './GridItem';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Card } from '../Card/Card';
+import { DOC_GRID_ITEM } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof GridItem> = {
-  title: 'Components/Grid/GridItem',
+  title: 'UI Kit/Layout/GridItem',
   component: GridItem,
   parameters: {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Компонент для управления расположением элементов внутри Grid. Позволяет задавать позицию, растяжение и выравнивание элементов в CSS Grid.',
+        component: DOC_GRID_ITEM,
       },
     },
   },
-  decorators: [
-    Story => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   argTypes: {
     column: {
       control: 'text',
       description: 'Позиция по колонке (число или строка)',
+      table: {
+        type: { summary: 'целое число (индекс) либо CSS-строка для grid-column' },
+      },
     },
     row: {
       control: 'text',
       description: 'Позиция по строке (число или строка)',
+      table: {
+        type: { summary: 'целое число (индекс) либо CSS-строка для grid-row' },
+      },
     },
     columnSpan: {
       control: 'text',
       description: 'Растяжение по колонкам (число или строка)',
+      table: {
+        type: { summary: 'целое число (span) либо CSS-строка для grid-column' },
+      },
     },
     rowSpan: {
       control: 'text',
       description: 'Растяжение по строкам (число или строка)',
+      table: {
+        type: { summary: 'целое число (span) либо CSS-строка для grid-row' },
+      },
     },
     justifySelf: {
       control: { type: 'select' },
@@ -246,3 +250,4 @@ export const NestedGridItems: Story = {
     </Grid>
   ),
 };
+

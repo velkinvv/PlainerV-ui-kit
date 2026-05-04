@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useRef } from 'react';
 import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
-import { Badge } from '../components/ui/Badge';
+import { Tag } from '../components/ui/Tag';
 import {
   useScrollPosition,
   useWindowScrollPosition,
@@ -11,7 +11,7 @@ import {
 } from './useScrollPosition';
 
 const meta: Meta = {
-  title: 'Hooks/useScrollPosition',
+  title: 'UI Kit/Hooks/useScrollPosition',
   parameters: {
     docs: {
       description: {
@@ -69,6 +69,26 @@ const direction = useScrollDirection();
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+/**
+ * Рендерит тег с направлением скролла.
+ * @param scrollDirection - Направление скролла: вниз, вверх или null.
+ * @param isCompact - Компактный режим для короткой подписи.
+ */
+const renderScrollDirectionTag = (
+  scrollDirection: 'up' | 'down' | null,
+  isCompact: boolean = false,
+) => {
+  const directionLabel = scrollDirection === 'down' ? (isCompact ? '↓' : '↓ Вниз') : scrollDirection === 'up' ? (isCompact ? '↑' : '↑ Вверх') : '—';
+  const colorVariant = scrollDirection === 'down' ? 'success' : scrollDirection === 'up' ? 'warning' : 'neutral';
+  const appearance = scrollDirection ? 'filled' : 'outline';
+
+  return (
+    <Tag colorVariant={colorVariant} appearance={appearance}>
+      {directionLabel}
+    </Tag>
+  );
+};
 
 // Компонент для демонстрации базового использования
 const BasicScrollPositionDemo = () => {
@@ -138,11 +158,7 @@ const BasicScrollPositionDemo = () => {
           <Typography variant="body2" marginBottom="xs">
             <strong>Направление</strong>
           </Typography>
-          <Badge
-            variant={direction === 'down' ? 'success' : direction === 'up' ? 'warning' : 'outlined'}
-          >
-            {direction === 'down' ? '↓ Вниз' : direction === 'up' ? '↑ Вверх' : '—'}
-          </Badge>
+          {renderScrollDirectionTag(direction)}
         </div>
       </div>
 
@@ -481,9 +497,9 @@ const EnabledDisabledDemo = () => {
           <Typography variant="body2" marginBottom="xs">
             <strong>Статус</strong>
           </Typography>
-          <Badge variant={isEnabled ? 'success' : 'outlined'}>
+          <Tag colorVariant={isEnabled ? 'success' : 'neutral'} appearance={isEnabled ? 'filled' : 'outline'}>
             {isEnabled ? 'Активно' : 'Отключено'}
-          </Badge>
+          </Tag>
         </div>
       </div>
 
@@ -571,11 +587,7 @@ const WindowScrollDemo = () => {
           <Typography variant="body2" marginBottom="xs">
             <strong>Направление</strong>
           </Typography>
-          <Badge
-            variant={direction === 'down' ? 'success' : direction === 'up' ? 'warning' : 'outlined'}
-          >
-            {direction === 'down' ? '↓' : direction === 'up' ? '↑' : '—'}
-          </Badge>
+          {renderScrollDirectionTag(direction, true)}
         </div>
       </div>
 
@@ -626,3 +638,4 @@ export const AllExamples: Story = {
     </div>
   ),
 };
+

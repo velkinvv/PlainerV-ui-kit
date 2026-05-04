@@ -1,13 +1,11 @@
-// Re-export UI-related types
+// Реэкспорт типов UI и сценариев данных (без Redux)
 export * from './theme';
 export * from './sizes';
 export * from './ui';
 export * from './redux';
 export * from './icon';
-export * from './ui';
-export * from './redux';
 
-// Common UI enums and interfaces that might be needed in forms/components
+// Общие перечисления и сущности для форм/отображения (при необходимости в приложении)
 export enum UserRole {
   SUPER_ADMIN = 'super_admin',
   ADMIN = 'admin',
@@ -35,7 +33,6 @@ export enum PaymentStatus {
   REFUNDED = 'refunded',
 }
 
-// Basic interfaces for UI forms and displays
 export interface BaseEntity {
   id: string;
   createdAt: Date;
@@ -65,7 +62,6 @@ export interface Address {
   };
 }
 
-// Basic form DTOs that might be used in UI
 export interface LoginDto {
   phone: string;
   password?: string;

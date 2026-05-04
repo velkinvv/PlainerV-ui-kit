@@ -43,7 +43,7 @@ export const calculateHintPosition = ({
   let boundary: HTMLElement | null = null;
   if (boundaryElement) {
     if (typeof boundaryElement === 'string') {
-      boundary = document.querySelector(boundaryElement);
+      boundary = triggerElement.ownerDocument?.querySelector(boundaryElement) ?? null;
     } else {
       boundary = boundaryElement;
     }
@@ -110,14 +110,42 @@ export const calculateHintPosition = ({
     }
   };
 
-  // Если режим default или нет размеров hint, возвращаем базовую позицию
-  if (mode === 'default' || !hintRect || hintRect.width === 0 || hintRect.height === 0) {
+  /**
+   * Пока хинт не измерен — сдвигаем только центр TOP/BOTTOM, чтобы не уходить за край
+   * (консервативная половина ширины; после измерения точнее).
+   */
+  if (!hintRect || hintRect.width === 0 || hintRect.height === 0) {
     const basePos = getBasePosition(placement);
-    return { x: basePos.x, y: basePos.y, placement };
+    let { x: preX, y: preY } = basePos;
+    if (placement === HintPosition.TOP || placement === HintPosition.BOTTOM) {
+      const guessHalfWidth = Math.min(160, Math.max(48, viewportWidth * 0.25));
+      preX = clamp(preX, guessHalfWidth + offset, viewportWidth - guessHalfWidth - offset);
+    }
+    return { x: preX, y: preY, placement };
   }
 
   const hintWidth = hintRect.width;
   const hintHeight = hintRect.height;
+
+  // Режим default: подгонка под viewport (у TOP/BOTTOM якорь — центр по X и translateX(-50%) в стилях)
+  if (mode === 'default') {
+    const basePos = getBasePosition(placement);
+    let fitX = basePos.x;
+    let fitY = basePos.y;
+    if (placement === HintPosition.TOP || placement === HintPosition.BOTTOM) {
+      fitX = clamp(fitX, hintWidth / 2 + offset, viewportWidth - hintWidth / 2 - offset);
+    }
+    if (placement === HintPosition.TOP_LEFT || placement === HintPosition.BOTTOM_LEFT) {
+      fitX = clamp(fitX, offset, viewportWidth - hintWidth - offset);
+    }
+    if (placement === HintPosition.TOP_RIGHT || placement === HintPosition.BOTTOM_RIGHT) {
+      fitX = clamp(fitX, hintWidth + offset, viewportWidth - offset);
+    }
+    if (placement === HintPosition.LEFT || placement === HintPosition.RIGHT) {
+      fitY = clamp(fitY, hintHeight / 2 + offset, viewportHeight - hintHeight / 2 - offset);
+    }
+    return { x: fitX, y: fitY, placement };
+  }
 
   // Вычисляем доступное пространство
   const spaceAbove = triggerRect.top;

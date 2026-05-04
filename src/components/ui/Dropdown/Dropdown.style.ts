@@ -1,4 +1,4 @@
-import styled, { keyframes } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { Size } from '../../../types/sizes';
 import type { DropdownAlignSelf, DropdownCssMixin } from '../../../types/ui';
 import {
@@ -7,13 +7,25 @@ import {
   getDropdownAnimations,
 } from '../../../handlers/dropdownThemeHandlers';
 import { colors } from '../../../variables/colors';
+import { primary } from '../../../variables/colors/primary';
 
 /**
  * Контейнер dropdown
+ * @property $fullWidth — блок на всю ширину родителя (иначе `inline-block` сжимает триггер, как у `Select fullWidth`)
  */
-export const DropdownContainer = styled.div<{ $alignSelf?: DropdownAlignSelf }>`
+export const DropdownContainer = styled.div.withConfig({
+  shouldForwardProp: prop => prop !== '$alignSelf' && prop !== '$fullWidth',
+})<{ $alignSelf?: DropdownAlignSelf; $fullWidth?: boolean }>`
   position: relative;
-  display: inline-block;
+  ${({ $fullWidth }) =>
+    $fullWidth
+      ? css`
+          display: block;
+          width: 100%;
+        `
+      : css`
+          display: inline-block;
+        `}
   ${({ $alignSelf }) => $alignSelf && `align-self: ${$alignSelf};`}
 `;
 
@@ -41,6 +53,8 @@ export const DropdownContent = styled.div<{
   $menuMaxHeight?: string | number;
   $dropContainerCssMixin?: DropdownCssMixin;
   $inline?: boolean;
+  /** Узкие внутренние отступы панели списка (календарь и т.п.) */
+  $menuDensity?: 'default' | 'compact';
 }>`
   position: ${({ $inline }) => ($inline ? 'absolute' : 'fixed')};
   overflow: hidden;
@@ -66,6 +80,12 @@ export const DropdownContent = styled.div<{
     `;
   }}
 
+  ${({ $menuDensity }) =>
+    $menuDensity === 'compact' &&
+    css`
+      padding: 4px 4px;
+    `}
+
   opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
   visibility: ${({ $isOpen }) => ($isOpen ? 'visible' : 'hidden')};
   transform: ${({ $isOpen, theme }) => {
@@ -80,10 +100,14 @@ export const DropdownContent = styled.div<{
   left: ${({ $position }) => $position.x}px;
   top: ${({ $position }) => $position.y}px;
 
-  /* Ширина меню, если задана */
+  /* Явная ширина панели: сбрасываем min/max из темы, иначе узкая ширина триггера не применяется к выпадашке (minWidth из темы dropdown). */
   ${({ $menuWidth }) =>
     $menuWidth !== undefined &&
-    `width: ${typeof $menuWidth === 'number' ? `${$menuWidth}px` : $menuWidth};`}
+    css`
+      min-width: 0;
+      max-width: none;
+      width: ${typeof $menuWidth === 'number' ? `${$menuWidth}px` : $menuWidth};
+    `}
 
   /* Максимальная высота меню, если задана */
   ${({ $menuMaxHeight }) =>
@@ -94,8 +118,9 @@ export const DropdownContent = styled.div<{
       overflow-x: hidden;
     `}
 
-  /* Стили для внутреннего контента, чтобы он не выходил за пределы */
+  /* Внутренний контент: min-width 0 — иначе flex/min-width у вложенных панелей (напр. фильтр колонки) обрезается при overflow:hidden */
   > * {
+    min-width: 0;
     max-width: 100%;
     box-sizing: border-box;
     word-wrap: break-word;
@@ -187,13 +212,61 @@ export const DropdownDivider = styled.div`
   width: 100%;
 `;
 
+/** Контейнер вложенного уровня дерева пунктов меню */
+export const DropdownMenuTreeNestedList = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding-left: 10px;
+  margin-left: 8px;
+  border-left: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#374151' : '#e5e7eb')};
+`;
+
+/** Обёртка иконки шеврона ветки: поворот без `style` на `Icon` (тип `IconProps` не принимает `style`). */
+export const DropdownMenuTreeChevronFrame = styled.span<{ $expanded: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform: ${({ $expanded }) => ($expanded ? 'rotate(0deg)' : 'rotate(-90deg)')};
+  transition: transform 0.15s ease;
+`;
+
+/** Кнопка раскрытия ветки (шеврон), не участвует в выборе строки */
+export const DropdownMenuTreeExpandButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  margin: 0 4px 0 0;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+
+  &:hover {
+    background: ${({ theme }) => (theme.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)')};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors?.primary ?? '#2563eb'};
+    outline-offset: 1px;
+  }
+`;
+
 /**
  * Обёртка списка пунктов меню
  */
-export const DropdownMenuWrapper = styled.div`
+/** Обёртка списка пунктов; при `compact` без лишнего вертикального зазора между строками */
+export const DropdownMenuWrapper = styled.div.withConfig({
+  shouldForwardProp: prop => prop !== '$density',
+})<{ $density?: 'default' | 'compact' }>`
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: ${({ $density }) => ($density === 'compact' ? '2px' : '4px')};
   width: 100%;
 `;
 
@@ -208,9 +281,13 @@ const spin = keyframes`
  * @param size - размер элемента
  * @param state - состояние элемента
  */
-export const DropdownItem = styled.div<{
+export const DropdownItem = styled.div.withConfig({
+  shouldForwardProp: prop => !['$density', '$size', '$state'].includes(prop),
+})<{
   $size?: Size;
   $state?: 'hover' | 'active' | 'disabled' | 'selected' | 'focus';
+  /** Компактные строки меню (календарь) */
+  $density?: 'default' | 'compact';
 }>`
   display: flex;
   align-items: center;
@@ -237,7 +314,15 @@ export const DropdownItem = styled.div<{
       text-align: ${styles.textAlign};
       user-select: ${styles.userSelect};
       opacity: ${$state && 'opacity' in styles ? styles.opacity : 1};
-      ${$state === 'focus' && 'border' in styles ? `border: ${styles.border};` : 'border: none;'}
+      ${
+        $state === 'focus'
+          ? `
+      border: none;
+      outline: none;
+      box-shadow: 0 0 0 2px ${theme.mode === 'dark' ? primary[300] : primary[500]};
+    `
+          : 'border: none;'
+      }
     `;
   }}
 
@@ -257,16 +342,28 @@ export const DropdownItem = styled.div<{
     opacity: 0.75;
   }
 
-  &:focus,
+  &:focus {
+    outline: none;
+  }
+
+  /* Клик мышью: без рамки/кольца фокуса (раньше срабатывал общий блок с border из темы). */
+  &:focus:not(:focus-visible) {
+    border: none;
+    box-shadow: none;
+  }
+
+  /* Клавиатура: кольцо через box-shadow — без смены border и без системной чёрной обводки. */
   &:focus-visible {
     ${({ theme, $size = Size.MD }) => {
       const focusStyles = getDropdownItemStyles(theme.dropdowns, $size, 'focus');
+      const ringColor = theme.mode === 'dark' ? primary[300] : primary[500];
       return `
         background: ${'background' in focusStyles ? focusStyles.background : 'transparent'};
         color: ${'color' in focusStyles ? focusStyles.color : 'inherit'};
-        border: ${'border' in focusStyles ? focusStyles.border : 'none'};
+        border: none;
         font-weight: ${'fontWeight' in focusStyles ? focusStyles.fontWeight : 400};
         outline: none;
+        box-shadow: 0 0 0 2px ${ringColor};
       `;
     }}
   }
@@ -318,6 +415,16 @@ export const DropdownItem = styled.div<{
       return styles.borderRadius;
     }};
   }
+
+  /* После правил скругления краёв списка — чтобы padding/радиус компактного режима не перебивались */
+  ${({ $density }) =>
+    $density === 'compact' &&
+    css`
+      padding: 3px 10px;
+      line-height: 1.2;
+      border-radius: 6px;
+      gap: 6px;
+    `}
 `;
 
 export const DropdownItemIconSlot = styled.span`
@@ -350,7 +457,8 @@ export const DropdownItemLabel = styled.span<{ $tone?: 'default' | 'danger' }>`
   font-weight: inherit;
   color: ${({ $tone }) => ($tone === 'danger' ? colors.red[600] : 'inherit')};
   display: block;
-  word-break: break-word;
+  word-break: normal;
+  overflow-wrap: break-word;
 `;
 
 export const DropdownItemDescription = styled.span`

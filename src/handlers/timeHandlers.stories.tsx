@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import { Button } from '../components/ui/buttons/Button';
 import { Input } from '../components/ui/inputs/Input';
@@ -28,7 +28,7 @@ import {
 } from './timeHandlers';
 
 const meta: Meta = {
-  title: 'Handlers/Time Handlers',
+  title: 'UI Kit/Utils/Handlers/Time Handlers',
   parameters: {
     docs: {
       description: {
@@ -420,3 +420,4 @@ export const AllExamples: Story = {
     </div>
   ),
 };
+

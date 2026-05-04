@@ -1,12 +1,43 @@
-import type { Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
+import { Tag } from '../components/ui/Tag';
 import { Button } from '../components/ui/buttons/Button';
-import { Badge } from '../components/ui/Badge';
+
+const codeBlockContainerStyle: React.CSSProperties = {
+  backgroundColor: '#2d3748',
+  color: '#e2e8f0',
+  padding: '16px',
+  borderRadius: '6px',
+  fontFamily: 'Monaco, Consolas, "Courier New", monospace',
+  fontSize: '14px',
+  overflow: 'auto',
+  userSelect: 'text',
+  WebkitUserSelect: 'text',
+};
+
+const codeBlockPreStyle: React.CSSProperties = {
+  margin: 0,
+  whiteSpace: 'pre-wrap',
+  userSelect: 'text',
+  WebkitUserSelect: 'text',
+};
+
+const hookDescriptionStyle: React.CSSProperties = {
+  color: '#334155',
+  backgroundColor: '#e2e8f0',
+  border: '1px solid #cbd5e1',
+  borderRadius: '999px',
+  padding: '4px 10px',
+  display: 'inline-flex',
+  alignItems: 'center',
+  fontSize: '12px',
+  lineHeight: '16px',
+};
 
 const meta: Meta = {
-  title: 'Hooks/Overview',
+  title: 'UI Kit/Hooks/Overview',
   parameters: {
     docs: {
       description: {
@@ -19,7 +50,8 @@ const meta: Meta = {
 
 ### State Management
 - **useModal** - управление модальными окнами
-- **useToast** - управление уведомлениями
+- **useToast** - стек карточек Toast (нужны **ThemeProvider** + **ToastProvider**)
+- **useSnackbar** - стек полос Snackbar внизу экрана (**ThemeProvider** + **SnackbarProvider**)
 - **useLocalStorage** - работа с localStorage
 
 ### Performance & Optimization
@@ -64,11 +96,19 @@ const HooksOverview = () => {
         },
         {
           name: 'useToast',
-          description: 'Управление уведомлениями',
-          features: ['Показ уведомлений', 'Автоматическое скрытие', 'Различные типы'],
+          description: 'Стек Toast (карточки, портал в body)',
+          features: ['Типы success/error/warning/info', 'Заголовок и текст', 'Таймер и ручное закрытие'],
           color: '#e8f5e8',
           borderColor: '#4caf50',
           icon: '🔔',
+        },
+        {
+          name: 'useSnackbar',
+          description: 'Стек Snackbar (компактная полоса снизу)',
+          features: ['Опция действия actionLabel + onAction', 'Таймер по умолчанию 4 с', 'Позиция bottom-*'],
+          color: '#eceff1',
+          borderColor: '#607d8b',
+          icon: '📣',
         },
         {
           name: 'useLocalStorage',
@@ -246,11 +286,9 @@ const MyComponent = () => {
   return (
     <div>
       <button onClick={open}>Открыть модальное окно</button>
-      {isOpen && (
-        <Modal onClose={close}>
-          <div>Содержимое модального окна</div>
-        </Modal>
-      )}
+      <Modal isOpen={isOpen} onClose={close} lazy unmountOnClose>
+        <div>Содержимое модального окна</div>
+      </Modal>
     </div>
   );
 };`,
@@ -258,7 +296,8 @@ const MyComponent = () => {
         },
         {
           name: 'useToast',
-          code: `import { useToast } from '@/hooks';
+          code: `// Корень приложения: <ThemeProvider><ToastProvider>...</ToastProvider></ThemeProvider>
+import { useToast } from '@/hooks';
 
 const MyComponent = () => {
   const { showToast } = useToast();
@@ -278,7 +317,31 @@ const MyComponent = () => {
     </div>
   );
 };`,
-          description: 'Показ уведомлений пользователю',
+          description: 'Показ карточек Toast (провайдеры на корне)',
+        },
+        {
+          name: 'useSnackbar',
+          code: `// Корень: <ThemeProvider><SnackbarProvider placement="bottom-center">...</SnackbarProvider></ThemeProvider>
+import { useSnackbar } from '@/hooks';
+
+const MyComponent = () => {
+  const { showSnackbar } = useSnackbar();
+
+  return (
+    <button
+      type="button"
+      onClick={() =>
+        showSnackbar('Удалено', {
+          actionLabel: 'Отменить',
+          onAction: () => console.log('отмена'),
+        })
+      }
+    >
+      Показать snackbar
+    </button>
+  );
+};`,
+          description: 'Компактные полосы снизу с опциональным действием',
         },
         {
           name: 'useLocalStorage',
@@ -469,21 +532,13 @@ const SizeComponent = () => {
                   <Typography variant="h5" marginRight="sm">
                     {hook.name}
                   </Typography>
-                  <Badge variant="outlined">{hook.description}</Badge>
+                  <span style={hookDescriptionStyle}>{hook.description}</span>
                 </div>
 
                 <div
-                  style={{
-                    backgroundColor: '#2d3748',
-                    color: '#e2e8f0',
-                    padding: '16px',
-                    borderRadius: '6px',
-                    fontFamily: 'Monaco, Consolas, "Courier New", monospace',
-                    fontSize: '14px',
-                    overflow: 'auto',
-                  }}
+                  style={codeBlockContainerStyle}
                 >
-                  <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{hook.code}</pre>
+                  <pre style={codeBlockPreStyle}>{hook.code}</pre>
                 </div>
               </div>
             ))}
@@ -501,7 +556,7 @@ const HooksBestPractices = () => {
       title: 'Импорт хуков',
       description: 'Импортируйте только необходимые хуки',
       code: `// ✅ Хорошо - импорт только нужных хуков
-import { useModal, useToast } from '@/hooks';
+import { useModal, useToast, useSnackbar } from '@/hooks';
 
 // ❌ Плохо - импорт всех хуков
 import * as hooks from '@/hooks';`,
@@ -514,7 +569,8 @@ import * as hooks from '@/hooks';`,
     {
       title: 'Обработка ошибок',
       description: 'Всегда обрабатывайте возможные ошибки',
-      code: `const MyComponent = () => {
+      code: `// useToast / useSnackbar работают только внутри соответствующих провайдеров (см. README)
+const MyComponent = () => {
   const { showToast } = useToast();
 
   const handleAction = async () => {
@@ -613,8 +669,9 @@ const MyComponent = () => {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
-              <Badge
-                variant="primary"
+              <Tag
+                colorVariant="primary"
+                appearance="filled"
                 style={{
                   marginRight: '12px',
                   minWidth: '24px',
@@ -625,7 +682,7 @@ const MyComponent = () => {
                 }}
               >
                 {index + 1}
-              </Badge>
+              </Tag>
               <Typography variant="h5">{practice.title}</Typography>
             </div>
 
@@ -635,17 +692,11 @@ const MyComponent = () => {
 
             <div
               style={{
-                backgroundColor: '#2d3748',
-                color: '#e2e8f0',
-                padding: '16px',
-                borderRadius: '6px',
-                fontFamily: 'Monaco, Consolas, "Courier New", monospace',
-                fontSize: '14px',
-                overflow: 'auto',
+                ...codeBlockContainerStyle,
                 marginBottom: '16px',
               }}
             >
-              <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{practice.code}</pre>
+              <pre style={codeBlockPreStyle}>{practice.code}</pre>
             </div>
 
             <Typography variant="body2" marginBottom="sm" style={{ fontWeight: 'bold' }}>
@@ -686,3 +737,4 @@ export const AllExamples: Story = {
     </div>
   ),
 };
+

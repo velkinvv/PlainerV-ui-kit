@@ -1,15 +1,31 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import React, { useState } from 'react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
+import React, { useId, useState } from 'react';
 import { RadioButton } from './RadioButton';
+import {
+  AdditionalLabel,
+  InputContainer,
+  Label,
+  RequiredIndicator,
+} from '../inputs/shared';
 import { Size, IconSize } from '../../../types/sizes';
-import { TooltipPosition, RadioButtonLabelPosition } from '../../../types/ui';
+import {
+  TooltipPosition,
+  RadioButtonLabelPosition,
+  RadioButtonVariant,
+} from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
+import { DOC_RADIO_BUTTON } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof RadioButton> = {
-  title: 'Components/RadioButton',
+  title: 'UI Kit/Inputs/RadioButton',
   component: RadioButton,
   parameters: {
     layout: 'padded',
+    docs: {
+      description: {
+        component: DOC_RADIO_BUTTON,
+      },
+    },
   },
   tags: ['autodocs'],
   argTypes: {
@@ -19,7 +35,19 @@ const meta: Meta<typeof RadioButton> = {
     },
     label: {
       control: 'text',
-      description: 'Текстовая метка',
+      description: 'Подпись рядом с кружком опции',
+    },
+    fieldLabel: {
+      control: 'text',
+      description: 'Подпись над радиокнопкой — как основной label у Input',
+    },
+    additionalLabel: {
+      control: 'text',
+      description: 'Строка под fieldLabel (как additionalLabel у Input)',
+    },
+    formRequired: {
+      control: 'boolean',
+      description: 'Звезда у fieldLabel и required на input',
     },
     disabled: {
       control: 'boolean',
@@ -38,11 +66,89 @@ const meta: Meta<typeof RadioButton> = {
       control: 'text',
       description: 'Значение радио кнопки',
     },
+    status: {
+      control: { type: 'select' },
+      options: [undefined, 'success', 'error', 'warning'],
+      description: 'Визуальный статус обводки и палитры',
+      table: {
+        type: { summary: '`success`, `error`, `warning` либо не задан' },
+      },
+    },
+    variant: {
+      control: { type: 'select' },
+      options: [RadioButtonVariant.FILLED, RadioButtonVariant.OUTLINE],
+      description: 'Вариант заливки',
+      table: {
+        type: { summary: '`filled` или `outline`' },
+      },
+    },
+    labelPosition: {
+      control: { type: 'select' },
+      options: [
+        RadioButtonLabelPosition.RIGHT,
+        RadioButtonLabelPosition.LEFT,
+        RadioButtonLabelPosition.TOP,
+        RadioButtonLabelPosition.BOTTOM,
+        RadioButtonLabelPosition.NONE,
+      ],
+      description: 'Позиция подписи относительно кружка',
+      table: {
+        type: { summary: '`right`, `left`, `top`, `bottom`, `none`' },
+      },
+    },
+    onChange: {
+      action: 'changed',
+      description:
+        'Событие change у `<input type="radio" />`; в связке нескольких кнопок сравнивайте `event.target.value` с `value` каждой кнопки',
+      table: {
+        type: {
+          summary: '(event: React.ChangeEvent<HTMLInputElement>) => void',
+        },
+      },
+    },
+    error: {
+      control: 'text',
+      description: 'Текст ошибки под контролом (как у Input)',
+    },
+    helperText: {
+      control: 'text',
+      description: 'Подсказка под контролом; скрывается при `error` или `success`',
+    },
+    success: {
+      control: 'boolean',
+      description: 'Успех: строка «Успешно» под контролом, как у Input',
+    },
+    extraText: {
+      control: 'text',
+      description: 'Доп. строка у подписи опции (рядом с лейблом)',
+    },
+    extraFooterText: {
+      control: 'text',
+      description: 'Доп. строка под всем блоком сообщений — аналог `extraText` у Input',
+    },
   },
 };
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+/** Одна радиокнопка под контролем стейта (`checked` задаётся из `useState`, не только из args). */
+const renderInteractiveRadioButton = (initialChecked = false): Story['render'] => {
+  return (args) => {
+    const [checked, setChecked] = useState(initialChecked);
+
+    return (
+      <RadioButton
+        {...args}
+        checked={checked}
+        onChange={(event) => {
+          args.onChange?.(event);
+          setChecked(event.target.checked);
+        }}
+      />
+    );
+  };
+};
 
 export const Default: Story = {
   args: {
@@ -50,6 +156,7 @@ export const Default: Story = {
     name: 'options',
     value: 'option1',
   },
+  render: renderInteractiveRadioButton(false),
 };
 
 export const Checked: Story = {
@@ -59,6 +166,7 @@ export const Checked: Story = {
     name: 'options',
     value: 'option1',
   },
+  render: renderInteractiveRadioButton(true),
 };
 
 export const Disabled: Story = {
@@ -84,66 +192,102 @@ export const WithoutLabel: Story = {
   args: {
     name: 'options',
     value: 'option1',
+    'aria-label': 'Радиокнопка без текстовой метки',
   },
+  render: renderInteractiveRadioButton(false),
 };
 
 export const Sizes: Story = {
-  render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      <RadioButton
-        checked={true}
-        label="Маленький размер"
-        name="sizes"
-        value="small"
-        size={Size.SM}
-      />
-      <RadioButton
-        checked={true}
-        label="Средний размер"
-        name="sizes"
-        value="medium"
-        size={Size.MD}
-      />
-      <RadioButton
-        checked={true}
-        label="Большой размер"
-        name="sizes"
-        value="large"
-        size={Size.LG}
-      />
-    </div>
-  ),
+  render: () => {
+    const [selectedSize, setSelectedSize] = useState<string>('medium');
+
+    const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setSelectedSize(event.target.value);
+    };
+
+    return (
+      <fieldset
+        style={{
+          border: 'none',
+          margin: 0,
+          padding: 0,
+        }}
+      >
+        <legend
+          style={{
+            fontWeight: 600,
+            marginBottom: 12,
+            padding: 0,
+          }}
+        >
+          Размеры (одна активная группа)
+        </legend>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <RadioButton
+            checked={selectedSize === 'small'}
+            onChange={handleSizeChange}
+            label="Маленький размер"
+            name="sizes"
+            value="small"
+            size={Size.SM}
+          />
+          <RadioButton
+            checked={selectedSize === 'medium'}
+            onChange={handleSizeChange}
+            label="Средний размер"
+            name="sizes"
+            value="medium"
+            size={Size.MD}
+          />
+          <RadioButton
+            checked={selectedSize === 'large'}
+            onChange={handleSizeChange}
+            label="Большой размер"
+            name="sizes"
+            value="large"
+            size={Size.LG}
+          />
+        </div>
+      </fieldset>
+    );
+  },
 };
 
 export const Interactive: Story = {
-  render: () => {
+  args: {
+    name: 'interactive',
+    value: 'option1',
+    label: 'Опция 1',
+  },
+  render: (args) => {
     const [selectedValue, setSelectedValue] = useState('option1');
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      args.onChange?.(event);
       setSelectedValue(event.target.value);
     };
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         <RadioButton
+          {...args}
           checked={selectedValue === 'option1'}
           onChange={handleChange}
           label="Опция 1"
-          name="interactive"
           value="option1"
         />
         <RadioButton
+          {...args}
           checked={selectedValue === 'option2'}
           onChange={handleChange}
           label="Опция 2"
-          name="interactive"
           value="option2"
         />
         <RadioButton
+          {...args}
           checked={selectedValue === 'option3'}
           onChange={handleChange}
           label="Опция 3"
-          name="interactive"
           value="option3"
         />
         <div
@@ -157,6 +301,59 @@ export const Interactive: Story = {
           <strong>Выбранная опция:</strong> {selectedValue}
         </div>
       </div>
+    );
+  },
+};
+
+/**
+ * Несколько `RadioButton` с одной общей подписью сверху: оболочка как у текстовых полей (`InputContainer` + `Label`),
+ * без дублирования `fieldLabel` на каждой опции. Для многих сценариев удобнее `RadioButtonGroup`.
+ */
+export const SharedFieldCaptionMultipleRadios: Story = {
+  render: () => {
+    const [deliveryMethod, setDeliveryMethod] = useState('courier');
+    const groupHeadingCaptionId = useId();
+
+    const handleDeliveryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setDeliveryMethod(event.target.value);
+    };
+
+    return (
+      <InputContainer fullWidth>
+        <Label id={groupHeadingCaptionId}>
+          Способ доставки
+          <RequiredIndicator>*</RequiredIndicator>
+        </Label>
+        <AdditionalLabel>Все варианты относятся к одному заказу; доступен только один способ.</AdditionalLabel>
+        <div role="radiogroup" aria-labelledby={groupHeadingCaptionId}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <RadioButton
+              name="delivery-shared-caption"
+              value="courier"
+              checked={deliveryMethod === 'courier'}
+              onChange={handleDeliveryChange}
+              label="Курьерская доставка"
+            />
+            <RadioButton
+              name="delivery-shared-caption"
+              value="pickup"
+              checked={deliveryMethod === 'pickup'}
+              onChange={handleDeliveryChange}
+              label="Самовывоз со склада"
+            />
+            <RadioButton
+              name="delivery-shared-caption"
+              value="post"
+              checked={deliveryMethod === 'post'}
+              onChange={handleDeliveryChange}
+              label="Почтовая отправка"
+            />
+          </div>
+        </div>
+        <p style={{ margin: '12px 0 0', color: '#575757', fontSize: '14px' }}>
+          Выбрано:&nbsp;<strong>{deliveryMethod}</strong>
+        </p>
+      </InputContainer>
     );
   },
 };
@@ -297,6 +494,82 @@ export const WithHelperText: Story = {
           value="option2"
         />
       </div>
+    );
+  },
+};
+
+export const WithHelperAndFooterExtra: Story = {
+  render: () => {
+    const [value, setValue] = useState('option1');
+
+    return (
+      <RadioButton
+        checked={value === 'option1'}
+        onChange={e => setValue(e.target.value)}
+        label="Экспресс-доставка"
+        name="radio-footer-demo"
+        value="option1"
+        helperText="Срок — 1–2 рабочих дня по городу."
+        extraFooterText="Стоимость рассчитывается при оформлении заказа."
+      />
+    );
+  },
+};
+
+export const WithSuccessAndFooterExtra: Story = {
+  render: () => {
+    const [value, setValue] = useState('option1');
+
+    return (
+      <RadioButton
+        checked={value === 'option1'}
+        onChange={e => setValue(e.target.value)}
+        label="Способ оплаты сохранён"
+        name="radio-success-demo"
+        value="option1"
+        success
+        extraFooterText="Платёж будет списан при отгрузке."
+      />
+    );
+  },
+};
+
+export const WithErrorAndFooterExtra: Story = {
+  render: () => {
+    const [value, setValue] = useState('option1');
+
+    return (
+      <RadioButton
+        checked={value === 'option1'}
+        onChange={e => setValue(e.target.value)}
+        label="Проблемный способ оплаты"
+        name="radio-error-extra-demo"
+        value="option1"
+        error="Карта отклонена банком. Выберите другой способ."
+        extraFooterText="Поддержка: support@example.com"
+      />
+    );
+  },
+};
+
+export const WithFieldLabelAndFooterMessages: Story = {
+  render: () => {
+    const [value, setValue] = useState('');
+
+    return (
+      <RadioButton
+        checked={value === 'save'}
+        onChange={() => setValue('save')}
+        fieldLabel="Сохранение черновика"
+        additionalLabel="Черновик виден только вам до публикации."
+        label="Сохранить как черновик"
+        name="draft-save"
+        value="save"
+        formRequired
+        error={value ? undefined : 'Подтвердите действие, выбрав опцию.'}
+        helperText={value ? 'Можно вернуться к редактированию позже.' : undefined}
+        extraFooterText="Черновики хранятся 30 дней."
+      />
     );
   },
 };
@@ -537,3 +810,4 @@ export const ComplexExample: Story = {
     );
   },
 };
+

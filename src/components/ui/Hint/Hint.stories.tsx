@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { css } from 'styled-components';
 import {
@@ -8,31 +8,23 @@ import {
   HintVisibilityTrigger,
   type HintPositioningMode,
 } from './Hint';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Button } from '../buttons/Button';
 import { ButtonVariant } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
 import { IconSize, Size } from '../../../types/sizes';
+import { DOC_HINT } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Hint> = {
-  title: 'Components/Hint',
+  title: 'UI Kit/Feedback/Hint',
   component: Hint,
   parameters: {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Компонент подсказки с поддержкой различных позиций и размеров. Использует стандартные цвета темы в отличие от Tooltip.',
+        component: DOC_HINT,
       },
     },
   },
-  decorators: [
-    Story => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   args: {
     visibilityTrigger: HintVisibilityTrigger.HOVER,
@@ -73,11 +65,18 @@ const meta: Meta<typeof Hint> = {
     },
     onVisibilityChange: {
       action: 'visibilityChanged',
-      description: 'Колбек на изменение видимости хинта. Вызывается с true при показе и false при скрытии.',
+      description:
+        'Колбек на изменение видимости хинта. Вызывается с true при показе и false при скрытии.',
+      table: {
+        type: { summary: '(visible: boolean) => void' },
+      },
     },
     onHintClick: {
       action: 'hintClicked',
       description: 'Колбек на клик по hint. Вызывается при клике на содержимое hint.',
+      table: {
+        type: { summary: '(event: React.MouseEvent<HTMLDivElement>) => void' },
+      },
     },
     anchorClassName: {
       control: 'text',
@@ -100,6 +99,9 @@ const meta: Meta<typeof Hint> = {
       options: ['default', 'autoFlip', 'autoFit'] as HintPositioningMode[],
       description:
         'Режим позиционирования подсказки: default (текущее поведение), autoFlip (автоматически переворачивать), autoFit (автоматически подстраивать)',
+      table: {
+        type: { summary: 'default, autoFlip, autoFit' },
+      },
     },
     isOpen: {
       control: 'boolean',
@@ -112,6 +114,9 @@ const meta: Meta<typeof Hint> = {
     onOpenChange: {
       action: 'openChanged',
       description: 'Колбек изменения состояния видимости подсказки',
+      table: {
+        type: { summary: '(open: boolean) => void' },
+      },
     },
     showArrow: {
       control: 'boolean',
@@ -435,7 +440,8 @@ export const ArrowDemo: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Демонстрация стрелок hint во всех основных направлениях. Стрелки автоматически позиционируются и используют цвет границы из варианта hint.',
+        story:
+          'Демонстрация стрелок hint во всех основных направлениях. Стрелки автоматически позиционируются и используют цвет границы из варианта hint.',
       },
     },
   },
@@ -444,7 +450,8 @@ export const ArrowDemo: Story = {
 // Демонстрация click режима
 export const ClickMode: Story = {
   args: {
-    content: 'Подсказка открывается при клике. Закройте её, нажав на крестик, Escape или кликнув вне элемента.',
+    content:
+      'Подсказка открывается при клике. Закройте её, нажав на крестик, Escape или кликнув вне элемента.',
     visibilityTrigger: HintVisibilityTrigger.CLICK,
     children: <Button variant={ButtonVariant.PRIMARY}>Кликни на меня</Button>,
   },
@@ -466,7 +473,7 @@ export const WithVisibilityChange: Story = {
     const handleVisibilityChange = (visible: boolean) => {
       const timestamp = new Date().toLocaleTimeString();
       const status = visible ? 'показан' : 'скрыт';
-      setVisibilityLog(prev => [...prev, `${timestamp}: Hint ${status}`]);
+      setVisibilityLog((prev) => [...prev, `${timestamp}: Hint ${status}`]);
     };
 
     return (
@@ -523,9 +530,9 @@ export const WithHintClick: Story = {
   render: () => {
     const [clickLog, setClickLog] = React.useState<string[]>([]);
 
-    const handleHintClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    const handleHintClick = (_event: React.MouseEvent<HTMLDivElement>) => {
       const timestamp = new Date().toLocaleTimeString();
-      setClickLog(prev => [...prev, `${timestamp}: Клик по hint`]);
+      setClickLog((prev) => [...prev, `${timestamp}: Клик по hint`]);
     };
 
     return (
@@ -612,7 +619,8 @@ export const WithAnchorCssMixin: Story = {
 // Демонстрация режимов позиционирования
 export const PositioningModeDefault: Story = {
   args: {
-    content: 'Режим default - подсказка отображается в указанной позиции без автоматической корректировки',
+    content:
+      'Режим default - подсказка отображается в указанной позиции без автоматической корректировки',
     children: <Button variant={ButtonVariant.PRIMARY}>Default режим</Button>,
     placement: HintPosition.TOP,
     positioningMode: 'default',
@@ -629,7 +637,8 @@ export const PositioningModeDefault: Story = {
 
 export const PositioningModeAutoFlip: Story = {
   args: {
-    content: 'Режим autoFlip - подсказка автоматически переворачивается при недостатке места (TOP ↔ BOTTOM, LEFT ↔ RIGHT)',
+    content:
+      'Режим autoFlip - подсказка автоматически переворачивается при недостатке места (TOP ↔ BOTTOM, LEFT ↔ RIGHT)',
     children: <Button variant={ButtonVariant.PRIMARY}>AutoFlip режим</Button>,
     placement: HintPosition.TOP,
     positioningMode: 'autoFlip',
@@ -646,7 +655,8 @@ export const PositioningModeAutoFlip: Story = {
 
 export const PositioningModeAutoFit: Story = {
   args: {
-    content: 'Режим autoFit - подсказка автоматически подстраивает позицию, чтобы не выходить за границы viewport',
+    content:
+      'Режим autoFit - подсказка автоматически подстраивает позицию, чтобы не выходить за границы viewport',
     children: <Button variant={ButtonVariant.PRIMARY}>AutoFit режим</Button>,
     placement: HintPosition.TOP,
     positioningMode: 'autoFit',
@@ -784,7 +794,8 @@ export const UncontrolledMode: Story = {
         </div>
         <div>
           <span style={{ fontSize: '14px', color: '#666' }}>
-            Последнее изменение состояния: {openState === null ? 'не было' : openState ? 'открыта' : 'закрыта'}
+            Последнее изменение состояния:{' '}
+            {openState === null ? 'не было' : openState ? 'открыта' : 'закрыта'}
           </span>
         </div>
       </div>
@@ -854,19 +865,44 @@ export const ArrowsWithVariants: Story = {
       }}
     >
       <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-        <Hint content="Default с стрелкой" placement={HintPosition.TOP} showArrow variant={HintVariant.DEFAULT}>
+        <Hint
+          content="Default с стрелкой"
+          placement={HintPosition.TOP}
+          showArrow
+          variant={HintVariant.DEFAULT}
+        >
           <Button variant={ButtonVariant.PRIMARY}>Default</Button>
         </Hint>
-        <Hint content="Info с стрелкой" placement={HintPosition.TOP} showArrow variant={HintVariant.INFO}>
+        <Hint
+          content="Info с стрелкой"
+          placement={HintPosition.TOP}
+          showArrow
+          variant={HintVariant.INFO}
+        >
           <Button variant={ButtonVariant.PRIMARY}>Info</Button>
         </Hint>
-        <Hint content="Success с стрелкой" placement={HintPosition.TOP} showArrow variant={HintVariant.SUCCESS}>
+        <Hint
+          content="Success с стрелкой"
+          placement={HintPosition.TOP}
+          showArrow
+          variant={HintVariant.SUCCESS}
+        >
           <Button variant={ButtonVariant.PRIMARY}>Success</Button>
         </Hint>
-        <Hint content="Warning с стрелкой" placement={HintPosition.TOP} showArrow variant={HintVariant.WARNING}>
+        <Hint
+          content="Warning с стрелкой"
+          placement={HintPosition.TOP}
+          showArrow
+          variant={HintVariant.WARNING}
+        >
           <Button variant={ButtonVariant.PRIMARY}>Warning</Button>
         </Hint>
-        <Hint content="Error с стрелкой" placement={HintPosition.TOP} showArrow variant={HintVariant.ERROR}>
+        <Hint
+          content="Error с стрелкой"
+          placement={HintPosition.TOP}
+          showArrow
+          variant={HintVariant.ERROR}
+        >
           <Button variant={ButtonVariant.PRIMARY}>Error</Button>
         </Hint>
       </div>
@@ -875,7 +911,8 @@ export const ArrowsWithVariants: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Демонстрация стрелок для всех вариантов hint. Цвет стрелки соответствует цвету границы варианта.',
+        story:
+          'Демонстрация стрелок для всех вариантов hint. Цвет стрелки соответствует цвету границы варианта.',
       },
     },
   },
@@ -913,7 +950,8 @@ export const ArrowsCornerPositions: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Демонстрация стрелок для угловых позиций. Стрелки позиционируются ближе к соответствующему углу.',
+        story:
+          'Демонстрация стрелок для угловых позиций. Стрелки позиционируются ближе к соответствующему углу.',
       },
     },
   },
@@ -1063,3 +1101,4 @@ export const TourGuide: Story = {
     },
   },
 };
+

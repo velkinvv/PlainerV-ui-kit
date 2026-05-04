@@ -1,4 +1,5 @@
 import { getColor } from '../themes/colors/colorTheme';
+import { themeRadiusBySize } from '../themes/radiusScale';
 import { Size, IconSize } from '../types/sizes';
 import type { ColorTheme, ThemeMode } from '../types/theme';
 // import { getColor } from '../themes/theme';
@@ -233,16 +234,13 @@ export const getInfoColor = (mode: ThemeMode): string => {
   return getColor(mode, 'info');
 };
 
-// Хендлеры для border-radius согласно Figma макету
+/**
+ * Радиус скругления по ключу из темы (`theme.borderRadius` — обычно `Size.MD`).
+ * Числовые значения — в `themes/radiusScale.ts`.
+ * @param size - Размер из темы или явный `Size` компонента.
+ */
 export const BorderRadiusHandler = (size: Size = Size.MD): string => {
-  const radiusMap: Record<Size, string> = {
-    [Size.XS]: '35px', // xs: 35px
-    [Size.SM]: '35px', // sm: 35px
-    [Size.MD]: '35px', // md: 35px
-    [Size.LG]: '35px', // lg: 35px
-    [Size.XL]: '35px', // xl: 35px
-  };
-  return radiusMap[size];
+  return themeRadiusBySize[size];
 };
 
 // Хендлеры для gap согласно Figma макету
@@ -339,9 +337,19 @@ export const BoxShadowHandler = (size: Size = Size.MD): string => {
   return shadowMap[size];
 };
 
-// Хендлеры для z-index
+/**
+ * Слои наложения: панель `Dropdown` в теме задаётся отдельно (`~9999`); тултип и хинт должны быть выше панели.
+ * @param level - имя слоя
+ */
 export const ZIndexHandler = (
-  level: 'dropdown' | 'sticky' | 'fixed' | 'modal' | 'popover' | 'tooltip' = 'dropdown',
+  level:
+    | 'dropdown'
+    | 'sticky'
+    | 'fixed'
+    | 'modal'
+    | 'popover'
+    | 'tooltip'
+    | 'hint' = 'dropdown',
 ): number => {
   const zIndexMap: Record<string, number> = {
     dropdown: 1000,
@@ -349,7 +357,10 @@ export const ZIndexHandler = (
     fixed: 1030,
     modal: 1040,
     popover: 1050,
-    tooltip: 11000,
+    /** Выше панели выпадающего меню (`theme.dropdowns.settings.zIndex`, обычно 9999) */
+    tooltip: 11500,
+    /** Чуть выше тултипа, чтобы `Hint` не перекрывался тултипом при совпадении областей */
+    hint: 11600,
   };
   return zIndexMap[level];
 };

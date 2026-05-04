@@ -1,31 +1,32 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { DropdownMenu } from './DropdownMenu';
 import { DropdownMenuItem } from './DropdownMenuItem';
+import { DOC_DROPDOWN_MENU_ITEM } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof DropdownMenuItem> = {
-  title: 'Components/Dropdown/DropdownMenuItem',
+  title: 'UI Kit/Navigation/Dropdown/DropdownMenuItem',
   component: DropdownMenuItem,
   decorators: [
-    Story => (
-      <ThemeProvider>
-        <DropdownMenu style={{ maxWidth: 320 }}>{Story()}</DropdownMenu>
-      </ThemeProvider>
-    ),
+    Story => <DropdownMenu style={{ maxWidth: 320 }}>{Story()}</DropdownMenu>,
   ],
   parameters: {
     docs: {
       description: {
-        component:
-          '`DropdownMenuItem` — атомарный элемент выпадающего меню. Поддерживает иконки, описание, правый слот с шорткатом/тегом, а также состояния `disabled`, `tone="danger"` и кастомный контент.',
+        component: DOC_DROPDOWN_MENU_ITEM,
       },
     },
   },
   argTypes: {
     label: { description: 'Основной текст пункта меню', control: { type: 'text' } },
     description: { description: 'Дополнительное описание под заголовком', control: { type: 'text' } },
-    value: { description: 'Полезное значение, которое вернётся в `onSelect`', control: { type: 'text' } },
+    value: {
+      description: 'Полезное значение, которое вернётся в `onSelect`',
+      control: { type: 'text' },
+      table: {
+        type: { summary: 'строка либо число (идентификатор пункта)' },
+      },
+    },
     icon: { description: 'Левая иконка/аватар', control: false },
     rightSlot: { description: 'Правый слот (тег, статус, кастомный контент)', control: false },
     shortcut: { description: 'Строка с сочетанием клавиш. Если указана, рендерится справа', control: { type: 'text' } },
@@ -36,13 +37,13 @@ const meta: Meta<typeof DropdownMenuItem> = {
       table: { defaultValue: { summary: false } },
     },
     tone: {
-      description: 'Тон оформления. `default` — обычный, `danger` — подчёркивает опасное действие',
+      description: 'Тон оформления; допустимые значения: `default` (обычный), `danger` (акцент на опасное действие)',
       options: ['default', 'danger'],
       control: { type: 'inline-radio' },
       table: { defaultValue: { summary: 'default' } },
     },
     state: {
-      description: 'Принудительное состояние элемента. Доступно `selected`',
+      description: 'Принудительное состояние: задайте `selected` или оставьте без значения',
       options: ['selected'],
       control: { type: 'inline-radio' },
     },
@@ -52,12 +53,20 @@ const meta: Meta<typeof DropdownMenuItem> = {
       table: { defaultValue: { summary: false } },
     },
     tooltipText: {
-      description: 'Кастомный текст тултипа. Если не указан, используется `label` или `description`.',
+      description:
+        'Кастомный текст тултипа. Если не указан, подставляется текст из `label`, иначе из `description`',
       control: { type: 'text' },
+    },
+    tooltipType: {
+      description: '`tooltip` (по умолчанию) — компактная подсказка; `hint` — карточка `Hint`',
+      options: ['tooltip', 'hint'],
+      control: { type: 'inline-radio' },
+      table: { defaultValue: { summary: 'tooltip' } },
     },
     onSelect: { description: 'Колбэк при выборе текущего пункта', control: false },
     children: {
-      description: 'Кастомный контент. Если передан, `label`/`description` можно не указывать',
+      description:
+        'Кастомный контент строки; если передан, пропы `label` и `description` можно опустить',
       control: false,
     },
   },
@@ -187,3 +196,23 @@ export const WithTooltip: Story = {
     },
   },
 };
+
+export const WithHint: Story = {
+  args: {
+    label: 'Pro',
+    description: 'Расширенный тариф',
+    value: 'pro',
+    tooltip: 'Безлимит запросов, приоритетная поддержка и отчёты по использованию.',
+    tooltipType: 'hint',
+    tooltipPosition: 'top',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Задайте `tooltip` (или `showTooltip` + текст) и `tooltipType: "hint"`, чтобы на пункте меню показывался `Hint` вместо тултипа. Для отключённых / loading / skeleton строк подсказка не показывается.',
+      },
+    },
+  },
+};
+

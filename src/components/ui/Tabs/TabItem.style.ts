@@ -1,62 +1,261 @@
-import styled from 'styled-components';
-import { TabsDirection, TabItemTextPosition } from '../../../types/ui';
+import styled, { css } from 'styled-components';
+import {
+  TabsDirection,
+  TabsVariant,
+  TabItemTextPosition,
+  TabsVerticalPosition,
+} from '../../../types/ui';
 import type { TabItemTextOrientation } from '../../../types/ui';
+import { ThemeMode } from '../../../types/theme';
+
+/** Трек группы табов: контейнер списка + контента */
+export const TabItemGroupContainer = styled.div<{
+  $direction: TabsDirection;
+  $tabsPosition?: TabsVerticalPosition;
+}>`
+  display: flex;
+  flex-direction: ${({ $direction, $tabsPosition }) => {
+    if ($direction === TabsDirection.VERTICAL) {
+      return $tabsPosition === TabsVerticalPosition.END ? 'row-reverse' : 'row';
+    }
+    return 'column';
+  }};
+`;
 
 /**
- * TabItemTrigger - стилизованная кнопка для TabItem
+ * Список триггеров вкладок
+ * @property $direction — горизонтальный или вертикальный ряд сегментов
+ * @property $variant — line (подчёркивание) или pill (сегментированный трек)
+ */
+export const TabItemGroupList = styled.div<{
+  $direction: TabsDirection;
+  $variant: TabsVariant;
+}>`
+  display: flex;
+  flex-direction: ${({ $direction }) => ($direction === TabsDirection.VERTICAL ? 'column' : 'row')};
+
+  ${({ $variant, $direction, theme }) =>
+    $variant === TabsVariant.PILL
+      ? css`
+          align-items: stretch;
+          gap: 4px;
+          padding: 4px;
+          border-radius: 9999px;
+          border: none;
+          background: ${theme.mode === ThemeMode.DARK ? '#1c1c1c' : theme.colors.backgroundTertiary};
+        `
+      : css`
+          border-bottom: ${$direction === TabsDirection.HORIZONTAL
+            ? `1px solid ${theme.colors.borderSecondary}`
+            : 'none'};
+          border-right: ${$direction === TabsDirection.VERTICAL
+            ? `1px solid ${theme.colors.borderSecondary}`
+            : 'none'};
+          background: ${theme.colors.backgroundSecondary};
+        `}
+
+  ${({ $direction }) =>
+    $direction === TabsDirection.HORIZONTAL
+      ? css`
+          width: 100%;
+        `
+      : ''}
+`;
+
+/** Обёртка для вертикального текста с позицией RIGHT (разворот содержимого) */
+export const TabItemVerticalTextWrap = styled.span`
+  display: inline-block;
+  transform: rotate(180deg);
+`;
+
+/** Слот иконки: наследует цвет текста сегмента */
+export const TabItemIconSlot = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: currentColor;
+
+  & svg {
+    display: block;
+  }
+`;
+
+/**
+ * Бейдж уведомления на сегменте (макет: красный круг, белый текст)
+ * @property children — число или краткая метка
+ */
+export const TabItemBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  margin-left: 6px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  color: #ffffff;
+  background: #ff3b30;
+  flex-shrink: 0;
+`;
+
+/**
+ * TabItemTrigger — кнопка сегмента вкладки
+ * @property $isActive — выбранный сегмент
+ * @property $direction — ось списка табов
+ * @property $variant — pill или line
+ * @property $disabled — неактивное состояние (без клика)
+ * @property $textOrientation — горизонтальный или вертикальный текст внутри сегмента
+ * @property $textPosition — выравнивание при вертикальном тексте
+ * @property $hasIcons — влияет на отступы (legacy, для line)
+ * @property $flexDirection — направление иконок и подписи
+ * @property $gap — зазор между иконкой и текстом
  */
 export const TabItemTrigger = styled.button<{
   $isActive: boolean;
   $direction: TabsDirection;
+  $variant: TabsVariant;
+  $disabled?: boolean;
   $textOrientation?: TabItemTextOrientation;
   $textPosition?: TabItemTextPosition;
   $hasIcons?: boolean;
   $flexDirection?: string;
   $gap?: string;
 }>`
-  padding: 12px 24px;
-  background: ${({ $isActive, theme }) => ($isActive ? theme.colors.primary : 'transparent')};
-  color: ${({ $isActive, theme }) => ($isActive ? '#ffffff' : theme.colors.textSecondary)};
   border: none;
-  cursor: pointer;
+  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
   font-size: 14px;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
   white-space: nowrap;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: ${({ $flexDirection }) => $flexDirection || 'row'};
   gap: ${({ $gap }) => $gap || '0'};
+  font-family: inherit;
 
-  /* Горизонтальное направление: border-bottom */
-  border-bottom: ${({ $isActive, $direction, theme }) =>
-    $direction === TabsDirection.HORIZONTAL
-      ? `2px solid ${$isActive ? theme.colors.primary : 'transparent'}`
-      : 'none'};
+  ${({ $variant, $direction, $isActive, $disabled, theme }) =>
+    $variant === TabsVariant.PILL
+      ? css`
+          padding: ${$direction === TabsDirection.VERTICAL ? '10px 12px' : '8px 16px'};
+          min-height: ${$direction === TabsDirection.VERTICAL ? 'auto' : '40px'};
+          border-radius: 10px;
+          flex: ${$direction === TabsDirection.HORIZONTAL ? '1' : '0 0 auto'};
+          width: ${$direction === TabsDirection.VERTICAL ? '100%' : 'auto'};
+          box-shadow: none;
+          border-bottom: none;
+          border-right: none;
 
-  /* Вертикальное направление: border-right */
-  border-right: ${({ $isActive, $direction, theme }) =>
-    $direction === TabsDirection.VERTICAL
-      ? `2px solid ${$isActive ? theme.colors.primary : 'transparent'}`
-      : 'none'};
+          ${$disabled
+            ? css`
+                background: transparent;
+                color: ${theme.colors.textDisabled};
+                box-shadow: none;
+              `
+            : $isActive
+              ? theme.mode === ThemeMode.DARK
+                ? css`
+                    background: #444444;
+                    color: ${theme.colors.text};
+                    box-shadow: none;
+                  `
+                : css`
+                    background: ${theme.colors.backgroundSecondary};
+                    color: ${theme.colors.text};
+                    box-shadow: ${theme.boxShadow.sm};
+                  `
+              : theme.mode === ThemeMode.DARK
+                ? css`
+                    background: transparent;
+                    color: ${theme.colors.textSecondary};
+                  `
+                : css`
+                    background: transparent;
+                    color: ${theme.colors.textSecondary};
+                  `}
 
-  /* Поворот текста */
-  ${({ $textOrientation, $textPosition }) => {
+          &:hover:enabled {
+            ${!$disabled && !$isActive
+              ? theme.mode === ThemeMode.DARK
+                ? css`
+                    background: transparent;
+                    color: ${theme.colors.text};
+                  `
+                : css`
+                    background: transparent;
+                    color: ${theme.colors.text};
+                  `
+              : ''}
+            ${!$disabled && $isActive
+              ? theme.mode === ThemeMode.DARK
+                ? css`
+                    background: #4a4a4a;
+                    color: ${theme.colors.text};
+                  `
+                : css`
+                    background: ${theme.colors.backgroundSecondary};
+                    color: ${theme.colors.text};
+                  `
+              : ''}
+          }
+
+          &:focus {
+            outline: none;
+          }
+
+          &:focus-visible {
+            outline: 2px solid ${theme.colors.primary};
+            outline-offset: 2px;
+          }
+        `
+      : css`
+          padding: 12px 24px;
+          background: ${$isActive && !$disabled ? theme.colors.primary : 'transparent'};
+          color: ${$isActive && !$disabled ? '#ffffff' : $disabled ? theme.colors.textDisabled : theme.colors.textSecondary};
+          border-bottom: ${$direction === TabsDirection.HORIZONTAL
+            ? `2px solid ${$isActive && !$disabled ? theme.colors.primary : 'transparent'}`
+            : 'none'};
+          border-right: ${$direction === TabsDirection.VERTICAL
+            ? `2px solid ${$isActive && !$disabled ? theme.colors.primary : 'transparent'}`
+            : 'none'};
+          border-radius: 0;
+
+          &:hover:enabled {
+            background: ${$isActive ? theme.colors.primary : theme.colors.backgroundTertiary};
+            color: ${$isActive ? '#ffffff' : theme.colors.text};
+          }
+
+          &:focus {
+            outline: none;
+          }
+
+          &:focus-visible {
+            outline: 2px solid ${theme.colors.primary};
+            outline-offset: -2px;
+          }
+        `}
+
+  /* Поворот текста (вертикальная подпись внутри сегмента) */
+  ${({ $textOrientation, $textPosition, $variant }) => {
+    if ($variant === TabsVariant.PILL) {
+      return '';
+    }
     if ($textOrientation === 'vertical') {
-      // По умолчанию используется правая позиция
       const position = $textPosition || TabItemTextPosition.RIGHT;
-      // LEFT: текст идёт сверху вниз, слева направо (vertical-lr)
-      // RIGHT: текст идёт сверху вниз, справа налево (vertical-rl)
-      // Поворот на 180 градусов применяется к span внутри компонента
       if (position === TabItemTextPosition.RIGHT) {
-        return `
+        return css`
           writing-mode: vertical-rl;
           text-orientation: mixed;
         `;
       }
-      // LEFT
-      return `
+      return css`
         writing-mode: vertical-lr;
         text-orientation: mixed;
       `;
@@ -64,42 +263,31 @@ export const TabItemTrigger = styled.button<{
     return '';
   }}
 
-  /* Выравнивание текста в вертикальном режиме текста */
-  ${({ $textOrientation, $textPosition }) => {
-    if ($textOrientation === 'vertical') {
-      // По умолчанию используется правая позиция
-      const position = $textPosition || TabItemTextPosition.RIGHT;
-      if (position === TabItemTextPosition.LEFT) {
-        return `
-          justify-content: flex-start;
-        `;
-      }
-      if (position === TabItemTextPosition.RIGHT) {
-        return `
-          justify-content: flex-end;
-        `;
-      }
-      return `
+  ${({ $textOrientation, $textPosition, $variant }) => {
+    if ($variant === TabsVariant.PILL || $textOrientation !== 'vertical') {
+      return '';
+    }
+    const position = $textPosition || TabItemTextPosition.RIGHT;
+    if (position === TabItemTextPosition.LEFT) {
+      return css`
+        justify-content: flex-start;
+      `;
+    }
+    if (position === TabItemTextPosition.RIGHT) {
+      return css`
         justify-content: flex-end;
       `;
     }
-    return '';
+    return css`
+      justify-content: flex-end;
+    `;
   }}
-
-  &:hover {
-    background: ${({ $isActive, theme }) =>
-      $isActive ? theme.colors.primary : theme.colors.backgroundTertiary};
-    color: ${({ $isActive, theme }) => ($isActive ? '#ffffff' : theme.colors.text)};
-  }
-
-  &:focus {
-    outline: 2px solid ${({ theme }) => theme.colors.primary};
-    outline-offset: -2px;
-  }
 `;
 
 /**
- * TabItemContent - стилизованный контейнер для содержимого TabItem
+ * TabItemContent — панель контента выбранной вкладки
+ * @property $isActive — показывать или скрывать блок
+ * @property $direction — влияет на flex-раскладку рядом с вертикальным списком
  */
 export const TabItemContent = styled.div<{
   $isActive: boolean;
@@ -109,15 +297,13 @@ export const TabItemContent = styled.div<{
   padding: 16px;
   background: ${({ theme }) => theme.colors.backgroundSecondary};
 
-  /* В вертикальном режиме контент должен занимать оставшееся пространство */
   ${({ $direction }) =>
     $direction === TabsDirection.VERTICAL
-      ? `
-    flex: 1;
-    min-width: 0;
-  `
-      : `
-    /* В горизонтальном режиме контент занимает всю ширину под триггерами */
-    width: 100%;
-  `}
+      ? css`
+          flex: 1;
+          min-width: 0;
+        `
+      : css`
+          width: 100%;
+        `}
 `;
