@@ -1,7 +1,6 @@
 ﻿import styled, { css } from 'styled-components';
 import type { DataGridColumnFilterIconPosition } from '@/types/ui';
-import { ThemeMode } from '@/types/theme';
-import { tableInteractiveBorderRadiusFromTheme } from '../basicTable/tableThemeRadiusHandlers';
+import { tableBorderRadiusFromTheme } from '../basicTable/tableThemeRadiusHandlers';
 
 /** Контейнер таблицы с возможностью наложения оверлея загрузки */
 export const DataGridRoot = styled.div`
@@ -17,8 +16,7 @@ export const DataGridLoadingOverlay = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: ${({ theme }) =>
-    theme.mode === ThemeMode.DARK ? 'rgba(0, 0, 0, 0.35)' : 'rgba(255, 255, 255, 0.55)'};
+  background: ${({ theme }) => theme.tables.loadingOverlay.background};
   border-radius: inherit;
   pointer-events: all;
 `;
@@ -172,7 +170,7 @@ export const DataGridExpandButton = styled.button`
   background: transparent;
   cursor: pointer;
   color: inherit;
-  border-radius: ${({ theme }) => tableInteractiveBorderRadiusFromTheme(theme)};
+  border-radius: ${({ theme }) => tableBorderRadiusFromTheme(theme)};
 
   &:focus-visible {
     outline: 2px solid ${({ theme }) => theme.colors.primary};

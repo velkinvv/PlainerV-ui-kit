@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { Size } from '../../../types/sizes';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Button } from '../buttons/Button/Button';
 import { DOC_POPOVER } from '@/components/ui/storyDocs/uiKitDocs';
 
@@ -19,13 +18,6 @@ const meta: Meta<typeof Popover> = {
       },
     },
   },
-  decorators: [
-    Story => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   argTypes: {
     trigger: {
       control: false,

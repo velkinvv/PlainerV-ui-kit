@@ -23,7 +23,7 @@ export const TABLE_KIT_DOC = `
 
 Обёртка из двух слоёв: внешний — верхние скругления как у карточки и \`overflow: hidden\` (чтобы фон \`thead\` не «срезал» радиус), внутренний — \`overflow-x: auto\` только вокруг \`<Table>\`. \`<TablePagination />\` держите **снаружи** \`TableContainerScroll\` (но внутри \`TableContainer\`), чтобы не клипались тени кнопок страниц.
 
-**Как использовать:** \`TableContainer\` → \`TableContainerScroll\` → \`Table\`; при встроенной пагинации — сестра \`TablePagination\` с \`embeddedInTableCard\` и проп \`embeddedPaginationBelow\` у \`TableContainerScroll\` (скругление только сверху у сетки). Без футера проп не передавайте — скругление клипа со всех сторон, как у цельной карточки.
+**Как использовать:** \`TableContainer\` → \`TableContainerScroll\` → \`Table\`; при встроенной пагинации — сестра \`TablePagination\` с \`embeddedInTableCard\` и проп \`embeddedPaginationBelow\` у \`TableContainerScroll\` (скругление только сверху у сетки). Без футера проп не передавайте — скругление углов со всех сторон, как у цельной карточки.
 
 **Внешний вид:** у контейнера тонкая обводка (\`border\` темы), чтобы таблица не сливалась с белым фоном страницы. Шапка (\`thead\`) визуально отделена от тела: свой фон и нижняя граница (не путать с первой строкой «зебры»).
 
@@ -84,7 +84,7 @@ export const TABLE_KIT_DOC = `
 | \`maxLines\` | Максимум строк у **текста** заголовка рядом с иконкой; иконка выравнивается по верху первой строки. |
 | \`sortPriority\` | При сортировке по нескольким полям: порядковый номер (1…n) рядом с парой шевронов. |
 
-Иконка сортировки — **два штриховых шеврона** (вверх / вниз): активное направление темнее, противоположное приглушено, без сортировки по колонке оба в нейтральном тоне.
+Иконка сортировки — **два линейных шеврона** (вверх / вниз): активное направление темнее, противоположное приглушено, без сортировки по колонке оба в нейтральном тоне.
 
 Ячейку шапки помечайте \`activeColumn\`, если колонка активна — в макете усиливается нижняя граница колонки. Для многострочного заголовка задайте ту же \`headerMaxLines\` у \`TableCell\`, что и \`maxLines\` у \`TableSortLabel\`, чтобы снять \`nowrap\` у \`th\`.
 
@@ -232,7 +232,7 @@ export const DATAGRID_DOC = `
 | Проп | Зачем |
 |------|--------|
 | \`expandedRowIds\` | Контролируемый список раскрытых id. |
-| \`onExpandedRowChange\` | Разворот/сворачивание; в параметрах — \`rowId\`, \`expanded\`, полный \`expandedIds\`. |
+| \`onExpandedRowChange\` | Клик по раскрытию строки: \`(params) => void\`, где \`params\` — \`{ rowId, expanded, expandedIds }\` (\`expanded\` — стало ли развёрнуто; \`expandedIds\` — полный список id открытых строк после действия). Для контролируемого \`expandedRowIds\` обновляйте состояние из колбэка. Ранее использовалось имя \`onRowCollapseChange\` — оно снято, API только \`onExpandedRowChange\`. |
 | \`getRowExpandable\` | Разрешить раскрытие для строки. |
 | \`renderExpandedRow\` | Контент под строкой; второй аргумент — \`dataStatus\`, \`isLoading\`. |
 | \`onExpandedRowOpen\` | Вызов при открытии (ленивая подгрузка). |
@@ -286,7 +286,9 @@ export const DATAGRID_DOC = `
 | Сторис | Что показывает |
 |--------|----------------|
 | **ClientPagination** | \`paginationMode="client"\`, сортировка, мультивыбор, липкая шапка (зебра по умолчанию у грида). |
-| **ClientPaginationPlainBody** | То же, с \`striped={false}\` — без чередования фона строк. |
+| **Без зебры и липкая шапка** (\`ClientPaginationPlainBody\`) | \`striped={false}\` + \`stickyHeader\`; обёртка с \`max-height\` и \`overflow: auto\`; все демо-строки на странице — видна прокрутка и «липкая» шапка. |
+| **Без зебры (без липкой шапки)** (\`PlainBodyNoStickyHeader\`) | Только \`striped={false}\`; \`stickyHeader\` не включается; пагинация по 3 строки. |
+| **Липкая шапка (зебра, прокрутка)** (\`StickyHeaderWithScroll\`) | Зебра по умолчанию + \`stickyHeader\`; та же обёртка со скроллом и полный список строк на странице. |
 | **MultiColumnSort** | \`multiColumnSort\` + массив в \`sortModel\`; приоритеты 1, 2 у шевронов. |
 | **CompactPaginationHideRowsSelect** | \`paginationVariant="compact"\`, \`showRowsPerPageSelect={false}\`. |
 | **PaginationToolbarCentered** | \`paginationToolbarAlign="center"\`. |

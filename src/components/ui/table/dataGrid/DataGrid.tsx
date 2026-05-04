@@ -69,7 +69,8 @@ import { DataGridColumnHeaderContent } from './DataGridColumnHeaderContent';
 
 /**
  * Готовая таблица с колонками и строками из пропсов (композиция `Table*` + выбор + пагинация + сортировка).
- * @param props — см. `DataGridProps` в `types/ui.ts`: раскрытие строк, ресайз (`onColumnResize*`),
+ * @param props — см. `DataGridProps` в `types/ui.ts`: раскрытие строк (`expandedRowIds`, `onExpandedRowChange` с объектом
+ *   `{ rowId, expanded, expandedIds }`; не `onRowCollapseChange`), ресайз (`onColumnResize*`),
  *   DnD колонок/строк (`onColumnDrag*`, `onRowDrag*`), клик по фильтру (`onColumnFilterClick` + `filterable` у колонки).
  */
 export function DataGrid<Row extends DataGridBaseRow>(props: DataGridProps<Row>): React.ReactElement {

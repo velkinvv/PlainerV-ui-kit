@@ -1,6 +1,5 @@
 ﻿import React, { useMemo, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { ThemeProvider } from '@/themes/ThemeProvider';
 import { Size } from '@/types/sizes';
 import type { TableSortDirection } from '@/types/ui';
 import {
@@ -24,13 +23,6 @@ import { TableWithTextFilterInHeader as tableColumnFilterTableStorySource } from
 const meta: Meta<typeof Table> = {
   title: 'UI Kit/Data Display/Table',
   component: Table,
-  decorators: [
-    Story => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   parameters: {
     layout: 'padded',
     docs: {
@@ -70,24 +62,24 @@ type Story = StoryObj<typeof Table>;
 type Row = { id: string; name: string; calories: number };
 
 const sampleRows: Row[] = [
-  { id: '1', name: 'Frozen yoghurt', calories: 159 },
-  { id: '2', name: 'Ice cream sandwich', calories: 237 },
-  { id: '3', name: 'Eclair', calories: 262 },
-  { id: '4', name: 'Cupcake', calories: 305 },
-  { id: '5', name: 'Gingerbread', calories: 356 },
-  { id: '6', name: 'Marshmallow', calories: 318 },
-  { id: '7', name: 'Nougat', calories: 360 },
-  { id: '8', name: 'Jelly bean', calories: 375 },
-  { id: '9', name: 'Lollipop', calories: 392 },
-  { id: '10', name: 'Honeycomb', calories: 408 },
-  { id: '11', name: 'Donut', calories: 452 },
-  { id: '12', name: 'Apple pie', calories: 411 },
-  { id: '13', name: 'Cheesecake', calories: 321 },
-  { id: '14', name: 'Brownie', calories: 466 },
-  { id: '15', name: 'Tiramisu', calories: 240 },
-  { id: '16', name: 'Panna cotta', calories: 215 },
-  { id: '17', name: 'Profiteroles', calories: 289 },
-  { id: '18', name: 'Macaron', calories: 170 },
+  { id: '1', name: 'Замороженный йогурт', calories: 159 },
+  { id: '2', name: 'Мороженое в рожке', calories: 237 },
+  { id: '3', name: 'Эклер', calories: 262 },
+  { id: '4', name: 'Кекс', calories: 305 },
+  { id: '5', name: 'Пряник', calories: 356 },
+  { id: '6', name: 'Зефир', calories: 318 },
+  { id: '7', name: 'Нуга', calories: 360 },
+  { id: '8', name: 'Мармелад', calories: 375 },
+  { id: '9', name: 'Леденец', calories: 392 },
+  { id: '10', name: 'Вафли с карамелью', calories: 408 },
+  { id: '11', name: 'Пончик', calories: 452 },
+  { id: '12', name: 'Яблочный пирог', calories: 411 },
+  { id: '13', name: 'Чизкейк', calories: 321 },
+  { id: '14', name: 'Брауни', calories: 466 },
+  { id: '15', name: 'Тирамису', calories: 240 },
+  { id: '16', name: 'Панна-котта', calories: 215 },
+  { id: '17', name: 'Профитроли', calories: 289 },
+  { id: '18', name: 'Макарон', calories: 170 },
 ];
 
 /**
@@ -119,8 +111,8 @@ export const Basic: Story = {
           <Table size="md" striped aria-label="Пример таблицы">
             <TableHead>
               <TableRow>
-                <TableCell>Dessert</TableCell>
-                <TableCell align="right">Calories</TableCell>
+                <TableCell>Блюдо</TableCell>
+                <TableCell align="right">Ккал</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -191,8 +183,8 @@ export const PlainBody: Story = {
             <Table size="md" aria-label="Таблица без зебры">
               <TableHead>
                 <TableRow>
-                  <TableCell>Dessert</TableCell>
-                  <TableCell align="right">Calories</TableCell>
+                  <TableCell>Блюдо</TableCell>
+                  <TableCell align="right">Ккал</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -295,7 +287,7 @@ export const SortableHead: Story = {
                     }
                   }}
                 >
-                  Dessert
+                  Блюдо
                 </TableSortLabel>
               </TableCell>
               <TableCell align="right" activeColumn={orderBy === 'calories'}>
@@ -311,7 +303,7 @@ export const SortableHead: Story = {
                     }
                   }}
                 >
-                  Calories
+                  Ккал
                 </TableSortLabel>
               </TableCell>
             </TableRow>
@@ -346,7 +338,7 @@ export const ColumnFilterInHeader: Story = {
     docs: {
       description: {
         story:
-          'Идентично **Table › Column filters › TableWithTextFilterInHeader**: иконка воронки, `Dropdown` (`multiSelection`), `ColumnFilterPanel`, `Input`; фильтр по подстроке в колонке User.',
+          'Идентично **Table › Column filters › TableWithTextFilterInHeader**: иконка воронки, `Dropdown` (`multiSelection`), `ColumnFilterPanel`, `Input`; фильтр по подстроке в колонке «Пользователь».',
       },
     },
   },
@@ -422,8 +414,8 @@ export const PaginationEmbeddedInCard: Story = {
         <Table size="md" striped aria-label="Таблица с встроенной пагинацией">
           <TableHead>
             <TableRow>
-              <TableCell>Dessert</TableCell>
-              <TableCell align="right">Calories</TableCell>
+              <TableCell>Блюдо</TableCell>
+              <TableCell align="right">Ккал</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -477,7 +469,7 @@ export const StickyHeader: Story = {
         <Table stickyHeader striped size="md" aria-label="Таблица со липкой шапкой">
           <TableHead>
             <TableRow>
-              <TableCell>Продукт</TableCell>
+              <TableCell>Блюдо</TableCell>
               <TableCell align="right">Ккал</TableCell>
             </TableRow>
           </TableHead>
@@ -515,8 +507,8 @@ export const StripedSizes: Story = {
         <Table striped size="sm" aria-label="Плотность sm">
           <TableHead>
             <TableRow>
-              <TableCell>Dessert</TableCell>
-              <TableCell align="right">Calories</TableCell>
+              <TableCell>Блюдо</TableCell>
+              <TableCell align="right">Ккал</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -535,8 +527,8 @@ export const StripedSizes: Story = {
         <Table striped size="md" aria-label="Плотность md">
           <TableHead>
             <TableRow>
-              <TableCell>Dessert</TableCell>
-              <TableCell align="right">Calories</TableCell>
+              <TableCell>Блюдо</TableCell>
+              <TableCell align="right">Ккал</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

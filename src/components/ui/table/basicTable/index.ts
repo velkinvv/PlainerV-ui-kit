@@ -22,5 +22,5 @@ export {
 } from './handlers';
 export type { TableSortChevronTone, TableSelectionAggregate } from './handlers';
 export { TABLE_HEADER_MAX_LINES_CAP, normalizeTableHeaderMaxLines } from './tableHeaderClampHandlers';
-export { tableInteractiveBorderRadiusFromTheme } from './tableThemeRadiusHandlers';
+export { tableBorderRadiusFromTheme, tableInteractiveBorderRadiusFromTheme } from './tableThemeRadiusHandlers';
 export { TableCellHeadLineClamp } from './Table.style';

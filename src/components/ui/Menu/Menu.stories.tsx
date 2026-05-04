@@ -2,7 +2,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Menu } from './Menu';
 import { MenuItem } from './MenuItem';
-import { ThemeProvider } from '@/themes/ThemeProvider';
 import { Icon } from '../Icon/Icon';
 import { DOC_MENU } from '@/components/ui/storyDocs/uiKitDocs';
 
@@ -17,13 +16,6 @@ const meta: Meta<typeof Menu> = {
       },
     },
   },
-  decorators: [
-    (Story) => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   argTypes: {
     'aria-label': {

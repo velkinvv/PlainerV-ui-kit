@@ -8,7 +8,6 @@ import {
   HintVisibilityTrigger,
   type HintPositioningMode,
 } from './Hint';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Button } from '../buttons/Button';
 import { ButtonVariant } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
@@ -26,13 +25,6 @@ const meta: Meta<typeof Hint> = {
       },
     },
   },
-  decorators: [
-    (Story) => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   args: {
     visibilityTrigger: HintVisibilityTrigger.HOVER,

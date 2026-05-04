@@ -148,7 +148,7 @@ export function TableStoriesDataGridDemo(): React.ReactElement {
                     handleSortClick('user');
                   }}
                 >
-                  User
+                  Пользователь
                 </TableSortLabel>
               </TableCell>
               <TableCell activeColumn={orderBy === 'state'}>
@@ -159,11 +159,11 @@ export function TableStoriesDataGridDemo(): React.ReactElement {
                     handleSortClick('state');
                   }}
                 >
-                  State
+                  Статус
                 </TableSortLabel>
               </TableCell>
-              <TableCell>Social</TableCell>
-              <TableCell>Social</TableCell>
+              <TableCell>Сервис</TableCell>
+              <TableCell>Профиль</TableCell>
               <TableCell align="right" activeColumn={orderBy === 'date'}>
                 <TableSortLabel
                   active={orderBy === 'date'}
@@ -172,7 +172,7 @@ export function TableStoriesDataGridDemo(): React.ReactElement {
                     handleSortClick('date');
                   }}
                 >
-                  Date
+                  Дата
                 </TableSortLabel>
               </TableCell>
               <TableCell padding="checkbox" align="center" />

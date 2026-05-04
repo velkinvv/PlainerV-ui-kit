@@ -3,7 +3,6 @@ import React from 'react';
 import { ButtonGroup } from './ButtonGroup';
 import { Button } from '../Button';
 import { IconButton } from '../IconButton';
-import { ThemeProvider } from '../../../../themes/ThemeProvider';
 import { ButtonVariant } from '@/types/ui';
 import { IconSize, Size } from '@/types/sizes';
 import { Icon } from '../../Icon/Icon';
@@ -47,13 +46,6 @@ const meta: Meta<typeof ButtonGroup> = {
     size: Size.MD,
     attachedShape: 'segment',
   },
-  decorators: [
-    (Story) => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   parameters: {
     layout: 'padded',
     docs: {

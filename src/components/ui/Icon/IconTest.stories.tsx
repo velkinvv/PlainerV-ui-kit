@@ -1,7 +1,6 @@
 ﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Icon } from './Icon';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { IconSize } from '../../../types/sizes';
 
 const meta: Meta<typeof Icon> = {
@@ -10,13 +9,6 @@ const meta: Meta<typeof Icon> = {
   parameters: {
     layout: 'centered',
   },
-  decorators: [
-    Story => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
 };
 

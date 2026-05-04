@@ -2,7 +2,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Tabs } from './Tabs';
 import { TabItem, TabItemGroupList } from './TabItem';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { TabItemTextOrientation, TabItemTextPosition, TabsDirection } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
 import { DOC_TAB_ITEM } from '@/components/ui/storyDocs/uiKitDocs';
@@ -18,13 +17,6 @@ const meta: Meta<typeof TabItem> = {
       },
     },
   },
-  decorators: [
-    (Story) => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   argTypes: {
     value: {

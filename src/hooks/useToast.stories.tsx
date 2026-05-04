@@ -3,26 +3,21 @@ import React from 'react';
 import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
-import { ThemeProvider } from '../themes/ThemeProvider';
 import { ToastProvider } from '../components/ui/Toast';
 import { useToast } from './useToast';
 import { ToastAppearance, type ToastType } from '@/types/ui';
 
-const withToast: Decorator = (Story) => (
-  <ThemeProvider>
-    <ToastProvider>
-      <Story />
-    </ToastProvider>
-  </ThemeProvider>
+const withToast: Decorator = Story => (
+  <ToastProvider>
+    <Story />
+  </ToastProvider>
 );
 
 /** Провайдер с внешним видом «пилюля» по умолчанию */
-const withPillToast: Decorator = (Story) => (
-  <ThemeProvider>
-    <ToastProvider defaultAppearance={ToastAppearance.PILL}>
-      <Story />
-    </ToastProvider>
-  </ThemeProvider>
+const withPillToast: Decorator = Story => (
+  <ToastProvider defaultAppearance={ToastAppearance.PILL}>
+    <Story />
+  </ToastProvider>
 );
 
 const meta: Meta = {
@@ -546,12 +541,10 @@ export const AdvancedControls: Story = {
 
 export const LimitedStack: Story = {
   decorators: [
-    (Story) => (
-      <ThemeProvider>
-        <ToastProvider limit={3} newestOnTop stacked>
-          <Story />
-        </ToastProvider>
-      </ThemeProvider>
+    Story => (
+      <ToastProvider limit={3} newestOnTop stacked>
+        <Story />
+      </ToastProvider>
     ),
   ],
   render: () => <LimitAndStackDemo />,

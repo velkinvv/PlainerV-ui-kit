@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { Stepper } from './Stepper';
 import type { StepperLinearStep } from '../../../types/ui';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { DOC_STEPPER } from '@/components/ui/storyDocs/uiKitDocs';
 
 const linearSteps: StepperLinearStep[] = [
@@ -14,13 +13,6 @@ const linearSteps: StepperLinearStep[] = [
 const meta: Meta<typeof Stepper> = {
   title: 'UI Kit/Navigation/Stepper',
   component: Stepper,
-  decorators: [
-    (Story) => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   parameters: {
     layout: 'padded',
     docs: {

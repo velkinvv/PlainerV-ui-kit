@@ -1,7 +1,6 @@
 ﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Accordion } from './Accordion';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { DOC_ACCORDION } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Accordion> = {
@@ -15,13 +14,6 @@ const meta: Meta<typeof Accordion> = {
       },
     },
   },
-  decorators: [
-    (Story) => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   argTypes: {
     defaultOpen: {

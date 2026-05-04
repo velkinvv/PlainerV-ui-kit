@@ -8,6 +8,7 @@ import { lightAccordionTheme, darkAccordionTheme } from './accordion';
 import { lightAvatarTheme, darkAvatarTheme } from './avatar';
 import { lightAvatarGroupTheme, darkAvatarGroupTheme } from './avatarGroup';
 import { lightCardTheme, darkCardTheme } from './card';
+import { lightTableTheme, darkTableTheme } from './table';
 import { lightDropdownTheme, darkDropdownTheme } from './dropdown';
 import { lightHintTheme, darkHintTheme } from './hint';
 import { lightModalTheme, darkModalTheme } from './modal';
@@ -53,6 +54,7 @@ export const lightTheme: ThemeType = {
   avatars: lightAvatarTheme,
   avatarGroups: lightAvatarGroupTheme,
   cards: lightCardTheme,
+  tables: lightTableTheme,
   dropdowns: lightDropdownTheme,
   hints: lightHintTheme,
   modals: lightModalTheme,
@@ -105,6 +107,7 @@ export const darkTheme: ThemeType = {
   avatars: darkAvatarTheme,
   avatarGroups: darkAvatarGroupTheme,
   cards: darkCardTheme,
+  tables: darkTableTheme,
   dropdowns: darkDropdownTheme,
   hints: darkHintTheme,
   modals: darkModalTheme,

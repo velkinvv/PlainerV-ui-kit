@@ -4,7 +4,6 @@ import { Icon } from './Icon';
 import * as PlainerIconsModule from '../../../icons/plainer';
 import * as IconExIconsModule from '../../../icons/iconex';
 import * as PhosphorIconsModule from '../../../icons/phosphor/regular';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { IconSize } from '../../../types/sizes';
 import { Hint } from '../Hint/Hint';
 import { sizeMap } from '../../../handlers/iconHandlers';
@@ -64,13 +63,6 @@ const meta: Meta<typeof Icon> = {
       },
     },
   },
-  decorators: [
-    Story => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   argTypes: {
     name: {

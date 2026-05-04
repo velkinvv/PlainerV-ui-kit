@@ -2,7 +2,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 import { Progress, useProgress, useStepper } from './';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Size } from '../../../types/sizes';
 import type { ProgressStep } from '../../../types/ui';
 import { DOC_PROGRESS } from '@/components/ui/storyDocs/uiKitDocs';
@@ -18,13 +17,6 @@ const meta: Meta<typeof Progress> = {
       },
     },
   },
-  decorators: [
-    (Story) => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   args: {
     value: 64,

@@ -15,7 +15,6 @@ import {
   collectTreeBranchKeysFromSections,
 } from '../../../handlers/dropdownTreeSelectionHandlers';
 import { Size } from '../../../types/sizes';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { DropdownMenu } from './DropdownMenu';
 import { DropdownMenuItem } from './DropdownMenuItem';
 import { DOC_DROPDOWN } from '@/components/ui/storyDocs/uiKitDocs';
@@ -35,13 +34,6 @@ const meta: Meta<typeof Dropdown> = {
       },
     },
   },
-  decorators: [
-    Story => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   argTypes: {
     trigger: {
       description:

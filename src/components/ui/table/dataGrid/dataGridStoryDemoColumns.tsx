@@ -17,13 +17,13 @@ export function getDataGridStoryDemoColumns(): DataGridColumn<DataGridStoryDemoR
   return [
     {
       field: 'user',
-      headerName: 'User',
+      headerName: 'Пользователь',
       sortable: true,
       width: 160,
     },
     {
       field: 'tag.color',
-      headerName: 'State',
+      headerName: 'Статус',
       sortable: true,
       width: 140,
       render: ({ row }) => (
@@ -39,13 +39,13 @@ export function getDataGridStoryDemoColumns(): DataGridColumn<DataGridStoryDemoR
     },
     {
       field: 'socialChannel',
-      headerName: 'Social',
+      headerName: 'Сервис',
       sortable: true,
       width: 120,
     },
     {
       field: 'login',
-      headerName: 'Social',
+      headerName: 'Профиль',
       sortable: true,
       width: 180,
       render: ({ row }) => (
@@ -57,7 +57,7 @@ export function getDataGridStoryDemoColumns(): DataGridColumn<DataGridStoryDemoR
     },
     {
       field: 'dateLabel',
-      headerName: 'Date',
+      headerName: 'Дата',
       sortable: true,
       align: 'right',
       width: 160,

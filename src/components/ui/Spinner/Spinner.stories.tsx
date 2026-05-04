@@ -1,7 +1,6 @@
 ﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Spinner } from './Spinner';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Size } from '../../../types/sizes';
 import { SpinnerVariant } from '../../../types/ui';
 import { DOC_SPINNER } from '@/components/ui/storyDocs/uiKitDocs';
@@ -17,13 +16,6 @@ const meta: Meta<typeof Spinner> = {
       },
     },
   },
-  decorators: [
-    (Story) => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   args: {
     color: '#68d5f8',

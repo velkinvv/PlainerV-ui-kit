@@ -3854,13 +3854,19 @@ export interface DataGridExpandedRowRenderContext {
   isLoading: boolean;
 }
 
-/** Аргумент колбэка `onExpandedRowChange` */
+/**
+ * Аргумент колбэка `onExpandedRowChange` у `DataGrid`.
+ * Вызывается при каждом развороте или сворачивании строки по кнопке раскрытия (после расчёта нового набора id).
+ */
 export interface DataGridExpandedRowChangeParams {
-  /** Строка, у которой изменилось раскрытие */
+  /** Идентификатор строки, для которой изменилось состояние раскрытия */
   rowId: DataGridRowId;
-  /** Стало ли развёрнуто после действия пользователя */
+  /** `true`, если строка стала развёрнутой; `false`, если свёрнута */
   expanded: boolean;
-  /** Полный список id раскрытых строк после этого изменения */
+  /**
+   * Полный список id всех развёрнутых строк **после** этого действия (включая или исключая `rowId` в зависимости от `expanded`).
+   * Удобно для контролируемого режима: передать тот же массив/Set в `expandedRowIds` без ручного диффа.
+   */
   expandedIds: readonly DataGridRowId[];
 }
 
@@ -3888,7 +3894,9 @@ export interface DataGridExpandedRowChangeParams {
  * @property sortModel + onSortChange — Контролируемая сортировка (одно поле, массив критериев или `null`; данные сортирует родитель)
  * @property multiColumnSort — Режим нескольких полей: клик добавляет asc → desc → снять; порядок в массиве — приоритет
  * @property rowBackgroundColorByStatus — Фон строки по данным строки
- * @property expandedRowIds + onExpandedRowChange + getRowExpandable + renderExpandedRow — раскрывающаяся подстрока
+ * @property expandedRowIds — контролируемый набор id развёрнутых строк (`Set` или массив); без пропа раскрытие хранится внутри грида
+ * @property onExpandedRowChange — уведомление о клике по раскрытию: аргумент `{ rowId, expanded, expandedIds }` (не использовать удалённое имя `onRowCollapseChange`)
+ * @property getRowExpandable + renderExpandedRow — какие строки можно раскрыть и что рендерить под строкой
  * @property getExpandedRowDataStatus + getExpandedRowLoading + onExpandedRowOpen — ленивая загрузка и статусы области раскрытия (отдельно от `isLoading` таблицы)
  * @property renderRowWrapper — Обёртка над `TableRow` (должна сохранять один корневой `tr` или `Fragment` с одним `tr`)
  * @property renderCell — Глобальный рендер ячейки, если у колонки нет `render`
@@ -3966,7 +3974,11 @@ export interface DataGridProps<Row extends DataGridBaseRow = DataGridBaseRow> ex
   /** Вызывается при развороте строки (удобно запустить ленивую подгрузку по `row.id`) */
   onExpandedRowOpen?: (row: Row) => void;
   /**
-   * Изменение раскрытия: какая строка, новое состояние и полный список раскрытых id (удобно для контролируемого `expandedRowIds` без ручного пересчёта).
+   * Клик по кнопке раскрытия строки: уведомление родителя о новом состоянии.
+   * В `params` передаются `rowId`, флаг `expanded` для этой строки и полный массив `expandedIds` после операции.
+   * При контролируемом `expandedRowIds` обновляйте состояние родителя из этого колбэка; при неконтролируемом (`expandedRowIds` не передан)
+   * внутренний набор раскрытых строк обновит сам `DataGrid` после вызова колбэка.
+   * Старое имя `onRowCollapseChange` удалено — используйте только этот колбэк.
    */
   onExpandedRowChange?: (params: DataGridExpandedRowChangeParams) => void;
   renderExpandedRow?: (row: Row, context: DataGridExpandedRowRenderContext) => ReactNode;

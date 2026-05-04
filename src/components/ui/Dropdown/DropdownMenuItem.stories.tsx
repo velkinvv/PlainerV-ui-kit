@@ -1,6 +1,5 @@
 ﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { DropdownMenu } from './DropdownMenu';
 import { DropdownMenuItem } from './DropdownMenuItem';
 import { DOC_DROPDOWN_MENU_ITEM } from '@/components/ui/storyDocs/uiKitDocs';
@@ -9,11 +8,7 @@ const meta: Meta<typeof DropdownMenuItem> = {
   title: 'UI Kit/Navigation/Dropdown/DropdownMenuItem',
   component: DropdownMenuItem,
   decorators: [
-    Story => (
-      <ThemeProvider>
-        <DropdownMenu style={{ maxWidth: 320 }}>{Story()}</DropdownMenu>
-      </ThemeProvider>
-    ),
+    Story => <DropdownMenu style={{ maxWidth: 320 }}>{Story()}</DropdownMenu>,
   ],
   parameters: {
     docs: {

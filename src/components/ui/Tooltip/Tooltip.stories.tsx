@@ -2,7 +2,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Tooltip } from './Tooltip';
 import { ButtonVariant, TooltipPosition } from '../../../types/ui';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Button } from '../buttons/Button/Button';
 import { Icon } from '../Icon/Icon';
 import { IconSize, Size } from '../../../types/sizes';
@@ -19,13 +18,6 @@ const meta: Meta<typeof Tooltip> = {
       },
     },
   },
-  decorators: [
-    (Story) => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   argTypes: {
     content: {

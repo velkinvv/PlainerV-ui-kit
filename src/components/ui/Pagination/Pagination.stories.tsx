@@ -1,7 +1,6 @@
 ﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import { Pagination } from './Pagination';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Size } from '../../../types/sizes';
 import { Card } from '../Card';
 import { Typography } from '../Typography';
@@ -10,13 +9,6 @@ import { DOC_PAGINATION } from '@/components/ui/storyDocs/uiKitDocs';
 const meta: Meta<typeof Pagination> = {
   title: 'UI Kit/Navigation/Pagination',
   component: Pagination,
-  decorators: [
-    (Story) => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   parameters: {
     layout: 'padded',
     docs: {

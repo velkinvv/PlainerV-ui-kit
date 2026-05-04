@@ -3,7 +3,6 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Grid } from './Grid';
 import { GridItem } from './GridItem';
 import { GridMode } from '../../../types/ui';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Card } from '../Card/Card';
 import { DOC_GRID } from '@/components/ui/storyDocs/uiKitDocs';
 
@@ -18,13 +17,6 @@ const meta: Meta<typeof Grid> = {
       },
     },
   },
-  decorators: [
-    Story => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   argTypes: {
     mode: {

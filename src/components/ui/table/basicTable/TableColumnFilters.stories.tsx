@@ -1,6 +1,5 @@
 import React, { useCallback, useId, useMemo, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { ThemeProvider } from '@/themes/ThemeProvider';
 import { Size, IconSize } from '@/types/sizes';
 import type { DataGridColumn } from '@/types/ui';
 import { Dropdown } from '../../Dropdown/Dropdown';
@@ -39,13 +38,6 @@ const meta: Meta = {
       },
     },
   },
-  decorators: [
-    Story => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
 };
 
@@ -162,7 +154,7 @@ export const TableWithTextFilterInHeader: Story = {
           if (!userFilter) {
             return true;
           }
-          return row.user.toLowerCase().includes(userFilter.toLowerCase());
+          return row.user.toLocaleLowerCase('ru-RU').includes(userFilter.toLocaleLowerCase('ru-RU'));
         }),
       [userFilter],
     );
@@ -170,7 +162,7 @@ export const TableWithTextFilterInHeader: Story = {
     return (
       <StoryColumnFiltersPage>
         <StoryColumnFiltersIntro>
-          Фильтр по подстроке в колонке User. Панель — ColumnFilterPanel внутри Dropdown с multiSelection, чтобы
+          Фильтр по подстроке в колонке «Пользователь». Панель — ColumnFilterPanel внутри Dropdown с multiSelection, чтобы
           клики по полю не закрывали меню до «Применить».
         </StoryColumnFiltersIntro>
         <TableContainer elevated>
@@ -180,7 +172,7 @@ export const TableWithTextFilterInHeader: Story = {
                 <TableRow>
                   <TableCell>
                     <TextFilterColumnHeader
-                      columnTitle="User"
+                      columnTitle="Пользователь"
                       appliedValue={userFilter}
                       onApplyFilter={setUserFilter}
                       onClearFilter={() => {
@@ -188,8 +180,8 @@ export const TableWithTextFilterInHeader: Story = {
                       }}
                     />
                   </TableCell>
-                  <TableCell>State</TableCell>
-                  <TableCell align="right">Date</TableCell>
+                  <TableCell>Статус</TableCell>
+                  <TableCell align="right">Дата</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -228,7 +220,7 @@ export const DataGridWithTextFilterInHeader: Story = {
           field: 'user',
           headerName: (
             <TextFilterColumnHeader
-              columnTitle="User"
+              columnTitle="Пользователь"
               appliedValue={userFilter}
               onApplyFilter={setUserFilter}
               onClearFilter={() => {
@@ -240,11 +232,11 @@ export const DataGridWithTextFilterInHeader: Story = {
         },
         {
           field: 'tag',
-          headerName: 'State',
+          headerName: 'Статус',
           sortable: false,
           render: ({ row }) => row.tag?.label ?? '—',
         },
-        { field: 'dateLabel', headerName: 'Date', align: 'right', sortable: false },
+        { field: 'dateLabel', headerName: 'Дата', align: 'right', sortable: false },
       ],
       [userFilter],
     );
@@ -255,7 +247,7 @@ export const DataGridWithTextFilterInHeader: Story = {
           if (!userFilter) {
             return true;
           }
-          return row.user.toLowerCase().includes(userFilter.toLowerCase());
+          return row.user.toLocaleLowerCase('ru-RU').includes(userFilter.toLocaleLowerCase('ru-RU'));
         }),
       [userFilter],
     );

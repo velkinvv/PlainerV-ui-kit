@@ -3,7 +3,6 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Icon } from './Icon/Icon';
 import * as PlainerIconsModule from '../../icons/plainer';
 import * as IconExIconsModule from '../../icons/iconex';
-import { ThemeProvider } from '../../themes/ThemeProvider';
 import { Hint } from './Hint/Hint';
 import { IconSize } from '../../types/sizes';
 import { sizeMap } from '../../handlers/iconHandlers';
@@ -49,13 +48,6 @@ const meta: Meta<typeof Icon> = {
       },
     },
   },
-  decorators: [
-    Story => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
 };
 

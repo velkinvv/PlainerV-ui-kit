@@ -34,3 +34,13 @@ export const DataGridStoryFilterFieldLabel = styled.label`
   font-size: 14px;
   color: ${({ theme }) => theme.colors.textSecondary};
 `;
+
+/**
+ * Область с вертикальным скроллом для демонстрации `stickyHeader` у `DataGrid`:
+ * родитель с ограниченной высотой и `overflow: auto` (как у примитива `Table › StickyHeader`).
+ */
+export const DataGridStoryScrollArea = styled.div`
+  max-height: 320px;
+  overflow: auto;
+  border-radius: 12px;
+`;

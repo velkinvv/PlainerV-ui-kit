@@ -1646,6 +1646,61 @@ export type CardTheme = {
 };
 
 /**
+ * Тема примитивов `Table` / `DataGrid`: скругления, оболочка-карточка, шапка, зебра, строки, пагинация, оверлей загрузки.
+ */
+export type TableTheme = {
+  /** Единое скругление оболочки, клипа, верхних углов шапки, нижних углов встроенной пагинации и мелких контролов. */
+  borderRadius: string;
+  shell: {
+    /** Обводка внешней карточки таблицы */
+    border: string;
+    /** Фон карточки таблицы */
+    background: string;
+  };
+  header: {
+    background: string;
+    borderBottom: string;
+  };
+  /** Визуальный подвал таблицы (`tfoot`) */
+  footerSection: {
+    background: string;
+  };
+  cell: {
+    /** Цвет текста в ячейках тела */
+    text: string;
+    /** Цвет текста в ячейках шапки */
+    textHead: string;
+    /** Нижняя граница ячейки шапки (обычная колонка) */
+    headBorderBottom: string;
+    /** Нижняя граница ячейки активной колонки сортировки */
+    headActiveSortBorderBottom: string;
+    /** Вертикальный разделитель между колонками шапки */
+    headColumnDivider: string;
+  };
+  body: {
+    /** Граница между строками `tbody` */
+    rowBorder: string;
+  };
+  zebra: {
+    oddRowBackground: string;
+  };
+  row: {
+    selectedBackground: string;
+    hoverBackground: string;
+    draggingBackground: string;
+    draggingOutline: string;
+    draggingBoxShadow: string;
+  };
+  pagination: {
+    borderTop: string;
+    textSecondary: string;
+  };
+  loadingOverlay: {
+    background: string;
+  };
+};
+
+/**
  * Тип темы для Hint компонента
  * Определяет все настройки стилизации подсказок
  */
@@ -2176,6 +2231,7 @@ export type ThemeType = {
   avatars: AvatarTheme; // Тема для аватаров
   avatarGroups: AvatarGroupTheme; // Тема для групп аватаров
   cards: CardTheme; // Тема для карточек
+  tables: TableTheme; // Тема для таблицы и DataGrid
   dropdowns: DropdownTheme; // Тема для dropdown
   hints: HintTheme; // Тема для подсказок
   modals: ModalTheme; // Тема для модальных окон

@@ -1,23 +1,15 @@
-﻿import type { Decorator, Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 import React from 'react';
 import { Button } from '../buttons/Button';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Toast } from './Toast';
 import { ToastProvider, useToast } from './ToastProvider';
 import { ToastAppearance, type ToastItem, type ToastPlacement } from '@/types/ui';
 import { DOC_TOAST } from '@/components/ui/storyDocs/uiKitDocs';
 
-const withTheme: Decorator = (Story) => (
-  <ThemeProvider>
-    <Story />
-  </ThemeProvider>
-);
-
 const meta: Meta<typeof Toast> = {
   title: 'UI Kit/Feedback/Toast',
   component: Toast,
-  decorators: [withTheme],
   parameters: {
     layout: 'padded',
     docs: {

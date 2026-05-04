@@ -1,7 +1,6 @@
 ﻿import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { FloatingMenu } from './FloatingMenu';
-import { ThemeProvider } from '@/themes/ThemeProvider';
 import {
   FloatingMenuDropdownTrigger,
   FloatingMenuDragSource,
@@ -18,12 +17,10 @@ const meta: Meta<typeof FloatingMenu> = {
   title: 'UI Kit/Navigation/FloatingMenu',
   component: FloatingMenu,
   decorators: [
-    (Story) => (
-      <ThemeProvider>
-        <div style={{ minHeight: 400, position: 'relative' }}>
-          <Story />
-        </div>
-      </ThemeProvider>
+    Story => (
+      <div style={{ minHeight: 400, position: 'relative' }}>
+        <Story />
+      </div>
     ),
   ],
   parameters: {

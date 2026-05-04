@@ -3,16 +3,13 @@ import React from 'react';
 import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
-import { ThemeProvider } from '../themes/ThemeProvider';
 import { SnackbarProvider } from '../components/ui/Snackbar';
 import { useSnackbar } from './useSnackbar';
 
-const withSnackbar: Decorator = (Story) => (
-  <ThemeProvider>
-    <SnackbarProvider>
-      <Story />
-    </SnackbarProvider>
-  </ThemeProvider>
+const withSnackbar: Decorator = Story => (
+  <SnackbarProvider>
+    <Story />
+  </SnackbarProvider>
 );
 
 const meta: Meta = {

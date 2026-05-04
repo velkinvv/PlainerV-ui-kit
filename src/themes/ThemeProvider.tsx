@@ -62,36 +62,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 
   const themeWithType = useMemo(() => ({ ...theme, type: theme.mode }), [theme]);
 
-  // Синхронизация с темой Storybook
-  useEffect(() => {
-    const handleThemeChange = (event: { theme: string }) => {
-      const newTheme = event.theme;
-      if (newTheme === 'dark') {
-        setMode(ThemeMode.DARK);
-      } else if (newTheme === 'light') {
-        setMode(ThemeMode.LIGHT);
-      }
-    };
-
-    // Слушаем события от аддона Storybook
-    if (typeof window !== 'undefined') {
-      const storybookWindow = window as unknown as {
-        __STORYBOOK_ADDONS_CHANNEL__?: {
-          on: (event: string, handler: (event: { theme: string }) => void) => void;
-          off: (event: string, handler: (event: { theme: string }) => void) => void;
-        };
-      };
-      const channel = storybookWindow.__STORYBOOK_ADDONS_CHANNEL__;
-      if (!channel) {
-        return;
-      }
-      channel.on('THEME_CHANGED', handleThemeChange);
-
-      return () => {
-        channel.off('THEME_CHANGED', handleThemeChange);
-      };
-    }
-  }, []);
+  // Синхронизация с тулбаром тем Storybook: см. `.storybook/withStorybookUiKitTheme.tsx` (глобал `theme` в декораторе).
 
   // Обновляем localStorage при изменении темы
   useEffect(() => {

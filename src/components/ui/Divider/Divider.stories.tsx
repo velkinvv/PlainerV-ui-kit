@@ -1,7 +1,6 @@
 ﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Divider } from './Divider';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { DividerOrientation } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 import { DOC_DIVIDER } from '@/components/ui/storyDocs/uiKitDocs';
@@ -17,13 +16,6 @@ const meta: Meta<typeof Divider> = {
       },
     },
   },
-  decorators: [
-    (Story) => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   argTypes: {
     orientation: {

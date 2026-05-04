@@ -2,7 +2,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Tabs } from './Tabs';
 import { TabItem } from './TabItem';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import {
   TabsDirection,
   TabsVerticalPosition,
@@ -24,13 +23,6 @@ const meta: Meta<typeof Tabs> = {
       },
     },
   },
-  decorators: [
-    Story => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   argTypes: {
     defaultActiveTab: {

@@ -3,7 +3,6 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Modal, useModal } from './index';
 import { Button } from '../buttons/Button';
 import { Icon } from '../Icon/Icon';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { ButtonVariant } from '../../../types/ui';
 import { Size, IconSize, ModalSize } from '../../../types/sizes';
 import {
@@ -48,13 +47,6 @@ const meta: Meta<typeof Modal> = {
       },
     },
   },
-  decorators: [
-    (Story) => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   argTypes: {
     title: {

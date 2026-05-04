@@ -1,10 +1,21 @@
-import { BorderRadiusHandler } from '@/handlers/uiHandlers';
 import type { ThemeType } from '@/types/theme';
+
+/** Запасной радиус, если в теме нет `tables` (например, устаревший мок). */
+const TABLE_THEME_FALLBACK_BORDER_RADIUS = '12px';
+
+/**
+ * Единое скругление примитива таблицы: карточка-оболочка, клип скролла, верх шапки, низ встроенной пагинации, фокус мелких контролов.
+ * @param theme — активная тема styled-components
+ */
+export function tableBorderRadiusFromTheme(theme: ThemeType): string {
+  return theme.tables?.borderRadius ?? TABLE_THEME_FALLBACK_BORDER_RADIUS;
+}
 
 /**
  * Скругление мелких интерактивных контролов в таблице (сортировка, фильтр в шапке, expand).
- * Использует глобальный ключ темы `theme.borderRadius` и шкалу `themeRadiusBySize` (см. `BorderRadiusHandler`).
+ * Совпадает с `tableBorderRadiusFromTheme`: значение задаётся в `theme.tables.borderRadius`.
+ * @param theme — активная тема styled-components
  */
 export function tableInteractiveBorderRadiusFromTheme(theme: ThemeType): string {
-  return BorderRadiusHandler(theme.borderRadius);
+  return tableBorderRadiusFromTheme(theme);
 }

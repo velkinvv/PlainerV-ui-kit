@@ -1,7 +1,6 @@
 ﻿import React, { useCallback, useId, useMemo, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
-import { ThemeProvider } from '@/themes/ThemeProvider';
 import { IconSize, Size } from '@/types/sizes';
 import {
   ButtonVariant,
@@ -23,6 +22,7 @@ import {
   DataGridStoryExpandedDetailLine,
   DataGridStoryFilterFieldLabel,
   DataGridStoryHint,
+  DataGridStoryScrollArea,
 } from './DataGrid.stories.style';
 import { ColumnFilterPanel } from '../columnFilter/ColumnFilterPanel';
 import { Icon } from '../../Icon/Icon';
@@ -39,13 +39,6 @@ const demoDisabledRowIds: string[] = TABLE_STORY_DEMO_ROWS.filter(row => row.dis
 const meta: Meta<typeof DataGrid> = {
   title: 'UI Kit/Data Display/DataGrid',
   component: DataGrid,
-  decorators: [
-    Story => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   parameters: {
     layout: 'padded',
     docs: {
@@ -117,7 +110,10 @@ const meta: Meta<typeof DataGrid> = {
     isLoading: { description: 'Глобальный оверлей загрузки над таблицей.' },
     rowBackgroundColorByStatus: { description: '(row) => CSS-цвет фона строки или undefined.' },
     expandedRowIds: { description: 'Контролируемые раскрытые id.' },
-    onExpandedRowChange: { description: 'Смена раскрытия; в параметрах полный список expandedIds.' },
+    onExpandedRowChange: {
+      description:
+        'Клик по кнопке раскрытия строки. Аргумент: `{ rowId, expanded, expandedIds }` — какая строка, стала ли развёрнутой, полный список id открытых строк после клика. Для контролируемого `expandedRowIds` обновляйте родитель из этого колбэка. Старое имя `onRowCollapseChange` удалено.',
+    },
     getRowExpandable: { description: '(row) => boolean — можно ли развернуть строку.' },
     getExpandedRowDataStatus: { description: 'Статус данных подстроки: idle | loading | ready | error.' },
     getExpandedRowLoading: { description: 'Упрощённый флаг загрузки подстроки (если статус не задан).' },
@@ -227,13 +223,64 @@ export const ClientPagination: Story = {
   },
 };
 
-/** Как **ClientPagination**, но без зебры: `striped={false}` (у `DataGrid` зебра по умолчанию включена). */
+/**
+ * Без зебры и с липкой шапкой: `striped={false}` + `stickyHeader`.
+ * Обёртка с `max-height` и `overflow: auto` — чтобы шапка «прилипала» при прокрутке (как `Table › StickyHeader`).
+ */
 export const ClientPaginationPlainBody: Story = {
+  name: 'Без зебры и липкая шапка',
   parameters: {
     docs: {
       description: {
         story:
-          'Ровный фон строк тела таблицы (как у карточки), без чередования. У примитива `Table` зебра по умолчанию выключена; у `DataGrid` — наоборот, поэтому для «белой» сетки передайте **`striped={false}`**.',
+          'Ровный фон строк (`striped={false}`) и липкая шапка (`stickyHeader`). Родитель с **ограниченной высотой** и вертикальным скроллом — иначе `position: sticky` у заголовка не проявляется. На странице показаны все демо-строки (`pageSize` = числу строк), чтобы появилась прокрутка.',
+      },
+    },
+  },
+  render: () => {
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
+    const [sortModel, setSortModel] = useState<DataGridSortModel | null>({ field: 'user', direction: 'asc' });
+    const fullPageSize = TABLE_STORY_DEMO_ROWS.length;
+    const [pagination, setPagination] = useState<DataGridPaginationModel>({ page: 0, pageSize: fullPageSize });
+
+    const sorted = useMemo(() => sortRows(TABLE_STORY_DEMO_ROWS, sortModel), [sortModel]);
+
+    return (
+      <DataGridStoryScrollArea>
+        <DataGrid<DataGridStoryDemoRow>
+          tableId="story-data-grid-plain-body"
+          columns={demoColumns}
+          rows={sorted}
+          totalRows={sorted.length}
+          displayRowSelectionColumn
+          multiselect
+          selectedIds={selectedIds}
+          disabledIds={demoDisabledRowIds}
+          onRowSelectionChange={ids => {
+            setSelectedIds(ids);
+          }}
+          sortModel={sortModel}
+          onSortChange={setSortModel}
+          paginationModel={pagination}
+          onPaginationChange={setPagination}
+          paginationMode="client"
+          stickyHeader
+          striped={false}
+          size={Size.MD}
+        />
+      </DataGridStoryScrollArea>
+    );
+  },
+};
+
+/** Только отключение зебры: `striped={false}`, липкая шапка выключена (как у `Table` по умолчанию). */
+export const PlainBodyNoStickyHeader: Story = {
+  name: 'Без зебры (без липкой шапки)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`striped={false}` — ровный фон строк; `stickyHeader` не передаётся (`false`). Пагинация по 3 строки, как в **ClientPagination**.',
       },
     },
   },
@@ -246,7 +293,7 @@ export const ClientPaginationPlainBody: Story = {
 
     return (
       <DataGrid<DataGridStoryDemoRow>
-        tableId="story-data-grid-plain-body"
+        tableId="story-data-grid-plain-no-sticky"
         columns={demoColumns}
         rows={sorted}
         totalRows={sorted.length}
@@ -262,10 +309,55 @@ export const ClientPaginationPlainBody: Story = {
         paginationModel={pagination}
         onPaginationChange={setPagination}
         paginationMode="client"
-        stickyHeader
         striped={false}
         size={Size.MD}
       />
+    );
+  },
+};
+
+/** Липкая шапка при зебре по умолчанию: вертикальный скролл и все строки на одной странице. */
+export const StickyHeaderWithScroll: Story = {
+  name: 'Липкая шапка (зебра, прокрутка)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`stickyHeader` при зебре по умолчанию (`striped` не задаётся). Обёртка с `max-height` и `overflow: auto`; `pageSize` равен числу демо-строк — прокрутка по телу таблицы, шапка остаётся видимой.',
+      },
+    },
+  },
+  render: () => {
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
+    const [sortModel, setSortModel] = useState<DataGridSortModel | null>({ field: 'user', direction: 'asc' });
+    const fullPageSize = TABLE_STORY_DEMO_ROWS.length;
+    const [pagination, setPagination] = useState<DataGridPaginationModel>({ page: 0, pageSize: fullPageSize });
+
+    const sorted = useMemo(() => sortRows(TABLE_STORY_DEMO_ROWS, sortModel), [sortModel]);
+
+    return (
+      <DataGridStoryScrollArea>
+        <DataGrid<DataGridStoryDemoRow>
+          tableId="story-data-grid-sticky-zebra-scroll"
+          columns={demoColumns}
+          rows={sorted}
+          totalRows={sorted.length}
+          displayRowSelectionColumn
+          multiselect
+          selectedIds={selectedIds}
+          disabledIds={demoDisabledRowIds}
+          onRowSelectionChange={ids => {
+            setSelectedIds(ids);
+          }}
+          sortModel={sortModel}
+          onSortChange={setSortModel}
+          paginationModel={pagination}
+          onPaginationChange={setPagination}
+          paginationMode="client"
+          stickyHeader
+          size={Size.MD}
+        />
+      </DataGridStoryScrollArea>
     );
   },
 };
@@ -745,7 +837,7 @@ export const BuiltinColumnFilterIcon: Story = {
     docs: {
       description: {
         story:
-          'Колонка **User** с `filterable: true`. После «Применить» у колонки выставляется `filterApplied: true` — иконка с заливкой `theme.colors.info`. Клик по иконке вызывает `onColumnFilterClick({ field, nativeEvent })`; здесь под таблицей показывается `ColumnFilterPanel` (в приложении чаще — `Dropdown` с порталом у курсора).',
+          'Колонка **Пользователь** с `filterable: true`. После «Применить» у колонки выставляется `filterApplied: true` — иконка с заливкой `theme.colors.info`. Клик по иконке вызывает `onColumnFilterClick({ field, nativeEvent })`; здесь под таблицей показывается `ColumnFilterPanel` (в приложении чаще — `Dropdown` с порталом у курсора).',
       },
     },
   },
@@ -762,7 +854,7 @@ export const BuiltinColumnFilterIcon: Story = {
           if (!appliedUserSubstring) {
             return true;
           }
-          return row.user.toLowerCase().includes(appliedUserSubstring.toLowerCase());
+          return row.user.toLocaleLowerCase('ru-RU').includes(appliedUserSubstring.toLocaleLowerCase('ru-RU'));
         }),
       [appliedUserSubstring],
     );
@@ -784,7 +876,7 @@ export const BuiltinColumnFilterIcon: Story = {
     return (
       <DataGridStoryBlock>
         <DataGridStoryHint>
-          Нажмите иконку воронки в заголовке User. Панель под таблицей — упрощённый пример; вариант с `Dropdown` см. **Фильтр в шапке колонки**.
+          Нажмите иконку воронки в заголовке «Пользователь». Панель под таблицей — упрощённый пример; вариант с `Dropdown` см. **Фильтр в шапке колонки**.
         </DataGridStoryHint>
         <DataGrid<DataGridStoryDemoRow>
           tableId="story-data-grid-builtin-filter-icon"
@@ -812,7 +904,7 @@ export const BuiltinColumnFilterIcon: Story = {
               setFilterPanelOpen(false);
             }}
           >
-            <DataGridStoryFilterFieldLabel htmlFor={filterInputDomId}>Подстрока в User:</DataGridStoryFilterFieldLabel>
+            <DataGridStoryFilterFieldLabel htmlFor={filterInputDomId}>Подстрока в «Пользователь»:</DataGridStoryFilterFieldLabel>
             <Input
               id={filterInputDomId}
               value={draftUserSubstring}
@@ -837,7 +929,7 @@ export const FilterIconPositions: Story = {
     docs: {
       description: {
         story:
-          'У колонок **User** / **State** / **Date** заданы `filterIconPosition`: `leading`, `inlineTitle`, `trailing`. Ширина колонок увеличена, чтобы визуально сравнить режимы. Клик по иконке — в Actions (без панели фильтра).',
+          'У колонок **Пользователь** / **Статус** / **Дата** заданы `filterIconPosition`: `leading`, `inlineTitle`, `trailing`. Ширина колонок увеличена, чтобы визуально сравнить режимы. Клик по иконке — в Actions (без панели фильтра).',
       },
     },
   },
@@ -858,7 +950,7 @@ export const FilterIconPositions: Story = {
       return [
         {
           ...userColumn,
-          headerName: 'User (leading)',
+          headerName: 'Пользователь (leading)',
           filterable: true,
           filterIconPosition: 'leading' satisfies DataGridColumnFilterIconPosition,
           minWidth: 200,
@@ -866,7 +958,7 @@ export const FilterIconPositions: Story = {
         },
         {
           ...stateColumn,
-          headerName: 'State (inlineTitle)',
+          headerName: 'Статус (inlineTitle)',
           filterable: true,
           filterIconPosition: 'inlineTitle' satisfies DataGridColumnFilterIconPosition,
           minWidth: 200,
@@ -874,7 +966,7 @@ export const FilterIconPositions: Story = {
         },
         {
           ...dateColumn,
-          headerName: 'Date (trailing)',
+          headerName: 'Дата (trailing)',
           filterable: true,
           filterIconPosition: 'trailing' satisfies DataGridColumnFilterIconPosition,
           minWidth: 200,
@@ -911,7 +1003,7 @@ export const FilterIconCustomization: Story = {
     docs: {
       description: {
         story:
-          'Колонка **User** с `filterIconProps` (`IconExFilter2`, цвет по умолчанию `currentColor`) и `filterIconPropsApplied` (белый `color` на заливке `info` после «Применить»). Альтернатива: полностью свой узел в `filterIcon`.',
+          'Колонка **Пользователь** с `filterIconProps` (`IconExFilter2`, цвет по умолчанию `currentColor`) и `filterIconPropsApplied` (белый `color` на заливке `info` после «Применить»). Альтернатива: полностью свой узел в `filterIcon`.',
       },
     },
   },
@@ -928,7 +1020,7 @@ export const FilterIconCustomization: Story = {
           if (!appliedUserSubstring) {
             return true;
           }
-          return row.user.toLowerCase().includes(appliedUserSubstring.toLowerCase());
+          return row.user.toLocaleLowerCase('ru-RU').includes(appliedUserSubstring.toLocaleLowerCase('ru-RU'));
         }),
       [appliedUserSubstring],
     );
@@ -981,7 +1073,7 @@ export const FilterIconCustomization: Story = {
               setFilterPanelOpen(false);
             }}
           >
-            <DataGridStoryFilterFieldLabel htmlFor={filterInputDomId}>Подстрока в User:</DataGridStoryFilterFieldLabel>
+            <DataGridStoryFilterFieldLabel htmlFor={filterInputDomId}>Подстрока в «Пользователь»:</DataGridStoryFilterFieldLabel>
             <Input
               id={filterInputDomId}
               value={draftUserSubstring}
@@ -1005,7 +1097,7 @@ export const FilterIconCustomNode: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Колонка **User** с `filterIcon`: произвольный `ReactNode` внутри кнопки (здесь `Icon` с `IconExSettings`).',
+        story: 'Колонка **Пользователь** с `filterIcon`: произвольный `ReactNode` внутри кнопки (здесь `Icon` с `IconExSettings`).',
       },
     },
   },
@@ -1022,7 +1114,7 @@ export const FilterIconCustomNode: Story = {
           if (!appliedUserSubstring) {
             return true;
           }
-          return row.user.toLowerCase().includes(appliedUserSubstring.toLowerCase());
+          return row.user.toLocaleLowerCase('ru-RU').includes(appliedUserSubstring.toLocaleLowerCase('ru-RU'));
         }),
       [appliedUserSubstring],
     );
@@ -1074,7 +1166,7 @@ export const FilterIconCustomNode: Story = {
               setFilterPanelOpen(false);
             }}
           >
-            <DataGridStoryFilterFieldLabel htmlFor={filterInputDomId}>Подстрока в User:</DataGridStoryFilterFieldLabel>
+            <DataGridStoryFilterFieldLabel htmlFor={filterInputDomId}>Подстрока в «Пользователь»:</DataGridStoryFilterFieldLabel>
             <Input
               id={filterInputDomId}
               value={draftUserSubstring}
@@ -1299,7 +1391,7 @@ export const GlobalRenderCell: Story = {
   },
   render: () => {
     const columnsWithPlainField: DataGridColumn<DataGridStoryDemoRow>[] = [
-      { field: 'user', headerName: 'User', sortable: true },
+      { field: 'user', headerName: 'Пользователь', sortable: true },
       {
         field: 'comment',
         headerName: 'Комментарий',

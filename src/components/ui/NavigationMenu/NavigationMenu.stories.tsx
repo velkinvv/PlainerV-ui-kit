@@ -2,7 +2,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { NavigationMenu } from './NavigationMenu';
 import { NavigationMenuItem } from './NavigationMenuItem';
-import { ThemeProvider } from '@/themes/ThemeProvider';
 import { NavigationMenuActiveAppearance } from '@/types/ui';
 import { Icon } from '../Icon/Icon';
 import { DOC_NAVIGATION_MENU } from '@/components/ui/storyDocs/uiKitDocs';
@@ -19,12 +18,10 @@ const meta: Meta<typeof NavigationMenu> = {
     },
   },
   decorators: [
-    (Story) => (
-      <ThemeProvider>
-        <div style={{ maxWidth: 280 }}>
-          <Story />
-        </div>
-      </ThemeProvider>
+    Story => (
+      <div style={{ maxWidth: 280 }}>
+        <Story />
+      </div>
     ),
   ],
   tags: ['autodocs'],

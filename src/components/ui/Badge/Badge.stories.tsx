@@ -8,7 +8,6 @@ import {
   BadgeStoriesSizeTitle,
   BadgeStoriesSizeProp,
 } from './BadgeStories.style';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { BadgeVariant } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 import { DOC_BADGE } from '@/components/ui/storyDocs/uiKitDocs';
@@ -24,13 +23,6 @@ const meta: Meta<typeof Badge> = {
       },
     },
   },
-  decorators: [
-    (Story) => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   argTypes: {
     variant: {

@@ -1,7 +1,6 @@
 ﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import { Calendar } from './Calendar';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { darkTheme } from '../../../themes/themes';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import { DOC_CALENDAR } from '@/components/ui/storyDocs/uiKitDocs';
@@ -9,13 +8,6 @@ import { DOC_CALENDAR } from '@/components/ui/storyDocs/uiKitDocs';
 const meta: Meta<typeof Calendar> = {
   title: 'UI Kit/Inputs/Calendar',
   component: Calendar,
-  decorators: [
-    (Story) => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   parameters: {
     layout: 'padded',
     docs: {

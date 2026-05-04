@@ -1,13 +1,32 @@
 import type { Preview } from '@storybook/react';
-import { ThemeProvider } from '../src/themes/ThemeProvider';
+import addonThemes from '@storybook/addon-themes';
+import { withThemeByDataAttribute } from '@storybook/addon-themes';
+import { withStorybookUiKitTheme } from './withStorybookUiKitTheme';
 import { withStoryCanvasRoom } from './withStoryCanvasRoom';
 import './preview-storybook-overlays.css';
 
+const themeAddonAnnotations = addonThemes();
+
+/**
+ * Стартовое значение глобала `theme` (тулбар аддона тем) — как у {@link ThemeProvider} / `localStorage`.
+ */
+function getInitialStorybookThemeGlobal(): 'light' | 'dark' {
+  if (typeof window === 'undefined') {
+    return 'light';
+  }
+  return window.localStorage.getItem('storybook-theme') === 'dark' ? 'dark' : 'light';
+}
+
 /**
  * Глобальные параметры превью.
- * Декоратор `ThemeProvider` нужен всем сторис с styled-components: без темы `theme` в контексте
- * undefined и падает доступ к полям вроде `theme.sizes` / `theme.buttons` и т.д.
- * Дополнительная обёртка в отдельных сторис допустима (внутренний провайдер перекрывает внешний).
+ * Декоратор {@link withStorybookUiKitTheme} подключает `ThemeProvider` для styled-components: без `theme` в
+ * контексте падает доступ к `theme.sizes` / `theme.buttons` и т.д.
+ * **Не оборачивайте** сторис в ещё один `ThemeProvider`: внутренний перекрывает внешний и ломает синхрон
+ * с тулбаром тем (инверсия светлой/тёмной).
+ *
+ * `@storybook/addon-themes`: `withThemeByDataAttribute` выставляет `data-theme` на `<html>` (CSS / селекторы).
+ * {@link withStorybookUiKitTheme} читает `context.globals.theme` и передаёт тему в {@link ThemeProvider} в iframe превью.
+ * Оформление shell (сайдбар, хедер) — в `.storybook/manager.ts` через палитру UI-kit.
  *
  * `withStoryCanvasRoom` — см. файл декоратора: место под абсолютные попапы на Canvas и в Docs.
  *
@@ -17,18 +36,23 @@ import './preview-storybook-overlays.css';
  * См. `preview-storybook-overlays.css` и `dropdownInline` / `portalContainer`.
  */
 const preview: Preview = {
+  ...themeAddonAnnotations,
+  initialGlobals: {
+    ...(themeAddonAnnotations.initialGlobals ?? {}),
+    theme: getInitialStorybookThemeGlobal(),
+  },
   decorators: [
     /**
      * @param Story — компонент сторис из CSF (`Story` из `@storybook/react`)
      * Порядок декораторов Storybook: первый в массиве — внутренний (ближе к сторис), следующие — снаружи.
-     * Итог: снаружи запас по высоте (`withStoryCanvasRoom`), внутри — тема и сама сторис.
+     * Итог: снаружи — `data-theme` на документе и запас по высоте (`withStoryCanvasRoom`), внутри — тема и сторис.
      */
-    (Story) => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
+    withStorybookUiKitTheme,
     withStoryCanvasRoom,
+    withThemeByDataAttribute({
+      themes: { light: 'light', dark: 'dark' },
+      defaultTheme: getInitialStorybookThemeGlobal(),
+    }),
   ],
   parameters: {
     options: {

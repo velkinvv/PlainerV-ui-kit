@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 import { ButtonVariant } from '@/types/ui';
 import { getButtonVariant } from '@/handlers/buttonThemeHandlers';
-import { tableInteractiveBorderRadiusFromTheme } from './tableThemeRadiusHandlers';
+import { tableBorderRadiusFromTheme } from './tableThemeRadiusHandlers';
 
 /**
  * Кнопка-иконка фильтра в заголовке таблицы / грида.
@@ -20,7 +20,7 @@ export const TableHeaderFilterIconButton = styled.button.withConfig({
   min-width: 24px;
   min-height: 24px;
   border: 0;
-  border-radius: ${({ theme }) => tableInteractiveBorderRadiusFromTheme(theme)};
+  border-radius: ${({ theme }) => tableBorderRadiusFromTheme(theme)};
   box-sizing: border-box;
   background: transparent;
   cursor: pointer;

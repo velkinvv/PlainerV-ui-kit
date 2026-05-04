@@ -1,7 +1,6 @@
 ﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Avatar } from './Avatar';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Size } from '../../../types/sizes';
 import { AvatarState, AvatarStatus } from '../../../types/ui';
 import { DOC_AVATAR } from '@/components/ui/storyDocs/uiKitDocs';
@@ -17,13 +16,6 @@ const meta: Meta<typeof Avatar> = {
       },
     },
   },
-  decorators: [
-    (Story) => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   argTypes: {
     size: {

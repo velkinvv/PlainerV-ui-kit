@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import styled from 'styled-components';
-import { ThemeProvider } from '@/themes/ThemeProvider';
 import { Size } from '@/types/sizes';
 import { Typography } from '../../Typography/Typography';
 import { Input } from '../../inputs/Input';
@@ -11,13 +10,6 @@ import { DOC_COLUMN_FILTER_PANEL } from '@/components/ui/storyDocs/uiKitDocs';
 const meta: Meta<typeof ColumnFilterPanel> = {
   title: 'UI Kit/Data Display/Table/ColumnFilterPanel',
   component: ColumnFilterPanel,
-  decorators: [
-    Story => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   parameters: {
     layout: 'centered',
     docs: {

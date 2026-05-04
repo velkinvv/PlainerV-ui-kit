@@ -1,21 +1,13 @@
-﻿import type { Decorator, Meta, StoryObj } from '@storybook/react';
+﻿import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 import React from 'react';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Snackbar } from './Snackbar';
 import type { SnackbarItem } from '@/types/ui';
 import { DOC_SNACKBAR } from '@/components/ui/storyDocs/uiKitDocs';
 
-const withTheme: Decorator = (Story) => (
-  <ThemeProvider>
-    <Story />
-  </ThemeProvider>
-);
-
 const meta: Meta<typeof Snackbar> = {
   title: 'UI Kit/Feedback/Snackbar',
   component: Snackbar,
-  decorators: [withTheme],
   parameters: {
     layout: 'padded',
     docs: {

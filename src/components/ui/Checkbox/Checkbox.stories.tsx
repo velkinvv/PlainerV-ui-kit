@@ -2,7 +2,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Checkbox } from './Checkbox';
 import { CheckboxGroup as CheckboxGroupField } from './CheckboxGroup';
-import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Size } from '../../../types/sizes';
 import { DOC_CHECKBOX } from '@/components/ui/storyDocs/uiKitDocs';
 
@@ -17,13 +16,6 @@ const meta: Meta<typeof Checkbox> = {
       },
     },
   },
-  decorators: [
-    (Story) => (
-      <ThemeProvider>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   tags: ['autodocs'],
   argTypes: {
     checked: {

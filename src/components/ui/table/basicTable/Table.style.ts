@@ -1,16 +1,7 @@
 import styled, { css } from 'styled-components';
-import { BorderRadiusHandler } from '@/handlers/uiHandlers';
-import { tableInteractiveBorderRadiusFromTheme } from './tableThemeRadiusHandlers';
-import { Size } from '@/types/sizes';
-import { ThemeMode, type ThemeType } from '@/types/theme';
+import { tableBorderRadiusFromTheme } from './tableThemeRadiusHandlers';
+import type { ThemeType } from '@/types/theme';
 import type { TablePaginationToolbarAlign, TableSize } from '@/types/ui';
-
-/**
- * Скругление контейнера таблицы-карточки из темы (как у `Card` размера MD).
- * @param theme — активная тема styled-components
- */
-const tableContainerBorderRadiusFromTheme = (theme: ThemeType): string =>
-  theme.cards?.sizes?.[Size.MD]?.borderRadius ?? BorderRadiusHandler(theme.borderRadius);
 
 /**
  * Вертикальные отступы ячейки по размеру таблицы.
@@ -48,9 +39,9 @@ export const TableContainerRoot = styled.div<{ $elevated: boolean }>`
   display: flex;
   flex-direction: column;
   overflow: visible;
-  border-radius: ${({ theme }) => tableContainerBorderRadiusFromTheme(theme)};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  background: ${({ theme }) => theme.colors.card};
+  border-radius: ${({ theme }) => tableBorderRadiusFromTheme(theme)};
+  border: ${({ theme }) => theme.tables.shell.border};
+  background: ${({ theme }) => theme.tables.shell.background};
   ${({ theme, $elevated }) =>
     $elevated &&
     css`
@@ -77,13 +68,13 @@ export const TableContainerScrollClip = styled.div.withConfig({
   ${({ theme, $embeddedPaginationBelow }) =>
     $embeddedPaginationBelow
       ? css`
-          border-top-left-radius: ${tableContainerBorderRadiusFromTheme(theme)};
-          border-top-right-radius: ${tableContainerBorderRadiusFromTheme(theme)};
+          border-top-left-radius: ${tableBorderRadiusFromTheme(theme)};
+          border-top-right-radius: ${tableBorderRadiusFromTheme(theme)};
           border-bottom-left-radius: 0;
           border-bottom-right-radius: 0;
         `
       : css`
-          border-radius: ${tableContainerBorderRadiusFromTheme(theme)};
+          border-radius: ${tableBorderRadiusFromTheme(theme)};
         `}
 `;
 
@@ -104,7 +95,7 @@ export const StyledTable = styled.table<{ $stickyHeader: boolean; $striped: bool
   border-collapse: collapse;
   border-spacing: 0;
   font-family: ${({ theme }) => theme.fonts.primary};
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.tables.cell.text};
 
   ${({ $stickyHeader }) =>
     $stickyHeader &&
@@ -120,9 +111,7 @@ export const StyledTable = styled.table<{ $stickyHeader: boolean; $striped: bool
     $striped &&
     css`
       tbody tr:nth-child(odd) {
-        background: ${theme.mode === ThemeMode.DARK
-          ? 'rgba(255, 255, 255, 0.02)'
-          : theme.colors.backgroundTertiary};
+        background: ${theme.tables.zebra.oddRowBackground};
       }
 
       /* Строка-деталь раскрытия не ломает подсчёт «зебры» у основных строк (см. DataGrid). */
@@ -131,30 +120,25 @@ export const StyledTable = styled.table<{ $stickyHeader: boolean; $striped: bool
           background: transparent;
         }
         tbody tr:nth-child(odd of :not([data-datagrid-expanded-detail])) {
-          background: ${theme.mode === ThemeMode.DARK
-            ? 'rgba(255, 255, 255, 0.02)'
-            : theme.colors.backgroundTertiary};
+          background: ${theme.tables.zebra.oddRowBackground};
         }
       }
     `}
 `;
 
-/** Шапка: отличный от строк и от «зебры» фон (`tbody` odd использует `backgroundTertiary`). */
+/** Шапка: фон и границы из `theme.tables`. */
 export const StyledThead = styled.thead`
-  background: ${({ theme }) =>
-    theme.mode === ThemeMode.DARK
-      ? theme.colors.backgroundQuinary
-      : theme.colors.backgroundQuaternary};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.borderSecondary};
-  /* Скругление верхних углов шапки по токену карточки (визуально заметно при светлом фоне страницы). */
-  border-top-left-radius: ${({ theme }) => tableContainerBorderRadiusFromTheme(theme)};
-  border-top-right-radius: ${({ theme }) => tableContainerBorderRadiusFromTheme(theme)};
+  background: ${({ theme }) => theme.tables.header.background};
+  border-bottom: ${({ theme }) => theme.tables.header.borderBottom};
+  /* Скругление верхних углов совпадает с клипом и единым токеном theme.tables.borderRadius. */
+  border-top-left-radius: ${({ theme }) => tableBorderRadiusFromTheme(theme)};
+  border-top-right-radius: ${({ theme }) => tableBorderRadiusFromTheme(theme)};
 `;
 
 export const StyledTbody = styled.tbody``;
 
 export const StyledTfoot = styled.tfoot`
-  background: ${({ theme }) => theme.colors.backgroundSecondary};
+  background: ${({ theme }) => theme.tables.footerSection.background};
 `;
 
 export const StyledTr = styled.tr<{
@@ -167,13 +151,11 @@ export const StyledTr = styled.tr<{
   ${({ $section, theme, $selected, $disabled, $hoverable, $dragging }) =>
     $section === 'body' &&
     css`
-      border-bottom: 1px solid ${theme.colors.border};
+      border-bottom: 1px solid ${theme.tables.body.rowBorder};
 
       ${$selected &&
       css`
-        background: ${theme.mode === ThemeMode.DARK
-          ? 'rgba(255, 255, 255, 0.08)'
-          : `color-mix(in srgb, ${theme.colors.primary} 10%, ${theme.colors.card})`};
+        background: ${theme.tables.row.selectedBackground};
       `}
 
       ${$disabled &&
@@ -188,12 +170,10 @@ export const StyledTr = styled.tr<{
         position: relative;
         z-index: 2;
         opacity: 0.48;
-        outline: 2px dashed ${theme.colors.primary};
+        outline: 2px dashed ${theme.tables.row.draggingOutline};
         outline-offset: -2px;
-        box-shadow: ${theme.boxShadow?.md ?? `0 8px 24px ${theme.colors.shadow}`};
-        background: ${theme.mode === ThemeMode.DARK
-          ? 'rgba(255, 255, 255, 0.06)'
-          : `color-mix(in srgb, ${theme.colors.primary} 14%, ${theme.colors.card})`};
+        box-shadow: ${theme.tables.row.draggingBoxShadow};
+        background: ${theme.tables.row.draggingBackground};
       `}
 
       ${$hoverable &&
@@ -203,9 +183,7 @@ export const StyledTr = styled.tr<{
       css`
         transition: background-color 0.15s ease;
         &:hover {
-          background: ${theme.mode === ThemeMode.DARK
-            ? 'rgba(255, 255, 255, 0.04)'
-            : `color-mix(in srgb, ${theme.colors.primary} 6%, ${theme.colors.card})`};
+          background: ${theme.tables.row.hoverBackground};
         }
       `}
     `}
@@ -252,7 +230,8 @@ export const TableCellBase = styled('td').withConfig({
   vertical-align: middle;
   font-size: ${({ theme }) => theme.fontSizes?.sm ?? '14px'};
   line-height: ${({ theme }) => theme.lineHeights?.normal ?? 1.4};
-  color: ${({ theme, $isHead }) => ($isHead ? theme.colors.textSecondary : theme.colors.text)};
+  color: ${({ theme, $isHead }) =>
+    $isHead ? theme.tables.cell.textHead : theme.tables.cell.text};
   font-weight: ${({ theme, $isHead }) => ($isHead ? theme.fontWeights?.semiBold ?? 600 : theme.fontWeights?.regular ?? 400)};
   padding: ${({ $size, $padding }) => cellPadding($size, $padding)};
   ${({ $isHead, $isFooter, $size }) =>
@@ -263,15 +242,15 @@ export const TableCellBase = styled('td').withConfig({
   border-bottom: ${({ $isHead, theme, $activeSortColumn }) =>
     $isHead
       ? $activeSortColumn
-        ? `3px solid ${theme.colors.text}`
-        : `1px solid ${theme.colors.border}`
+        ? theme.tables.cell.headActiveSortBorderBottom
+        : theme.tables.cell.headBorderBottom
       : 'none'};
 
   ${({ $columnDividers, theme }) =>
     $columnDividers &&
     css`
       &:not(:last-child) {
-        border-inline-end: 1px solid ${theme.colors.borderSecondary ?? theme.colors.border};
+        border-inline-end: 1px solid ${theme.tables.cell.headColumnDivider};
       }
     `}
 
@@ -313,7 +292,7 @@ export const TableSortLabelButton = styled.button.withConfig({
   &:focus-visible {
     outline: 2px solid ${({ theme }) => theme.colors.primary};
     outline-offset: 2px;
-    border-radius: ${({ theme }) => tableInteractiveBorderRadiusFromTheme(theme)};
+    border-radius: ${({ theme }) => tableBorderRadiusFromTheme(theme)};
   }
 
   ${({ $disabled }) =>
@@ -371,8 +350,11 @@ export const TablePaginationRoot = styled.div<{ $embeddedInTableCard?: boolean }
     css`
       margin-top: 0;
       padding: 12px 16px;
-      border-top: 1px solid ${theme.colors.border};
+      border-top: ${theme.tables.pagination.borderTop};
       box-sizing: border-box;
+      background: ${theme.tables.shell.background};
+      border-bottom-left-radius: ${tableBorderRadiusFromTheme(theme)};
+      border-bottom-right-radius: ${tableBorderRadiusFromTheme(theme)};
     `}
 `;
 
@@ -416,7 +398,7 @@ export const TablePaginationRowsSelect = styled.label<{ $compact?: boolean }>`
   gap: ${({ $compact }) => ($compact ? '6px' : '8px')};
   font-size: ${({ theme, $compact }) =>
     $compact ? theme.fontSizes?.xs ?? '12px' : theme.fontSizes?.sm ?? '14px'};
-  color: ${({ theme }) => theme.colors.textSecondary};
+  color: ${({ theme }) => theme.tables.pagination.textSecondary};
 `;
 
 /**
@@ -474,7 +456,7 @@ export const TablePaginationPageJump = styled.label`
   align-items: center;
   gap: 8px;
   font-size: ${({ theme }) => theme.fontSizes?.sm ?? '14px'};
-  color: ${({ theme }) => theme.colors.textSecondary};
+  color: ${({ theme }) => theme.tables.pagination.textSecondary};
 `;
 
 /**
