@@ -4,9 +4,14 @@ import { Icon } from './Icon';
 import * as PlainerIconsModule from '../../../icons/plainer';
 import * as IconExIconsModule from '../../../icons/iconex';
 import { IconSize } from '../../../types/sizes';
+import {
+  handleIconStoryCardMouseEnter,
+  handleIconStoryCardMouseLeave,
+} from '../../../handlers/iconStoryHoverHandlers';
 import type { IconVariant } from '../../../types/ui';
 import type { IconName } from '../../../icons';
 import { DOC_ICON_CATEGORIES } from '@/components/ui/storyDocs/uiKitDocs';
+import { buildIconStoriesScrollableGridStyle, iconStoriesStyles } from './Icon.stories.styles';
 
 // Функция для получения реально существующих иконок
 const getExistingIcons = () => {
@@ -76,79 +81,26 @@ const IconGrid = ({
   variant?: IconVariant;
   title: string;
 }) => (
-  <div style={{ marginBottom: '40px' }}>
-    <style>
-      {`
-        .icon-categories-grid::-webkit-scrollbar {
-          width: 8px;
-        }
-        .icon-categories-grid::-webkit-scrollbar-track {
-          background: #f1f5f9;
-          border-radius: 4px;
-        }
-        .icon-categories-grid::-webkit-scrollbar-thumb {
-          background: #cbd5e1;
-          border-radius: 4px;
-        }
-        .icon-categories-grid::-webkit-scrollbar-thumb:hover {
-          background: #94a3b8;
-        }
-      `}
-    </style>
-    <h3 style={{ marginBottom: '16px', color: '#374151' }}>{title}</h3>
+  <div style={iconStoriesStyles.pageSection}>
+    <style>{iconStoriesStyles.hintTooltipCss}</style>
+    <h3 style={iconStoriesStyles.titleWithMargin}>{title}</h3>
     <div
-      className="icon-categories-grid"
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
-        gap: '16px',
-        maxHeight: '600px',
-        overflowY: 'auto',
-        padding: '8px',
-        border: '1px solid #e5e7eb',
-        borderRadius: '8px',
-        backgroundColor: '#fafafa',
-        scrollbarWidth: 'thin',
-        scrollbarColor: '#cbd5e1 #f1f5f9',
-      }}
+      className="icon-stories-scroll"
+      style={buildIconStoriesScrollableGridStyle(0, 600)}
     >
       {icons.map((iconName: IconName) => (
         <div
           key={iconName}
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            padding: '16px',
-            border: '1px solid #e5e7eb',
-            borderRadius: '8px',
-            backgroundColor: '#f9fafb',
-            transition: 'all 0.2s',
-            cursor: 'pointer',
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.transform = 'translateY(-2px)';
-            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = 'none';
-          }}
+          style={iconStoriesStyles.iconCategoryCard}
+          onMouseEnter={handleIconStoryCardMouseEnter}
+          onMouseLeave={handleIconStoryCardMouseLeave}
         >
           <Icon
             name={iconName}
             size={IconSize.MD}
             // variant={variant}
           />
-          <span
-            style={{
-              fontSize: '12px',
-              marginTop: '8px',
-              textAlign: 'center',
-              color: '#6b7280',
-              fontWeight: '500',
-            }}
-          >
+          <span style={iconStoriesStyles.iconNameLabel}>
             {iconName}
           </span>
         </div>
@@ -351,11 +303,11 @@ const iconCategories = {
 // История всех категорий
 export const AllCategories: Story = {
   render: () => (
-    <div style={{ padding: '20px' }}>
+    <div style={iconStoriesStyles.pageRoot}>
       <h1>Категории иконок</h1>
 
       {/* Plainer иконки */}
-      <section style={{ marginBottom: '40px' }}>
+      <section style={iconStoriesStyles.pageSection}>
         <h2>Plainer иконки</h2>
         <IconGrid
           icons={getExistingIcons().plainerIcons}

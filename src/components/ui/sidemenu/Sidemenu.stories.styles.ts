@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import type { ThemeType } from '@/types/theme';
 
 export const sidemenuStoriesStyles = {
   edgeAttachedPageRoot: {
@@ -6,7 +7,6 @@ export const sidemenuStoriesStyles = {
     flexDirection: 'column',
     minHeight: '100vh',
     margin: 0,
-    background: '#e8e8e8',
   } satisfies CSSProperties,
   edgeAttachedStatus: {
     margin: '12px 16px',
@@ -25,7 +25,6 @@ export const sidemenuStoriesStyles = {
   edgeAttachedMain: {
     flex: 1,
     padding: 24,
-    background: '#f3f3f3',
     fontFamily: 'system-ui, sans-serif',
     fontSize: 14,
   } satisfies CSSProperties,
@@ -36,7 +35,6 @@ export const sidemenuStoriesStyles = {
   } satisfies CSSProperties,
   interactiveControlsPanel: {
     padding: '20px',
-    background: '#f5f5f5',
     borderRadius: '8px',
     minWidth: '200px',
   } satisfies CSSProperties,
@@ -50,7 +48,6 @@ export const sidemenuStoriesStyles = {
   offScreenSurface: {
     position: 'relative',
     minHeight: '100vh',
-    background: '#ececec',
     paddingLeft: 120,
     paddingTop: 24,
     boxSizing: 'border-box',
@@ -62,11 +59,9 @@ export const sidemenuStoriesStyles = {
   customToggleButton: {
     padding: '6px 8px',
     borderRadius: 8,
-    border: '1px solid #ccc',
     cursor: 'pointer',
     font: 'inherit',
     fontSize: 12,
-    background: '#fff',
     maxWidth: '100%',
     boxSizing: 'border-box',
     overflow: 'hidden',
@@ -74,3 +69,23 @@ export const sidemenuStoriesStyles = {
     whiteSpace: 'nowrap',
   } satisfies CSSProperties,
 };
+
+export const createSidemenuStoryThemeStyles = (theme: ThemeType) => ({
+  edgeAttachedPageRoot: {
+    background: theme.colors.backgroundTertiary,
+  } satisfies CSSProperties,
+  edgeAttachedMain: {
+    background: theme.colors.backgroundSecondary,
+  } satisfies CSSProperties,
+  interactiveControlsPanel: {
+    background: theme.colors.backgroundSecondary,
+  } satisfies CSSProperties,
+  offScreenSurface: {
+    background: theme.colors.backgroundTertiary,
+  } satisfies CSSProperties,
+  customToggleButton: {
+    border: `1px solid ${theme.colors.border}`,
+    background: theme.colors.backgroundSecondary,
+    color: theme.colors.text,
+  } satisfies CSSProperties,
+});

@@ -16,6 +16,8 @@ import {
 } from './buttonThemeHandlers';
 import { Size } from '../types/sizes';
 import { ButtonVariant } from '../types/ui';
+import { inputFieldStoriesStyles } from '@/handlers/inputFieldStories.styles';
+import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
 
 const meta: Meta = {
   title: 'UI Kit/Utils/Handlers/Button Theme Handlers',
@@ -65,19 +67,11 @@ const ButtonSizesDemo = () => {
         Размеры кнопок
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Typography variant="body1" marginBottom="sm">
           Выберите размер:
         </Typography>
-        <div
-          style={{
-            display: 'flex',
-            gap: '8px',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
+        <div style={storybookDemoStyles.rowWrapGap8AlignCenterJustifyCenter}>
           {sizes.map((size) => (
             <Button
               key={size}
@@ -91,11 +85,11 @@ const ButtonSizesDemo = () => {
         </div>
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Стили для размера {selectedSize}:</strong>
         </Typography>
-        <pre style={{ fontSize: '12px', overflow: 'auto' }}>
+        <pre style={storybookDemoStyles.demoJsonPre12}>
           {JSON.stringify(buttonSize, null, 2)}
         </pre>
       </div>
@@ -126,11 +120,11 @@ const ButtonVariantsDemo = () => {
         Варианты кнопок
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Typography variant="body1" marginBottom="sm">
           Выберите вариант:
         </Typography>
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        <div style={inputFieldStoriesStyles.rowWrapGap8}>
           {variants.map((variant) => (
             <Button key={variant} variant={variant} onClick={() => setSelectedVariant(variant)}>
               {variant}
@@ -139,11 +133,11 @@ const ButtonVariantsDemo = () => {
         </div>
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Стили для варианта {selectedVariant}:</strong>
         </Typography>
-        <pre style={{ fontSize: '12px', overflow: 'auto' }}>
+        <pre style={storybookDemoStyles.demoJsonPre12}>
           {JSON.stringify(buttonVariant, null, 2)}
         </pre>
       </div>
@@ -197,11 +191,11 @@ const ButtonStatesDemo = () => {
         Состояния кнопок
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Typography variant="body1" marginBottom="sm">
           Выберите вариант:
         </Typography>
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
+        <div style={storybookDemoStyles.rowFlexGap8WrapMarginBottom12}>
           {variants.map((variant) => (
             <Button
               key={variant}
@@ -217,7 +211,7 @@ const ButtonStatesDemo = () => {
         <Typography variant="body1" marginBottom="sm">
           Выберите состояние:
         </Typography>
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        <div style={inputFieldStoriesStyles.rowWrapGap8}>
           {states.map((state) => (
             <Button
               key={state.key}
@@ -231,13 +225,13 @@ const ButtonStatesDemo = () => {
         </div>
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>
             Стили для состояния {selectedState} варианта {selectedVariant}:
           </strong>
         </Typography>
-        <pre style={{ fontSize: '12px', overflow: 'auto' }}>
+        <pre style={storybookDemoStyles.demoJsonPre12}>
           {JSON.stringify(stateStyles, null, 2)}
         </pre>
       </div>
@@ -258,13 +252,13 @@ const ButtonAnimationsDemo = () => {
         Анимации и настройки кнопок
       </Typography>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+      <div style={storybookDemoStyles.gridTwoColumnsGap16}>
         <div>
           <Typography variant="body1" marginBottom="sm">
             <strong>Анимации:</strong>
           </Typography>
-          <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
-            <pre style={{ fontSize: '12px', overflow: 'auto' }}>
+          <div style={storybookDemoStyles.demoResultPanel}>
+            <pre style={storybookDemoStyles.demoJsonPre12}>
               {JSON.stringify(animations, null, 2)}
             </pre>
           </div>
@@ -274,8 +268,8 @@ const ButtonAnimationsDemo = () => {
           <Typography variant="body1" marginBottom="sm">
             <strong>Настройки:</strong>
           </Typography>
-          <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
-            <pre style={{ fontSize: '12px', overflow: 'auto' }}>
+          <div style={storybookDemoStyles.demoResultPanel}>
+            <pre style={storybookDemoStyles.demoJsonPre12}>
               {JSON.stringify(settings, null, 2)}
             </pre>
           </div>
@@ -303,11 +297,11 @@ const ButtonHandlersUsageDemo = () => {
         Практическое использование хендлеров
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Typography variant="body1" marginBottom="sm">
           Настройте параметры:
         </Typography>
-        <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
+        <div style={storybookDemoStyles.rowFlexGap16MarginBottom16}>
           <div>
             <Typography variant="body2" marginBottom="xs">
               Вариант:
@@ -315,7 +309,7 @@ const ButtonHandlersUsageDemo = () => {
             <select
               value={customVariant}
               onChange={(e) => setCustomVariant(e.target.value as ButtonVariant)}
-              style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={storybookDemoStyles.nativeSelectBordered}
             >
               <option value={ButtonVariant.PRIMARY}>Primary</option>
               <option value={ButtonVariant.SECONDARY}>Secondary</option>
@@ -331,7 +325,7 @@ const ButtonHandlersUsageDemo = () => {
             <select
               value={customSize}
               onChange={(e) => setCustomSize(e.target.value as Size)}
-              style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+              style={storybookDemoStyles.nativeSelectBordered}
             >
               <option value={Size.SM}>Small</option>
               <option value={Size.MD}>Medium</option>
@@ -342,24 +336,16 @@ const ButtonHandlersUsageDemo = () => {
         </div>
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Полученные стили:</strong>
         </Typography>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+        <div style={storybookDemoStyles.gridTwoColumnsGap12}>
           <div>
             <Typography variant="body2" marginBottom="xs">
               Размер:
             </Typography>
-            <pre
-              style={{
-                fontSize: '10px',
-                overflow: 'auto',
-                backgroundColor: 'white',
-                padding: '8px',
-                borderRadius: '4px',
-              }}
-            >
+            <pre style={storybookDemoStyles.demoJsonPre10OnCard}>
               {JSON.stringify(buttonSize, null, 2)}
             </pre>
           </div>
@@ -367,15 +353,7 @@ const ButtonHandlersUsageDemo = () => {
             <Typography variant="body2" marginBottom="xs">
               Вариант:
             </Typography>
-            <pre
-              style={{
-                fontSize: '10px',
-                overflow: 'auto',
-                backgroundColor: 'white',
-                padding: '8px',
-                borderRadius: '4px',
-              }}
-            >
+            <pre style={storybookDemoStyles.demoJsonPre10OnCard}>
               {JSON.stringify(buttonVariant, null, 2)}
             </pre>
           </div>
@@ -383,15 +361,7 @@ const ButtonHandlersUsageDemo = () => {
             <Typography variant="body2" marginBottom="xs">
               Hover:
             </Typography>
-            <pre
-              style={{
-                fontSize: '10px',
-                overflow: 'auto',
-                backgroundColor: 'white',
-                padding: '8px',
-                borderRadius: '4px',
-              }}
-            >
+            <pre style={storybookDemoStyles.demoJsonPre10OnCard}>
               {JSON.stringify(hoverStyles, null, 2)}
             </pre>
           </div>
@@ -399,15 +369,7 @@ const ButtonHandlersUsageDemo = () => {
             <Typography variant="body2" marginBottom="xs">
               Active:
             </Typography>
-            <pre
-              style={{
-                fontSize: '10px',
-                overflow: 'auto',
-                backgroundColor: 'white',
-                padding: '8px',
-                borderRadius: '4px',
-              }}
-            >
+            <pre style={storybookDemoStyles.demoJsonPre10OnCard}>
               {JSON.stringify(activeStyles, null, 2)}
             </pre>
           </div>
@@ -439,7 +401,7 @@ export const ButtonHandlersUsage: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={storybookDemoStyles.columnFlexGap24}>
       <ButtonSizesDemo />
       <ButtonVariantsDemo />
       <ButtonStatesDemo />

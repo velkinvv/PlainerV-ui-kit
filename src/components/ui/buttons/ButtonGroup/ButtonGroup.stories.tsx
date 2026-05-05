@@ -7,6 +7,7 @@ import { ButtonVariant } from '@/types/ui';
 import { IconSize, Size } from '@/types/sizes';
 import { Icon } from '../../Icon/Icon';
 import { DOC_BUTTON_GROUP } from '@/components/ui/storyDocs/uiKitDocs';
+import { buttonGroupStoriesStyles } from './ButtonGroup.stories.styles';
 
 interface SelectableButtonGroupStoryProps extends React.ComponentProps<typeof ButtonGroup> {
   children: React.ReactNode;
@@ -197,7 +198,7 @@ export const Selectable: Story = {
 /** Три размера — разный внешний радиус сегмента */
 export const AttachedSizes: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <div style={buttonGroupStoriesStyles.columnGap16}>
       <SelectableButtonGroupStory
         attached
         size={Size.SM}
@@ -268,7 +269,7 @@ export const AttachedPill: Story = {
 /** Текст + иконка / иконка + текст */
 export const AttachedWithIcons: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+    <div style={buttonGroupStoriesStyles.columnGap12}>
       <SelectableButtonGroupStory
         attached
         size={Size.MD}
@@ -357,7 +358,7 @@ export const WithIconButtons: Story = {
 
 export const FullWidth: Story = {
   render: () => (
-    <div style={{ maxWidth: 480 }}>
+    <div style={buttonGroupStoriesStyles.maxWidth480}>
       <SelectableButtonGroupStory
         attached
         fullWidth
@@ -380,7 +381,7 @@ export const FullWidth: Story = {
 /** Склеенная группа на всю ширину: сегменты делят ширину поровну */
 export const AttachedFullWidth: Story = {
   render: () => (
-    <div style={{ maxWidth: 400 }}>
+    <div style={buttonGroupStoriesStyles.maxWidth400}>
       <SelectableButtonGroupStory
         attached
         fullWidth
@@ -415,14 +416,13 @@ export const AllButtonVariants: Story = {
     ];
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={buttonGroupStoriesStyles.columnGap12}>
         {allButtonVariants.map((buttonVariant) => (
           (() => {
             const inactiveVariantForRow =
               buttonVariant === ButtonVariant.GHOST || buttonVariant === ButtonVariant.LINE
                 ? buttonVariant
                 : ButtonVariant.OUTLINE;
-
             return (
           <SelectableButtonGroupStory
             key={`all-variants-${buttonVariant}`}

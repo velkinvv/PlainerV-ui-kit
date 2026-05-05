@@ -4,6 +4,7 @@ import { Avatar } from './Avatar';
 import { Size } from '../../../types/sizes';
 import { AvatarState, AvatarStatus } from '../../../types/ui';
 import { DOC_AVATAR } from '@/components/ui/storyDocs/uiKitDocs';
+import { avatarStoriesStyles } from './Avatar.stories.styles';
 
 const meta: Meta<typeof Avatar> = {
   title: 'UI Kit/Data Display/Avatar',
@@ -142,13 +143,13 @@ export const WithFallback: Story = {
 export const WithCustomFallback: Story = {
   args: {
     size: Size.LG,
-    fallback: <span style={{ fontSize: '24px' }}>👤</span>,
+    fallback: <span style={avatarStoriesStyles.iconFallback}>👤</span>,
   },
 };
 
 export const AllSizes: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+    <div style={avatarStoriesStyles.rowContainer}>
       <Avatar
         size={Size.SM}
         src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
@@ -222,25 +223,18 @@ export const CloseState: Story = {
 
 export const AllStates: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: '24px',
-        padding: '20px',
-      }}
-    >
-      <div style={{ textAlign: 'center' }}>
+    <div style={avatarStoriesStyles.grid4Container}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           state={AvatarState.OFFLINE}
           src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
           alt="Offline"
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>Offline</p>
+        <p style={avatarStoriesStyles.caption}>Offline</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           state={AvatarState.AVATAR}
@@ -248,10 +242,10 @@ export const AllStates: Story = {
           src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
           alt="Avatar with text"
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>With Text</p>
+        <p style={avatarStoriesStyles.caption}>With Text</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           state={AvatarState.CLOSE}
@@ -260,10 +254,10 @@ export const AllStates: Story = {
           src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
           alt="Close state"
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>Close (Warning)</p>
+        <p style={avatarStoriesStyles.caption}>Close (Warning)</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           state={AvatarState.PIN}
@@ -272,10 +266,10 @@ export const AllStates: Story = {
           src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
           alt="Pin state"
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>Pin (Online)</p>
+        <p style={avatarStoriesStyles.caption}>Pin (Online)</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           state={AvatarState.SUB}
@@ -284,10 +278,10 @@ export const AllStates: Story = {
           src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
           alt="Sub state"
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>Subscribe (Danger)</p>
+        <p style={avatarStoriesStyles.caption}>Subscribe (Danger)</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           state={AvatarState.CONTACT}
@@ -296,10 +290,10 @@ export const AllStates: Story = {
           src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
           alt="Contact state"
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>Contact (Offline)</p>
+        <p style={avatarStoriesStyles.caption}>Contact (Offline)</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           state={AvatarState.LIKE}
@@ -308,10 +302,10 @@ export const AllStates: Story = {
           src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
           alt="Like state"
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>Like (Online)</p>
+        <p style={avatarStoriesStyles.caption}>Like (Online)</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           state={AvatarState.UNPIN}
@@ -320,7 +314,7 @@ export const AllStates: Story = {
           src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
           alt="Unpin state"
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>Unpin (Warning)</p>
+        <p style={avatarStoriesStyles.caption}>Unpin (Warning)</p>
       </div>
     </div>
   ),
@@ -336,15 +330,8 @@ export const AllStates: Story = {
 
 export const AllMessageCounts: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: '24px',
-        padding: '20px',
-      }}
-    >
-      <div style={{ textAlign: 'center' }}>
+    <div style={avatarStoriesStyles.grid4Container}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           status={AvatarStatus.ONLINE}
@@ -352,10 +339,10 @@ export const AllMessageCounts: Story = {
           src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
           alt="1 message"
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>1 сообщение (Online - зеленый)</p>
+        <p style={avatarStoriesStyles.caption}>1 сообщение (Online - зеленый)</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           status={AvatarStatus.DANGER}
@@ -363,10 +350,10 @@ export const AllMessageCounts: Story = {
           src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
           alt="5 messages"
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>5 сообщений (Danger - красный)</p>
+        <p style={avatarStoriesStyles.caption}>5 сообщений (Danger - красный)</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           status={AvatarStatus.WARNING}
@@ -374,10 +361,10 @@ export const AllMessageCounts: Story = {
           src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
           alt="99 messages"
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>99 сообщений (Warning - желтый)</p>
+        <p style={avatarStoriesStyles.caption}>99 сообщений (Warning - желтый)</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           status={AvatarStatus.OFFLINE}
@@ -385,7 +372,7 @@ export const AllMessageCounts: Story = {
           src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
           alt="150 messages"
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>150+ сообщений (Offline - серый)</p>
+        <p style={avatarStoriesStyles.caption}>150+ сообщений (Offline - серый)</p>
       </div>
     </div>
   ),
@@ -402,42 +389,35 @@ export const AllMessageCounts: Story = {
 
 export const MessageCountTest: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'flex',
-        gap: '20px',
-        alignItems: 'center',
-        padding: '20px',
-      }}
-    >
-      <div style={{ textAlign: 'center' }}>
+    <div style={avatarStoriesStyles.wideRowContainer}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.SM}
           status={AvatarStatus.ONLINE}
           messageCount={3}
           alt="SM with messages"
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>SM с сообщениями</p>
+        <p style={avatarStoriesStyles.caption}>SM с сообщениями</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           status={AvatarStatus.DANGER}
           messageCount={7}
           alt="MD with messages"
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>MD с сообщениями</p>
+        <p style={avatarStoriesStyles.caption}>MD с сообщениями</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.LG}
           status={AvatarStatus.WARNING}
           messageCount={12}
           alt="LG with messages"
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>LG с сообщениями</p>
+        <p style={avatarStoriesStyles.caption}>LG с сообщениями</p>
       </div>
     </div>
   ),
@@ -453,39 +433,32 @@ export const MessageCountTest: Story = {
 
 export const MessageCountWithoutImage: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: '24px',
-        padding: '20px',
-      }}
-    >
-      <div style={{ textAlign: 'center' }}>
+    <div style={avatarStoriesStyles.grid4Container}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar size={Size.MD} status={AvatarStatus.ONLINE} messageCount={1} alt="1 message" />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>1 сообщение (Online - без изображения)</p>
+        <p style={avatarStoriesStyles.caption}>1 сообщение (Online - без изображения)</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar size={Size.MD} status={AvatarStatus.DANGER} messageCount={5} alt="5 messages" />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>5 сообщений (Danger - без изображения)</p>
+        <p style={avatarStoriesStyles.caption}>5 сообщений (Danger - без изображения)</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar size={Size.MD} status={AvatarStatus.WARNING} messageCount={99} alt="99 messages" />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>
+        <p style={avatarStoriesStyles.caption}>
           99 сообщений (Warning - без изображения)
         </p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           status={AvatarStatus.OFFLINE}
           messageCount={150}
           alt="150 messages"
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>
+        <p style={avatarStoriesStyles.caption}>
           150+ сообщений (Offline - без изображения)
         </p>
       </div>
@@ -520,47 +493,40 @@ export const WithUserName: Story = {
 
 export const UserNameExamples: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: '24px',
-        padding: '20px',
-      }}
-    >
-      <div style={{ textAlign: 'center' }}>
+    <div style={avatarStoriesStyles.grid4Container}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           userName="Александр Иванов"
           status={AvatarStatus.ONLINE}
           messageCount={3}
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>Александр Иванов (Online)</p>
+        <p style={avatarStoriesStyles.caption}>Александр Иванов (Online)</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar size={Size.MD} userName="Мария" status={AvatarStatus.DANGER} messageCount={7} />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>Мария (Danger)</p>
+        <p style={avatarStoriesStyles.caption}>Мария (Danger)</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           userName="Дмитрий Сергеевич"
           status={AvatarStatus.WARNING}
           messageCount={1}
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>Дмитрий Сергеевич (Warning)</p>
+        <p style={avatarStoriesStyles.caption}>Дмитрий Сергеевич (Warning)</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           userName="Анна-Мария"
           status={AvatarStatus.OFFLINE}
           messageCount={15}
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>Анна-Мария (Offline)</p>
+        <p style={avatarStoriesStyles.caption}>Анна-Мария (Offline)</p>
       </div>
     </div>
   ),
@@ -577,15 +543,8 @@ export const UserNameExamples: Story = {
 
 export const UserNameWithImage: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'flex',
-        gap: '20px',
-        alignItems: 'center',
-        padding: '20px',
-      }}
-    >
-      <div style={{ textAlign: 'center' }}>
+    <div style={avatarStoriesStyles.wideRowContainer}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           userName="Иван Петров"
@@ -594,17 +553,17 @@ export const UserNameWithImage: Story = {
           status={AvatarStatus.ONLINE}
           messageCount={5}
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>С изображением (Online)</p>
+        <p style={avatarStoriesStyles.caption}>С изображением (Online)</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           userName="Иван Петров"
           status={AvatarStatus.ONLINE}
           messageCount={5}
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>Без изображения (fallback)</p>
+        <p style={avatarStoriesStyles.caption}>Без изображения (fallback)</p>
       </div>
     </div>
   ),
@@ -638,15 +597,8 @@ export const WithTooltip: Story = {
 
 export const TooltipExamples: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: '24px',
-        padding: '20px',
-      }}
-    >
-      <div style={{ textAlign: 'center' }}>
+    <div style={avatarStoriesStyles.grid3Container}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           userName="Александр Иванов"
@@ -654,10 +606,10 @@ export const TooltipExamples: Story = {
           status={AvatarStatus.ONLINE}
           messageCount={3}
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>С userName и тултипом (Online)</p>
+        <p style={avatarStoriesStyles.caption}>С userName и тултипом (Online)</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           alt="Мария Сидорова"
@@ -665,12 +617,12 @@ export const TooltipExamples: Story = {
           status={AvatarStatus.DANGER}
           messageCount={7}
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>С alt и тултипом (Danger)</p>
+        <p style={avatarStoriesStyles.caption}>С alt и тултипом (Danger)</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar size={Size.MD} showTooltip={true} status={AvatarStatus.WARNING} messageCount={1} />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>Без userName/alt (дефолтный тултип)</p>
+        <p style={avatarStoriesStyles.caption}>Без userName/alt (дефолтный тултип)</p>
       </div>
     </div>
   ),
@@ -686,15 +638,8 @@ export const TooltipExamples: Story = {
 
 export const TooltipWithImage: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'flex',
-        gap: '20px',
-        alignItems: 'center',
-        padding: '20px',
-      }}
-    >
-      <div style={{ textAlign: 'center' }}>
+    <div style={avatarStoriesStyles.wideRowContainer}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.LG}
           userName="Елена Козлова"
@@ -704,10 +649,10 @@ export const TooltipWithImage: Story = {
           status={AvatarStatus.ONLINE}
           messageCount={9}
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>С изображением и тултипом (Online)</p>
+        <p style={avatarStoriesStyles.caption}>С изображением и тултипом (Online)</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.LG}
           userName="Елена Козлова"
@@ -715,7 +660,7 @@ export const TooltipWithImage: Story = {
           status={AvatarStatus.ONLINE}
           messageCount={9}
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>Без изображения, с тултипом</p>
+        <p style={avatarStoriesStyles.caption}>Без изображения, с тултипом</p>
       </div>
     </div>
   ),
@@ -731,39 +676,32 @@ export const TooltipWithImage: Story = {
 
 export const AltTextExamples: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: '24px',
-        padding: '20px',
-      }}
-    >
-      <div style={{ textAlign: 'center' }}>
+    <div style={avatarStoriesStyles.grid3Container}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           userName="Иван Петров"
           src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>userName как alt</p>
+        <p style={avatarStoriesStyles.caption}>userName как alt</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           userName="Иван Петров"
           alt="Кастомный alt текст"
           src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>Кастомный alt</p>
+        <p style={avatarStoriesStyles.caption}>Кастомный alt</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>Дефолтный alt</p>
+        <p style={avatarStoriesStyles.caption}>Дефолтный alt</p>
       </div>
     </div>
   ),
@@ -798,15 +736,8 @@ export const WithCustomTooltip: Story = {
 
 export const TooltipTextExamples: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: '24px',
-        padding: '20px',
-      }}
-    >
-      <div style={{ textAlign: 'center' }}>
+    <div style={avatarStoriesStyles.grid3Container}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           userName="Иван Петров"
@@ -815,10 +746,10 @@ export const TooltipTextExamples: Story = {
           status={AvatarStatus.ONLINE}
           messageCount={15}
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>Кастомный tooltipText (Online)</p>
+        <p style={avatarStoriesStyles.caption}>Кастомный tooltipText (Online)</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           userName="Мария Сидорова"
@@ -826,10 +757,10 @@ export const TooltipTextExamples: Story = {
           status={AvatarStatus.DANGER}
           messageCount={7}
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>userName как тултип (Danger)</p>
+        <p style={avatarStoriesStyles.caption}>userName как тултип (Danger)</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           alt="Александр Иванов"
@@ -838,7 +769,7 @@ export const TooltipTextExamples: Story = {
           status={AvatarStatus.WARNING}
           messageCount={3}
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>tooltipText + alt (Warning)</p>
+        <p style={avatarStoriesStyles.caption}>tooltipText + alt (Warning)</p>
       </div>
     </div>
   ),
@@ -872,15 +803,8 @@ export const WithCursorPointer: Story = {
 
 export const CursorExamples: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: '24px',
-        padding: '20px',
-      }}
-    >
-      <div style={{ textAlign: 'center' }}>
+    <div style={avatarStoriesStyles.grid3Container}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           userName="Иван Петров"
@@ -888,10 +812,10 @@ export const CursorExamples: Story = {
           status={AvatarStatus.ONLINE}
           messageCount={5}
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>cursor=&quot;pointer&quot; (Online)</p>
+        <p style={avatarStoriesStyles.caption}>cursor=&quot;pointer&quot; (Online)</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           userName="Мария Сидорова"
@@ -899,10 +823,10 @@ export const CursorExamples: Story = {
           status={AvatarStatus.DANGER}
           messageCount={3}
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>cursor=&quot;default&quot; (Danger)</p>
+        <p style={avatarStoriesStyles.caption}>cursor=&quot;default&quot; (Danger)</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.MD}
           userName="Александр Иванов"
@@ -910,7 +834,7 @@ export const CursorExamples: Story = {
           status={AvatarStatus.WARNING}
           messageCount={7}
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>С onClick (автоматически pointer)</p>
+        <p style={avatarStoriesStyles.caption}>С onClick (автоматически pointer)</p>
       </div>
     </div>
   ),
@@ -926,37 +850,30 @@ export const CursorExamples: Story = {
 
 export const BadgeVariations: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: '24px',
-        padding: '20px',
-      }}
-    >
-      <div style={{ textAlign: 'center' }}>
+    <div style={avatarStoriesStyles.grid4Container}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar size={Size.SM} userName="Анна" status={AvatarStatus.ONLINE} messageCount={1} />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>SM размер, 1 сообщение (Online)</p>
+        <p style={avatarStoriesStyles.caption}>SM размер, 1 сообщение (Online)</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar size={Size.MD} userName="Петр" status={AvatarStatus.DANGER} messageCount={5} />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>MD размер, 5 сообщений (Danger)</p>
+        <p style={avatarStoriesStyles.caption}>MD размер, 5 сообщений (Danger)</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar size={Size.LG} userName="Мария" status={AvatarStatus.WARNING} messageCount={99} />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>LG размер, 99 сообщений (Warning)</p>
+        <p style={avatarStoriesStyles.caption}>LG размер, 99 сообщений (Warning)</p>
       </div>
 
-      <div style={{ textAlign: 'center' }}>
+      <div style={avatarStoriesStyles.centeredCell}>
         <Avatar
           size={Size.XL}
           userName="Александр"
           status={AvatarStatus.OFFLINE}
           messageCount={150}
         />
-        <p style={{ marginTop: '8px', fontSize: '12px' }}>XL размер, 150+ (Offline)</p>
+        <p style={avatarStoriesStyles.caption}>XL размер, 150+ (Offline)</p>
       </div>
     </div>
   ),

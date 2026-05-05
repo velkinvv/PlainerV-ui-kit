@@ -12,13 +12,14 @@ import { Icon } from '../Icon/Icon';
 import { NavigationMenu } from '../NavigationMenu/NavigationMenu';
 import { NavigationMenuItem } from '../NavigationMenu/NavigationMenuItem';
 import { DOC_FLOATING_MENU } from '@/components/ui/storyDocs/uiKitDocs';
+import { floatingMenuStoriesStyles } from './FloatingMenu.stories.styles';
 
 const meta: Meta<typeof FloatingMenu> = {
   title: 'UI Kit/Navigation/FloatingMenu',
   component: FloatingMenu,
   decorators: [
     Story => (
-      <div style={{ minHeight: 400, position: 'relative' }}>
+      <div style={floatingMenuStoriesStyles.decoratorContainer}>
         <Story />
       </div>
     ),
@@ -196,22 +197,27 @@ export const DropdownHover: Story = {
 
 export const Placements: Story = {
   render: () => {
-    const [p, setP] = useState(FloatingMenuPlacement.LEFT_CENTER);
+    const [selectedPlacement, setSelectedPlacement] = useState(FloatingMenuPlacement.LEFT_CENTER);
     return (
-      <div style={{ padding: 24 }}>
-        <p style={{ marginBottom: 16 }}>
+      <div style={floatingMenuStoriesStyles.placementsContainer}>
+        <p style={floatingMenuStoriesStyles.placementsLabelRow}>
           <label>
             Размещение:{' '}
-            <select value={p} onChange={(e) => setP(e.target.value as FloatingMenuPlacement)}>
-              {Object.values(FloatingMenuPlacement).map((v) => (
-                <option key={v} value={v}>
-                  {v}
+            <select
+              value={selectedPlacement}
+              onChange={(changeEvent) =>
+                setSelectedPlacement(changeEvent.target.value as FloatingMenuPlacement)
+              }
+            >
+              {Object.values(FloatingMenuPlacement).map((placementValue) => (
+                <option key={placementValue} value={placementValue}>
+                  {placementValue}
                 </option>
               ))}
             </select>
           </label>
         </p>
-        <FloatingMenu aria-label="Демо позиции" placement={p} draggable={false}>
+        <FloatingMenu aria-label="Демо позиции" placement={selectedPlacement} draggable={false}>
           <FloatingMenu.Group>
             <FloatingMenu.GroupItem icon={<span>◆</span>} active aria-label="A" />
             <FloatingMenu.GroupItem icon={<span>◇</span>} aria-label="B" />

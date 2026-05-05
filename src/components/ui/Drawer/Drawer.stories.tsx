@@ -4,6 +4,7 @@ import { Drawer } from './Drawer';
 import { Button } from '../buttons/Button';
 import { ButtonVariant, type DrawerPlacement } from '../../../types/ui';
 import { DOC_DRAWER } from '@/components/ui/storyDocs/uiKitDocs';
+import { surfaceOverlayStoriesStyles } from '@/handlers/surfaceOverlayStories.styles';
 
 const meta: Meta<typeof Drawer> = {
   title: 'UI Kit/Surfaces/Drawer',
@@ -76,7 +77,7 @@ type Story = StoryObj<typeof meta>;
 const DrawerDemo = ({ placement }: { placement: DrawerPlacement }) => {
   const [open, setOpen] = useState(false);
   return (
-    <div style={{ padding: 24 }}>
+    <div style={surfaceOverlayStoriesStyles.paddedRoot}>
       <Button type="button" onClick={() => setOpen(true)}>
         Открыть ({placement})
       </Button>
@@ -123,7 +124,7 @@ const KeepMountedWithLazyInitDrawerDemo = () => {
   }, [isOpen]);
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={surfaceOverlayStoriesStyles.paddedRoot}>
       <Button type="button" onClick={() => setIsOpen(true)}>
         Open keep-mounted drawer
       </Button>
@@ -171,11 +172,11 @@ const LifecycleCheatsheetDrawerDemo = () => {
   }, [isOpen]);
 
   return (
-    <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 860 }}>
-      <p style={{ margin: 0 }}>
+    <div style={surfaceOverlayStoriesStyles.lifecycleCheatsheetRoot}>
+      <p style={surfaceOverlayStoriesStyles.paragraphReset}>
         Cheatsheet режима lifecycle для drawer: переключите флаги и откройте панель.
       </p>
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+      <div style={surfaceOverlayStoriesStyles.controlsRow}>
         <Button
           type="button"
           variant={lazyModeEnabled ? ButtonVariant.PRIMARY : ButtonVariant.OUTLINE}
@@ -196,7 +197,9 @@ const LifecycleCheatsheetDrawerDemo = () => {
           Open drawer
         </Button>
       </div>
-      <p style={{ margin: 0, color: '#6b7280' }}>Открытий в текущей сессии: {openCount}</p>
+      <p style={surfaceOverlayStoriesStyles.mutedOpenCountCaption}>
+        Открытий в текущей сессии: {openCount}
+      </p>
       <Drawer
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}

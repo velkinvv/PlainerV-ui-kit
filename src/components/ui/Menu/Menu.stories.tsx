@@ -4,6 +4,7 @@ import { Menu } from './Menu';
 import { MenuItem } from './MenuItem';
 import { Icon } from '../Icon/Icon';
 import { DOC_MENU } from '@/components/ui/storyDocs/uiKitDocs';
+import { menuStoriesStyles } from './Menu.stories.styles';
 
 const meta: Meta<typeof Menu> = {
   title: 'UI Kit/Navigation/Menu',
@@ -121,20 +122,18 @@ export const AnchoredDemo: Story = {
     const wrapRef = useRef<HTMLDivElement>(null);
 
     return (
-      <div ref={wrapRef} style={{ position: 'relative', display: 'inline-block' }}>
-        <button type="button" id={buttonId} aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
+      <div ref={wrapRef} style={menuStoriesStyles.anchoredContainer}>
+        <button
+          type="button"
+          id={buttonId}
+          aria-haspopup="menu"
+          aria-expanded={open}
+          onClick={() => setOpen((previousOpenState) => !previousOpenState)}
+        >
           Открыть меню
         </button>
         {open ? (
-          <div
-            style={{
-              position: 'absolute',
-              left: 0,
-              top: '100%',
-              marginTop: 4,
-              zIndex: 2,
-            }}
-          >
+          <div style={menuStoriesStyles.anchoredPopup}>
             <Menu id={menuId} aria-label="Пример якорного меню" autoFocusFirstItem>
               <MenuItem
                 onClick={() => {

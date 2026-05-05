@@ -5,6 +5,8 @@ import { RangeSlider } from './RangeSlider';
 import { Form } from '../Form';
 import { Size } from '../../../types/sizes';
 import {
+  SliderStoriesCompact,
+  SliderStoriesMedium,
   SliderStoriesNarrow,
   SliderStoriesRoot,
   SliderStoriesSection,
@@ -130,59 +132,59 @@ type Story = StoryObj<typeof meta>;
 
 export const Single: Story = {
   render: () => {
-    const [v, setV] = useState(1_000_000);
+    const [sliderValue, setSliderValue] = useState(1_000_000);
     return (
-      <div style={{ maxWidth: 480 }}>
+      <SliderStoriesCompact>
         <Slider
           fullWidth
           min={0}
           max={2_000_000}
           step={50_000}
-          value={v}
-          onChange={setV}
+          value={sliderValue}
+          onChange={setSliderValue}
           formatValue={formatRub}
           formatMinLabel={() => '0'}
           formatMaxLabel={() => '2 млн ₽'}
         />
-      </div>
+      </SliderStoriesCompact>
     );
   },
 };
 
 export const Range: Story = {
   render: () => {
-    const [pair, setPair] = useState<[number, number]>([0, 1_000_000]);
+    const [priceRange, setPriceRange] = useState<[number, number]>([0, 1_000_000]);
     return (
-      <div style={{ maxWidth: 520 }}>
+      <SliderStoriesMedium>
         <RangeSlider
           fullWidth
           min={0}
           max={2_000_000}
           step={50_000}
-          value={pair}
-          onChange={(p) => setPair([p[0], p[1]])}
+          value={priceRange}
+          onChange={(nextPriceRange) => setPriceRange([nextPriceRange[0], nextPriceRange[1]])}
           formatValue={formatRub}
           formatMinLabel={() => '0'}
           formatMaxLabel={() => '2 млн ₽'}
         />
-      </div>
+      </SliderStoriesMedium>
     );
   },
 };
 
 export const RangeWithInputs: Story = {
   render: () => {
-    const [pair, setPair] = useState<[number, number]>([0, 2_000_000]);
+    const [priceRange, setPriceRange] = useState<[number, number]>([0, 2_000_000]);
     return (
-      <Form formId="story-slider-range" onSubmit={(e) => e.preventDefault()}>
-        <div style={{ maxWidth: 520 }}>
+      <Form formId="story-slider-range" onSubmit={(submitEvent) => submitEvent.preventDefault()}>
+        <SliderStoriesMedium>
           <RangeSlider
             fullWidth
             min={0}
             max={2_000_000}
             step={10_000}
-            value={pair}
-            onChange={(p) => setPair([p[0], p[1]])}
+            value={priceRange}
+            onChange={(nextPriceRange) => setPriceRange([nextPriceRange[0], nextPriceRange[1]])}
             formatValue={formatRub}
             formatMinLabel={() => '0'}
             formatMaxLabel={() => '2 млн ₽'}
@@ -190,7 +192,7 @@ export const RangeWithInputs: Story = {
             nameFrom="priceFrom"
             nameTo="priceTo"
           />
-        </div>
+        </SliderStoriesMedium>
       </Form>
     );
   },
@@ -369,7 +371,7 @@ export const SmallIntegerScale: Story = {
               max={10}
               step={1}
               value={range}
-              onChange={(pair) => setRange([pair[0], pair[1]])}
+            onChange={(nextRangeValue) => setRange([nextRangeValue[0], nextRangeValue[1]])}
               formatValue={(n) => String(n)}
               formatMinLabel={() => '0'}
               formatMaxLabel={() => '10'}
@@ -420,18 +422,18 @@ export const NarrowContainer: Story = {
 export const RangeWithInputsLarge: Story = {
   name: 'Диапазон с полями (LG)',
   render: () => {
-    const [pair, setPair] = useState<[number, number]>([300_000, 1_700_000]);
+    const [priceRange, setPriceRange] = useState<[number, number]>([300_000, 1_700_000]);
     return (
-      <Form formId="story-slider-range-lg" onSubmit={(e) => e.preventDefault()}>
-        <div style={{ maxWidth: 520 }}>
+      <Form formId="story-slider-range-lg" onSubmit={(submitEvent) => submitEvent.preventDefault()}>
+        <SliderStoriesMedium>
           <RangeSlider
             size={Size.LG}
             fullWidth
             min={0}
             max={2_000_000}
             step={25_000}
-            value={pair}
-            onChange={(next) => setPair([next[0], next[1]])}
+            value={priceRange}
+            onChange={(nextPriceRange) => setPriceRange([nextPriceRange[0], nextPriceRange[1]])}
             formatValue={formatRub}
             formatMinLabel={() => '0'}
             formatMaxLabel={() => '2 млн ₽'}
@@ -439,7 +441,7 @@ export const RangeWithInputsLarge: Story = {
             nameFrom="priceFromLg"
             nameTo="priceToLg"
           />
-        </div>
+        </SliderStoriesMedium>
       </Form>
     );
   },

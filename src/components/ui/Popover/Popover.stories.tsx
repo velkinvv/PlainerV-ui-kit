@@ -6,6 +6,7 @@ import { Button } from '../buttons/Button/Button';
 import { DOC_POPOVER } from '@/components/ui/storyDocs/uiKitDocs';
 
 import { Popover } from './Popover';
+import { popoverStoriesStyles } from './Popover.stories.styles';
 
 const meta: Meta<typeof Popover> = {
   title: 'UI Kit/Overlays/Popover',
@@ -78,12 +79,12 @@ export const Default: Story = {
     positioningMode: 'autoFit',
     contentAriaLabel: 'Дополнительная информация',
   },
-  render: args => (
+  render: (storyArgs) => (
     <Popover
-      {...args}
+      {...storyArgs}
       trigger={<Button variant="secondary">Открыть popover</Button>}
     >
-      <div style={{ maxWidth: 280 }}>
+      <div style={popoverStoriesStyles.maxWidth280}>
         Текст и действия внутри панели. Радиусы, отступы и тень совпадают с токенами выпадающего меню (
         <code>theme.dropdowns</code>).
       </div>
@@ -93,29 +94,29 @@ export const Default: Story = {
 
 export const VariantsAndSizes: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'flex-start' }}>
-      {(['default', 'elevated', 'outlined'] as const).map(variant => (
+    <div style={popoverStoriesStyles.variantsWrap}>
+      {(['default', 'elevated', 'outlined'] as const).map((popoverVariant) => (
         <Popover
-          key={variant}
-          variant={variant}
+          key={popoverVariant}
+          variant={popoverVariant}
           size={Size.MD}
           positioningMode="autoFit"
-          contentAriaLabel={`Вариант ${variant}`}
-          trigger={<Button variant="secondary">{variant}</Button>}
+          contentAriaLabel={`Вариант ${popoverVariant}`}
+          trigger={<Button variant="secondary">{popoverVariant}</Button>}
         >
-          <div style={{ width: 220 }}>Вариант панели: {variant}</div>
+          <div style={popoverStoriesStyles.width220}>Вариант панели: {popoverVariant}</div>
         </Popover>
       ))}
-      {[Size.SM, Size.MD, Size.LG].map(size => (
+      {[Size.SM, Size.MD, Size.LG].map((popoverSize) => (
         <Popover
-          key={size}
-          size={size}
+          key={popoverSize}
+          size={popoverSize}
           variant="default"
           positioningMode="autoFit"
-          contentAriaLabel={`Размер ${size}`}
-          trigger={<Button variant="secondary">Size {size}</Button>}
+          contentAriaLabel={`Размер ${popoverSize}`}
+          trigger={<Button variant="secondary">Size {popoverSize}</Button>}
         >
-          <div>Размер {size}</div>
+          <div>Размер {popoverSize}</div>
         </Popover>
       ))}
     </div>
@@ -124,21 +125,21 @@ export const VariantsAndSizes: Story = {
 
 export const Controlled: Story = {
   render: () => {
-    const [open, setOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'flex-start' }}>
+      <div style={popoverStoriesStyles.controlledStack}>
         <Popover
-          open={open}
-          onOpenChange={setOpen}
+          open={isOpen}
+          onOpenChange={setIsOpen}
           positioningMode="autoFit"
           contentAriaLabel="Контролируемая панель"
           trigger={<Button variant="secondary">Триггер (контролируемый)</Button>}
         >
-          <div style={{ width: 260 }}>
-            Состояние снаружи: <strong>{open ? 'открыто' : 'закрыто'}</strong>
+          <div style={popoverStoriesStyles.width260}>
+            Состояние снаружи: <strong>{isOpen ? 'открыто' : 'закрыто'}</strong>
           </div>
         </Popover>
-        <Button variant="ghost" onClick={() => setOpen(value => !value)}>
+        <Button variant="ghost" onClick={() => setIsOpen((previousOpenState) => !previousOpenState)}>
           Переключить извне
         </Button>
       </div>
@@ -153,14 +154,14 @@ export const ScrollableContent: Story = {
     positioningMode: 'autoFit',
     contentAriaLabel: 'Длинный список',
   },
-  render: args => (
+  render: (storyArgs) => (
     <Popover
-      {...args}
+      {...storyArgs}
       trigger={<Button variant="secondary">С прокруткой</Button>}
     >
-      <ul style={{ margin: 0, paddingLeft: 18 }}>
-        {Array.from({ length: 20 }, (_, index) => (
-          <li key={index}>Строка {index + 1}</li>
+      <ul style={popoverStoriesStyles.scrollableList}>
+        {Array.from({ length: 20 }, (_unusedItem, lineNumber) => (
+          <li key={lineNumber}>Строка {lineNumber + 1}</li>
         ))}
       </ul>
     </Popover>
@@ -169,22 +170,15 @@ export const ScrollableContent: Story = {
 
 export const InlineInCard: Story = {
   render: () => (
-    <div
-      style={{
-        padding: 24,
-        border: '1px dashed rgba(0,0,0,0.2)',
-        borderRadius: 12,
-        maxWidth: 400,
-      }}
-    >
-      <p style={{ marginTop: 0 }}>Панель позиционируется относительно корня popover (relative).</p>
+    <div style={popoverStoriesStyles.inlineCard}>
+      <p style={popoverStoriesStyles.paragraphNoTopMargin}>Панель позиционируется относительно корня popover (relative).</p>
       <Popover
         inline
         positioningMode="autoFit"
         contentAriaLabel="Внутри карточки"
         trigger={<Button variant="secondary">Inline popover</Button>}
       >
-        <div style={{ width: 240 }}>Содержимое без портала в body — удобно в модалках и overflow-контейнерах.</div>
+        <div style={popoverStoriesStyles.width240}>Содержимое без портала в body — удобно в модалках и overflow-контейнерах.</div>
       </Popover>
     </div>
   ),

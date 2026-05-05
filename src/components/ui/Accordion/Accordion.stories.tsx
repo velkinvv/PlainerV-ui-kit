@@ -2,6 +2,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Accordion } from './Accordion';
 import { DOC_ACCORDION } from '@/components/ui/storyDocs/uiKitDocs';
+import { accordionStoriesStyles } from './Accordion.stories.styles';
 
 const meta: Meta<typeof Accordion> = {
   title: 'UI Kit/Feedback/Accordion',
@@ -208,8 +209,10 @@ export const Controlled: Story = {
     };
 
     return (
-      <div style={{ width: '400px' }}>
-        <p style={{ marginBottom: '16px' }}>Open items: {Array.from(openItems).join(', ')}</p>
+      <div style={accordionStoriesStyles.controlledContainer}>
+        <p style={accordionStoriesStyles.controlledCaption}>
+          Open items: {Array.from(openItems).join(', ')}
+        </p>
         <Accordion>
           <Accordion.Item value="item1" position="start">
             <Accordion.Trigger title="Controlled Item 1" subtitle="External control" />

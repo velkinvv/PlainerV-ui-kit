@@ -1,9 +1,12 @@
 ﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
+import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
+import { lightTheme } from '@/themes/themes';
 import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
 import { useClickOutside } from './useClickOutside';
+import { ClickOutsideDropdownOptionButton } from './useClickOutside.stories.styles';
 
 const meta: Meta = {
   title: 'UI Kit/Hooks/useClickOutside',
@@ -48,6 +51,25 @@ return <div ref={ref}>Элемент</div>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+/** Демо-трилементы с цветами из темы (фон панели + акцент рамки). */
+const clickOutsideMultiDemoElements = [
+  {
+    title: 'Элемент 1',
+    panelBackground: lightTheme.colors.backgroundTertiary,
+    borderAccent: lightTheme.colors.primary,
+  },
+  {
+    title: 'Элемент 2',
+    panelBackground: lightTheme.colors.backgroundTertiary,
+    borderAccent: lightTheme.colors.success,
+  },
+  {
+    title: 'Элемент 3',
+    panelBackground: lightTheme.colors.backgroundQuaternary,
+    borderAccent: lightTheme.colors.warning,
+  },
+] as const;
+
 // Компонент для демонстрации базового использования
 const BasicClickOutsideDemo = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -64,34 +86,25 @@ const BasicClickOutsideDemo = () => {
         Базовое использование useClickOutside
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Button onClick={() => setIsOpen(!isOpen)}>{isOpen ? 'Закрыть' : 'Открыть'} элемент</Button>
       </div>
 
       {isOpen && (
-        <div
-          ref={ref}
-          style={{
-            padding: '20px',
-            backgroundColor: '#e3f2fd',
-            border: '2px solid #2196f3',
-            borderRadius: '8px',
-            marginBottom: '16px',
-          }}
-        >
+        <div ref={ref} style={storybookDemoStyles.clickOutsideTrackedPanel}>
           <Typography variant="h4" marginBottom="sm">
             Отслеживаемый элемент
           </Typography>
           <Typography variant="body1" marginBottom="md">
             Кликните вне этого элемента, чтобы закрыть его.
           </Typography>
-          <Typography variant="body2" style={{ color: '#666' }}>
+          <Typography variant="body2" style={{ color: lightTheme.colors.textSecondary }}>
             Этот элемент отслеживается с помощью useClickOutside
           </Typography>
         </div>
       )}
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Статус:</strong>
         </Typography>
@@ -115,13 +128,17 @@ const DisabledClickOutsideDemo = () => {
     setClickCount(prev => prev + 1);
   }, isEnabled);
 
+  const trackedPanelStyle = isEnabled
+    ? storybookDemoStyles.clickOutsideTrackedPanel
+    : storybookDemoStyles.clickOutsideTrackedPanelHookDisabled;
+
   return (
     <Card padding="lg">
       <Typography variant="h3" marginBottom="md">
         Управление состоянием useClickOutside
       </Typography>
 
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
+      <div style={storybookDemoStyles.rowFlexGap12MarginBottom16Wrap}>
         <Button onClick={() => setIsOpen(!isOpen)}>{isOpen ? 'Закрыть' : 'Открыть'} элемент</Button>
         <Button
           variant={isEnabled ? 'primary' : 'outlined'}
@@ -132,16 +149,7 @@ const DisabledClickOutsideDemo = () => {
       </div>
 
       {isOpen && (
-        <div
-          ref={ref}
-          style={{
-            padding: '20px',
-            backgroundColor: isEnabled ? '#e3f2fd' : '#fff3cd',
-            border: `2px solid ${isEnabled ? '#2196f3' : '#ffc107'}`,
-            borderRadius: '8px',
-            marginBottom: '16px',
-          }}
-        >
+        <div ref={ref} style={trackedPanelStyle}>
           <Typography variant="h4" marginBottom="sm">
             Отслеживаемый элемент
           </Typography>
@@ -150,13 +158,13 @@ const DisabledClickOutsideDemo = () => {
               ? 'Кликните вне этого элемента, чтобы закрыть его.'
               : 'Отслеживание отключено. Клики вне элемента не обрабатываются.'}
           </Typography>
-          <Typography variant="body2" style={{ color: '#666' }}>
+          <Typography variant="body2" style={{ color: lightTheme.colors.textSecondary }}>
             Статус отслеживания: {isEnabled ? 'Включено' : 'Отключено'}
           </Typography>
         </div>
       )}
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Статус:</strong>
         </Typography>
@@ -201,46 +209,41 @@ const MultipleElementsDemo = () => {
     }));
   };
 
-  const elements = [
-    { title: 'Элемент 1', color: '#e3f2fd', borderColor: '#2196f3' },
-    { title: 'Элемент 2', color: '#e8f5e8', borderColor: '#4caf50' },
-    { title: 'Элемент 3', color: '#fff3e0', borderColor: '#ff9800' },
-  ];
-
   return (
     <Card padding="lg">
       <Typography variant="h3" marginBottom="md">
         Множественные элементы
       </Typography>
 
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
-        {elements.map((element, index) => (
+      <div style={storybookDemoStyles.rowFlexGap12MarginBottom16Wrap}>
+        {clickOutsideMultiDemoElements.map((_element, index) => (
           <Button
-            key={index}
+            key={clickOutsideMultiDemoElements[index].title}
             onClick={() => toggleElement(index)}
-            style={{ backgroundColor: element.borderColor }}
+            style={{ backgroundColor: clickOutsideMultiDemoElements[index].borderAccent }}
           >
-            {openElements.has(index) ? 'Закрыть' : 'Открыть'} {element.title}
+            {openElements.has(index) ? 'Закрыть' : 'Открыть'}{' '}
+            {clickOutsideMultiDemoElements[index].title}
           </Button>
         ))}
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '16px' }}>
-        {elements.map((element, index) => {
+      <div style={storybookDemoStyles.columnFlexGap16MarginBottom16}>
+        {clickOutsideMultiDemoElements.map((element, index) => {
           const isOpen = openElements.has(index);
           const clickCount = clickCounts[index] || 0;
 
           return (
-            <div key={index}>
+            <div key={element.title}>
               {isOpen && (
                 <ClickOutsideElement
                   title={element.title}
-                  color={element.color}
-                  borderColor={element.borderColor}
+                  panelBackground={element.panelBackground}
+                  borderAccent={element.borderAccent}
                   onClose={createClickOutsideHandler(index)}
                 />
               )}
-              <div style={{ padding: '8px', backgroundColor: '#f8f9fa', borderRadius: '4px' }}>
+              <div style={storybookDemoStyles.demoStatusStripCompact}>
                 <Typography variant="body2">
                   {element.title}: {isOpen ? 'Открыт' : 'Закрыт'} | Кликов вне: {clickCount}
                 </Typography>
@@ -253,16 +256,25 @@ const MultipleElementsDemo = () => {
   );
 };
 
+/** Полоска статуса: те же токены, что и в обзоре хуков, без циклического импорта сторис. */
+const hooksOverviewDemoStatusStrip = {
+  padding: '8px',
+  backgroundColor: lightTheme.colors.backgroundTertiary,
+  borderRadius: '4px',
+} as const;
+
 // Компонент для отдельного отслеживаемого элемента
 const ClickOutsideElement = ({
   title,
-  color,
-  borderColor,
+  panelBackground,
+  borderAccent,
   onClose,
 }: {
   title: string;
-  color: string;
-  borderColor: string;
+  /** Фон панели из палитры темы. */
+  panelBackground: string;
+  /** Цвет рамки из палитры темы. */
+  borderAccent: string;
   onClose: () => void;
 }) => {
   const ref = useClickOutside(onClose);
@@ -272,8 +284,8 @@ const ClickOutsideElement = ({
       ref={ref}
       style={{
         padding: '20px',
-        backgroundColor: color,
-        border: `2px solid ${borderColor}`,
+        backgroundColor: panelBackground,
+        border: `2px solid ${borderAccent}`,
         borderRadius: '8px',
       }}
     >
@@ -283,7 +295,7 @@ const ClickOutsideElement = ({
       <Typography variant="body1" marginBottom="md">
         Кликните вне этого элемента, чтобы закрыть его.
       </Typography>
-      <Typography variant="body2" style={{ color: '#666' }}>
+      <Typography variant="body2" style={{ color: lightTheme.colors.textSecondary }}>
         Этот элемент отслеживается с помощью useClickOutside
       </Typography>
     </div>
@@ -306,43 +318,20 @@ const ModalIntegrationDemo = () => {
         Интеграция с модальными окнами
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Button onClick={() => setIsModalOpen(true)}>Открыть модальное окно</Button>
       </div>
 
       {isModalOpen && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-          }}
-        >
-          <div
-            ref={modalRef}
-            style={{
-              backgroundColor: 'white',
-              padding: '24px',
-              borderRadius: '8px',
-              maxWidth: '400px',
-              width: '90%',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-            }}
-          >
+        <div style={storybookDemoStyles.modalStoryBackdrop}>
+          <div ref={modalRef} style={storybookDemoStyles.modalStoryPanel}>
             <Typography variant="h4" marginBottom="md">
               Модальное окно
             </Typography>
             <Typography variant="body1" marginBottom="lg">
               Это модальное окно закрывается при клике вне его области.
             </Typography>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+            <div style={storybookDemoStyles.rowFlexGap12JustifyFlexEnd}>
               <Button variant="outlined" onClick={() => setIsModalOpen(false)}>
                 Закрыть
               </Button>
@@ -351,7 +340,7 @@ const ModalIntegrationDemo = () => {
         </div>
       )}
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Статус:</strong>
         </Typography>
@@ -383,56 +372,32 @@ const DropdownDemo = () => {
         Дропдаун с useClickOutside
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
-        <div style={{ position: 'relative', display: 'inline-block' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
+        <div style={storybookDemoStyles.inlineBlockRelative}>
           <Button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
             {selectedOption || 'Выберите опцию'} ▼
           </Button>
 
           {isDropdownOpen && (
-            <div
-              ref={dropdownRef}
-              style={{
-                position: 'absolute',
-                top: '100%',
-                left: 0,
-                right: 0,
-                backgroundColor: 'white',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-                zIndex: 1000,
-                marginTop: '4px',
-              }}
-            >
+            <div ref={dropdownRef} style={storybookDemoStyles.dropdownStoryMenuPanel}>
               {options.map((option, index) => (
-                <div
-                  key={index}
+                <ClickOutsideDropdownOptionButton
+                  key={option}
+                  $withBottomDivider={index < options.length - 1}
                   onClick={() => {
                     setSelectedOption(option);
                     setIsDropdownOpen(false);
                   }}
-                  style={{
-                    padding: '8px 12px',
-                    cursor: 'pointer',
-                    borderBottom: index < options.length - 1 ? '1px solid #eee' : 'none',
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.backgroundColor = '#f5f5f5';
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.backgroundColor = 'white';
-                  }}
                 >
                   <Typography variant="body2">{option}</Typography>
-                </div>
+                </ClickOutsideDropdownOptionButton>
               ))}
             </div>
           )}
         </div>
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Статус:</strong>
         </Typography>
@@ -470,7 +435,7 @@ export const DropdownExample: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={storybookDemoStyles.columnFlexGap24}>
       <BasicClickOutsideDemo />
       <DisabledClickOutsideDemo />
       <MultipleElementsDemo />
@@ -479,4 +444,3 @@ export const AllExamples: Story = {
     </div>
   ),
 };
-

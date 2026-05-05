@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { lightTheme } from '@/themes/themes';
 import { Button } from '../components/ui/buttons/Button';
 
 export const StoryControlsContainer = styled.div`
@@ -29,7 +30,7 @@ export const ModalsStateGrid = styled.section`
 
 export const ModalStateCard = styled.article`
   padding: 12px;
-  background-color: #f5f5f5;
+  background-color: ${lightTheme.colors.backgroundTertiary};
   border-radius: 8px;
 `;
 

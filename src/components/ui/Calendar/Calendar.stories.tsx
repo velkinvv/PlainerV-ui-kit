@@ -4,6 +4,7 @@ import { Calendar } from './Calendar';
 import { darkTheme } from '../../../themes/themes';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import { DOC_CALENDAR } from '@/components/ui/storyDocs/uiKitDocs';
+import { calendarStoriesStyles, createCalendarStoryThemeStyles } from './Calendar.stories.styles';
 
 const meta: Meta<typeof Calendar> = {
   title: 'UI Kit/Inputs/Calendar',
@@ -72,6 +73,11 @@ const meta: Meta<typeof Calendar> = {
 
 export default meta;
 type Story = StoryObj<typeof Calendar>;
+const calendarStoryThemeStyles = createCalendarStoryThemeStyles(darkTheme);
+const calendarDarkSurfaceStyle = {
+  ...calendarStoriesStyles.darkSurfaceRoot,
+  ...calendarStoryThemeStyles.darkSurfaceRoot,
+};
 
 export const Default: Story = {
   render: () => {
@@ -104,14 +110,7 @@ export const FullWidth: Story = {
   render: () => {
     const [value, setValue] = useState<Date | null>(new Date(2025, 8, 18));
     return (
-      <div
-        style={{
-          boxSizing: 'border-box',
-          width: '100%',
-          minHeight: '100vh',
-          padding: 24,
-        }}
-      >
+      <div style={calendarStoriesStyles.fullWidthStoryRoot}>
         <Calendar
           value={value}
           onChange={setValue}
@@ -238,7 +237,9 @@ export const OnDarkSurface: Story = {
     const [value, setValue] = useState<Date | null>(new Date(2025, 8, 18));
     return (
       <StyledThemeProvider theme={darkTheme}>
-        <div style={{ background: '#1a1a1a', padding: 24, borderRadius: 12 }}>
+        <div
+          style={calendarDarkSurfaceStyle}
+        >
           <Calendar value={value} onChange={setValue} defaultVisibleMonth={new Date(2025, 8, 1)} />
         </div>
       </StyledThemeProvider>

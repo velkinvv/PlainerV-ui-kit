@@ -3,12 +3,23 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { DropdownMenu } from './DropdownMenu';
 import { DropdownMenuItem } from './DropdownMenuItem';
 import { DOC_DROPDOWN_MENU_ITEM } from '@/components/ui/storyDocs/uiKitDocs';
+import { lightTheme } from '@/themes/themes';
+import {
+  createDropdownMenuItemStoryThemeStyles,
+  dropdownMenuItemStoriesStyles,
+} from './DropdownMenuItem.stories.styles';
+
+const dropdownMenuItemStoryThemeStyles = createDropdownMenuItemStoryThemeStyles(lightTheme);
+const dropdownMenuItemMetaStyle = {
+  ...dropdownMenuItemStoriesStyles.customContentMeta,
+  ...dropdownMenuItemStoryThemeStyles.customContentMeta,
+};
 
 const meta: Meta<typeof DropdownMenuItem> = {
   title: 'UI Kit/Navigation/Dropdown/DropdownMenuItem',
   component: DropdownMenuItem,
   decorators: [
-    Story => <DropdownMenu style={{ maxWidth: 320 }}>{Story()}</DropdownMenu>,
+    Story => <DropdownMenu style={dropdownMenuItemStoriesStyles.menuDecoratorRoot}>{Story()}</DropdownMenu>,
   ],
   parameters: {
     docs: {
@@ -162,12 +173,18 @@ export const MixedStates: Story = {
 export const CustomContent: Story = {
   render: () => (
     <DropdownMenuItem>
-      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', gap: 8 }}>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <span style={{ fontWeight: 600 }}>System update</span>
-          <span style={{ fontSize: 12, color: '#6b7280' }}>Плановое обновление в 02:00</span>
+      <div style={dropdownMenuItemStoriesStyles.customContentRow}>
+        <div style={dropdownMenuItemStoriesStyles.customContentColumn}>
+          <span style={dropdownMenuItemStoriesStyles.customContentTitle}>System update</span>
+          <span
+            style={dropdownMenuItemMetaStyle}
+          >
+            Плановое обновление в 02:00
+          </span>
         </div>
-        <span style={{ fontSize: 12, color: '#6b7280' }}>Через 1 час</span>
+        <span style={dropdownMenuItemMetaStyle}>
+          Через 1 час
+        </span>
       </div>
     </DropdownMenuItem>
   ),

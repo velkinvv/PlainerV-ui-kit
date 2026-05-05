@@ -5,6 +5,7 @@ import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
 import { SnackbarProvider } from '../components/ui/Snackbar';
 import { useSnackbar } from './useSnackbar';
+import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
 
 const withSnackbar: Decorator = Story => (
   <SnackbarProvider>
@@ -58,7 +59,7 @@ const BasicDemo = () => {
       <Typography variant="h3" marginBottom="md">
         useSnackbar
       </Typography>
-      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: 16 }}>
+      <div style={storybookDemoStyles.rowFlexGap12MarginBottom16Wrap}>
         <Button onClick={() => showSnackbar('Сохранено')}>Короткое</Button>
         <Button
           onClick={() =>

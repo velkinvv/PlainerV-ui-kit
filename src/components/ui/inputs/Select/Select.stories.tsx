@@ -5,6 +5,8 @@ import type { DropdownMenuLoadMoreContext, SelectOption } from '../../../../type
 import { Form } from '../../Form';
 import { Size } from '../../../../types/sizes';
 import { DOC_SELECT } from '@/components/ui/storyDocs/uiKitDocs';
+import { inputFieldStoriesStyles } from '@/handlers/inputFieldStories.styles';
+import { lightTheme } from '@/themes/themes';
 
 const sampleOptions: SelectOption[] = [
   { value: 'ru', label: 'Русский' },
@@ -354,14 +356,14 @@ export const OpenMenuIconProps: Story = {
     name: 'open-menu-icon',
     label: 'Шеврон меню',
     openMenuIconProps: {
-      color: '#1565c0',
+      color: lightTheme.colors.primary,
     },
   },
   parameters: {
     docs: {
       description: {
         story:
-          'Панельные режимы: иконка в триггере и внутри `Dropdown`. `native`: только иконка у поля. В Controls можно править объект `openMenuIconProps` (например `{ "color": "#1565c0" }`).',
+          'Панельные режимы: иконка в триггере и внутри `Dropdown`. `native`: только иконка у поля. В Controls можно править объект `openMenuIconProps` (например `color` из `lightTheme.colors.primary`).',
       },
     },
   },
@@ -377,7 +379,7 @@ export const ClearIconProps: Story = {
     value: 'moscow',
     displayClearIcon: true,
     clearIconProps: {
-      color: '#c62828',
+      color: lightTheme.colors.danger,
     },
   },
   parameters: {
@@ -395,7 +397,7 @@ export const SearchSelect: Story = {
   render: () => {
     const [value, setValue] = useState('');
     return (
-      <div style={{ maxWidth: 360 }}>
+      <div style={inputFieldStoriesStyles.maxWidth360}>
         <Select
           mode="searchSelect"
           label="Город"
@@ -424,7 +426,7 @@ export const SearchSelectMultiple: Story = {
   render: () => {
     const [value, setValue] = useState<string[]>(['moscow', 'spb']);
     return (
-      <div style={{ maxWidth: 420 }}>
+      <div style={inputFieldStoriesStyles.maxWidth420}>
         <Select
           mode="searchSelect"
           label="Города"
@@ -509,7 +511,7 @@ export const TreeMultipleSelect: Story = {
   render: () => {
     const [value, setValue] = useState<string[]>([]);
     return (
-      <div style={{ maxWidth: 440 }}>
+      <div style={inputFieldStoriesStyles.maxWidth440}>
         <Select
           label="Города по регионам"
           name="cities-tree"
@@ -523,16 +525,7 @@ export const TreeMultipleSelect: Story = {
           disableSelectedOptionHighlight
         />
         {value.length > 0 ? (
-          <pre
-            style={{
-              marginTop: 12,
-              padding: 12,
-              background: '#f1f5f9',
-              borderRadius: 8,
-              fontSize: 12,
-              overflow: 'auto',
-            }}
-          >
+          <pre style={inputFieldStoriesStyles.storyPreviewPreJson}>
             {JSON.stringify(value, null, 2)}
           </pre>
         ) : null}
@@ -554,7 +547,7 @@ export const TreeMultipleSelectCollapsed: Story = {
   render: () => {
     const [value, setValue] = useState<string[]>(['msk']);
     return (
-      <div style={{ maxWidth: 440 }}>
+      <div style={inputFieldStoriesStyles.maxWidth440}>
         <Select
           label="Регионы (свёрнуто по умолчанию)"
           name="cities-tree-collapsed"
@@ -578,8 +571,8 @@ export const TreeMultipleSelectControlledExpand: Story = {
     const [value, setValue] = useState<string[]>([]);
     const [expandedKeys, setExpandedKeys] = useState<string[]>(['m/region-nw']);
     return (
-      <div style={{ maxWidth: 460 }}>
-        <p style={{ margin: '0 0 8px', fontSize: 13, color: '#64748b' }}>
+      <div style={inputFieldStoriesStyles.maxWidth460}>
+        <p style={inputFieldStoriesStyles.storyCaption13Secondary}>
           Развёрнута ветка с ключом <code>m/region-nw</code> (вторая группа в списке).
         </p>
         <Select
@@ -651,7 +644,7 @@ export const SelectLazyLoadOnScroll: Story = {
     };
 
     return (
-      <div style={{ maxWidth: 400 }}>
+      <div style={inputFieldStoriesStyles.maxWidth400}>
         <Select
           label="Ленивая подгрузка"
           name="lazy-scroll"
@@ -670,18 +663,7 @@ export const SelectLazyLoadOnScroll: Story = {
           menuHasMore={hasMore}
           menuIsLoadingMore={loadingMore}
         />
-        <pre
-          style={{
-            marginTop: 12,
-            fontSize: 11,
-            lineHeight: 1.4,
-            maxHeight: 120,
-            overflow: 'auto',
-            background: '#f4f4f5',
-            padding: 8,
-            borderRadius: 8,
-          }}
-        >
+        <pre style={inputFieldStoriesStyles.storyEventLogPre}>
           {events.join('\n') || 'События появятся здесь'}
         </pre>
       </div>
@@ -867,7 +849,7 @@ export const InFormWithSubmit: Story = {
           onValueChange={(v) => setValue(String(v))}
           onChange={(e) => setValue(e.target.value)}
         />
-        <button type="submit" style={{ marginTop: 12 }}>
+        <button type="submit" style={inputFieldStoriesStyles.submitButtonPrimaryMarginTop12}>
           Отправить
         </button>
       </>

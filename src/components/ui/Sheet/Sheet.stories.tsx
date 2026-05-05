@@ -4,6 +4,7 @@ import { Sheet } from './Sheet';
 import { Button } from '../buttons/Button';
 import { ButtonVariant, type SheetPlacement } from '../../../types/ui';
 import { DOC_SHEET } from '@/components/ui/storyDocs/uiKitDocs';
+import { surfaceOverlayStoriesStyles } from '@/handlers/surfaceOverlayStories.styles';
 
 const meta: Meta<typeof Sheet> = {
   title: 'UI Kit/Surfaces/Sheet',
@@ -52,7 +53,7 @@ type Story = StoryObj<typeof meta>;
 const SheetDemo = ({ placement }: { placement: SheetPlacement }) => {
   const [open, setOpen] = useState(false);
   return (
-    <div style={{ padding: 24 }}>
+    <div style={surfaceOverlayStoriesStyles.paddedRoot}>
       <Button type="button" onClick={() => setOpen(true)}>
         Открыть sheet ({placement})
       </Button>
@@ -95,7 +96,7 @@ const KeepMountedWithLazyInitSheetDemo = () => {
   }, [isOpen]);
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={surfaceOverlayStoriesStyles.paddedRoot}>
       <Button type="button" onClick={() => setIsOpen(true)}>
         Open keep-mounted sheet
       </Button>
@@ -143,11 +144,11 @@ const LifecycleCheatsheetSheetDemo = () => {
   }, [isOpen]);
 
   return (
-    <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 860 }}>
-      <p style={{ margin: 0 }}>
+    <div style={surfaceOverlayStoriesStyles.lifecycleCheatsheetRoot}>
+      <p style={surfaceOverlayStoriesStyles.paragraphReset}>
         Cheatsheet режима lifecycle для sheet: переключите флаги и откройте лист.
       </p>
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+      <div style={surfaceOverlayStoriesStyles.controlsRow}>
         <Button
           type="button"
           variant={lazyModeEnabled ? ButtonVariant.PRIMARY : ButtonVariant.OUTLINE}
@@ -168,7 +169,9 @@ const LifecycleCheatsheetSheetDemo = () => {
           Open sheet
         </Button>
       </div>
-      <p style={{ margin: 0, color: '#6b7280' }}>Открытий в текущей сессии: {openCount}</p>
+      <p style={surfaceOverlayStoriesStyles.mutedOpenCountCaption}>
+        Открытий в текущей сессии: {openCount}
+      </p>
       <Sheet
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}

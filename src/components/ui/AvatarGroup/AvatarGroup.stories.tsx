@@ -1,9 +1,11 @@
 ﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { fn } from '@storybook/test';
 import { AvatarGroup } from './AvatarGroup';
 import { AvatarGroupVariant, AvatarStatus } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 import { DOC_AVATAR_GROUP } from '@/components/ui/storyDocs/uiKitDocs';
+import { avatarGroupStoriesStyles } from './AvatarGroup.stories.styles';
 
 const meta: Meta<typeof AvatarGroup> = {
   title: 'UI Kit/Data Display/AvatarGroup',
@@ -270,7 +272,7 @@ export const Interactive: Story = {
   args: {
     avatars: sampleAvatars.map((avatar) => ({
       ...avatar,
-      onClick: () => alert(`Клик по аватару: ${avatar.userName}`),
+      onClick: fn(),
     })),
     variant: AvatarGroupVariant.STACK,
     maxVisible: 3,
@@ -326,7 +328,7 @@ export const GridLarge: Story = {
 // Все варианты - маленький размер
 export const AllVariantsSmall: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={avatarGroupStoriesStyles.columnGap24}>
       <div>
         <h3>Stack (наложение) - SM</h3>
         <AvatarGroup
@@ -364,7 +366,7 @@ export const AllVariantsSmall: Story = {
 // Все варианты - средний размер
 export const AllVariantsMedium: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={avatarGroupStoriesStyles.columnGap24}>
       <div>
         <h3>Stack (наложение) - MD</h3>
         <AvatarGroup
@@ -402,7 +404,7 @@ export const AllVariantsMedium: Story = {
 // Все варианты - большой размер
 export const AllVariantsLarge: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={avatarGroupStoriesStyles.columnGap24}>
       <div>
         <h3>Stack (наложение) - LG</h3>
         <AvatarGroup
@@ -440,10 +442,10 @@ export const AllVariantsLarge: Story = {
 // Сравнение всех размеров для каждого варианта
 export const SizeComparison: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+    <div style={avatarGroupStoriesStyles.columnGap32}>
       <div>
         <h2>Stack (наложение)</h2>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+        <div style={avatarGroupStoriesStyles.rowCenterGap24}>
           <div>
             <h4>SM</h4>
             <AvatarGroup
@@ -479,7 +481,7 @@ export const SizeComparison: Story = {
 
       <div>
         <h2>Row (в ряд)</h2>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+        <div style={avatarGroupStoriesStyles.rowCenterGap24}>
           <div>
             <h4>SM</h4>
             <AvatarGroup
@@ -518,7 +520,7 @@ export const SizeComparison: Story = {
 
       <div>
         <h2>Grid (сетка)</h2>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+        <div style={avatarGroupStoriesStyles.rowCenterGap24}>
           <div>
             <h4>SM</h4>
             <AvatarGroup
@@ -555,7 +557,7 @@ export const SizeComparison: Story = {
 // Демонстрация с разными статусами
 export const StatusVariations: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={avatarGroupStoriesStyles.columnGap24}>
       <div>
         <h3>Разные статусы - Stack</h3>
         <AvatarGroup
@@ -596,7 +598,7 @@ export const StatusVariations: Story = {
 // Демонстрация с сообщениями
 export const WithMessages: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={avatarGroupStoriesStyles.columnGap24}>
       <div>
         <h3>С сообщениями - Stack</h3>
         <AvatarGroup

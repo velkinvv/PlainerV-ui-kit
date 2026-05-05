@@ -11,6 +11,7 @@ import {
 } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
 import { DOC_RADIO_BUTTON_GROUP } from '@/components/ui/storyDocs/uiKitDocs';
+import { radioButtonGroupStoriesStyles } from './RadioButtonGroup.stories.styles';
 
 const meta: Meta<typeof RadioButtonGroup> = {
   title: 'UI Kit/Inputs/RadioButtonGroup',
@@ -106,7 +107,7 @@ export const GroupDefault: RadioButtonGroupStory = {
       <RadioButtonGroup
         options={basicOptions}
         value={value}
-        onChange={e => setValue(e.target.value)}
+        onChange={(changeEvent) => setValue(changeEvent.target.value)}
         label="Выберите опцию"
       />
     );
@@ -121,7 +122,7 @@ export const GroupHorizontal: RadioButtonGroupStory = {
       <RadioButtonGroup
         options={basicOptions}
         value={value}
-        onChange={e => setValue(e.target.value)}
+        onChange={(changeEvent) => setValue(changeEvent.target.value)}
         label="Горизонтальное расположение"
         additionalLabel="Та же дополнительная строка подписи, что и у текстовых полей."
         orientation={RadioButtonGroupOrientation.HORIZONTAL}
@@ -138,7 +139,7 @@ export const GroupVertical: RadioButtonGroupStory = {
       <RadioButtonGroup
         options={basicOptions}
         value={value}
-        onChange={e => setValue(e.target.value)}
+        onChange={(changeEvent) => setValue(changeEvent.target.value)}
         label="Вертикальное расположение"
         orientation={RadioButtonGroupOrientation.VERTICAL}
       />
@@ -160,7 +161,7 @@ export const GroupWithExtraText: RadioButtonGroupStory = {
       <RadioButtonGroup
         options={options}
         value={value}
-        onChange={e => setValue(e.target.value)}
+        onChange={(changeEvent) => setValue(changeEvent.target.value)}
         label="Выберите тарифный план"
         orientation={RadioButtonGroupOrientation.VERTICAL}
       />
@@ -173,8 +174,8 @@ export const GroupWithOnClick: RadioButtonGroupStory = {
     const [value, setValue] = useState('option1');
     const [clickedValue, setClickedValue] = useState<string | null>(null);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setValue(e.target.value);
+    const handleChange = (changeEvent: React.ChangeEvent<HTMLInputElement>) => {
+      setValue(changeEvent.target.value);
     };
 
     const handleClick = (val: string, option: RadioButtonGroupOption) => {
@@ -183,7 +184,7 @@ export const GroupWithOnClick: RadioButtonGroupStory = {
     };
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={radioButtonGroupStoriesStyles.columnGap16}>
         <RadioButtonGroup
           options={basicOptions}
           value={value}
@@ -192,7 +193,7 @@ export const GroupWithOnClick: RadioButtonGroupStory = {
           label="Группа с обработчиком onClick"
         />
         {clickedValue && (
-          <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
+          <div style={radioButtonGroupStoriesStyles.selectedCard}>
             <strong>Последний клик:</strong> {clickedValue}
           </div>
         )}
@@ -209,7 +210,7 @@ export const GroupDisabled: RadioButtonGroupStory = {
       <RadioButtonGroup
         options={basicOptions}
         value={value}
-        onChange={e => setValue(e.target.value)}
+        onChange={(changeEvent) => setValue(changeEvent.target.value)}
         label="Отключенная группа"
         disabled={true}
       />
@@ -225,7 +226,7 @@ export const GroupReadOnly: RadioButtonGroupStory = {
       <RadioButtonGroup
         options={basicOptions}
         value={value}
-        onChange={e => setValue(e.target.value)}
+        onChange={(changeEvent) => setValue(changeEvent.target.value)}
         label="Группа только для чтения"
         readOnly={true}
       />
@@ -239,18 +240,18 @@ export const GroupWithVariants: RadioButtonGroupStory = {
     const [value2, setValue2] = useState('option1');
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div style={radioButtonGroupStoriesStyles.columnGap24}>
         <RadioButtonGroup
           options={basicOptions}
           value={value1}
-          onChange={e => setValue1(e.target.value)}
+          onChange={(changeEvent) => setValue1(changeEvent.target.value)}
           label="Filled вариант (по умолчанию)"
           variant={RadioButtonVariant.FILLED}
         />
         <RadioButtonGroup
           options={basicOptions}
           value={value2}
-          onChange={e => setValue2(e.target.value)}
+          onChange={(changeEvent) => setValue2(changeEvent.target.value)}
           label="Outline вариант"
           variant={RadioButtonVariant.OUTLINE}
         />
@@ -266,25 +267,25 @@ export const GroupWithSizes: RadioButtonGroupStory = {
     const [value3, setValue3] = useState('option1');
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div style={radioButtonGroupStoriesStyles.columnGap24}>
         <RadioButtonGroup
           options={basicOptions}
           value={value1}
-          onChange={e => setValue1(e.target.value)}
+          onChange={(changeEvent) => setValue1(changeEvent.target.value)}
           label="Маленький размер"
           size={Size.SM}
         />
         <RadioButtonGroup
           options={basicOptions}
           value={value2}
-          onChange={e => setValue2(e.target.value)}
+          onChange={(changeEvent) => setValue2(changeEvent.target.value)}
           label="Средний размер (по умолчанию)"
           size={Size.MD}
         />
         <RadioButtonGroup
           options={basicOptions}
           value={value3}
-          onChange={e => setValue3(e.target.value)}
+          onChange={(changeEvent) => setValue3(changeEvent.target.value)}
           label="Большой размер"
           size={Size.LG}
         />
@@ -305,25 +306,25 @@ export const GroupWithLabelPositions: RadioButtonGroupStory = {
     ];
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div style={radioButtonGroupStoriesStyles.columnGap24}>
         <RadioButtonGroup
           options={options}
           value={value1}
-          onChange={e => setValue1(e.target.value)}
+          onChange={(changeEvent) => setValue1(changeEvent.target.value)}
           label="Лейбл справа (по умолчанию)"
           labelPosition={RadioButtonLabelPosition.RIGHT}
         />
         <RadioButtonGroup
           options={options}
           value={value2}
-          onChange={e => setValue2(e.target.value)}
+          onChange={(changeEvent) => setValue2(changeEvent.target.value)}
           label="Лейбл слева"
           labelPosition={RadioButtonLabelPosition.LEFT}
         />
         <RadioButtonGroup
           options={options}
           value={value3}
-          onChange={e => setValue3(e.target.value)}
+          onChange={(changeEvent) => setValue3(changeEvent.target.value)}
           label="Лейбл сверху"
           labelPosition={RadioButtonLabelPosition.TOP}
           orientation={RadioButtonGroupOrientation.HORIZONTAL}
@@ -359,16 +360,16 @@ export const GroupComplex: RadioButtonGroupStory = {
     ];
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={radioButtonGroupStoriesStyles.columnGap16}>
         <RadioButtonGroup
           options={options}
           value={value}
-          onChange={e => setValue(e.target.value)}
+          onChange={(changeEvent) => setValue(changeEvent.target.value)}
           label="Выберите тарифный план"
           orientation={RadioButtonGroupOrientation.VERTICAL}
           size={Size.MD}
         />
-        <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
+        <div style={radioButtonGroupStoriesStyles.selectedCard}>
           <strong>Выбранный план:</strong> {value}
         </div>
       </div>
@@ -386,7 +387,7 @@ export const GroupWithError: RadioButtonGroupStory = {
       <RadioButtonGroup
         options={basicOptions}
         value={value}
-        onChange={e => setValue(e.target.value)}
+        onChange={(changeEvent) => setValue(changeEvent.target.value)}
         label="Выберите опцию (с ошибкой)"
         error="Пожалуйста, выберите одну из опций"
         required
@@ -403,7 +404,7 @@ export const GroupWithHelperText: RadioButtonGroupStory = {
       <RadioButtonGroup
         options={basicOptions}
         value={value}
-        onChange={e => setValue(e.target.value)}
+        onChange={(changeEvent) => setValue(changeEvent.target.value)}
         label="Выберите опцию"
         helperText="Это вспомогательный текст, который помогает понять выбор"
       />
@@ -419,7 +420,7 @@ export const GroupWithHelperAndExtraText: RadioButtonGroupStory = {
       <RadioButtonGroup
         options={basicOptions}
         value={value}
-        onChange={e => setValue(e.target.value)}
+        onChange={(changeEvent) => setValue(changeEvent.target.value)}
         label="Способ доставки"
         helperText="От выбора зависит срок и стоимость."
         extraText="Бесплатная доставка от 3000 ₽ по городу."
@@ -436,7 +437,7 @@ export const GroupWithSuccessAndExtraText: RadioButtonGroupStory = {
       <RadioButtonGroup
         options={basicOptions}
         value={value}
-        onChange={e => setValue(e.target.value)}
+        onChange={(changeEvent) => setValue(changeEvent.target.value)}
         label="План подписки"
         success
         extraText="Изменения вступят в силу со следующего расчётного периода."
@@ -454,7 +455,7 @@ export const GroupWithErrorAndFooterExtra: RadioButtonGroupStory = {
       <RadioButtonGroup
         options={basicOptions}
         value={value}
-        onChange={e => setValue(e.target.value)}
+        onChange={(changeEvent) => setValue(changeEvent.target.value)}
         label="Согласие на обработку"
         error="Нужно выбрать один из вариантов."
         extraText="Подробнее в политике конфиденциальности в подвале страницы."
@@ -473,7 +474,7 @@ export const GroupFooterExtraTextOnly: RadioButtonGroupStory = {
       <RadioButtonGroup
         options={basicOptions}
         value={value}
-        onChange={e => setValue(e.target.value)}
+        onChange={(changeEvent) => setValue(changeEvent.target.value)}
         label="Частота рассылки"
         extraText="Письма можно отключить в любой момент в настройках профиля."
       />
@@ -490,7 +491,7 @@ export const GroupWithSuccessOnly: RadioButtonGroupStory = {
       <RadioButtonGroup
         options={basicOptions}
         value={value}
-        onChange={e => setValue(e.target.value)}
+        onChange={(changeEvent) => setValue(changeEvent.target.value)}
         label="Регион"
         success
       />
@@ -513,7 +514,7 @@ export const GroupWithTooltipHelperAndFooterExtra: RadioButtonGroupStory = {
       <RadioButtonGroup
         options={tariffOptions}
         value={value}
-        onChange={e => setValue(e.target.value)}
+        onChange={(changeEvent) => setValue(changeEvent.target.value)}
         label="Тариф"
         tooltip="Тариф влияет на лимиты API и количество мест."
         tooltipPosition={TooltipPosition.TOP}
@@ -534,15 +535,15 @@ function RadioButtonGroupFooterShowcaseDemo() {
   const [valueSuccessExtra, setValueSuccessExtra] = useState('option3');
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '40px', maxWidth: '520px' }}>
+    <div style={radioButtonGroupStoriesStyles.showcaseContainer}>
       <section aria-labelledby="rg-showcase-error-extra">
-        <h3 id="rg-showcase-error-extra" style={{ margin: '0 0 12px', fontSize: '15px', fontWeight: 600 }}>
+        <h3 id="rg-showcase-error-extra" style={radioButtonGroupStoriesStyles.showcaseHeading}>
           Ошибка + extraText
         </h3>
         <RadioButtonGroup
           options={basicOptions}
           value={valueErrorExtra}
-          onChange={e => setValueErrorExtra(e.target.value)}
+          onChange={(changeEvent) => setValueErrorExtra(changeEvent.target.value)}
           label="Пример 1"
           error={valueErrorExtra ? undefined : 'Сделайте выбор'}
           extraText="Дополнительное пояснение под ошибкой."
@@ -551,13 +552,13 @@ function RadioButtonGroupFooterShowcaseDemo() {
       </section>
 
       <section aria-labelledby="rg-showcase-helper-extra">
-        <h3 id="rg-showcase-helper-extra" style={{ margin: '0 0 12px', fontSize: '15px', fontWeight: 600 }}>
+        <h3 id="rg-showcase-helper-extra" style={radioButtonGroupStoriesStyles.showcaseHeading}>
           helperText + extraText
         </h3>
         <RadioButtonGroup
           options={basicOptions}
           value={valueHelperExtra}
-          onChange={e => setValueHelperExtra(e.target.value)}
+          onChange={(changeEvent) => setValueHelperExtra(changeEvent.target.value)}
           label="Пример 2"
           helperText="Обычная подсказка под группой."
           extraText="Второстепенная строка внизу."
@@ -565,13 +566,13 @@ function RadioButtonGroupFooterShowcaseDemo() {
       </section>
 
       <section aria-labelledby="rg-showcase-success-extra">
-        <h3 id="rg-showcase-success-extra" style={{ margin: '0 0 12px', fontSize: '15px', fontWeight: 600 }}>
+        <h3 id="rg-showcase-success-extra" style={radioButtonGroupStoriesStyles.showcaseHeading}>
           success + extraText
         </h3>
         <RadioButtonGroup
           options={basicOptions}
           value={valueSuccessExtra}
-          onChange={e => setValueSuccessExtra(e.target.value)}
+          onChange={(changeEvent) => setValueSuccessExtra(changeEvent.target.value)}
           label="Пример 3"
           success
           extraText="Успех: helper скрыт, эта строка остаётся."
@@ -593,7 +594,7 @@ export const GroupWithRequired: RadioButtonGroupStory = {
       <RadioButtonGroup
         options={basicOptions}
         value={value}
-        onChange={e => setValue(e.target.value)}
+        onChange={(changeEvent) => setValue(changeEvent.target.value)}
         label="Обязательная группа"
         required
       />
@@ -609,7 +610,7 @@ export const GroupWithTooltip: RadioButtonGroupStory = {
       <RadioButtonGroup
         options={basicOptions}
         value={value}
-        onChange={e => setValue(e.target.value)}
+        onChange={(changeEvent) => setValue(changeEvent.target.value)}
         label="Группа с tooltip"
         tooltip="Это подсказка для всей группы радиокнопок"
         tooltipPosition={TooltipPosition.TOP}
@@ -623,11 +624,11 @@ export const GroupWithFullWidth: RadioButtonGroupStory = {
     const [value, setValue] = useState('option1');
 
     return (
-      <div style={{ width: '500px' }}>
+      <div style={radioButtonGroupStoriesStyles.width500}>
         <RadioButtonGroup
           options={basicOptions}
           value={value}
-          onChange={e => setValue(e.target.value)}
+          onChange={(changeEvent) => setValue(changeEvent.target.value)}
           label="Группа с fullWidth"
           fullWidth
         />
@@ -644,7 +645,7 @@ export const GroupWithIndividualErrors: RadioButtonGroupStory = {
       <RadioButtonGroup
         options={basicOptions}
         value={value}
-        onChange={e => setValue(e.target.value)}
+        onChange={(changeEvent) => setValue(changeEvent.target.value)}
         label="Группа с индивидуальными ошибками"
         error={['Ошибка для опции 1', '', 'Ошибка для опции 3']}
       />
@@ -681,7 +682,7 @@ export const GroupComplexNew: RadioButtonGroupStory = {
       <RadioButtonGroup
         options={options}
         value={value}
-        onChange={e => setValue(e.target.value)}
+        onChange={(changeEvent) => setValue(changeEvent.target.value)}
         label="Выберите тарифный план"
         helperText="Выберите подходящий для вас тарифный план"
         extraText="Иконки и подписи опций — из макета; эта строка — групповой extraText, как у Input."

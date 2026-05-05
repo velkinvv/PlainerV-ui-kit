@@ -4,6 +4,7 @@ import { FileInput } from './FileInput';
 import { Form } from '../../Form';
 import { Size } from '../../../../types/sizes';
 import { DOC_FILE_INPUT } from '@/components/ui/storyDocs/uiKitDocs';
+import { inputFieldStoriesStyles } from '@/handlers/inputFieldStories.styles';
 
 const meta: Meta<typeof FileInput> = {
   title: 'UI Kit/Inputs/FileInput',
@@ -110,7 +111,7 @@ export const FileCard: Story = {
     const [deletableName, setDeletableName] = useState('report.docx');
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 24, maxWidth: 480 }}>
+      <div style={inputFieldStoriesStyles.columnGap24MaxWidth480}>
         <FileInput
           label="Загрузка (прогресс)"
           name="f1"

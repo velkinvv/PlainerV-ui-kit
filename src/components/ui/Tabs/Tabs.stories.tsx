@@ -11,6 +11,7 @@ import {
 } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
 import { DOC_TABS } from '@/components/ui/storyDocs/uiKitDocs';
+import { tabsStoriesStyles } from './Tabs.stories.styles';
 
 const meta: Meta<typeof Tabs> = {
   title: 'UI Kit/Navigation/Tabs',
@@ -109,10 +110,10 @@ export const PillSegmentedWithIconsAndBadge: Story = {
             iconStart={<Icon name="IconExHome" size="md" />}
             badge={3}
           >
-            <div style={{ padding: '16px' }}>Контент «Входящие»</div>
+            <div style={tabsStoriesStyles.contentPadding16}>Контент «Входящие»</div>
           </TabItem>
           <TabItem value="folders" label="Папки" iconEnd={<Icon name="IconExSettings" size="md" />}>
-            <div style={{ padding: '16px' }}>Контент «Папки»</div>
+            <div style={tabsStoriesStyles.contentPadding16}>Контент «Папки»</div>
           </TabItem>
           <TabItem
             value="archive"
@@ -120,7 +121,7 @@ export const PillSegmentedWithIconsAndBadge: Story = {
             iconStart={<Icon name="IconExUser" size="md" />}
             badge={12}
           >
-            <div style={{ padding: '16px' }}>Контент «Архив»</div>
+            <div style={tabsStoriesStyles.contentPadding16}>Контент «Архив»</div>
           </TabItem>
         </Tabs.List>
       </>
@@ -139,10 +140,10 @@ export const LineHorizontal: Story = {
       <>
         <Tabs.List>
           <TabItem value="a" label="Вкладка A">
-            <div style={{ padding: '16px' }}>Контент A</div>
+            <div style={tabsStoriesStyles.contentPadding16}>Контент A</div>
           </TabItem>
           <TabItem value="b" label="Вкладка B">
-            <div style={{ padding: '16px' }}>Контент B</div>
+            <div style={tabsStoriesStyles.contentPadding16}>Контент B</div>
           </TabItem>
         </Tabs.List>
       </>
@@ -157,19 +158,19 @@ export const Default: Story = {
       <>
         <Tabs.List>
           <TabItem value="overview" label="Overview">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Overview</h3>
               <p>This is the overview content of the tabs component.</p>
             </div>
           </TabItem>
           <TabItem value="details" label="Details">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Details</h3>
               <p>Detailed information about the component.</p>
             </div>
           </TabItem>
           <TabItem value="settings" label="Settings">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Settings</h3>
               <p>Configuration options and settings.</p>
             </div>
@@ -190,19 +191,19 @@ export const WithDefaultActive: Story = {
       <>
         <Tabs.List>
           <TabItem value="overview" label="Overview">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Overview</h3>
               <p>This tab is not active by default.</p>
             </div>
           </TabItem>
           <TabItem value="details" label="Details">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Details</h3>
               <p>This tab is active by default.</p>
             </div>
           </TabItem>
           <TabItem value="settings" label="Settings">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Settings</h3>
               <p>This tab is not active by default.</p>
             </div>
@@ -222,19 +223,19 @@ export const WithIcons: Story = {
       <>
         <Tabs.List>
           <TabItem value="home" label="🏠 Home">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Home</h3>
               <p>Welcome to the home page!</p>
             </div>
           </TabItem>
           <TabItem value="profile" label="👤 Profile">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Profile</h3>
               <p>User profile information.</p>
             </div>
           </TabItem>
           <TabItem value="settings" label="⚙️ Settings">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Settings</h3>
               <p>Application settings and preferences.</p>
             </div>
@@ -254,17 +255,9 @@ export const WithComplexContent: Story = {
       <>
         <Tabs.List>
           <TabItem value="code" label="Code">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Code Example</h3>
-              <pre
-                style={{
-                  backgroundColor: '#f8fafc',
-                  padding: '12px',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  overflow: 'auto',
-                }}
-              >
+              <pre style={tabsStoriesStyles.codeBlock}>
                 {`import { Tabs } from './Tabs';
 import { TabItem } from './TabItem';
 
@@ -282,24 +275,17 @@ import { TabItem } from './TabItem';
             </div>
           </TabItem>
           <TabItem value="preview" label="Preview">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Live Preview</h3>
-              <div
-                style={{
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                  padding: '16px',
-                  backgroundColor: '#f9fafb',
-                }}
-              >
+              <div style={tabsStoriesStyles.previewPanel}>
                 <p>This is a live preview of the tabs component.</p>
               </div>
             </div>
           </TabItem>
           <TabItem value="docs" label="Documentation">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Documentation</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={tabsStoriesStyles.docsStack}>
                 <div>
                   <h4>Props</h4>
                   <ul>
@@ -339,26 +325,26 @@ export const Controlled: Story = {
     };
 
     return (
-      <div style={{ width: '500px' }}>
-        <p style={{ marginBottom: '16px' }}>
+      <div style={tabsStoriesStyles.controlledContainer}>
+        <p style={tabsStoriesStyles.controlledLabel}>
           Active tab: <strong>{activeTab}</strong>
         </p>
         <Tabs defaultActiveTab={activeTab} onChange={handleChange}>
           <Tabs.List>
             <TabItem value="tab1" label="Tab 1">
-              <div style={{ padding: '16px' }}>
+              <div style={tabsStoriesStyles.contentPadding16}>
                 <h3>Tab 1 Content</h3>
                 <p>This is controlled externally.</p>
               </div>
             </TabItem>
             <TabItem value="tab2" label="Tab 2">
-              <div style={{ padding: '16px' }}>
+              <div style={tabsStoriesStyles.contentPadding16}>
                 <h3>Tab 2 Content</h3>
                 <p>This is also controlled externally.</p>
               </div>
             </TabItem>
             <TabItem value="tab3" label="Tab 3">
-              <div style={{ padding: '16px' }}>
+              <div style={tabsStoriesStyles.contentPadding16}>
                 <h3>Tab 3 Content</h3>
                 <p>This is controlled externally as well.</p>
               </div>
@@ -380,7 +366,7 @@ export const Vertical: Story = {
       <>
         <Tabs.List>
           <TabItem value="overview" label="Overview">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Overview</h3>
               <p>This is the overview content in vertical tabs layout.</p>
               <p>
@@ -390,21 +376,21 @@ export const Vertical: Story = {
             </div>
           </TabItem>
           <TabItem value="details" label="Details">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Details</h3>
               <p>Detailed information about the component in vertical layout.</p>
               <p>You can see that tabs are now displayed on the left side.</p>
             </div>
           </TabItem>
           <TabItem value="settings" label="Settings">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Settings</h3>
               <p>Configuration options and settings in vertical layout.</p>
               <p>The active tab indicator is now on the right side of the trigger.</p>
             </div>
           </TabItem>
           <TabItem value="advanced" label="Advanced">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Advanced</h3>
               <p>Advanced settings and options in vertical layout.</p>
               <p>This demonstrates how vertical tabs can accommodate more content.</p>
@@ -432,25 +418,25 @@ export const VerticalWithIcons: Story = {
       <>
         <Tabs.List>
           <TabItem value="home" label="🏠 Home">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Home</h3>
               <p>Welcome to the home page in vertical tabs layout!</p>
             </div>
           </TabItem>
           <TabItem value="profile" label="👤 Profile">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Profile</h3>
               <p>User profile information in vertical layout.</p>
             </div>
           </TabItem>
           <TabItem value="messages" label="💬 Messages">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Messages</h3>
               <p>Your messages in vertical tabs layout.</p>
             </div>
           </TabItem>
           <TabItem value="settings" label="⚙️ Settings">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Settings</h3>
               <p>Application settings in vertical layout.</p>
             </div>
@@ -476,19 +462,19 @@ export const Horizontal: Story = {
       <>
         <Tabs.List>
           <TabItem value="overview" label="Overview">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Overview</h3>
               <p>This is the overview content in horizontal tabs layout (default).</p>
             </div>
           </TabItem>
           <TabItem value="details" label="Details">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Details</h3>
               <p>Detailed information in horizontal layout.</p>
             </div>
           </TabItem>
           <TabItem value="settings" label="Settings">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Settings</h3>
               <p>Configuration options in horizontal layout.</p>
             </div>
@@ -519,7 +505,7 @@ export const VerticalWithVerticalText: Story = {
             label="Overview"
             textOrientation={TabItemTextOrientation.VERTICAL}
           >
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Overview</h3>
               <p>This is the overview content in vertical tabs layout with vertical text.</p>
               <p>Vertical text is useful when you have limited horizontal space.</p>
@@ -530,7 +516,7 @@ export const VerticalWithVerticalText: Story = {
             label="Details"
             textOrientation={TabItemTextOrientation.VERTICAL}
           >
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Details</h3>
               <p>Detailed information about the component in vertical layout with vertical text.</p>
             </div>
@@ -540,7 +526,7 @@ export const VerticalWithVerticalText: Story = {
             label="Settings"
             textOrientation={TabItemTextOrientation.VERTICAL}
           >
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Settings</h3>
               <p>Configuration options and settings in vertical layout with vertical text.</p>
             </div>
@@ -550,7 +536,7 @@ export const VerticalWithVerticalText: Story = {
             label="Advanced"
             textOrientation={TabItemTextOrientation.VERTICAL}
           >
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Advanced</h3>
               <p>Advanced settings and options in vertical layout with vertical text.</p>
             </div>
@@ -582,7 +568,7 @@ export const VerticalWithVerticalTextLeft: Story = {
             textOrientation={TabItemTextOrientation.VERTICAL}
             textPosition={TabItemTextPosition.LEFT}
           >
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Overview</h3>
               <p>Vertical tabs with vertical text positioned on the left side.</p>
             </div>
@@ -593,7 +579,7 @@ export const VerticalWithVerticalTextLeft: Story = {
             textOrientation={TabItemTextOrientation.VERTICAL}
             textPosition={TabItemTextPosition.LEFT}
           >
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Details</h3>
               <p>Detailed information with left-aligned vertical text.</p>
             </div>
@@ -604,7 +590,7 @@ export const VerticalWithVerticalTextLeft: Story = {
             textOrientation={TabItemTextOrientation.VERTICAL}
             textPosition={TabItemTextPosition.LEFT}
           >
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Settings</h3>
               <p>Settings with left-aligned vertical text.</p>
             </div>
@@ -636,7 +622,7 @@ export const VerticalWithVerticalTextRight: Story = {
             textOrientation={TabItemTextOrientation.VERTICAL}
             textPosition={TabItemTextPosition.RIGHT}
           >
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Overview</h3>
               <p>Vertical tabs with vertical text positioned on the right side (default).</p>
             </div>
@@ -647,7 +633,7 @@ export const VerticalWithVerticalTextRight: Story = {
             textOrientation={TabItemTextOrientation.VERTICAL}
             textPosition={TabItemTextPosition.RIGHT}
           >
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Details</h3>
               <p>Detailed information with right-aligned vertical text.</p>
             </div>
@@ -658,7 +644,7 @@ export const VerticalWithVerticalTextRight: Story = {
             textOrientation={TabItemTextOrientation.VERTICAL}
             textPosition={TabItemTextPosition.RIGHT}
           >
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Settings</h3>
               <p>Settings with right-aligned vertical text.</p>
             </div>
@@ -690,7 +676,7 @@ export const VerticalWithVerticalTextAndIcons: Story = {
             textOrientation={TabItemTextOrientation.VERTICAL}
             iconStart={<Icon name="IconExHome" size="md" />}
           >
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Home</h3>
               <p>Welcome to the home page with vertical text and icon!</p>
             </div>
@@ -701,7 +687,7 @@ export const VerticalWithVerticalTextAndIcons: Story = {
             textOrientation={TabItemTextOrientation.VERTICAL}
             iconStart={<Icon name="IconExUser" size="md" />}
           >
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Profile</h3>
               <p>User profile information with vertical text and icon.</p>
             </div>
@@ -712,7 +698,7 @@ export const VerticalWithVerticalTextAndIcons: Story = {
             textOrientation={TabItemTextOrientation.VERTICAL}
             iconStart={<Icon name="IconExSettings" size="md" />}
           >
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Settings</h3>
               <p>Application settings with vertical text and icon.</p>
             </div>
@@ -740,19 +726,19 @@ export const VerticalTabsOnRight: Story = {
       <>
         <Tabs.List>
           <TabItem value="overview" label="Overview">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Overview</h3>
               <p>This is the overview content. Tabs are positioned on the right side.</p>
             </div>
           </TabItem>
           <TabItem value="details" label="Details">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Details</h3>
               <p>Detailed information. Tabs are on the right, content is on the left.</p>
             </div>
           </TabItem>
           <TabItem value="settings" label="Settings">
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Settings</h3>
               <p>Configuration options. Tabs positioned on the right side.</p>
             </div>
@@ -784,7 +770,7 @@ export const VerticalTabsOnRightWithVerticalText: Story = {
             label="Overview"
             textOrientation={TabItemTextOrientation.VERTICAL}
           >
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Overview</h3>
               <p>Vertical tabs on the right with vertical text orientation.</p>
             </div>
@@ -794,7 +780,7 @@ export const VerticalTabsOnRightWithVerticalText: Story = {
             label="Details"
             textOrientation={TabItemTextOrientation.VERTICAL}
           >
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Details</h3>
               <p>Detailed information with tabs on the right and vertical text.</p>
             </div>
@@ -804,7 +790,7 @@ export const VerticalTabsOnRightWithVerticalText: Story = {
             label="Settings"
             textOrientation={TabItemTextOrientation.VERTICAL}
           >
-            <div style={{ padding: '16px' }}>
+            <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Settings</h3>
               <p>Settings with tabs on the right and vertical text.</p>
             </div>

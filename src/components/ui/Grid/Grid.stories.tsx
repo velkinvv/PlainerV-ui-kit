@@ -5,6 +5,7 @@ import { GridItem } from './GridItem';
 import { GridMode } from '../../../types/ui';
 import { Card } from '../Card/Card';
 import { DOC_GRID } from '@/components/ui/storyDocs/uiKitDocs';
+import { gridStoriesStyles } from './Grid.stories.styles';
 
 const meta: Meta<typeof Grid> = {
   title: 'UI Kit/Layout/Grid',
@@ -241,12 +242,12 @@ export const Alignment: Story = {
     height: '300px',
     children: (
       <>
-        <Card style={{ height: '100px' }}>Выровненный 1</Card>
-        <Card style={{ height: '150px' }}>Выровненный 2</Card>
-        <Card style={{ height: '80px' }}>Выровненный 3</Card>
-        <Card style={{ height: '120px' }}>Выровненный 4</Card>
-        <Card style={{ height: '90px' }}>Выровненный 5</Card>
-        <Card style={{ height: '110px' }}>Выровненный 6</Card>
+        <Card style={gridStoriesStyles.alignmentCardHeight100}>Выровненный 1</Card>
+        <Card style={gridStoriesStyles.alignmentCardHeight150}>Выровненный 2</Card>
+        <Card style={gridStoriesStyles.alignmentCardHeight80}>Выровненный 3</Card>
+        <Card style={gridStoriesStyles.alignmentCardHeight120}>Выровненный 4</Card>
+        <Card style={gridStoriesStyles.alignmentCardHeight90}>Выровненный 5</Card>
+        <Card style={gridStoriesStyles.alignmentCardHeight110}>Выровненный 6</Card>
       </>
     ),
   },
@@ -261,66 +262,18 @@ export const Nested: Story = {
       <>
         <Card>
           <h3>Внешний элемент 1</h3>
-          <Grid columns={2} gap={8} style={{ marginTop: '16px' }}>
-            <div
-              style={{
-                padding: '8px',
-                backgroundColor: '#f0f0f0',
-                borderRadius: '4px',
-              }}
-            >
-              Вложенный 1-1
-            </div>
-            <div
-              style={{
-                padding: '8px',
-                backgroundColor: '#f0f0f0',
-                borderRadius: '4px',
-              }}
-            >
-              Вложенный 1-2
-            </div>
-            <div
-              style={{
-                padding: '8px',
-                backgroundColor: '#f0f0f0',
-                borderRadius: '4px',
-              }}
-            >
-              Вложенный 1-3
-            </div>
-            <div
-              style={{
-                padding: '8px',
-                backgroundColor: '#f0f0f0',
-                borderRadius: '4px',
-              }}
-            >
-              Вложенный 1-4
-            </div>
+          <Grid columns={2} gap={8} style={gridStoriesStyles.gridNestedMarginTop}>
+            <div style={gridStoriesStyles.nestedDemoNeutralCell}>Вложенный 1-1</div>
+            <div style={gridStoriesStyles.nestedDemoNeutralCell}>Вложенный 1-2</div>
+            <div style={gridStoriesStyles.nestedDemoNeutralCell}>Вложенный 1-3</div>
+            <div style={gridStoriesStyles.nestedDemoNeutralCell}>Вложенный 1-4</div>
           </Grid>
         </Card>
         <Card>
           <h3>Внешний элемент 2</h3>
-          <Grid columns={1} gap={8} style={{ marginTop: '16px' }}>
-            <div
-              style={{
-                padding: '8px',
-                backgroundColor: '#e8f5e8',
-                borderRadius: '4px',
-              }}
-            >
-              Вложенный 2-1
-            </div>
-            <div
-              style={{
-                padding: '8px',
-                backgroundColor: '#e8f5e8',
-                borderRadius: '4px',
-              }}
-            >
-              Вложенный 2-2
-            </div>
+          <Grid columns={1} gap={8} style={gridStoriesStyles.gridNestedMarginTop}>
+            <div style={gridStoriesStyles.nestedDemoSuccessTintCell}>Вложенный 2-1</div>
+            <div style={gridStoriesStyles.nestedDemoSuccessTintCell}>Вложенный 2-2</div>
           </Grid>
         </Card>
       </>
@@ -347,7 +300,7 @@ export const WithRows: Story = {
           <Card>Обычный элемент</Card>
         </GridItem>
         <GridItem rowSpan={2}>
-          <Card style={{ height: '100%' }}>Растянутый на 2 строки</Card>
+          <Card style={gridStoriesStyles.cardFullHeight}>Растянутый на 2 строки</Card>
         </GridItem>
         <GridItem>
           <Card>Обычный элемент</Card>
@@ -387,11 +340,11 @@ export const MaxColumnWidth: Story = {
 // Демонстрация всех возможностей
 export const AllFeatures: Story = {
   render: () => (
-    <div style={{ padding: '20px' }}>
+    <div style={gridStoriesStyles.allFeaturesRoot}>
       <h2>Демонстрация всех возможностей Grid</h2>
 
       <h3>1. Базовый Grid</h3>
-      <Grid columns={3} gap={16} style={{ marginBottom: '40px' }}>
+      <Grid columns={3} gap={16} style={gridStoriesStyles.sectionSpacingMarginBottom40}>
         <Card>Базовый 1</Card>
         <Card>Базовый 2</Card>
         <Card>Базовый 3</Card>
@@ -401,7 +354,7 @@ export const AllFeatures: Story = {
       <Grid
         columns={{ xs: 1, sm: 2, md: 3, lg: 4 }}
         gap={{ xs: 8, sm: 12, md: 16, lg: 20 }}
-        style={{ marginBottom: '40px' }}
+        style={gridStoriesStyles.sectionSpacingMarginBottom40}
       >
         <Card>Адаптивный 1</Card>
         <Card>Адаптивный 2</Card>
@@ -410,7 +363,7 @@ export const AllFeatures: Story = {
       </Grid>
 
       <h3>3. Auto-fit Grid</h3>
-      <Grid autoFit minColumnWidth="200px" gap={16} style={{ marginBottom: '40px' }}>
+      <Grid autoFit minColumnWidth="200px" gap={16} style={gridStoriesStyles.sectionSpacingMarginBottom40}>
         <Card>Auto-fit 1</Card>
         <Card>Auto-fit 2</Card>
         <Card>Auto-fit 3</Card>
@@ -425,74 +378,42 @@ export const AllFeatures: Story = {
         justifyContent="space-between"
         alignItems="center"
         height="200px"
-        style={{ marginBottom: '40px' }}
+        style={gridStoriesStyles.sectionSpacingMarginBottom40}
       >
         <GridItem height="80px">
-          <Card style={{ height: '100%' }}>Выровненный 1</Card>
+          <Card style={gridStoriesStyles.cardFullHeight}>Выровненный 1</Card>
         </GridItem>
         <GridItem height="120px">
-          <Card style={{ height: '100%' }}>Выровненный 2</Card>
+          <Card style={gridStoriesStyles.cardFullHeight}>Выровненный 2</Card>
         </GridItem>
         <GridItem height="100px">
-          <Card style={{ height: '100%' }}>Выровненный 3</Card>
+          <Card style={gridStoriesStyles.cardFullHeight}>Выровненный 3</Card>
         </GridItem>
         <GridItem height="90px">
-          <Card style={{ height: '100%' }}>Выровненный 4</Card>
+          <Card style={gridStoriesStyles.cardFullHeight}>Выровненный 4</Card>
         </GridItem>
         <GridItem height="110px">
-          <Card style={{ height: '100%' }}>Выровненный 5</Card>
+          <Card style={gridStoriesStyles.cardFullHeight}>Выровненный 5</Card>
         </GridItem>
         <GridItem height="70px">
-          <Card style={{ height: '100%' }}>Выровненный 6</Card>
+          <Card style={gridStoriesStyles.cardFullHeight}>Выровненный 6</Card>
         </GridItem>
       </Grid>
 
       <h3>5. Вложенный Grid</h3>
-      <Grid columns={2} gap={20} style={{ marginBottom: '40px' }}>
+      <Grid columns={2} gap={20} style={gridStoriesStyles.sectionSpacingMarginBottom40}>
         <Card>
           <h4>Внешний элемент</h4>
-          <Grid columns={2} gap={8} style={{ marginTop: '16px' }}>
-            <div
-              style={{
-                padding: '8px',
-                backgroundColor: '#f0f0f0',
-                borderRadius: '4px',
-              }}
-            >
-              Вложенный 1
-            </div>
-            <div
-              style={{
-                padding: '8px',
-                backgroundColor: '#f0f0f0',
-                borderRadius: '4px',
-              }}
-            >
-              Вложенный 2
-            </div>
+          <Grid columns={2} gap={8} style={gridStoriesStyles.gridNestedMarginTop}>
+            <div style={gridStoriesStyles.nestedDemoNeutralCell}>Вложенный 1</div>
+            <div style={gridStoriesStyles.nestedDemoNeutralCell}>Вложенный 2</div>
           </Grid>
         </Card>
         <Card>
           <h4>Другой внешний элемент</h4>
-          <Grid columns={1} gap={8} style={{ marginTop: '16px' }}>
-            <div
-              style={{
-                padding: '8px',
-                backgroundColor: '#e8f5e8',
-                borderRadius: '4px',
-              }}
-            >
-              Вложенный 3
-            </div>
-            <div
-              style={{
-                padding: '8px',
-                backgroundColor: '#e8f5e8',
-                borderRadius: '4px',
-              }}
-            >
-              Вложенный 4
-            </div>
+          <Grid columns={1} gap={8} style={gridStoriesStyles.gridNestedMarginTop}>
+            <div style={gridStoriesStyles.nestedDemoSuccessTintCell}>Вложенный 3</div>
+            <div style={gridStoriesStyles.nestedDemoSuccessTintCell}>Вложенный 4</div>
           </Grid>
         </Card>
       </Grid>

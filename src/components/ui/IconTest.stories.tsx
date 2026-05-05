@@ -1,6 +1,7 @@
 ﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { IconPlainerUser } from '../../icons/plainer';
+import { iconTestPageStoriesStyles, iconTestStoryColors } from './IconTest.stories.styles';
 
 const meta: Meta = {
   title: 'UI Kit/Data Display/Icon/Icon Test',
@@ -14,7 +15,7 @@ type Story = StoryObj;
 
 export const Default: Story = {
   render: () => (
-    <div style={{ padding: '20px', textAlign: 'center' }}>
+    <div style={iconTestPageStoriesStyles.centeredRoot}>
       <h3>Icon Test</h3>
       <IconPlainerUser width={48} height={48} />
       <p>Иконка должна использовать цвет из темы</p>
@@ -24,9 +25,9 @@ export const Default: Story = {
 
 export const CustomColor: Story = {
   render: () => (
-    <div style={{ padding: '20px', textAlign: 'center' }}>
+    <div style={iconTestPageStoriesStyles.centeredRoot}>
       <h3>Icon with Custom Color</h3>
-      <IconPlainerUser width={48} height={48} color="#ff0000" />
+      <IconPlainerUser width={48} height={48} color={iconTestStoryColors.customIconColor} />
       <p>Иконка с кастомным красным цветом</p>
     </div>
   ),

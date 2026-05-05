@@ -35,6 +35,7 @@ import {
   WarningIconCircle,
 } from './Modal.stories.style';
 import { DOC_MODAL } from '@/components/ui/storyDocs/uiKitDocs';
+import { modalStoriesStyles } from './Modal.stories.styles';
 
 const meta: Meta<typeof Modal> = {
   title: 'UI Kit/Surfaces/Modal',
@@ -1205,13 +1206,9 @@ export const CustomOverlayStyles: Story = {
           onClose={() => setIsOpen(false)}
           title="Custom Overlay"
           description="Оверлей модального окна стилизован через проп overlayStyledCss."
-          overlayStyledCss={`
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(12px);
-            padding: 48px;
-          `}
+          overlayStyledCss={modalStoriesStyles.customOverlayCss}
           overlayClassName="modal-overlay--dark"
-          overlayStyle={{ border: '2px solid rgba(255, 255, 255, 0.4)' }}
+          overlayStyle={modalStoriesStyles.overlayBorderStyle}
           buttons={[
             {
               label: 'Close',
@@ -1426,11 +1423,11 @@ const LifecycleCheatsheetDemo = () => {
   }, [isOpen]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 760 }}>
-      <p style={{ margin: 0 }}>
+    <div style={modalStoriesStyles.lifecycleRoot}>
+      <p style={modalStoriesStyles.paragraphNoMargin}>
         Быстрая памятка: переключите режимы и откройте модалку, чтобы увидеть поведение lifecycle.
       </p>
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+      <div style={modalStoriesStyles.controlsRow}>
         <Button
           variant={lazyModeEnabled ? ButtonVariant.PRIMARY : ButtonVariant.OUTLINE}
           onClick={() => setLazyModeEnabled((previousLazyModeEnabled) => !previousLazyModeEnabled)}
@@ -1447,7 +1444,7 @@ const LifecycleCheatsheetDemo = () => {
         </Button>
         <Button onClick={() => setIsOpen(true)}>Open modal</Button>
       </div>
-      <p style={{ margin: 0, color: '#6b7280' }}>
+      <p style={modalStoriesStyles.mutedParagraph}>
         Открытий в текущей сессии: {openCount}. Сохранение внутреннего состояния видно при
         `unmountOnClose=false`.
       </p>
@@ -1466,7 +1463,7 @@ const LifecycleCheatsheetDemo = () => {
           },
         ]}
       >
-        <p style={{ margin: 0 }}>
+        <p style={modalStoriesStyles.paragraphNoMargin}>
           Текущая конфигурация: lazy={String(lazyModeEnabled)}, unmountOnClose=
           {String(unmountOnCloseEnabled)}.
         </p>

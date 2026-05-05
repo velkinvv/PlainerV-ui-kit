@@ -6,6 +6,7 @@ import { Typography } from '../../Typography/Typography';
 import { Input } from '../../inputs/Input';
 import { ColumnFilterPanel } from './ColumnFilterPanel';
 import { DOC_COLUMN_FILTER_PANEL } from '@/components/ui/storyDocs/uiKitDocs';
+import { columnFilterPanelStoriesStyles } from './ColumnFilterPanel.stories.styles';
 
 const meta: Meta<typeof ColumnFilterPanel> = {
   title: 'UI Kit/Data Display/Table/ColumnFilterPanel',
@@ -44,7 +45,7 @@ export const Default: Story = {
     const [appliedMessage, setAppliedMessage] = useState<string | null>(null);
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'flex-start' }}>
+      <div style={columnFilterPanelStoriesStyles.defaultStoryStack}>
         <ColumnFilterPanel
           size={Size.SM}
           onApply={() => {

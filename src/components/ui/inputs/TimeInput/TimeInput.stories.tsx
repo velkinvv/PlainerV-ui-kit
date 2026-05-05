@@ -4,6 +4,7 @@ import { TimeInput } from './TimeInput';
 import { Size, IconSize } from '../../../../types/sizes';
 import { Icon } from '../../Icon/Icon';
 import { DOC_TIME_INPUT } from '@/components/ui/storyDocs/uiKitDocs';
+import { timeInputStoriesStyles } from './TimeInput.stories.styles';
 
 const meta: Meta<typeof TimeInput> = {
   title: 'UI Kit/Inputs/TimeInput',
@@ -552,14 +553,7 @@ export const TextAlignRight: Story = {
 
 export const TextAlignComparison: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '16px',
-        width: '400px',
-      }}
-    >
+    <div style={timeInputStoriesStyles.columnGap16Width400}>
       <TimeInput
         label="По левому краю (по умолчанию)"
         placeholder="Выберите время"
@@ -597,14 +591,7 @@ export const TextAlignComparison: Story = {
 
 export const RangeTextAlignComparison: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '16px',
-        width: '600px',
-      }}
-    >
+    <div style={timeInputStoriesStyles.columnGap16Width600}>
       <TimeInput
         label="Range по левому краю"
         range={true}
@@ -720,14 +707,7 @@ export const SegmentedRangeInputMode: Story = {
 
 export const InputModeComparison: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '24px',
-        width: '400px',
-      }}
-    >
+    <div style={timeInputStoriesStyles.columnGap24Width400}>
       <TimeInput
         label="Обычный ввод"
         placeholder="Введите время"
@@ -776,14 +756,7 @@ export const TimeFormatDemo: Story = {
     const [time5, setTime5] = React.useState('14:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="HH:mm (24-часовой формат)"
           placeholder="Выберите время"
@@ -847,14 +820,7 @@ export const SegmentedTimeFormatDemo: Story = {
     const [time3, setTime3] = React.useState('14:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           segmented={true}
           label="Сегментированный HH:mm"
@@ -912,14 +878,7 @@ export const RangeTimeFormatDemo: Story = {
     });
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           range={true}
           label="Диапазон HH:mm"
@@ -986,14 +945,7 @@ export const CustomIconDemo: Story = {
     const [time4, setTime4] = React.useState('14:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="Стандартная иконка часов"
           placeholder="Выберите время"
@@ -1044,14 +996,7 @@ export const SegmentedCustomIconDemo: Story = {
     const [time2, setTime2] = React.useState('14:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           segmented={true}
           label="Сегментированный с иконкой солнца"
@@ -1094,14 +1039,7 @@ export const RangeCustomIconDemo: Story = {
     });
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           range={true}
           label="Диапазон с иконкой солнца"
@@ -1139,23 +1077,14 @@ export const BottomPanelDemo: Story = {
     const [time3, setTime3] = React.useState('14:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="С информационной панелью"
           placeholder="Выберите время"
           value={time1}
           onChange={value => setTime1(value as string)}
           renderBottomPanel={() => (
-            <div style={{ fontSize: '12px', color: '#666' }}>
-              ⏰ Выберите время для планирования встречи
-            </div>
+            <div style={timeInputStoriesStyles.smallNoteText}>⏰ Выберите время для планирования встречи</div>
           )}
         />
 
@@ -1165,42 +1094,24 @@ export const BottomPanelDemo: Story = {
           value={time2}
           onChange={value => setTime2(value as string)}
           renderBottomPanel={() => (
-            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+            <div style={timeInputStoriesStyles.rowGap8Centered}>
               <button
-                style={{
-                  padding: '4px 8px',
-                  fontSize: '12px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  background: 'white',
-                  cursor: 'pointer',
-                }}
+                type="button"
+                style={timeInputStoriesStyles.actionButtonCompact}
                 onClick={() => setTime2('09:00')}
               >
                 9:00
               </button>
               <button
-                style={{
-                  padding: '4px 8px',
-                  fontSize: '12px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  background: 'white',
-                  cursor: 'pointer',
-                }}
+                type="button"
+                style={timeInputStoriesStyles.actionButtonCompact}
                 onClick={() => setTime2('12:00')}
               >
                 12:00
               </button>
               <button
-                style={{
-                  padding: '4px 8px',
-                  fontSize: '12px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  background: 'white',
-                  cursor: 'pointer',
-                }}
+                type="button"
+                style={timeInputStoriesStyles.actionButtonCompact}
                 onClick={() => setTime2('18:00')}
               >
                 18:00
@@ -1215,17 +1126,9 @@ export const BottomPanelDemo: Story = {
           value={time3}
           onChange={value => setTime3(value as string)}
           renderBottomPanel={() => (
-            <div style={{ textAlign: 'center' }}>
-              <div
-                style={{
-                  fontSize: '14px',
-                  fontWeight: 'bold',
-                  marginBottom: '4px',
-                }}
-              >
-                🕐 Время
-              </div>
-              <div style={{ fontSize: '11px', color: '#888' }}>Выберите время для продолжения</div>
+            <div style={timeInputStoriesStyles.centerText}>
+              <div style={timeInputStoriesStyles.panelTitleBold}>🕐 Время</div>
+              <div style={timeInputStoriesStyles.extraSmallNoteText}>Выберите время для продолжения</div>
             </div>
           )}
         />
@@ -1251,14 +1154,7 @@ export const RangeBottomPanelDemo: Story = {
     });
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           range={true}
           label="Диапазон с информационной панелью"
@@ -1266,9 +1162,7 @@ export const RangeBottomPanelDemo: Story = {
           value={range}
           onChange={value => setRange(value as any)}
           renderBottomPanel={() => (
-            <div style={{ fontSize: '12px', color: '#666' }}>
-              📊 Выберите рабочие часы для планирования
-            </div>
+            <div style={timeInputStoriesStyles.smallNoteText}>📊 Выберите рабочие часы для планирования</div>
           )}
         />
       </div>
@@ -1291,23 +1185,14 @@ export const TopPanelDemo: Story = {
     const [time3, setTime3] = React.useState('14:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="С информационной панелью сверху"
           placeholder="Выберите время"
           value={time1}
           onChange={value => setTime1(value as string)}
           renderTopPanel={() => (
-            <div style={{ fontSize: '12px', color: '#666' }}>
-              ⏰ Выберите время для планирования встречи
-            </div>
+            <div style={timeInputStoriesStyles.smallNoteText}>⏰ Выберите время для планирования встречи</div>
           )}
         />
 
@@ -1317,42 +1202,24 @@ export const TopPanelDemo: Story = {
           value={time2}
           onChange={value => setTime2(value as string)}
           renderTopPanel={() => (
-            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+            <div style={timeInputStoriesStyles.rowGap8Centered}>
               <button
-                style={{
-                  padding: '4px 8px',
-                  fontSize: '12px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  background: 'white',
-                  cursor: 'pointer',
-                }}
+                type="button"
+                style={timeInputStoriesStyles.actionButtonCompact}
                 onClick={() => setTime2('09:00')}
               >
                 9:00
               </button>
               <button
-                style={{
-                  padding: '4px 8px',
-                  fontSize: '12px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  background: 'white',
-                  cursor: 'pointer',
-                }}
+                type="button"
+                style={timeInputStoriesStyles.actionButtonCompact}
                 onClick={() => setTime2('12:00')}
               >
                 12:00
               </button>
               <button
-                style={{
-                  padding: '4px 8px',
-                  fontSize: '12px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  background: 'white',
-                  cursor: 'pointer',
-                }}
+                type="button"
+                style={timeInputStoriesStyles.actionButtonCompact}
                 onClick={() => setTime2('18:00')}
               >
                 18:00
@@ -1367,17 +1234,9 @@ export const TopPanelDemo: Story = {
           value={time3}
           onChange={value => setTime3(value as string)}
           renderTopPanel={() => (
-            <div style={{ textAlign: 'center' }}>
-              <div
-                style={{
-                  fontSize: '14px',
-                  fontWeight: 'bold',
-                  marginBottom: '4px',
-                }}
-              >
-                🕐 Время
-              </div>
-              <div style={{ fontSize: '11px', color: '#888' }}>Выберите время для продолжения</div>
+            <div style={timeInputStoriesStyles.centerText}>
+              <div style={timeInputStoriesStyles.panelTitleBold}>🕐 Время</div>
+              <div style={timeInputStoriesStyles.extraSmallNoteText}>Выберите время для продолжения</div>
             </div>
           )}
         />
@@ -1400,26 +1259,17 @@ export const TopAndBottomPanelsDemo: Story = {
     const [time, setTime] = React.useState('14:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="С панелями сверху и снизу"
           placeholder="Выберите время"
           value={time}
           onChange={value => setTime(value as string)}
           renderTopPanel={() => (
-            <div style={{ fontSize: '12px', color: '#666', textAlign: 'center' }}>
-              ⏰ Выберите время для планирования
-            </div>
+            <div style={timeInputStoriesStyles.smallNoteTextCentered}>⏰ Выберите время для планирования</div>
           )}
           renderBottomPanel={() => (
-            <div style={{ fontSize: '12px', color: '#666', textAlign: 'center' }}>
+            <div style={timeInputStoriesStyles.smallNoteTextCentered}>
               💡 Подсказка: используйте стрелки для навигации
             </div>
           )}
@@ -1446,14 +1296,7 @@ export const StatusDemo: Story = {
     const [time4, setTime4] = React.useState('14:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="Обычное состояние"
           placeholder="Выберите время"
@@ -1505,14 +1348,7 @@ export const SegmentedStatusDemo: Story = {
     const [time3, setTime3] = React.useState('14:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           segmented={true}
           label="Сегментированный error"
@@ -1568,14 +1404,7 @@ export const RangeStatusDemo: Story = {
     });
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           range={true}
           label="Диапазон error"
@@ -1633,14 +1462,7 @@ export const LoadingDemo: Story = {
     }, []);
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="Загрузка времени (3 сек)"
           placeholder="Выберите время"
@@ -1667,13 +1489,8 @@ export const LoadingDemo: Story = {
 
         <button
           onClick={() => setIsLoading3(!isLoading3)}
-          style={{
-            padding: '8px 16px',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            background: 'white',
-            cursor: 'pointer',
-          }}
+          type="button"
+          style={timeInputStoriesStyles.actionButtonMedium}
         >
           {isLoading3 ? 'Остановить загрузку' : 'Начать загрузку'}
         </button>
@@ -1709,14 +1526,7 @@ export const SkeletonDemo: Story = {
     }, []);
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="Skeleton эффект (3 сек)"
           placeholder="Выберите время"
@@ -1743,13 +1553,8 @@ export const SkeletonDemo: Story = {
 
         <button
           onClick={() => setSkeleton3(!skeleton3)}
-          style={{
-            padding: '8px 16px',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            background: 'white',
-            cursor: 'pointer',
-          }}
+          type="button"
+          style={timeInputStoriesStyles.actionButtonMedium}
         >
           {skeleton3 ? 'Убрать skeleton' : 'Показать skeleton'}
         </button>
@@ -1774,14 +1579,7 @@ export const TooltipDemo: Story = {
     const [time3, setTime3] = React.useState('15:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="Обычный TimeInput"
           placeholder="Без подсказки"
@@ -1842,7 +1640,7 @@ export const TooltipDemo: Story = {
           }}
           icon={<Icon name="IconPlainerMoon" size={IconSize.SM} />}
           tooltip={
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={timeInputStoriesStyles.rowAlignCenterGap8}>
               <Icon name="IconPlainerMoon" size={IconSize.XS} />
               <span>Тултип с иконкой для TimeInput</span>
             </div>
@@ -1871,14 +1669,7 @@ export const CharacterCounterDemo: Story = {
     const [time3, setTime3] = React.useState('15:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="Обычный TimeInput"
           placeholder="Без maxLength"
@@ -1934,14 +1725,7 @@ export const ExtraTextDemo: Story = {
     const [time2, setTime2] = React.useState('15:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="Обычный TimeInput"
           placeholder="Без дополнительного текста"
@@ -1987,14 +1771,7 @@ export const DisableCopyingDemo: Story = {
     const [time2, setTime2] = React.useState('15:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="Обычный TimeInput"
           placeholder="Можно выделять и копировать время"
@@ -2098,14 +1875,7 @@ export const HandleInputDemo: Story = {
     };
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="Время с маской HH:MM"
           placeholder="ЧЧ:ММ"
@@ -2141,14 +1911,7 @@ export const IgnoreMaskCharactersDemo: Story = {
     const [time2, setTime2] = useState('12:30:45');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="Обычный счетчик символов"
           placeholder="Введите время..."
@@ -2171,16 +1934,9 @@ export const IgnoreMaskCharactersDemo: Story = {
           helperText="Считаются только цифры, разделители игнорируются (6/6)"
         />
 
-        <div
-          style={{
-            marginTop: '16px',
-            padding: '12px',
-            backgroundColor: '#f5f5f5',
-            borderRadius: '4px',
-          }}
-        >
-          <h4 style={{ margin: '0 0 8px 0', fontSize: '14px' }}>Сравнение:</h4>
-          <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '12px' }}>
+        <div style={timeInputStoriesStyles.infoBoxWithTopMargin}>
+          <h4 style={timeInputStoriesStyles.heading14}>Сравнение:</h4>
+          <ul style={timeInputStoriesStyles.list12}>
             <li>
               <strong>ignoreMaskCharacters=false:</strong> &quot;12:30:45&quot; = 8 символов
             </li>
@@ -2210,14 +1966,7 @@ export const CharacterCounterThresholdDemo: Story = {
     const [time3, setTime3] = useState('');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="Всегда видимый счетчик (threshold=0)"
           placeholder="Введите время..."
@@ -2251,16 +2000,9 @@ export const CharacterCounterThresholdDemo: Story = {
           helperText="Счетчик никогда не показывается"
         />
 
-        <div
-          style={{
-            marginTop: '16px',
-            padding: '12px',
-            backgroundColor: '#f5f5f5',
-            borderRadius: '4px',
-          }}
-        >
-          <h4 style={{ margin: '0 0 8px 0', fontSize: '14px' }}>Пороги видимости для времени:</h4>
-          <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '12px' }}>
+        <div style={timeInputStoriesStyles.infoBoxWithTopMargin}>
+          <h4 style={timeInputStoriesStyles.heading14}>Пороги видимости для времени:</h4>
+          <ul style={timeInputStoriesStyles.list12}>
             <li>
               <strong>threshold=0:</strong> Счетчик всегда видим
             </li>
@@ -2296,14 +2038,7 @@ export const AdditionalLabelDemo: Story = {
     const [time3, setTime3] = useState('');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="Время начала работы"
           additionalLabel="Укажите время в формате ЧЧ:ММ"
@@ -2332,18 +2067,9 @@ export const AdditionalLabelDemo: Story = {
           helperText="Уведомления отправляются ежедневно в указанное время"
         />
 
-        <div
-          style={{
-            marginTop: '16px',
-            padding: '12px',
-            backgroundColor: '#f5f5f5',
-            borderRadius: '4px',
-          }}
-        >
-          <h4 style={{ margin: '0 0 8px 0', fontSize: '14px' }}>
-            Дополнительные метки для времени:
-          </h4>
-          <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '12px' }}>
+        <div style={timeInputStoriesStyles.infoBoxWithTopMargin}>
+          <h4 style={timeInputStoriesStyles.heading14}>Дополнительные метки для времени:</h4>
+          <ul style={timeInputStoriesStyles.list12}>
             <li>
               <strong>additionalLabel</strong> отображается справа и помогает уточнить формат ввода
               времени

@@ -15,6 +15,8 @@ import {
   useSupportsHover,
   useSupportsTouch,
 } from './useMediaQuery';
+import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
+import { lightTheme } from '@/themes/themes';
 
 const meta: Meta = {
   title: 'UI Kit/Hooks/useMediaQuery',
@@ -90,28 +92,14 @@ const BasicMediaQueryDemo = () => {
         Базовое использование useMediaQuery
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Typography variant="body1" marginBottom="sm">
           Измените размер окна браузера, чтобы увидеть изменения
         </Typography>
       </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '12px',
-          marginBottom: '16px',
-        }}
-      >
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#f8f9fa',
-            borderRadius: '8px',
-            textAlign: 'center',
-          }}
-        >
+      <div style={storybookDemoStyles.gridAutoFitMin200Gap12MarginBottom16}>
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Малый экран</strong>
           </Typography>
@@ -121,14 +109,7 @@ const BasicMediaQueryDemo = () => {
           {renderMediaQueryStatusTag(isSmallScreen)}
         </div>
 
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#f8f9fa',
-            borderRadius: '8px',
-            textAlign: 'center',
-          }}
-        >
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Средний экран</strong>
           </Typography>
@@ -138,14 +119,7 @@ const BasicMediaQueryDemo = () => {
           {renderMediaQueryStatusTag(isMediumScreen)}
         </div>
 
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#f8f9fa',
-            borderRadius: '8px',
-            textAlign: 'center',
-          }}
-        >
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Большой экран</strong>
           </Typography>
@@ -156,7 +130,7 @@ const BasicMediaQueryDemo = () => {
         </div>
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Текущее состояние:</strong>
         </Typography>
@@ -185,90 +159,55 @@ const PredefinedHooksDemo = () => {
         Предопределенные хуки
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Typography variant="body1" marginBottom="sm">
           Стандартные брейкпоинты для устройств
         </Typography>
       </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-          gap: '12px',
-          marginBottom: '16px',
-        }}
-      >
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#e3f2fd',
-            borderRadius: '8px',
-            textAlign: 'center',
-          }}
-        >
+      <div style={storybookDemoStyles.gridAutoFitMin150Gap12MarginBottom16}>
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Mobile</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
+          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
             ≤ 768px
           </Typography>
           {renderMediaQueryStatusTag(isMobile, 'Да', 'Нет')}
         </div>
 
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#e8f5e8',
-            borderRadius: '8px',
-            textAlign: 'center',
-          }}
-        >
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Tablet</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
+          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
             769px - 1024px
           </Typography>
           {renderMediaQueryStatusTag(isTablet, 'Да', 'Нет')}
         </div>
 
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#fff3e0',
-            borderRadius: '8px',
-            textAlign: 'center',
-          }}
-        >
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Desktop</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
+          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
             ≥ 1025px
           </Typography>
           {renderMediaQueryStatusTag(isDesktop, 'Да', 'Нет')}
         </div>
 
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#f3e5f5',
-            borderRadius: '8px',
-            textAlign: 'center',
-          }}
-        >
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Large</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
+          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
             ≥ 1440px
           </Typography>
           {renderMediaQueryStatusTag(isLargeScreen, 'Да', 'Нет')}
         </div>
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Определение устройства:</strong>
         </Typography>
@@ -298,26 +237,19 @@ const OrientationDemo = () => {
         Ориентация экрана
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Typography variant="body1" marginBottom="sm">
           Поверните устройство или измените размер окна
         </Typography>
       </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '16px',
-          marginBottom: '16px',
-        }}
-      >
+      <div style={storybookDemoStyles.gridTwoColumnsGap16MarginBottom16}>
         <div
           style={{
-            padding: '20px',
-            backgroundColor: isPortrait ? '#e8f5e8' : '#f8f9fa',
-            borderRadius: '8px',
-            textAlign: 'center',
+            ...storybookDemoStyles.orientationTileBase,
+            ...(isPortrait
+              ? storybookDemoStyles.orientationTileActiveSuccess
+              : storybookDemoStyles.orientationTileInactiveBorder),
           }}
         >
           <Typography variant="h4" marginBottom="sm">
@@ -331,10 +263,10 @@ const OrientationDemo = () => {
 
         <div
           style={{
-            padding: '20px',
-            backgroundColor: isLandscape ? '#e3f2fd' : '#f8f9fa',
-            borderRadius: '8px',
-            textAlign: 'center',
+            ...storybookDemoStyles.orientationTileBase,
+            ...(isLandscape
+              ? storybookDemoStyles.orientationTileActivePrimary
+              : storybookDemoStyles.orientationTileInactiveBorder),
           }}
         >
           <Typography variant="h4" marginBottom="sm">
@@ -347,7 +279,7 @@ const OrientationDemo = () => {
         </div>
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Ориентация:</strong>
         </Typography>
@@ -371,26 +303,19 @@ const DeviceSupportDemo = () => {
         Поддержка устройств
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Typography variant="body1" marginBottom="sm">
           Определение возможностей устройства
         </Typography>
       </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '16px',
-          marginBottom: '16px',
-        }}
-      >
+      <div style={storybookDemoStyles.gridTwoColumnsGap16MarginBottom16}>
         <div
           style={{
-            padding: '20px',
-            backgroundColor: supportsHover ? '#e8f5e8' : '#f8f9fa',
-            borderRadius: '8px',
-            textAlign: 'center',
+            ...storybookDemoStyles.orientationTileBase,
+            ...(supportsHover
+              ? storybookDemoStyles.orientationTileActiveSuccess
+              : storybookDemoStyles.orientationTileInactiveBorder),
           }}
         >
           <Typography variant="h4" marginBottom="sm">
@@ -399,7 +324,7 @@ const DeviceSupportDemo = () => {
           <Typography variant="body1" marginBottom="xs">
             <strong>Hover</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
+          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
             Поддержка наведения
           </Typography>
           {renderMediaQueryStatusTag(supportsHover, 'Поддерживается', 'Не поддерживается')}
@@ -407,10 +332,10 @@ const DeviceSupportDemo = () => {
 
         <div
           style={{
-            padding: '20px',
-            backgroundColor: supportsTouch ? '#e3f2fd' : '#f8f9fa',
-            borderRadius: '8px',
-            textAlign: 'center',
+            ...storybookDemoStyles.orientationTileBase,
+            ...(supportsTouch
+              ? storybookDemoStyles.orientationTileActivePrimary
+              : storybookDemoStyles.orientationTileInactiveBorder),
           }}
         >
           <Typography variant="h4" marginBottom="sm">
@@ -419,14 +344,14 @@ const DeviceSupportDemo = () => {
           <Typography variant="body1" marginBottom="xs">
             <strong>Touch</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
+          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
             Сенсорное управление
           </Typography>
           {renderMediaQueryStatusTag(supportsTouch, 'Поддерживается', 'Не поддерживается')}
         </div>
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Возможности устройства:</strong>
         </Typography>
@@ -453,23 +378,23 @@ const ResponsiveContentDemo = () => {
         title: 'Мобильная версия',
         description: 'Оптимизировано для смартфонов',
         icon: '📱',
-        color: '#e3f2fd',
+        backgroundColor: lightTheme.colors.backgroundTertiary,
       };
-    } else if (isTablet) {
+    }
+    if (isTablet) {
       return {
         title: 'Планшетная версия',
         description: 'Оптимизировано для планшетов',
         icon: '📱',
-        color: '#e8f5e8',
-      };
-    } else {
-      return {
-        title: 'Десктопная версия',
-        description: 'Оптимизировано для компьютеров',
-        icon: '🖥️',
-        color: '#fff3e0',
+        backgroundColor: lightTheme.colors.backgroundQuaternary,
       };
     }
+    return {
+      title: 'Десктопная версия',
+      description: 'Оптимизировано для компьютеров',
+      icon: '🖥️',
+      backgroundColor: lightTheme.colors.backgroundSecondary,
+    };
   };
 
   const content = getContent();
@@ -480,7 +405,7 @@ const ResponsiveContentDemo = () => {
         Адаптивный контент
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Typography variant="body1" marginBottom="sm">
           Контент меняется в зависимости от размера экрана
         </Typography>
@@ -488,11 +413,8 @@ const ResponsiveContentDemo = () => {
 
       <div
         style={{
-          padding: '24px',
-          backgroundColor: content.color,
-          borderRadius: '12px',
-          textAlign: 'center',
-          marginBottom: '16px',
+          ...storybookDemoStyles.responsiveDeviceHeroBanner,
+          backgroundColor: content.backgroundColor,
         }}
       >
         <Typography variant="h2" marginBottom="md">
@@ -504,7 +426,7 @@ const ResponsiveContentDemo = () => {
         <Typography variant="body1">{content.description}</Typography>
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Текущее устройство:</strong>
         </Typography>
@@ -533,90 +455,55 @@ const CustomMediaQueryDemo = () => {
         Кастомные медиа-запросы
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Typography variant="body1" marginBottom="sm">
           Специальные медиа-запросы для доступности и предпочтений
         </Typography>
       </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '12px',
-          marginBottom: '16px',
-        }}
-      >
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#f8f9fa',
-            borderRadius: '8px',
-            textAlign: 'center',
-          }}
-        >
+      <div style={storybookDemoStyles.gridAutoFitMin200Gap12MarginBottom16}>
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Темная тема</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
+          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
             prefers-color-scheme: dark
           </Typography>
           {renderMediaQueryStatusTag(isDarkMode, 'Включена', 'Выключена')}
         </div>
 
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#f8f9fa',
-            borderRadius: '8px',
-            textAlign: 'center',
-          }}
-        >
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Высокий контраст</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
+          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
             prefers-contrast: high
           </Typography>
           {renderMediaQueryStatusTag(isHighContrast, 'Включен', 'Выключен')}
         </div>
 
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#f8f9fa',
-            borderRadius: '8px',
-            textAlign: 'center',
-          }}
-        >
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Уменьшенное движение</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
+          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
             prefers-reduced-motion: reduce
           </Typography>
           {renderMediaQueryStatusTag(isReducedMotion, 'Включено', 'Выключено')}
         </div>
 
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#f8f9fa',
-            borderRadius: '8px',
-            textAlign: 'center',
-          }}
-        >
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Печать</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
+          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
             print
           </Typography>
           {renderMediaQueryStatusTag(isPrint)}
         </div>
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Предпочтения пользователя:</strong>
         </Typography>
@@ -661,7 +548,7 @@ export const CustomMediaQueries: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={storybookDemoStyles.columnFlexGap24}>
       <BasicMediaQueryDemo />
       <PredefinedHooksDemo />
       <OrientationDemo />

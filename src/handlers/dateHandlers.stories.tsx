@@ -17,6 +17,8 @@ import {
   isRangeEnd,
   isValidDate,
 } from './dateHandlers';
+import { inputFieldStoriesStyles } from '@/handlers/inputFieldStories.styles';
+import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
 
 const meta: Meta = {
   title: 'UI Kit/Utils/Handlers/Date Handlers',
@@ -76,17 +78,17 @@ const DateParserDemo = () => {
       <Typography variant="h3" marginBottom="md">
         Парсинг дат
       </Typography>
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.rowFlexGap12MarginBottom16}>
         <Input
           value={input}
           onChange={e => setInput(e.target.value)}
           placeholder="Введите дату (например: 25.12.2023)"
-          style={{ flex: 1 }}
+          style={storybookDemoStyles.flexGrowFull}
         />
         <Button onClick={handleParse}>Парсить</Button>
       </div>
       {result && (
-        <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+        <div style={storybookDemoStyles.demoResultPanel}>
           <Typography variant="body1" marginBottom="sm">
             <strong>Результат:</strong>
           </Typography>
@@ -119,11 +121,11 @@ const DateFormatterDemo = () => {
       <Typography variant="h3" marginBottom="md">
         Форматирование дат
       </Typography>
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Typography variant="body1" marginBottom="sm">
           Выберите формат:
         </Typography>
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        <div style={inputFieldStoriesStyles.rowWrapGap8}>
           {formats.map(fmt => (
             <Button
               key={fmt}
@@ -136,7 +138,7 @@ const DateFormatterDemo = () => {
           ))}
         </div>
       </div>
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body2" marginBottom="xs">
           <strong>Исходная дата:</strong> {date.toLocaleString()}
         </Typography>
@@ -163,17 +165,17 @@ const DateRangeDemo = () => {
       <Typography variant="h3" marginBottom="md">
         Парсинг диапазонов дат
       </Typography>
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.rowFlexGap12MarginBottom16}>
         <Input
           value={rangeInput}
           onChange={e => setRangeInput(e.target.value)}
           placeholder="Введите диапазон (например: 01.01.2023 — 31.12.2023)"
-          style={{ flex: 1 }}
+          style={storybookDemoStyles.flexGrowFull}
         />
         <Button onClick={handleParseRange}>Парсить</Button>
       </div>
       {rangeResult && (
-        <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+        <div style={storybookDemoStyles.demoResultPanel}>
           <Typography variant="body1" marginBottom="sm">
             <strong>Результат:</strong>
           </Typography>
@@ -201,7 +203,7 @@ const CalendarDemo = () => {
         Календарные функции
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <UICalendar
           value={selectedDate}
           onChange={setSelectedDate}
@@ -211,7 +213,7 @@ const CalendarDemo = () => {
         />
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body2" marginBottom="xs">
           <strong>Текущая дата:</strong> {getCurrentDate().toLocaleDateString()}
         </Typography>
@@ -245,7 +247,7 @@ export const Calendar: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={storybookDemoStyles.columnFlexGap24}>
       <DateParserDemo />
       <DateFormatterDemo />
       <DateRangeDemo />

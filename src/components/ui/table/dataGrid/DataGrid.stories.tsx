@@ -29,6 +29,7 @@ import { Icon } from '../../Icon/Icon';
 import { Input } from '../../inputs/Input/Input';
 import { DATAGRID_DOC } from '../storyDocs/documentation';
 import { DataGridWithTextFilterInHeader as tableColumnFilterDataGridStorySource } from '../basicTable/TableColumnFilters.stories';
+import { lightTheme } from '@/themes/themes';
 
 /** Колонки под демо-строки из `TABLE_STORY_DEMO_ROWS` (как в сторис примитива Table). */
 const demoColumns: DataGridColumn<DataGridStoryDemoRow>[] = getDataGridStoryDemoColumns();
@@ -108,7 +109,8 @@ const meta: Meta<typeof DataGrid> = {
         'Фон шапки: `default` — серый (`theme.tables.header`); `card` — как фон карточки, обычно белый (`theme.tables.shell`).',
     },
     tableHeaderBackground: {
-      description: 'Кастомный фон шапки и панели `headerToolbar` (перекрывает `tableHeaderVariant`), например `#e8f4ff`.',
+      description:
+        'Кастомный фон шапки и панели `headerToolbar` (перекрывает `tableHeaderVariant`), например светлый оттенок из палитры темы или CSS-переменная.',
     },
     striped: {
       description:
@@ -1207,7 +1209,7 @@ export const FilterIconCustomization: Story = {
                 filterable: true,
                 filterApplied: Boolean(appliedUserSubstring?.trim()),
                 filterIconProps: { name: 'IconExFilter2' as const },
-                filterIconPropsApplied: { color: '#ffffff' },
+                filterIconPropsApplied: { color: lightTheme.colors.backgroundSecondary },
               }
             : column,
         ),
@@ -1485,7 +1487,9 @@ export const RowBackgroundByStatus: Story = {
       rows={TABLE_STORY_DEMO_ROWS.slice(0, 8)}
       totalRows={8}
       rowBackgroundColorByStatus={demoRow =>
-        demoRow.tag?.color === 'danger' ? 'rgba(239, 68, 68, 0.08)' : undefined
+        demoRow.tag?.color === 'danger'
+          ? `color-mix(in srgb, ${lightTheme.colors.danger} 14%, ${lightTheme.colors.backgroundSecondary})`
+          : undefined
       }
       size={Size.MD}
     />

@@ -1,5 +1,6 @@
 ﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { fn } from '@storybook/test';
 import { Badge } from './Badge';
 import {
   BadgeStoriesSizesRoot,
@@ -11,6 +12,7 @@ import {
 import { BadgeVariant } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 import { DOC_BADGE } from '@/components/ui/storyDocs/uiKitDocs';
+import { badgeStoriesStyles } from './Badge.stories.styles';
 
 const meta: Meta<typeof Badge> = {
   title: 'UI Kit/Data Display/Badge',
@@ -169,14 +171,14 @@ export const Rounded: Story = {
 export const Clickable: Story = {
   args: {
     children: 'Clickable',
-    onClick: () => alert('Badge clicked!'),
+    onClick: fn(),
   },
 };
 
 // Демонстрация всех вариантов
 export const AllVariants: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+    <div style={badgeStoriesStyles.wrapRowCenter}>
       <Badge variant={BadgeVariant.DEFAULT}>3</Badge>
       <Badge variant={BadgeVariant.DEFAULT_MAIN}>3</Badge>
       <Badge variant={BadgeVariant.DEFAULT_MAIN_INVERSION}>3</Badge>
@@ -230,7 +232,7 @@ export const AllSizes: Story = {
 // Демонстрация dot размеров для всех вариантов
 export const AllDotVariants: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+    <div style={badgeStoriesStyles.rowCenter}>
       <Badge variant={BadgeVariant.DEFAULT} isDot={true} />
       <Badge variant={BadgeVariant.DEFAULT_MAIN} isDot={true} />
       <Badge variant={BadgeVariant.DEFAULT_MAIN_INVERSION} isDot={true} />
@@ -248,7 +250,7 @@ export const AllDotVariants: Story = {
 // Демонстрация с числами
 export const WithNumbers: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+    <div style={badgeStoriesStyles.wrapRow}>
       <Badge variant={BadgeVariant.DEFAULT}>5</Badge>
       <Badge variant={BadgeVariant.DEFAULT_SUCCESS}>12</Badge>
       <Badge variant={BadgeVariant.DEFAULT_MAIN}>99</Badge>
@@ -264,7 +266,7 @@ export const WithNumbers: Story = {
 // Демонстрация ограничения на 9+
 export const NumberLimiting: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+    <div style={badgeStoriesStyles.wrapRowCenter}>
       <Badge variant={BadgeVariant.DEFAULT}>9</Badge>
       <Badge variant={BadgeVariant.DEFAULT}>10</Badge>
       <Badge variant={BadgeVariant.DEFAULT}>99</Badge>

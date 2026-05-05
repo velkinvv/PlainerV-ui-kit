@@ -2,7 +2,9 @@
 import React, { useState } from 'react';
 import { TextArea } from './TextArea';
 import { Form } from '../../Form';
+import { Button } from '../../buttons/Button';
 import { DOC_TEXTAREA } from '@/components/ui/storyDocs/uiKitDocs';
+import { textAreaStoriesStyles } from './TextArea.stories.styles';
 
 const meta: Meta<typeof TextArea> = {
   title: 'UI Kit/Inputs/TextArea',
@@ -20,8 +22,8 @@ const meta: Meta<typeof TextArea> = {
     (Story) => (
       <Form
         formId="story-textarea-form"
-        onSubmit={(e) => {
-          e.preventDefault();
+        onSubmit={(submitEvent) => {
+          submitEvent.preventDefault();
         }}
       >
         <Story />
@@ -235,7 +237,7 @@ export const WithMaxLengthAndCounter: Story = {
         displayCharacterCounter
         characterCounterVisibilityThreshold={0}
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(changeEvent) => setValue(changeEvent.target.value)}
         rows={5}
       />
     );
@@ -254,7 +256,7 @@ export const CounterVisibilityThreshold: Story = {
         displayCharacterCounter
         characterCounterVisibilityThreshold={40}
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(changeEvent) => setValue(changeEvent.target.value)}
         rows={4}
       />
     );
@@ -355,11 +357,11 @@ export const InFormWithSubmit: Story = {
           rows={4}
           placeholder="Введите сообщение и отправьте форму"
           value={value}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(changeEvent) => setValue(changeEvent.target.value)}
         />
-        <button type="submit" style={{ marginTop: 12 }}>
+        <Button type="submit" style={textAreaStoriesStyles.submitButton}>
           Отправить
-        </button>
+        </Button>
       </>
     );
   },

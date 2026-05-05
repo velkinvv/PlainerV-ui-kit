@@ -5,6 +5,7 @@ import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
 import { Modal } from '../components/ui/Modal';
 import { ButtonVariant } from '../types/ui';
+import { lightTheme } from '@/themes/themes';
 import { useModal } from './useModal';
 import {
   AllExamplesContainer,
@@ -159,9 +160,9 @@ const MultipleModalsDemo = () => {
   const modal3 = useModal();
 
   const modals = [
-    { hook: modal1, title: 'Первое модальное окно', color: '#007bff' },
-    { hook: modal2, title: 'Второе модальное окно', color: '#28a745' },
-    { hook: modal3, title: 'Третье модальное окно', color: '#dc3545' },
+    { hook: modal1, title: 'Первое модальное окно', color: lightTheme.colors.primary },
+    { hook: modal2, title: 'Второе модальное окно', color: lightTheme.colors.success },
+    { hook: modal3, title: 'Третье модальное окно', color: lightTheme.colors.danger },
   ];
 
   return (

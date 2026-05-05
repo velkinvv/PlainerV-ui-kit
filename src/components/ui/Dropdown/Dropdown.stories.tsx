@@ -18,6 +18,91 @@ import { Size } from '../../../types/sizes';
 import { DropdownMenu } from './DropdownMenu';
 import { DropdownMenuItem } from './DropdownMenuItem';
 import { DOC_DROPDOWN } from '@/components/ui/storyDocs/uiKitDocs';
+import { Typography } from '../Typography/Typography';
+import { lightTheme } from '@/themes/themes';
+import {
+  createDropdownStoryThemeStyles,
+  dropdownStoriesStyles,
+} from './Dropdown.stories.styles';
+
+const dropdownStoryThemeStyles = createDropdownStoryThemeStyles(lightTheme);
+const dropdownStoryPalette = dropdownStoryThemeStyles.palette;
+const getPanelContainerStyle = (disabled: boolean) => ({
+  ...dropdownStoriesStyles.panelContainer,
+  ...dropdownStoryThemeStyles.panelContainerByDisabled(disabled),
+});
+const getPanelSecondaryButtonStyle = (disabled: boolean) => ({
+  ...dropdownStoriesStyles.panelButtonBase,
+  ...dropdownStoryThemeStyles.panelButtonSecondaryByDisabled(disabled),
+});
+const getPanelPrimaryButtonStyle = (disabled: boolean) => ({
+  ...dropdownStoriesStyles.panelButtonBase,
+  ...dropdownStoryThemeStyles.panelButtonPrimaryByDisabled(disabled),
+});
+const panelInputStyle = {
+  ...dropdownStoriesStyles.panelInput,
+  ...dropdownStoryThemeStyles.panelInput,
+};
+const controlledMenuStateTextStyle = {
+  ...dropdownStoriesStyles.controlledMenuStateText,
+  ...dropdownStoryThemeStyles.controlledMenuStateText,
+};
+const userMenuTriggerStyle = {
+  ...dropdownStoriesStyles.userMenuTrigger,
+  ...dropdownStoryThemeStyles.userMenuTrigger,
+};
+const userMenuAvatarStyle = {
+  ...dropdownStoriesStyles.userMenuAvatar,
+  ...dropdownStoryThemeStyles.userMenuAvatar,
+};
+const notificationBadgeStyle = {
+  ...dropdownStoriesStyles.notificationBadge,
+  ...dropdownStoryThemeStyles.notificationBadge,
+};
+const alignSelfDemoContainerStyle = {
+  ...dropdownStoriesStyles.alignSelfDemoContainer,
+  ...dropdownStoryThemeStyles.alignSelfDemoContainer,
+};
+const smartPositioningContainerStyle = {
+  ...dropdownStoriesStyles.smartPositioningContainer,
+  ...dropdownStoryThemeStyles.smartPositioningContainer,
+};
+const inlineModeContainerStyle = {
+  ...dropdownStoriesStyles.inlineModeContainer,
+  ...dropdownStoryThemeStyles.inlineModeContainer,
+};
+const portalContainerStyle = {
+  ...dropdownStoriesStyles.portalContainer,
+  ...dropdownStoryThemeStyles.portalContainer,
+};
+const targetElementBoxStyle = {
+  ...dropdownStoriesStyles.targetElementBox,
+  ...dropdownStoryThemeStyles.targetElementBox,
+};
+const previewPanelStyle = {
+  ...dropdownStoriesStyles.previewPanel,
+  ...dropdownStoryThemeStyles.previewPanel,
+};
+const selectedValuesPreviewStyle = {
+  ...dropdownStoriesStyles.selectedValuesPreview,
+  ...dropdownStoryThemeStyles.selectedValuesPreview,
+};
+const treeDescriptionStyle = {
+  ...dropdownStoriesStyles.treeDescription,
+  ...dropdownStoryThemeStyles.treeDescription,
+};
+const treeKeysDescriptionStyle = {
+  ...dropdownStoriesStyles.treeKeysDescription,
+  ...dropdownStoryThemeStyles.treeKeysDescription,
+};
+const sectionDescriptionStyle = {
+  ...dropdownStoriesStyles.sectionDescription,
+  ...dropdownStoryThemeStyles.sectionDescription,
+};
+const panelMetaTextStyle = {
+  ...dropdownStoriesStyles.panelMetaText,
+  ...dropdownStoryThemeStyles.panelMetaText,
+};
 
 const meta: Meta<typeof Dropdown> = {
   title: 'UI Kit/Navigation/Dropdown',
@@ -415,7 +500,7 @@ export const OpenMenuIconProps: Story = {
       children: 'Меню',
     },
     openMenuIconProps: {
-      color: '#1565c0',
+      color: dropdownStoryPalette.iconAccent,
     },
     items: [
       { label: 'Пункт 1', value: '1' },
@@ -436,7 +521,7 @@ export const WithIcons: Story = {
   args: {
     trigger: (
       <Button>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>⚙️ Settings</span>
+        <span style={dropdownStoriesStyles.inlineFlexCenterGap8}>⚙️ Settings</span>
       </Button>
     ),
     items: [
@@ -494,7 +579,7 @@ export const WithDivider: Story = {
 
 export const Sizes: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
+    <div style={dropdownStoriesStyles.wrappedRowGap24}>
       {[Size.SM, Size.MD, Size.LG].map(size => {
         const caption =
           size === Size.SM ? 'SM / 32px' : size === Size.MD ? 'MD / 40px' : 'LG / 48px';
@@ -532,7 +617,7 @@ export const Sizes: Story = {
 
 export const Variants: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
+    <div style={dropdownStoriesStyles.wrappedRowGap24}>
       {[
         {
           dropdownVariant: 'default',
@@ -581,31 +666,8 @@ export const Variants: Story = {
 export const UserMenu: Story = {
   args: {
     trigger: (
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          cursor: 'pointer',
-          padding: '8px 12px',
-          border: '1px solid #e5e7eb',
-          borderRadius: '8px',
-          backgroundColor: '#f9fafb',
-        }}
-      >
-        <div
-          style={{
-            width: '32px',
-            height: '32px',
-            borderRadius: '50%',
-            backgroundColor: '#68d5f8',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            fontWeight: 'bold',
-          }}
-        >
+      <div style={userMenuTriggerStyle}>
+        <div style={userMenuAvatarStyle}>
           JD
         </div>
         <span>John Doe</span>
@@ -627,25 +689,10 @@ export const NotificationDropdown: Story = {
       variant: ButtonVariant.GHOST,
       children: (
         <span
-          style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+          style={dropdownStoriesStyles.inlineFlexRelativeGap6}
         >
           🔔 Notifications
-          <span
-            style={{
-              position: 'absolute',
-              top: -6,
-              right: -6,
-              backgroundColor: '#ef4444',
-              color: 'white',
-              borderRadius: '50%',
-              width: '16px',
-              height: '16px',
-              fontSize: '10px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
+          <span style={notificationBadgeStyle}>
             3
           </span>
         </span>
@@ -657,19 +704,19 @@ export const NotificationDropdown: Story = {
           label="New message"
           description="You have a new message from Alice"
           rightSlot="2 minutes ago"
-          style={{ backgroundColor: '#fef3c7', borderBottom: '1px solid #e5e7eb' }}
+          style={dropdownStoryThemeStyles.notificationWarningRow}
         />
         <DropdownMenuItem
           label="Task completed"
           description="Project X has been completed"
           rightSlot="1 hour ago"
-          style={{ backgroundColor: '#dbeafe', borderBottom: '1px solid #e5e7eb' }}
+          style={dropdownStoryThemeStyles.notificationInfoRow}
         />
         <DropdownMenuItem
           label="System update"
           description="System will be updated tonight"
           rightSlot="3 hours ago"
-          style={{ backgroundColor: '#f3e8ff' }}
+          style={dropdownStoryThemeStyles.notificationVioletRow}
         />
       </DropdownMenu>
     ),
@@ -758,7 +805,7 @@ export const SkeletonState: Story = {
 
 export const SkeletonButtonSizes: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', alignItems: 'flex-start' }}>
+    <div style={dropdownStoriesStyles.wrappedRowGap24AlignStart}>
       <Dropdown
         buttonProps={{ variant: ButtonVariant.OUTLINE, size: Size.SM }}
         skeleton
@@ -839,8 +886,8 @@ export const ControlledMenu: Story = {
     const [isOpen, setIsOpen] = React.useState(false);
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+      <div style={dropdownStoriesStyles.controlColumnGap16}>
+        <div style={dropdownStoriesStyles.rowGap8AlignCenter}>
           <Dropdown
             buttonProps={{
               variant: ButtonVariant.PRIMARY,
@@ -856,7 +903,7 @@ export const ControlledMenu: Story = {
               ] as DropdownMenuItemProps[]
             }
           />
-          <span style={{ fontSize: '14px', color: '#6b7280' }}>
+          <span style={controlledMenuStateTextStyle}>
             Меню {isOpen ? 'открыто' : 'закрыто'}
           </span>
         </div>
@@ -905,19 +952,7 @@ export const AlignSelfDemo: Story = {
     ];
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'stretch',
-          gap: 24,
-          minHeight: 220,
-          padding: 16,
-          border: '1px dashed #d1d5db',
-          borderRadius: 12,
-        }}
-      >
+      <div style={alignSelfDemoContainerStyle}>
         <Dropdown
           alignSelf="flex-start"
           buttonProps={{ children: 'flex-start', variant: ButtonVariant.PRIMARY }}
@@ -954,10 +989,10 @@ export const CustomContainerStyle: Story = {
     },
     defaultOpen: true,
     dropContainerStyle: {
-      border: '2px dashed #2563eb',
-      boxShadow: '0 12px 24px rgba(37, 99, 235, 0.25)',
+      border: `2px dashed ${dropdownStoryPalette.iconAccent}`,
+      boxShadow: `0 12px 24px color-mix(in srgb, ${dropdownStoryPalette.iconAccent} 35%, transparent)`,
       background:
-        'linear-gradient(135deg, rgba(59,130,246,0.08) 0%, rgba(37,99,235,0.12) 100%)',
+        `linear-gradient(135deg, color-mix(in srgb, ${dropdownStoryPalette.iconAccent} 12%, transparent) 0%, color-mix(in srgb, ${dropdownStoryPalette.iconAccent} 18%, transparent) 100%)`,
       backdropFilter: 'blur(6px)',
     },
     items: [
@@ -984,9 +1019,9 @@ export const CustomContainerMixin: Story = {
     },
     defaultOpen: true,
     dropContainerCssMixin: css`
-      border: 1px solid rgba(0, 0, 0, 0.08);
+      border: 1px solid ${dropdownStoryPalette.border};
       backdrop-filter: blur(8px);
-      background: rgba(255, 255, 255, 0.85);
+      background: color-mix(in srgb, ${dropdownStoryPalette.surface} 85%, transparent);
 
       &::before {
         content: '';
@@ -994,7 +1029,7 @@ export const CustomContainerMixin: Story = {
         inset: 0;
         border-radius: inherit;
         pointer-events: none;
-        border: 2px dashed rgba(59, 130, 246, 0.25);
+        border: 2px dashed color-mix(in srgb, ${dropdownStoryPalette.iconAccent} 35%, transparent);
       }
     `,
     items: [
@@ -1015,18 +1050,8 @@ export const CustomContainerMixin: Story = {
 
 export const SmartPositioning: Story = {
   render: () => (
-    <div
-      style={{
-        border: '1px solid #d1d5db',
-        borderRadius: 12,
-        height: 320,
-        padding: 16,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-      }}
-    >
-      <div style={{ alignSelf: 'flex-start' }}>
+    <div style={smartPositioningContainerStyle}>
+      <div style={dropdownStoriesStyles.alignSelfStart}>
         <Dropdown
           positioningMode="autoFlip"
           buttonProps={{ children: 'Auto flip вниз/вверх', variant: ButtonVariant.PRIMARY }}
@@ -1037,7 +1062,7 @@ export const SmartPositioning: Story = {
           ]}
         />
       </div>
-      <div style={{ alignSelf: 'flex-end' }}>
+      <div style={dropdownStoriesStyles.alignSelfEnd}>
         <Dropdown
           positioningMode="autoFit"
           buttonProps={{ children: 'Auto fit по краям', variant: ButtonVariant.SECONDARY }}
@@ -1218,8 +1243,8 @@ export const ErrorStateStory: Story = {
         buttonProps={{ variant: ButtonVariant.DANGER, children: 'Ошибка загрузки' }}
         loadItems={loadItems}
         renderErrorState={(error, retry) => (
-          <div style={{ padding: 24, textAlign: 'center' }}>
-            <strong style={{ display: 'block', marginBottom: 8 }}>
+          <div style={dropdownStoriesStyles.errorStateContainer}>
+            <strong style={dropdownStoriesStyles.errorStateTitle}>
               Ошибка: {(error as Error)?.message}
             </strong>
             <Button variant={ButtonVariant.SECONDARY} size={Size.SM} onClick={retry}>
@@ -1242,18 +1267,8 @@ export const ErrorStateStory: Story = {
 
 export const InlineMode: Story = {
   render: () => (
-    <div
-      style={{
-        border: '1px solid #e5e7eb',
-        padding: 24,
-        borderRadius: 12,
-        width: 320,
-        height: 220,
-        overflow: 'auto',
-        position: 'relative',
-      }}
-    >
-      <div style={{ height: 120 }} />
+    <div style={inlineModeContainerStyle}>
+      <div style={dropdownStoriesStyles.inlineModeSpacer} />
       <Dropdown
         inline
         buttonProps={{ variant: ButtonVariant.PRIMARY, children: 'Inline внутри блока' }}
@@ -1281,22 +1296,10 @@ export const CustomPortalContainer: Story = {
     const portalRef = React.useRef<HTMLDivElement>(null);
 
     return (
-      <div
-        style={{
-          border: '1px solid #cbd5f5',
-          padding: 24,
-          borderRadius: 12,
-          position: 'relative',
-          minHeight: 220,
-        }}
-      >
+      <div style={portalContainerStyle}>
         <div
           ref={portalRef}
-          style={{
-            position: 'absolute',
-            inset: 16,
-            pointerEvents: 'none',
-          }}
+          style={dropdownStoriesStyles.portalTargetOverlay}
         />
         <Dropdown
           buttonProps={{ variant: ButtonVariant.PRIMARY, children: 'Внутренний портал' }}
@@ -1326,17 +1329,10 @@ export const WithTargetElement: Story = {
     const targetRef = React.useRef<HTMLDivElement>(null);
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div style={dropdownStoriesStyles.controlColumnGap24}>
         <div
           ref={targetRef}
-          style={{
-            padding: '16px',
-            backgroundColor: '#e5e7eb',
-            borderRadius: '8px',
-            width: '200px',
-            textAlign: 'center',
-            cursor: 'pointer',
-          }}
+          style={targetElementBoxStyle}
         >
           Целевой элемент для позиционирования
         </div>
@@ -1373,7 +1369,7 @@ export const WithActivateItem: Story = {
     const [activatedValue, setActivatedValue] = React.useState<string | undefined>(undefined);
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={dropdownStoriesStyles.controlColumnGap16}>
         <Dropdown
           buttonProps={{
             variant: ButtonVariant.PRIMARY,
@@ -1392,14 +1388,7 @@ export const WithActivateItem: Story = {
           }
         />
         {activatedValue && (
-          <div
-            style={{
-              padding: '12px',
-              backgroundColor: '#e5e7eb',
-              borderRadius: '8px',
-              fontSize: '14px',
-            }}
-          >
+          <div style={previewPanelStyle}>
             Активирован элемент: <strong>{activatedValue}</strong>
           </div>
         )}
@@ -1426,19 +1415,10 @@ export const WithTopPanel: Story = {
         }}
         defaultOpen={true}
         renderTopPanel={({ size, variant, disabled }) => (
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '8px 12px',
-              backgroundColor: disabled ? '#f3f4f6' : '#f9fafb',
-              borderRadius: '6px',
-            }}
-          >
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <span style={{ fontSize: '14px', fontWeight: 600 }}>Поиск и фильтры</span>
-              <span style={{ fontSize: '12px', color: '#6b7280' }}>
+          <div style={getPanelContainerStyle(disabled)}>
+            <div style={dropdownStoriesStyles.controlColumnGap4}>
+              <span style={dropdownStoriesStyles.panelHeading}>Поиск и фильтры</span>
+              <span style={panelMetaTextStyle}>
                 Размер: {size}, Вариант: {variant}
               </span>
             </div>
@@ -1446,13 +1426,7 @@ export const WithTopPanel: Story = {
               type="text"
               placeholder="Поиск..."
               disabled={disabled}
-              style={{
-                padding: '6px 12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '14px',
-                width: '150px',
-              }}
+              style={panelInputStyle}
             />
           </div>
         )}
@@ -1486,32 +1460,16 @@ export const WithBottomPanel: Story = {
         }}
         defaultOpen={true}
         renderBottomPanel={({ size, variant, disabled }) => (
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '8px 12px',
-              backgroundColor: disabled ? '#f3f4f6' : '#f9fafb',
-              borderRadius: '6px',
-            }}
-          >
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <span style={{ fontSize: '14px', fontWeight: 600 }}>Дополнительные действия</span>
-              <span style={{ fontSize: '12px', color: '#6b7280' }}>
+          <div style={getPanelContainerStyle(disabled)}>
+            <div style={dropdownStoriesStyles.controlColumnGap4}>
+              <span style={dropdownStoriesStyles.panelHeading}>Дополнительные действия</span>
+              <span style={panelMetaTextStyle}>
                 Размер: {size}, Вариант: {variant}
               </span>
             </div>
             <button
               disabled={disabled}
-              style={{
-                padding: '6px 12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '14px',
-                backgroundColor: disabled ? '#e5e7eb' : '#ffffff',
-                cursor: disabled ? 'not-allowed' : 'pointer',
-              }}
+              style={getPanelSecondaryButtonStyle(disabled)}
             >
               Применить
             </button>
@@ -1547,68 +1505,31 @@ export const WithBothPanels: Story = {
         }}
         defaultOpen={true}
         renderTopPanel={({ size, variant, disabled }) => (
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '8px 12px',
-              backgroundColor: disabled ? '#f3f4f6' : '#f9fafb',
-              borderRadius: '6px',
-            }}
-          >
-            <span style={{ fontSize: '14px', fontWeight: 600 }}>Поиск</span>
+          <div style={getPanelContainerStyle(disabled)}>
+            <span style={dropdownStoriesStyles.panelHeading}>Поиск</span>
             <input
               type="text"
               placeholder="Поиск..."
               disabled={disabled}
-              style={{
-                padding: '6px 12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '14px',
-                width: '150px',
-              }}
+              style={panelInputStyle}
             />
           </div>
         )}
         renderBottomPanel={({ size, variant, disabled }) => (
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '8px 12px',
-              backgroundColor: disabled ? '#f3f4f6' : '#f9fafb',
-              borderRadius: '6px',
-            }}
-          >
-            <span style={{ fontSize: '12px', color: '#6b7280' }}>Выбрано: 0 элементов</span>
-            <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={getPanelContainerStyle(disabled)}>
+            <span style={panelMetaTextStyle}>
+              Выбрано: 0 элементов
+            </span>
+            <div style={dropdownStoriesStyles.rowGap8AlignCenter}>
               <button
                 disabled={disabled}
-                style={{
-                  padding: '6px 12px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  backgroundColor: disabled ? '#e5e7eb' : '#ffffff',
-                  cursor: disabled ? 'not-allowed' : 'pointer',
-                }}
+                style={getPanelSecondaryButtonStyle(disabled)}
               >
                 Сбросить
               </button>
               <button
                 disabled={disabled}
-                style={{
-                  padding: '6px 12px',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  backgroundColor: disabled ? '#e5e7eb' : '#3b82f6',
-                  color: disabled ? '#9ca3af' : '#ffffff',
-                  cursor: disabled ? 'not-allowed' : 'pointer',
-                }}
+                style={getPanelPrimaryButtonStyle(disabled)}
               >
                 Применить
               </button>
@@ -1651,7 +1572,7 @@ export const MultiSelection: Story = {
     };
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={dropdownStoriesStyles.controlColumnGap16}>
         <Dropdown
           buttonProps={{
             variant: ButtonVariant.PRIMARY,
@@ -1672,14 +1593,7 @@ export const MultiSelection: Story = {
           }
         />
         {selectedValues.length > 0 && (
-          <div
-            style={{
-              padding: '12px',
-              backgroundColor: '#e5e7eb',
-              borderRadius: '8px',
-              fontSize: '14px',
-            }}
-          >
+          <div style={previewPanelStyle}>
             Выбранные значения: <strong>{selectedValues.join(', ')}</strong>
           </div>
         )}
@@ -1714,7 +1628,7 @@ export const MultiSelectionWithDisabled: Story = {
     };
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={dropdownStoriesStyles.controlColumnGap16}>
         <Dropdown
           buttonProps={{
             variant: ButtonVariant.PRIMARY,
@@ -1735,14 +1649,7 @@ export const MultiSelectionWithDisabled: Story = {
           }
         />
         {selectedValues.length > 0 && (
-          <div
-            style={{
-              padding: '12px',
-              backgroundColor: '#e5e7eb',
-              borderRadius: '8px',
-              fontSize: '14px',
-            }}
-          >
+          <div style={previewPanelStyle}>
             Выбранные значения: <strong>{selectedValues.join(', ')}</strong>
           </div>
         )}
@@ -1778,8 +1685,8 @@ export const MultiSelectionWithoutHighlight: Story = {
     };
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <div style={{ display: 'flex', gap: '16px' }}>
+      <div style={dropdownStoriesStyles.controlColumnGap16}>
+        <div style={dropdownStoriesStyles.rowGap16}>
           <Dropdown
             buttonProps={{
               variant: ButtonVariant.PRIMARY,
@@ -1819,14 +1726,7 @@ export const MultiSelectionWithoutHighlight: Story = {
           />
         </div>
         {selectedValues.length > 0 && (
-          <div
-            style={{
-              padding: '12px',
-              backgroundColor: '#e5e7eb',
-              borderRadius: '8px',
-              fontSize: '14px',
-            }}
-          >
+          <div style={previewPanelStyle}>
             Выбранные значения: <strong>{selectedValues.join(', ')}</strong>
           </div>
         )}
@@ -1869,13 +1769,17 @@ export const TreeMultiSelect: Story = {
     };
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 440 }}>
-        <p style={{ margin: 0, fontSize: 14, color: '#64748b', lineHeight: 1.5 }}>
+      <div style={dropdownStoriesStyles.treeContainer}>
+        <Typography
+          as="p"
+          variant="body2"
+          style={treeDescriptionStyle}
+        >
           Клик по строке родителя: если в ветке никого не выбрано — выбирается всё поддерево; если
           выбрано хотя бы одно значение (частично или полностью) — снимается вся ветка. Чекбокс
           родителя по-прежнему явно включает или выключает всё поддерево. Листья можно переключать
           по одному.
-        </p>
+        </Typography>
         <Dropdown
           buttonProps={{
             variant: ButtonVariant.PRIMARY,
@@ -1891,16 +1795,7 @@ export const TreeMultiSelect: Story = {
           items={dropdownTreeMultiItems}
         />
         {selectedValues.length > 0 ? (
-          <pre
-            style={{
-              margin: 0,
-              padding: 12,
-              backgroundColor: '#f1f5f9',
-              borderRadius: 8,
-              fontSize: 12,
-              overflow: 'auto',
-            }}
-          >
+          <pre style={selectedValuesPreviewStyle}>
             {JSON.stringify(selectedValues, null, 2)}
           </pre>
         ) : null}
@@ -1943,7 +1838,7 @@ export const TreeMultiSelectCollapsedDefault: Story = {
     };
 
     return (
-      <div style={{ maxWidth: 440 }}>
+      <div style={dropdownStoriesStyles.treeCollapsedContainer}>
         <Dropdown
           buttonProps={{
             variant: ButtonVariant.OUTLINE,
@@ -2000,10 +1895,14 @@ export const TreeMultiSelectControlledBranches: Story = {
     };
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 480 }}>
-        <p style={{ margin: 0, fontSize: 13, color: '#64748b' }}>
+      <div style={dropdownStoriesStyles.treeControlledContainer}>
+        <Typography
+          as="p"
+          variant="caption"
+          style={treeKeysDescriptionStyle}
+        >
           Ключи раскрытых веток: <code>{expandedKeys.join(', ') || '—'}</code>
-        </p>
+        </Typography>
         <Dropdown
           buttonProps={{
             variant: ButtonVariant.SECONDARY,
@@ -2041,12 +1940,18 @@ export const VirtualScroll: Story = {
     }));
 
     return (
-      <div style={{ display: 'flex', gap: '20px', flexDirection: 'column' }}>
+      <div style={dropdownStoriesStyles.sectionColumn}>
         <div>
-          <h3>Виртуальный скролл с автоматической высотой (itemHeight="auto")</h3>
-          <p style={{ color: '#666', marginBottom: '10px' }}>
+          <Typography as="h3" variant="h5" style={dropdownStoriesStyles.sectionTitle}>
+            Виртуальный скролл с автоматической высотой (itemHeight="auto")
+          </Typography>
+          <Typography
+            as="p"
+            variant="body2"
+            style={sectionDescriptionStyle}
+          >
             Высота элемента вычисляется автоматически из темы на основе размера dropdown.
-          </p>
+          </Typography>
           <Dropdown
             buttonProps={{
               variant: ButtonVariant.PRIMARY,
@@ -2059,10 +1964,16 @@ export const VirtualScroll: Story = {
         </div>
 
         <div>
-          <h3>Виртуальный скролл с фиксированной высотой (itemHeight=32)</h3>
-          <p style={{ color: '#666', marginBottom: '10px' }}>
+          <Typography as="h3" variant="h5" style={dropdownStoriesStyles.sectionTitle}>
+            Виртуальный скролл с фиксированной высотой (itemHeight=32)
+          </Typography>
+          <Typography
+            as="p"
+            variant="body2"
+            style={sectionDescriptionStyle}
+          >
             Высота элемента задана явно в пикселях.
-          </p>
+          </Typography>
           <Dropdown
             buttonProps={{
               variant: ButtonVariant.PRIMARY,
@@ -2075,10 +1986,16 @@ export const VirtualScroll: Story = {
         </div>
 
         <div>
-          <h3>Без виртуального скролла (для сравнения)</h3>
-          <p style={{ color: '#666', marginBottom: '10px' }}>
+          <Typography as="h3" variant="h5" style={dropdownStoriesStyles.sectionTitle}>
+            Без виртуального скролла (для сравнения)
+          </Typography>
+          <Typography
+            as="p"
+            variant="body2"
+            style={sectionDescriptionStyle}
+          >
             Обычный скролл - все элементы рендерятся одновременно.
-          </p>
+          </Typography>
           <Dropdown
             buttonProps={{
               variant: ButtonVariant.OUTLINE,
@@ -2103,12 +2020,18 @@ export const VirtualScroll: Story = {
 
 export const WithTooltips: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '20px', flexDirection: 'column' }}>
+    <div style={dropdownStoriesStyles.sectionColumn}>
       <div>
-        <h3>Тултипы с кастомным текстом</h3>
-        <p style={{ color: '#666', marginBottom: '10px' }}>
+        <Typography as="h3" variant="h5" style={dropdownStoriesStyles.sectionTitle}>
+          Тултипы с кастомным текстом
+        </Typography>
+        <Typography
+          as="p"
+          variant="body2"
+          style={sectionDescriptionStyle}
+        >
           Элементы меню могут отображать тултипы при наведении. Полезно для длинных названий или дополнительной информации.
-        </p>
+        </Typography>
         <Dropdown
           buttonProps={{
             variant: ButtonVariant.PRIMARY,
@@ -2149,10 +2072,16 @@ export const WithTooltips: Story = {
       </div>
 
       <div>
-        <h3>Тултипы с автоматическим текстом (из label)</h3>
-        <p style={{ color: '#666', marginBottom: '10px' }}>
+        <Typography as="h3" variant="h5" style={dropdownStoriesStyles.sectionTitle}>
+          Тултипы с автоматическим текстом (из label)
+        </Typography>
+        <Typography
+          as="p"
+          variant="body2"
+          style={sectionDescriptionStyle}
+        >
           Если `tooltipText` не указан, но `showTooltip={true}`, тултип будет использовать текст из `label`.
-        </p>
+        </Typography>
         <Dropdown
           buttonProps={{
             variant: ButtonVariant.OUTLINE,
@@ -2179,10 +2108,16 @@ export const WithTooltips: Story = {
       </div>
 
       <div>
-        <h3>Смешанные тултипы</h3>
-        <p style={{ color: '#666', marginBottom: '10px' }}>
+        <Typography as="h3" variant="h5" style={dropdownStoriesStyles.sectionTitle}>
+          Смешанные тултипы
+        </Typography>
+        <Typography
+          as="p"
+          variant="body2"
+          style={sectionDescriptionStyle}
+        >
           Некоторые элементы с тултипами, некоторые без. Тултипы автоматически отключаются для disabled элементов.
-        </p>
+        </Typography>
         <Dropdown
           buttonProps={{
             variant: ButtonVariant.PRIMARY,

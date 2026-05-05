@@ -9,6 +9,8 @@ import {
   useWindowScrollPosition,
   useScrollDirection,
 } from './useScrollPosition';
+import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
+import { lightTheme } from '@/themes/themes';
 
 const meta: Meta = {
   title: 'UI Kit/Hooks/useScrollPosition',
@@ -101,60 +103,32 @@ const BasicScrollPositionDemo = () => {
         Базовое использование useScrollPosition
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Typography variant="body1" marginBottom="sm">
           Прокрутите страницу, чтобы увидеть изменения позиции
         </Typography>
       </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-          gap: '12px',
-          marginBottom: '16px',
-        }}
-      >
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#f8f9fa',
-            borderRadius: '8px',
-            textAlign: 'center',
-          }}
-        >
+      <div style={storybookDemoStyles.gridAutoFitMin150Gap12MarginBottom16}>
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>X позиция</strong>
           </Typography>
-          <Typography variant="h4" style={{ color: '#007bff' }}>
+          <Typography variant="h4" style={storybookDemoStyles.windowSizeValuePrimary}>
             {x}
           </Typography>
         </div>
 
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#f8f9fa',
-            borderRadius: '8px',
-            textAlign: 'center',
-          }}
-        >
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Y позиция</strong>
           </Typography>
-          <Typography variant="h4" style={{ color: '#28a745' }}>
+          <Typography variant="h4" style={storybookDemoStyles.windowSizeValueSuccess}>
             {y}
           </Typography>
         </div>
 
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#f8f9fa',
-            borderRadius: '8px',
-            textAlign: 'center',
-          }}
-        >
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Направление</strong>
           </Typography>
@@ -162,7 +136,7 @@ const BasicScrollPositionDemo = () => {
         </div>
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Текущая позиция:</strong>
         </Typography>
@@ -189,65 +163,34 @@ const ElementScrollDemo = () => {
         Скролл элемента
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Typography variant="body1" marginBottom="sm">
           Прокрутите содержимое ниже, чтобы увидеть позицию скролла элемента
         </Typography>
       </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '12px',
-          marginBottom: '16px',
-        }}
-      >
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#f8f9fa',
-            borderRadius: '8px',
-            textAlign: 'center',
-          }}
-        >
+      <div style={storybookDemoStyles.gridTwoColumnsGap12MarginBottom16}>
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>X позиция элемента</strong>
           </Typography>
-          <Typography variant="h4" style={{ color: '#007bff' }}>
+          <Typography variant="h4" style={storybookDemoStyles.windowSizeValuePrimary}>
             {x}
           </Typography>
         </div>
 
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#f8f9fa',
-            borderRadius: '8px',
-            textAlign: 'center',
-          }}
-        >
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Y позиция элемента</strong>
           </Typography>
-          <Typography variant="h4" style={{ color: '#28a745' }}>
+          <Typography variant="h4" style={storybookDemoStyles.windowSizeValueSuccess}>
             {y}
           </Typography>
         </div>
       </div>
 
-      <div
-        ref={scrollRef}
-        style={{
-          height: '200px',
-          width: '100%',
-          overflow: 'auto',
-          border: '2px solid #dee2e6',
-          borderRadius: '8px',
-          backgroundColor: '#f8f9fa',
-        }}
-      >
-        <div style={{ width: '300%', height: '300%', padding: '20px' }}>
+      <div ref={scrollRef} style={storybookDemoStyles.scrollViewportStory}>
+        <div style={storybookDemoStyles.scrollContentOversized}>
           <Typography variant="h4" marginBottom="md">
             Прокручиваемый контент
           </Typography>
@@ -255,33 +198,18 @@ const ElementScrollDemo = () => {
             Этот контент можно прокручивать в любом направлении. Позиция скролла отслеживается в
             реальном времени.
           </Typography>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
-            {Array.from({ length: 9 }, (_, i) => (
-              <div
-                key={i}
-                style={{
-                  padding: '16px',
-                  backgroundColor: '#e3f2fd',
-                  borderRadius: '8px',
-                  textAlign: 'center',
-                }}
-              >
-                <Typography variant="h6">Блок {i + 1}</Typography>
-                <Typography variant="body2">Содержимое блока {i + 1}</Typography>
+          <div style={storybookDemoStyles.gridThreeColumnsGap16}>
+            {Array.from({ length: 9 }, (_, tileIndex) => (
+              <div key={tileIndex} style={storybookDemoStyles.scrollDemoContentTile}>
+                <Typography variant="h6">Блок {tileIndex + 1}</Typography>
+                <Typography variant="body2">Содержимое блока {tileIndex + 1}</Typography>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      <div
-        style={{
-          padding: '12px',
-          backgroundColor: '#f5f5f5',
-          borderRadius: '8px',
-          marginTop: '16px',
-        }}
-      >
+      <div style={storybookDemoStyles.demoResultPanelMarginTop16}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Позиция скролла элемента:</strong>
         </Typography>
@@ -310,13 +238,13 @@ const ThrottlingDemo = () => {
         Настройка throttling
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Typography variant="body1" marginBottom="sm">
           Измените задержку обновления и прокрутите страницу
         </Typography>
       </div>
 
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
+      <div style={storybookDemoStyles.rowFlexGap12MarginBottom16Wrap}>
         <Button
           size="sm"
           variant={throttle === 0 ? 'primary' : 'outlined'}
@@ -347,64 +275,36 @@ const ThrottlingDemo = () => {
         </Button>
       </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-          gap: '12px',
-          marginBottom: '16px',
-        }}
-      >
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#f8f9fa',
-            borderRadius: '8px',
-            textAlign: 'center',
-          }}
-        >
+      <div style={storybookDemoStyles.gridAutoFitMin150Gap12MarginBottom16}>
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>X позиция</strong>
           </Typography>
-          <Typography variant="h4" style={{ color: '#007bff' }}>
+          <Typography variant="h4" style={storybookDemoStyles.windowSizeValuePrimary}>
             {x}
           </Typography>
         </div>
 
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#f8f9fa',
-            borderRadius: '8px',
-            textAlign: 'center',
-          }}
-        >
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Y позиция</strong>
           </Typography>
-          <Typography variant="h4" style={{ color: '#28a745' }}>
+          <Typography variant="h4" style={storybookDemoStyles.windowSizeValueSuccess}>
             {y}
           </Typography>
         </div>
 
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#f8f9fa',
-            borderRadius: '8px',
-            textAlign: 'center',
-          }}
-        >
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Обновлений</strong>
           </Typography>
-          <Typography variant="h4" style={{ color: '#dc3545' }}>
+          <Typography variant="h4" style={storybookDemoStyles.windowSizeValueDanger}>
             {updateCount}
           </Typography>
         </div>
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Настройки:</strong>
         </Typography>
@@ -431,7 +331,7 @@ const EnabledDisabledDemo = () => {
         Управление состоянием useScrollPosition
       </Typography>
 
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
+      <div style={storybookDemoStyles.rowFlexGap12MarginBottom16Wrap}>
         <Button
           variant={isEnabled ? 'primary' : 'outlined'}
           onClick={() => setIsEnabled(!isEnabled)}
@@ -440,58 +340,51 @@ const EnabledDisabledDemo = () => {
         </Button>
       </div>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Typography variant="body1" marginBottom="sm">
           Прокрутите страницу, чтобы увидеть разницу
         </Typography>
       </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-          gap: '12px',
-          marginBottom: '16px',
-        }}
-      >
+      <div style={storybookDemoStyles.gridAutoFitMin150Gap12MarginBottom16}>
         <div
           style={{
-            padding: '12px',
-            backgroundColor: isEnabled ? '#e8f5e8' : '#f8f9fa',
-            borderRadius: '8px',
-            textAlign: 'center',
+            ...storybookDemoStyles.windowSizeMetricTile,
+            backgroundColor: isEnabled
+              ? lightTheme.colors.backgroundQuaternary
+              : lightTheme.colors.backgroundTertiary,
           }}
         >
           <Typography variant="body2" marginBottom="xs">
             <strong>X позиция</strong>
           </Typography>
-          <Typography variant="h4" style={{ color: '#007bff' }}>
+          <Typography variant="h4" style={storybookDemoStyles.windowSizeValuePrimary}>
             {x}
           </Typography>
         </div>
 
         <div
           style={{
-            padding: '12px',
-            backgroundColor: isEnabled ? '#e8f5e8' : '#f8f9fa',
-            borderRadius: '8px',
-            textAlign: 'center',
+            ...storybookDemoStyles.windowSizeMetricTile,
+            backgroundColor: isEnabled
+              ? lightTheme.colors.backgroundQuaternary
+              : lightTheme.colors.backgroundTertiary,
           }}
         >
           <Typography variant="body2" marginBottom="xs">
             <strong>Y позиция</strong>
           </Typography>
-          <Typography variant="h4" style={{ color: '#28a745' }}>
+          <Typography variant="h4" style={storybookDemoStyles.windowSizeValueSuccess}>
             {y}
           </Typography>
         </div>
 
         <div
           style={{
-            padding: '12px',
-            backgroundColor: isEnabled ? '#e8f5e8' : '#f8f9fa',
-            borderRadius: '8px',
-            textAlign: 'center',
+            ...storybookDemoStyles.windowSizeMetricTile,
+            backgroundColor: isEnabled
+              ? lightTheme.colors.backgroundQuaternary
+              : lightTheme.colors.backgroundTertiary,
           }}
         >
           <Typography variant="body2" marginBottom="xs">
@@ -503,7 +396,7 @@ const EnabledDisabledDemo = () => {
         </div>
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Статус отслеживания:</strong>
         </Typography>
@@ -530,60 +423,32 @@ const WindowScrollDemo = () => {
         useWindowScrollPosition
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Typography variant="body1" marginBottom="sm">
           Упрощенная версия для отслеживания скролла окна
         </Typography>
       </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-          gap: '12px',
-          marginBottom: '16px',
-        }}
-      >
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#f8f9fa',
-            borderRadius: '8px',
-            textAlign: 'center',
-          }}
-        >
+      <div style={storybookDemoStyles.gridAutoFitMin150Gap12MarginBottom16}>
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>X позиция</strong>
           </Typography>
-          <Typography variant="h4" style={{ color: '#007bff' }}>
+          <Typography variant="h4" style={storybookDemoStyles.windowSizeValuePrimary}>
             {x}
           </Typography>
         </div>
 
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#f8f9fa',
-            borderRadius: '8px',
-            textAlign: 'center',
-          }}
-        >
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Y позиция</strong>
           </Typography>
-          <Typography variant="h4" style={{ color: '#28a745' }}>
+          <Typography variant="h4" style={storybookDemoStyles.windowSizeValueSuccess}>
             {y}
           </Typography>
         </div>
 
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#f8f9fa',
-            borderRadius: '8px',
-            textAlign: 'center',
-          }}
-        >
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Направление</strong>
           </Typography>
@@ -591,7 +456,7 @@ const WindowScrollDemo = () => {
         </div>
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Позиция окна:</strong>
         </Typography>
@@ -629,7 +494,7 @@ export const WindowScroll: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={storybookDemoStyles.columnFlexGap24}>
       <BasicScrollPositionDemo />
       <ElementScrollDemo />
       <ThrottlingDemo />

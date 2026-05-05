@@ -26,7 +26,30 @@ import {
 } from './Sidemenu.stories.helpers';
 import { SidemenuLogoIconSlot, SidemenuLogoTitleText } from './Sidemenu.style';
 import { SidemenuDemoFooterActions, SidemenuDemoHeaderBrand } from './Sidemenu.stories.slots.styles';
-import { sidemenuStoriesStyles } from './Sidemenu.stories.styles';
+import { lightTheme } from '@/themes/themes';
+import { createSidemenuStoryThemeStyles, sidemenuStoriesStyles } from './Sidemenu.stories.styles';
+
+const sidemenuStoryThemeStyles = createSidemenuStoryThemeStyles(lightTheme);
+const edgeAttachedPageRootStyle = {
+  ...sidemenuStoriesStyles.edgeAttachedPageRoot,
+  ...sidemenuStoryThemeStyles.edgeAttachedPageRoot,
+};
+const edgeAttachedMainStyle = {
+  ...sidemenuStoriesStyles.edgeAttachedMain,
+  ...sidemenuStoryThemeStyles.edgeAttachedMain,
+};
+const interactiveControlsPanelStyle = {
+  ...sidemenuStoriesStyles.interactiveControlsPanel,
+  ...sidemenuStoryThemeStyles.interactiveControlsPanel,
+};
+const offScreenSurfaceStyle = {
+  ...sidemenuStoriesStyles.offScreenSurface,
+  ...sidemenuStoryThemeStyles.offScreenSurface,
+};
+const customToggleButtonStyle = {
+  ...sidemenuStoriesStyles.customToggleButton,
+  ...sidemenuStoryThemeStyles.customToggleButton,
+};
 
 const meta: Meta<typeof Sidemenu> = {
   title: 'UI Kit/Navigation/Sidemenu',
@@ -300,7 +323,7 @@ export const EdgeAttachedLayout: Story = {
     const sidemenuProps = pickSidemenuPropsFromStoryArgs(args);
 
     return (
-      <div style={sidemenuStoriesStyles.edgeAttachedPageRoot}>
+      <div style={edgeAttachedPageRootStyle}>
         <p
           role="status"
           aria-live="polite"
@@ -318,7 +341,7 @@ export const EdgeAttachedLayout: Story = {
               sidemenuProps.onItemClick?.(item);
             }}
           />
-          <main style={sidemenuStoriesStyles.edgeAttachedMain}>
+          <main style={edgeAttachedMainStyle}>
             Область контента приложения рядом с боковой колонной.
           </main>
         </div>
@@ -388,7 +411,7 @@ const InteractiveExample: React.FC = () => {
         onItemClick={fn()}
       />
 
-      <div style={sidemenuStoriesStyles.interactiveControlsPanel}>
+      <div style={interactiveControlsPanelStyle}>
         <h3>Контролы</h3>
         <div style={sidemenuStoriesStyles.interactiveCheckboxWrap}>
           <label>
@@ -481,7 +504,7 @@ const OffScreenStorySurface: React.FC<{ summary: string; children: React.ReactNo
   summary,
   children,
 }) => (
-  <div style={sidemenuStoriesStyles.offScreenSurface}>
+  <div style={offScreenSurfaceStyle}>
     <p style={sidemenuStoriesStyles.offScreenSummary}>{summary}</p>
     {children}
   </div>
@@ -674,7 +697,7 @@ export const ExpandPanelCustomToggle: Story = {
       expandToggleRender={({ isExpanded, toggleExpanded }) => (
         <button
           type="button"
-          style={sidemenuStoriesStyles.customToggleButton}
+          style={customToggleButtonStyle}
           onClick={() => toggleExpanded()}
           aria-label={
             isExpanded ? 'Свернуть боковую панель' : 'Развернуть боковую панель'
