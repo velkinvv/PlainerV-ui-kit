@@ -438,7 +438,7 @@ export const Modal = ({ isOpen, onClose, children }) => {
 - Использовать `LayoutAnimation` или `react-native-reanimated`
 - Адаптировать анимации раскрытия/сворачивания
 
-### Шаг 5.4: Sidebar
+### Шаг 5.4: Sidemenu
 
 **Особенности:**
 - Интеграция с навигацией (React Navigation)
@@ -526,7 +526,7 @@ test('renders button with text', () => {
 - [ ] Skeleton
 - [ ] Tooltip
 - [ ] Hint
-- [ ] Sidebar
+- [ ] Sidemenu
 
 ### Тестирование
 - [ ] Настроить тестовую среду

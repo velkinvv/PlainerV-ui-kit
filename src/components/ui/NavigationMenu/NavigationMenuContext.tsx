@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 import type { NavigationMenuActiveAppearance } from '@/types/ui';
 
 /** Значение контекста меню навигации */
@@ -11,6 +11,26 @@ export interface NavigationMenuContextValue {
   setActiveId: (id: string) => void;
   /** Вариант подсветки активного пункта */
   activeAppearance: NavigationMenuActiveAppearance;
+  /** В compact: вложенные уровни показывать в панели при hover, а не в колонке */
+  collapsedNestedFlyout: boolean;
+}
+
+/**
+ * Внутри всплывающего подменю — визуально развёрнутый вид (подписи видны), без смены корня **NavigationMenu**.
+ */
+export function NavigationMenuFlyoutBranchProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const parent = useNavigationMenuContext();
+  const value = useMemo<NavigationMenuContextValue>(
+    () => ({ ...parent, collapsed: false }),
+    [parent],
+  );
+  return (
+    <NavigationMenuContext.Provider value={value}>{children}</NavigationMenuContext.Provider>
+  );
 }
 
 export const NavigationMenuContext = createContext<NavigationMenuContextValue | undefined>(

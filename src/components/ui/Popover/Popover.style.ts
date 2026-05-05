@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 
-import { Size } from 'types';
-import { PopoverVariant } from 'types/ui';
+import { Size } from '@/types/sizes';
+import type { PopoverVariant } from '@/types/ui';
 
 import { getDropdownAnimations, getDropdownContainerStyles } from '../../../handlers/dropdownThemeHandlers';
 
@@ -63,7 +63,9 @@ export const PopoverSurface = styled.div<PopoverSurfaceStyledProps>`
       line-height: ${styles.lineHeight};
       text-align: ${styles.textAlign};
       user-select: ${styles.userSelect};
-      white-space: ${styles.whiteSpace};
+      /* не наследуем nowrap от токенов dropdown — иначе длинный текст вылезает за max-width */
+      white-space: normal;
+      overflow-wrap: break-word;
       backdrop-filter: ${styles.backdropFilter};
       transform: ${animations.openAnimation.transform};
       transition: ${animations.openAnimation.duration} ${animations.openAnimation.easing};
@@ -77,6 +79,8 @@ export const PopoverSurface = styled.div<PopoverSurfaceStyledProps>`
     min-width: 0;
     max-width: 100%;
     box-sizing: border-box;
+    white-space: normal;
+    overflow-wrap: break-word;
     word-wrap: break-word;
   }
 `;

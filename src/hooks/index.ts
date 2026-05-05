@@ -17,3 +17,5 @@ export { useKeyPress } from './useKeyPress';
 export { useMediaQuery } from './useMediaQuery';
 export { useScrollPosition } from './useScrollPosition';
 export { useWindowSize } from './useWindowSize';
+export { useNavigationMenuExpand } from './useNavigationMenuExpand';
+export type { UseNavigationMenuExpandParams, UseNavigationMenuExpandResult } from './useNavigationMenuExpand';

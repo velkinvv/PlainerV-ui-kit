@@ -24,7 +24,10 @@ module.exports = {
       relativePath => !String(relativePath).replace(/\\/g, '/').includes('/table_pkg/'),
     );
     /** Явные пути: подстраховка, если glob не подхватил файл сторис */
-    const forcedStoryPaths = ['src/components/ui/Dropdown/DropdownTagTrigger.stories.tsx'];
+    const forcedStoryPaths = [
+      'src/components/ui/Dropdown/DropdownTagTrigger.stories.tsx',
+      'src/components/ui/sidemenu/Sidemenu.stories.tsx',
+    ];
     const mergedRelative = [...new Set([...withoutTablePkg, ...forcedStoryPaths])];
     return mergedRelative.map(relativePath => path.join('..', relativePath).replace(/\\/g, '/'));
   },

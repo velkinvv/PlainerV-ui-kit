@@ -234,8 +234,8 @@ export type { IconProps } from '@/types/ui';
 export { ThemeToggle } from './ThemeToggle';
 export type { ThemeToggleProps } from '@/types/ui';
 
-export { Sidebar } from './sidebar';
-export type { SidebarProps } from '@/types/ui';
+export { Sidemenu } from './sidemenu';
+export type { SidemenuProps } from '@/types/ui';
 
 export { Checkbox, CheckboxGroup } from './Checkbox';
 export type { CheckboxProps, CheckboxGroupProps } from '@/types/ui';

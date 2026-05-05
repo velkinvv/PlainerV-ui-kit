@@ -101,7 +101,7 @@ function MyComponent() {
 
 ### Навигация
 
-- **Sidebar** - Боковая панель навигации
+- **Sidemenu** - Боковое меню навигации
 - **Tabs** - Вкладки
 - **Breadcrumb** - «Хлебные крошки» (`nav` + `ol`, `aria-current`, разделитель, `Size`)
 - **Stepper** - Шаги навигации по макету: `variant="compact"` (кольцо «N/M», заголовок, подзаголовок, `onBack`) или `variant="linear"` (кружки, подписи «Шаг N», соединители); `appearance` / тема, `fullWidth`
@@ -299,13 +299,13 @@ function LoginForm() {
 }
 ```
 
-### Навигация с сайдбаром
+### Навигация с боковым меню (Sidemenu)
 
 ```tsx
-import { Sidebar, ThemeToggle } from '@velkinvv/plainerv';
+import { Sidemenu, ThemeToggle } from '@velkinvv/plainerv';
 
 function AppLayout() {
-  const sidebarItems = [
+  const sidemenuItems = [
     { id: 'home', label: 'Главная', icon: 'Home', active: true },
     { id: 'profile', label: 'Профиль', icon: 'User' },
     { id: 'settings', label: 'Настройки', icon: 'Settings' },
@@ -313,7 +313,7 @@ function AppLayout() {
 
   return (
     <div style={{ display: 'flex' }}>
-      <Sidebar items={sidebarItems} />
+      <Sidemenu items={sidemenuItems} />
       <main>
         <header>
           <ThemeToggle />

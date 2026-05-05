@@ -251,6 +251,10 @@ export interface CalculateDropdownPositionOptions {
   boundaryElement?: HTMLElement | null;
   offset?: number;
   mode?: DropdownPositioningMode;
+  /**
+   * **below** — классика под триггером; **rightStart** — панель справа, верх совпадает с триггером (подменю сайдбара).
+   */
+  preferredPlacement?: 'below' | 'rightStart';
 }
 
 export const calculateDropdownPosition = ({
@@ -259,6 +263,7 @@ export const calculateDropdownPosition = ({
   boundaryElement,
   offset = 4,
   mode = 'default',
+  preferredPlacement = 'below',
 }: CalculateDropdownPositionOptions): { x: number; y: number } => {
   if (!triggerElement) return { x: 0, y: 0 };
 
@@ -266,6 +271,39 @@ export const calculateDropdownPosition = ({
   const menuRect = menuElement?.getBoundingClientRect();
   const viewportWidth = window.innerWidth;
   const viewportHeight = window.innerHeight;
+  const menuWidth = menuRect?.width ?? 0;
+  const menuHeight = menuRect?.height ?? 0;
+
+  if (preferredPlacement === 'rightStart') {
+    let xRight = triggerRect.right + offset;
+    let yTop = triggerRect.top;
+
+    if (menuWidth > 0 && xRight + menuWidth > viewportWidth - offset) {
+      xRight = triggerRect.left - menuWidth - offset;
+    }
+    if (menuWidth > 0) {
+      xRight = clamp(xRight, offset, viewportWidth - menuWidth - offset);
+    }
+
+    if (menuHeight > 0) {
+      yTop = clamp(yTop, offset, viewportHeight - menuHeight - offset);
+    }
+
+    let x = xRight;
+    let y = yTop;
+
+    if (boundaryElement) {
+      const boundaryRect = boundaryElement.getBoundingClientRect();
+      x -= boundaryRect.left;
+      y -= boundaryRect.top;
+      if (menuWidth > 0 && menuHeight > 0) {
+        x = clamp(x, 0, (boundaryElement.clientWidth || viewportWidth) - menuWidth);
+        y = clamp(y, 0, (boundaryElement.clientHeight || viewportHeight) - menuHeight);
+      }
+    }
+
+    return { x, y };
+  }
 
   let x = triggerRect.left;
   let y = triggerRect.bottom + offset;

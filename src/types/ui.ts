@@ -1301,6 +1301,16 @@ export interface PopoverProps extends BaseComponentProps {
   id?: string;
   /** Атрибут `data-testid` корневой обёртки */
   dataTestId?: string;
+  /**
+   * Якорь панели: **below** — под триггером (по умолчанию); **rightStart** — справа, выравнивание по верху (подменю у компактного **NavigationMenu**).
+   */
+  preferredPlacement?: 'below' | 'rightStart';
+  /**
+   * Если **false**, клик по обёртке триггера не переключает панель (открытие только через **open** / hover с `triggerWrapperProps`).
+   */
+  triggerWrapClickToggle?: boolean;
+  /** Атрибуты корневого `div` вокруг **trigger** (например `onMouseEnter` / `onMouseLeave` для flyout) */
+  triggerWrapperProps?: React.HTMLAttributes<HTMLDivElement>;
 }
 
 export type DropdownCssMixin = string | number | false | DropdownCssMixin[] | undefined;
@@ -1707,6 +1717,20 @@ export interface TabsProps extends BaseComponentProps {
 }
 
 /**
+ * Способ раскрытия компактного меню навигации до полного (подписи + ширина)
+ */
+export enum NavigationMenuExpandInteraction {
+  /** Только проп `collapsed` / ширина снаружи, без авто-раскрытия */
+  NONE = 'none',
+  /** Переключение по клику по области меню (не по кнопкам/ссылкам пунктов) */
+  CLICK = 'click',
+  /** Раскрытие при наведении на меню, сворачивание при уходе курсора */
+  HOVER = 'hover',
+  /** Только кнопка в шапке (`Sidemenu`: встроенная или {@link SidemenuProps.expandToggleRender}); клик по оболочке не переключает */
+  TOGGLE_BUTTON = 'toggleButton',
+}
+
+/**
  * Подсветка активного пункта бокового меню навигации (макет Figma; компонент `NavigationMenu`)
  */
 export enum NavigationMenuActiveAppearance {
@@ -1719,13 +1743,31 @@ export enum NavigationMenuActiveAppearance {
 }
 
 /**
+ * Визуальный статус пункта навигации (оттенок строки, без смены логики active)
+ */
+export enum NavigationMenuItemStatus {
+  SUCCESS = 'success',
+  WARNING = 'warning',
+  DANGER = 'danger',
+  INFO = 'info',
+}
+
+/**
  * Пропсы контейнера вертикального меню навигации (`NavigationMenu`)
- * @property collapsed — компактный режим: только иконки, бейдж на иконке
+ * @property collapsed — компактный режим: только иконки, бейдж на иконке (игнорируется при expandInteraction ≠ none — см. ниже)
  * @property activeId — id выбранного пункта (контролируемый режим)
  * @property defaultActiveId — начальный выбранный пункт
  * @property onActiveChange — смена выбранного id
  * @property activeAppearance — стиль подсветки активного пункта
  * @property aria-label — доступное имя для элемента навигации
+ * @property expandInteraction — none | click | hover: раскрытие компактного меню (подписи + ширина)
+ * @property expanded — контролируемое «раскрыто до полного» (при expandInteraction ≠ none)
+ * @property defaultExpanded — начальное раскрытие в неконтролируемом режиме
+ * @property onExpand — после перехода в развёрнутое состояние
+ * @property onCollapse — после перехода обратно в компактное
+ * @property onExpandedChange — для контролируемого режима: запрос смены expanded
+ * @property expandCompactWidth — ширина в компактном виде (число px или css, по умолчанию 72)
+ * @property expandFullWidth — ширина в развёрнутом виде (по умолчанию 100%)
  */
 export interface NavigationMenuProps extends BaseComponentProps {
   collapsed?: boolean;
@@ -1734,6 +1776,20 @@ export interface NavigationMenuProps extends BaseComponentProps {
   onActiveChange?: (id: string) => void;
   activeAppearance?: NavigationMenuActiveAppearance;
   'aria-label'?: string;
+  expandInteraction?: NavigationMenuExpandInteraction;
+  expanded?: boolean;
+  defaultExpanded?: boolean;
+  onExpand?: () => void;
+  onCollapse?: () => void;
+  onExpandedChange?: (expanded: boolean) => void;
+  expandCompactWidth?: number | string;
+  expandFullWidth?: number | string;
+  /**
+   * При **collapsed** вложенные пункты (**items**) показать во всплывающей панели при наведении на ветку (справа от колонки).
+   * Если **false** — вложенность в узкой колонке не отображается (прежнее поведение).
+   * @default true
+   */
+  collapsedNestedFlyout?: boolean;
 }
 
 /**
@@ -1741,12 +1797,22 @@ export interface NavigationMenuProps extends BaseComponentProps {
  * @property id — уникальный ключ внутри навигации (связь с activeId)
  * @property label — основной текст (в collapsed скрывается визуально)
  * @property icon — префикс-иконка слева
- * @property badge — красный бейдж (в expanded — справа от текста, в collapsed — на иконке)
+ * @property badge — содержимое счётчика; рендерится через компонент **Badge** (в expanded — справа, в collapsed — у иконки)
  * @property suffix — суффикс (например шеврон подменю)
  * @property disabled — отключённое состояние
  * @property href — если задан, рендерится ссылка вместо кнопки
  * @property title — подсказка; в collapsed по умолчанию не задаётся из label (передайте строку)
  * @property onClick — дополнительный обработчик клика
+ * @property status — цветовой акцент строки (успех / предупреждение / ошибка / информация)
+ * @property loading — индикатор загрузки; клик не меняет active
+ * @property skeleton — плейсхолдер-скелетон вместо содержимого; строка не интерактивна
+ * @property isVisible — показ строки с анимацией; при false строка сворачивается и скрывается
+ * @property items — вложенные пункты (рекурсивно); при наличии строка становится веткой (раскрытие по клику)
+ * @property defaultNestedExpanded — см. поле в интерфейсе (ветка в колонке или flyout в compact)
+ * @property hint — всплывающий {@link Hint} вокруг кнопки/ссылки; если переданы и hint и tooltip, используется hint
+ * @property tooltip — {@link Tooltip} вокруг кнопки/ссылки; игнорируется при наличии hint
+ * @property popover — {@link Popover} снаружи: `children` — панель, `trigger` задаётся кнопкой/ссылкой; на **листе** по умолчанию клик не меняет **activeId** (см. **popoverActivateNavigation**)
+ * @property popoverActivateNavigation — если **true**, при наличии **popover** клик по листу также выбирает пункт (**activeId**); по умолчанию при заданном **popover** — только открытие панели
  */
 export interface NavigationMenuItemProps {
   id: string;
@@ -1760,6 +1826,26 @@ export interface NavigationMenuItemProps {
   title?: string;
   children?: React.ReactNode;
   onClick?: (event: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => void;
+  status?: NavigationMenuItemStatus;
+  loading?: boolean;
+  skeleton?: boolean;
+  isVisible?: boolean;
+  /** Вложенные уровни; id по всему дереву должны быть уникальны */
+  items?: NavigationMenuItemProps[];
+  /**
+   * Начально раскрыта ли ветка (развёрнутая панель — подсписок в колонке; compact + **collapsedNestedFlyout** — открыт ли flyout при монтировании).
+   */
+  defaultNestedExpanded?: boolean;
+  /** Конфиг Hint без children — триггер задаётся строкой пункта */
+  hint?: Omit<HintProps, 'children'>;
+  /** Конфиг Tooltip без children */
+  tooltip?: Omit<TooltipProps, 'children'>;
+  /** Конфиг Popover без trigger: `children` — содержимое панели */
+  popover?: Omit<PopoverProps, 'trigger'>;
+  /**
+   * Только для **листа** с **popover**: при `true` клик по строке ещё и выставляет **activeId**; при `false` или без явного значения при наличии **popover** выбор пункта не выполняется (удобно, когда панель заменяет переход).
+   */
+  popoverActivateNavigation?: boolean;
 }
 
 /**
@@ -3303,47 +3389,157 @@ export interface TextareaProps extends BaseComponentProps {
 }
 
 /**
- * Варианты боковой панели
+ * Варианты бокового меню (раскладка)
  */
-export enum SidebarVariant {
-  EXPANDED = 'expanded', // Развернутая панель
+export enum SidemenuVariant {
+  EXPANDED = 'expanded', // Развёрнутая панель
   COLLAPSED = 'collapsed', // Свернутая панель
 }
 
 /**
- * Элемент боковой панели
+ * Элемент бокового меню
  * @property id - Уникальный идентификатор
  * @property label - Подпись элемента (`ReactNode`)
  * @property icon - Иконка элемента
  * @property active - Активен ли элемент
  * @property notificationCount - Количество уведомлений
  * @property onClick - Обработчик клика
+ * @property status — статус пункта (см. {@link NavigationMenuItemStatus})
+ * @property loading — загрузка пункта
+ * @property skeleton — скелетон вместо содержимого
+ * @property isVisible — видимость строки с анимацией
+ * @property items — вложенные пункты меню (несколько уровней); id уникальны во всём дереве
+ * @property hint — см. {@link NavigationMenuItemProps.hint}
+ * @property tooltip — см. {@link NavigationMenuItemProps.tooltip}
+ * @property popover — см. {@link NavigationMenuItemProps.popover}
+ * @property popoverActivateNavigation — см. {@link NavigationMenuItemProps.popoverActivateNavigation}
  */
-export interface SidebarItem {
+export interface SidemenuItem {
   id: string;
   label: ReactNode;
   icon?: React.ReactNode;
   active?: boolean;
   notificationCount?: number;
   onClick?: () => void;
+  status?: NavigationMenuItemStatus;
+  loading?: boolean;
+  skeleton?: boolean;
+  isVisible?: boolean;
+  items?: SidemenuItem[];
+  hint?: Omit<HintProps, 'children'>;
+  tooltip?: Omit<TooltipProps, 'children'>;
+  popover?: Omit<PopoverProps, 'trigger'>;
+  popoverActivateNavigation?: boolean;
 }
 
 /**
- * Пропсы боковой панели
- * @property items - Список элементов панели
- * @property logo - Логотип панели
- * @property variant - Состояние панели (развернута/свернута)
- * @property onItemClick - Обработчик клика по элементу
+ * Пропсы бокового меню
+ * @property items - Список пунктов меню
+ * @property logo - Блок логотипа в шапке (иконка и заголовок), если не задан **logoSlot**
+ * @property logoSlot — произвольный контент вместо разметки из **logo** (имеет приоритет над **logo.icon** / **logo.title**)
+ * @property variant - Состояние (развёрнуто/свернуто); при expandInteraction ≠ none задаёт только начальный вид и работает в паре с раскрытием
+ * @property onItemClick - Обработчик клика по пункту
+ * @property expandInteraction — см. {@link NavigationMenuProps.expandInteraction}
+ * @property expanded — контролируемое раскрытие панели (ширина + подписи)
+ * @property defaultExpanded — начальное раскрытие при интерактивном режиме
+ * @property onExpand — после разворота панели
+ * @property onCollapse — после сворачивания панели
+ * @property onExpandedChange — контролируемый режим: запрос смены expanded
+ * @property expandCompactWidth — ширина компактной панели (px), по умолчанию 100
+ * @property expandExpandedWidth — ширина развёрнутой панели (px), по умолчанию 310
+ * @property offScreenHoverReveal — панель скрыта за левым краём; узкая зона у края экрана по hover показывает меню (анимация)
+ * @property offScreenEdgeWidth — ширина hover-зоны у левого края (px)
+ * @property offScreenRevealed — контролируемая видимость панели с экрана
+ * @property defaultOffScreenRevealed — начальное состояние видимости
+ * @property onOffScreenRevealedChange — смена видимости (контролируемый режим)
+ * @property onOffScreenShow — после появления панели
+ * @property onOffScreenHide — после скрытия панели
+ * @property offScreenZIndex — слой над контентом (по умолчанию 1030)
+ * @property offScreenHideDelayMs — задержка перед скрытием после ухода курсора (мс, по умолчанию 1500)
+ * @property expandToggleRender — кнопка в шапке: **isExpanded**, **toggleExpanded**
+ * @property onExpandToggleClick — до смены состояния; у встроенной кнопки можно отменить через **preventDefault**
+ * @property showExpandToggleButton — показать встроенную кнопку дополнительно при **CLICK** / **HOVER**
+ * @property footer — нижний слот панели: произвольный контент (второе меню, действия и т.д.)
+ * @property slotStyles — **header** / **body** / **footer**: высота, flex, overflow (см. {@link SidemenuSlotStyles})
  */
-export interface SidebarProps extends BaseComponentProps {
-  items: SidebarItem[];
+/** Стили зон {@link Sidemenu}: шапка (лого + разделитель), средний блок навигации, нижний слот */
+export type SidemenuSlotStyles = {
+  /** Зона шапки: строка логотипа и разделитель под ней */
+  header?: React.CSSProperties;
+  /** Средняя колонка с основным {@link NavigationMenu} */
+  body?: React.CSSProperties;
+  /** Обёртка содержимого **footer** (под разделителем перед футером) */
+  footer?: React.CSSProperties;
+};
+
+export interface SidemenuProps extends BaseComponentProps {
+  items: SidemenuItem[];
   logo?: {
     icon?: React.ReactNode;
     title?: string;
   };
-  variant?: SidebarVariant;
-  onItemClick?: (item: SidebarItem) => void;
+  /**
+   * Левая часть шапки вместо связки **logo.icon** + **logo.title**: любой ReactNode (свой логотип, доп. контролы).
+   * Если задан, **logo.icon** и **logo.title** в шапке не выводятся.
+   */
+  logoSlot?: React.ReactNode;
+  /**
+   * Нижняя область боковой панели под основным списком: можно передать другое меню, кнопки и т.п.
+   * Обёртка задаёт отступы и **не** участвует в переключении раскрытия по клику по оболочке (`data-prevent-navigation-expand-toggle`).
+   */
+  footer?: React.ReactNode;
+  /**
+   * Подстройка вёрстки зон панели: **height**, **minHeight**, **maxHeight**, **overflow**, **flex** и т.д.
+   * Мержится поверх встроенных стилей (у среднего блока по умолчанию **flex: 1** и **minHeight: 0**).
+   */
+  slotStyles?: SidemenuSlotStyles;
+  /**
+   * Панель как колонка у левого края экрана: без скруглений и тени «карточки», только вертикальная линия справа;
+   * высота на весь вьюпорт (**min-height: 100vh**), без отступа от кромки. Для корневого лейаута: обёртка `display: flex; min-height: 100vh`.
+   * Полностью совместима с **expandInteraction**, **offScreenHoverReveal** и связанными колбэками показа/скрытия.
+   */
+  edgeAttached?: boolean;
+  variant?: SidemenuVariant;
+  onItemClick?: (item: SidemenuItem) => void;
+  expandInteraction?: NavigationMenuExpandInteraction;
+  expanded?: boolean;
+  defaultExpanded?: boolean;
+  onExpand?: () => void;
+  onCollapse?: () => void;
+  onExpandedChange?: (expanded: boolean) => void;
+  expandCompactWidth?: number;
+  expandExpandedWidth?: number;
+  offScreenHoverReveal?: boolean;
+  offScreenEdgeWidth?: number;
+  offScreenRevealed?: boolean;
+  defaultOffScreenRevealed?: boolean;
+  onOffScreenRevealedChange?: (revealed: boolean) => void;
+  onOffScreenShow?: () => void;
+  onOffScreenHide?: () => void;
+  offScreenZIndex?: number;
+  /** Задержка перед скрытием панели после mouseleave (мс) */
+  offScreenHideDelayMs?: number;
+  /** Рендер кнопки «развернуть / свернуть» панель (подписи + ширина); см. {@link SidemenuExpandToggleRenderContext} */
+  expandToggleRender?: (context: SidemenuExpandToggleRenderContext) => React.ReactNode;
+  /**
+   * Перед сменой состояния панели: клик по **встроенной** кнопке (`event` задан) или вызов **toggleExpanded** из **expandToggleRender** (`event === null`).
+   * Для встроенной кнопки: `event.preventDefault()` отменяет переключение.
+   */
+  onExpandToggleClick?: (event: React.MouseEvent<Element> | null, nextExpanded: boolean) => void;
+  /**
+   * Встроенная кнопка в шапке дополнительно к режиму **CLICK** / **HOVER** (дублирует переключение).
+   * Режим **TOGGLE_BUTTON** уже показывает такую кнопку по умолчанию.
+   */
+  showExpandToggleButton?: boolean;
 }
+
+/** Контекст для {@link SidemenuProps.expandToggleRender} */
+export type SidemenuExpandToggleRenderContext = {
+  /** Панель в развёрнутом виде (подписи и полная ширина) */
+  isExpanded: boolean;
+  /** Переключить панель (учитывает {@link SidemenuProps.onExpandToggleClick} только без события отмены) */
+  toggleExpanded: () => void;
+};
 
 /**
  * Пропсы переключателя темы

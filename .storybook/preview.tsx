@@ -136,7 +136,7 @@ const preview: Preview = {
             'NavigationMenu',
             'Pagination',
             'Stepper',
-            'Sidebar',
+            'Sidemenu',
             'Tabs',
             'Tabs/TabItem',
           ],
