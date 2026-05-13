@@ -5,9 +5,9 @@ import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
 import { Input } from '../components/ui/inputs/Input';
+import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
 import { useDebounce, useDebounceCallback } from './useDebounce';
 import {
-  AllExamplesContainer,
   CenteredMessage,
   DebouncedQueryCard,
   LogContainer,
@@ -429,12 +429,12 @@ export const DelayComparison: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <AllExamplesContainer>
+    <StorybookStaggerStack>
       <BasicDebounceDemo />
       <SearchDemo />
       <DebounceCallbackDemo />
       <DelayComparisonDemo />
-    </AllExamplesContainer>
+    </StorybookStaggerStack>
   ),
 };
 

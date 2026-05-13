@@ -1,5 +1,12 @@
 ﻿import type { Meta, StoryObj } from '@storybook/react';
+import { motion } from 'framer-motion';
 import React from 'react';
+import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
+import {
+  storybookStaggerContainerVariants,
+  storybookStaggerItemVariants,
+  useStorybookMotionTransitions,
+} from '@/handlers/storybookMotion';
 import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
@@ -8,7 +15,6 @@ import { ButtonVariant } from '../types/ui';
 import { lightTheme } from '@/themes/themes';
 import { useModal } from './useModal';
 import {
-  AllExamplesContainer,
   ColoredTriggerButton,
   ModalsStateGrid,
   ModalsTriggerContainer,
@@ -183,14 +189,20 @@ const MultipleModalsDemo = () => {
         ))}
       </ModalsTriggerContainer>
 
-      <ModalsStateGrid>
+      <ModalsStateGrid
+        variants={storybookStaggerContainerVariants(motionTransitions.stagger)}
+        initial="hidden"
+        animate="visible"
+      >
         {modals.map((modal, modalIndex) => (
-          <ModalStateCard key={modalIndex}>
-            <Typography variant="body2" marginBottom="xs">
-              <strong>Модальное окно {modalIndex + 1}:</strong>
-            </Typography>
-            <Typography variant="body2">{modal.hook.isOpen ? 'Открыто' : 'Закрыто'}</Typography>
-          </ModalStateCard>
+          <motion.div key={modal.title} variants={storybookStaggerItemVariants}>
+            <ModalStateCard>
+              <Typography variant="body2" marginBottom="xs">
+                <strong>Модальное окно {modalIndex + 1}:</strong>
+              </Typography>
+              <Typography variant="body2">{modal.hook.isOpen ? 'Открыто' : 'Закрыто'}</Typography>
+            </ModalStateCard>
+          </motion.div>
         ))}
       </ModalsStateGrid>
 
@@ -297,12 +309,12 @@ export const Integration: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <AllExamplesContainer>
+    <StorybookStaggerStack>
       <BasicModalDemo />
       <InitialStateDemo />
       <MultipleModalsDemo />
       <IntegrationDemo />
-    </AllExamplesContainer>
+    </StorybookStaggerStack>
   ),
 };
 

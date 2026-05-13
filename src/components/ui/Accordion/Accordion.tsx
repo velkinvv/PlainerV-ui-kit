@@ -1,6 +1,6 @@
 import React, { useState, createContext, useContext } from 'react';
 import { clsx } from 'clsx';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Icon } from '../Icon/Icon';
 import type { AccordionProps } from '../../../types/ui';
 import { IconSize } from '../../../types/sizes';
@@ -168,6 +168,7 @@ export const AccordionContentComponent: React.FC<AccordionContentProps> = ({
   align = 'left',
   ...props
 }) => {
+  const prefersReducedMotion = useReducedMotion();
   const { openItems } = useAccordionContext();
   const itemId = useAccordionItemContext();
   const isOpen = openItems.has(itemId);
@@ -177,10 +178,10 @@ export const AccordionContentComponent: React.FC<AccordionContentProps> = ({
       {isOpen && (
         <AccordionContent
           className={clsx('ui-accordion-content', className)}
-          initial={{ height: 0 }}
-          animate={{ height: 'auto' }}
-          exit={{ height: 0 }}
-          transition={{ duration: 0.2, ease: 'easeInOut' }}
+          initial={prefersReducedMotion ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }}
+          animate={{ height: 'auto', opacity: 1 }}
+          exit={prefersReducedMotion ? { height: 0, opacity: 0.98 } : { height: 0, opacity: 0 }}
+          transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.2, ease: 'easeInOut' }}
         >
           <ContentInner $align={align} {...props}>
             {children}

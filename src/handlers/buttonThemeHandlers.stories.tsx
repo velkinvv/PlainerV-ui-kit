@@ -18,6 +18,7 @@ import { Size } from '../types/sizes';
 import { ButtonVariant } from '../types/ui';
 import { inputFieldStoriesStyles } from '@/handlers/inputFieldStories.styles';
 import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
+import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
 
 const meta: Meta = {
   title: 'UI Kit/Utils/Handlers/Button Theme Handlers',
@@ -401,13 +402,13 @@ export const ButtonHandlersUsage: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <div style={storybookDemoStyles.columnFlexGap24}>
+    <StorybookStaggerStack>
       <ButtonSizesDemo />
       <ButtonVariantsDemo />
       <ButtonStatesDemo />
       <ButtonAnimationsDemo />
       <ButtonHandlersUsageDemo />
-    </div>
+    </StorybookStaggerStack>
   ),
 };
 

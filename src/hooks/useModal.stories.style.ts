@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { motion } from 'framer-motion';
 import { lightTheme } from '@/themes/themes';
 import { Button } from '../components/ui/buttons/Button';
 
@@ -10,7 +11,7 @@ export const StoryControlsContainer = styled.div`
 
 export const StoryStateContainer = styled.div`
   padding: 12px;
-  background-color: #f5f5f5;
+  background-color: ${lightTheme.colors.backgroundTertiary};
   border-radius: 8px;
 `;
 
@@ -21,7 +22,8 @@ export const ModalsTriggerContainer = styled.div`
   flex-wrap: wrap;
 `;
 
-export const ModalsStateGrid = styled.section`
+/** Сетка статусов нескольких модалок — на базе motion для stagger при монтировании. */
+export const ModalsStateGrid = styled(motion.section)`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
@@ -36,10 +38,4 @@ export const ModalStateCard = styled.article`
 
 export const ColoredTriggerButton = styled(Button)<{ $backgroundColor: string }>`
   background-color: ${({ $backgroundColor }) => $backgroundColor};
-`;
-
-export const AllExamplesContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
 `;

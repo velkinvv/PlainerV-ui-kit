@@ -1,6 +1,15 @@
 ﻿import type { Meta, StoryObj } from '@storybook/react';
+import { AnimatePresence, motion } from 'framer-motion';
 import React, { useState } from 'react';
 import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
+import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
+import {
+  storybookBackdropFadeVariants,
+  storybookDropdownRevealVariants,
+  storybookFadeSlideVariants,
+  storybookModalPopVariants,
+  useStorybookMotionTransitions,
+} from '@/handlers/storybookMotion';
 import { lightTheme } from '@/themes/themes';
 import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
@@ -74,6 +83,7 @@ const clickOutsideMultiDemoElements = [
 const BasicClickOutsideDemo = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [clickCount, setClickCount] = useState(0);
+  const motionTransitions = useStorybookMotionTransitions();
 
   const ref = useClickOutside(() => {
     setIsOpen(false);
@@ -90,19 +100,30 @@ const BasicClickOutsideDemo = () => {
         <Button onClick={() => setIsOpen(!isOpen)}>{isOpen ? 'Закрыть' : 'Открыть'} элемент</Button>
       </div>
 
-      {isOpen && (
-        <div ref={ref} style={storybookDemoStyles.clickOutsideTrackedPanel}>
-          <Typography variant="h4" marginBottom="sm">
-            Отслеживаемый элемент
-          </Typography>
-          <Typography variant="body1" marginBottom="md">
-            Кликните вне этого элемента, чтобы закрыть его.
-          </Typography>
-          <Typography variant="body2" style={{ color: lightTheme.colors.textSecondary }}>
-            Этот элемент отслеживается с помощью useClickOutside
-          </Typography>
-        </div>
-      )}
+      <AnimatePresence mode="sync">
+        {isOpen && (
+          <motion.div
+            key="basic-tracked-panel"
+            ref={ref}
+            style={storybookDemoStyles.clickOutsideTrackedPanel}
+            variants={storybookFadeSlideVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            transition={motionTransitions.panel}
+          >
+            <Typography variant="h4" marginBottom="sm">
+              Отслеживаемый элемент
+            </Typography>
+            <Typography variant="body1" marginBottom="md">
+              Кликните вне этого элемента, чтобы закрыть его.
+            </Typography>
+            <Typography variant="body2" style={{ color: lightTheme.colors.textSecondary }}>
+              Этот элемент отслеживается с помощью useClickOutside
+            </Typography>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
@@ -122,6 +143,7 @@ const DisabledClickOutsideDemo = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isEnabled, setIsEnabled] = useState(true);
   const [clickCount, setClickCount] = useState(0);
+  const motionTransitions = useStorybookMotionTransitions();
 
   const ref = useClickOutside(() => {
     setIsOpen(false);
@@ -148,21 +170,32 @@ const DisabledClickOutsideDemo = () => {
         </Button>
       </div>
 
-      {isOpen && (
-        <div ref={ref} style={trackedPanelStyle}>
-          <Typography variant="h4" marginBottom="sm">
-            Отслеживаемый элемент
-          </Typography>
-          <Typography variant="body1" marginBottom="md">
-            {isEnabled
-              ? 'Кликните вне этого элемента, чтобы закрыть его.'
-              : 'Отслеживание отключено. Клики вне элемента не обрабатываются.'}
-          </Typography>
-          <Typography variant="body2" style={{ color: lightTheme.colors.textSecondary }}>
-            Статус отслеживания: {isEnabled ? 'Включено' : 'Отключено'}
-          </Typography>
-        </div>
-      )}
+      <AnimatePresence mode="sync">
+        {isOpen && (
+          <motion.div
+            key="disabled-demo-panel"
+            ref={ref}
+            style={trackedPanelStyle}
+            variants={storybookFadeSlideVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            transition={motionTransitions.panel}
+          >
+            <Typography variant="h4" marginBottom="sm">
+              Отслеживаемый элемент
+            </Typography>
+            <Typography variant="body1" marginBottom="md">
+              {isEnabled
+                ? 'Кликните вне этого элемента, чтобы закрыть его.'
+                : 'Отслеживание отключено. Клики вне элемента не обрабатываются.'}
+            </Typography>
+            <Typography variant="body2" style={{ color: lightTheme.colors.textSecondary }}>
+              Статус отслеживания: {isEnabled ? 'Включено' : 'Отключено'}
+            </Typography>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
@@ -216,14 +249,13 @@ const MultipleElementsDemo = () => {
       </Typography>
 
       <div style={storybookDemoStyles.rowFlexGap12MarginBottom16Wrap}>
-        {clickOutsideMultiDemoElements.map((_element, index) => (
+        {clickOutsideMultiDemoElements.map((element, index) => (
           <Button
-            key={clickOutsideMultiDemoElements[index].title}
+            key={element.title}
             onClick={() => toggleElement(index)}
-            style={{ backgroundColor: clickOutsideMultiDemoElements[index].borderAccent }}
+            style={{ backgroundColor: element.borderAccent }}
           >
-            {openElements.has(index) ? 'Закрыть' : 'Открыть'}{' '}
-            {clickOutsideMultiDemoElements[index].title}
+            {openElements.has(index) ? 'Закрыть' : 'Открыть'} {element.title}
           </Button>
         ))}
       </div>
@@ -235,14 +267,17 @@ const MultipleElementsDemo = () => {
 
           return (
             <div key={element.title}>
-              {isOpen && (
-                <ClickOutsideElement
-                  title={element.title}
-                  panelBackground={element.panelBackground}
-                  borderAccent={element.borderAccent}
-                  onClose={createClickOutsideHandler(index)}
-                />
-              )}
+              <AnimatePresence mode="popLayout">
+                {isOpen && (
+                  <ClickOutsideElement
+                    key={element.title}
+                    title={element.title}
+                    panelBackground={element.panelBackground}
+                    borderAccent={element.borderAccent}
+                    onClose={createClickOutsideHandler(index)}
+                  />
+                )}
+              </AnimatePresence>
               <div style={storybookDemoStyles.demoStatusStripCompact}>
                 <Typography variant="body2">
                   {element.title}: {isOpen ? 'Открыт' : 'Закрыт'} | Кликов вне: {clickCount}
@@ -255,13 +290,6 @@ const MultipleElementsDemo = () => {
     </Card>
   );
 };
-
-/** Полоска статуса: те же токены, что и в обзоре хуков, без циклического импорта сторис. */
-const hooksOverviewDemoStatusStrip = {
-  padding: '8px',
-  backgroundColor: lightTheme.colors.backgroundTertiary,
-  borderRadius: '4px',
-} as const;
 
 // Компонент для отдельного отслеживаемого элемента
 const ClickOutsideElement = ({
@@ -278,9 +306,10 @@ const ClickOutsideElement = ({
   onClose: () => void;
 }) => {
   const ref = useClickOutside(onClose);
+  const motionTransitions = useStorybookMotionTransitions();
 
   return (
-    <div
+    <motion.div
       ref={ref}
       style={{
         padding: '20px',
@@ -288,6 +317,11 @@ const ClickOutsideElement = ({
         border: `2px solid ${borderAccent}`,
         borderRadius: '8px',
       }}
+      variants={storybookFadeSlideVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      transition={motionTransitions.panel}
     >
       <Typography variant="h4" marginBottom="sm">
         {title}
@@ -298,7 +332,7 @@ const ClickOutsideElement = ({
       <Typography variant="body2" style={{ color: lightTheme.colors.textSecondary }}>
         Этот элемент отслеживается с помощью useClickOutside
       </Typography>
-    </div>
+    </motion.div>
   );
 };
 
@@ -306,6 +340,7 @@ const ClickOutsideElement = ({
 const ModalIntegrationDemo = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalClickCount, setModalClickCount] = useState(0);
+  const motionTransitions = useStorybookMotionTransitions();
 
   const modalRef = useClickOutside(() => {
     setIsModalOpen(false);
@@ -322,23 +357,42 @@ const ModalIntegrationDemo = () => {
         <Button onClick={() => setIsModalOpen(true)}>Открыть модальное окно</Button>
       </div>
 
-      {isModalOpen && (
-        <div style={storybookDemoStyles.modalStoryBackdrop}>
-          <div ref={modalRef} style={storybookDemoStyles.modalStoryPanel}>
-            <Typography variant="h4" marginBottom="md">
-              Модальное окно
-            </Typography>
-            <Typography variant="body1" marginBottom="lg">
-              Это модальное окно закрывается при клике вне его области.
-            </Typography>
-            <div style={storybookDemoStyles.rowFlexGap12JustifyFlexEnd}>
-              <Button variant="outlined" onClick={() => setIsModalOpen(false)}>
-                Закрыть
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {isModalOpen && (
+          <motion.div
+            key="modal-demo-backdrop"
+            style={storybookDemoStyles.modalStoryBackdrop}
+            variants={storybookBackdropFadeVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            transition={motionTransitions.backdrop}
+          >
+            <motion.div
+              key="modal-demo-panel"
+              ref={modalRef}
+              style={storybookDemoStyles.modalStoryPanel}
+              variants={storybookModalPopVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              transition={motionTransitions.panel}
+            >
+              <Typography variant="h4" marginBottom="md">
+                Модальное окно
+              </Typography>
+              <Typography variant="body1" marginBottom="lg">
+                Это модальное окно закрывается при клике вне его области.
+              </Typography>
+              <div style={storybookDemoStyles.rowFlexGap12JustifyFlexEnd}>
+                <Button variant="outlined" onClick={() => setIsModalOpen(false)}>
+                  Закрыть
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
@@ -358,6 +412,7 @@ const DropdownDemo = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string>('');
   const [clickCount, setClickCount] = useState(0);
+  const motionTransitions = useStorybookMotionTransitions();
 
   const dropdownRef = useClickOutside(() => {
     setIsDropdownOpen(false);
@@ -378,22 +433,33 @@ const DropdownDemo = () => {
             {selectedOption || 'Выберите опцию'} ▼
           </Button>
 
-          {isDropdownOpen && (
-            <div ref={dropdownRef} style={storybookDemoStyles.dropdownStoryMenuPanel}>
-              {options.map((option, index) => (
-                <ClickOutsideDropdownOptionButton
-                  key={option}
-                  $withBottomDivider={index < options.length - 1}
-                  onClick={() => {
-                    setSelectedOption(option);
-                    setIsDropdownOpen(false);
-                  }}
-                >
-                  <Typography variant="body2">{option}</Typography>
-                </ClickOutsideDropdownOptionButton>
-              ))}
-            </div>
-          )}
+          <AnimatePresence>
+            {isDropdownOpen && (
+              <motion.div
+                key="dropdown-panel"
+                ref={dropdownRef}
+                style={storybookDemoStyles.dropdownStoryMenuPanel}
+                variants={storybookDropdownRevealVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                transition={motionTransitions.panel}
+              >
+                {options.map((option, index) => (
+                  <ClickOutsideDropdownOptionButton
+                    key={option}
+                    $withBottomDivider={index < options.length - 1}
+                    onClick={() => {
+                      setSelectedOption(option);
+                      setIsDropdownOpen(false);
+                    }}
+                  >
+                    <Typography variant="body2">{option}</Typography>
+                  </ClickOutsideDropdownOptionButton>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
@@ -435,12 +501,12 @@ export const DropdownExample: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <div style={storybookDemoStyles.columnFlexGap24}>
+    <StorybookStaggerStack>
       <BasicClickOutsideDemo />
       <DisabledClickOutsideDemo />
       <MultipleElementsDemo />
       <ModalIntegrationDemo />
       <DropdownDemo />
-    </div>
+    </StorybookStaggerStack>
   ),
 };

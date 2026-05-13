@@ -7,6 +7,7 @@ import { ToastProvider } from '../components/ui/Toast';
 import { useToast } from './useToast';
 import { ToastAppearance, type ToastType } from '@/types/ui';
 import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
+import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
 
 const withToast: Decorator = Story => (
   <ToastProvider>
@@ -535,13 +536,13 @@ export const LimitedStack: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <div style={storybookDemoStyles.columnFlexGap24}>
+    <StorybookStaggerStack>
       <BasicToastDemo />
       <ToastTypesDemo />
       <AutoHideDemo />
       <BulkOperationsDemo />
       <AdvancedControlsDemo />
-    </div>
+    </StorybookStaggerStack>
   ),
 };
 

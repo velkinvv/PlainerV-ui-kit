@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 
+export { useIsDesktop } from './useWindowSize';
+
 export function useMediaQuery(query: string): boolean {
   const [matches, setMatches] = useState<boolean>(false);
 
@@ -29,7 +31,6 @@ export function useMediaQuery(query: string): boolean {
 // Предопределенные медиа-запросы
 export const useIsMobile = () => useMediaQuery('(max-width: 768px)');
 export const useIsTablet = () => useMediaQuery('(min-width: 769px) and (max-width: 1024px)');
-export const useIsDesktop = () => useMediaQuery('(min-width: 1025px)');
 export const useIsLargeScreen = () => useMediaQuery('(min-width: 1440px)');
 
 // Хук для определения ориентации

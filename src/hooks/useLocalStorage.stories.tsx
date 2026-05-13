@@ -5,13 +5,13 @@ import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
 import { Input } from '../components/ui/inputs/Input';
+import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
 import { useLocalStorage } from './useLocalStorage';
 import {
   ActionsRow,
   ActionsRowCenter,
   ActionsRowTop,
   ActionsRowWrap,
-  AllExamplesContainer,
   CounterValue,
   EmptyItemsText,
   ItemRow,
@@ -452,12 +452,12 @@ export const ArrayStorage: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <AllExamplesContainer>
+    <StorybookStaggerStack>
       <BasicLocalStorageDemo />
       <ObjectLocalStorageDemo />
       <SyncDemo />
       <ArrayLocalStorageDemo />
-    </AllExamplesContainer>
+    </StorybookStaggerStack>
   ),
 };
 

@@ -2,6 +2,11 @@ import styled, { css } from 'styled-components';
 import type { HintVariant, HintCssMixin, HintAnimationPreset } from '../../../types/ui';
 import { HintPosition, HintAnimationPreset as AnimationPreset } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
+import {
+  buildHoverPressMotionCss,
+  buildSurfaceTransitionCss,
+  uiMotionSurfaceEasing,
+} from '../../../handlers/uiMotionStyleHandlers';
 import { ZIndexHandler } from '../../../handlers/uiHandlers';
 
 /**
@@ -20,6 +25,13 @@ export const AnchorWrapper = styled.div<{
 export const HintTrigger = styled.div`
   display: inline-block;
   cursor: help;
+  transition: transform 0.12s ease;
+  ${buildHoverPressMotionCss({
+    hoverSelector: '&:hover',
+    activeSelector: '&:active',
+    hoverTransform: 'none',
+    activeTransform: 'scale(0.98)',
+  })}
 `;
 
 /**
@@ -53,6 +65,7 @@ export const HintContent = styled.div<{
   display: ${({ theme }) => theme.hints.settings.display};
   align-items: ${({ theme }) => theme.hints.settings.alignItems};
   justify-content: ${({ theme }) => theme.hints.settings.justifyContent};
+  will-change: transform, opacity;
 
   /* Мобильный режим */
   ${({ $mobile }) =>
@@ -169,29 +182,33 @@ export const HintContent = styled.div<{
     switch ($animationPreset) {
       case AnimationPreset.FADE:
         return css`
-          transition: opacity ${durationMs} ${theme.hints.animations.easing},
-            visibility ${durationMs} ${theme.hints.animations.easing},
-            transform ${durationMs} ${theme.hints.animations.easing};
+          ${buildSurfaceTransitionCss(
+            `opacity ${durationMs} ${uiMotionSurfaceEasing},
+             visibility ${durationMs} ${uiMotionSurfaceEasing},
+             transform ${durationMs} ${uiMotionSurfaceEasing}`,
+          )}
         `;
       case AnimationPreset.SLIDE:
         return css`
-          transition: opacity ${durationMs} ${theme.hints.animations.easing},
-            visibility ${durationMs} ${theme.hints.animations.easing},
-            transform ${durationMs} cubic-bezier(0.4, 0, 0.2, 1);
+          ${buildSurfaceTransitionCss(
+            `opacity ${durationMs} ${theme.hints.animations.easing},
+             visibility ${durationMs} ${theme.hints.animations.easing},
+             transform ${durationMs} cubic-bezier(0.4, 0, 0.2, 1)`,
+          )}
         `;
       case AnimationPreset.SCALE:
         return css`
-          transition: opacity ${durationMs} ${theme.hints.animations.easing},
-            visibility ${durationMs} ${theme.hints.animations.easing},
-            transform ${durationMs} cubic-bezier(0.34, 1.56, 0.64, 1);
+          ${buildSurfaceTransitionCss(
+            `opacity ${durationMs} ${theme.hints.animations.easing},
+             visibility ${durationMs} ${theme.hints.animations.easing},
+             transform ${durationMs} cubic-bezier(0.34, 1.56, 0.64, 1)`,
+          )}
         `;
       case AnimationPreset.NONE:
-        return css`
-          transition: none;
-        `;
+        return buildSurfaceTransitionCss('none');
       default:
         return css`
-          transition: ${theme.hints.animations.transition};
+          ${buildSurfaceTransitionCss(theme.hints.animations.transition)}
         `;
     }
   }}
@@ -381,8 +398,17 @@ export const HintCloseButton = styled.button`
   cursor: pointer;
   color: inherit;
   opacity: 0.7;
-  transition: opacity 0.2s ease-in-out, background-color 0.2s ease-in-out;
+  transition:
+    opacity 0.2s ease-in-out,
+    background-color 0.2s ease-in-out,
+    transform 0.12s ease;
   border-radius: 4px;
+  ${buildHoverPressMotionCss({
+    hoverSelector: '&:hover',
+    activeSelector: '&:active',
+    hoverTransform: 'translateY(-1px)',
+    activeTransform: 'scale(0.96)',
+  })}
 
   &:hover {
     opacity: 1;

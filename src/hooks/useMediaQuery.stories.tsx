@@ -16,6 +16,7 @@ import {
   useSupportsTouch,
 } from './useMediaQuery';
 import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
+import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
 import { lightTheme } from '@/themes/themes';
 
 const meta: Meta = {
@@ -36,7 +37,7 @@ const meta: Meta = {
 ### Предопределенные хуки
 - **useIsMobile** - мобильные устройства (max-width: 768px)
 - **useIsTablet** - планшеты (769px - 1024px)
-- **useIsDesktop** - десктопы (min-width: 1025px)
+- **useIsDesktop** - десктопы по \`innerWidth\` (хук ресайза из \`useWindowSize\`, порог 1025px; см. also \`UI Kit/Hooks/useWindowSize\`)
 - **useIsLargeScreen** - большие экраны (min-width: 1440px)
 - **useIsPortrait** - портретная ориентация
 - **useIsLandscape** - альбомная ориентация
@@ -548,14 +549,14 @@ export const CustomMediaQueries: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <div style={storybookDemoStyles.columnFlexGap24}>
+    <StorybookStaggerStack>
       <BasicMediaQueryDemo />
       <PredefinedHooksDemo />
       <OrientationDemo />
       <DeviceSupportDemo />
       <ResponsiveContentDemo />
       <CustomMediaQueryDemo />
-    </div>
+    </StorybookStaggerStack>
   ),
 };
 

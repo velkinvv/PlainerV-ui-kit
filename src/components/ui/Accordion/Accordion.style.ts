@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components';
 import { motion } from 'framer-motion';
 import { Size } from '../../../types/sizes';
+import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
 
 /**
  * Контейнер аккордеона
@@ -31,12 +32,19 @@ export const AccordionTrigger = styled.button<{ $size?: Size }>`
   color: ${({ theme }) => theme.accordions.variants.default.color};
   line-height: ${({ theme, $size = Size.MD }) => theme.accordions.sizes[$size].lineHeight};
   transition: ${({ theme }) => theme.accordions.animations.transition};
+  will-change: transform, background-color, color;
   user-select: ${({ theme }) => theme.accordions.settings.userSelect};
 
   &:hover {
     background: ${({ theme }) => theme.accordions.variants.hover.background};
     color: ${({ theme }) => theme.accordions.variants.hover.color};
   }
+  ${buildHoverPressMotionCss({
+    hoverSelector: '&:hover',
+    activeSelector: '&:active',
+    hoverTransform: 'translateY(-1px)',
+    activeTransform: 'scale(0.98)',
+  })}
 
   &:focus {
     outline: none;
@@ -52,6 +60,7 @@ export const AccordionTrigger = styled.button<{ $size?: Size }>`
   &[data-state='open'] .chevron {
     transform: rotate(-90deg); /* Поворот на -90 градусов для стрелки вниз */
   }
+
 `;
 
 /**
@@ -62,6 +71,7 @@ export const AccordionContent = styled(motion.div)`
   overflow: ${({ theme }) => theme.accordions.settings.overflow};
   position: relative;
   z-index: ${({ theme }) => theme.accordions.settings.zIndex};
+  will-change: height, opacity;
 `;
 
 /**

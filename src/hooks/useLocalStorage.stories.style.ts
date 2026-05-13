@@ -70,9 +70,3 @@ export const RemoveItemButton = styled(Button)`
   padding: 4px 8px;
   min-width: auto;
 `;
-
-export const AllExamplesContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-`;

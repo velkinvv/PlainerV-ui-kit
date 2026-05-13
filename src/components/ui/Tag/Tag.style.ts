@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components';
 import { TransitionHandler } from '../../../handlers/uiHandlers';
+import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
 import type { Colors } from '../../../types/theme';
 import type { TagAppearance, TagColorVariant, TagCustomColors, TagStatusDisplay } from '../../../types/ui';
 import { ThemeMode } from '../../../types/theme';
@@ -290,11 +291,18 @@ export const TagRoot = styled.span.withConfig({
       &:active {
         filter: brightness(0.93);
       }
+      ${buildHoverPressMotionCss({
+        hoverSelector: '&:hover',
+        activeSelector: '&:active',
+        hoverTransform: 'translateY(-1px)',
+        activeTransform: 'scale(0.98)',
+      })}
 
       &:focus-visible {
         outline: 2px solid ${theme.colors.primary};
         outline-offset: 2px;
       }
+
     `}
 
   ${({ $clickable, $disabled, theme, $customSurface }) =>
@@ -303,10 +311,20 @@ export const TagRoot = styled.span.withConfig({
     $customSurface?.background != null &&
     `${$customSurface.background}`.length > 0 &&
     css`
+      &:hover {
+      }
+      ${buildHoverPressMotionCss({
+        hoverSelector: '&:hover',
+        activeSelector: '&:active',
+        hoverTransform: 'translateY(-1px)',
+        activeTransform: 'scale(0.98)',
+      })}
+
       &:focus-visible {
         outline: 2px solid ${theme.colors.primary};
         outline-offset: 2px;
       }
+
     `}
 `;
 

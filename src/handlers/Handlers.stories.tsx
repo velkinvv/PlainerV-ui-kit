@@ -1,5 +1,12 @@
 ﻿import type { Meta, StoryObj } from '@storybook/react';
+import { motion } from 'framer-motion';
 import React from 'react';
+import {
+  storybookStaggerContainerVariants,
+  storybookStaggerItemVariants,
+  useStorybookMotionTransitions,
+} from '@/handlers/storybookMotion';
+import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
 import { Badge } from '../components/ui/Badge';
@@ -21,7 +28,6 @@ import {
   IntegrationStepCard,
   IntegrationStepHeader,
   StepBadge,
-  AllExamplesWrapper,
 } from './Handlers.stories.style';
 
 const meta: Meta = {
@@ -66,6 +72,8 @@ type Story = StoryObj<typeof meta>;
 
 // Компонент для обзора хендлеров
 const HandlersOverview = () => {
+  const motionTransitions = useStorybookMotionTransitions();
+
   const handlers = [
     {
       name: 'Date Handlers',
@@ -138,13 +146,14 @@ const HandlersOverview = () => {
         </Typography>
       </SectionDescription>
 
-      <HandlersGrid>
-        {handlers.map((handler, index) => (
-          <HandlerCard
-            key={index}
-            $backgroundColor={handler.color}
-            $borderColor={handler.borderColor}
-          >
+      <HandlersGrid
+        variants={storybookStaggerContainerVariants(motionTransitions.stagger)}
+        initial="hidden"
+        animate="visible"
+      >
+        {handlers.map(handler => (
+          <motion.div key={handler.name} variants={storybookStaggerItemVariants}>
+            <HandlerCard $backgroundColor={handler.color} $borderColor={handler.borderColor}>
             <HandlerCardHeader>
               <Typography variant="h4" marginRight="sm">
                 {handler.icon}
@@ -170,6 +179,7 @@ const HandlersOverview = () => {
               ))}
             </HandlerFeaturesList>
           </HandlerCard>
+          </motion.div>
         ))}
       </HandlersGrid>
 
@@ -201,6 +211,8 @@ const HandlersOverview = () => {
 
 // Компонент для демонстрации использования
 const HandlersUsageExamples = () => {
+  const motionTransitions = useStorybookMotionTransitions();
+
   const examples = [
     {
       title: 'Date Handlers',
@@ -267,22 +279,28 @@ const MyComponent = () => {
         </Typography>
       </SectionDescription>
 
-      <ExamplesList>
-        {examples.map((example, index) => (
-          <ExampleCard key={index}>
-            <ExampleHeader>
-              <Typography variant="h5" marginBottom="xs">
-                {example.title}
-              </Typography>
-              <MutedDescriptionText>
-                <Typography variant="body2">{example.description}</Typography>
-              </MutedDescriptionText>
-            </ExampleHeader>
+      <ExamplesList
+        variants={storybookStaggerContainerVariants(motionTransitions.stagger)}
+        initial="hidden"
+        animate="visible"
+      >
+        {examples.map(example => (
+          <motion.div key={example.title} variants={storybookStaggerItemVariants}>
+            <ExampleCard>
+              <ExampleHeader>
+                <Typography variant="h5" marginBottom="xs">
+                  {example.title}
+                </Typography>
+                <MutedDescriptionText>
+                  <Typography variant="body2">{example.description}</Typography>
+                </MutedDescriptionText>
+              </ExampleHeader>
 
-            <CodeBlock>
-              <CodePre>{example.code}</CodePre>
-            </CodeBlock>
-          </ExampleCard>
+              <CodeBlock>
+                <CodePre>{example.code}</CodePre>
+              </CodeBlock>
+            </ExampleCard>
+          </motion.div>
         ))}
       </ExamplesList>
     </Card>
@@ -291,6 +309,8 @@ const MyComponent = () => {
 
 // Компонент для демонстрации интеграции
 const HandlersIntegrationGuide = () => {
+  const motionTransitions = useStorybookMotionTransitions();
+
   const integrationSteps = [
     {
       step: 1,
@@ -362,29 +382,35 @@ const handleDateParse = (input: string): DateParseResult => {
         </Typography>
       </SectionDescription>
 
-      <IntegrationStepsList>
-        {integrationSteps.map((step, index) => (
-          <IntegrationStepCard key={index}>
-            <IntegrationStepHeader>
-              <Badge
-                variant="primary"
-                as={StepBadge}
-              >
-                {step.step}
-              </Badge>
-              <Typography variant="h5">{step.title}</Typography>
-            </IntegrationStepHeader>
+      <IntegrationStepsList
+        variants={storybookStaggerContainerVariants(motionTransitions.stagger)}
+        initial="hidden"
+        animate="visible"
+      >
+        {integrationSteps.map(step => (
+          <motion.div key={step.title} variants={storybookStaggerItemVariants}>
+            <IntegrationStepCard>
+              <IntegrationStepHeader>
+                <Badge
+                  variant="primary"
+                  as={StepBadge}
+                >
+                  {step.step}
+                </Badge>
+                <Typography variant="h5">{step.title}</Typography>
+              </IntegrationStepHeader>
 
-            <MutedDescriptionText>
-              <Typography variant="body1" marginBottom="md">
-                {step.description}
-              </Typography>
-            </MutedDescriptionText>
+              <MutedDescriptionText>
+                <Typography variant="body1" marginBottom="md">
+                  {step.description}
+                </Typography>
+              </MutedDescriptionText>
 
-            <CodeBlock>
-              <CodePre>{step.code}</CodePre>
-            </CodeBlock>
-          </IntegrationStepCard>
+              <CodeBlock>
+                <CodePre>{step.code}</CodePre>
+              </CodeBlock>
+            </IntegrationStepCard>
+          </motion.div>
         ))}
       </IntegrationStepsList>
     </Card>
@@ -405,11 +431,11 @@ export const IntegrationGuide: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <AllExamplesWrapper>
+    <StorybookStaggerStack>
       <HandlersOverview />
       <HandlersUsageExamples />
       <HandlersIntegrationGuide />
-    </AllExamplesWrapper>
+    </StorybookStaggerStack>
   ),
 };
 

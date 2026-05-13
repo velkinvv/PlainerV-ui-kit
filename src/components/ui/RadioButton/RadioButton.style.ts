@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { buildReducedMotionTransformCss } from '../../../handlers/uiMotionStyleHandlers';
 import type { RadioButtonProps } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 
@@ -155,6 +156,7 @@ export const RadioCircle = styled.div<RadioButtonProps>`
     return theme.radioButton.colors.filled.unchecked;
   }};
   transition: ${({ theme }) => theme.radioButton.animations.transition};
+  will-change: transform, border-color, background-color;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -168,6 +170,13 @@ export const RadioCircle = styled.div<RadioButtonProps>`
       }
       return theme.radioButton.colors.hover.borderUnchecked;
     }};
+
+    transform: ${({ disabled, readOnly }) => (disabled || readOnly ? 'none' : 'translateY(-1px)')};
+  }
+
+  &:active {
+    transform: ${({ disabled, readOnly }) => (disabled || readOnly ? 'none' : 'scale(0.97)')};
+    ${buildReducedMotionTransformCss()}
   }
 
   &:focus-within {
@@ -203,6 +212,7 @@ export const RadioDot = styled.div<RadioButtonProps>`
     return 'transparent';
   }};
   transition: ${({ theme }) => theme.radioButton.animations.dotScale};
+  will-change: transform, background-color;
   transform: ${({ checked, variant }) => {
     // Показываем точку только для outline варианта
     if (variant === 'outline' && checked) {

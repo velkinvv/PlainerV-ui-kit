@@ -4,9 +4,9 @@ import { Size } from '../types/sizes';
 import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
+import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
 import { useKeyPress, useKeyPressSimple } from './useKeyPress';
 import {
-  AllExamplesContainer,
   ButtonRow,
   ButtonRowWrap,
   ControlsRowWrap,
@@ -480,14 +480,14 @@ export const PreventDefault: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <AllExamplesContainer>
+    <StorybookStaggerStack>
       <BasicKeyPressDemo />
       <ModifierKeysDemo />
       <MultipleKeysDemo />
       <EnabledDisabledDemo />
       <SimpleKeyPressDemo />
       <PreventDefaultDemo />
-    </AllExamplesContainer>
+    </StorybookStaggerStack>
   ),
 };
 

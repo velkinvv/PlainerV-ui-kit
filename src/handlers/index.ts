@@ -1,3 +1,5 @@
+export * from './uiMotion';
+export * from './uiMotionStyleHandlers';
 export * from './iconHandlers';
 export * from './tableSelectionHandlers';
 export * from './linkHandlers';

@@ -1,10 +1,18 @@
 ﻿import type { Meta, StoryObj } from '@storybook/react';
+import { motion } from 'framer-motion';
 import React from 'react';
 import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
+import {
+  storybookFadeSlideVariants,
+  storybookStaggerContainerVariants,
+  storybookStaggerItemVariants,
+  useStorybookMotionTransitions,
+} from '@/handlers/storybookMotion';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
 import { Tag } from '../components/ui/Tag';
 import { Button } from '../components/ui/buttons/Button';
+import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
 import {
   HOOK_OVERVIEW_CARD_BORDER_ACCENTS,
   hookOverviewCardStyle,
@@ -38,7 +46,7 @@ const meta: Meta = {
 - **useKeyPress** - обработка нажатий клавиш
 - **useMediaQuery** - отслеживание медиа-запросов
 - **useScrollPosition** - отслеживание позиции скролла
-- **useWindowSize** - отслеживание размера окна
+- **useWindowSize** - отслеживание размера окна (**useIsDesktop** по ширине innerWidth)
 
 ## Особенности:
 
@@ -58,6 +66,8 @@ type Story = StoryObj<typeof meta>;
 
 // Компонент для обзора хуков
 const HooksOverview = () => {
+  const motionTransitions = useStorybookMotionTransitions();
+
   const hooks = [
     {
       category: 'State Management',
@@ -129,7 +139,7 @@ const HooksOverview = () => {
         {
           name: 'useWindowSize',
           description: 'Отслеживание размера окна',
-          features: ['Размер окна', 'Размер экрана', 'Доступный размер'],
+          features: ['Размер окна', 'Размер экрана', 'Доступный размер', 'useIsDesktop по innerWidth'],
           icon: '🖥️',
         },
       ],
@@ -160,7 +170,12 @@ const HooksOverview = () => {
               {category.category}
             </Typography>
 
-            <div style={hooksOverviewStoriesStyles.overviewCardGrid}>
+            <motion.div
+              style={hooksOverviewStoriesStyles.overviewCardGrid}
+              variants={storybookStaggerContainerVariants(motionTransitions.stagger)}
+              initial="hidden"
+              animate="visible"
+            >
               {category.hooks.map((hook, hookIndex) => {
                 const accentBorder =
                   HOOK_OVERVIEW_CARD_BORDER_ACCENTS[
@@ -168,7 +183,12 @@ const HooksOverview = () => {
                   ];
 
                 return (
-                  <div key={hook.name} style={hookOverviewCardStyle(accentBorder)}>
+                  <motion.div
+                    key={hook.name}
+                    style={hookOverviewCardStyle(accentBorder)}
+                    variants={storybookStaggerItemVariants}
+                    transition={motionTransitions.springSoft}
+                  >
                     <div style={hooksOverviewStoriesStyles.flexAlignCenterMarginBottom12}>
                       <Typography variant="h4" style={{ marginRight: '12px' }}>
                         {hook.icon}
@@ -191,15 +211,21 @@ const HooksOverview = () => {
                         </li>
                       ))}
                     </ul>
-                  </div>
+                  </motion.div>
                 );
               })}
-            </div>
+            </motion.div>
           </div>
         );
       })}
 
-      <div style={hooksOverviewStoriesStyles.principlesPanel}>
+      <motion.div
+        style={hooksOverviewStoriesStyles.principlesPanel}
+        variants={storybookFadeSlideVariants}
+        initial="hidden"
+        animate="visible"
+        transition={motionTransitions.panel}
+      >
         <Typography variant="body1" marginBottom="sm">
           <strong>Общие принципы:</strong>
         </Typography>
@@ -220,13 +246,15 @@ const HooksOverview = () => {
             <Typography variant="body2">SSR совместимость</Typography>
           </li>
         </ul>
-      </div>
+      </motion.div>
     </Card>
   );
 };
 
 // Компонент для демонстрации использования
 const HooksUsageExamples = () => {
+  const motionTransitions = useStorybookMotionTransitions();
+
   const examples = [
     {
       title: 'State Management',
@@ -438,15 +466,16 @@ const ScrollComponent = () => {
         },
         {
           name: 'useWindowSize',
-          code: `import { useWindowSize } from '@/hooks';
+          code: `import { useWindowSize, useIsDesktop } from '@/hooks';
 
 const SizeComponent = () => {
   const { width, height } = useWindowSize();
+  const isDesktop = useIsDesktop();
 
   return (
     <div>
       <div>Размер окна: {width} × {height}</div>
-      <div>Тип устройства: {width <= 768 ? 'Мобильное' : 'Десктоп'}</div>
+      <div>Десктоп (innerWidth ≥ 1025): {isDesktop ? 'да' : 'нет'}</div>
     </div>
   );
 };`,
@@ -474,9 +503,19 @@ const SizeComponent = () => {
             {category.title}
           </Typography>
 
-          <div style={hooksOverviewStoriesStyles.columnFlexGap20}>
-            {category.hooks.map((hook, hookIndex) => (
-              <div key={hook.name} style={hooksOverviewStoriesStyles.hookExampleCard}>
+          <motion.div
+            style={hooksOverviewStoriesStyles.columnFlexGap20}
+            variants={storybookStaggerContainerVariants(motionTransitions.stagger)}
+            initial="hidden"
+            animate="visible"
+          >
+            {category.hooks.map(hook => (
+              <motion.div
+                key={hook.name}
+                style={hooksOverviewStoriesStyles.hookExampleCard}
+                variants={storybookStaggerItemVariants}
+                transition={motionTransitions.springSoft}
+              >
                 <div style={hooksOverviewStoriesStyles.flexAlignCenterMarginBottom12}>
                   <Typography variant="h5" marginRight="sm">
                     {hook.name}
@@ -487,9 +526,9 @@ const SizeComponent = () => {
                 <div style={hooksOverviewStoriesStyles.codeBlockContainer}>
                   <pre style={hooksOverviewStoriesStyles.codeBlockPre}>{hook.code}</pre>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       ))}
     </Card>
@@ -498,6 +537,8 @@ const SizeComponent = () => {
 
 // Компонент для демонстрации лучших практик
 const HooksBestPractices = () => {
+  const motionTransitions = useStorybookMotionTransitions();
+
   const practices = [
     {
       title: 'Импорт хуков',
@@ -604,9 +645,19 @@ const MyComponent = () => {
         </Typography>
       </div>
 
-      <div style={hooksOverviewStoriesStyles.columnFlexGap24}>
+      <motion.div
+        style={hooksOverviewStoriesStyles.columnFlexGap24}
+        variants={storybookStaggerContainerVariants(motionTransitions.stagger)}
+        initial="hidden"
+        animate="visible"
+      >
         {practices.map((practice, index) => (
-          <div key={practice.title} style={hooksOverviewStoriesStyles.hookExampleCard}>
+          <motion.div
+            key={practice.title}
+            style={hooksOverviewStoriesStyles.hookExampleCard}
+            variants={storybookStaggerItemVariants}
+            transition={motionTransitions.springSoft}
+          >
             <div style={hooksOverviewStoriesStyles.flexAlignCenterMarginBottom12}>
               <Tag
                 colorVariant="primary"
@@ -636,9 +687,9 @@ const MyComponent = () => {
                 </li>
               ))}
             </ul>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </Card>
   );
 };
@@ -657,11 +708,11 @@ export const BestPractices: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <div style={hooksOverviewStoriesStyles.columnFlexGap24}>
+    <StorybookStaggerStack>
       <HooksOverview />
       <HooksUsageExamples />
       <HooksBestPractices />
-    </div>
+    </StorybookStaggerStack>
   ),
 };
 

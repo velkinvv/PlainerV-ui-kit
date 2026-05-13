@@ -1,5 +1,9 @@
 import styled, { css } from 'styled-components';
 import { TransitionHandler } from '../../../handlers/uiHandlers';
+import {
+  buildHoverPressMotionCss,
+  buildReducedMotionTransformCss,
+} from '../../../handlers/uiMotionStyleHandlers';
 import { Size } from '../../../types/sizes';
 import { ThemeMode } from '../../../types/theme';
 import { success } from '../../../variables/colors/success';
@@ -109,6 +113,7 @@ export const CheckboxBox = styled.div<{
   }};
 
   transition: ${TransitionHandler()};
+  will-change: transform, background-color, border-color;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -122,6 +127,15 @@ export const CheckboxBox = styled.div<{
         background: ${checked || indeterminate ? success[500] : theme.mode === ThemeMode.DARK ? neutral[800] : neutral[10]};
       `}
   }
+
+  &:active {
+  }
+  ${buildHoverPressMotionCss({
+    hoverSelector: '&:hover',
+    activeSelector: '&:active',
+    hoverTransform: 'none',
+    activeTransform: 'scale(0.96)',
+  })}
 
   /* Focus состояние согласно макету */
   &:focus-within,
@@ -144,11 +158,15 @@ export const CheckboxBox = styled.div<{
 export const CheckIcon = styled.div<{ checked: boolean; indeterminate?: boolean; size?: Size }>`
   opacity: ${({ checked, indeterminate }) => (checked || indeterminate ? 1 : 0)};
   transition: ${TransitionHandler()};
+  transform: ${({ checked, indeterminate }) => (checked || indeterminate ? 'scale(1)' : 'scale(0.75)')};
+  will-change: transform, opacity;
   color: ${neutral[10]}; /* Белый цвет для иконки */
   display: flex;
   align-items: center;
   justify-content: center;
   line-height: 1;
+
+  ${buildReducedMotionTransformCss('scale(1)')}
 
   /* Размер иконки пропорционально размеру чекбокса */
   ${({ size = Size.MD }) => {

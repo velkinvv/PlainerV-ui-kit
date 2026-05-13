@@ -5,6 +5,11 @@ export interface WindowSize {
   height: number;
 }
 
+/**
+ * Нижняя граница ширины окна для «десктопа» (согласовано с `useIsMobile` / `useIsTablet`: 768 / 1024).
+ */
+export const DESKTOP_MIN_INNER_WIDTH_PX = 1025;
+
 export function useWindowSize(): WindowSize {
   const [windowSize, setWindowSize] = useState<WindowSize>({
     width: typeof window !== 'undefined' ? window.innerWidth : 0,
@@ -88,4 +93,15 @@ export function useAvailableSize(): WindowSize {
   }, []);
 
   return availableSize;
+}
+
+/**
+ * Десктопная раскладка по ширине окна браузера (`innerWidth`), обновляется на `resize`.
+ * Композиция над {@link useWindowSize}; порог по умолчанию совпадает с пресетами `useMediaQuery`.
+ *
+ * @param minInnerWidthPx - минимальная ширина окна в пикселях для `true` (по умолчанию {@link DESKTOP_MIN_INNER_WIDTH_PX})
+ */
+export function useIsDesktop(minInnerWidthPx: number = DESKTOP_MIN_INNER_WIDTH_PX): boolean {
+  const { width } = useWindowSize();
+  return width >= minInnerWidthPx;
 }

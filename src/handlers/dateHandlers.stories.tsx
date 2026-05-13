@@ -19,6 +19,7 @@ import {
 } from './dateHandlers';
 import { inputFieldStoriesStyles } from '@/handlers/inputFieldStories.styles';
 import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
+import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
 
 const meta: Meta = {
   title: 'UI Kit/Utils/Handlers/Date Handlers',
@@ -247,12 +248,12 @@ export const Calendar: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <div style={storybookDemoStyles.columnFlexGap24}>
+    <StorybookStaggerStack>
       <DateParserDemo />
       <DateFormatterDemo />
       <DateRangeDemo />
       <CalendarDemo />
-    </div>
+    </StorybookStaggerStack>
   ),
 };
 

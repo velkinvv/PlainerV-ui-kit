@@ -4,8 +4,15 @@ import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
 import { Tag } from '../components/ui/Tag';
-import { useWindowSize, useScreenSize, useAvailableSize } from './useWindowSize';
+import {
+  useWindowSize,
+  useScreenSize,
+  useAvailableSize,
+  useIsDesktop,
+  DESKTOP_MIN_INNER_WIDTH_PX,
+} from './useWindowSize';
 import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
+import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
 import { lightTheme } from '@/themes/themes';
 
 const meta: Meta = {
@@ -29,6 +36,9 @@ const meta: Meta = {
 ### useAvailableSize
 Отслеживает доступный размер экрана без панелей браузера (screen.availWidth, screen.availHeight).
 
+### useIsDesktop
+\`true\`, если \`innerWidth >= 1025\` (порог как у mobile/tablet пресетов; можно передать свой минимум в пикселях). Основан на \`useWindowSize\` и событии \`resize\`.
+
 ## Возвращаемые значения:
 
 - **width** - ширина в пикселях
@@ -45,6 +55,10 @@ const { width, height } = useScreenSize();
 
 // Доступный размер экрана
 const { width, height } = useAvailableSize();
+
+// Десктоп по ширине окна (>= 1025px или свой порог)
+const isDesktop = useIsDesktop();
+const isDesktopWide = useIsDesktop(1280);
 \`\`\`
         `,
       },
@@ -70,6 +84,7 @@ const BasicWindowSizeDemo = () => {
   const windowSize = useWindowSize();
   const screenSize = useScreenSize();
   const availableSize = useAvailableSize();
+  const isDesktop = useIsDesktop();
 
   return (
     <Card padding="lg">
@@ -131,8 +146,12 @@ const BasicWindowSizeDemo = () => {
         <Typography variant="body2" marginBottom="xs">
           Экран устройства: {screenSize.width} × {screenSize.height}px
         </Typography>
-        <Typography variant="body2">
+        <Typography variant="body2" marginBottom="xs">
           Доступный размер: {availableSize.width} × {availableSize.height}px
+        </Typography>
+        <Typography variant="body2" marginBottom="xs">
+          <strong>useIsDesktop</strong> (порог {DESKTOP_MIN_INNER_WIDTH_PX}px):{' '}
+          {isDesktop ? 'да' : 'нет'}
         </Typography>
       </div>
     </Card>
@@ -543,13 +562,13 @@ export const RealTime: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <div style={storybookDemoStyles.columnFlexGap24}>
+    <StorybookStaggerStack>
       <BasicWindowSizeDemo />
       <ResponsiveDemo />
       <SizeComparisonDemo />
       <OrientationDemo />
       <RealTimeDemo />
-    </div>
+    </StorybookStaggerStack>
   ),
 };
 

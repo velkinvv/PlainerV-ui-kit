@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components';
 import type { DefaultTheme } from 'styled-components';
 import { TransitionHandler } from '../../../handlers/uiHandlers';
+import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
 import type { PillGeometry } from './handlers';
 import type { PillStatus } from '../../../types/ui';
 import { ThemeMode } from '../../../types/theme';
@@ -77,6 +78,12 @@ export const PillRoot = styled.button
             background: ${theme.colors.backgroundQuaternary};
           `}
   }
+  ${buildHoverPressMotionCss({
+    hoverSelector: '&:hover:not(:disabled)',
+    activeSelector: '&:active:not(:disabled)',
+    hoverTransform: 'none',
+    activeTransform: 'scale(0.98)',
+  })}
 
   ${({ $selected, theme, $status }) =>
     $selected &&

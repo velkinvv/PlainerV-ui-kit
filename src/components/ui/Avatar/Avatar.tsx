@@ -2,6 +2,7 @@ import React, { forwardRef } from 'react';
 import { clsx } from 'clsx';
 import { AvatarState, AvatarStatus, BadgeVariant, type AvatarProps } from '../../../types/ui';
 import { Size, IconSize } from '../../../types/sizes';
+import { useUiMotionPresets } from '../../../hooks/useUiMotion';
 import { Icon } from '../Icon';
 import { Tooltip } from '../Tooltip/Tooltip';
 import { Badge } from '../Badge/Badge';
@@ -106,6 +107,7 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
     },
     ref,
   ) => {
+    const uiMotion = useUiMotionPresets();
     const [imageError, setImageError] = React.useState(false);
 
     const handleImageError = () => {
@@ -231,8 +233,7 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
           className={clsx('ui-avatar')}
           onClick={handleClick}
           cursor={cursor}
-          whileHover={onClick ? { scale: 1.05 } : undefined}
-          whileTap={onClick ? { scale: 0.95 } : undefined}
+          {...uiMotion.avatar(Boolean(onClick))}
         >
           {renderContent()}
         </AvatarContainer>

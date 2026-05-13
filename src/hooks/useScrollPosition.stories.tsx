@@ -10,6 +10,7 @@ import {
   useScrollDirection,
 } from './useScrollPosition';
 import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
+import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
 import { lightTheme } from '@/themes/themes';
 
 const meta: Meta = {
@@ -494,13 +495,13 @@ export const WindowScroll: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <div style={storybookDemoStyles.columnFlexGap24}>
+    <StorybookStaggerStack>
       <BasicScrollPositionDemo />
       <ElementScrollDemo />
       <ThrottlingDemo />
       <EnabledDisabledDemo />
       <WindowScrollDemo />
-    </div>
+    </StorybookStaggerStack>
   ),
 };
 

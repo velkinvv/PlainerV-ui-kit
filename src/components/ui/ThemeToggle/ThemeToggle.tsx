@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useTheme } from '../../../themes/ThemeProvider';
 import { Icon } from '../Icon';
 import type { ThemeToggleProps } from '../../../types/ui';
@@ -42,9 +42,14 @@ const ToggleHandle = styled(motion.div)`
 export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className }) => {
   const { mode, toggle } = useTheme();
   const isDark = mode === ThemeMode.DARK;
+  const prefersReducedMotion = useReducedMotion();
 
   return (
-    <ToggleContainer onClick={toggle} className={className} whileTap={{ scale: 0.95 }}>
+    <ToggleContainer
+      onClick={toggle}
+      className={className}
+      {...(!prefersReducedMotion ? { whileTap: { scale: 0.95 } } : {})}
+    >
       <SunIcon>
         <Icon name="IconPlainerSun" size={IconSize.MD} />
       </SunIcon>
@@ -56,11 +61,15 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className }) => {
         animate={{
           x: isDark ? 24 : 0,
         }}
-        transition={{
-          type: 'spring',
-          stiffness: 500,
-          damping: 30,
-        }}
+        transition={
+          prefersReducedMotion
+            ? { duration: 0 }
+            : {
+                type: 'spring',
+                stiffness: 500,
+                damping: 30,
+              }
+        }
       />
     </ToggleContainer>
   );

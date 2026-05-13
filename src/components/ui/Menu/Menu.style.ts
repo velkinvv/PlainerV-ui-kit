@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components';
 import { ThemeMode, type ThemeType } from '@/types/theme';
+import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
 
 /** Внешняя «бумага» списка меню (тень и граница как у выпадающих панелей) */
 export const MenuSurface = styled.div`
@@ -64,7 +65,9 @@ const menuItemButtonStyles = (props: {
     cursor: pointer;
     transition:
       background 0.12s ease,
-      color 0.12s ease;
+      color 0.12s ease,
+      transform 0.12s ease;
+    will-change: transform, background-color;
 
     &:disabled {
       cursor: not-allowed;
@@ -75,6 +78,12 @@ const menuItemButtonStyles = (props: {
     &:not(:disabled):hover {
       background: ${hoverBg};
     }
+    ${buildHoverPressMotionCss({
+      hoverSelector: '&:not(:disabled):hover',
+      activeSelector: '&:not(:disabled):active',
+      hoverTransform: 'translateY(-1px)',
+      activeTransform: 'scale(0.98)',
+    })}
 
     ${$selected && !$destructive
       ? css`
@@ -92,6 +101,7 @@ const menuItemButtonStyles = (props: {
       outline: 2px solid ${theme.colors.primary};
       outline-offset: 0;
     }
+
   `;
 };
 

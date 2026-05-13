@@ -6,6 +6,10 @@ import {
   getDropdownItemStyles,
   getDropdownAnimations,
 } from '../../../handlers/dropdownThemeHandlers';
+import {
+  buildHoverPressMotionCss,
+  buildSurfaceTransitionCss,
+} from '../../../handlers/uiMotionStyleHandlers';
 import { colors } from '../../../variables/colors';
 import { primary } from '../../../variables/colors/primary';
 
@@ -35,6 +39,13 @@ export const DropdownContainer = styled.div.withConfig({
 export const DropdownTrigger = styled.div`
   cursor: pointer;
   display: inline-block;
+  transition: transform 0.12s ease;
+  ${buildHoverPressMotionCss({
+    hoverSelector: '&:hover',
+    activeSelector: '&:active',
+    hoverTransform: 'none',
+    activeTransform: 'scale(0.98)',
+  })}
 `;
 
 /**
@@ -88,14 +99,15 @@ export const DropdownContent = styled.div<{
 
   opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
   visibility: ${({ $isOpen }) => ($isOpen ? 'visible' : 'hidden')};
+  will-change: transform, opacity;
   transform: ${({ $isOpen, theme }) => {
     const animations = getDropdownAnimations(theme.dropdowns);
     return $isOpen ? animations.openAnimation.transform : animations.closeAnimation.transform;
   }};
-  transition: ${({ theme }) => {
+  ${({ theme }) => {
     const animations = getDropdownAnimations(theme.dropdowns);
-    return `${animations.openAnimation.duration} ${animations.openAnimation.easing}`;
-  }};
+    return buildSurfaceTransitionCss(`${animations.openAnimation.duration} ${animations.openAnimation.easing}`);
+  }}
 
   left: ${({ $position }) => $position.x}px;
   top: ${({ $position }) => $position.y}px;
@@ -251,10 +263,21 @@ export const DropdownMenuTreeExpandButton = styled.button`
     background: ${({ theme }) => (theme.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)')};
   }
 
+  &:active {
+    transform: scale(0.96);
+  }
+  ${buildHoverPressMotionCss({
+    hoverSelector: '&:hover',
+    activeSelector: '&:active',
+    hoverTransform: 'none',
+    activeTransform: 'scale(0.96)',
+  })}
+
   &:focus-visible {
     outline: 2px solid ${({ theme }) => theme.colors?.primary ?? '#2563eb'};
     outline-offset: 1px;
   }
+
 `;
 
 /**

@@ -2,6 +2,7 @@ import React, { forwardRef, useCallback } from 'react';
 import { clsx } from 'clsx';
 import { type ButtonProps, ButtonVariant } from '../../../../types/ui';
 import { Size } from '../../../../types/sizes';
+import { useUiMotionPresets } from '../../../../hooks/useUiMotion';
 import { StyledButton, StyledLinkButton, LoadingContainer, LoadingSpinner } from './Button.style';
 import { mergeAnchorRel } from '../../../../handlers/linkHandlers';
 import { Tooltip } from '../../Tooltip/Tooltip';
@@ -31,6 +32,7 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPr
     },
     ref,
   ) => {
+    const uiMotion = useUiMotionPresets();
     const isAnchor = Boolean(href);
 
     const handleClick = useCallback(
@@ -96,6 +98,7 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPr
       'aria-disabled': isAnchor && (disabled || loading) ? true : undefined,
       className: clsx('ui-button', isAnchor ? 'ui-button--link' : null, className),
       onClick: handleClick,
+      ...uiMotion.buttonPress(!(disabled || loading)),
       ...props,
     };
 

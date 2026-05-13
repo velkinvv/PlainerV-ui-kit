@@ -28,6 +28,7 @@ import {
 } from './timeHandlers';
 import { inputFieldStoriesStyles } from '@/handlers/inputFieldStories.styles';
 import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
+import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
 
 const meta: Meta = {
   title: 'UI Kit/Utils/Handlers/Time Handlers',
@@ -406,13 +407,13 @@ export const TimeValidation: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <div style={storybookDemoStyles.columnFlexGap24}>
+    <StorybookStaggerStack>
       <TimeParserDemo />
       <TimeFormatterDemo />
       <TimeRangeDemo />
       <TimeCreatorDemo />
       <TimeValidationDemo />
-    </div>
+    </StorybookStaggerStack>
   ),
 };
 

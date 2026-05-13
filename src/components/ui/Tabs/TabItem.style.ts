@@ -7,6 +7,7 @@ import {
 } from '../../../types/ui';
 import type { TabItemTextOrientation } from '../../../types/ui';
 import { ThemeMode } from '../../../types/theme';
+import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
 
 /** Трек группы табов: контейнер списка + контента */
 export const TabItemGroupContainer = styled.div<{
@@ -132,7 +133,9 @@ export const TabItemTrigger = styled.button<{
   transition:
     background 0.2s ease,
     color 0.2s ease,
-    box-shadow 0.2s ease;
+    box-shadow 0.2s ease,
+    transform 0.18s ease;
+  will-change: transform, background-color, color;
   white-space: nowrap;
   display: flex;
   align-items: center;
@@ -205,6 +208,12 @@ export const TabItemTrigger = styled.button<{
                   `
               : ''}
           }
+          ${buildHoverPressMotionCss({
+            hoverSelector: '&:hover:enabled',
+            activeSelector: '&:active:enabled',
+            hoverTransform: !$disabled ? 'translateY(-1px)' : 'none',
+            activeTransform: !$disabled ? 'scale(0.98)' : 'none',
+          })}
 
           &:focus {
             outline: none;
@@ -231,6 +240,12 @@ export const TabItemTrigger = styled.button<{
             background: ${$isActive ? theme.colors.primary : theme.colors.backgroundTertiary};
             color: ${$isActive ? '#ffffff' : theme.colors.text};
           }
+          ${buildHoverPressMotionCss({
+            hoverSelector: '&:hover:enabled',
+            activeSelector: '&:active:enabled',
+            hoverTransform: !$disabled ? 'translateY(-1px)' : 'none',
+            activeTransform: !$disabled ? 'scale(0.98)' : 'none',
+          })}
 
           &:focus {
             outline: none;

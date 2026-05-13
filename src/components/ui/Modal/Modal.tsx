@@ -1,6 +1,6 @@
 import React, { forwardRef, useCallback, useId, useMemo, useRef, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, useReducedMotion } from 'framer-motion';
 import { clsx } from 'clsx';
 import { Icon } from '../Icon/Icon';
 import { Button } from '../buttons/Button/Button';
@@ -73,6 +73,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
     },
     ref,
   ) => {
+    const prefersReducedMotion = useReducedMotion();
     useModalEscape({ isOpen, closeOnEscape, closeOnEscapeKeyDown, onClose });
     const titleId = useId();
     const descriptionId = useId();
@@ -128,12 +129,33 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
       };
     }, [animationConfig, presetAnimations]);
 
+    const effectiveAnimations = useMemo(() => {
+      if (!prefersReducedMotion) {
+        return animations;
+      }
+
+      return {
+        overlay: {
+          initial: { opacity: 0 },
+          animate: { opacity: 1 },
+          exit: { opacity: 0 },
+        },
+        modal: {
+          initial: { opacity: 0, scale: 1, y: 0 },
+          animate: { opacity: 1, scale: 1, y: 0 },
+          exit: { opacity: 0, scale: 1, y: 0 },
+          transition: { duration: 0.01 },
+        },
+      };
+    }, [animations, prefersReducedMotion]);
+
     const [asyncButtonsState, setAsyncButtonsState] = useState<Record<number, boolean>>({});
-    const { shouldRenderPortal, shouldRenderContent, isHidden } = useOverlayVisibility({
-      isOpen,
-      unmountOnClose,
-      lazy,
-    });
+    const { shouldRenderPortal, shouldRenderContent, isHidden, notifyPresenceExitComplete } =
+      useOverlayVisibility({
+        isOpen,
+        unmountOnClose,
+        lazy,
+      });
 
     const handleButtonAction = useCallback(async (button: ModalButtonProps, index: number) => {
       if (button.asyncOnClick) {
@@ -194,9 +216,9 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
         $mobile={mobile}
         $overlayCss={overlayStyledCss}
         $overlayVariant={overlayVariant}
-        initial={animations.overlay.initial}
-        animate={animations.overlay.animate}
-        exit={animations.overlay.exit}
+        initial={effectiveAnimations.overlay.initial}
+        animate={effectiveAnimations.overlay.animate}
+        exit={effectiveAnimations.overlay.exit}
         onClick={handleOverlayClick}
         className={overlayClassName}
         style={overlayPresentationStyle}
@@ -220,10 +242,10 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
           aria-labelledby={title ? titleId : undefined}
           aria-describedby={description ? descriptionId : undefined}
           className={clsx('ui-modal', className)}
-          initial={animations.modal.initial}
-          animate={animations.modal.animate}
-          exit={animations.modal.exit}
-          transition={animations.modal.transition}
+          initial={effectiveAnimations.modal.initial}
+          animate={effectiveAnimations.modal.animate}
+          exit={effectiveAnimations.modal.exit}
+          transition={effectiveAnimations.modal.transition}
           onAnimationComplete={() => {
             // Сигнализируем Storybook о завершении анимации модального окна
             if (modalContainerRef.current) {
@@ -284,7 +306,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
     );
 
     return createPortal(
-      <AnimatePresence>
+      <AnimatePresence onExitComplete={notifyPresenceExitComplete}>
         {shouldRenderContent ? modalBody : null}
       </AnimatePresence>,
       mountNode,
