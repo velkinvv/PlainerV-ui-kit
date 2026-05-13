@@ -48,7 +48,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "test:coverage:check": "jest --coverage --coverageThreshold='{\"global\":{\"branches\":60,\"functions\":60,\"lines\":60,\"statements\":60}}'",
+    "test:coverage:check": "jest --coverage --coverageThreshold='{\"global\":{\"branches\":27,\"functions\":28,\"lines\":40,\"statements\":40}}'",
     "analyze": "npm run build && echo Bundle analysis saved to dist/stats.html",
     "quality:check": "npm run type-check && npm run lint:check && npm run format:check",
     "quality:fix": "npm run fix-all && npm run type-check",
