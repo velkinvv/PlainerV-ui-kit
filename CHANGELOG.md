@@ -8,6 +8,8 @@
 ## [Unreleased]
 
 ### Added
+
+- Поле **`columns[].format`** у **DataGrid** и тип **`TableCellFormat`**: декларативное отображение ячеек (ссылки через **`Link`**, маски телефона/счёта/карты/ИНН/СНИЛС, число, валюта, проценты, дата/время, почта `mailto:`, перечисление, булево значение, кастомный **`renderCell`**). Хелпер **`formatTableCellValue`**, константы масок (**`TABLE_CELL_MASK_*`**) и связанные утилиты — в модуле **`tableCellFormat`** (handlers); кэш **`Intl.NumberFormat`** через **`intlFormatCache`**. Компонент **`TableCellFormatted`** для примитивной **`Table`**. Сторис: **DataGrid › Column formats**, **Table › TableCellFormatted**; в корневом **DataGrid.stories** дополнены **`argTypes`** для **`columns`** и **`renderCell`**. Скрипты **`npm run react-doctor`** / **`react-doctor:strict`**; раздел в документации Storybook по **`format`**.
 - Начальная версия библиотеки UI компонентов
 - Компоненты: Button, ButtonGroup, Input, Modal, Dropdown, Card, Badge, Spinner, Skeleton, Divider, Checkbox, RadioButton, Switch, Progress, Avatar, Tooltip, Toast, Snackbar, Pagination, Tabs, Accordion, Menu, FloatingMenu
 - Поддержка темной и светлой темы
@@ -29,6 +31,14 @@
 - Обновлены пути к шрифтам для работы в npm пакете
 
 ### Security
+
+---
+
+## [0.1.4] - 2026-05-13
+
+### Changed
+
+- Версия пакета: подготовка релиза 0.1.4.
 
 ---
 

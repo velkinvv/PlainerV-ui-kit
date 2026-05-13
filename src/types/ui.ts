@@ -3952,6 +3952,173 @@ export interface DataGridRenderCellParams<Row extends DataGridBaseRow = DataGrid
   rowIndex: number;
 }
 
+/**
+ * Контекст встроенных и кастомных форматтеров ячеек (`TableCellFormatted`, `DataGrid` при `columns[].format`).
+ * @property value — сырое значение поля (в гриде после `valueGetter`, если он задан).
+ * @property row — строка данных; в ручной разметке таблицы можно не передавать.
+ * @property field — ключ колонки (`field` из описания колонки).
+ * @property rowIndex — индекс строки в текущем фрагменте данных (страница клиента и т.п.).
+ */
+export interface TableCellFormatContext<Row = unknown> {
+  value: unknown;
+  row?: Row;
+  field: string;
+  rowIndex: number;
+}
+
+/** Локаль по умолчанию для пресетов `number` / `currency` / `percent` (можно переопределить в каждом формате). */
+export type TableCellFormatDefaultLocale = 'ru-RU';
+
+/**
+ * Декларативное форматирование содержимого ячейки: пресеты или кастомный рендер.
+ * Приоритет в `DataGrid`: `columns[].render` → `renderCell` → `columns[].format` → строка по умолчанию.
+ */
+export type TableCellFormat<Row = unknown> =
+  | {
+      type: 'text';
+      /** Преобразование регистра отображаемой строки */
+      transform?: 'uppercase' | 'lowercase' | 'capitalize';
+    }
+  | {
+      type: 'number';
+      /** Число знаков после запятой */
+      decimals?: number;
+      /** Локаль `Intl`; по умолчанию `ru-RU` */
+      locale?: string;
+      /** Текст при некорректном числе или пустом значении */
+      fallback?: string;
+    }
+  | {
+      type: 'currency';
+      /** Код валюты ISO 4217; по умолчанию `RUB` */
+      currency?: string;
+      locale?: string;
+      decimals?: number;
+      fallback?: string;
+    }
+  | {
+      type: 'percent';
+      locale?: string;
+      decimals?: number;
+      /**
+       * `true` (по умолчанию) — значение трактуется как доля (`0.25` → «25 %»).
+       * `false` — значение уже в процентах (`25` → «25 %»).
+       */
+      fromFraction?: boolean;
+      fallback?: string;
+    }
+  | {
+      type: 'date';
+      /** Шаблон dayjs; по умолчанию `DD.MM.YYYY` */
+      pattern?: string;
+      fallback?: string;
+    }
+  | {
+      type: 'datetime';
+      /** Шаблон dayjs; по умолчанию `DD.MM.YYYY HH:mm` */
+      pattern?: string;
+      fallback?: string;
+    }
+  | {
+      type: 'time';
+      /** Шаблон dayjs; по умолчанию `HH:mm` */
+      pattern?: string;
+      fallback?: string;
+    }
+  | {
+      type: 'mask';
+      /** Маска: `#` — цифра, `A` — буква (латиница/кириллица), `*` — любой символ по порядку из значения */
+      pattern: string;
+    }
+  | {
+      type: 'phone';
+      country?: 'RU' | 'INT';
+      /** Своя маска; иначе берётся пресет по `country` */
+      mask?: string;
+      fallback?: string;
+    }
+  | {
+      type: 'bankAccount';
+      fallback?: string;
+    }
+  | {
+      type: 'bankCard';
+      fallback?: string;
+    }
+  | {
+      type: 'inn';
+      fallback?: string;
+    }
+  | {
+      type: 'snils';
+      fallback?: string;
+    }
+  | {
+      type: 'email';
+      /** Тема письма (`mailto`) */
+      subject?: string | ((row: Row | undefined) => string | undefined);
+      /** Тело письма */
+      body?: string | ((row: Row | undefined) => string | undefined);
+      target?: React.HTMLAttributeAnchorTarget;
+      openInNewTab?: boolean;
+      textVariant?: 'default' | 'line' | 'muted';
+      /** Текст ссылки; по умолчанию — значение ячейки */
+      label?: ReactNode | ((params: TableCellFormatContext<Row>) => ReactNode);
+      fallback?: string;
+    }
+  | {
+      type: 'link';
+      /**
+       * URL или шаблон с плейсхолдерами `{поле}` / `{user.id}` по объекту строки.
+       * Функция — полный контроль (в т.ч. условный href).
+       */
+      href: string | ((params: TableCellFormatContext<Row>) => string | undefined | null | false);
+      target?: React.HTMLAttributeAnchorTarget;
+      rel?: string;
+      download?: string | boolean;
+      textVariant?: 'default' | 'line' | 'muted';
+      openInNewTab?: boolean;
+      label?: ReactNode | ((params: TableCellFormatContext<Row>) => ReactNode);
+      fallback?: string;
+    }
+  | {
+      type: 'boolean';
+      trueLabel?: ReactNode;
+      falseLabel?: ReactNode;
+      /** Неопределённое значение (`null` / `undefined` / пустая строка) */
+      indeterminateLabel?: ReactNode;
+    }
+  | {
+      type: 'enum';
+      options:
+        | Readonly<Record<string, ReactNode>>
+        | ReadonlyArray<{
+            readonly value: string | number | boolean;
+            readonly label: ReactNode;
+          }>;
+      fallback?: ReactNode;
+    }
+  | {
+      type: 'custom';
+      /** Полный контроль над содержимым ячейки */
+      renderCell: (params: TableCellFormatContext<Row>) => ReactNode;
+    };
+
+/** Пропсы ячейки с декларативным форматированием (надстройка над `TableCell`). */
+export interface TableCellFormattedProps<Row = unknown>
+  extends Omit<TableCellProps, 'children'> {
+  /** Значение для форматирования */
+  value: unknown;
+  /** Строка данных — нужна для шаблонов ссылок и кастомных форматтеров */
+  row?: Row;
+  /** Имя поля (попадает в контекст форматирования) */
+  field?: string;
+  rowIndex?: number;
+  format?: TableCellFormat<Row>;
+  /** Если задано — выводится как есть, без `format` */
+  children?: ReactNode;
+}
+
 /** Параметры колбэка `onColumnResize`: какая колонка и новая ширина в пикселях (родитель обновляет `columns[].width`) */
 export interface DataGridColumnResizeParams {
   /** Идентификатор колонки (как у `field` в `DataGridColumn`) */
@@ -4029,6 +4196,11 @@ export interface DataGridColumn<Row extends DataGridBaseRow = DataGridBaseRow> {
   sortable?: boolean;
   /** Кастомное значение ячейки */
   valueGetter?: (row: Row) => unknown;
+  /**
+   * Декларативное форматирование отображения (ссылки, маски, числа, даты и т.д.);
+   * применяется, если не заданы `render` у колонки и глобальный `renderCell` у грида.
+   */
+  format?: TableCellFormat<Row>;
   /** Рендер ячейки; приоритетнее глобального `renderCell` у `DataGrid` */
   render?: (params: DataGridRenderCellParams<Row>) => ReactNode;
   /** Не участвует в перестановке колонок drag-and-drop */

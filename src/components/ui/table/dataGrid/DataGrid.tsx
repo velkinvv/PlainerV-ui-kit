@@ -2,21 +2,22 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { clsx } from 'clsx';
 import { useTheme } from 'styled-components';
 import type { ThemeType } from '@/types/theme';
-import type {
-  DataGridBaseRow,
-  DataGridColumn,
-  DataGridExpandedRowDataStatus,
-  DataGridExpandedRowRenderContext,
-  DataGridProps,
-  DataGridRenderCellParams,
+import {
+  RadioButtonLabelPosition,
+  SpinnerVariant,
+  type DataGridBaseRow,
+  type DataGridColumn,
+  type DataGridExpandedRowDataStatus,
+  type DataGridExpandedRowRenderContext,
+  type DataGridProps,
+  type DataGridRenderCellParams,
 } from '@/types/ui';
-import { RadioButtonLabelPosition } from '@/types/ui';
 import { Size, IconSize } from '@/types/sizes';
 import { getTableSelectionAggregate } from '@/handlers/tableSelectionHandlers';
+import { formatTableCellValue } from '@/handlers/tableCellFormat';
 import { Checkbox } from '../../Checkbox/Checkbox';
 import { RadioButton } from '../../RadioButton/RadioButton';
 import { Spinner } from '../../Spinner/Spinner';
-import { SpinnerVariant } from '@/types/ui';
 import { Icon } from '../../Icon/Icon';
 import {
   TableContainer,
@@ -78,7 +79,8 @@ import { resolveDataGridTableHeaderBackground } from './dataGridTableHeaderSurfa
  *   DnD колонок/строк (`onColumnDrag*`, `onRowDrag*`), клик по фильтру (`onColumnFilterClick` + `filterable` у колонки),
  *   дополнительная строка над заголовками колонок (`headerToolbar`, `headerToolbarAlign`, `headerToolbarAriaLabel`),
  *   высота области скролла (`scrollAreaMaxHeight` → `TableContainerScroll`) для липкой шапки,
- *   тон шапки (`tableHeaderVariant`, `tableHeaderBackground`) для согласования с панелью `headerToolbar`.
+ *   тон шапки (`tableHeaderVariant`, `tableHeaderBackground`) для согласования с панелью `headerToolbar`,
+ *   декларативное отображение ячеек (`columns[].format` → `TableCellFormat`; приоритет ниже, чем у `columns[].render` и `renderCell`).
  */
 export function DataGrid<Row extends DataGridBaseRow>(
   props: DataGridProps<Row>,
@@ -594,6 +596,18 @@ export function DataGrid<Row extends DataGridBaseRow>(
       }
       if (renderCell) {
         return renderCell(params);
+      }
+      if (col.format) {
+        const formattedNode = formatTableCellValue({
+          value,
+          row,
+          field: fieldStr,
+          rowIndex,
+          format: col.format,
+        });
+        if (formattedNode !== null && formattedNode !== undefined) {
+          return formattedNode;
+        }
       }
       if (value == null || value === '') {
         return null;

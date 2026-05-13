@@ -71,6 +71,10 @@ export const TABLE_KIT_DOC = `
 
 Для **несортируемого** длинного заголовка вручную можно обернуть текст в \`TableCellHeadLineClamp\` из \`Table.style\` (экспорт из \`basicTable\`) с пропом \`$maxLines\` — в \`DataGrid\` это делается автоматически при \`headerMaxLines\`.
 
+### TableCellFormatted
+
+Обёртка над \`TableCell\`: пропсы \`value\`, опционально \`row\`, \`field\`, \`rowIndex\` и объект \`format\` (\`TableCellFormat\`) — те же пресеты, что у **DataGrid** (\`columns[].format\`). Если переданы \`children\`, они отображаются вместо форматирования. Сторис **Table › TableCellFormatted**.
+
 ### TableSortLabel
 
 Кнопка-обёртка для заголовка с иконкой сортировки; контролируемая сортировка на стороне родителя.
@@ -142,7 +146,7 @@ export const DATAGRID_DOC = `
 | Проп | Зачем |
 |------|--------|
 | \`tableId\` | Уникальный \`id\` у \`<table>\`; для группы радиокнопок при одиночном выборе (\`name\`). |
-| \`columns\` | Описание колонок (\`field\`, \`headerName\`, \`filterable\`, \`filterIconPosition\`, \`headerMaxLines\`, \`render\`, \`sortable\`, \`width\`, \`align\`, \`disableReorder\`, \`disableResize\`, …). |
+| \`columns\` | Описание колонок (\`field\`, \`headerName\`, \`filterable\`, \`filterIconPosition\`, \`headerMaxLines\`, \`render\`, \`format\`, \`sortable\`, \`width\`, \`align\`, \`disableReorder\`, \`disableResize\`, …). |
 | \`rows\` | Массив строк; каждая строка должна иметь поле \`id: string\` (см. \`DataGridBaseRow\`), если не переопределяете \`getRowId\`. |
 | \`totalRows\` | Число записей для пагинации и отображения (при серверной пагинации — всего на сервере; при клиентской — обычно \`rows.length\` после фильтрации). |
 
@@ -156,6 +160,7 @@ export const DATAGRID_DOC = `
 | \`align\` | \`left\` / \`center\` / \`right\`. |
 | \`sortable\` | Показывать сортируемый заголовок; фактическая сортировка — в родителе по \`sortModel\` / \`onSortChange\`. |
 | \`valueGetter\` | Кастомное значение для сортировки/отображения по умолчанию. |
+| \`format\` | Декларативное форматирование ячейки (\`TableCellFormat\`): маски, ссылки, числа, даты и др.; ниже по приоритету, чем \`render\` колонки и \`renderCell\` грида. |
 | \`render\` | Ячейка; имеет приоритет над глобальным \`renderCell\` грида. |
 | \`disableReorder\` | Не таскать колонку при \`enableColumnDrag\`. |
 | \`disableResize\` | Не показывать ручку ширины при \`enableColumnResize\` + \`onColumnResize\`. |
@@ -166,6 +171,30 @@ export const DATAGRID_DOC = `
 | \`filterIconProps\` | Частичные пропсы \`Icon\` (\`name\`, \`size\`, \`color\`, \`className\`) — мерж поверх \`IconExFilter\` + \`IconSize.XS\` + \`currentColor\`. |
 | \`filterIconPropsApplied\` | Доп. мерж поверх \`filterIconProps\`, только если \`filterApplied\` (например другой \`color\` на фоне \`info\`). |
 | \`filterIconPosition\` | \`leading\` — иконка у левого края ячейки перед заголовком; \`inlineTitle\` — сразу после заголовка без растягивания текста на всю ширину; \`trailing\` — заголовок на всю ширину, иконка у правого края (**по умолчанию**). |
+
+### Форматирование ячеек (\`columns[].format\`)
+
+Поле **\`format\`** задаёт декларативное отображение без собственного \`render\`. Хелпер **\`formatTableCellValue\`** и константы масок экспортируются из пакета (см. \`tableCellFormat\` в handlers). Для примитивной таблицы доступен компонент **\`TableCellFormatted\`** (сторис **Table › TableCellFormatted**).
+
+Приоритет: \`columns[].render\` → \`DataGridProps.renderCell\` → \`columns[].format\` → строковое значение поля.
+
+| Тип \`format.type\` | Назначение |
+|---------------------|------------|
+| \`text\` | Регистр строки (\`uppercase\`, \`lowercase\`, \`capitalize\`). |
+| \`number\` | Число через \`Intl\`; локаль по умолчанию \`ru-RU\`. |
+| \`currency\` | Валюта (\`currency\` по умолчанию \`RUB\`). |
+| \`percent\` | Проценты; \`fromFraction\` — доля \`0.25\` → «25 %». |
+| \`date\` / \`datetime\` / \`time\` | dayjs-шаблон (\`pattern\`). |
+| \`mask\` | Своя маска: \`#\` — цифра, \`A\` — буква, \`*\` — любой символ. |
+| \`phone\` | Пресеты \`RU\` / \`INT\` или своя \`mask\`. |
+| \`bankAccount\` / \`bankCard\` / \`inn\` / \`snils\` | Типовые маски РФ. |
+| \`email\` | Ссылка \`mailto:\` (\`subject\`, \`body\`). |
+| \`link\` | Компонент \`Link\`: \`href\` строкой с \`{поле}\` или функцией от контекста. |
+| \`boolean\` | Подписи для да/нет и неопределённого значения. |
+| \`enum\` | Сопоставление значения с \`ReactNode\`. |
+| \`custom\` | Полный контроль: \`renderCell(params)\`. |
+
+Сторис **DataGrid › Column formats › Встроенные форматы колонок**.
 
 ### Фильтры колонок (композиция и встроенная иконка)
 

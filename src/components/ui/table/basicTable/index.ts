@@ -7,6 +7,7 @@ export { TableBody } from './TableBody';
 export { TableFooter } from './TableFooter';
 export { TableRow } from './TableRow';
 export { TableCell } from './TableCell';
+export { TableCellFormatted } from './TableCellFormatted';
 export { TablePagination } from './TablePagination';
 export { TableSortLabel } from './TableSortLabel';
 export { TableSortChevronIcon } from './TableSortChevronIcon';

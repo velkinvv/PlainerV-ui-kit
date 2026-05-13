@@ -14,3 +14,4 @@ export * from './navigationMenuItemStatusHandlers';
 export * from './navigationMenuItemMotionHandlers';
 export * from './offScreenPanelMotionHandlers';
 export * from './navigationMenuNestedHandlers';
+export * from './tableCellFormat';

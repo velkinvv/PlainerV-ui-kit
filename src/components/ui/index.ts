@@ -164,6 +164,7 @@ export {
   TableFooter,
   TableRow,
   TableCell,
+  TableCellFormatted,
   TablePagination,
   TableSortLabel,
   TableSortChevronIcon,
@@ -182,12 +183,15 @@ export type {
   TableFooterProps,
   TableRowProps,
   TableCellProps,
+  TableCellFormattedProps,
   TablePaginationProps,
   TablePaginationToolbarAlign,
   TableSortLabelProps,
   TableSize,
   TableCellVariant,
   TableSortDirection,
+  TableCellFormat,
+  TableCellFormatContext,
 } from '@/types/ui';
 export type { TableSortChevronTone, TableContainerScrollProps } from './table';
 
