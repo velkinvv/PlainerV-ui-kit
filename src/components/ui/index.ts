@@ -167,7 +167,7 @@ export {
   getSortChevronTones,
   getTableSortChevronColor,
   parseTablePageJumpInput,
-} from './Table';
+} from './table';
 export type {
   TableContainerProps,
   TableProps,
@@ -183,9 +183,9 @@ export type {
   TableCellVariant,
   TableSortDirection,
 } from '@/types/ui';
-export type { TableSortChevronTone, TableContainerScrollProps } from './Table';
+export type { TableSortChevronTone, TableContainerScrollProps } from './table';
 
-export { DataGrid } from './Table';
+export { DataGrid } from './table';
 export {
   applyDataGridColDragGhostPreview,
   applyDataGridRowDragGhostPreview,
@@ -204,7 +204,7 @@ export {
   normalizeDataGridSortModel,
   resolveNextDataGridSortModel,
   getDataGridSortCriterionIndexForField,
-} from './Table';
+} from './table';
 export type {
   DataGridProps,
   DataGridBaseRow,
@@ -226,7 +226,7 @@ export type {
   ColumnFilterPanelPresentation,
 } from '@/types/ui';
 
-export { ColumnFilterPanel } from './Table';
+export { ColumnFilterPanel } from './table';
 
 export { Icon } from './Icon';
 export type { IconProps } from '@/types/ui';
