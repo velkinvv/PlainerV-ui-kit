@@ -4,9 +4,9 @@ import { Size } from '../types/sizes';
 import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
+import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
 import { useKeyPress, useKeyPressSimple } from './useKeyPress';
 import {
-  AllExamplesContainer,
   ButtonRow,
   ButtonRowWrap,
   ControlsRowWrap,
@@ -75,25 +75,25 @@ const BasicKeyPressDemo = () => {
 
   useKeyPress({
     targetKey: 'Enter',
-    handler: event => {
+    handler: (event) => {
       setLastKey('Enter');
-      setKeyCount(prev => prev + 1);
+      setKeyCount((prev) => prev + 1);
     },
   });
 
   useKeyPress({
     targetKey: 'Escape',
-    handler: event => {
+    handler: (event) => {
       setLastKey('Escape');
-      setKeyCount(prev => prev + 1);
+      setKeyCount((prev) => prev + 1);
     },
   });
 
   useKeyPress({
     targetKey: ' ',
-    handler: event => {
+    handler: (event) => {
       setLastKey('Space');
-      setKeyCount(prev => prev + 1);
+      setKeyCount((prev) => prev + 1);
     },
   });
 
@@ -130,45 +130,45 @@ const ModifierKeysDemo = () => {
   useKeyPress({
     targetKey: 's',
     modifier: 'ctrl',
-    handler: event => {
+    handler: (event) => {
       setLastCombination('Ctrl+S');
-      setCombinationCount(prev => prev + 1);
+      setCombinationCount((prev) => prev + 1);
     },
   });
 
   useKeyPress({
     targetKey: 'z',
     modifier: 'ctrl',
-    handler: event => {
+    handler: (event) => {
       setLastCombination('Ctrl+Z');
-      setCombinationCount(prev => prev + 1);
+      setCombinationCount((prev) => prev + 1);
     },
   });
 
   useKeyPress({
     targetKey: 'a',
     modifier: 'ctrl',
-    handler: event => {
+    handler: (event) => {
       setLastCombination('Ctrl+A');
-      setCombinationCount(prev => prev + 1);
+      setCombinationCount((prev) => prev + 1);
     },
   });
 
   useKeyPress({
     targetKey: 'c',
     modifier: 'ctrl',
-    handler: event => {
+    handler: (event) => {
       setLastCombination('Ctrl+C');
-      setCombinationCount(prev => prev + 1);
+      setCombinationCount((prev) => prev + 1);
     },
   });
 
   useKeyPress({
     targetKey: 'v',
     modifier: 'ctrl',
-    handler: event => {
+    handler: (event) => {
       setLastCombination('Ctrl+V');
-      setCombinationCount(prev => prev + 1);
+      setCombinationCount((prev) => prev + 1);
     },
   });
 
@@ -221,9 +221,9 @@ const MultipleKeysDemo = () => {
 
   useKeyPress({
     targetKey: ['1', '2', '3', '4', '5'],
-    handler: event => {
+    handler: (event) => {
       setLastKey(event.key);
-      setKeyCount(prev => prev + 1);
+      setKeyCount((prev) => prev + 1);
     },
   });
 
@@ -241,11 +241,11 @@ const MultipleKeysDemo = () => {
 
       <SectionContainer>
         <ButtonRow>
-        {['1', '2', '3', '4', '5'].map(num => (
-          <Button key={num} size={Size.SM} variant="outlined">
-            {num}
-          </Button>
-        ))}
+          {['1', '2', '3', '4', '5'].map((num) => (
+            <Button key={num} size={Size.SM} variant="outlined">
+              {num}
+            </Button>
+          ))}
         </ButtonRow>
       </SectionContainer>
 
@@ -270,36 +270,36 @@ const EnabledDisabledDemo = () => {
 
   useKeyPress({
     targetKey: 'ArrowUp',
-    handler: event => {
+    handler: (event) => {
       setLastKey('Arrow Up');
-      setKeyCount(prev => prev + 1);
+      setKeyCount((prev) => prev + 1);
     },
     enabled: isEnabled,
   });
 
   useKeyPress({
     targetKey: 'ArrowDown',
-    handler: event => {
+    handler: (event) => {
       setLastKey('Arrow Down');
-      setKeyCount(prev => prev + 1);
+      setKeyCount((prev) => prev + 1);
     },
     enabled: isEnabled,
   });
 
   useKeyPress({
     targetKey: 'ArrowLeft',
-    handler: event => {
+    handler: (event) => {
       setLastKey('Arrow Left');
-      setKeyCount(prev => prev + 1);
+      setKeyCount((prev) => prev + 1);
     },
     enabled: isEnabled,
   });
 
   useKeyPress({
     targetKey: 'ArrowRight',
-    handler: event => {
+    handler: (event) => {
       setLastKey('Arrow Right');
-      setKeyCount(prev => prev + 1);
+      setKeyCount((prev) => prev + 1);
     },
     enabled: isEnabled,
   });
@@ -327,7 +327,7 @@ const EnabledDisabledDemo = () => {
           Нажмите стрелки для навигации
         </Typography>
         <ButtonRow>
-          {['↑', '↓', '←', '→'].map(arrow => (
+          {['↑', '↓', '←', '→'].map((arrow) => (
             <Button key={arrow} size={Size.SM} variant="outlined">
               {arrow}
             </Button>
@@ -358,17 +358,17 @@ const SimpleKeyPressDemo = () => {
 
   useKeyPressSimple('F1', () => {
     setLastKey('F1');
-    setKeyCount(prev => prev + 1);
+    setKeyCount((prev) => prev + 1);
   });
 
   useKeyPressSimple('F2', () => {
     setLastKey('F2');
-    setKeyCount(prev => prev + 1);
+    setKeyCount((prev) => prev + 1);
   });
 
   useKeyPressSimple('F3', () => {
     setLastKey('F3');
-    setKeyCount(prev => prev + 1);
+    setKeyCount((prev) => prev + 1);
   });
 
   return (
@@ -385,11 +385,11 @@ const SimpleKeyPressDemo = () => {
 
       <SectionContainer>
         <ButtonRow>
-        {['F1', 'F2', 'F3'].map(key => (
-          <Button key={key} size={Size.SM} variant="outlined">
-            {key}
-          </Button>
-        ))}
+          {['F1', 'F2', 'F3'].map((key) => (
+            <Button key={key} size={Size.SM} variant="outlined">
+              {key}
+            </Button>
+          ))}
         </ButtonRow>
       </SectionContainer>
 
@@ -413,18 +413,18 @@ const PreventDefaultDemo = () => {
 
   useKeyPress({
     targetKey: 'Tab',
-    handler: event => {
+    handler: (event) => {
       setLastKey('Tab (prevented)');
-      setKeyCount(prev => prev + 1);
+      setKeyCount((prev) => prev + 1);
     },
     preventDefault: true,
   });
 
   useKeyPress({
     targetKey: 'Tab',
-    handler: event => {
+    handler: (event) => {
       setLastKey('Tab (normal)');
-      setKeyCount(prev => prev + 1);
+      setKeyCount((prev) => prev + 1);
     },
     preventDefault: false,
   });
@@ -480,14 +480,13 @@ export const PreventDefault: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <AllExamplesContainer>
+    <StorybookStaggerStack>
       <BasicKeyPressDemo />
       <ModifierKeysDemo />
       <MultipleKeysDemo />
       <EnabledDisabledDemo />
       <SimpleKeyPressDemo />
       <PreventDefaultDemo />
-    </AllExamplesContainer>
+    </StorybookStaggerStack>
   ),
 };
-

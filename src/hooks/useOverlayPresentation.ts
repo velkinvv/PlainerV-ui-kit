@@ -35,11 +35,7 @@ type UseOverlayPresentationResult = {
 export const useOverlayPresentation = (
   overlayPresentationParameters: UseOverlayPresentationParameters,
 ): UseOverlayPresentationResult => {
-  const {
-    isOpen,
-    isHidden,
-    overlayInlineStyle,
-  } = overlayPresentationParameters;
+  const { isOpen, isHidden, overlayInlineStyle } = overlayPresentationParameters;
 
   const overlayPresentationStyle = useMemo(() => {
     if (!isHidden) {

@@ -1,7 +1,13 @@
 import styled, { css } from 'styled-components';
 import { TransitionHandler } from '../../../handlers/uiHandlers';
+import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
 import type { Colors } from '../../../types/theme';
-import type { TagAppearance, TagColorVariant, TagCustomColors, TagStatusDisplay } from '../../../types/ui';
+import type {
+  TagAppearance,
+  TagColorVariant,
+  TagCustomColors,
+  TagStatusDisplay,
+} from '../../../types/ui';
 import { ThemeMode } from '../../../types/theme';
 
 type TagRootProps = {
@@ -222,7 +228,7 @@ const customSurfaceCss = (
  * @property $customSurface — переопределение фона (не сочетается с marker в типах; в стилях игнорируем marker если передан custom)
  */
 export const TagRoot = styled.span.withConfig({
-  shouldForwardProp: prop =>
+  shouldForwardProp: (prop) =>
     ![
       '$color',
       '$appearance',
@@ -255,7 +261,8 @@ export const TagRoot = styled.span.withConfig({
   white-space: nowrap;
   user-select: none;
   transition: ${TransitionHandler()};
-  cursor: ${({ $clickable, $disabled }) => ($disabled ? 'not-allowed' : $clickable ? 'pointer' : 'default')};
+  cursor: ${({ $clickable, $disabled }) =>
+    $disabled ? 'not-allowed' : $clickable ? 'pointer' : 'default'};
   opacity: ${({ $disabled }) => ($disabled ? 0.55 : 1)};
 
   ${({ $widthCss }) => $widthCss && `width: ${$widthCss};`}
@@ -267,7 +274,7 @@ export const TagRoot = styled.span.withConfig({
       border-color: transparent !important;
     `}
 
-  ${({ theme, $customSurface, $clickable, $disabled }) =>
+  ${({ $customSurface, $clickable, $disabled }) =>
     $customSurface?.background != null && `${$customSurface.background}`.length > 0
       ? customSurfaceCss($customSurface, Boolean($clickable), $disabled)
       : ''}
@@ -290,6 +297,12 @@ export const TagRoot = styled.span.withConfig({
       &:active {
         filter: brightness(0.93);
       }
+      ${buildHoverPressMotionCss({
+        hoverSelector: '&:hover',
+        activeSelector: '&:active',
+        hoverTransform: 'translateY(-1px)',
+        activeTransform: 'scale(0.98)',
+      })}
 
       &:focus-visible {
         outline: 2px solid ${theme.colors.primary};
@@ -303,6 +316,15 @@ export const TagRoot = styled.span.withConfig({
     $customSurface?.background != null &&
     `${$customSurface.background}`.length > 0 &&
     css`
+      &:hover {
+      }
+      ${buildHoverPressMotionCss({
+        hoverSelector: '&:hover',
+        activeSelector: '&:active',
+        hoverTransform: 'translateY(-1px)',
+        activeTransform: 'scale(0.98)',
+      })}
+
       &:focus-visible {
         outline: 2px solid ${theme.colors.primary};
         outline-offset: 2px;
@@ -312,7 +334,7 @@ export const TagRoot = styled.span.withConfig({
 
 /** Цветная метка статуса слева (режим `statusDisplay="marker"`) */
 export const TagStatusMarker = styled.span.withConfig({
-  shouldForwardProp: prop => !['$markerColor', '$markerFill'].includes(String(prop)),
+  shouldForwardProp: (prop) => !['$markerColor', '$markerFill'].includes(String(prop)),
 })<{ $markerColor: TagColorVariant; $markerFill?: string }>`
   flex-shrink: 0;
   width: 8px;

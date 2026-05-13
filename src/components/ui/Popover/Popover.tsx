@@ -3,10 +3,14 @@ import { createPortal } from 'react-dom';
 
 import clsx from 'clsx';
 
-import { Size } from 'types';
-import { PopoverProps } from 'types/ui';
+import { Size } from '@/types/sizes';
+import type { PopoverProps } from '@/types/ui';
 
-import { calculateDropdownPosition, handleClickOutsideEvent, isClickInsideDropdown } from '../Dropdown/handlers';
+import {
+  calculateDropdownPosition,
+  handleClickOutsideEvent,
+  isClickInsideDropdown,
+} from '../Dropdown/handlers';
 import { PopoverSurface } from './Popover.style';
 
 const defaultPortalRoot = (): HTMLElement | null =>
@@ -48,6 +52,7 @@ export const Popover: React.FC<PopoverProps> = ({
   size = Size.MD,
   variant = 'default',
   positioningMode = 'default',
+  preferredPlacement = 'below',
   portalContainer,
   offset = 4,
   closeOnEscape = true,
@@ -62,6 +67,8 @@ export const Popover: React.FC<PopoverProps> = ({
   contentAriaLabel = 'Всплывающая панель',
   id,
   dataTestId,
+  triggerWrapClickToggle = true,
+  triggerWrapperProps,
 }) => {
   const rootRef = useRef<HTMLDivElement>(null);
   const surfaceRef = useRef<HTMLDivElement>(null);
@@ -85,17 +92,18 @@ export const Popover: React.FC<PopoverProps> = ({
     if (!triggerElement || !menuElement) {
       return;
     }
-    const boundary = inline ? boundaryElement ?? triggerElement : undefined;
+    const boundary = inline ? (boundaryElement ?? triggerElement) : undefined;
     const next = calculateDropdownPosition({
       triggerElement,
       menuElement,
       boundaryElement: boundary,
       offset,
       mode: positioningMode,
+      preferredPlacement,
     });
     menuElement.style.left = `${next.x}px`;
     menuElement.style.top = `${next.y}px`;
-  }, [inline, boundaryElement, offset, positioningMode]);
+  }, [inline, boundaryElement, offset, positioningMode, preferredPlacement]);
 
   useLayoutEffect(() => {
     if (!isOpen) {
@@ -158,6 +166,9 @@ export const Popover: React.FC<PopoverProps> = ({
   }, [isOpen, onClickOutside, setOpenState]);
 
   const handleRootClick = (event: React.MouseEvent) => {
+    if (!triggerWrapClickToggle) {
+      return;
+    }
     if (disabled) {
       return;
     }
@@ -167,6 +178,13 @@ export const Popover: React.FC<PopoverProps> = ({
     }
     setOpenState(!isOpen);
   };
+
+  const {
+    onClick: triggerWrapperOnClick,
+    className: triggerWrapperClassName,
+    style: triggerWrapperStyle,
+    ...restTriggerWrapperProps
+  } = triggerWrapperProps ?? {};
 
   const portalTarget = portalContainer ?? defaultPortalRoot();
 
@@ -194,9 +212,16 @@ export const Popover: React.FC<PopoverProps> = ({
       ref={rootRef}
       id={id}
       data-testid={dataTestId}
-      className={clsx(className)}
-      onClick={handleRootClick}
-      style={inline ? { position: 'relative' } : undefined}
+      className={clsx('ui-popover-anchor', className, triggerWrapperClassName)}
+      onClick={(event: React.MouseEvent<HTMLDivElement>) => {
+        triggerWrapperOnClick?.(event);
+        handleRootClick(event);
+      }}
+      style={{
+        ...(inline ? { position: 'relative' as const } : {}),
+        ...triggerWrapperStyle,
+      }}
+      {...restTriggerWrapperProps}
     >
       {trigger}
       {isOpen && inline && panel}

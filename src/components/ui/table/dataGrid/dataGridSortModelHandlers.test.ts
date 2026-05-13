@@ -11,7 +11,9 @@ describe('normalizeDataGridSortModel', () => {
   });
 
   it('оборачивает один критерий в массив', () => {
-    expect(normalizeDataGridSortModel({ field: 'a', direction: 'asc' })).toEqual([{ field: 'a', direction: 'asc' }]);
+    expect(normalizeDataGridSortModel({ field: 'a', direction: 'asc' })).toEqual([
+      { field: 'a', direction: 'asc' },
+    ]);
   });
 
   it('копирует массив критериев', () => {

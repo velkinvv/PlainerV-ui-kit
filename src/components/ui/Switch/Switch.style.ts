@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components';
 import { TransitionHandler } from '../../../handlers/uiHandlers';
+import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
 import { ThemeMode } from '../../../types/theme';
 import grey from '../../../variables/colors/grey';
 import { neutral } from '../../../variables/colors/neutral';
@@ -82,6 +83,7 @@ export const SwitchTrack = styled.span<{
   height: ${({ $geometry }) => $geometry.trackHeight}px;
   border-radius: 999px;
   transition: ${TransitionHandler()};
+  will-change: transform, background-color;
   background: ${({ theme, $checked, $disabled }) => {
     if ($disabled) {
       return theme.mode === ThemeMode.DARK ? grey[700] : grey[200];
@@ -102,6 +104,15 @@ export const SwitchTrack = styled.span<{
             ? grey[500]
             : grey[200]};
       }
+
+      &:active {
+      }
+      ${buildHoverPressMotionCss({
+        hoverSelector: '&:hover',
+        activeSelector: '&:active',
+        hoverTransform: 'none',
+        activeTransform: 'scale(0.98)',
+      })}
     `}
 `;
 
@@ -126,6 +137,7 @@ export const SwitchThumb = styled.span<{
     $disabled ? (theme.mode === ThemeMode.DARK ? grey[400] : grey[100]) : neutral[10]};
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
   transition: ${TransitionHandler()};
+  will-change: transform;
   transform: ${({ $checked, $geometry }) =>
     `translateX(${getSwitchThumbTranslateX($checked, $geometry)}px)`};
 

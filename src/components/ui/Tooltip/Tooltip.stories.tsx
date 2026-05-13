@@ -6,6 +6,7 @@ import { Button } from '../buttons/Button/Button';
 import { Icon } from '../Icon/Icon';
 import { IconSize, Size } from '../../../types/sizes';
 import { DOC_TOOLTIP } from '@/components/ui/storyDocs/uiKitDocs';
+import { tooltipStoriesStyles } from './Tooltip.stories.styles';
 
 const meta: Meta<typeof Tooltip> = {
   title: 'UI Kit/Feedback/Tooltip',
@@ -138,7 +139,7 @@ export const HtmlContent: Story = {
         <br />
         <em>Курсив</em>
         <br />
-        <span style={{ color: '#3b82f6' }}>Цветной текст</span>
+        <span style={tooltipStoriesStyles.htmlAccentText}>Цветной текст</span>
       </div>
     ),
     children: <Button variant={ButtonVariant.PRIMARY}>HTML контент</Button>,
@@ -157,14 +158,7 @@ export const Disabled: Story = {
 // Демонстрация всех позиций
 export const AllPositions: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'grid',
-        gap: '20px',
-        gridTemplateColumns: 'repeat(2, 1fr)',
-        padding: '40px',
-      }}
-    >
+    <div style={tooltipStoriesStyles.gridDemo}>
       <Tooltip content="Подсказка сверху" position={TooltipPosition.TOP}>
         <Button variant={ButtonVariant.PRIMARY}>TOP</Button>
       </Tooltip>
@@ -194,7 +188,7 @@ export const AllPositions: Story = {
 // Демонстрация с иконками
 export const WithIcons: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+    <div style={tooltipStoriesStyles.rowDemo}>
       <Tooltip content="Информация">
         <Icon name="IconExInfoSquare" size={IconSize.MD} />
       </Tooltip>
@@ -228,7 +222,7 @@ export const WithIcons: Story = {
 // Демонстрация с разными задержками
 export const DifferentDelays: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+    <div style={tooltipStoriesStyles.rowDemo}>
       <Tooltip content="Без задержки" delay={0}>
         <Button variant={ButtonVariant.PRIMARY}>0мс</Button>
       </Tooltip>
@@ -258,7 +252,7 @@ export const DifferentDelays: Story = {
 // Демонстрация размеров
 export const Sizes: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+    <div style={tooltipStoriesStyles.rowDemo}>
       <Tooltip content="Маленькая подсказка" size={Size.SM}>
         <Button variant={ButtonVariant.PRIMARY}>SM</Button>
       </Tooltip>
@@ -284,14 +278,7 @@ export const Sizes: Story = {
 // Демонстрация стрелок
 export const ArrowDemo: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'flex',
-        gap: '20px',
-        alignItems: 'center',
-        padding: '40px',
-      }}
-    >
+    <div style={tooltipStoriesStyles.arrowDemo}>
       <Tooltip content="Стрелка вниз" position={TooltipPosition.TOP}>
         <Button variant={ButtonVariant.PRIMARY}>Top</Button>
       </Tooltip>
@@ -317,4 +304,3 @@ export const ArrowDemo: Story = {
     },
   },
 };
-

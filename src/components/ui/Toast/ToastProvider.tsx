@@ -142,7 +142,9 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
       };
       setToasts((prev) => {
         const existingWithoutCurrent = prev.filter((toastItem) => toastItem.id !== id);
-        const next = newestOnTop ? [item, ...existingWithoutCurrent] : [...existingWithoutCurrent, item];
+        const next = newestOnTop
+          ? [item, ...existingWithoutCurrent]
+          : [...existingWithoutCurrent, item];
         const limited = applyToastLimit(next);
         const keptIds = new Set(limited.map((toastItem) => toastItem.id));
         setTimingByToastId((previousTimingByToastId) => {
@@ -191,31 +193,37 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
     return toastsRef.current.some((toastItem) => toastItem.id === id);
   }, []);
 
-  const updateToast = useCallback((id: string, patch: Partial<Omit<ToastItem, 'id'>>) => {
-    setToasts((prev) => prev.map((toastItem) => (toastItem.id === id ? { ...toastItem, ...patch, id } : toastItem)));
+  const updateToast = useCallback(
+    (id: string, patch: Partial<Omit<ToastItem, 'id'>>) => {
+      setToasts((prev) =>
+        prev.map((toastItem) => (toastItem.id === id ? { ...toastItem, ...patch, id } : toastItem)),
+      );
 
-    if (patch.duration !== undefined) {
-      if (patch.duration > 0) {
-        setTimingByToastId((prev) => ({
-          ...prev,
-          [id]: {
-            duration: patch.duration as number,
-            remaining: patch.duration as number,
-            pauseOnHover: patch.pauseOnHover ?? prev[id]?.pauseOnHover ?? pauseOnHover,
-            pauseOnFocusLoss: patch.pauseOnFocusLoss ?? prev[id]?.pauseOnFocusLoss ?? pauseOnFocusLoss,
-            isHovered: prev[id]?.isHovered ?? false,
-            isPausedByApi: prev[id]?.isPausedByApi ?? false,
-          },
-        }));
-      } else {
-        setTimingByToastId((prev) => {
-          const next = { ...prev };
-          delete next[id];
-          return next;
-        });
+      if (patch.duration !== undefined) {
+        if (patch.duration > 0) {
+          setTimingByToastId((prev) => ({
+            ...prev,
+            [id]: {
+              duration: patch.duration as number,
+              remaining: patch.duration as number,
+              pauseOnHover: patch.pauseOnHover ?? prev[id]?.pauseOnHover ?? pauseOnHover,
+              pauseOnFocusLoss:
+                patch.pauseOnFocusLoss ?? prev[id]?.pauseOnFocusLoss ?? pauseOnFocusLoss,
+              isHovered: prev[id]?.isHovered ?? false,
+              isPausedByApi: prev[id]?.isPausedByApi ?? false,
+            },
+          }));
+        } else {
+          setTimingByToastId((prev) => {
+            const next = { ...prev };
+            delete next[id];
+            return next;
+          });
+        }
       }
-    }
-  }, [pauseOnFocusLoss, pauseOnHover]);
+    },
+    [pauseOnFocusLoss, pauseOnHover],
+  );
 
   const clearToasts = useCallback(() => {
     setToasts([]);
@@ -335,7 +343,8 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
           }
 
           const shouldPauseByWindow = timerState.pauseOnFocusLoss && !windowHasFocusRef.current;
-          const shouldPause = timerState.isHovered || shouldPauseByWindow || timerState.isPausedByApi;
+          const shouldPause =
+            timerState.isHovered || shouldPauseByWindow || timerState.isPausedByApi;
 
           if (shouldPause) {
             next[toastId] = timerState;
@@ -404,7 +413,12 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
   const stack =
     typeof document !== 'undefined'
       ? createPortal(
-          <ToastStack role="region" aria-label="Уведомления" $placement={placement} $stacked={stacked}>
+          <ToastStack
+            role="region"
+            aria-label="Уведомления"
+            $placement={placement}
+            $stacked={stacked}
+          >
             <AnimatePresence initial={false}>
               {toasts.map((toastItem) => (
                 <motion.div

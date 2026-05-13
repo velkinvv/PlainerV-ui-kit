@@ -2,6 +2,7 @@ import React, { forwardRef } from 'react';
 import { clsx } from 'clsx';
 import { AvatarState, AvatarStatus, BadgeVariant, type AvatarProps } from '../../../types/ui';
 import { Size, IconSize } from '../../../types/sizes';
+import { useUiMotionPresets } from '../../../hooks/useUiMotion';
 import { Icon } from '../Icon';
 import { Tooltip } from '../Tooltip/Tooltip';
 import { Badge } from '../Badge/Badge';
@@ -61,7 +62,7 @@ const generateInitials = (userName: string): string => {
     // Если несколько слов, берем первые буквы первых двух слов
     return words
       .slice(0, 2)
-      .map(word => word.charAt(0))
+      .map((word) => word.charAt(0))
       .join('')
       .toUpperCase();
   }
@@ -106,6 +107,7 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
     },
     ref,
   ) => {
+    const uiMotion = useUiMotionPresets();
     const [imageError, setImageError] = React.useState(false);
 
     const handleImageError = () => {
@@ -231,8 +233,7 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
           className={clsx('ui-avatar')}
           onClick={handleClick}
           cursor={cursor}
-          whileHover={onClick ? { scale: 1.05 } : undefined}
-          whileTap={onClick ? { scale: 0.95 } : undefined}
+          {...uiMotion.avatar(Boolean(onClick))}
         >
           {renderContent()}
         </AvatarContainer>
@@ -244,7 +245,7 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
               size={size === Size.LG ? Size.MD : Size.SM}
               rounded={true}
             >
-              {(messageCount ?? 0) > 99 ? '99+' : messageCount ?? 0}
+              {(messageCount ?? 0) > 99 ? '99+' : (messageCount ?? 0)}
             </Badge>
           </AvatarMessageBadgeAnchor>
         )}

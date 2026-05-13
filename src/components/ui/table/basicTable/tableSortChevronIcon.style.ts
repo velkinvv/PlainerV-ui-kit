@@ -14,7 +14,7 @@ export const TableSortLabelPriority = styled.span`
 
 /** Шевроны + опциональный индекс сортировки в одну горизонтальную группу. */
 export const TableSortChevronMetaRow = styled.span.withConfig({
-  shouldForwardProp: prop => prop !== '$dockStart',
+  shouldForwardProp: (prop) => prop !== '$dockStart',
 })<{ $dockStart?: boolean }>`
   display: inline-flex;
   flex-direction: row;

@@ -6,6 +6,7 @@ import React from 'react';
 import { Size, IconSize } from '../../../../types/sizes';
 import { InputVariant } from '../../../../types/ui';
 import { DOC_INPUT } from '@/components/ui/storyDocs/uiKitDocs';
+import { inputStoriesStyles } from './Input.stories.styles';
 
 const meta: Meta<typeof Input> = {
   title: 'UI Kit/Inputs/Input',
@@ -148,16 +149,6 @@ const meta: Meta<typeof Input> = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
-
-/** Кнопка сброса полей в интерактивных сторис */
-const inputStoriesResetButtonStyle: React.CSSProperties = {
-  padding: '8px 16px',
-  marginTop: '12px',
-  border: '1px solid #ccc',
-  borderRadius: '4px',
-  background: 'white',
-  cursor: 'pointer',
-};
 
 // Основные варианты
 export const Default: Story = {
@@ -344,14 +335,7 @@ export const TextAlignRight: Story = {
 
 export const TextAlignComparison: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '16px',
-        width: '400px',
-      }}
-    >
+    <div style={inputStoriesStyles.columnGap16Width400}>
       <Input
         label="По левому краю (по умолчанию)"
         placeholder="Введите текст..."
@@ -385,14 +369,7 @@ export const AllVariants: Story = {
     const [okEmail, setOkEmail] = React.useState('user@example.com');
     const [search, setSearch] = React.useState('Поисковый запрос');
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '24px',
-          width: '400px',
-        }}
-      >
+      <div style={inputStoriesStyles.columnGap24Width400}>
         <Input
           label="Обычное поле"
           placeholder="Введите текст..."
@@ -447,14 +424,7 @@ export const FormExample: Story = {
     };
     return (
       <Form formId="form-example" onSubmit={(e) => e.preventDefault()}>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '16px',
-            width: '400px',
-          }}
-        >
+        <div style={inputStoriesStyles.columnGap16Width400}>
           <HiddenUsernameField />
           <Input
             label="Имя"
@@ -500,7 +470,7 @@ export const FormExample: Story = {
             onChange={(e) => setPassword2(e.target.value)}
           />
 
-          <button type="button" onClick={reset} style={inputStoriesResetButtonStyle}>
+          <button type="button" onClick={reset} style={inputStoriesStyles.formResetButton}>
             Очистить форму
           </button>
         </div>
@@ -554,14 +524,7 @@ export const LoadingDemo: Story = {
     }, []);
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={inputStoriesStyles.columnGap16Width400}>
         <Input
           label="Загрузка данных (3 сек)"
           placeholder="Введите текст..."
@@ -591,13 +554,8 @@ export const LoadingDemo: Story = {
 
         <button
           onClick={() => setIsLoading3(!isLoading3)}
-          style={{
-            padding: '8px 16px',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            background: 'white',
-            cursor: 'pointer',
-          }}
+          type="button"
+          style={inputStoriesStyles.actionButtonMedium}
         >
           {isLoading3 ? 'Остановить загрузку' : 'Начать загрузку'}
         </button>
@@ -633,14 +591,7 @@ export const SkeletonDemo: Story = {
     }, []);
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={inputStoriesStyles.columnGap16Width400}>
         <Input
           label="Skeleton эффект (3 сек)"
           placeholder="Введите текст..."
@@ -670,13 +621,8 @@ export const SkeletonDemo: Story = {
 
         <button
           onClick={() => setSkeleton3(!skeleton3)}
-          style={{
-            padding: '8px 16px',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            background: 'white',
-            cursor: 'pointer',
-          }}
+          type="button"
+          style={inputStoriesStyles.actionButtonMedium}
         >
           {skeleton3 ? 'Убрать skeleton' : 'Показать skeleton'}
         </button>
@@ -704,14 +650,7 @@ export const TooltipDemo: Story = {
     const [value6, setValue6] = React.useState('');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={inputStoriesStyles.columnGap16Width400}>
         <Input
           label="Обычный инпут"
           placeholder="Без подсказки"
@@ -766,7 +705,7 @@ export const TooltipDemo: Story = {
           onChange={(e) => setValue6(e.target.value)}
           leftIcon={<Icon name="IconPlainerPlus" size={IconSize.SM} />}
           tooltip={
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={inputStoriesStyles.rowAlignCenterGap8}>
               <Icon name="IconPlainerPlus" size={IconSize.XS} />
               <span>Тултип с иконкой и текстом</span>
             </div>
@@ -796,14 +735,7 @@ export const CharacterCounterDemo: Story = {
     const [value4, setValue4] = React.useState('');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={inputStoriesStyles.columnGap16Width400}>
         <Input
           label="Обычный инпут"
           placeholder="Без maxLength"
@@ -859,14 +791,7 @@ export const ExtraTextDemo: Story = {
     const [value3, setValue3] = React.useState('');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={inputStoriesStyles.columnGap16Width400}>
         <Input
           label="Обычный инпут"
           placeholder="Без дополнительного текста"
@@ -911,14 +836,7 @@ export const DisableCopyingDemo: Story = {
     const [value2, setValue2] = React.useState('Защищенный инпут - нельзя копировать');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={inputStoriesStyles.columnGap16Width400}>
         <Input
           label="Обычный инпут"
           placeholder="Можно выделять и копировать текст"
@@ -1117,14 +1035,7 @@ export const HandleInputDemo: Story = {
     };
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={inputStoriesStyles.columnGap16Width400}>
         <Input
           label="Телефон (маска +7 (XXX) XXX-XX-XX)"
           placeholder="+7 (___) ___-__-__"
@@ -1184,14 +1095,7 @@ export const IgnoreMaskCharactersDemo: Story = {
     const [value2, setValue2] = React.useState('10.12.1985');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={inputStoriesStyles.columnGap16Width400}>
         <Input
           label="Обычный счетчик символов"
           placeholder="Введите дату..."
@@ -1214,16 +1118,9 @@ export const IgnoreMaskCharactersDemo: Story = {
           helperText="Считаются только цифры, разделители игнорируются (8/8)"
         />
 
-        <div
-          style={{
-            marginTop: '16px',
-            padding: '12px',
-            backgroundColor: '#f5f5f5',
-            borderRadius: '4px',
-          }}
-        >
-          <h4 style={{ margin: '0 0 8px 0', fontSize: '14px' }}>Сравнение:</h4>
-          <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '12px' }}>
+        <div style={inputStoriesStyles.infoBoxWithTopMargin}>
+          <h4 style={inputStoriesStyles.heading14}>Сравнение:</h4>
+          <ul style={inputStoriesStyles.list12}>
             <li>
               <strong>ignoreMaskCharacters=false:</strong> &quot;10.12.1985&quot; = 10 символов
             </li>
@@ -1254,14 +1151,7 @@ export const CharacterCounterThresholdDemo: Story = {
     const [value3, setValue3] = React.useState('');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={inputStoriesStyles.columnGap16Width400}>
         <Input
           label="Всегда видимый счетчик (threshold=0)"
           placeholder="Введите текст..."
@@ -1295,16 +1185,9 @@ export const CharacterCounterThresholdDemo: Story = {
           helperText="Счетчик никогда не показывается"
         />
 
-        <div
-          style={{
-            marginTop: '16px',
-            padding: '12px',
-            backgroundColor: '#f5f5f5',
-            borderRadius: '4px',
-          }}
-        >
-          <h4 style={{ margin: '0 0 8px 0', fontSize: '14px' }}>Пороги видимости:</h4>
-          <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '12px' }}>
+        <div style={inputStoriesStyles.infoBoxWithTopMargin}>
+          <h4 style={inputStoriesStyles.heading14}>Пороги видимости:</h4>
+          <ul style={inputStoriesStyles.list12}>
             <li>
               <strong>threshold=0:</strong> Счетчик всегда видим
             </li>
@@ -1340,14 +1223,7 @@ export const AdditionalLabelDemo: Story = {
     const [value3, setValue3] = React.useState('');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={inputStoriesStyles.columnGap16Width400}>
         <Input
           label="Имя пользователя"
           additionalLabel="Уникальный идентификатор для входа в систему"
@@ -1377,16 +1253,9 @@ export const AdditionalLabelDemo: Story = {
           helperText="Используется для двухфакторной аутентификации"
         />
 
-        <div
-          style={{
-            marginTop: '16px',
-            padding: '12px',
-            backgroundColor: '#f5f5f5',
-            borderRadius: '4px',
-          }}
-        >
-          <h4 style={{ margin: '0 0 8px 0', fontSize: '14px' }}>Дополнительные метки:</h4>
-          <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '12px' }}>
+        <div style={inputStoriesStyles.infoBoxWithTopMargin}>
+          <h4 style={inputStoriesStyles.heading14}>Дополнительные метки:</h4>
+          <ul style={inputStoriesStyles.list12}>
             <li>
               <strong>additionalLabel</strong> отображается справа от основного label
             </li>
@@ -1448,7 +1317,7 @@ export const ReadOnlyComparison: Story = {
   render: () => {
     const [editable, setEditable] = React.useState('Можно редактировать');
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={inputStoriesStyles.columnGap16}>
         <Input
           label="Обычное поле"
           value={editable}
@@ -1492,7 +1361,7 @@ export const PasswordForm: Story = {
     };
     return (
       <Form formId="password-form" formName="passwordForm" onSubmit={(e) => e.preventDefault()}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div style={inputStoriesStyles.columnGap16}>
           <Input
             label="Имя пользователя"
             placeholder="Введите имя пользователя"
@@ -1519,21 +1388,11 @@ export const PasswordForm: Story = {
             onChange={(e) => setPassword2(e.target.value)}
             required
           />
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            <button
-              type="submit"
-              style={{
-                padding: '8px 16px',
-                backgroundColor: '#007bff',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-              }}
-            >
+          <div style={inputStoriesStyles.rowWrapGap8}>
+            <button type="submit" style={inputStoriesStyles.submitButtonPrimary}>
               Отправить
             </button>
-            <button type="button" onClick={reset} style={inputStoriesResetButtonStyle}>
+            <button type="button" onClick={reset} style={inputStoriesStyles.formResetButton}>
               Очистить
             </button>
           </div>
@@ -1559,13 +1418,13 @@ export const PasswordComparison: Story = {
     const [loginEmail, setLoginEmail] = React.useState('');
     const [loginPass, setLoginPass] = React.useState('');
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+      <div style={inputStoriesStyles.columnGap32}>
         <div>
-          <h3 style={{ marginBottom: '16px', color: '#28a745' }}>
+          <h3 style={inputStoriesStyles.sectionTitleRegistration}>
             ✅ Форма регистрации (новые пароли)
           </h3>
           <Form formId="registration-form" onSubmit={(e) => e.preventDefault()}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={inputStoriesStyles.columnGap16}>
               <Input
                 label="Имя пользователя"
                 placeholder="Введите имя пользователя"
@@ -1596,7 +1455,7 @@ export const PasswordComparison: Story = {
                   setRegPass('');
                   setRegPass2('');
                 }}
-                style={inputStoriesResetButtonStyle}
+                style={inputStoriesStyles.formResetButton}
               >
                 Очистить
               </button>
@@ -1605,11 +1464,9 @@ export const PasswordComparison: Story = {
         </div>
 
         <div>
-          <h3 style={{ marginBottom: '16px', color: '#007bff' }}>
-            ✅ Форма входа (текущий пароль)
-          </h3>
+          <h3 style={inputStoriesStyles.sectionTitleLogin}>✅ Форма входа (текущий пароль)</h3>
           <Form formId="login-form" onSubmit={(e) => e.preventDefault()}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={inputStoriesStyles.columnGap16}>
               <HiddenUsernameField />
               <Input
                 label="Email"
@@ -1633,7 +1490,7 @@ export const PasswordComparison: Story = {
                   setLoginEmail('');
                   setLoginPass('');
                 }}
-                style={inputStoriesResetButtonStyle}
+                style={inputStoriesStyles.formResetButton}
               >
                 Очистить
               </button>
@@ -1671,8 +1528,10 @@ export const AutocompleteDemo: Story = {
     };
     return (
       <Form formId="autocomplete-demo" onSubmit={(e) => e.preventDefault()}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <h3 style={{ marginBottom: '8px' }}>Демонстрация различных типов autocomplete</h3>
+        <div style={inputStoriesStyles.columnGap16}>
+          <h3 style={inputStoriesStyles.autocompleteDemoHeading}>
+            Демонстрация различных типов autocomplete
+          </h3>
 
           <HiddenUsernameField />
 
@@ -1733,7 +1592,7 @@ export const AutocompleteDemo: Story = {
             onChange={(e) => setFamily(e.target.value)}
           />
 
-          <button type="button" onClick={resetAll} style={inputStoriesResetButtonStyle}>
+          <button type="button" onClick={resetAll} style={inputStoriesStyles.formResetButton}>
             Очистить все поля
           </button>
         </div>
@@ -1749,4 +1608,3 @@ export const AutocompleteDemo: Story = {
     },
   },
 };
-

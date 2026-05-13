@@ -5,6 +5,7 @@ import { TabItem, TabItemGroupList } from './TabItem';
 import { TabItemTextOrientation, TabItemTextPosition, TabsDirection } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
 import { DOC_TAB_ITEM } from '@/components/ui/storyDocs/uiKitDocs';
+import { tabItemStoriesStyles } from './TabItem.stories.styles';
 
 const meta: Meta<typeof TabItem> = {
   title: 'UI Kit/Navigation/Tabs/TabItem',
@@ -72,7 +73,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: () => (
     <TabItem value="tab1" label="Tab 1" defaultActive>
-      <div style={{ padding: '16px' }}>
+      <div style={tabItemStoriesStyles.contentPadding16}>
         <h3>Tab 1 Content</h3>
         <p>This is the content of the first tab using TabItem component.</p>
       </div>
@@ -98,7 +99,7 @@ export const HorizontalText: Story = {
           label="Horizontal Text"
           textOrientation={TabItemTextOrientation.HORIZONTAL}
         >
-          <div style={{ padding: '16px' }}>
+          <div style={tabItemStoriesStyles.contentPadding16}>
             <h3>Horizontal Text Tab</h3>
             <p>This tab has horizontal text orientation.</p>
           </div>
@@ -124,7 +125,7 @@ export const VerticalText: Story = {
       textOrientation={TabItemTextOrientation.VERTICAL}
       defaultActive
     >
-      <div style={{ padding: '16px' }}>
+      <div style={tabItemStoriesStyles.contentPadding16}>
         <h3>Vertical Text Tab</h3>
         <p>This tab has vertical text orientation.</p>
       </div>
@@ -150,7 +151,7 @@ export const VerticalTextLeft: Story = {
           textOrientation={TabItemTextOrientation.VERTICAL}
           textPosition={TabItemTextPosition.LEFT}
         >
-          <div style={{ padding: '16px' }}>
+          <div style={tabItemStoriesStyles.contentPadding16}>
             <h3>Vertical Text Left</h3>
             <p>This tab has vertical text orientation with left alignment.</p>
           </div>
@@ -177,7 +178,7 @@ export const VerticalTextRight: Story = {
       textPosition={TabItemTextPosition.RIGHT}
       defaultActive
     >
-      <div style={{ padding: '16px' }}>
+      <div style={tabItemStoriesStyles.contentPadding16}>
         <h3>Vertical Text Right</h3>
         <p>This tab has vertical text orientation with right alignment.</p>
       </div>
@@ -199,9 +200,9 @@ export const WithIcons: Story = {
       <Tabs.List>
         <TabItem
           value="home"
-          label={<span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>🏠 Home</span>}
+          label={<span style={tabItemStoriesStyles.iconLabelRow}>🏠 Home</span>}
         >
-          <div style={{ padding: '16px' }}>
+          <div style={tabItemStoriesStyles.contentPadding16}>
             <h3>Home</h3>
             <p>Welcome to the home page using TabItem!</p>
           </div>
@@ -223,11 +224,11 @@ export const VerticalTextWithIcons: Story = {
   render: () => (
     <TabItem
       value="home"
-      label={<span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>🏠 Home</span>}
+      label={<span style={tabItemStoriesStyles.iconLabelRow}>🏠 Home</span>}
       textOrientation={TabItemTextOrientation.VERTICAL}
       defaultActive
     >
-      <div style={{ padding: '16px' }}>
+      <div style={tabItemStoriesStyles.contentPadding16}>
         <h3>Home</h3>
         <p>Welcome to the home page with vertical text!</p>
       </div>
@@ -249,7 +250,7 @@ export const WithIconStart: Story = {
     <Tabs>
       <Tabs.List>
         <TabItem value="home" label="Home" iconStart={<Icon name="IconExHome" size="md" />}>
-          <div style={{ padding: '16px' }}>
+          <div style={tabItemStoriesStyles.contentPadding16}>
             <h3>Home</h3>
             <p>Tab with icon at the start (left for horizontal text, top for vertical text).</p>
           </div>
@@ -276,7 +277,7 @@ export const WithIconEnd: Story = {
       iconEnd={<Icon name="IconExSettings" size="md" />}
       defaultActive
     >
-      <div style={{ padding: '16px' }}>
+      <div style={tabItemStoriesStyles.contentPadding16}>
         <h3>Settings</h3>
         <p>Tab with icon at the end (right for horizontal text, bottom for vertical text).</p>
       </div>
@@ -302,7 +303,7 @@ export const WithBothIcons: Story = {
       iconEnd={<Icon name="IconExSend" size="md" />}
       defaultActive
     >
-      <div style={{ padding: '16px' }}>
+      <div style={tabItemStoriesStyles.contentPadding16}>
         <h3>Profile</h3>
         <p>Tab with icons at both start and end.</p>
       </div>
@@ -327,7 +328,7 @@ export const VerticalTextWithIconStart: Story = {
       iconStart={<Icon name="IconExHome" size="md" />}
       defaultActive
     >
-      <div style={{ padding: '16px' }}>
+      <div style={tabItemStoriesStyles.contentPadding16}>
         <h3>Home</h3>
         <p>Vertical text with icon at the start (top).</p>
       </div>
@@ -352,7 +353,7 @@ export const VerticalTextWithIconEnd: Story = {
       iconEnd={<Icon name="IconExSettings" size="md" />}
       defaultActive
     >
-      <div style={{ padding: '16px' }}>
+      <div style={tabItemStoriesStyles.contentPadding16}>
         <h3>Settings</h3>
         <p>Vertical text with icon at the end (bottom).</p>
       </div>
@@ -373,19 +374,19 @@ export const WithGroup: Story = {
     <TabItem.Group defaultActiveTab="tab1">
       <TabItemGroupList $direction={TabsDirection.HORIZONTAL}>
         <TabItem value="tab1" label="Tab 1">
-          <div style={{ padding: '16px' }}>
+          <div style={tabItemStoriesStyles.contentPadding16}>
             <h3>Tab 1 Content</h3>
             <p>This is the content of the first tab in a group.</p>
           </div>
         </TabItem>
         <TabItem value="tab2" label="Tab 2">
-          <div style={{ padding: '16px' }}>
+          <div style={tabItemStoriesStyles.contentPadding16}>
             <h3>Tab 2 Content</h3>
             <p>This is the content of the second tab in a group.</p>
           </div>
         </TabItem>
         <TabItem value="tab3" label="Tab 3">
-          <div style={{ padding: '16px' }}>
+          <div style={tabItemStoriesStyles.contentPadding16}>
             <h3>Tab 3 Content</h3>
             <p>This is the content of the third tab in a group.</p>
           </div>
@@ -402,4 +403,3 @@ export const WithGroup: Story = {
     },
   },
 };
-

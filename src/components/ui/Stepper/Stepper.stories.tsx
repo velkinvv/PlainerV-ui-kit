@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Stepper } from './Stepper';
 import type { StepperLinearStep } from '../../../types/ui';
 import { DOC_STEPPER } from '@/components/ui/storyDocs/uiKitDocs';
+import { stepperStoriesStyles } from './Stepper.stories.styles';
 
 const linearSteps: StepperLinearStep[] = [
   { title: 'Наименование' },
@@ -137,20 +138,25 @@ export const CompactWithoutBack: Story = {
 /** Интерактив: шаги и кольцо */
 export const CompactInteractive: Story = {
   render: () => {
-    const [step, setStep] = useState(1);
-    const total = 4;
+    const [currentStep, setCurrentStep] = useState(1);
+    const totalSteps = 4;
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'flex-start' }}>
+      <div style={stepperStoriesStyles.interactiveContainer}>
         <Stepper
           variant="compact"
           appearance="dark"
-          currentStep={step}
-          totalSteps={total}
-          title={`Шаг ${step} из ${total}`}
-          subtitle={step < total ? `Далее: шаг ${step + 1}` : 'Завершение'}
-          onBack={() => setStep((s) => Math.max(1, s - 1))}
+          currentStep={currentStep}
+          totalSteps={totalSteps}
+          title={`Шаг ${currentStep} из ${totalSteps}`}
+          subtitle={currentStep < totalSteps ? `Далее: шаг ${currentStep + 1}` : 'Завершение'}
+          onBack={() => setCurrentStep((previousStepValue) => Math.max(1, previousStepValue - 1))}
         />
-        <button type="button" onClick={() => setStep((s) => Math.min(total, s + 1))}>
+        <button
+          type="button"
+          onClick={() =>
+            setCurrentStep((previousStepValue) => Math.min(totalSteps, previousStepValue + 1))
+          }
+        >
           Вперёд (демо)
         </button>
       </div>
@@ -203,4 +209,3 @@ export const LinearCustomLabels: Story = {
     />
   ),
 };
-

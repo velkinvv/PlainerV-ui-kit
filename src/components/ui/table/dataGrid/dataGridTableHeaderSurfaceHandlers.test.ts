@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import type { ThemeType } from '@/types/theme';
 import { resolveDataGridTableHeaderBackground } from './dataGridTableHeaderSurfaceHandlers';
 

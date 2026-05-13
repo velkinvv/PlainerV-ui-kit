@@ -6,15 +6,17 @@ import { Typography } from '../components/ui/Typography';
 import { ToastProvider } from '../components/ui/Toast';
 import { useToast } from './useToast';
 import { ToastAppearance, type ToastType } from '@/types/ui';
+import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
+import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
 
-const withToast: Decorator = Story => (
+const withToast: Decorator = (Story) => (
   <ToastProvider>
     <Story />
   </ToastProvider>
 );
 
 /** Провайдер с внешним видом «пилюля» по умолчанию */
-const withPillToast: Decorator = Story => (
+const withPillToast: Decorator = (Story) => (
   <ToastProvider defaultAppearance={ToastAppearance.PILL}>
     <Story />
   </ToastProvider>
@@ -73,7 +75,7 @@ const BasicToastDemo = () => {
         Базовое использование useToast
       </Typography>
 
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
+      <div style={storybookDemoStyles.rowFlexGap12MarginBottom16Wrap}>
         <Button onClick={() => showToast('Простое уведомление')}>Простое уведомление</Button>
         <Button onClick={() => showToast('Успешная операция', 'success', 'Успех')}>Успех</Button>
         <Button onClick={() => showToast('Произошла ошибка', 'error', 'Ошибка')}>Ошибка</Button>
@@ -83,21 +85,21 @@ const BasicToastDemo = () => {
         <Button onClick={() => showToast('Информация', 'info', 'Инфо')}>Информация</Button>
       </div>
 
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.rowFlexGap12MarginBottom16}>
         <Button onClick={clearToasts} variant="outlined" disabled={toasts.length === 0}>
           Очистить все ({toasts.length})
         </Button>
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body2" marginBottom="xs">
           <strong>Активные уведомления:</strong> {toasts.length}
         </Typography>
         {toasts.length > 0 ? (
-          <div style={{ marginTop: '8px' }}>
+          <div style={storybookDemoStyles.marginTop8}>
             {toasts.map((toast) => (
-              <div key={toast.id} style={{ marginBottom: '4px' }}>
-                <Typography variant="body2" style={{ fontSize: '12px' }}>
+              <div key={toast.id} style={storybookDemoStyles.marginBottom4}>
+                <Typography variant="body2" style={storybookDemoStyles.typographyFinePrint12}>
                   {toast.type}: {toast.message} (ID: {toast.id.slice(0, 6)})
                 </Typography>
               </div>
@@ -156,14 +158,7 @@ const ToastTypesDemo = () => {
         Различные типы уведомлений
       </Typography>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
-          gap: '12px',
-          marginBottom: '16px',
-        }}
-      >
+      <div style={storybookDemoStyles.gridAutoFillMin160Gap12MarginBottom16}>
         {toastExamples.map((example, index) => (
           <Button
             key={index}
@@ -183,7 +178,7 @@ const ToastTypesDemo = () => {
         ))}
       </div>
 
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.rowFlexGap12MarginBottom16}>
         <Button onClick={clearToasts} variant="outlined" disabled={toasts.length === 0}>
           Очистить все
         </Button>
@@ -201,7 +196,7 @@ const AutoHideDemo = () => {
         Автоматическое скрытие уведомлений
       </Typography>
 
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
+      <div style={storybookDemoStyles.rowFlexGap12MarginBottom16Wrap}>
         <Button onClick={() => showToast('Быстрое уведомление', 'info', 'Быстро', 1000)}>
           1 секунда
         </Button>
@@ -216,17 +211,17 @@ const AutoHideDemo = () => {
         </Button>
       </div>
 
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.rowFlexGap12MarginBottom16}>
         <Button onClick={clearToasts} variant="outlined" disabled={toasts.length === 0}>
           Очистить все
         </Button>
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body2" marginBottom="xs">
           <strong>Активные уведомления:</strong> {toasts.length}
         </Typography>
-        <Typography variant="body2" style={{ fontSize: '12px', color: '#6c757d' }}>
+        <Typography variant="body2" style={storybookDemoStyles.typographyFinePrint12Secondary}>
           Уведомления с длительностью 0 не скрываются автоматически
         </Typography>
       </div>
@@ -242,11 +237,15 @@ const PillToastDemo = () => {
       <Typography variant="h3" marginBottom="md">
         Внешний вид «пилюля» (по умолчанию у провайдера)
       </Typography>
-      <Typography variant="body2" marginBottom="md" style={{ color: '#616161' }}>
+      <Typography
+        variant="body2"
+        marginBottom="md"
+        style={storybookDemoStyles.typographyMutedParagraph}
+      >
         Типы уведомлений: иконка с glow, кнопка «Action» закрывает toast после колбэка.
       </Typography>
 
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
+      <div style={storybookDemoStyles.rowFlexGap12MarginBottom16Wrap}>
         <Button
           onClick={() =>
             showToast('Notification', 'neutral', undefined, 6000, {
@@ -327,7 +326,7 @@ const BulkOperationsDemo = () => {
         Массовые операции
       </Typography>
 
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
+      <div style={storybookDemoStyles.rowFlexGap12MarginBottom16Wrap}>
         <Button onClick={showMultipleToasts}>Показать несколько уведомлений</Button>
         <Button onClick={() => showToast('Новое уведомление', 'info', 'Новое')}>
           Добавить еще одно
@@ -337,33 +336,22 @@ const BulkOperationsDemo = () => {
         </Button>
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body2" marginBottom="xs">
           <strong>Активные уведомления:</strong> {toasts.length}
         </Typography>
         {toasts.length > 0 ? (
-          <div style={{ marginTop: '8px' }}>
+          <div style={storybookDemoStyles.marginTop8}>
             {toasts.map((toast, index) => (
-              <div
-                key={toast.id}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: '4px',
-                  padding: '4px 8px',
-                  backgroundColor: 'white',
-                  borderRadius: '4px',
-                }}
-              >
-                <Typography variant="body2" style={{ fontSize: '12px' }}>
+              <div key={toast.id} style={storybookDemoStyles.toastDemoActiveRow}>
+                <Typography variant="body2" style={storybookDemoStyles.typographyFinePrint12}>
                   {index + 1}. {toast.title}: {toast.message}
                 </Typography>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => hideToast(toast.id)}
-                  style={{ padding: '2px 6px', minWidth: 'auto' }}
+                  style={storybookDemoStyles.toastDismissIconButtonTight}
                 >
                   ×
                 </Button>
@@ -377,7 +365,8 @@ const BulkOperationsDemo = () => {
 };
 
 const AdvancedControlsDemo = () => {
-  const { showToast, updateToast, pauseToasts, playToasts, clearToasts, isActiveToast } = useToast();
+  const { showToast, updateToast, pauseToasts, playToasts, clearToasts, isActiveToast } =
+    useToast();
 
   const showPauseOnHover = () => {
     showToast('Наведи мышку на карточку: таймер остановится.', 'info', 'Pause on hover', 7000, {
@@ -444,7 +433,7 @@ const AdvancedControlsDemo = () => {
         Продвинутые функции
       </Typography>
 
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
+      <div style={storybookDemoStyles.rowFlexGap12MarginBottom16Wrap}>
         <Button onClick={showPauseOnHover}>Pause on hover</Button>
         <Button onClick={showAndUpdate}>Update by id</Button>
         <Button variant="outlined" onClick={() => pauseToasts()}>
@@ -504,7 +493,7 @@ const LimitAndStackDemo = () => {
       <Typography variant="h3" marginBottom="md">
         limit + newestOnTop + stacked
       </Typography>
-      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+      <div style={storybookDemoStyles.rowFlexGap12Wrap}>
         <Button onClick={showMany}>Показать 5 уведомлений</Button>
         <Button variant="outlined" onClick={clearToasts}>
           Очистить
@@ -541,7 +530,7 @@ export const AdvancedControls: Story = {
 
 export const LimitedStack: Story = {
   decorators: [
-    Story => (
+    (Story) => (
       <ToastProvider limit={3} newestOnTop stacked>
         <Story />
       </ToastProvider>
@@ -552,13 +541,12 @@ export const LimitedStack: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <StorybookStaggerStack>
       <BasicToastDemo />
       <ToastTypesDemo />
       <AutoHideDemo />
       <BulkOperationsDemo />
       <AdvancedControlsDemo />
-    </div>
+    </StorybookStaggerStack>
   ),
 };
-

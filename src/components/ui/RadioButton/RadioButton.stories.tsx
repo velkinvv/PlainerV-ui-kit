@@ -1,20 +1,12 @@
 ﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useId, useState } from 'react';
 import { RadioButton } from './RadioButton';
-import {
-  AdditionalLabel,
-  InputContainer,
-  Label,
-  RequiredIndicator,
-} from '../inputs/shared';
+import { AdditionalLabel, InputContainer, Label, RequiredIndicator } from '../inputs/shared';
 import { Size, IconSize } from '../../../types/sizes';
-import {
-  TooltipPosition,
-  RadioButtonLabelPosition,
-  RadioButtonVariant,
-} from '../../../types/ui';
+import { TooltipPosition, RadioButtonLabelPosition, RadioButtonVariant } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
 import { DOC_RADIO_BUTTON } from '@/components/ui/storyDocs/uiKitDocs';
+import { radioButtonStoriesStyles } from './RadioButton.stories.styles';
 
 const meta: Meta<typeof RadioButton> = {
   title: 'UI Kit/Inputs/RadioButton',
@@ -206,23 +198,9 @@ export const Sizes: Story = {
     };
 
     return (
-      <fieldset
-        style={{
-          border: 'none',
-          margin: 0,
-          padding: 0,
-        }}
-      >
-        <legend
-          style={{
-            fontWeight: 600,
-            marginBottom: 12,
-            padding: 0,
-          }}
-        >
-          Размеры (одна активная группа)
-        </legend>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <fieldset style={radioButtonStoriesStyles.fieldsetReset}>
+        <legend style={radioButtonStoriesStyles.legendBase}>Размеры (одна активная группа)</legend>
+        <div style={radioButtonStoriesStyles.columnGap16}>
           <RadioButton
             checked={selectedSize === 'small'}
             onChange={handleSizeChange}
@@ -268,7 +246,7 @@ export const Interactive: Story = {
     };
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <div style={radioButtonStoriesStyles.columnGap12}>
         <RadioButton
           {...args}
           checked={selectedValue === 'option1'}
@@ -290,14 +268,7 @@ export const Interactive: Story = {
           label="Опция 3"
           value="option3"
         />
-        <div
-          style={{
-            marginTop: '16px',
-            padding: '12px',
-            backgroundColor: '#f5f5f5',
-            borderRadius: '4px',
-          }}
-        >
+        <div style={radioButtonStoriesStyles.selectedCard}>
           <strong>Выбранная опция:</strong> {selectedValue}
         </div>
       </div>
@@ -324,9 +295,11 @@ export const SharedFieldCaptionMultipleRadios: Story = {
           Способ доставки
           <RequiredIndicator>*</RequiredIndicator>
         </Label>
-        <AdditionalLabel>Все варианты относятся к одному заказу; доступен только один способ.</AdditionalLabel>
+        <AdditionalLabel>
+          Все варианты относятся к одному заказу; доступен только один способ.
+        </AdditionalLabel>
         <div role="radiogroup" aria-labelledby={groupHeadingCaptionId}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={radioButtonStoriesStyles.columnGap12}>
             <RadioButton
               name="delivery-shared-caption"
               value="courier"
@@ -350,7 +323,7 @@ export const SharedFieldCaptionMultipleRadios: Story = {
             />
           </div>
         </div>
-        <p style={{ margin: '12px 0 0', color: '#575757', fontSize: '14px' }}>
+        <p style={radioButtonStoriesStyles.selectedValueCaption}>
           Выбрано:&nbsp;<strong>{deliveryMethod}</strong>
         </p>
       </InputContainer>
@@ -373,9 +346,9 @@ export const RadioGroup: Story = {
     ];
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        <h3 style={{ margin: '0 0 16px 0' }}>Выберите тему оформления:</h3>
-        {options.map(option => (
+      <div style={radioButtonStoriesStyles.columnGap12}>
+        <h3 style={radioButtonStoriesStyles.headingWithBottom16}>Выберите тему оформления:</h3>
+        {options.map((option) => (
           <RadioButton
             key={option.value}
             checked={selectedValue === option.value}
@@ -385,14 +358,7 @@ export const RadioGroup: Story = {
             value={option.value}
           />
         ))}
-        <div
-          style={{
-            marginTop: '16px',
-            padding: '12px',
-            backgroundColor: '#f5f5f5',
-            borderRadius: '4px',
-          }}
-        >
+        <div style={radioButtonStoriesStyles.selectedCard}>
           <strong>Выбранная тема:</strong> {selectedValue}
         </div>
       </div>
@@ -411,8 +377,8 @@ export const WithError: Story = {
     const hasError = selectedValue === '';
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        <h3 style={{ margin: '0 0 16px 0' }}>Выберите способ доставки:</h3>
+      <div style={radioButtonStoriesStyles.columnGap12}>
+        <h3 style={radioButtonStoriesStyles.headingWithBottom16}>Выберите способ доставки:</h3>
         <RadioButton
           checked={selectedValue === 'courier'}
           onChange={handleChange}
@@ -435,9 +401,7 @@ export const WithError: Story = {
           value="post"
         />
         {hasError && (
-          <div style={{ color: '#dc2626', fontSize: '14px', marginTop: '8px' }}>
-            Пожалуйста, выберите способ доставки
-          </div>
+          <div style={radioButtonStoriesStyles.errorText}>Пожалуйста, выберите способ доставки</div>
         )}
       </div>
     );
@@ -451,10 +415,10 @@ export const WithErrorState: Story = {
     const [value, setValue] = useState('option1');
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={radioButtonStoriesStyles.columnGap16}>
         <RadioButton
           checked={value === 'option1'}
-          onChange={e => setValue(e.target.value)}
+          onChange={(changeEvent) => setValue(changeEvent.target.value)}
           label="Опция с ошибкой"
           name="error"
           value="option1"
@@ -462,7 +426,7 @@ export const WithErrorState: Story = {
         />
         <RadioButton
           checked={value === 'option2'}
-          onChange={e => setValue(e.target.value)}
+          onChange={(changeEvent) => setValue(changeEvent.target.value)}
           label="Опция без ошибки"
           name="error"
           value="option2"
@@ -477,10 +441,10 @@ export const WithHelperText: Story = {
     const [value, setValue] = useState('option1');
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={radioButtonStoriesStyles.columnGap16}>
         <RadioButton
           checked={value === 'option1'}
-          onChange={e => setValue(e.target.value)}
+          onChange={(changeEvent) => setValue(changeEvent.target.value)}
           label="Опция с подсказкой"
           name="helper"
           value="option1"
@@ -488,7 +452,7 @@ export const WithHelperText: Story = {
         />
         <RadioButton
           checked={value === 'option2'}
-          onChange={e => setValue(e.target.value)}
+          onChange={(changeEvent) => setValue(changeEvent.target.value)}
           label="Обычная опция"
           name="helper"
           value="option2"
@@ -505,7 +469,7 @@ export const WithHelperAndFooterExtra: Story = {
     return (
       <RadioButton
         checked={value === 'option1'}
-        onChange={e => setValue(e.target.value)}
+        onChange={(changeEvent) => setValue(changeEvent.target.value)}
         label="Экспресс-доставка"
         name="radio-footer-demo"
         value="option1"
@@ -523,7 +487,7 @@ export const WithSuccessAndFooterExtra: Story = {
     return (
       <RadioButton
         checked={value === 'option1'}
-        onChange={e => setValue(e.target.value)}
+        onChange={(changeEvent) => setValue(changeEvent.target.value)}
         label="Способ оплаты сохранён"
         name="radio-success-demo"
         value="option1"
@@ -541,7 +505,7 @@ export const WithErrorAndFooterExtra: Story = {
     return (
       <RadioButton
         checked={value === 'option1'}
-        onChange={e => setValue(e.target.value)}
+        onChange={(changeEvent) => setValue(changeEvent.target.value)}
         label="Проблемный способ оплаты"
         name="radio-error-extra-demo"
         value="option1"
@@ -579,10 +543,10 @@ export const WithTooltip: Story = {
     const [value, setValue] = useState('option1');
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={radioButtonStoriesStyles.columnGap16}>
         <RadioButton
           checked={value === 'option1'}
-          onChange={e => setValue(e.target.value)}
+          onChange={(changeEvent) => setValue(changeEvent.target.value)}
           label="Опция с tooltip (сверху)"
           name="tooltip"
           value="option1"
@@ -591,7 +555,7 @@ export const WithTooltip: Story = {
         />
         <RadioButton
           checked={value === 'option2'}
-          onChange={e => setValue(e.target.value)}
+          onChange={(changeEvent) => setValue(changeEvent.target.value)}
           label="Опция с tooltip (снизу)"
           name="tooltip"
           value="option2"
@@ -600,7 +564,7 @@ export const WithTooltip: Story = {
         />
         <RadioButton
           checked={value === 'option3'}
-          onChange={e => setValue(e.target.value)}
+          onChange={(changeEvent) => setValue(changeEvent.target.value)}
           label="Опция с tooltip (слева)"
           name="tooltip"
           value="option3"
@@ -609,7 +573,7 @@ export const WithTooltip: Story = {
         />
         <RadioButton
           checked={value === 'option4'}
-          onChange={e => setValue(e.target.value)}
+          onChange={(changeEvent) => setValue(changeEvent.target.value)}
           label="Опция с tooltip (справа)"
           name="tooltip"
           value="option4"
@@ -626,10 +590,10 @@ export const WithRequired: Story = {
     const [value, setValue] = useState('');
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={radioButtonStoriesStyles.columnGap16}>
         <RadioButton
           checked={value === 'option1'}
-          onChange={e => setValue(e.target.value)}
+          onChange={(changeEvent) => setValue(changeEvent.target.value)}
           label="Обязательная опция 1"
           name="required"
           value="option1"
@@ -637,7 +601,7 @@ export const WithRequired: Story = {
         />
         <RadioButton
           checked={value === 'option2'}
-          onChange={e => setValue(e.target.value)}
+          onChange={(changeEvent) => setValue(changeEvent.target.value)}
           label="Обязательная опция 2"
           name="required"
           value="option2"
@@ -645,7 +609,7 @@ export const WithRequired: Story = {
         />
         <RadioButton
           checked={value === 'option3'}
-          onChange={e => setValue(e.target.value)}
+          onChange={(changeEvent) => setValue(changeEvent.target.value)}
           label="Необязательная опция"
           name="required"
           value="option3"
@@ -660,10 +624,10 @@ export const WithIcons: Story = {
     const [value, setValue] = useState('option1');
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={radioButtonStoriesStyles.columnGap16}>
         <RadioButton
           checked={value === 'option1'}
-          onChange={e => setValue(e.target.value)}
+          onChange={(changeEvent) => setValue(changeEvent.target.value)}
           label="Опция с иконкой слева"
           name="icons"
           value="option1"
@@ -671,7 +635,7 @@ export const WithIcons: Story = {
         />
         <RadioButton
           checked={value === 'option2'}
-          onChange={e => setValue(e.target.value)}
+          onChange={(changeEvent) => setValue(changeEvent.target.value)}
           label="Опция с иконкой справа"
           name="icons"
           value="option2"
@@ -680,7 +644,7 @@ export const WithIcons: Story = {
         />
         <RadioButton
           checked={value === 'option3'}
-          onChange={e => setValue(e.target.value)}
+          onChange={(changeEvent) => setValue(changeEvent.target.value)}
           label="Опция с обеими иконками"
           name="icons"
           value="option3"
@@ -699,12 +663,12 @@ export const WithStatus: Story = {
     const [value3, setValue3] = useState('option1');
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div style={radioButtonStoriesStyles.columnGap24}>
         <div>
           <h4>Success статус:</h4>
           <RadioButton
             checked={value1 === 'option1'}
-            onChange={e => setValue1(e.target.value)}
+            onChange={(changeEvent) => setValue1(changeEvent.target.value)}
             label="Опция со статусом success"
             name="status-success"
             value="option1"
@@ -715,7 +679,7 @@ export const WithStatus: Story = {
           <h4>Error статус:</h4>
           <RadioButton
             checked={value2 === 'option1'}
-            onChange={e => setValue2(e.target.value)}
+            onChange={(changeEvent) => setValue2(changeEvent.target.value)}
             label="Опция со статусом error"
             name="status-error"
             value="option1"
@@ -726,7 +690,7 @@ export const WithStatus: Story = {
           <h4>Warning статус:</h4>
           <RadioButton
             checked={value3 === 'option1'}
-            onChange={e => setValue3(e.target.value)}
+            onChange={(changeEvent) => setValue3(changeEvent.target.value)}
             label="Опция со статусом warning"
             name="status-warning"
             value="option1"
@@ -743,10 +707,10 @@ export const FullWidth: Story = {
     const [value, setValue] = useState('option1');
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '400px' }}>
+      <div style={radioButtonStoriesStyles.width400Column16}>
         <RadioButton
           checked={value === 'option1'}
-          onChange={e => setValue(e.target.value)}
+          onChange={(changeEvent) => setValue(changeEvent.target.value)}
           label="Опция с fullWidth"
           name="fullwidth"
           value="option1"
@@ -754,7 +718,7 @@ export const FullWidth: Story = {
         />
         <RadioButton
           checked={value === 'option2'}
-          onChange={e => setValue(e.target.value)}
+          onChange={(changeEvent) => setValue(changeEvent.target.value)}
           label="Обычная опция"
           name="fullwidth"
           value="option2"
@@ -769,10 +733,10 @@ export const ComplexExample: Story = {
     const [value, setValue] = useState('plan1');
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={radioButtonStoriesStyles.columnGap16}>
         <RadioButton
           checked={value === 'plan1'}
-          onChange={e => setValue(e.target.value)}
+          onChange={(changeEvent) => setValue(changeEvent.target.value)}
           label="Базовый план"
           name="complex"
           value="plan1"
@@ -784,7 +748,7 @@ export const ComplexExample: Story = {
         />
         <RadioButton
           checked={value === 'plan2'}
-          onChange={e => setValue(e.target.value)}
+          onChange={(changeEvent) => setValue(changeEvent.target.value)}
           label="Профессиональный план"
           name="complex"
           value="plan2"
@@ -796,7 +760,7 @@ export const ComplexExample: Story = {
         />
         <RadioButton
           checked={value === 'plan3'}
-          onChange={e => setValue(e.target.value)}
+          onChange={(changeEvent) => setValue(changeEvent.target.value)}
           label="Корпоративный план"
           name="complex"
           value="plan3"
@@ -810,4 +774,3 @@ export const ComplexExample: Story = {
     );
   },
 };
-

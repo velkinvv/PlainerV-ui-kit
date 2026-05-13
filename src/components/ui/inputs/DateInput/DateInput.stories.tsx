@@ -6,6 +6,7 @@ import { Size, IconSize } from '../../../../types/sizes';
 import type { DateTimeRange } from '../../../../types/ui';
 import { Icon } from '../../Icon/Icon';
 import { DOC_DATE_INPUT } from '@/components/ui/storyDocs/uiKitDocs';
+import { dateInputStoriesStyles } from './DateInput.stories.styles';
 
 const meta: Meta<typeof DateInput> = {
   title: 'UI Kit/Inputs/DateInput',
@@ -152,7 +153,7 @@ export const CalendarFullWidth: Story = {
     calendarFullWidth: true,
   },
   render: (args) => (
-    <div style={{ maxWidth: 420 }}>
+    <div style={dateInputStoriesStyles.maxWidth420}>
       <DateInput {...args} />
     </div>
   ),
@@ -190,7 +191,7 @@ export const WithError: Story = {
 
 export const Sizes: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div style={dateInputStoriesStyles.columnGap16}>
       <DateInput label="Маленький размер" size={Size.SM} placeholder="Выберите дату" />
       <DateInput label="Средний размер" size={Size.MD} placeholder="Выберите дату" />
       <DateInput label="Большой размер" size={Size.LG} placeholder="Выберите дату" />
@@ -207,15 +208,9 @@ export const Interactive: Story = {
     };
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={dateInputStoriesStyles.columnGap16}>
         <DateInput label="Дата" value={value} onChange={handleChange} placeholder="Выберите дату" />
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#f5f5f5',
-            borderRadius: '4px',
-          }}
-        >
+        <div style={dateInputStoriesStyles.infoBox}>
           <strong>Выбранная дата:</strong> {value || 'Не выбрано'}
         </div>
       </div>
@@ -256,7 +251,7 @@ export const RangeInteractive: Story = {
     };
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={dateInputStoriesStyles.columnGap16}>
         <DateInput
           range
           label="Диапазон дат"
@@ -264,13 +259,7 @@ export const RangeInteractive: Story = {
           onChange={handleChange}
           placeholder="Выберите диапазон дат"
         />
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#f5f5f5',
-            borderRadius: '4px',
-          }}
-        >
+        <div style={dateInputStoriesStyles.infoBox}>
           <strong>Выбранный диапазон:</strong>
           <br />
           Начало: {range.start || 'Не выбрано'}
@@ -293,7 +282,7 @@ export const WithMinMaxDates: Story = {
     };
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={dateInputStoriesStyles.columnGap16}>
         <DateInput
           label="Дата в 2024 году"
           value={value}
@@ -302,13 +291,7 @@ export const WithMinMaxDates: Story = {
           maxDate={maxDate}
           placeholder="Выберите дату в 2024 году"
         />
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#f5f5f5',
-            borderRadius: '4px',
-          }}
-        >
+        <div style={dateInputStoriesStyles.infoBox}>
           <strong>Ограничения:</strong>
           <br />
           Минимальная дата: {minDate.toLocaleDateString('ru-RU')}
@@ -373,9 +356,9 @@ export const FormExample: Story = {
     };
 
     return (
-      <div style={{ maxWidth: '500px' }}>
-        <h3 style={{ marginBottom: '20px' }}>Форма планирования</h3>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={dateInputStoriesStyles.maxWidth500}>
+        <h3 style={dateInputStoriesStyles.titleMarginBottom20}>Форма планирования</h3>
+        <div style={dateInputStoriesStyles.columnGap16}>
           <DateInput
             label="Дата начала"
             value={formData.startDate}
@@ -405,15 +388,8 @@ export const FormExample: Story = {
           />
           <button
             onClick={handleSubmit}
-            style={{
-              padding: '12px 24px',
-              backgroundColor: '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontSize: '14px',
-            }}
+            type="button"
+            style={dateInputStoriesStyles.submitButtonPrimary}
           >
             Отправить
           </button>
@@ -479,14 +455,7 @@ export const TextAlignComparison: Story = {
     const [rightDate, setRightDate] = useState('2024-01-15');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           label="По левому краю (по умолчанию)"
           placeholder="Выберите дату"
@@ -540,14 +509,7 @@ export const RangeTextAlignComparison: Story = {
     });
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '600px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width600}>
         <DateInput
           label="Range по левому краю"
           range={true}
@@ -811,7 +773,7 @@ export const InputModeComparison: Story = {
     const [segmentedValue, setSegmentedValue] = useState('2024-12-25');
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div style={dateInputStoriesStyles.columnGap24}>
         <div>
           <h3>Обычный режим</h3>
           <DateInput
@@ -891,14 +853,7 @@ export const SegmentedTextAlignDemo: Story = {
     const [rightDate, setRightDate] = useState('2024-01-15');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           segmented={true}
           label="Сегментированный - по левому краю"
@@ -948,14 +903,7 @@ export const DateFormatDemo: Story = {
     const [date5, setDate5] = useState('2024-01-15');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           label="DD.MM.YYYY (по умолчанию)"
           placeholder="Выберите дату"
@@ -1016,14 +964,7 @@ export const SegmentedDateFormatDemo: Story = {
     const [date3, setDate3] = useState('2024-01-15');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           segmented={true}
           label="Сегментированный DD.MM.YYYY"
@@ -1080,14 +1021,7 @@ export const RangeDateFormatDemo: Story = {
     });
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           range={true}
           label="Диапазон DD.MM.YYYY"
@@ -1153,14 +1087,7 @@ export const CustomIconDemo: Story = {
     const [date4, setDate4] = useState('2024-01-15');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           label="Стандартная иконка календаря"
           placeholder="Выберите дату"
@@ -1211,14 +1138,7 @@ export const SegmentedCustomIconDemo: Story = {
     const [date2, setDate2] = useState('2024-01-15');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           segmented={true}
           label="Сегментированный с иконкой солнца"
@@ -1261,14 +1181,7 @@ export const RangeCustomIconDemo: Story = {
     });
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           range={true}
           label="Диапазон с иконкой солнца"
@@ -1306,21 +1219,14 @@ export const BottomPanelDemo: Story = {
     const [date3, setDate3] = useState('2024-01-15');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           label="С информационной панелью"
           placeholder="Выберите дату"
           value={date1}
           onChange={(value) => setDate1(value as string)}
           renderBottomPanel={() => (
-            <div style={{ fontSize: '12px', color: '#666' }}>
+            <div style={dateInputStoriesStyles.smallNoteText}>
               💡 Выберите дату для планирования встречи
             </div>
           )}
@@ -1332,29 +1238,17 @@ export const BottomPanelDemo: Story = {
           value={date2}
           onChange={(value) => setDate2(value as string)}
           renderBottomPanel={() => (
-            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+            <div style={dateInputStoriesStyles.rowGap8Centered}>
               <button
-                style={{
-                  padding: '4px 8px',
-                  fontSize: '12px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  background: 'white',
-                  cursor: 'pointer',
-                }}
+                type="button"
+                style={dateInputStoriesStyles.actionButtonCompact}
                 onClick={() => setDate2('2024-01-01')}
               >
                 Новый год
               </button>
               <button
-                style={{
-                  padding: '4px 8px',
-                  fontSize: '12px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  background: 'white',
-                  cursor: 'pointer',
-                }}
+                type="button"
+                style={dateInputStoriesStyles.actionButtonCompact}
                 onClick={() => setDate2('2024-12-25')}
               >
                 Рождество
@@ -1369,17 +1263,11 @@ export const BottomPanelDemo: Story = {
           value={date3}
           onChange={(value) => setDate3(value as string)}
           renderBottomPanel={() => (
-            <div style={{ textAlign: 'center' }}>
-              <div
-                style={{
-                  fontSize: '14px',
-                  fontWeight: 'bold',
-                  marginBottom: '4px',
-                }}
-              >
-                📅 Календарь
+            <div style={dateInputStoriesStyles.centerText}>
+              <div style={dateInputStoriesStyles.panelTitleBold}>📅 Календарь</div>
+              <div style={dateInputStoriesStyles.extraSmallNoteText}>
+                Выберите дату для продолжения
               </div>
-              <div style={{ fontSize: '11px', color: '#888' }}>Выберите дату для продолжения</div>
             </div>
           )}
         />
@@ -1405,14 +1293,7 @@ export const RangeBottomPanelDemo: Story = {
     });
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           range={true}
           label="Диапазон с информационной панелью"
@@ -1420,7 +1301,7 @@ export const RangeBottomPanelDemo: Story = {
           value={range}
           onChange={(value) => setRange(value as DateTimeRange)}
           renderBottomPanel={() => (
-            <div style={{ fontSize: '12px', color: '#666' }}>
+            <div style={dateInputStoriesStyles.smallNoteText}>
               📊 Выберите период для анализа данных
             </div>
           )}
@@ -1445,21 +1326,14 @@ export const TopPanelDemo: Story = {
     const [date3, setDate3] = useState('2024-01-15');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           label="С информационной панелью сверху"
           placeholder="Выберите дату"
           value={date1}
           onChange={(value) => setDate1(value as string)}
           renderTopPanel={() => (
-            <div style={{ fontSize: '12px', color: '#666' }}>
+            <div style={dateInputStoriesStyles.smallNoteText}>
               📅 Выберите дату для планирования встречи
             </div>
           )}
@@ -1471,29 +1345,17 @@ export const TopPanelDemo: Story = {
           value={date2}
           onChange={(value) => setDate2(value as string)}
           renderTopPanel={() => (
-            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+            <div style={dateInputStoriesStyles.rowGap8Centered}>
               <button
-                style={{
-                  padding: '4px 8px',
-                  fontSize: '12px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  background: 'white',
-                  cursor: 'pointer',
-                }}
+                type="button"
+                style={dateInputStoriesStyles.actionButtonCompact}
                 onClick={() => setDate2('2024-01-01')}
               >
                 Новый год
               </button>
               <button
-                style={{
-                  padding: '4px 8px',
-                  fontSize: '12px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  background: 'white',
-                  cursor: 'pointer',
-                }}
+                type="button"
+                style={dateInputStoriesStyles.actionButtonCompact}
                 onClick={() => setDate2('2024-12-25')}
               >
                 Рождество
@@ -1508,17 +1370,11 @@ export const TopPanelDemo: Story = {
           value={date3}
           onChange={(value) => setDate3(value as string)}
           renderTopPanel={() => (
-            <div style={{ textAlign: 'center' }}>
-              <div
-                style={{
-                  fontSize: '14px',
-                  fontWeight: 'bold',
-                  marginBottom: '4px',
-                }}
-              >
-                📅 Календарь
+            <div style={dateInputStoriesStyles.centerText}>
+              <div style={dateInputStoriesStyles.panelTitleBold}>📅 Календарь</div>
+              <div style={dateInputStoriesStyles.extraSmallNoteText}>
+                Выберите дату для продолжения
               </div>
-              <div style={{ fontSize: '11px', color: '#888' }}>Выберите дату для продолжения</div>
             </div>
           )}
         />
@@ -1541,26 +1397,19 @@ export const TopAndBottomPanelsDemo: Story = {
     const [date, setDate] = useState('2024-01-15');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           label="С панелями сверху и снизу"
           placeholder="Выберите дату"
           value={date}
           onChange={(value) => setDate(value as string)}
           renderTopPanel={() => (
-            <div style={{ fontSize: '12px', color: '#666', textAlign: 'center' }}>
+            <div style={dateInputStoriesStyles.smallNoteTextCentered}>
               📅 Выберите дату для планирования
             </div>
           )}
           renderBottomPanel={() => (
-            <div style={{ fontSize: '12px', color: '#666', textAlign: 'center' }}>
+            <div style={dateInputStoriesStyles.smallNoteTextCentered}>
               💡 Подсказка: используйте стрелки для навигации
             </div>
           )}
@@ -1587,14 +1436,7 @@ export const StatusDemo: Story = {
     const [date4, setDate4] = useState('2024-01-15');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           label="Обычное состояние"
           placeholder="Выберите дату"
@@ -1646,14 +1488,7 @@ export const SegmentedStatusDemo: Story = {
     const [date3, setDate3] = useState('2024-01-15');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           segmented={true}
           label="Сегментированный error"
@@ -1709,14 +1544,7 @@ export const RangeStatusDemo: Story = {
     });
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           range={true}
           label="Диапазон error"
@@ -1774,14 +1602,7 @@ export const LoadingDemo: Story = {
     }, []);
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           label="Загрузка даты (3 сек)"
           placeholder="Выберите дату"
@@ -1808,13 +1629,8 @@ export const LoadingDemo: Story = {
 
         <button
           onClick={() => setIsLoading3(!isLoading3)}
-          style={{
-            padding: '8px 16px',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            background: 'white',
-            cursor: 'pointer',
-          }}
+          type="button"
+          style={dateInputStoriesStyles.actionButtonMedium}
         >
           {isLoading3 ? 'Остановить загрузку' : 'Начать загрузку'}
         </button>
@@ -1850,14 +1666,7 @@ export const SkeletonDemo: Story = {
     }, []);
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           label="Skeleton эффект (3 сек)"
           placeholder="Выберите дату"
@@ -1884,13 +1693,8 @@ export const SkeletonDemo: Story = {
 
         <button
           onClick={() => setSkeleton3(!skeleton3)}
-          style={{
-            padding: '8px 16px',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            background: 'white',
-            cursor: 'pointer',
-          }}
+          type="button"
+          style={dateInputStoriesStyles.actionButtonMedium}
         >
           {skeleton3 ? 'Убрать skeleton' : 'Показать skeleton'}
         </button>
@@ -1915,14 +1719,7 @@ export const TooltipDemo: Story = {
     const [date3, setDate3] = useState('15.12.2023');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           label="Обычный DateInput"
           placeholder="Без подсказки"
@@ -1983,7 +1780,7 @@ export const TooltipDemo: Story = {
           }}
           icon={<Icon name="IconPlainerSun" size={IconSize.SM} />}
           tooltip={
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={dateInputStoriesStyles.rowGap8Centered}>
               <Icon name="IconPlainerSun" size={IconSize.XS} />
               <span>Тултип с иконкой для DateInput</span>
             </div>
@@ -2012,14 +1809,7 @@ export const CharacterCounterDemo: Story = {
     const [date3, setDate3] = useState('15.12.2023');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           label="Обычный DateInput"
           placeholder="Без maxLength"
@@ -2075,14 +1865,7 @@ export const InputBehaviorDemo: Story = {
     const [date2, setDate2] = useState('');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           label="Исправленный DateInput"
           placeholder="Попробуйте ввести дату по частям"
@@ -2099,16 +1882,9 @@ export const InputBehaviorDemo: Story = {
           helperText="Backspace и Delete теперь работают корректно"
         />
 
-        <div
-          style={{
-            marginTop: '16px',
-            padding: '12px',
-            backgroundColor: '#f5f5f5',
-            borderRadius: '4px',
-          }}
-        >
-          <h4 style={{ margin: '0 0 8px 0', fontSize: '14px' }}>Исправления:</h4>
-          <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '12px' }}>
+        <div style={dateInputStoriesStyles.infoBoxWithTopMargin}>
+          <h4 style={dateInputStoriesStyles.heading14}>Исправления:</h4>
+          <ul style={dateInputStoriesStyles.list12}>
             <li>✅ Нет автоматического заполнения при вводе одного символа</li>
             <li>✅ Backspace и Delete работают корректно</li>
             <li>✅ Парсинг даты происходит только при вводе полной даты</li>
@@ -2118,7 +1894,7 @@ export const InputBehaviorDemo: Story = {
             <li>✅ Автоматическое форматирование: &quot;10121985&quot; → &quot;10.12.1985&quot;</li>
             <li>✅ Парсинг только при полном годе: &quot;10.12.19&quot; не парсится</li>
           </ul>
-          <p style={{ margin: '8px 0 0 0', fontSize: '11px', color: '#666' }}>
+          <p style={dateInputStoriesStyles.paragraph11Muted}>
             Попробуйте: ввести &quot;10121985&quot; (автоформатирование в &quot;10.12.1985&quot;),
             затем &quot;10.12.19&quot; (неполный год - не парсится), затем &quot;10.12.1985&quot;
             (полный год - парсится).
@@ -2144,14 +1920,7 @@ export const ExtraTextDemo: Story = {
     const [date2, setDate2] = useState('15.12.2023');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           label="Обычный DateInput"
           placeholder="Без дополнительного текста"
@@ -2197,14 +1966,7 @@ export const DisableCopyingDemo: Story = {
     const [date2, setDate2] = useState('15.12.2023');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           label="Обычный DateInput"
           placeholder="Можно выделять и копировать дату"
@@ -2317,14 +2079,7 @@ export const HandleInputDemo: Story = {
     };
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           label="Дата с маской DD.MM.YYYY"
           placeholder="ДД.ММ.ГГГГ"
@@ -2360,14 +2115,7 @@ export const IgnoreMaskCharactersDemo: Story = {
     const [date2, setDate2] = useState('10.12.1985');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           label="Обычный счетчик символов"
           placeholder="Введите дату..."
@@ -2390,16 +2138,9 @@ export const IgnoreMaskCharactersDemo: Story = {
           helperText="Считаются только цифры, разделители игнорируются (8/8)"
         />
 
-        <div
-          style={{
-            marginTop: '16px',
-            padding: '12px',
-            backgroundColor: '#f5f5f5',
-            borderRadius: '4px',
-          }}
-        >
-          <h4 style={{ margin: '0 0 8px 0', fontSize: '14px' }}>Сравнение:</h4>
-          <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '12px' }}>
+        <div style={dateInputStoriesStyles.infoBoxWithTopMargin}>
+          <h4 style={dateInputStoriesStyles.heading14}>Сравнение:</h4>
+          <ul style={dateInputStoriesStyles.list12}>
             <li>
               <strong>ignoreMaskCharacters=false:</strong> &quot;10.12.1985&quot; = 10 символов
             </li>
@@ -2430,14 +2171,7 @@ export const CharacterCounterThresholdDemo: Story = {
     const [date3, setDate3] = useState('');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           label="Всегда видимый счетчик (threshold=0)"
           placeholder="Введите дату..."
@@ -2471,16 +2205,9 @@ export const CharacterCounterThresholdDemo: Story = {
           helperText="Счетчик никогда не показывается"
         />
 
-        <div
-          style={{
-            marginTop: '16px',
-            padding: '12px',
-            backgroundColor: '#f5f5f5',
-            borderRadius: '4px',
-          }}
-        >
-          <h4 style={{ margin: '0 0 8px 0', fontSize: '14px' }}>Пороги видимости для дат:</h4>
-          <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '12px' }}>
+        <div style={dateInputStoriesStyles.infoBoxWithTopMargin}>
+          <h4 style={dateInputStoriesStyles.heading14}>Пороги видимости для дат:</h4>
+          <ul style={dateInputStoriesStyles.list12}>
             <li>
               <strong>threshold=0:</strong> Счетчик всегда видим
             </li>
@@ -2516,14 +2243,7 @@ export const AdditionalLabelDemo: Story = {
     const [date3, setDate3] = useState('');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
         <DateInput
           label="Дата рождения"
           additionalLabel="Укажите дату в формате ДД.ММ.ГГГГ"
@@ -2551,16 +2271,9 @@ export const AdditionalLabelDemo: Story = {
           helperText="Документ должен быть действителен на момент подачи заявления"
         />
 
-        <div
-          style={{
-            marginTop: '16px',
-            padding: '12px',
-            backgroundColor: '#f5f5f5',
-            borderRadius: '4px',
-          }}
-        >
-          <h4 style={{ margin: '0 0 8px 0', fontSize: '14px' }}>Дополнительные метки для дат:</h4>
-          <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '12px' }}>
+        <div style={dateInputStoriesStyles.infoBoxWithTopMargin}>
+          <h4 style={dateInputStoriesStyles.heading14}>Дополнительные метки для дат:</h4>
+          <ul style={dateInputStoriesStyles.list12}>
             <li>
               <strong>additionalLabel</strong> отображается справа и помогает уточнить формат ввода
               даты
@@ -2583,4 +2296,3 @@ export const AdditionalLabelDemo: Story = {
     },
   },
 };
-

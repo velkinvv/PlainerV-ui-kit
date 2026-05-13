@@ -15,14 +15,14 @@ export const useStepper = (steps: ProgressStep[], initialStep: number = 0) => {
    * Переходит к следующему шагу
    */
   const nextStep = useCallback(() => {
-    setActiveStep(prev => Math.min(prev + 1, totalSteps));
+    setActiveStep((prev) => Math.min(prev + 1, totalSteps));
   }, [totalSteps]);
 
   /**
    * Переходит к предыдущему шагу
    */
   const previousStep = useCallback(() => {
-    setActiveStep(prev => Math.max(prev - 1, 0));
+    setActiveStep((prev) => Math.max(prev - 1, 0));
   }, []);
 
   /**

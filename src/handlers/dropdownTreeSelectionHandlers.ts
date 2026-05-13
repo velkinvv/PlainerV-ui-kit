@@ -75,7 +75,10 @@ export const collectTreeBranchKeysFromSections = (
   const keys: string[] = [];
   let groupSequence = 0;
 
-  const scanSection = (section: (DropdownMenuItemProps | DropdownMenuGroup)[], sectionPrefix: string) => {
+  const scanSection = (
+    section: (DropdownMenuItemProps | DropdownMenuGroup)[],
+    sectionPrefix: string,
+  ) => {
     section.forEach((entry, entryIndex) => {
       if ('items' in entry && Array.isArray(entry.items)) {
         const groupPrefix = `g${groupSequence}`;

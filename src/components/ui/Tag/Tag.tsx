@@ -81,6 +81,38 @@ export const Tag = forwardRef<HTMLElement, TagProps>(
       setIsTextTruncated(element.scrollWidth > element.clientWidth);
     }, [children, tooltipWhenTruncated, maxWidth, width, metrics.fontSize]);
 
+    const useNativeButton = rootElement === 'button';
+    const clickable = Boolean(onClick) && !disabled;
+    const showMarker = statusDisplay === 'marker';
+
+    const role = roleProp ?? (clickable && !useNativeButton ? 'button' : undefined);
+    const tabIndex = tabIndexProp ?? (clickable && !useNativeButton ? 0 : undefined);
+
+    const handleKeyDown = useCallback(
+      (keyboardEvent: React.KeyboardEvent<HTMLElement>) => {
+        onKeyDownProp?.(keyboardEvent as React.KeyboardEvent<HTMLSpanElement>);
+        if (keyboardEvent.defaultPrevented || !clickable || !onClick || useNativeButton) {
+          return;
+        }
+        if (keyboardEvent.key === 'Enter' || keyboardEvent.key === ' ') {
+          keyboardEvent.preventDefault();
+          (keyboardEvent.currentTarget as HTMLElement).click();
+        }
+      },
+      [clickable, onClick, onKeyDownProp, useNativeButton],
+    );
+
+    const handleClick = useCallback(
+      (mouseEvent: React.MouseEvent<HTMLElement>) => {
+        if (disabled) {
+          mouseEvent.preventDefault();
+          return;
+        }
+        onClick?.(mouseEvent as React.MouseEvent<HTMLSpanElement>);
+      },
+      [disabled, onClick],
+    );
+
     if (skeleton) {
       const widthPx = skeletonWidth ?? getTagSkeletonDefaultWidthPx(size);
       return (
@@ -94,40 +126,6 @@ export const Tag = forwardRef<HTMLElement, TagProps>(
         />
       );
     }
-
-    const useNativeButton = rootElement === 'button';
-    const clickable = Boolean(onClick) && !disabled;
-    const showMarker = statusDisplay === 'marker';
-
-    const role =
-      roleProp ?? (clickable && !useNativeButton ? 'button' : undefined);
-    const tabIndex =
-      tabIndexProp ?? (clickable && !useNativeButton ? 0 : undefined);
-
-    const handleKeyDown = useCallback(
-      (e: React.KeyboardEvent<HTMLElement>) => {
-        onKeyDownProp?.(e as React.KeyboardEvent<HTMLSpanElement>);
-        if (e.defaultPrevented || !clickable || !onClick || useNativeButton) {
-          return;
-        }
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          (e.currentTarget as HTMLElement).click();
-        }
-      },
-      [clickable, onClick, onKeyDownProp, useNativeButton],
-    );
-
-    const handleClick = useCallback(
-      (e: React.MouseEvent<HTMLElement>) => {
-        if (disabled) {
-          e.preventDefault();
-          return;
-        }
-        onClick?.(e as React.MouseEvent<HTMLSpanElement>);
-      },
-      [disabled, onClick],
-    );
 
     const ellipsisActive = Boolean(widthCss ?? maxWidthCss);
 
@@ -178,10 +176,8 @@ export const Tag = forwardRef<HTMLElement, TagProps>(
       tooltipContent ??
       (typeof children === 'string' || typeof children === 'number' ? children : null);
     const hasTooltipPayload =
-      tooltipBody != null &&
-      (typeof tooltipBody !== 'string' || tooltipBody.length > 0);
-    const showTruncationTooltip =
-      tooltipWhenTruncated && isTextTruncated && hasTooltipPayload;
+      tooltipBody != null && (typeof tooltipBody !== 'string' || tooltipBody.length > 0);
+    const showTruncationTooltip = tooltipWhenTruncated && isTextTruncated && hasTooltipPayload;
 
     if (!tooltipWhenTruncated) {
       return tagInner;

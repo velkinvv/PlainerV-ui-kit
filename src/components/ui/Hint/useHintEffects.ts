@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { HintVisibilityTrigger } from '../../../types/ui';
 import {
   createClickOutsideHandler,
@@ -108,7 +108,7 @@ export const useHintScrollPosition = ({
     document.addEventListener('scroll', handleScroll, true);
     window.addEventListener('resize', updatePosition);
 
-    scrollableParents.forEach(parent => {
+    scrollableParents.forEach((parent) => {
       parent.addEventListener('scroll', handleScroll, true);
     });
 
@@ -116,7 +116,7 @@ export const useHintScrollPosition = ({
       window.removeEventListener('scroll', handleScroll, true);
       document.removeEventListener('scroll', handleScroll, true);
       window.removeEventListener('resize', updatePosition);
-      scrollableParents.forEach(parent => {
+      scrollableParents.forEach((parent) => {
         parent.removeEventListener('scroll', handleScroll, true);
       });
     };
@@ -167,7 +167,15 @@ export const useHintControlledState = ({
       isVisibleRef,
       onVisibilityChange,
     });
-  }, [isOpenValue, useControlledMode, triggerRef, calculatePosition, setHintState, isVisibleRef, onVisibilityChange]);
+  }, [
+    isOpenValue,
+    useControlledMode,
+    triggerRef,
+    calculatePosition,
+    setHintState,
+    isVisibleRef,
+    onVisibilityChange,
+  ]);
 };
 
 /**

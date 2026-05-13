@@ -4,6 +4,7 @@ import { Divider } from './Divider';
 import { DividerOrientation } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 import { DOC_DIVIDER } from '@/components/ui/storyDocs/uiKitDocs';
+import { dividerStoriesStyles } from './Divider.stories.styles';
 
 const meta: Meta<typeof Divider> = {
   title: 'UI Kit/Surfaces/Divider',
@@ -76,7 +77,7 @@ export const Large: Story = {
 
 export const HorizontalWithContent: Story = {
   render: () => (
-    <div style={{ width: '300px' }}>
+    <div style={dividerStoriesStyles.width300}>
       <p>Content above the divider</p>
       <Divider />
       <p>Content below the divider</p>
@@ -89,14 +90,7 @@ export const HorizontalWithContent: Story = {
 
 export const VerticalWithContent: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '16px',
-        height: '100px',
-      }}
-    >
+    <div style={dividerStoriesStyles.verticalWithContentContainer}>
       <span>Left content</span>
       <Divider orientation={DividerOrientation.VERTICAL} />
       <span>Right content</span>
@@ -109,24 +103,17 @@ export const VerticalWithContent: Story = {
 
 export const AllSizes: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '16px',
-        width: '300px',
-      }}
-    >
+    <div style={dividerStoriesStyles.allSizesContainer}>
       <div>
-        <p style={{ marginBottom: '8px', fontSize: '12px' }}>Small</p>
+        <p style={dividerStoriesStyles.captionSmall}>Small</p>
         <Divider size={Size.SM} />
       </div>
       <div>
-        <p style={{ marginBottom: '8px', fontSize: '14px' }}>Medium</p>
+        <p style={dividerStoriesStyles.captionMedium}>Medium</p>
         <Divider size={Size.MD} />
       </div>
       <div>
-        <p style={{ marginBottom: '8px', fontSize: '16px' }}>Large</p>
+        <p style={dividerStoriesStyles.captionLarge}>Large</p>
         <Divider size={Size.LG} />
       </div>
     </div>
@@ -138,40 +125,26 @@ export const AllSizes: Story = {
 
 export const AllOrientations: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '200px',
-        }}
-      >
+    <div style={dividerStoriesStyles.allOrientationsRoot}>
+      <div style={dividerStoriesStyles.horizontalSection}>
         <span>Horizontal dividers:</span>
         <Divider orientation={DividerOrientation.HORIZONTAL} size={Size.SM} />
         <Divider orientation={DividerOrientation.HORIZONTAL} size={Size.MD} />
         <Divider orientation={DividerOrientation.HORIZONTAL} size={Size.LG} />
       </div>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          height: '100px',
-        }}
-      >
+      <div style={dividerStoriesStyles.verticalSection}>
         <span>Vertical dividers:</span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={dividerStoriesStyles.verticalRow}>
           <span>Left</span>
           <Divider orientation={DividerOrientation.VERTICAL} size={Size.SM} />
           <span>Right</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={dividerStoriesStyles.verticalRow}>
           <span>Left</span>
           <Divider orientation={DividerOrientation.VERTICAL} size={Size.MD} />
           <span>Right</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={dividerStoriesStyles.verticalRow}>
           <span>Left</span>
           <Divider orientation={DividerOrientation.VERTICAL} size={Size.LG} />
           <span>Right</span>
@@ -186,15 +159,15 @@ export const AllOrientations: Story = {
 
 export const InList: Story = {
   render: () => (
-    <div style={{ width: '300px' }}>
-      <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-        <li style={{ padding: '12px 0' }}>List item 1</li>
+    <div style={dividerStoriesStyles.width300}>
+      <ul style={dividerStoriesStyles.listReset}>
+        <li style={dividerStoriesStyles.listItem}>List item 1</li>
         <Divider />
-        <li style={{ padding: '12px 0' }}>List item 2</li>
+        <li style={dividerStoriesStyles.listItem}>List item 2</li>
         <Divider />
-        <li style={{ padding: '12px 0' }}>List item 3</li>
+        <li style={dividerStoriesStyles.listItem}>List item 3</li>
         <Divider />
-        <li style={{ padding: '12px 0' }}>List item 4</li>
+        <li style={dividerStoriesStyles.listItem}>List item 4</li>
       </ul>
     </div>
   ),
@@ -202,4 +175,3 @@ export const InList: Story = {
     layout: 'padded',
   },
 };
-

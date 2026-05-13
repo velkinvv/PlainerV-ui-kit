@@ -47,3 +47,13 @@ export const SliderStoriesSizeLabel = styled.span`
 export const SliderStoriesNarrow = styled.div`
   max-width: 280px;
 `;
+
+/** Контейнер средней ширины для слайдеров с денежной шкалой */
+export const SliderStoriesMedium = styled.div`
+  max-width: 520px;
+`;
+
+/** Контейнер компактной ширины для одиночного слайдера */
+export const SliderStoriesCompact = styled.div`
+  max-width: 480px;
+`;

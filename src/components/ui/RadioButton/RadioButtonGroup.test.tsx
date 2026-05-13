@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { RadioButtonGroup } from './RadioButtonGroup';
-import { RadioButtonGroupOrientation, RadioButtonVariant, RadioButtonLabelPosition, TooltipPosition } from '../../../types/ui';
+import { RadioButtonGroupOrientation, RadioButtonVariant } from '../../../types/ui';
 import { Size, IconSize } from '../../../types/sizes';
 import { Icon } from '../Icon/Icon';
 import type { RadioButtonGroupOption } from '../../../types/ui';
@@ -38,11 +38,7 @@ describe('RadioButtonGroup', () => {
 
     it('рендерит группу без лейбла', () => {
       renderWithTheme(
-        <RadioButtonGroup
-          options={basicOptions}
-          value="option1"
-          onChange={() => {}}
-        />,
+        <RadioButtonGroup options={basicOptions} value="option1" onChange={() => {}} />,
       );
 
       expect(screen.queryByText('Выберите опцию')).not.toBeInTheDocument();
@@ -51,11 +47,7 @@ describe('RadioButtonGroup', () => {
 
     it('выбирает правильную опцию по value', () => {
       renderWithTheme(
-        <RadioButtonGroup
-          options={basicOptions}
-          value="option2"
-          onChange={() => {}}
-        />,
+        <RadioButtonGroup options={basicOptions} value="option2" onChange={() => {}} />,
       );
 
       const radio1 = screen.getByRole('radio', { name: 'Опция 1' });
@@ -203,7 +195,7 @@ describe('RadioButtonGroup', () => {
       );
 
       const radios = screen.getAllByRole('radio');
-      radios.forEach(radio => {
+      radios.forEach((radio) => {
         expect(radio).toBeDisabled();
       });
     });
@@ -246,11 +238,7 @@ describe('RadioButtonGroup', () => {
       const handleChange = jest.fn();
 
       renderWithTheme(
-        <RadioButtonGroup
-          options={basicOptions}
-          value="option1"
-          onChange={handleChange}
-        />,
+        <RadioButtonGroup options={basicOptions} value="option1" onChange={handleChange} />,
       );
 
       const radio2 = screen.getByRole('radio', { name: 'Опция 2' });
@@ -310,12 +298,7 @@ describe('RadioButtonGroup', () => {
   describe('FullWidth', () => {
     it('применяет fullWidth', () => {
       renderWithTheme(
-        <RadioButtonGroup
-          options={basicOptions}
-          value="option1"
-          onChange={() => {}}
-          fullWidth
-        />,
+        <RadioButtonGroup options={basicOptions} value="option1" onChange={() => {}} fullWidth />,
       );
 
       expect(screen.getByText('Опция 1')).toBeInTheDocument();
@@ -376,11 +359,7 @@ describe('RadioButtonGroup', () => {
       ];
 
       renderWithTheme(
-        <RadioButtonGroup
-          options={optionsWithExtraText}
-          value="plan1"
-          onChange={() => {}}
-        />,
+        <RadioButtonGroup options={optionsWithExtraText} value="plan1" onChange={() => {}} />,
       );
 
       expect(screen.getByText('Базовый план')).toBeInTheDocument();
@@ -404,11 +383,7 @@ describe('RadioButtonGroup', () => {
       ];
 
       renderWithTheme(
-        <RadioButtonGroup
-          options={optionsWithIcons}
-          value="option1"
-          onChange={() => {}}
-        />,
+        <RadioButtonGroup options={optionsWithIcons} value="option1" onChange={() => {}} />,
       );
 
       expect(screen.getByText('Опция 1')).toBeInTheDocument();
@@ -428,18 +403,14 @@ describe('RadioButtonGroup', () => {
       );
 
       const radios = screen.getAllByRole('radio');
-      radios.forEach(radio => {
+      radios.forEach((radio) => {
         expect(radio).toHaveAttribute('name', 'custom-name');
       });
     });
 
     it('генерирует уникальное имя, если не указано', () => {
       renderWithTheme(
-        <RadioButtonGroup
-          options={basicOptions}
-          value="option1"
-          onChange={() => {}}
-        />,
+        <RadioButtonGroup options={basicOptions} value="option1" onChange={() => {}} />,
       );
 
       const radios = screen.getAllByRole('radio');
@@ -448,7 +419,7 @@ describe('RadioButtonGroup', () => {
       expect(name).toContain('radio-group-');
 
       // Все радиокнопки должны иметь одно и то же имя
-      radios.forEach(radio => {
+      radios.forEach((radio) => {
         expect(radio).toHaveAttribute('name', name);
       });
     });

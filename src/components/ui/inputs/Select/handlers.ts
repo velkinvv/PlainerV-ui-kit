@@ -141,7 +141,9 @@ export function getSelectPanelMinMenuWidthPx(options: SelectOption[]): number {
   /* 11px — запас для цифр/табличных шрифов; 3×11 + 56 ≈ 89px — три символа в одну строку без переноса */
   const approximateCharacterWidthPx = 11;
   const horizontalPaddingAndChromePx = 56;
-  return Math.ceil(characterSlotsForWidth * approximateCharacterWidthPx + horizontalPaddingAndChromePx);
+  return Math.ceil(
+    characterSlotsForWidth * approximateCharacterWidthPx + horizontalPaddingAndChromePx,
+  );
 }
 
 /**

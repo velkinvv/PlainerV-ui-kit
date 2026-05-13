@@ -31,7 +31,7 @@ describe('Button', () => {
     renderWithTheme(
       <Button onClick={handleClick} disabled>
         Кнопка
-      </Button>
+      </Button>,
     );
 
     fireEvent.click(screen.getByText('Кнопка'));
@@ -44,25 +44,19 @@ describe('Button', () => {
   });
 
   it('применяет правильный variant', () => {
-    const { container } = renderWithTheme(
-      <Button variant={ButtonVariant.PRIMARY}>Кнопка</Button>
-    );
+    const { container } = renderWithTheme(<Button variant={ButtonVariant.PRIMARY}>Кнопка</Button>);
     const button = container.querySelector('button');
     expect(button).toBeInTheDocument();
   });
 
   it('применяет правильный size', () => {
-    const { container } = renderWithTheme(
-      <Button size={Size.SM}>Кнопка</Button>
-    );
+    const { container } = renderWithTheme(<Button size={Size.SM}>Кнопка</Button>);
     const button = container.querySelector('button');
     expect(button).toBeInTheDocument();
   });
 
   it('применяет fullWidth', () => {
-    const { container } = renderWithTheme(
-      <Button fullWidth>Кнопка</Button>
-    );
+    const { container } = renderWithTheme(<Button fullWidth>Кнопка</Button>);
     const button = container.querySelector('button');
     expect(button).toBeInTheDocument();
   });
@@ -73,7 +67,7 @@ describe('Button', () => {
     renderWithTheme(
       <Button iconStart={<IconStart />} iconEnd={<IconEnd />}>
         Кнопка
-      </Button>
+      </Button>,
     );
 
     expect(screen.getByTestId('icon-start')).toBeInTheDocument();
@@ -85,7 +79,7 @@ describe('Button', () => {
     renderWithTheme(
       <Button onClick={handleClick} loading>
         Кнопка
-      </Button>
+      </Button>,
     );
 
     fireEvent.click(screen.getByText('Загрузка...').closest('button')!);

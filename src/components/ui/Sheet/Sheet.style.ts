@@ -9,13 +9,21 @@ import { BorderRadiusHandler } from '../../../handlers/uiHandlers';
  * @property $sheetPlacement - Сторона выезда панели
  */
 export const SheetOverlay = styled(Overlay).withConfig({
-  shouldForwardProp: prop => prop !== '$sheetPlacement',
+  shouldForwardProp: (prop) => prop !== '$sheetPlacement',
 })<{ $sheetPlacement: SheetPlacement }>`
   padding: 0 !important;
   justify-content: ${({ $sheetPlacement }) =>
-    $sheetPlacement === 'right' ? 'flex-end' : $sheetPlacement === 'left' ? 'flex-start' : 'center'};
+    $sheetPlacement === 'right'
+      ? 'flex-end'
+      : $sheetPlacement === 'left'
+        ? 'flex-start'
+        : 'center'};
   align-items: ${({ $sheetPlacement }) =>
-    $sheetPlacement === 'bottom' ? 'flex-end' : $sheetPlacement === 'top' ? 'flex-start' : 'stretch'};
+    $sheetPlacement === 'bottom'
+      ? 'flex-end'
+      : $sheetPlacement === 'top'
+        ? 'flex-start'
+        : 'stretch'};
   flex-direction: ${({ $sheetPlacement }) =>
     $sheetPlacement === 'top' || $sheetPlacement === 'bottom' ? 'column' : 'row'};
 `;
@@ -27,7 +35,7 @@ export const SheetOverlay = styled(Overlay).withConfig({
  * @property $placement - Сторона (скругления у края экрана)
  */
 export const SheetPanel = styled(motion.aside).withConfig({
-  shouldForwardProp: prop => !['$widthCss', '$heightCss', '$placement'].includes(prop),
+  shouldForwardProp: (prop) => !['$widthCss', '$heightCss', '$placement'].includes(prop),
 })<{
   $widthCss: string;
   $heightCss: string;

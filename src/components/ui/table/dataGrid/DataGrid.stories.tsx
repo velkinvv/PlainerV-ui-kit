@@ -29,12 +29,15 @@ import { Icon } from '../../Icon/Icon';
 import { Input } from '../../inputs/Input/Input';
 import { DATAGRID_DOC } from '../storyDocs/documentation';
 import { DataGridWithTextFilterInHeader as tableColumnFilterDataGridStorySource } from '../basicTable/TableColumnFilters.stories';
+import { lightTheme } from '@/themes/themes';
 
 /** Колонки под демо-строки из `TABLE_STORY_DEMO_ROWS` (как в сторис примитива Table). */
 const demoColumns: DataGridColumn<DataGridStoryDemoRow>[] = getDataGridStoryDemoColumns();
 
 /** Id строк с `disableRow` (как в демо-таблице). */
-const demoDisabledRowIds: string[] = TABLE_STORY_DEMO_ROWS.filter(row => row.disableRow).map(row => row.id);
+const demoDisabledRowIds: string[] = TABLE_STORY_DEMO_ROWS.filter((row) => row.disableRow).map(
+  (row) => row.id,
+);
 
 const meta: Meta<typeof DataGrid> = {
   title: 'UI Kit/Data Display/DataGrid',
@@ -48,9 +51,14 @@ const meta: Meta<typeof DataGrid> = {
     },
   },
   argTypes: {
-    tableId: { description: 'Уникальный `id` у `<table>` и `name` у радиогруппы при `multiselect={false}`.' },
+    tableId: {
+      description: 'Уникальный `id` у `<table>` и `name` у радиогруппы при `multiselect={false}`.',
+    },
     columns: { description: 'Описание колонок (`field`, `headerName`, `render`, …).' },
-    rows: { description: 'Строки данных; у каждой должен быть стабильный идентификатор (или через `getRowId`).' },
+    rows: {
+      description:
+        'Строки данных; у каждой должен быть стабильный идентификатор (или через `getRowId`).',
+    },
     totalRows: { description: 'Всего записей для пагинации (на сервере — полный счётчик).' },
     getRowId: { description: '(row) => id если ключ не в `row.id`.' },
     displayRowSelectionColumn: { description: 'Показать колонку выбора (чекбокс или радио).' },
@@ -63,7 +71,9 @@ const meta: Meta<typeof DataGrid> = {
     onRowClick: { description: '(row, event) — клик по строке.' },
     onRowDoubleClick: { description: '(row, event) — двойной клик.' },
     paginationModel: { description: '{ page, pageSize }; страница с нуля.' },
-    onPaginationChange: { description: 'Обновление модели пагинации; без пары с model футер скрыт.' },
+    onPaginationChange: {
+      description: 'Обновление модели пагинации; без пары с model футер скрыт.',
+    },
     paginationVariant: {
       control: 'select',
       options: ['default', 'compact'],
@@ -89,14 +99,20 @@ const meta: Meta<typeof DataGrid> = {
         'Одно поле `{ field, direction }`, массив критериев по приоритету или `null`. С `multiColumnSort` — массив.',
     },
     onSortChange: { description: 'Смена модели сортировки; сортировку данных делает родитель.' },
-    multiColumnSort: { description: 'Несколько полей: asc → desc → снять по каждой колонке; порядок в массиве — приоритет.' },
+    multiColumnSort: {
+      description:
+        'Несколько полей: asc → desc → снять по каждой колонке; порядок в массиве — приоритет.',
+    },
     paginationMode: {
       control: 'select',
       options: ['client', 'server'],
       description:
         '`client` — грид режет `rows` по странице; `server` — в `rows` уже текущая порция, `totalRows` с сервера.',
     },
-    stickyHeader: { description: 'Липкая шапка при вертикальном скролле (задайте `scrollAreaMaxHeight` или внешний предок со скроллом без конфликта с треком таблицы).' },
+    stickyHeader: {
+      description:
+        'Липкая шапка при вертикальном скролле (задайте `scrollAreaMaxHeight` или внешний предок со скроллом без конфликта с треком таблицы).',
+    },
     scrollAreaMaxHeight: {
       description:
         'Макс. высота зоны с вертикальным скроллом вокруг сетки (пробрасывается в `TableContainerScroll`); для `stickyHeader` удобнее, чем обёртка `div` с `overflow: auto`.',
@@ -108,13 +124,17 @@ const meta: Meta<typeof DataGrid> = {
         'Фон шапки: `default` — серый (`theme.tables.header`); `card` — как фон карточки, обычно белый (`theme.tables.shell`).',
     },
     tableHeaderBackground: {
-      description: 'Кастомный фон шапки и панели `headerToolbar` (перекрывает `tableHeaderVariant`), например `#e8f4ff`.',
+      description:
+        'Кастомный фон шапки и панели `headerToolbar` (перекрывает `tableHeaderVariant`), например светлый оттенок из палитры темы или CSS-переменная.',
     },
     striped: {
       description:
         'Зебра строк в `tbody`. У `DataGrid` по умолчанию **включена**; передайте `false`, чтобы фон строк совпадал с карточкой (см. сторис **ClientPaginationPlainBody**).',
     },
-    columnDividers: { description: 'Вертикальные разделители между колонками (`Table.columnDividers`); по умолчанию `true`.' },
+    columnDividers: {
+      description:
+        'Вертикальные разделители между колонками (`Table.columnDividers`); по умолчанию `true`.',
+    },
     size: { description: 'Плотность (`Size` дизайн-системы).' },
     elevated: { description: 'Тень карточки (`TableContainer`).' },
     hideFooter: { description: 'Скрыть блок пагинации под таблицей.' },
@@ -140,8 +160,12 @@ const meta: Meta<typeof DataGrid> = {
         'Клик по кнопке раскрытия строки. Аргумент: `{ rowId, expanded, expandedIds }` — какая строка, стала ли развёрнутой, полный список id открытых строк после клика. Для контролируемого `expandedRowIds` обновляйте родитель из этого колбэка. Старое имя `onRowCollapseChange` удалено.',
     },
     getRowExpandable: { description: '(row) => boolean — можно ли развернуть строку.' },
-    getExpandedRowDataStatus: { description: 'Статус данных подстроки: idle | loading | ready | error.' },
-    getExpandedRowLoading: { description: 'Упрощённый флаг загрузки подстроки (если статус не задан).' },
+    getExpandedRowDataStatus: {
+      description: 'Статус данных подстроки: idle | loading | ready | error.',
+    },
+    getExpandedRowLoading: {
+      description: 'Упрощённый флаг загрузки подстроки (если статус не задан).',
+    },
     onExpandedRowOpen: { description: 'Вызов при развороте строки (ленивая загрузка).' },
     renderExpandedRow: { description: '(row, context) — контент под строкой.' },
     renderCell: { description: 'Глобальный рендер ячейки, если у колонки нет `render`.' },
@@ -149,18 +173,36 @@ const meta: Meta<typeof DataGrid> = {
     enableColumnDrag: { description: 'Перетаскивание заголовков колонок (HTML5 DnD).' },
     onColumnDragStart: { description: 'Старт DnD колонки: `{ fromIndex, field }`.' },
     onColumnDragEnd: { description: '(fromIndex, toIndex) после успешного drop.' },
-    onColumnOrderChange: { description: 'Успешный reorder: `{ fromIndex, toIndex, field }` (дублирует смысл `onColumnDragEnd`).' },
-    onColumnDragCancel: { description: 'DnD колонки без смены позиции (та же колонка или отпускание вне цели).' },
-    enableColumnResize: { description: 'Ручка ширины на правом краю заголовка (вместе с `onColumnResize`).' },
+    onColumnOrderChange: {
+      description:
+        'Успешный reorder: `{ fromIndex, toIndex, field }` (дублирует смысл `onColumnDragEnd`).',
+    },
+    onColumnDragCancel: {
+      description: 'DnD колонки без смены позиции (та же колонка или отпускание вне цели).',
+    },
+    enableColumnResize: {
+      description: 'Ручка ширины на правом краю заголовка (вместе с `onColumnResize`).',
+    },
     onColumnResizeStart: { description: 'Начало жеста ресайза: `{ field, width }` (px).' },
     onColumnResizeChange: { description: 'Движение ручки: предпросмотр `{ field, width }` (px).' },
-    onColumnResize: { description: '({ field, width }) — фиксация после `pointerup`; обновите `columns[].width`.' },
+    onColumnResize: {
+      description: '({ field, width }) — фиксация после `pointerup`; обновите `columns[].width`.',
+    },
     onColumnResizeEnd: { description: 'Конец жеста: `{ field, width, committed }`.' },
-    columnResizeMaxWidthPx: { description: 'Верхний предел ширины при ресайзе (по умолчанию 2000).' },
-    headerMaxLines: { description: 'Максимум строк в заголовках колонок (`line-clamp`); у колонки можно своё `headerMaxLines`.' },
+    columnResizeMaxWidthPx: {
+      description: 'Верхний предел ширины при ресайзе (по умолчанию 2000).',
+    },
+    headerMaxLines: {
+      description:
+        'Максимум строк в заголовках колонок (`line-clamp`); у колонки можно своё `headerMaxLines`.',
+    },
     enableRowDrag: { description: 'Перетаскивание строк за ручку.' },
-    onRowDragStart: { description: 'Старт DnD строки: `{ fromIndex, rowId }` (индекс на текущей странице).' },
-    onRowDragEnd: { description: '(orderedIds) — новый порядок идентификаторов строк на странице.' },
+    onRowDragStart: {
+      description: 'Старт DnD строки: `{ fromIndex, rowId }` (индекс на текущей странице).',
+    },
+    onRowDragEnd: {
+      description: '(orderedIds) — новый порядок идентификаторов строк на странице.',
+    },
     onRowDragCancel: { description: 'DnD строки без перестановки.' },
     onColumnFilterClick: {
       description:
@@ -174,7 +216,10 @@ export default meta;
 
 type Story = StoryObj<typeof DataGrid>;
 
-function sortRows(rows: DataGridStoryDemoRow[], model: DataGridSortModel | null): DataGridStoryDemoRow[] {
+function sortRows(
+  rows: DataGridStoryDemoRow[],
+  model: DataGridSortModel | null,
+): DataGridStoryDemoRow[] {
   const criteria = normalizeDataGridSortModel(model ?? null);
   const copy = [...rows];
   if (criteria.length === 0) {
@@ -218,7 +263,10 @@ export const ClientPagination: Story = {
   },
   render: () => {
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
-    const [sortModel, setSortModel] = useState<DataGridSortModel | null>({ field: 'user', direction: 'asc' });
+    const [sortModel, setSortModel] = useState<DataGridSortModel | null>({
+      field: 'user',
+      direction: 'asc',
+    });
     const [pagination, setPagination] = useState<DataGridPaginationModel>({ page: 0, pageSize: 3 });
 
     const sorted = useMemo(() => sortRows(TABLE_STORY_DEMO_ROWS, sortModel), [sortModel]);
@@ -233,7 +281,7 @@ export const ClientPagination: Story = {
         multiselect
         selectedIds={selectedIds}
         disabledIds={demoDisabledRowIds}
-        onRowSelectionChange={ids => {
+        onRowSelectionChange={(ids) => {
           setSelectedIds(ids);
         }}
         sortModel={sortModel}
@@ -263,9 +311,15 @@ export const ClientPaginationPlainBody: Story = {
   },
   render: () => {
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
-    const [sortModel, setSortModel] = useState<DataGridSortModel | null>({ field: 'user', direction: 'asc' });
+    const [sortModel, setSortModel] = useState<DataGridSortModel | null>({
+      field: 'user',
+      direction: 'asc',
+    });
     const fullPageSize = TABLE_STORY_DEMO_ROWS.length;
-    const [pagination, setPagination] = useState<DataGridPaginationModel>({ page: 0, pageSize: fullPageSize });
+    const [pagination, setPagination] = useState<DataGridPaginationModel>({
+      page: 0,
+      pageSize: fullPageSize,
+    });
 
     const sorted = useMemo(() => sortRows(TABLE_STORY_DEMO_ROWS, sortModel), [sortModel]);
 
@@ -279,7 +333,7 @@ export const ClientPaginationPlainBody: Story = {
         multiselect
         selectedIds={selectedIds}
         disabledIds={demoDisabledRowIds}
-        onRowSelectionChange={ids => {
+        onRowSelectionChange={(ids) => {
           setSelectedIds(ids);
         }}
         sortModel={sortModel}
@@ -309,7 +363,10 @@ export const PlainBodyNoStickyHeader: Story = {
   },
   render: () => {
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
-    const [sortModel, setSortModel] = useState<DataGridSortModel | null>({ field: 'user', direction: 'asc' });
+    const [sortModel, setSortModel] = useState<DataGridSortModel | null>({
+      field: 'user',
+      direction: 'asc',
+    });
     const [pagination, setPagination] = useState<DataGridPaginationModel>({ page: 0, pageSize: 3 });
 
     const sorted = useMemo(() => sortRows(TABLE_STORY_DEMO_ROWS, sortModel), [sortModel]);
@@ -324,7 +381,7 @@ export const PlainBodyNoStickyHeader: Story = {
         multiselect
         selectedIds={selectedIds}
         disabledIds={demoDisabledRowIds}
-        onRowSelectionChange={ids => {
+        onRowSelectionChange={(ids) => {
           setSelectedIds(ids);
         }}
         sortModel={sortModel}
@@ -352,9 +409,15 @@ export const StickyHeaderWithScroll: Story = {
   },
   render: () => {
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
-    const [sortModel, setSortModel] = useState<DataGridSortModel | null>({ field: 'user', direction: 'asc' });
+    const [sortModel, setSortModel] = useState<DataGridSortModel | null>({
+      field: 'user',
+      direction: 'asc',
+    });
     const fullPageSize = TABLE_STORY_DEMO_ROWS.length;
-    const [pagination, setPagination] = useState<DataGridPaginationModel>({ page: 0, pageSize: fullPageSize });
+    const [pagination, setPagination] = useState<DataGridPaginationModel>({
+      page: 0,
+      pageSize: fullPageSize,
+    });
 
     const sorted = useMemo(() => sortRows(TABLE_STORY_DEMO_ROWS, sortModel), [sortModel]);
 
@@ -368,7 +431,7 @@ export const StickyHeaderWithScroll: Story = {
         multiselect
         selectedIds={selectedIds}
         disabledIds={demoDisabledRowIds}
-        onRowSelectionChange={ids => {
+        onRowSelectionChange={(ids) => {
           setSelectedIds(ids);
         }}
         sortModel={sortModel}
@@ -396,8 +459,13 @@ export const MultiColumnSort: Story = {
     },
   },
   render: () => {
-    const [sortModel, setSortModel] = useState<DataGridSortModel | null>([{ field: 'user', direction: 'asc' }]);
-    const [pagination, setPagination] = useState<DataGridPaginationModel>({ page: 0, pageSize: 10 });
+    const [sortModel, setSortModel] = useState<DataGridSortModel | null>([
+      { field: 'user', direction: 'asc' },
+    ]);
+    const [pagination, setPagination] = useState<DataGridPaginationModel>({
+      page: 0,
+      pageSize: 10,
+    });
     const sorted = useMemo(() => sortRows(TABLE_STORY_DEMO_ROWS, sortModel), [sortModel]);
 
     return (
@@ -431,7 +499,10 @@ export const CompactPaginationHideRowsSelect: Story = {
   },
   render: () => {
     const [pagination, setPagination] = useState<DataGridPaginationModel>({ page: 0, pageSize: 5 });
-    const [sortModel, setSortModel] = useState<DataGridSortModel | null>({ field: 'user', direction: 'asc' });
+    const [sortModel, setSortModel] = useState<DataGridSortModel | null>({
+      field: 'user',
+      direction: 'asc',
+    });
     const sorted = useMemo(() => sortRows(TABLE_STORY_DEMO_ROWS, sortModel), [sortModel]);
 
     return (
@@ -574,7 +645,7 @@ export const SingleSelect: Story = {
         multiselect={false}
         selectedIds={selectedIds}
         disabledIds={demoDisabledRowIds}
-        onRowSelectionChange={ids => {
+        onRowSelectionChange={(ids) => {
           setSelectedIds(ids);
         }}
         size={Size.SM}
@@ -608,7 +679,7 @@ export const ExpandAndLoading: Story = {
           variant={ButtonVariant.SECONDARY}
           size={Size.SM}
           onClick={() => {
-            setLoading(loadingFlag => !loadingFlag);
+            setLoading((loadingFlag) => !loadingFlag);
           }}
         >
           Переключить загрузку
@@ -620,8 +691,8 @@ export const ExpandAndLoading: Story = {
           totalRows={TABLE_STORY_DEMO_ROWS.length}
           expandedRowIds={expanded}
           onExpandedRowChange={handleExpandedRowChange}
-          getRowExpandable={row => row.id === '1' || row.id === '2'}
-          renderExpandedRow={row => <p>Детали по строке {row.user}</p>}
+          getRowExpandable={(row) => row.id === '1' || row.id === '2'}
+          renderExpandedRow={(row) => <p>Детали по строке {row.user}</p>}
           isLoading={loading}
         />
       </DataGridStoryBlock>
@@ -648,7 +719,7 @@ export const ExpandLazyRowData: Story = {
     const handleExpandedRowChange = useCallback((params: DataGridExpandedRowChangeParams) => {
       setExpanded([...params.expandedIds]);
       if (!params.expanded) {
-        setDetailStatusByRowId(previous => {
+        setDetailStatusByRowId((previous) => {
           const next = { ...previous };
           delete next[params.rowId];
           return next;
@@ -657,17 +728,17 @@ export const ExpandLazyRowData: Story = {
     }, []);
 
     const handleExpandedRowOpen = useCallback((row: DataGridStoryDemoRow) => {
-      setDetailStatusByRowId(previous => ({ ...previous, [row.id]: 'loading' }));
+      setDetailStatusByRowId((previous) => ({ ...previous, [row.id]: 'loading' }));
       window.setTimeout(() => {
-        setDetailStatusByRowId(previous => ({ ...previous, [row.id]: 'ready' }));
+        setDetailStatusByRowId((previous) => ({ ...previous, [row.id]: 'ready' }));
       }, 900);
     }, []);
 
     return (
       <DataGridStoryBlock>
         <DataGridStoryHint>
-          Разверните строку 1 или 2: сначала спиннер в подстроке, затем текст деталей. Глобальный оверлей
-          таблицы не используется.
+          Разверните строку 1 или 2: сначала спиннер в подстроке, затем текст деталей. Глобальный
+          оверлей таблицы не используется.
         </DataGridStoryHint>
         <DataGrid<DataGridStoryDemoRow>
           tableId="story-data-grid-expand-lazy"
@@ -676,12 +747,14 @@ export const ExpandLazyRowData: Story = {
           totalRows={TABLE_STORY_DEMO_ROWS.length}
           expandedRowIds={expanded}
           onExpandedRowChange={handleExpandedRowChange}
-          getRowExpandable={demoRow => demoRow.id === '1' || demoRow.id === '2'}
-          getExpandedRowDataStatus={demoRow => detailStatusByRowId[demoRow.id] ?? 'idle'}
+          getRowExpandable={(demoRow) => demoRow.id === '1' || demoRow.id === '2'}
+          getExpandedRowDataStatus={(demoRow) => detailStatusByRowId[demoRow.id] ?? 'idle'}
           onExpandedRowOpen={handleExpandedRowOpen}
           renderExpandedRow={(demoRow, expandedContext) =>
             expandedContext.dataStatus === 'ready' ? (
-              <DataGridStoryExpandedDetailLine>Детали по строке {demoRow.user}</DataGridStoryExpandedDetailLine>
+              <DataGridStoryExpandedDetailLine>
+                Детали по строке {demoRow.user}
+              </DataGridStoryExpandedDetailLine>
             ) : null
           }
         />
@@ -703,7 +776,9 @@ export const ColumnReorder: Story = {
     },
   },
   render: function ColumnReorderStory() {
-    const [cols, setCols] = useState<DataGridColumn<DataGridStoryDemoRow>[]>(() => [...demoColumns]);
+    const [cols, setCols] = useState<DataGridColumn<DataGridStoryDemoRow>[]>(() => [
+      ...demoColumns,
+    ]);
     const onColumnDragStart = useMemo(() => fn(), []);
     const onColumnOrderChange = useMemo(() => fn(), []);
     const onColumnDragCancel = useMemo(() => fn(), []);
@@ -711,7 +786,8 @@ export const ColumnReorder: Story = {
     return (
       <DataGridStoryBlock>
         <DataGridStoryHint>
-          Перетащите заголовок колонки на другой заголовок, чтобы поменять порядок. Отпустите на той же колонке или вне таблицы — сработает отмена (см. Actions).
+          Перетащите заголовок колонки на другой заголовок, чтобы поменять порядок. Отпустите на той
+          же колонке или вне таблицы — сработает отмена (см. Actions).
         </DataGridStoryHint>
         <DataGrid<DataGridStoryDemoRow>
           tableId="story-data-grid-col-dnd"
@@ -721,7 +797,7 @@ export const ColumnReorder: Story = {
           enableColumnDrag
           onColumnDragStart={onColumnDragStart}
           onColumnDragEnd={(fromIndex, toIndex) => {
-            setCols(previous => reorderByIndex(previous, fromIndex, toIndex));
+            setCols((previous) => reorderByIndex(previous, fromIndex, toIndex));
           }}
           onColumnOrderChange={onColumnOrderChange}
           onColumnDragCancel={onColumnDragCancel}
@@ -746,7 +822,7 @@ export const ColumnResize: Story = {
   },
   render: function ColumnResizeStory() {
     const [columnsState, setColumnsState] = useState<DataGridColumn<DataGridStoryDemoRow>[]>(() =>
-      demoColumns.map(column =>
+      demoColumns.map((column) =>
         String(column.field) === 'actions' ? { ...column, disableResize: true } : { ...column },
       ),
     );
@@ -757,7 +833,8 @@ export const ColumnResize: Story = {
     return (
       <DataGridStoryBlock>
         <DataGridStoryHint>
-          Потяните за правый край заголовка колонки. Колонка действий без ручки ресайза (`disableResize`). Панель Actions — все колбэки ресайза.
+          Потяните за правый край заголовка колонки. Колонка действий без ручки ресайза
+          (`disableResize`). Панель Actions — все колбэки ресайза.
         </DataGridStoryHint>
         <DataGrid<DataGridStoryDemoRow>
           tableId="story-data-grid-col-resize"
@@ -768,8 +845,10 @@ export const ColumnResize: Story = {
           onColumnResizeStart={onColumnResizeStart}
           onColumnResizeChange={onColumnResizeChange}
           onColumnResize={({ field, width }) => {
-            setColumnsState(previous =>
-              previous.map(column => (String(column.field) === field ? { ...column, width } : column)),
+            setColumnsState((previous) =>
+              previous.map((column) =>
+                String(column.field) === field ? { ...column, width } : column,
+              ),
             );
           }}
           onColumnResizeEnd={onColumnResizeEnd}
@@ -793,7 +872,10 @@ export const HeaderMaxLines: Story = {
     },
   },
   render: () => {
-    const [sortModel, setSortModel] = useState<DataGridSortModel | null>({ field: 'user', direction: 'asc' });
+    const [sortModel, setSortModel] = useState<DataGridSortModel | null>({
+      field: 'user',
+      direction: 'asc',
+    });
     const [columnsForClamp] = useState<DataGridColumn<DataGridStoryDemoRow>[]>(() => [
       {
         ...demoColumns[0],
@@ -848,12 +930,16 @@ export const HeaderToolbar: Story = {
     },
   },
   render: () => {
-    const [sortModel, setSortModel] = useState<DataGridSortModel | null>({ field: 'user', direction: 'asc' });
+    const [sortModel, setSortModel] = useState<DataGridSortModel | null>({
+      field: 'user',
+      direction: 'asc',
+    });
 
     return (
       <DataGridStoryBlock>
         <DataGridStoryHint>
-          Первая строка шапки — слот для действий; ниже — обычные заголовки колонок с сортировкой и фильтром при необходимости.
+          Первая строка шапки — слот для действий; ниже — обычные заголовки колонок с сортировкой и
+          фильтром при необходимости.
         </DataGridStoryHint>
         <DataGrid<DataGridStoryDemoRow>
           tableId="story-data-grid-header-toolbar"
@@ -942,11 +1028,17 @@ export const HeaderToolbarCardSurface: Story = {
     },
   },
   render: () => {
-    const [sortModel, setSortModel] = useState<DataGridSortModel | null>({ field: 'user', direction: 'asc' });
+    const [sortModel, setSortModel] = useState<DataGridSortModel | null>({
+      field: 'user',
+      direction: 'asc',
+    });
 
     return (
       <DataGridStoryBlock>
-        <DataGridStoryHint>Сравните с **Панель иконок над шапкой** (`tableHeaderVariant` по умолчанию — серый тон шапки).</DataGridStoryHint>
+        <DataGridStoryHint>
+          Сравните с **Панель иконок над шапкой** (`tableHeaderVariant` по умолчанию — серый тон
+          шапки).
+        </DataGridStoryHint>
         <DataGrid<DataGridStoryDemoRow>
           tableId="story-data-grid-header-toolbar-card"
           columns={demoColumns}
@@ -1023,11 +1115,13 @@ export const BuiltinColumnFilterIcon: Story = {
 
     const filteredRows = useMemo(
       () =>
-        TABLE_STORY_DEMO_ROWS.slice(0, 8).filter(row => {
+        TABLE_STORY_DEMO_ROWS.slice(0, 8).filter((row) => {
           if (!appliedUserSubstring) {
             return true;
           }
-          return row.user.toLocaleLowerCase('ru-RU').includes(appliedUserSubstring.toLocaleLowerCase('ru-RU'));
+          return row.user
+            .toLocaleLowerCase('ru-RU')
+            .includes(appliedUserSubstring.toLocaleLowerCase('ru-RU'));
         }),
       [appliedUserSubstring],
     );
@@ -1049,7 +1143,8 @@ export const BuiltinColumnFilterIcon: Story = {
     return (
       <DataGridStoryBlock>
         <DataGridStoryHint>
-          Нажмите иконку воронки в заголовке «Пользователь». Панель под таблицей — упрощённый пример; вариант с `Dropdown` см. **Фильтр в шапке колонки**.
+          Нажмите иконку воронки в заголовке «Пользователь». Панель под таблицей — упрощённый
+          пример; вариант с `Dropdown` см. **Фильтр в шапке колонки**.
         </DataGridStoryHint>
         <DataGrid<DataGridStoryDemoRow>
           tableId="story-data-grid-builtin-filter-icon"
@@ -1077,11 +1172,13 @@ export const BuiltinColumnFilterIcon: Story = {
               setFilterPanelOpen(false);
             }}
           >
-            <DataGridStoryFilterFieldLabel htmlFor={filterInputDomId}>Подстрока в «Пользователь»:</DataGridStoryFilterFieldLabel>
+            <DataGridStoryFilterFieldLabel htmlFor={filterInputDomId}>
+              Подстрока в «Пользователь»:
+            </DataGridStoryFilterFieldLabel>
             <Input
               id={filterInputDomId}
               value={draftUserSubstring}
-              onChange={event => {
+              onChange={(event) => {
                 setDraftUserSubstring(event.target.value);
               }}
               placeholder="Например, ann"
@@ -1108,9 +1205,9 @@ export const FilterIconPositions: Story = {
   },
   render: function FilterIconPositionsStory() {
     const columns: DataGridColumn<DataGridStoryDemoRow>[] = useMemo(() => {
-      const userColumn = demoColumns.find(column => column.field === 'user');
-      const stateColumn = demoColumns.find(column => column.field === 'tag.color');
-      const dateColumn = demoColumns.find(column => column.field === 'dateLabel');
+      const userColumn = demoColumns.find((column) => column.field === 'user');
+      const stateColumn = demoColumns.find((column) => column.field === 'tag.color');
+      const dateColumn = demoColumns.find((column) => column.field === 'dateLabel');
       if (!userColumn || !stateColumn || !dateColumn) {
         return demoColumns.slice(0, 3).map((column, columnIndex) => ({
           ...column,
@@ -1151,8 +1248,8 @@ export const FilterIconPositions: Story = {
     return (
       <DataGridStoryBlock>
         <DataGridStoryHint>
-          Свойство <code>columns[].filterIconPosition</code>: иконка слева от текста, сразу после текста без
-          растягивания заголовка, или справа в ячейке (как раньше по умолчанию).
+          Свойство <code>columns[].filterIconPosition</code>: иконка слева от текста, сразу после
+          текста без растягивания заголовка, или справа в ячейке (как раньше по умолчанию).
         </DataGridStoryHint>
         <DataGrid<DataGridStoryDemoRow>
           tableId="story-data-grid-filter-icon-position"
@@ -1189,11 +1286,13 @@ export const FilterIconCustomization: Story = {
 
     const filteredRows = useMemo(
       () =>
-        TABLE_STORY_DEMO_ROWS.slice(0, 8).filter(row => {
+        TABLE_STORY_DEMO_ROWS.slice(0, 8).filter((row) => {
           if (!appliedUserSubstring) {
             return true;
           }
-          return row.user.toLocaleLowerCase('ru-RU').includes(appliedUserSubstring.toLocaleLowerCase('ru-RU'));
+          return row.user
+            .toLocaleLowerCase('ru-RU')
+            .includes(appliedUserSubstring.toLocaleLowerCase('ru-RU'));
         }),
       [appliedUserSubstring],
     );
@@ -1207,7 +1306,7 @@ export const FilterIconCustomization: Story = {
                 filterable: true,
                 filterApplied: Boolean(appliedUserSubstring?.trim()),
                 filterIconProps: { name: 'IconExFilter2' as const },
-                filterIconPropsApplied: { color: '#ffffff' },
+                filterIconPropsApplied: { color: lightTheme.colors.backgroundSecondary },
               }
             : column,
         ),
@@ -1218,7 +1317,8 @@ export const FilterIconCustomization: Story = {
       <DataGridStoryBlock>
         <DataGridStoryHint>
           Иконка по умолчанию другая; после применения фильтра — белая на синей плашке. Можно задать{' '}
-          <code>filterIcon</code> с любым <code>ReactNode</code> (например <code>Icon</code> вручную).
+          <code>filterIcon</code> с любым <code>ReactNode</code> (например <code>Icon</code>{' '}
+          вручную).
         </DataGridStoryHint>
         <DataGrid<DataGridStoryDemoRow>
           tableId="story-data-grid-filter-icon-custom"
@@ -1246,11 +1346,13 @@ export const FilterIconCustomization: Story = {
               setFilterPanelOpen(false);
             }}
           >
-            <DataGridStoryFilterFieldLabel htmlFor={filterInputDomId}>Подстрока в «Пользователь»:</DataGridStoryFilterFieldLabel>
+            <DataGridStoryFilterFieldLabel htmlFor={filterInputDomId}>
+              Подстрока в «Пользователь»:
+            </DataGridStoryFilterFieldLabel>
             <Input
               id={filterInputDomId}
               value={draftUserSubstring}
-              onChange={event => {
+              onChange={(event) => {
                 setDraftUserSubstring(event.target.value);
               }}
               placeholder="Например, ann"
@@ -1270,7 +1372,8 @@ export const FilterIconCustomNode: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Колонка **Пользователь** с `filterIcon`: произвольный `ReactNode` внутри кнопки (здесь `Icon` с `IconExSettings`).',
+        story:
+          'Колонка **Пользователь** с `filterIcon`: произвольный `ReactNode` внутри кнопки (здесь `Icon` с `IconExSettings`).',
       },
     },
   },
@@ -1283,11 +1386,13 @@ export const FilterIconCustomNode: Story = {
 
     const filteredRows = useMemo(
       () =>
-        TABLE_STORY_DEMO_ROWS.slice(0, 8).filter(row => {
+        TABLE_STORY_DEMO_ROWS.slice(0, 8).filter((row) => {
           if (!appliedUserSubstring) {
             return true;
           }
-          return row.user.toLocaleLowerCase('ru-RU').includes(appliedUserSubstring.toLocaleLowerCase('ru-RU'));
+          return row.user
+            .toLocaleLowerCase('ru-RU')
+            .includes(appliedUserSubstring.toLocaleLowerCase('ru-RU'));
         }),
       [appliedUserSubstring],
     );
@@ -1339,11 +1444,13 @@ export const FilterIconCustomNode: Story = {
               setFilterPanelOpen(false);
             }}
           >
-            <DataGridStoryFilterFieldLabel htmlFor={filterInputDomId}>Подстрока в «Пользователь»:</DataGridStoryFilterFieldLabel>
+            <DataGridStoryFilterFieldLabel htmlFor={filterInputDomId}>
+              Подстрока в «Пользователь»:
+            </DataGridStoryFilterFieldLabel>
             <Input
               id={filterInputDomId}
               value={draftUserSubstring}
-              onChange={event => {
+              onChange={(event) => {
                 setDraftUserSubstring(event.target.value);
               }}
               placeholder="Например, ann"
@@ -1368,14 +1475,17 @@ export const RowReorder: Story = {
     },
   },
   render: function RowReorderStory() {
-    const [rowsState, setRowsState] = useState<DataGridStoryDemoRow[]>(() => [...TABLE_STORY_DEMO_ROWS]);
+    const [rowsState, setRowsState] = useState<DataGridStoryDemoRow[]>(() => [
+      ...TABLE_STORY_DEMO_ROWS,
+    ]);
     const onRowDragStart = useMemo(() => fn(), []);
     const onRowDragCancel = useMemo(() => fn(), []);
 
     return (
       <DataGridStoryBlock>
         <DataGridStoryHint>
-          Тяните иконку слева от строки и отпустите на другой ряд, чтобы изменить порядок. Actions — старт и отмена DnD.
+          Тяните иконку слева от строки и отпустите на другой ряд, чтобы изменить порядок. Actions —
+          старт и отмена DnD.
         </DataGridStoryHint>
         <DataGrid<DataGridStoryDemoRow>
           tableId="story-data-grid-row-dnd"
@@ -1384,9 +1494,11 @@ export const RowReorder: Story = {
           totalRows={rowsState.length}
           enableRowDrag
           onRowDragStart={onRowDragStart}
-          onRowDragEnd={orderedIds => {
-            const byId = new Map(rowsState.map(row => [row.id, row]));
-            const next = orderedIds.map(id => byId.get(id)).filter((row): row is DataGridStoryDemoRow => row != null);
+          onRowDragEnd={(orderedIds) => {
+            const byId = new Map(rowsState.map((row) => [row.id, row]));
+            const next = orderedIds
+              .map((id) => byId.get(id))
+              .filter((row): row is DataGridStoryDemoRow => row != null);
             if (next.length === rowsState.length) {
               setRowsState(next);
             }
@@ -1410,7 +1522,10 @@ export const ServerPaginationMode: Story = {
     },
   },
   render: () => {
-    const [paginationModel, setPaginationModel] = useState<DataGridPaginationModel>({ page: 0, pageSize: 3 });
+    const [paginationModel, setPaginationModel] = useState<DataGridPaginationModel>({
+      page: 0,
+      pageSize: 3,
+    });
 
     const visibleRows = useMemo(() => {
       const startIndex = paginationModel.page * paginationModel.pageSize;
@@ -1458,7 +1573,7 @@ export const RowClickHandlers: Story = {
           onRowClick={(rowData, mouseEvent) => {
             setLastEventLabel(`click: ${rowData.user} (${mouseEvent.detail})`);
           }}
-          onRowDoubleClick={rowData => {
+          onRowDoubleClick={(rowData) => {
             setLastEventLabel(`dblclick: ${rowData.user}`);
           }}
           size={Size.MD}
@@ -1484,8 +1599,10 @@ export const RowBackgroundByStatus: Story = {
       columns={demoColumns.slice(0, 4)}
       rows={TABLE_STORY_DEMO_ROWS.slice(0, 8)}
       totalRows={8}
-      rowBackgroundColorByStatus={demoRow =>
-        demoRow.tag?.color === 'danger' ? 'rgba(239, 68, 68, 0.08)' : undefined
+      rowBackgroundColorByStatus={(demoRow) =>
+        demoRow.tag?.color === 'danger'
+          ? `color-mix(in srgb, ${lightTheme.colors.danger} 14%, ${lightTheme.colors.backgroundSecondary})`
+          : undefined
       }
       size={Size.MD}
     />
@@ -1541,9 +1658,9 @@ export const CustomRowIdentifier: Story = {
         totalRows={6}
         displayRowSelectionColumn
         multiselect
-        getRowId={demoRow => `row_${demoRow.id}`}
+        getRowId={(demoRow) => `row_${demoRow.id}`}
         selectedIds={selectedPrefixedIds}
-        onRowSelectionChange={nextIds => {
+        onRowSelectionChange={(nextIds) => {
           setSelectedPrefixedIds(nextIds);
         }}
         size={Size.SM}
@@ -1578,7 +1695,7 @@ export const GlobalRenderCell: Story = {
         columns={columnsWithPlainField}
         rows={TABLE_STORY_DEMO_ROWS.slice(0, 5)}
         totalRows={5}
-        renderCell={renderParams => {
+        renderCell={(renderParams) => {
           if (renderParams.field === 'comment') {
             return <em>Нет данных (из renderCell)</em>;
           }
@@ -1616,4 +1733,3 @@ export const HideFooterFlatCard: Story = {
     />
   ),
 };
-

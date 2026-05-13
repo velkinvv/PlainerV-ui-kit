@@ -1,5 +1,9 @@
 import styled, { css } from 'styled-components';
 import { TransitionHandler } from '../../../handlers/uiHandlers';
+import {
+  buildHoverPressMotionCss,
+  buildReducedMotionTransformCss,
+} from '../../../handlers/uiMotionStyleHandlers';
 import { Size } from '../../../types/sizes';
 import { ThemeMode } from '../../../types/theme';
 import { success } from '../../../variables/colors/success';
@@ -75,17 +79,17 @@ export const CheckboxBox = styled.div<{
 
   /* Border согласно макету */
   border: ${({ checked, indeterminate, disabled, theme }) => {
-      if (checked || indeterminate) {
-        // Активный checkbox не имеет границы согласно макету
-        return 'none';
-      }
-      if (disabled) {
-        // Disabled border: Gray_02 / 4O (#E0E0E0) для светлой, Gray/500 (#9E9E9E) для темной
-        return `1px solid ${theme.mode === ThemeMode.DARK ? grey[500] : grey[300]}`;
-      }
-      // Inactive border: Gray/300 (#C5C5C5)
-      return `1px solid ${grey[300]}`;
-    }};
+    if (checked || indeterminate) {
+      // Активный checkbox не имеет границы согласно макету
+      return 'none';
+    }
+    if (disabled) {
+      // Disabled border: Gray_02 / 4O (#E0E0E0) для светлой, Gray/500 (#9E9E9E) для темной
+      return `1px solid ${theme.mode === ThemeMode.DARK ? grey[500] : grey[300]}`;
+    }
+    // Inactive border: Gray/300 (#C5C5C5)
+    return `1px solid ${grey[300]}`;
+  }};
 
   /* Border radius: пропорционально размеру, 4px для inactive, 6px для active согласно макету (MD) */
   border-radius: ${({ checked, indeterminate, size = Size.MD }) => {
@@ -109,6 +113,7 @@ export const CheckboxBox = styled.div<{
   }};
 
   transition: ${TransitionHandler()};
+  will-change: transform, background-color, border-color;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -119,9 +124,22 @@ export const CheckboxBox = styled.div<{
       !disabled &&
       css`
         border-color: ${checked || indeterminate ? success[600] : grey[300]};
-        background: ${checked || indeterminate ? success[500] : theme.mode === ThemeMode.DARK ? neutral[800] : neutral[10]};
+        background: ${checked || indeterminate
+          ? success[500]
+          : theme.mode === ThemeMode.DARK
+            ? neutral[800]
+            : neutral[10]};
       `}
   }
+
+  &:active {
+  }
+  ${buildHoverPressMotionCss({
+    hoverSelector: '&:hover',
+    activeSelector: '&:active',
+    hoverTransform: 'none',
+    activeTransform: 'scale(0.96)',
+  })}
 
   /* Focus состояние согласно макету */
   &:focus-within,
@@ -144,11 +162,16 @@ export const CheckboxBox = styled.div<{
 export const CheckIcon = styled.div<{ checked: boolean; indeterminate?: boolean; size?: Size }>`
   opacity: ${({ checked, indeterminate }) => (checked || indeterminate ? 1 : 0)};
   transition: ${TransitionHandler()};
+  transform: ${({ checked, indeterminate }) =>
+    checked || indeterminate ? 'scale(1)' : 'scale(0.75)'};
+  will-change: transform, opacity;
   color: ${neutral[10]}; /* Белый цвет для иконки */
   display: flex;
   align-items: center;
   justify-content: center;
   line-height: 1;
+
+  ${buildReducedMotionTransformCss('scale(1)')}
 
   /* Размер иконки пропорционально размеру чекбокса */
   ${({ size = Size.MD }) => {

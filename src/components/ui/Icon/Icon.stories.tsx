@@ -7,26 +7,36 @@ import * as PhosphorIconsModule from '../../../icons/phosphor/regular';
 import { IconSize } from '../../../types/sizes';
 import { Hint } from '../Hint/Hint';
 import { sizeMap } from '../../../handlers/iconHandlers';
+import {
+  handleIconStoryCardMouseEnter,
+  handleIconStoryCardMouseLeave,
+} from '../../../handlers/iconStoryHoverHandlers';
 import type { IconVariant } from '../../../types/ui';
 import type { IconName } from '../../../icons';
 import { DOC_ICON } from '@/components/ui/storyDocs/uiKitDocs';
+import { lightTheme } from '@/themes/themes';
+import {
+  buildIconPreviewCardStyle,
+  buildIconStoriesScrollableGridStyle,
+  iconStoriesStyles,
+} from './Icon.stories.styles';
 
 // Функция для получения реально существующих иконок
 const getExistingIcons = () => {
   // Получаем иконки Plainer
   const plainerIcons = Object.keys(PlainerIconsModule)
     // .map(key => key.replace('IconPlainer', ''))
-    .filter(name => name.length > 0);
+    .filter((name) => name.length > 0);
 
   // Получаем иконки IconEx
   const iconexIcons = Object.keys(IconExIconsModule)
     // .map(key => key.replace('IconEx', ''))
-    .filter(name => name.length > 0);
+    .filter((name) => name.length > 0);
 
   // Получаем иконки Phosphor
   const phosphorIcons = Object.keys(PhosphorIconsModule)
     // .map(key => key.replace('Phosphor', ''))
-    .filter(name => name.length > 0);
+    .filter((name) => name.length > 0);
 
   return { plainerIcons, iconexIcons, phosphorIcons };
 };
@@ -118,7 +128,7 @@ export const WithColor: Story = {
   args: {
     name: 'IconExHeart',
     size: IconSize.LG,
-    color: '#ef4444',
+    color: lightTheme.colors.danger,
     // variant: 'iconEx',
   },
 };
@@ -146,24 +156,16 @@ export const AllIcons: Story = {
       (iconName: string, variant: IconVariant, size: IconSize) => {
         const code = `<Icon name="${iconName}" size={IconSize.${size}} variant="${variant}" />`;
         return (
-          <div className="tooltip-content">
-            <div style={{ marginBottom: '8px' }}>
+          <div className="icon-tooltip-content">
+            <div style={iconStoriesStyles.hintTitle}>
               <strong>{iconName}</strong>
             </div>
-            <div style={{ marginBottom: '8px', fontSize: '11px' }}>Библиотека: {variant}</div>
-            <div
-              style={{
-                marginBottom: '8px',
-                fontSize: '11px',
-                fontFamily: 'monospace',
-              }}
-            >
-              {code}
-            </div>
+            <div style={iconStoriesStyles.hintMeta}>Библиотека: {variant}</div>
+            <div style={iconStoriesStyles.hintCode}>{code}</div>
             <button
-              className={`copy-button ${copiedIcon === code ? 'copied' : ''}`}
-              onClick={e => {
-                e.stopPropagation();
+              className={`icon-copy-button ${copiedIcon === code ? 'copied' : ''}`}
+              onClick={(clickEvent) => {
+                clickEvent.stopPropagation();
                 copyIconCode(code);
               }}
             >
@@ -202,85 +204,8 @@ export const AllIcons: Story = {
     const maxHeight = iconHeight * 10; // максимум 10 строк
 
     return (
-      <div style={{ padding: '20px', maxWidth: '1200px' }}>
-        <style>
-          {`
-            .icon-grid::-webkit-scrollbar {
-              width: 8px;
-            }
-            .icon-grid::-webkit-scrollbar-track {
-              background: #f1f5f9;
-              border-radius: 4px;
-            }
-            .icon-grid::-webkit-scrollbar-thumb {
-              background: #cbd5e1;
-              border-radius: 4px;
-            }
-            .icon-grid::-webkit-scrollbar-thumb:hover {
-              background: #94a3b8;
-            }
-
-            .icon-tooltip {
-              position: relative;
-            }
-            .icon-tooltip .tooltip-content {
-              visibility: hidden;
-              position: absolute;
-              z-index: 99999;
-              bottom: 125%;
-              left: 50%;
-              transform: translateX(-50%);
-              background-color: #1f2937;
-              color: white;
-              text-align: center;
-              padding: 12px;
-              border-radius: 8px;
-              font-size: 12px;
-              white-space: nowrap;
-              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-              opacity: 0;
-              transition: opacity 0.3s;
-              pointer-events: none;
-            }
-
-            .icon-tooltip .tooltip-content::after {
-              content: "";
-              position: absolute;
-              top: 100%;
-              left: 50%;
-              margin-left: -5px;
-              border-width: 5px;
-              border-style: solid;
-              border-color: #1f2937 transparent transparent transparent;
-            }
-
-            .icon-tooltip:hover .tooltip-content {
-              visibility: visible;
-              opacity: 1;
-            }
-
-            .copy-button {
-              background: #3b82f6;
-              color: white;
-              border: none;
-              padding: 4px 8px;
-              border-radius: 4px;
-              font-size: 10px;
-              cursor: pointer;
-              margin-top: 4px;
-              transition: background 0.2s;
-              pointer-events: auto;
-            }
-
-            .copy-button:hover {
-              background: #2563eb;
-            }
-
-            .copy-button.copied {
-              background: #10b981;
-            }
-          `}
-        </style>
+      <div style={iconStoriesStyles.pageRootWide}>
+        <style>{iconStoriesStyles.hintTooltipCss}</style>
 
         <h1>Все иконки</h1>
         <p>
@@ -290,43 +215,26 @@ export const AllIcons: Story = {
         </p>
 
         {/* Контролы */}
-        <div
-          style={{
-            display: 'flex',
-            gap: '16px',
-            marginBottom: '20px',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-          }}
-        >
+        <div style={iconStoriesStyles.controlsRow}>
           <div>
-            <label style={{ display: 'block', marginBottom: '4px' }}>Поиск иконок:</label>
+            <label style={iconStoriesStyles.controlLabel}>Поиск иконок:</label>
             <input
               type="text"
               value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
+              onChange={(changeEvent) => setSearchTerm(changeEvent.target.value)}
               placeholder="Введите название иконки..."
-              style={{
-                padding: '8px 12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '14px',
-                minWidth: '200px',
-              }}
+              style={iconStoriesStyles.searchInput}
             />
           </div>
 
           <div>
-            <label style={{ display: 'block', marginBottom: '4px' }}>Библиотека:</label>
+            <label style={iconStoriesStyles.controlLabel}>Библиотека:</label>
             <select
               value={selectedVariant}
-              onChange={e => setSelectedVariant(e.target.value as IconVariant | 'all')}
-              style={{
-                padding: '8px 12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '14px',
-              }}
+              onChange={(changeEvent) =>
+                setSelectedVariant(changeEvent.target.value as IconVariant | 'all')
+              }
+              style={iconStoriesStyles.controlInput}
             >
               <option value="all">Все библиотеки</option>
               <option value="plainer">Plainer</option>
@@ -336,16 +244,11 @@ export const AllIcons: Story = {
           </div>
 
           <div>
-            <label style={{ display: 'block', marginBottom: '4px' }}>Размер иконок:</label>
+            <label style={iconStoriesStyles.controlLabel}>Размер иконок:</label>
             <select
               value={selectedSize}
-              onChange={e => setSelectedSize(e.target.value as IconSize)}
-              style={{
-                padding: '8px 12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '14px',
-              }}
+              onChange={(changeEvent) => setSelectedSize(changeEvent.target.value as IconSize)}
+              style={iconStoriesStyles.controlInput}
             >
               <option value={IconSize.XS}>XS (16px)</option>
               <option value={IconSize.SM}>SM (20px)</option>
@@ -357,20 +260,12 @@ export const AllIcons: Story = {
         </div>
 
         {/* Статистика */}
-        <div
-          style={{
-            marginBottom: '20px',
-            padding: '12px',
-            backgroundColor: '#f8fafc',
-            borderRadius: '8px',
-            border: '1px solid #e2e8f0',
-          }}
-        >
+        <div style={iconStoriesStyles.statsPanel}>
           <strong>
             Найдено: {filteredIcons.length} из {allIcons.length} иконок
           </strong>
           {selectedVariant === 'all' && (
-            <div style={{ marginTop: '4px', fontSize: '14px', color: '#64748b' }}>
+            <div style={iconStoriesStyles.statsMeta}>
               Plainer: {plainerIcons.length} | IconEx: {iconexIcons.length} | Phosphor:{' '}
               {phosphorIcons.length}
             </div>
@@ -379,21 +274,8 @@ export const AllIcons: Story = {
 
         {/* Единый блок со всеми иконками */}
         <div
-          className="icon-showcase-grid"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
-            gap: '16px',
-            minHeight: iconHeight,
-            maxHeight,
-            overflowY: 'auto',
-            padding: '8px',
-            border: '1px solid #e5e7eb',
-            borderRadius: '8px',
-            backgroundColor: '#fafafa',
-            scrollbarWidth: 'thin',
-            scrollbarColor: '#cbd5e1 #f1f5f9',
-          }}
+          className="icon-stories-scroll"
+          style={buildIconStoriesScrollableGridStyle(iconHeight, maxHeight)}
         >
           {(filteredIcons || []).map((iconName: IconName) => {
             const variant =
@@ -404,51 +286,17 @@ export const AllIcons: Story = {
                 content={hintContent(String(iconName), variant, selectedSize)}
               >
                 <div
-                  className="icon-tooltip"
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    padding: '12px',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '8px',
-                    backgroundColor: 'white',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    height: `${iconHeight + 40}px`,
-                    boxSizing: 'border-box',
-                  }}
+                  style={buildIconPreviewCardStyle(`${iconHeight + 40}px`)}
+                  onMouseEnter={handleIconStoryCardMouseEnter}
+                  onMouseLeave={handleIconStoryCardMouseLeave}
                 >
                   <Icon
                     name={iconName}
                     size={selectedSize}
                     // variant={variant}
                   />
-                  <div
-                    style={{
-                      marginTop: '8px',
-                      fontSize: '12px',
-                      textAlign: 'center',
-                      color: '#6b7280',
-                      wordBreak: 'break-word',
-                      flex: 1,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    {String(iconName)}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '10px',
-                      color: '#9ca3af',
-                      marginTop: '4px',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    {variant}
-                  </div>
+                  <div style={iconStoriesStyles.iconNameLabelFlexible}>{String(iconName)}</div>
+                  <div style={iconStoriesStyles.iconVariantLabel}>{variant}</div>
                 </div>
               </Hint>
             );
@@ -492,42 +340,15 @@ export const PlainerIcons: Story = {
     ];
 
     return (
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(6, 1fr)',
-          gap: '16px',
-          padding: '20px',
-        }}
-      >
-        {plainerIconNames.map(iconName => (
-          <div
-            key={iconName}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              padding: '12px',
-              border: '1px solid #e5e7eb',
-              borderRadius: '8px',
-              backgroundColor: 'white',
-            }}
-          >
+      <div style={iconStoriesStyles.fixedSixColumnGrid}>
+        {plainerIconNames.map((iconName) => (
+          <div key={iconName} style={iconStoriesStyles.iconPreviewCard}>
             <Icon
               name={iconName as IconName}
               size={IconSize.LG}
               // variant="plainer"
             />
-            <div
-              style={{
-                marginTop: '8px',
-                fontSize: '12px',
-                textAlign: 'center',
-                color: '#6b7280',
-              }}
-            >
-              {iconName}
-            </div>
+            <div style={iconStoriesStyles.iconNameLabel}>{iconName}</div>
           </div>
         ))}
       </div>
@@ -681,42 +502,15 @@ export const IconExIcons: Story = {
     ];
 
     return (
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(6, 1fr)',
-          gap: '16px',
-          padding: '20px',
-        }}
-      >
-        {iconExIconNames.slice(0, 20).map(iconName => (
-          <div
-            key={iconName}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              padding: '12px',
-              border: '1px solid #e5e7eb',
-              borderRadius: '8px',
-              backgroundColor: 'white',
-            }}
-          >
+      <div style={iconStoriesStyles.fixedSixColumnGrid}>
+        {iconExIconNames.slice(0, 20).map((iconName) => (
+          <div key={iconName} style={iconStoriesStyles.iconPreviewCard}>
             <Icon
               name={iconName as IconName}
               size={IconSize.LG}
               // variant="iconEx"
             />
-            <div
-              style={{
-                marginTop: '8px',
-                fontSize: '12px',
-                textAlign: 'center',
-                color: '#6b7280',
-              }}
-            >
-              {iconName}
-            </div>
+            <div style={iconStoriesStyles.iconNameLabel}>{iconName}</div>
           </div>
         ))}
       </div>
@@ -787,42 +581,15 @@ export const PhosphorIcons: Story = {
     ];
 
     return (
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(6, 1fr)',
-          gap: '16px',
-          padding: '20px',
-        }}
-      >
-        {phosphorIconNames.map(iconName => (
-          <div
-            key={iconName}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              padding: '12px',
-              border: '1px solid #e5e7eb',
-              borderRadius: '8px',
-              backgroundColor: 'white',
-            }}
-          >
+      <div style={iconStoriesStyles.fixedSixColumnGrid}>
+        {phosphorIconNames.map((iconName) => (
+          <div key={iconName} style={iconStoriesStyles.iconPreviewCard}>
             <Icon
               name={iconName as IconName}
               size={IconSize.LG}
               // variant="phosphor"
             />
-            <div
-              style={{
-                marginTop: '8px',
-                fontSize: '12px',
-                textAlign: 'center',
-                color: '#6b7280',
-              }}
-            >
-              {iconName}
-            </div>
+            <div style={iconStoriesStyles.iconNameLabel}>{iconName}</div>
           </div>
         ))}
       </div>
@@ -840,17 +607,10 @@ export const PhosphorIcons: Story = {
 // История для демонстрации размеров
 export const IconSizes: Story = {
   render: () => (
-    <div style={{ padding: '20px' }}>
+    <div style={iconStoriesStyles.pageRoot}>
       <h2>Размеры иконок</h2>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-          gap: '20px',
-          marginTop: '20px',
-        }}
-      >
-        <div style={{ textAlign: 'center' }}>
+      <div style={iconStoriesStyles.responsiveCardGrid}>
+        <div style={iconStoriesStyles.iconCellCentered}>
           <Icon
             name="IconPlainerUser"
             size={IconSize.XS}
@@ -858,7 +618,7 @@ export const IconSizes: Story = {
           />
           <p>{sizeMap[IconSize.XS]}px</p>
         </div>
-        <div style={{ textAlign: 'center' }}>
+        <div style={iconStoriesStyles.iconCellCentered}>
           <Icon
             name="IconPlainerUser"
             size={IconSize.SM}
@@ -866,7 +626,7 @@ export const IconSizes: Story = {
           />
           <p>{sizeMap[IconSize.SM]}px</p>
         </div>
-        <div style={{ textAlign: 'center' }}>
+        <div style={iconStoriesStyles.iconCellCentered}>
           <Icon
             name="IconPlainerUser"
             size={IconSize.MD}
@@ -874,7 +634,7 @@ export const IconSizes: Story = {
           />
           <p>{sizeMap[IconSize.MD]}px</p>
         </div>
-        <div style={{ textAlign: 'center' }}>
+        <div style={iconStoriesStyles.iconCellCentered}>
           <Icon
             name="IconPlainerUser"
             size={IconSize.LG}
@@ -882,7 +642,7 @@ export const IconSizes: Story = {
           />
           <p>{sizeMap[IconSize.LG]}px</p>
         </div>
-        <div style={{ textAlign: 'center' }}>
+        <div style={iconStoriesStyles.iconCellCentered}>
           <Icon
             name="IconPlainerUser"
             size={IconSize.XL}
@@ -890,7 +650,7 @@ export const IconSizes: Story = {
           />
           <p>{sizeMap[IconSize.XL]}px</p>
         </div>
-        <div style={{ textAlign: 'center' }}>
+        <div style={iconStoriesStyles.iconCellCentered}>
           <Icon
             name="IconPlainerUser"
             size={IconSize.XL}
@@ -906,48 +666,41 @@ export const IconSizes: Story = {
 // История для демонстрации цветов
 export const IconColors: Story = {
   render: () => (
-    <div style={{ padding: '20px' }}>
+    <div style={iconStoriesStyles.pageRoot}>
       <h2>Цвета иконок</h2>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-          gap: '20px',
-          marginTop: '20px',
-        }}
-      >
-        <div style={{ textAlign: 'center' }}>
+      <div style={iconStoriesStyles.responsiveCardGrid}>
+        <div style={iconStoriesStyles.iconCellCentered}>
           <Icon
             name="IconExHeart"
             size={IconSize.LG}
-            color="#ef4444"
+            color={lightTheme.colors.danger}
             // variant="iconEx"
           />
           <p>Красный</p>
         </div>
-        <div style={{ textAlign: 'center' }}>
+        <div style={iconStoriesStyles.iconCellCentered}>
           <Icon
             name="IconExStar"
             size={IconSize.LG}
-            color="#f59e0b"
+            color={lightTheme.colors.warning}
             // variant="iconEx"
           />
           <p>Оранжевый</p>
         </div>
-        <div style={{ textAlign: 'center' }}>
+        <div style={iconStoriesStyles.iconCellCentered}>
           <Icon
             name="IconExCheck"
             size={IconSize.LG}
-            color="#10b981"
+            color={lightTheme.colors.success}
             // variant="iconEx"
           />
           <p>Зеленый</p>
         </div>
-        <div style={{ textAlign: 'center' }}>
+        <div style={iconStoriesStyles.iconCellCentered}>
           <Icon
             name="IconExInfoSquare"
             size={IconSize.LG}
-            color="#3b82f6"
+            color={lightTheme.colors.info}
             // variant="iconEx"
           />
           <p>Синий</p>
@@ -956,4 +709,3 @@ export const IconColors: Story = {
     </div>
   ),
 };
-

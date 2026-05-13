@@ -134,8 +134,7 @@ export const PageButton = styled.button<{
     const accentFill = theme.colors.info;
     const accentFillHover = theme.colors.infoHover;
     const primaryButtonStyles = getButtonVariant(theme.buttons, ButtonVariant.PRIMARY);
-    const labelOnAccent =
-      primaryButtonStyles.hover.color ?? primaryButtonStyles.color;
+    const labelOnAccent = primaryButtonStyles.hover.color ?? primaryButtonStyles.color;
 
     if ($disabled) {
       return css`

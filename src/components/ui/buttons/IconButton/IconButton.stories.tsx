@@ -5,6 +5,7 @@ import React from 'react';
 import { IconSize, Size } from '../../../../types/sizes';
 import { ButtonVariant } from '../../../../types/ui';
 import { DOC_ICON_BUTTON } from '@/components/ui/storyDocs/uiKitDocs';
+import { buttonStoriesStyles } from '@/handlers/buttonStories.styles';
 
 const meta: Meta<typeof IconButton> = {
   title: 'UI Kit/Inputs/IconButton',
@@ -145,7 +146,7 @@ export const Skeleton: Story = {
 
 export const SkeletonDebug: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div style={buttonStoriesStyles.columnGap16}>
       <div>
         <h4>Обычная IconButton для сравнения:</h4>
         <IconButton
@@ -163,24 +164,9 @@ export const SkeletonDebug: Story = {
       </div>
 
       <div>
-        <h4>Skeleton IconButton с inline стилями (для отладки):</h4>
-        <button
-          style={{
-            width: '40px',
-            height: '40px',
-            borderRadius: '50%',
-            background: 'linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%)',
-            backgroundSize: '200% 100%',
-            backgroundPosition: '-200% 0',
-            color: '#9ca3af80',
-            border: '2px solid #d1d5db',
-            animation: 'skeleton-loading 1.5s infinite ease-in-out',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <div style={{ filter: 'blur(1px)', opacity: 0.7 }}>
+        <h4>Skeleton IconButton с имитацией «сырого» shimmer (для отладки):</h4>
+        <button type="button" style={buttonStoriesStyles.skeletonDebugNativeIconButton}>
+          <div style={buttonStoriesStyles.skeletonDebugIconBlurWrapper}>
             <Icon name="IconExSettings" size={IconSize.MD} />
           </div>
         </button>
@@ -260,10 +246,10 @@ export const Square: Story = {
 // Комплексные примеры
 export const AllVariants: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={buttonStoriesStyles.columnGap24}>
       <div>
         <h4>Все варианты:</h4>
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+        <div style={buttonStoriesStyles.rowWrapGap12AlignCenter}>
           <IconButton
             variant={ButtonVariant.PRIMARY}
             icon={<Icon name="IconExHome" size={IconSize.MD} />}
@@ -301,7 +287,7 @@ export const AllVariants: Story = {
 
       <div>
         <h4>Размеры:</h4>
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+        <div style={buttonStoriesStyles.rowWrapGap12AlignCenter}>
           <IconButton
             variant={ButtonVariant.PRIMARY}
             size={Size.SM}
@@ -322,7 +308,7 @@ export const AllVariants: Story = {
 
       <div>
         <h4>Состояния:</h4>
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+        <div style={buttonStoriesStyles.rowWrapGap12AlignCenter}>
           <IconButton
             variant={ButtonVariant.PRIMARY}
             icon={<Icon name="IconExHome" size={IconSize.MD} />}
@@ -344,7 +330,7 @@ export const AllVariants: Story = {
 
       <div>
         <h4>Формы:</h4>
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+        <div style={buttonStoriesStyles.rowWrapGap12AlignCenter}>
           <IconButton
             variant={ButtonVariant.PRIMARY}
             icon={<Icon name="IconExSettings" size={IconSize.MD} />}
@@ -368,4 +354,3 @@ export const AllVariants: Story = {
     },
   },
 };
-

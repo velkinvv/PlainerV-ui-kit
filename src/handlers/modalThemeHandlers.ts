@@ -7,7 +7,10 @@ import type { ModalTheme } from '../types/theme';
  * @param size - размер
  * @returns объект с размерами для указанного размера
  */
-export const getModalSize = (theme: ModalTheme | undefined, size: ModalSize): ModalTheme['sizes'][ModalSize] => {
+export const getModalSize = (
+  theme: ModalTheme | undefined,
+  size: ModalSize,
+): ModalTheme['sizes'][ModalSize] => {
   // Fallback значения
   const fallbackSizes: Record<ModalSize, ModalTheme['sizes'][ModalSize]> = {
     [ModalSize.XS]: {

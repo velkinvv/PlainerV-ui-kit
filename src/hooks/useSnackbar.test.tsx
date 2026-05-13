@@ -2,7 +2,7 @@
 jest.unmock('styled-components');
 
 import React from 'react';
-import { act, fireEvent, render, renderHook, screen } from '@testing-library/react';
+import { act, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react';
 import { ThemeProvider } from '../themes/ThemeProvider';
 import { SnackbarProvider } from '../components/ui/Snackbar';
 import { useSnackbar } from './useSnackbar';
@@ -76,7 +76,9 @@ describe('useSnackbar', () => {
     expect(result.current.snackbars).toHaveLength(0);
   });
 
-  it('вызывает onAction при клике по кнопке действия и закрывает', () => {
+  it('вызывает onAction при клике по кнопке действия и закрывает', async () => {
+    // Exit Framer Motion после hideSnackbar занимает ~200ms; с fake timers waitFor не продвинет время
+    jest.useRealTimers();
     const onAction = jest.fn();
     const Trigger = () => {
       const { showSnackbar } = useSnackbar();
@@ -104,6 +106,9 @@ describe('useSnackbar', () => {
       fireEvent.click(screen.getByRole('button', { name: 'OK' }));
     });
     expect(onAction).toHaveBeenCalledTimes(1);
-    expect(screen.queryByText('Сообщение')).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByText('Сообщение')).not.toBeInTheDocument();
+    });
+    jest.useFakeTimers();
   });
 });

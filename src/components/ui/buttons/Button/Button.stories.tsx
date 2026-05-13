@@ -5,6 +5,7 @@ import { Icon } from '../../Icon/Icon';
 import { Size, IconSize } from '../../../../types/sizes';
 import { ButtonVariant } from '../../../../types/ui';
 import { DOC_BUTTON } from '@/components/ui/storyDocs/uiKitDocs';
+import { buttonStoriesStyles } from '@/handlers/buttonStories.styles';
 
 const meta: Meta<typeof Button> = {
   title: 'UI Kit/Inputs/Button',
@@ -77,15 +78,8 @@ type Story = StoryObj<typeof meta>;
 // Все истории в алфавитном порядке
 export const AllSizes: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '16px',
-        alignItems: 'flex-start',
-      }}
-    >
-      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+    <div style={buttonStoriesStyles.columnFlexStartGap16}>
+      <div style={buttonStoriesStyles.rowWrapGap12AlignCenter}>
         <Button size={Size.XS}>Extra Small</Button>
         <Button size={Size.SM}>Small</Button>
         <Button size={Size.MD}>Medium</Button>
@@ -101,15 +95,8 @@ export const AllSizes: Story = {
 
 export const AllVariants: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '16px',
-        alignItems: 'flex-start',
-      }}
-    >
-      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+    <div style={buttonStoriesStyles.columnFlexStartGap16}>
+      <div style={buttonStoriesStyles.rowWrapGap12}>
         <Button variant={ButtonVariant.PRIMARY}>Primary</Button>
         <Button variant={ButtonVariant.SECONDARY}>Secondary</Button>
         <Button variant={ButtonVariant.OUTLINE}>Outline</Button>
@@ -120,7 +107,7 @@ export const AllVariants: Story = {
         <Button variant={ButtonVariant.LINE}>Line</Button>
       </div>
 
-      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+      <div style={buttonStoriesStyles.rowWrapGap12AlignCenter}>
         <Button size={Size.XS}>Extra Small</Button>
         <Button size={Size.SM}>Small</Button>
         <Button size={Size.MD}>Medium</Button>
@@ -128,7 +115,7 @@ export const AllVariants: Story = {
         <Button size={Size.XL}>Extra Large</Button>
       </div>
 
-      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+      <div style={buttonStoriesStyles.rowWrapGap12}>
         <Button loading>Loading</Button>
         <Button disabled>Disabled</Button>
         <Button iconStart={<Icon name="IconExHeart" size={IconSize.MD} />}>With Icon</Button>
@@ -281,7 +268,7 @@ export const Skeleton: Story = {
  */
 export const SkeletonDebug: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div style={buttonStoriesStyles.columnGap16}>
       <div>
         <h4>Обычная кнопка для сравнения:</h4>
         <Button variant={ButtonVariant.PRIMARY}>Primary Button</Button>
@@ -293,20 +280,8 @@ export const SkeletonDebug: Story = {
       </div>
 
       <div>
-        <h4>Skeleton кнопка с inline стилями (для отладки):</h4>
-        <button
-          style={{
-            background: 'linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%)',
-            backgroundSize: '200% 100%',
-            backgroundPosition: '-200% 0',
-            color: '#9ca3af80', // Полупрозрачный серый цвет
-            border: '2px solid #d1d5db',
-            padding: '10px 18px',
-            borderRadius: '35px',
-            fontSize: '14px',
-            animation: 'skeleton-loading 1.5s infinite ease-in-out',
-          }}
-        >
+        <h4>Skeleton кнопка с имитацией «сырого» shimmer (для отладки):</h4>
+        <button type="button" style={buttonStoriesStyles.skeletonDebugNativeTextButton}>
           Inline Skeleton
         </button>
       </div>
@@ -383,7 +358,7 @@ export const DisabledWithTooltip: Story = {
  */
 export const TooltipVariations: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+    <div style={buttonStoriesStyles.rowWrapGap16}>
       <Button
         variant={ButtonVariant.PRIMARY}
         showTooltip={true}
@@ -439,7 +414,7 @@ export const TooltipVariations: Story = {
  */
 export const SkeletonVariations: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
+    <div style={buttonStoriesStyles.rowWrapGap16AlignCenter}>
       <Button variant={ButtonVariant.SKELETON} size={Size.SM}>
         Small Skeleton
       </Button>
@@ -490,7 +465,7 @@ export const SkeletonWithIcon: Story = {
  */
 export const IconVariations: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div style={buttonStoriesStyles.columnGap16}>
       <div>
         <h4>Только иконка в начале:</h4>
         <Button iconStart={<Icon name="IconExHome" size={IconSize.MD} />}>Home</Button>
@@ -540,4 +515,3 @@ export const IconVariations: Story = {
     },
   },
 };
-

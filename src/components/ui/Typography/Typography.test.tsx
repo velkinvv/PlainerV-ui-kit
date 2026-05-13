@@ -197,7 +197,7 @@ describe('Typography', () => {
       'label',
     ] as const;
 
-    variants.forEach(variant => {
+    variants.forEach((variant) => {
       it(`применяет стили для варианта ${variant}`, () => {
         renderWithTheme(
           <Typography variant={variant} data-testid="typography">
@@ -224,7 +224,7 @@ describe('Typography', () => {
       'textDisabled',
     ] as const;
 
-    colors.forEach(color => {
+    colors.forEach((color) => {
       it(`применяет цвет ${color}`, () => {
         renderWithTheme(
           <Typography color={color} data-testid="typography">

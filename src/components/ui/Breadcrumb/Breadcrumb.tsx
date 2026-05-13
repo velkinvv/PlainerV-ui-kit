@@ -186,11 +186,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
   }
 
   return (
-    <BreadcrumbNav
-      aria-label={ariaLabel}
-      className={clsx('ui-breadcrumb', className)}
-      $size={size}
-    >
+    <BreadcrumbNav aria-label={ariaLabel} className={clsx('ui-breadcrumb', className)} $size={size}>
       <BreadcrumbList>{items.map((item, index) => renderItem(item, index))}</BreadcrumbList>
     </BreadcrumbNav>
   );

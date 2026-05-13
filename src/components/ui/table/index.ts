@@ -1,6 +1,6 @@
 /**
  * Таблицы UI: примитивы (`basicTable`) и композиция DataGrid (`dataGrid`).
- * Импортируйте из `@/components/ui` или из `./Table` / `./Table/basicTable` / `./Table/dataGrid`.
+ * Импортируйте из `@/components/ui` или из `./table` / `./table/basicTable` / `./table/dataGrid`.
  */
 export * from './basicTable';
 export * from './dataGrid';

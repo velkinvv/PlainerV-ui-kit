@@ -16,7 +16,7 @@ export const mergeAnchorRel = (
   const parts = new Set(
     (rel ?? '')
       .split(/\s+/)
-      .map(s => s.trim())
+      .map((s) => s.trim())
       .filter(Boolean),
   );
   parts.add('noopener');

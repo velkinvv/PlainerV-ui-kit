@@ -1,6 +1,6 @@
 import React, { forwardRef, useCallback, useId, useMemo, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, useReducedMotion } from 'framer-motion';
 import { clsx } from 'clsx';
 import type { DrawerProps } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
@@ -20,7 +20,7 @@ import {
   DrawerTitle,
   DrawerBody,
 } from './Drawer.style';
-import { drawerOverlayMotion, getDrawerPanelMotion, drawerSizeToCss } from './handlers';
+import { getDrawerOverlayMotion, getDrawerPanelMotion, drawerSizeToCss } from './handlers';
 import { useOverlayVisibility } from '../../../hooks/useOverlayVisibility';
 import { useOverlayPortal } from '../../../hooks/useOverlayPortal';
 import { useOverlayPresentation } from '../../../hooks/useOverlayPresentation';
@@ -62,6 +62,7 @@ export const Drawer = forwardRef<HTMLElement, DrawerProps>(
     },
     ref,
   ) => {
+    const prefersReducedMotion = useReducedMotion();
     useModalEscape({ isOpen, closeOnEscape, closeOnEscapeKeyDown, onClose });
     const titleId = useId();
     const contentRef = useRef<HTMLDivElement>(null);
@@ -95,7 +96,14 @@ export const Drawer = forwardRef<HTMLElement, DrawerProps>(
       portalZIndex,
     });
 
-    const panelMotion = useMemo(() => getDrawerPanelMotion(placement), [placement]);
+    const panelMotion = useMemo(
+      () => getDrawerPanelMotion(placement, Boolean(prefersReducedMotion)),
+      [placement, prefersReducedMotion],
+    );
+    const overlayMotion = useMemo(
+      () => getDrawerOverlayMotion(Boolean(prefersReducedMotion)),
+      [prefersReducedMotion],
+    );
 
     const widthCss = useMemo(
       () =>
@@ -113,11 +121,12 @@ export const Drawer = forwardRef<HTMLElement, DrawerProps>(
       [placement, height],
     );
 
-    const { shouldRenderPortal, shouldRenderContent, isHidden } = useOverlayVisibility({
-      isOpen,
-      unmountOnClose,
-      lazy,
-    });
+    const { shouldRenderPortal, shouldRenderContent, isHidden, notifyPresenceExitComplete } =
+      useOverlayVisibility({
+        isOpen,
+        unmountOnClose,
+        lazy,
+      });
 
     const { overlayPresentationStyle, ariaHidden } = useOverlayPresentation({
       isOpen,
@@ -133,10 +142,10 @@ export const Drawer = forwardRef<HTMLElement, DrawerProps>(
       <DrawerOverlay
         $drawerPlacement={placement}
         $overlayVariant={overlayVariant}
-        initial={drawerOverlayMotion.initial}
-        animate={drawerOverlayMotion.animate}
-        exit={drawerOverlayMotion.exit}
-        transition={drawerOverlayMotion.transition}
+        initial={overlayMotion.initial}
+        animate={overlayMotion.animate}
+        exit={overlayMotion.exit}
+        transition={overlayMotion.transition}
         onClick={handleOverlayClick}
         className={overlayClassName}
         style={overlayPresentationStyle}
@@ -161,16 +170,18 @@ export const Drawer = forwardRef<HTMLElement, DrawerProps>(
         >
           {headerSlot ? (
             <DrawerHeader>{headerSlot}</DrawerHeader>
-          ) : (title || showCloseButton) && (
-            <DrawerHeader>
-              {title ? <DrawerTitle id={titleId}>{title}</DrawerTitle> : null}
-              {!title && showCloseButton ? <DrawerHeaderSpacer aria-hidden /> : null}
-              {showCloseButton ? (
-                <CloseButton type="button" onClick={onClose} aria-label="Закрыть">
-                  <Icon name="PhosphorX" size={IconSize.MD} color="#9E9E9E" />
-                </CloseButton>
-              ) : null}
-            </DrawerHeader>
+          ) : (
+            (title || showCloseButton) && (
+              <DrawerHeader>
+                {title ? <DrawerTitle id={titleId}>{title}</DrawerTitle> : null}
+                {!title && showCloseButton ? <DrawerHeaderSpacer aria-hidden /> : null}
+                {showCloseButton ? (
+                  <CloseButton type="button" onClick={onClose} aria-label="Закрыть">
+                    <Icon name="PhosphorX" size={IconSize.MD} color="#9E9E9E" />
+                  </CloseButton>
+                ) : null}
+              </DrawerHeader>
+            )
           )}
           <DrawerBody ref={contentRef} tabIndex={-1}>
             {children}
@@ -180,7 +191,7 @@ export const Drawer = forwardRef<HTMLElement, DrawerProps>(
     );
 
     return createPortal(
-      <AnimatePresence>
+      <AnimatePresence onExitComplete={notifyPresenceExitComplete}>
         {shouldRenderContent ? drawerBody : null}
       </AnimatePresence>,
       mountNode,

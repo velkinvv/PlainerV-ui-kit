@@ -1,10 +1,12 @@
+import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
 export const SectionDescription = styled.div`
   margin-bottom: 24px;
 `;
 
-export const HandlersGrid = styled.div`
+/** Сетка обзора хендлеров на базе `motion.div` для stagger-анимации карточек. */
+export const HandlersGrid = styled(motion.div)`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 16px;
@@ -39,7 +41,7 @@ export const PrinciplesBox = styled.div`
   border-radius: 8px;
 `;
 
-export const ExamplesList = styled.div`
+export const ExamplesList = styled(motion.div)`
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -79,7 +81,7 @@ export const CodePre = styled.pre`
   -webkit-user-select: text;
 `;
 
-export const IntegrationStepsList = styled.div`
+export const IntegrationStepsList = styled(motion.div)`
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -105,10 +107,4 @@ export const StepBadge = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-`;
-
-export const AllExamplesWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
 `;

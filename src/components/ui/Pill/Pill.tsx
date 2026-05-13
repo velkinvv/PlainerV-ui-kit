@@ -2,12 +2,7 @@ import React, { forwardRef, useCallback, useMemo } from 'react';
 import { clsx } from 'clsx';
 import type { PillProps, PillStatus } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
-import {
-  PillRoot,
-  PillIndicator,
-  PillLoadingIndicator,
-  PillText,
-} from './Pill.style';
+import { PillRoot, PillIndicator, PillLoadingIndicator, PillText } from './Pill.style';
 import { PillSkeletonRoot } from './PillSkeleton.style';
 import {
   getPillGeometry,

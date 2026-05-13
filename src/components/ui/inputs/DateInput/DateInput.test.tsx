@@ -67,9 +67,11 @@ describe('DateInput', () => {
     const { rerender } = renderWithTheme(<DateInput {...defaultProps} size={Size.SM} />);
     expect(screen.getByTestId('icon-IconPlainerCalendar-XS')).toBeInTheDocument();
 
-    rerender(<ThemeProvider>
-      <DateInput {...defaultProps} size={Size.LG} />
-    </ThemeProvider>);
+    rerender(
+      <ThemeProvider>
+        <DateInput {...defaultProps} size={Size.LG} />
+      </ThemeProvider>,
+    );
     expect(screen.getByTestId('icon-IconPlainerCalendar-MD')).toBeInTheDocument();
   });
 

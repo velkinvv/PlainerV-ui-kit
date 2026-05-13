@@ -36,10 +36,7 @@ export const clampStepperActiveIndex = (index: number, length: number): number =
  * @param totalSteps - Всего шагов (≥ 1).
  * @returns Дробь от 0 до 1.
  */
-export const getCompactRingProgressFraction = (
-  currentStep: number,
-  totalSteps: number,
-): number => {
+export const getCompactRingProgressFraction = (currentStep: number, totalSteps: number): number => {
   if (totalSteps <= 0) {
     return 0;
   }

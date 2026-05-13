@@ -1,10 +1,18 @@
 ﻿import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
-import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
 import { Tag } from '../components/ui/Tag';
-import { useWindowSize, useScreenSize, useAvailableSize } from './useWindowSize';
+import {
+  useWindowSize,
+  useScreenSize,
+  useAvailableSize,
+  useIsDesktop,
+  DESKTOP_MIN_INNER_WIDTH_PX,
+} from './useWindowSize';
+import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
+import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
+import { lightTheme } from '@/themes/themes';
 
 const meta: Meta = {
   title: 'UI Kit/Hooks/useWindowSize',
@@ -27,6 +35,9 @@ const meta: Meta = {
 ### useAvailableSize
 Отслеживает доступный размер экрана без панелей браузера (screen.availWidth, screen.availHeight).
 
+### useIsDesktop
+\`true\`, если \`innerWidth >= 1025\` (порог как у mobile/tablet пресетов; можно передать свой минимум в пикселях). Основан на \`useWindowSize\` и событии \`resize\`.
+
 ## Возвращаемые значения:
 
 - **width** - ширина в пикселях
@@ -43,6 +54,10 @@ const { width, height } = useScreenSize();
 
 // Доступный размер экрана
 const { width, height } = useAvailableSize();
+
+// Десктоп по ширине окна (>= 1025px или свой порог)
+const isDesktop = useIsDesktop();
+const isDesktopWide = useIsDesktop(1280);
 \`\`\`
         `,
       },
@@ -68,6 +83,7 @@ const BasicWindowSizeDemo = () => {
   const windowSize = useWindowSize();
   const screenSize = useScreenSize();
   const availableSize = useAvailableSize();
+  const isDesktop = useIsDesktop();
 
   return (
     <Card padding="lg">
@@ -75,51 +91,63 @@ const BasicWindowSizeDemo = () => {
         Базовое использование useWindowSize
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Typography variant="body1" marginBottom="sm">
           Измените размер окна браузера, чтобы увидеть изменения
         </Typography>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', marginBottom: '16px' }}>
-        <div style={{ padding: '12px', backgroundColor: '#e3f2fd', borderRadius: '8px', textAlign: 'center' }}>
+      <div style={storybookDemoStyles.gridAutoFitMin200Gap12MarginBottom16}>
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Окно браузера</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
+          <Typography
+            variant="body2"
+            marginBottom="xs"
+            style={storybookDemoStyles.typographyFinePrint12}
+          >
             innerWidth × innerHeight
           </Typography>
-          <Typography variant="h6" style={{ color: '#1976d2' }}>
+          <Typography variant="h6" style={storybookDemoStyles.windowSizeValuePrimary}>
             {windowSize.width} × {windowSize.height}
           </Typography>
         </div>
 
-        <div style={{ padding: '12px', backgroundColor: '#e8f5e8', borderRadius: '8px', textAlign: 'center' }}>
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Экран устройства</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
+          <Typography
+            variant="body2"
+            marginBottom="xs"
+            style={storybookDemoStyles.typographyFinePrint12}
+          >
             screen.width × screen.height
           </Typography>
-          <Typography variant="h6" style={{ color: '#388e3c' }}>
+          <Typography variant="h6" style={storybookDemoStyles.windowSizeValueSuccess}>
             {screenSize.width} × {screenSize.height}
           </Typography>
         </div>
 
-        <div style={{ padding: '12px', backgroundColor: '#fff3e0', borderRadius: '8px', textAlign: 'center' }}>
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Доступный размер</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
+          <Typography
+            variant="body2"
+            marginBottom="xs"
+            style={storybookDemoStyles.typographyFinePrint12}
+          >
             screen.availWidth × screen.availHeight
           </Typography>
-          <Typography variant="h6" style={{ color: '#f57c00' }}>
+          <Typography variant="h6" style={storybookDemoStyles.windowSizeValueWarning}>
             {availableSize.width} × {availableSize.height}
           </Typography>
         </div>
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Размеры:</strong>
         </Typography>
@@ -129,8 +157,12 @@ const BasicWindowSizeDemo = () => {
         <Typography variant="body2" marginBottom="xs">
           Экран устройства: {screenSize.width} × {screenSize.height}px
         </Typography>
-        <Typography variant="body2">
+        <Typography variant="body2" marginBottom="xs">
           Доступный размер: {availableSize.width} × {availableSize.height}px
+        </Typography>
+        <Typography variant="body2" marginBottom="xs">
+          <strong>useIsDesktop</strong> (порог {DESKTOP_MIN_INNER_WIDTH_PX}px):{' '}
+          {isDesktop ? 'да' : 'нет'}
         </Typography>
       </div>
     </Card>
@@ -142,10 +174,16 @@ const ResponsiveDemo = () => {
   const { width, height } = useWindowSize();
 
   const getDeviceType = () => {
-    if (width <= 768) return { type: 'Mobile', color: '#e3f2fd', icon: '📱' };
-    if (width <= 1024) return { type: 'Tablet', color: '#e8f5e8', icon: '📱' };
-    if (width <= 1440) return { type: 'Desktop', color: '#fff3e0', icon: '🖥️' };
-    return { type: 'Large Desktop', color: '#f3e5f5', icon: '🖥️' };
+    if (width <= 768) {
+      return { type: 'Mobile', bg: lightTheme.colors.backgroundTertiary, icon: '📱' };
+    }
+    if (width <= 1024) {
+      return { type: 'Tablet', bg: lightTheme.colors.backgroundQuaternary, icon: '📱' };
+    }
+    if (width <= 1440) {
+      return { type: 'Desktop', bg: lightTheme.colors.backgroundSecondary, icon: '🖥️' };
+    }
+    return { type: 'Large Desktop', bg: lightTheme.colors.card, icon: '🖥️' };
   };
 
   const device = getDeviceType();
@@ -156,19 +194,18 @@ const ResponsiveDemo = () => {
         Адаптивность на основе размера окна
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Typography variant="body1" marginBottom="sm">
           Измените размер окна, чтобы увидеть изменение типа устройства
         </Typography>
       </div>
 
-      <div style={{
-        padding: '24px',
-        backgroundColor: device.color,
-        borderRadius: '12px',
-        textAlign: 'center',
-        marginBottom: '16px'
-      }}>
+      <div
+        style={{
+          ...storybookDemoStyles.responsiveDeviceHeroBanner,
+          backgroundColor: device.bg,
+        }}
+      >
         <Typography variant="h2" marginBottom="md">
           {device.icon}
         </Typography>
@@ -180,34 +217,34 @@ const ResponsiveDemo = () => {
         </Typography>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '8px', marginBottom: '16px' }}>
-        <div style={{ padding: '8px', backgroundColor: '#f8f9fa', borderRadius: '4px', textAlign: 'center' }}>
-          <Typography variant="body2" style={{ fontSize: '12px' }}>
+      <div style={storybookDemoStyles.gridAutoFitMin120Gap8MarginBottom16}>
+        <div style={storybookDemoStyles.windowSizeBreakpointCell}>
+          <Typography variant="body2" style={storybookDemoStyles.typographyFinePrint12}>
             Mobile ≤ 768px
           </Typography>
           {renderWindowRangeStatusTag(width <= 768)}
         </div>
-        <div style={{ padding: '8px', backgroundColor: '#f8f9fa', borderRadius: '4px', textAlign: 'center' }}>
-          <Typography variant="body2" style={{ fontSize: '12px' }}>
+        <div style={storybookDemoStyles.windowSizeBreakpointCell}>
+          <Typography variant="body2" style={storybookDemoStyles.typographyFinePrint12}>
             Tablet 769-1024px
           </Typography>
           {renderWindowRangeStatusTag(width > 768 && width <= 1024)}
         </div>
-        <div style={{ padding: '8px', backgroundColor: '#f8f9fa', borderRadius: '4px', textAlign: 'center' }}>
-          <Typography variant="body2" style={{ fontSize: '12px' }}>
+        <div style={storybookDemoStyles.windowSizeBreakpointCell}>
+          <Typography variant="body2" style={storybookDemoStyles.typographyFinePrint12}>
             Desktop 1025-1440px
           </Typography>
           {renderWindowRangeStatusTag(width > 1024 && width <= 1440)}
         </div>
-        <div style={{ padding: '8px', backgroundColor: '#f8f9fa', borderRadius: '4px', textAlign: 'center' }}>
-          <Typography variant="body2" style={{ fontSize: '12px' }}>
+        <div style={storybookDemoStyles.windowSizeBreakpointCell}>
+          <Typography variant="body2" style={storybookDemoStyles.typographyFinePrint12}>
             Large {'>'} 1440px
           </Typography>
           {renderWindowRangeStatusTag(width > 1440)}
         </div>
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Текущее состояние:</strong>
         </Typography>
@@ -217,9 +254,7 @@ const ResponsiveDemo = () => {
         <Typography variant="body2" marginBottom="xs">
           Тип устройства: {device.type}
         </Typography>
-        <Typography variant="body2">
-          Соотношение сторон: {(width / height).toFixed(2)}
-        </Typography>
+        <Typography variant="body2">Соотношение сторон: {(width / height).toFixed(2)}</Typography>
       </div>
     </Card>
   );
@@ -251,77 +286,89 @@ const SizeComparisonDemo = () => {
         Сравнение размеров
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Typography variant="body1" marginBottom="sm">
           Разница между различными типами размеров
         </Typography>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', marginBottom: '16px' }}>
-        <div style={{ padding: '12px', backgroundColor: '#e3f2fd', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.gridAutoFitMin200Gap12MarginBottom16}>
+        <div style={storybookDemoStyles.windowSizeMutedPanel12}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Окно браузера</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
+          <Typography
+            variant="body2"
+            marginBottom="xs"
+            style={storybookDemoStyles.typographyFinePrint12}
+          >
             Видимая область
           </Typography>
-          <Typography variant="h6" style={{ color: '#1976d2' }}>
+          <Typography variant="h6" style={storybookDemoStyles.windowSizeValuePrimary}>
             {windowSize.width} × {windowSize.height}
           </Typography>
         </div>
 
-        <div style={{ padding: '12px', backgroundColor: '#e8f5e8', borderRadius: '8px' }}>
+        <div style={storybookDemoStyles.windowSizeMutedPanel12}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Экран устройства</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
+          <Typography
+            variant="body2"
+            marginBottom="xs"
+            style={storybookDemoStyles.typographyFinePrint12}
+          >
             Полный размер экрана
           </Typography>
-          <Typography variant="h6" style={{ color: '#388e3c' }}>
+          <Typography variant="h6" style={storybookDemoStyles.windowSizeValueSuccess}>
             {screenSize.width} × {screenSize.height}
           </Typography>
         </div>
 
-        <div style={{ padding: '12px', backgroundColor: '#fff3e0', borderRadius: '8px' }}>
+        <div style={storybookDemoStyles.windowSizeMutedPanel12}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Доступный размер</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={{ fontSize: '12px' }}>
+          <Typography
+            variant="body2"
+            marginBottom="xs"
+            style={storybookDemoStyles.typographyFinePrint12}
+          >
             Без панелей браузера
           </Typography>
-          <Typography variant="h6" style={{ color: '#f57c00' }}>
+          <Typography variant="h6" style={storybookDemoStyles.windowSizeValueWarning}>
             {availableSize.width} × {availableSize.height}
           </Typography>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
-        <div style={{ padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.gridTwoColumnsGap12MarginBottom16}>
+        <div style={storybookDemoStyles.windowSizeMutedPanel12}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Разница: Экран - Окно</strong>
           </Typography>
-          <Typography variant="body2" style={{ fontSize: '12px' }}>
+          <Typography variant="body2" style={storybookDemoStyles.typographyFinePrint12}>
             Ширина: {differences.windowToScreen.width}px
           </Typography>
-          <Typography variant="body2" style={{ fontSize: '12px' }}>
+          <Typography variant="body2" style={storybookDemoStyles.typographyFinePrint12}>
             Высота: {differences.windowToScreen.height}px
           </Typography>
         </div>
 
-        <div style={{ padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
+        <div style={storybookDemoStyles.windowSizeMutedPanel12}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Разница: Экран - Доступный</strong>
           </Typography>
-          <Typography variant="body2" style={{ fontSize: '12px' }}>
+          <Typography variant="body2" style={storybookDemoStyles.typographyFinePrint12}>
             Ширина: {differences.screenToAvailable.width}px
           </Typography>
-          <Typography variant="body2" style={{ fontSize: '12px' }}>
+          <Typography variant="body2" style={storybookDemoStyles.typographyFinePrint12}>
             Высота: {differences.screenToAvailable.height}px
           </Typography>
         </div>
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Анализ размеров:</strong>
         </Typography>
@@ -335,7 +382,12 @@ const SizeComparisonDemo = () => {
           Доступный размер: {availableSize.width} × {availableSize.height}px
         </Typography>
         <Typography variant="body2">
-          Использование экрана: {((windowSize.width * windowSize.height) / (screenSize.width * screenSize.height) * 100).toFixed(1)}%
+          Использование экрана:{' '}
+          {(
+            ((windowSize.width * windowSize.height) / (screenSize.width * screenSize.height)) *
+            100
+          ).toFixed(1)}
+          %
         </Typography>
       </div>
     </Card>
@@ -355,69 +407,77 @@ const OrientationDemo = () => {
         Ориентация окна
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Typography variant="body1" marginBottom="sm">
           Измените размер окна, чтобы увидеть изменение ориентации
         </Typography>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '16px' }}>
-        <div style={{
-          padding: '20px',
-          backgroundColor: isPortrait ? '#e8f5e8' : '#f8f9fa',
-          borderRadius: '8px',
-          textAlign: 'center'
-        }}>
+      <div style={storybookDemoStyles.gridThreeColumnsGap12MarginBottom16}>
+        <div
+          style={{
+            ...storybookDemoStyles.orientationTileBase,
+            ...(isPortrait
+              ? storybookDemoStyles.orientationTileActiveSuccess
+              : storybookDemoStyles.orientationTileInactiveBorder),
+          }}
+        >
           <Typography variant="h4" marginBottom="sm">
             📱
           </Typography>
           <Typography variant="body2" marginBottom="xs">
             <strong>Портретная</strong>
           </Typography>
-          <Typography variant="body2" style={{ fontSize: '12px' }}>
+          <Typography variant="body2" style={storybookDemoStyles.typographyFinePrint12}>
             Высота {'>'} Ширины
           </Typography>
-          <div style={{ marginTop: '8px' }}>{renderWindowRangeStatusTag(isPortrait)}</div>
+          <div style={storybookDemoStyles.marginTop8}>{renderWindowRangeStatusTag(isPortrait)}</div>
         </div>
 
-        <div style={{
-          padding: '20px',
-          backgroundColor: isLandscape ? '#e3f2fd' : '#f8f9fa',
-          borderRadius: '8px',
-          textAlign: 'center'
-        }}>
+        <div
+          style={{
+            ...storybookDemoStyles.orientationTileBase,
+            ...(isLandscape
+              ? storybookDemoStyles.orientationTileActivePrimary
+              : storybookDemoStyles.orientationTileInactiveBorder),
+          }}
+        >
           <Typography variant="h4" marginBottom="sm">
             🖥️
           </Typography>
           <Typography variant="body2" marginBottom="xs">
             <strong>Альбомная</strong>
           </Typography>
-          <Typography variant="body2" style={{ fontSize: '12px' }}>
+          <Typography variant="body2" style={storybookDemoStyles.typographyFinePrint12}>
             Ширина {'>'} Высоты
           </Typography>
-          <div style={{ marginTop: '8px' }}>{renderWindowRangeStatusTag(isLandscape)}</div>
+          <div style={storybookDemoStyles.marginTop8}>
+            {renderWindowRangeStatusTag(isLandscape)}
+          </div>
         </div>
 
-        <div style={{
-          padding: '20px',
-          backgroundColor: isSquare ? '#fff3e0' : '#f8f9fa',
-          borderRadius: '8px',
-          textAlign: 'center'
-        }}>
+        <div
+          style={{
+            ...storybookDemoStyles.orientationTileBase,
+            ...(isSquare
+              ? storybookDemoStyles.orientationTileActiveWarning
+              : storybookDemoStyles.orientationTileInactiveBorder),
+          }}
+        >
           <Typography variant="h4" marginBottom="sm">
             ⬜
           </Typography>
           <Typography variant="body2" marginBottom="xs">
             <strong>Квадратная</strong>
           </Typography>
-          <Typography variant="body2" style={{ fontSize: '12px' }}>
+          <Typography variant="body2" style={storybookDemoStyles.typographyFinePrint12}>
             Ширина = Высота
           </Typography>
-          <div style={{ marginTop: '8px' }}>{renderWindowRangeStatusTag(isSquare)}</div>
+          <div style={storybookDemoStyles.marginTop8}>{renderWindowRangeStatusTag(isSquare)}</div>
         </div>
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Ориентация:</strong>
         </Typography>
@@ -430,9 +490,7 @@ const OrientationDemo = () => {
         <Typography variant="body2" marginBottom="xs">
           Альбомная: {isLandscape ? 'Да' : 'Нет'}
         </Typography>
-        <Typography variant="body2">
-          Квадратная: {isSquare ? 'Да' : 'Нет'}
-        </Typography>
+        <Typography variant="body2">Квадратная: {isSquare ? 'Да' : 'Нет'}</Typography>
       </div>
     </Card>
   );
@@ -445,7 +503,7 @@ const RealTimeDemo = () => {
   const [lastChange, setLastChange] = React.useState<Date | null>(null);
 
   React.useEffect(() => {
-    setChangeCount(prev => prev + 1);
+    setChangeCount((prev) => prev + 1);
     setLastChange(new Date());
   }, [width, height]);
 
@@ -455,42 +513,42 @@ const RealTimeDemo = () => {
         Отслеживание в реальном времени
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Typography variant="body1" marginBottom="sm">
           Изменяйте размер окна и наблюдайте за обновлениями
         </Typography>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '12px', marginBottom: '16px' }}>
-        <div style={{ padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '8px', textAlign: 'center' }}>
+      <div style={storybookDemoStyles.gridAutoFitMin150Gap12MarginBottom16}>
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Ширина</strong>
           </Typography>
-          <Typography variant="h4" style={{ color: '#007bff' }}>
+          <Typography variant="h4" style={storybookDemoStyles.windowSizeValuePrimary}>
             {width}
           </Typography>
         </div>
 
-        <div style={{ padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '8px', textAlign: 'center' }}>
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Высота</strong>
           </Typography>
-          <Typography variant="h4" style={{ color: '#28a745' }}>
+          <Typography variant="h4" style={storybookDemoStyles.windowSizeValueSuccess}>
             {height}
           </Typography>
         </div>
 
-        <div style={{ padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '8px', textAlign: 'center' }}>
+        <div style={storybookDemoStyles.windowSizeMetricTile}>
           <Typography variant="body2" marginBottom="xs">
             <strong>Изменений</strong>
           </Typography>
-          <Typography variant="h4" style={{ color: '#dc3545' }}>
+          <Typography variant="h4" style={storybookDemoStyles.windowSizeValueDanger}>
             {changeCount}
           </Typography>
         </div>
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Статистика:</strong>
         </Typography>
@@ -530,13 +588,12 @@ export const RealTime: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <StorybookStaggerStack>
       <BasicWindowSizeDemo />
       <ResponsiveDemo />
       <SizeComparisonDemo />
       <OrientationDemo />
       <RealTimeDemo />
-    </div>
+    </StorybookStaggerStack>
   ),
 };
-

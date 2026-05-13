@@ -6,6 +6,10 @@ import {
   getDropdownItemStyles,
   getDropdownAnimations,
 } from '../../../handlers/dropdownThemeHandlers';
+import {
+  buildHoverPressMotionCss,
+  buildSurfaceTransitionCss,
+} from '../../../handlers/uiMotionStyleHandlers';
 import { colors } from '../../../variables/colors';
 import { primary } from '../../../variables/colors/primary';
 
@@ -14,7 +18,7 @@ import { primary } from '../../../variables/colors/primary';
  * @property $fullWidth — блок на всю ширину родителя (иначе `inline-block` сжимает триггер, как у `Select fullWidth`)
  */
 export const DropdownContainer = styled.div.withConfig({
-  shouldForwardProp: prop => prop !== '$alignSelf' && prop !== '$fullWidth',
+  shouldForwardProp: (prop) => prop !== '$alignSelf' && prop !== '$fullWidth',
 })<{ $alignSelf?: DropdownAlignSelf; $fullWidth?: boolean }>`
   position: relative;
   ${({ $fullWidth }) =>
@@ -35,6 +39,13 @@ export const DropdownContainer = styled.div.withConfig({
 export const DropdownTrigger = styled.div`
   cursor: pointer;
   display: inline-block;
+  transition: transform 0.12s ease;
+  ${buildHoverPressMotionCss({
+    hoverSelector: '&:hover',
+    activeSelector: '&:active',
+    hoverTransform: 'none',
+    activeTransform: 'scale(0.98)',
+  })}
 `;
 
 /**
@@ -88,14 +99,17 @@ export const DropdownContent = styled.div<{
 
   opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
   visibility: ${({ $isOpen }) => ($isOpen ? 'visible' : 'hidden')};
+  will-change: transform, opacity;
   transform: ${({ $isOpen, theme }) => {
     const animations = getDropdownAnimations(theme.dropdowns);
     return $isOpen ? animations.openAnimation.transform : animations.closeAnimation.transform;
   }};
-  transition: ${({ theme }) => {
+  ${({ theme }) => {
     const animations = getDropdownAnimations(theme.dropdowns);
-    return `${animations.openAnimation.duration} ${animations.openAnimation.easing}`;
-  }};
+    return buildSurfaceTransitionCss(
+      `${animations.openAnimation.duration} ${animations.openAnimation.easing}`,
+    );
+  }}
 
   left: ${({ $position }) => $position.x}px;
   top: ${({ $position }) => $position.y}px;
@@ -248,8 +262,19 @@ export const DropdownMenuTreeExpandButton = styled.button`
   cursor: pointer;
 
   &:hover {
-    background: ${({ theme }) => (theme.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)')};
+    background: ${({ theme }) =>
+      theme.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)'};
   }
+
+  &:active {
+    transform: scale(0.96);
+  }
+  ${buildHoverPressMotionCss({
+    hoverSelector: '&:hover',
+    activeSelector: '&:active',
+    hoverTransform: 'none',
+    activeTransform: 'scale(0.96)',
+  })}
 
   &:focus-visible {
     outline: 2px solid ${({ theme }) => theme.colors?.primary ?? '#2563eb'};
@@ -262,7 +287,7 @@ export const DropdownMenuTreeExpandButton = styled.button`
  */
 /** Обёртка списка пунктов; при `compact` без лишнего вертикального зазора между строками */
 export const DropdownMenuWrapper = styled.div.withConfig({
-  shouldForwardProp: prop => prop !== '$density',
+  shouldForwardProp: (prop) => prop !== '$density',
 })<{ $density?: 'default' | 'compact' }>`
   display: flex;
   flex-direction: column;
@@ -282,7 +307,7 @@ const spin = keyframes`
  * @param state - состояние элемента
  */
 export const DropdownItem = styled.div.withConfig({
-  shouldForwardProp: prop => !['$density', '$size', '$state'].includes(prop),
+  shouldForwardProp: (prop) => !['$density', '$size', '$state'].includes(prop),
 })<{
   $size?: Size;
   $state?: 'hover' | 'active' | 'disabled' | 'selected' | 'focus';

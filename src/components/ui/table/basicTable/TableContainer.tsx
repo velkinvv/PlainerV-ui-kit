@@ -13,7 +13,14 @@ export const TableContainer = forwardRef<HTMLDivElement, TableContainerProps>(
   ({ component, elevated = true, className, children, style, ...rest }, ref) => {
     const Root = (component ?? 'div') as React.ElementType;
     return (
-      <TableContainerRoot ref={ref} as={Root} className={className} style={style} $elevated={elevated} {...rest}>
+      <TableContainerRoot
+        ref={ref}
+        as={Root}
+        className={className}
+        style={style}
+        $elevated={elevated}
+        {...rest}
+      >
         {children}
       </TableContainerRoot>
     );

@@ -144,4 +144,3 @@ const ControlledDemo = () => {
 export const Controlled: Story = {
   render: () => <ControlledDemo />,
 };
-

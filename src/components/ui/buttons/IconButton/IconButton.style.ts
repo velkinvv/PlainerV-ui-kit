@@ -15,7 +15,8 @@ import { getButtonSize } from '../../../../handlers/buttonThemeHandlers';
  * @param rounded - скругленные углы
  */
 export const StyledIconButton = styled(motion.button).withConfig({
-  shouldForwardProp: prop => !['variant', 'size', 'loading', 'fullWidth', 'rounded'].includes(prop),
+  shouldForwardProp: (prop) =>
+    !['variant', 'size', 'loading', 'fullWidth', 'rounded'].includes(prop),
 })<IconButtonProps>`
   box-sizing: border-box;
   display: inline-flex;

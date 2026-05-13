@@ -80,22 +80,19 @@ export const DropdownMenuFromDefinitions: React.FC<DropdownMenuFromDefinitionsPr
   onTreeExpandedKeysChange,
   lookupTreeMenuItemByValue,
 }) => {
-  if (!definitions?.length) {
-    return null;
-  }
+  const safeDefinitions = definitions ?? [];
 
-  const hasGroups = definitions.some(isDropdownGroup);
-  const hasNestedTree = definitionsContainNestedTree(definitions);
-  const effectiveVirtualScroll =
-    hasGroups || hasNestedTree ? undefined : virtualScroll;
+  const hasGroups = safeDefinitions.some(isDropdownGroup);
+  const hasNestedTree = definitionsContainNestedTree(safeDefinitions);
+  const effectiveVirtualScroll = hasGroups || hasNestedTree ? undefined : virtualScroll;
 
-  const pinnedTop = definitions.filter(
+  const pinnedTop = safeDefinitions.filter(
     (definition) => isDropdownGroup(definition) && definition.pinned === 'top',
   );
-  const pinnedBottom = definitions.filter(
+  const pinnedBottom = safeDefinitions.filter(
     (definition) => isDropdownGroup(definition) && definition.pinned === 'bottom',
   );
-  const middle = definitions.filter(
+  const middle = safeDefinitions.filter(
     (definition) => !isDropdownGroup(definition) || !definition.pinned,
   );
 
@@ -111,6 +108,10 @@ export const DropdownMenuFromDefinitions: React.FC<DropdownMenuFromDefinitionsPr
     }
     return collectTreeBranchKeysFromSections(pinnedTop, middle, pinnedBottom);
   }, [hasNestedTree, treeDefaultExpanded, pinnedTop, middle, pinnedBottom]);
+
+  if (!safeDefinitions.length) {
+    return null;
+  }
 
   let itemIndex = 0;
 

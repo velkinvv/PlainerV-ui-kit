@@ -5,9 +5,9 @@ import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
 import { Input } from '../components/ui/inputs/Input';
+import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
 import { useDebounce, useDebounceCallback } from './useDebounce';
 import {
-  AllExamplesContainer,
   CenteredMessage,
   DebouncedQueryCard,
   LogContainer,
@@ -15,7 +15,6 @@ import {
   LogEntryText,
   LogHeader,
   NumberInput,
-  QueryValueCard,
   ReadOnlyInputDanger,
   ReadOnlyInputMuted,
   ReadOnlyInputSuccess,
@@ -97,7 +96,7 @@ const BasicDebounceDemo = () => {
         <NumberInput
           type="number"
           value={delay}
-          onChange={e => setDelay(parseInt(e.target.value) || 500)}
+          onChange={(e) => setDelay(parseInt(e.target.value) || 500)}
         />
       </SectionContainer>
 
@@ -108,7 +107,7 @@ const BasicDebounceDemo = () => {
           </Typography>
           <Input
             value={inputValue}
-            onChange={e => setInputValue(e.target.value)}
+            onChange={(e) => setInputValue(e.target.value)}
             placeholder="Введите что-нибудь..."
           />
         </div>
@@ -162,7 +161,7 @@ const SearchDemo = () => {
         `Результат 3 для "${term}"`,
         `Результат 4 для "${term}"`,
         `Результат 5 для "${term}"`,
-      ].filter(result => result.toLowerCase().includes(term.toLowerCase()));
+      ].filter((result) => result.toLowerCase().includes(term.toLowerCase()));
 
       setResults(mockResults);
       setIsSearching(false);
@@ -186,7 +185,7 @@ const SearchDemo = () => {
         </Typography>
         <Input
           value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
+          onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Введите поисковый запрос..."
         />
       </SectionContainer>
@@ -259,7 +258,7 @@ const DebounceCallbackDemo = () => {
   const [delay, setDelay] = useState(500);
 
   const handleInput = (value: string) => {
-    setLog(prev => [...prev, `Обработка: "${value}" в ${new Date().toLocaleTimeString()}`]);
+    setLog((prev) => [...prev, `Обработка: "${value}" в ${new Date().toLocaleTimeString()}`]);
   };
 
   const debouncedHandleInput = useDebounceCallback(handleInput, delay);
@@ -286,7 +285,7 @@ const DebounceCallbackDemo = () => {
         <NumberInput
           type="number"
           value={delay}
-          onChange={e => setDelay(parseInt(e.target.value) || 500)}
+          onChange={(e) => setDelay(parseInt(e.target.value) || 500)}
         />
       </SectionContainer>
 
@@ -296,7 +295,7 @@ const DebounceCallbackDemo = () => {
         </Typography>
         <Input
           value={inputValue}
-          onChange={e => handleInputChange(e.target.value)}
+          onChange={(e) => handleInputChange(e.target.value)}
           placeholder="Введите что-нибудь..."
         />
       </SectionContainer>
@@ -320,9 +319,7 @@ const DebounceCallbackDemo = () => {
                 $isLast={entryIndex === log.length - 1}
                 $isEven={entryIndex % 2 === 0}
               >
-                <LogEntryText variant="body2">
-                  {entry}
-                </LogEntryText>
+                <LogEntryText variant="body2">{entry}</LogEntryText>
               </LogEntry>
             ))
           )}
@@ -364,7 +361,7 @@ const DelayComparisonDemo = () => {
         </Typography>
         <Input
           value={inputValue}
-          onChange={e => setInputValue(e.target.value)}
+          onChange={(e) => setInputValue(e.target.value)}
           placeholder="Введите что-нибудь..."
         />
       </SectionContainer>
@@ -429,12 +426,11 @@ export const DelayComparison: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <AllExamplesContainer>
+    <StorybookStaggerStack>
       <BasicDebounceDemo />
       <SearchDemo />
       <DebounceCallbackDemo />
       <DelayComparisonDemo />
-    </AllExamplesContainer>
+    </StorybookStaggerStack>
   ),
 };
-

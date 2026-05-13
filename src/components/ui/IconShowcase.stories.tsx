@@ -6,17 +6,26 @@ import * as IconExIconsModule from '../../icons/iconex';
 import { Hint } from './Hint/Hint';
 import { IconSize } from '../../types/sizes';
 import { sizeMap } from '../../handlers/iconHandlers';
+import {
+  handleIconStoryCardMouseEnter,
+  handleIconStoryCardMouseLeave,
+} from '../../handlers/iconStoryHoverHandlers';
 import type { IconVariant } from '../../types/ui';
 import type { IconName } from '../../icons';
 import { DOC_ICON_SHOWCASE } from '@/components/ui/storyDocs/uiKitDocs';
+import {
+  buildCenteredIconPreviewCardStyle,
+  buildIconStoriesScrollableGridStyle,
+  iconStoriesStyles,
+} from './Icon/Icon.stories.styles';
 
 // Функция для получения реально существующих иконок
 const getExistingIcons = () => {
   // Получаем иконки Plainer (сохраняем полные имена)
-  const plainerIcons = Object.keys(PlainerIconsModule).filter(name => name.length > 0);
+  const plainerIcons = Object.keys(PlainerIconsModule).filter((name) => name.length > 0);
 
   // Получаем иконки IconEx (сохраняем полные имена)
-  const iconexIcons = Object.keys(IconExIconsModule).filter(name => name.length > 0);
+  const iconexIcons = Object.keys(IconExIconsModule).filter((name) => name.length > 0);
 
   return { plainerIcons, iconexIcons };
 };
@@ -76,24 +85,16 @@ export const AllIcons: Story = {
       (iconName: string, variant: IconVariant, size: IconSize) => {
         const code = `<Icon name="${iconName}" size={IconSize.${size}} variant="${variant}" />`;
         return (
-          <div className="tooltip-content">
-            <div style={{ marginBottom: '8px' }}>
+          <div className="icon-tooltip-content">
+            <div style={iconStoriesStyles.hintTitle}>
               <strong>{iconName}</strong>
             </div>
-            <div style={{ marginBottom: '8px', fontSize: '11px' }}>Библиотека: {variant}</div>
-            <div
-              style={{
-                marginBottom: '8px',
-                fontSize: '11px',
-                fontFamily: 'monospace',
-              }}
-            >
-              {code}
-            </div>
+            <div style={iconStoriesStyles.hintMeta}>Библиотека: {variant}</div>
+            <div style={iconStoriesStyles.hintCode}>{code}</div>
             <button
-              className={`copy-button ${copiedIcon === code ? 'copied' : ''}`}
-              onClick={e => {
-                e.stopPropagation();
+              className={`icon-copy-button ${copiedIcon === code ? 'copied' : ''}`}
+              onClick={(clickEvent) => {
+                clickEvent.stopPropagation();
                 copyIconCode(code);
               }}
             >
@@ -125,50 +126,34 @@ export const AllIcons: Story = {
     const maxHeight = Math.min(400, iconHeight * 6); // максимум 6 строк
 
     return (
-      <div style={{ padding: '20px' }}>
+      <div style={iconStoriesStyles.pageRoot}>
+        <style>{iconStoriesStyles.hintTooltipCss}</style>
         <h2>Полная демонстрация всех доступных иконок</h2>
-        <p style={{ marginBottom: '20px', color: '#666' }}>
+        <p style={iconStoriesStyles.description}>
           Наведите на иконку для просмотра информации и копирования кода
         </p>
 
         {/* Панель управления */}
-        <div
-          style={{
-            display: 'flex',
-            gap: '20px',
-            marginBottom: '20px',
-            flexWrap: 'wrap',
-            alignItems: 'end',
-          }}
-        >
+        <div style={iconStoriesStyles.controlsRowEnd}>
           <div>
-            <label style={{ display: 'block', marginBottom: '4px' }}>Поиск:</label>
+            <label style={iconStoriesStyles.controlLabel}>Поиск:</label>
             <input
               type="text"
               value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
+              onChange={(changeEvent) => setSearchTerm(changeEvent.target.value)}
               placeholder="Введите название иконки..."
-              style={{
-                padding: '8px 12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '14px',
-                minWidth: '200px',
-              }}
+              style={iconStoriesStyles.searchInput}
             />
           </div>
 
           <div>
-            <label style={{ display: 'block', marginBottom: '4px' }}>Библиотека:</label>
+            <label style={iconStoriesStyles.controlLabel}>Библиотека:</label>
             <select
               value={selectedVariant}
-              onChange={e => setSelectedVariant(e.target.value as IconVariant)}
-              style={{
-                padding: '8px 12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '14px',
-              }}
+              onChange={(changeEvent) =>
+                setSelectedVariant(changeEvent.target.value as IconVariant | 'all')
+              }
+              style={iconStoriesStyles.controlInput}
             >
               <option value="all">Все библиотеки</option>
               <option value="plainer">Plainer</option>
@@ -177,16 +162,11 @@ export const AllIcons: Story = {
           </div>
 
           <div>
-            <label style={{ display: 'block', marginBottom: '4px' }}>Размер иконок:</label>
+            <label style={iconStoriesStyles.controlLabel}>Размер иконок:</label>
             <select
               value={selectedSize}
-              onChange={e => setSelectedSize(e.target.value as IconSize)}
-              style={{
-                padding: '8px 12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '14px',
-              }}
+              onChange={(changeEvent) => setSelectedSize(changeEvent.target.value as IconSize)}
+              style={iconStoriesStyles.controlInput}
             >
               <option value={IconSize.XS}>{sizeMap[IconSize.XS]}px</option>
               <option value={IconSize.SM}>{sizeMap[IconSize.SM]}px</option>
@@ -198,20 +178,12 @@ export const AllIcons: Story = {
         </div>
 
         {/* Статистика */}
-        <div
-          style={{
-            marginBottom: '20px',
-            padding: '12px',
-            backgroundColor: '#f8fafc',
-            borderRadius: '8px',
-            border: '1px solid #e2e8f0',
-          }}
-        >
+        <div style={iconStoriesStyles.statsPanel}>
           <strong>
             Найдено: {filteredIcons.length} из {allIcons.length} иконок
           </strong>
           {selectedVariant === 'all' && (
-            <div style={{ marginTop: '4px', fontSize: '14px', color: '#64748b' }}>
+            <div style={iconStoriesStyles.statsMeta}>
               Plainer: {plainerIcons.length} | IconEx: {iconexIcons.length}
             </div>
           )}
@@ -219,21 +191,8 @@ export const AllIcons: Story = {
 
         {/* Единый блок со всеми иконками */}
         <div
-          className="icon-showcase-grid"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
-            gap: '16px',
-            minHeight: iconHeight,
-            maxHeight,
-            overflowY: 'auto',
-            padding: '8px',
-            border: '1px solid #e5e7eb',
-            borderRadius: '8px',
-            backgroundColor: '#fafafa',
-            scrollbarWidth: 'thin',
-            scrollbarColor: '#cbd5e1 #f1f5f9',
-          }}
+          className="icon-stories-scroll"
+          style={buildIconStoriesScrollableGridStyle(iconHeight, maxHeight)}
         >
           {(filteredIcons || []).map((iconName: IconName) => {
             const variant = selectedVariant === 'all' ? getIconVariant(iconName) : selectedVariant;
@@ -241,43 +200,16 @@ export const AllIcons: Story = {
             return (
               <Hint key={iconName} content={hintContent(iconName, variant, selectedSize)}>
                 <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    padding: '12px',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '8px',
-                    backgroundColor: 'white',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    minHeight: iconHeight,
-                    justifyContent: 'center',
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.borderColor = '#3b82f6';
-                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.15)';
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.borderColor = '#e5e7eb';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
+                  style={buildCenteredIconPreviewCardStyle(iconHeight)}
+                  onMouseEnter={handleIconStoryCardMouseEnter}
+                  onMouseLeave={handleIconStoryCardMouseLeave}
                 >
                   <Icon
                     name={iconName}
                     size={selectedSize}
                     // variant={variant}
                   />
-                  <div
-                    style={{
-                      fontSize: '10px',
-                      color: '#9ca3af',
-                      marginTop: '4px',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    {variant}
-                  </div>
+                  <div style={iconStoriesStyles.iconVariantLabel}>{variant}</div>
                 </div>
               </Hint>
             );
@@ -295,4 +227,3 @@ export const AllIcons: Story = {
     },
   },
 };
-

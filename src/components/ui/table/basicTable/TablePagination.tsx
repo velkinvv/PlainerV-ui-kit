@@ -121,7 +121,7 @@ export const TablePagination: React.FC<TablePaginationProps> = ({
   /** Опции для `Select` (значения строк — строки для совместимости с контролируемым `value`). */
   const rowsPerPageSelectOptions = useMemo<SelectOption[]>(
     () =>
-      rowsPerPageOptions?.map(optionSize => ({
+      rowsPerPageOptions?.map((optionSize) => ({
         value: String(optionSize),
         label: String(optionSize),
       })) ?? [],
@@ -181,7 +181,7 @@ export const TablePagination: React.FC<TablePaginationProps> = ({
                 autoComplete="off"
                 disabled={disabled}
                 value={jumpDraft}
-                onChange={event => {
+                onChange={(event) => {
                   setJumpDraft(event.target.value);
                 }}
                 onBlur={() => {

@@ -116,7 +116,8 @@ export const calculateHintPosition = ({
    */
   if (!hintRect || hintRect.width === 0 || hintRect.height === 0) {
     const basePos = getBasePosition(placement);
-    let { x: preX, y: preY } = basePos;
+    let preX = basePos.x;
+    const preY = basePos.y;
     if (placement === HintPosition.TOP || placement === HintPosition.BOTTOM) {
       const guessHalfWidth = Math.min(160, Math.max(48, viewportWidth * 0.25));
       preX = clamp(preX, guessHalfWidth + offset, viewportWidth - guessHalfWidth - offset);
@@ -251,7 +252,11 @@ export const calculateHintPosition = ({
       }
       // Проверяем, не выходит ли hint за верхнюю границу
       if (y - hintHeight / 2 < 0) {
-        y = clamp(hintHeight / 2 + offset, hintHeight / 2 + offset, viewportHeight - hintHeight / 2);
+        y = clamp(
+          hintHeight / 2 + offset,
+          hintHeight / 2 + offset,
+          viewportHeight - hintHeight / 2,
+        );
       }
     }
 
@@ -280,7 +285,11 @@ export const calculateHintPosition = ({
     }
 
     // Дополнительно: если hint все еще выходит за границы, пытаемся перевернуть
-    if (finalPlacement === HintPosition.TOP && y - hintHeight < 0 && spaceBelow >= hintHeight + offset) {
+    if (
+      finalPlacement === HintPosition.TOP &&
+      y - hintHeight < 0 &&
+      spaceBelow >= hintHeight + offset
+    ) {
       finalPlacement = HintPosition.BOTTOM;
       x = triggerRect.left + triggerRect.width / 2;
       y = triggerRect.bottom + offset;
@@ -292,7 +301,11 @@ export const calculateHintPosition = ({
       finalPlacement = HintPosition.TOP;
       x = triggerRect.left + triggerRect.width / 2;
       y = triggerRect.top - offset;
-    } else if (finalPlacement === HintPosition.LEFT && x - hintWidth < 0 && spaceRight >= hintWidth + offset) {
+    } else if (
+      finalPlacement === HintPosition.LEFT &&
+      x - hintWidth < 0 &&
+      spaceRight >= hintWidth + offset
+    ) {
       finalPlacement = HintPosition.RIGHT;
       x = triggerRect.right + offset;
       y = triggerRect.top + triggerRect.height / 2;
@@ -354,7 +367,8 @@ export const createHintEventHandlers = ({
   hideHint,
   hideTimeoutRef,
 }: CreateHintEventHandlersOptions) => {
-  const isVisible = useControlledMode && isOpenValue !== undefined ? isOpenValue : hintStateIsVisible;
+  const isVisible =
+    useControlledMode && isOpenValue !== undefined ? isOpenValue : hintStateIsVisible;
 
   return {
     handleMouseEnter: () => {
@@ -473,7 +487,7 @@ export const createScrollHandler = ({
   closeOnScroll,
   updatePosition,
   hideHint,
-  scrollableParents,
+  scrollableParents: _scrollableParents,
 }: CreateScrollHandlerOptions) => {
   return () => {
     if (closeOnScroll) {
@@ -573,7 +587,7 @@ export const createShowHint = ({
     const positionResult = calculatePosition();
 
     // Устанавливаем позицию сразу, но делаем элемент невидимым
-    setHintState(prev => {
+    setHintState((prev) => {
       // Если hint уже видим, не меняем состояние
       if (prev.isVisible) {
         return prev;
@@ -593,7 +607,7 @@ export const createShowHint = ({
       // Проверяем, что hint еще не видим (на случай отмены)
       const shouldShow = !isVisibleRef.current;
       if (shouldShow) {
-        setHintState(prev => {
+        setHintState((prev) => {
           if (prev.isVisible) {
             return prev;
           }
@@ -655,7 +669,7 @@ export const createHideHint = ({
     // Добавляем небольшую задержку для скрытия, чтобы избежать мерцания
     hideTimeoutRef.current = setTimeout(() => {
       const wasVisible = isVisibleRef.current;
-      setHintState(prev => {
+      setHintState((prev) => {
         return { ...prev, isVisible: false };
       });
       // Вызываем колбек только если hint был видим, асинхронно после обновления состояния
@@ -674,7 +688,7 @@ export const createHideHint = ({
  */
 export const closeOtherHintsInGroup = (hintGroup: string) => {
   const otherHints = document.querySelectorAll(`[data-hint-group="${hintGroup}"]`);
-  otherHints.forEach(hint => {
+  otherHints.forEach((hint) => {
     // Устанавливаем aria-hidden для скрытия других hints
     hint.setAttribute('aria-hidden', 'true');
     // Можно также добавить событие для закрытия, если нужно
@@ -704,7 +718,7 @@ export const createUpdatePosition = ({
     // Проверяем, что trigger элемент существует
     if (!triggerRef.current) return;
     const positionResult = calculatePosition();
-    setHintState(prev => ({
+    setHintState((prev) => ({
       ...prev,
       position: { x: positionResult.x, y: positionResult.y },
       placement: positionResult.placement,
@@ -747,7 +761,7 @@ export const syncControlledState = ({
 
   // Используем setTimeout для асинхронного обновления состояния
   setTimeout(() => {
-    setHintState(prev => ({
+    setHintState((prev) => ({
       ...prev,
       isVisible: isOpenValue,
       position: { x: positionResult.x, y: positionResult.y },

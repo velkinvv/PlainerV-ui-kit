@@ -63,13 +63,7 @@ export const DateRollerViewport = styled.div`
     display: none;
   }
 
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    black 14%,
-    black 86%,
-    transparent 100%
-  );
+  mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%);
 `;
 
 /**

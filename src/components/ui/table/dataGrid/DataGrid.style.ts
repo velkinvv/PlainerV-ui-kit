@@ -1,6 +1,7 @@
 ﻿import styled, { css } from 'styled-components';
 import type { DataGridColumnFilterIconPosition } from '@/types/ui';
 import { tableBorderRadiusFromTheme } from '../basicTable/tableThemeRadiusHandlers';
+import { buildReducedMotionTransitionDurationCss } from '../../../../handlers/uiMotionStyleHandlers';
 
 /**
  * Смещение второй строки липкой шапки вниз от первой (строка `headerToolbar`).
@@ -54,10 +55,7 @@ export const DataGridChevronWrap = styled.span<{ $open: boolean }>`
   line-height: 0;
   transform: ${({ $open }) => ($open ? 'rotate(180deg)' : 'rotate(0deg)')};
   transition: transform 0.38s cubic-bezier(0.33, 1, 0.68, 1);
-
-  @media (prefers-reduced-motion: reduce) {
-    transition-duration: 0.05s;
-  }
+  ${buildReducedMotionTransitionDurationCss()}
 `;
 
 /** Длительность и кривая раскрытия блока детализации строки (одна ось анимации — без скачка на открытии). */
@@ -75,10 +73,7 @@ export const DataGridExpandedSlot = styled.div<{ $open: boolean }>`
   min-height: 0;
   max-height: ${({ $open }) => ($open ? 'min(100vh, 3200px)' : '0')};
   transition: max-height ${datagridExpandedEaseMs} ${datagridExpandedEaseCurve};
-
-  @media (prefers-reduced-motion: reduce) {
-    transition-duration: 0.05s;
-  }
+  ${buildReducedMotionTransitionDurationCss()}
 `;
 
 /**
@@ -91,16 +86,9 @@ export const DataGridExpandedInner = styled.div<{ $tableSize: 'sm' | 'md'; $open
   min-height: 0;
   min-width: 0;
   padding: ${({ $open, $tableSize }) =>
-    !$open
-      ? '0'
-      : $tableSize === 'sm'
-        ? '8px 12px'
-        : '12px 16px'};
+    !$open ? '0' : $tableSize === 'sm' ? '8px 12px' : '12px 16px'};
   transition: padding ${datagridExpandedEaseMs} ${datagridExpandedEaseCurve};
-
-  @media (prefers-reduced-motion: reduce) {
-    transition-duration: 0.05s;
-  }
+  ${buildReducedMotionTransitionDurationCss()}
 `;
 
 /** Центрированный индикатор загрузки только в области раскрытия (не путать с оверлеем всей таблицы) */
@@ -151,7 +139,9 @@ export const DataGridColumnResizeHandle = styled.button`
 `;
 
 /** Строка заголовка колонки: подпись + опциональная кнопка фильтра */
-export const DataGridColumnHeaderRow = styled.div<{ $filterIconPosition: DataGridColumnFilterIconPosition }>`
+export const DataGridColumnHeaderRow = styled.div<{
+  $filterIconPosition: DataGridColumnFilterIconPosition;
+}>`
   display: flex;
   align-items: flex-start;
   gap: 6px;

@@ -46,7 +46,13 @@ export const TableSortLabel = forwardRef<HTMLButtonElement, TableSortLabelProps>
         {...rest}
         type="button"
         aria-sort={
-          active ? (direction === 'desc' ? 'descending' : direction === 'asc' ? 'ascending' : 'none') : undefined
+          active
+            ? direction === 'desc'
+              ? 'descending'
+              : direction === 'asc'
+                ? 'ascending'
+                : 'none'
+            : undefined
         }
       >
         {useHeaderLineClamp ? (
@@ -65,7 +71,11 @@ export const TableSortLabel = forwardRef<HTMLButtonElement, TableSortLabelProps>
           <TableSortLabelInner>
             {children}
             {!hideSortIcon ? (
-              <TableSortChevronIcon active={active} direction={direction} sortPriority={sortPriority} />
+              <TableSortChevronIcon
+                active={active}
+                direction={direction}
+                sortPriority={sortPriority}
+              />
             ) : null}
           </TableSortLabelInner>
         )}

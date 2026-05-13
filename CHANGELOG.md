@@ -32,6 +32,19 @@
 
 ---
 
+## [0.1.3] - 2026-05-04
+
+### Changed
+
+- Таблица (`Table`): липкая шапка и вертикальный скролл через `scrollAreaMaxHeight` у `TableContainerScroll`, CSS-переменная фона шапки `--plainer-table-header-background`.
+- DataGrid: `scrollAreaMaxHeight`, `tableHeaderVariant` / `tableHeaderBackground`, единый фон панели `headerToolbar` со шапкой колонок.
+
+### Added
+
+- Хелпер `resolveDataGridTableHeaderBackground`, экспорт `PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR` из примитива таблицы.
+
+---
+
 ## [0.1.0] - 2025-01-XX
 
 ### Added

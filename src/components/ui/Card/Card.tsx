@@ -2,6 +2,7 @@ import React, { forwardRef } from 'react';
 import { clsx } from 'clsx';
 import { type CardProps, CardVariant } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
+import { useUiMotionPresets } from '../../../hooks/useUiMotion';
 import { StyledCard } from './Card.style';
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(
@@ -20,6 +21,8 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     },
     ref,
   ) => {
+    const uiMotion = useUiMotionPresets();
+
     return (
       <StyledCard
         ref={ref}
@@ -31,8 +34,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
         fullWidth={fullWidth}
         className={clsx('ui-card', className)}
         onClick={onClick}
-        whileHover={hoverable ? { y: -2 } : undefined}
-        whileTap={clickable ? { scale: 0.98 } : undefined}
+        {...uiMotion.card({ hoverable, clickable })}
         {...props}
       >
         {children}

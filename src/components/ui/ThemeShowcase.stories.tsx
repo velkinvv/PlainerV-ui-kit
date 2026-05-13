@@ -18,6 +18,7 @@ import { GridItem } from './Grid/GridItem';
 import { Size } from '../../types/sizes';
 import { ButtonVariant, BadgeVariant } from '../../types/ui';
 import { DOC_THEME_SHOWCASE } from '@/components/ui/storyDocs/uiKitDocs';
+import { themeShowcaseStoriesStyles } from './ThemeShowcase.stories.styles';
 
 const meta: Meta = {
   title: 'UI Kit/Utils/Theme Showcase',
@@ -41,9 +42,9 @@ export const LightTheme: Story = {
     const [progressValue, _setProgressValue] = useState(65);
 
     return (
-      <div style={{ padding: '40px', background: '#EDF1F2', minHeight: '100vh' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <h1 style={{ marginBottom: '40px', textAlign: 'center' }}>UI Components - Light Theme</h1>
+      <div style={themeShowcaseStoriesStyles.lightPageShell}>
+        <div style={themeShowcaseStoriesStyles.contentShell}>
+          <h1 style={themeShowcaseStoriesStyles.pageHeading}>UI Components - Light Theme</h1>
 
           <Grid columns={2} gap={Size.MD}>
             {/* Buttons */}
@@ -53,7 +54,7 @@ export const LightTheme: Story = {
                   <CardTitle>Buttons</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+                  <div style={themeShowcaseStoriesStyles.buttonRow}>
                     <Button variant={ButtonVariant.PRIMARY}>Primary</Button>
                     <Button variant={ButtonVariant.SECONDARY}>Secondary</Button>
                     <Button variant={ButtonVariant.OUTLINE}>Outline</Button>
@@ -74,18 +75,12 @@ export const LightTheme: Story = {
                   <CardTitle>Inputs</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '16px',
-                    }}
-                  >
+                  <div style={themeShowcaseStoriesStyles.verticalStackGap16}>
                     <Input
                       label="Default Input"
                       placeholder="Enter text..."
                       value={inputValue}
-                      onChange={e => setInputValue(e.target.value)}
+                      onChange={(changeEvent) => setInputValue(changeEvent.target.value)}
                     />
                     <Input
                       label="Input with Error"
@@ -106,14 +101,7 @@ export const LightTheme: Story = {
                   <CardTitle>Badges & Avatars</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '16px',
-                      flexWrap: 'wrap',
-                    }}
-                  >
+                  <div style={themeShowcaseStoriesStyles.badgeAvatarRow}>
                     <Badge variant={BadgeVariant.PRIMARY}>Default</Badge>
                     <Badge variant={BadgeVariant.SECONDARY}>Secondary</Badge>
                     <Badge variant={BadgeVariant.DANGER}>Destructive</Badge>
@@ -133,21 +121,9 @@ export const LightTheme: Story = {
                   <CardTitle>Progress & Spinner</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '16px',
-                    }}
-                  >
+                  <div style={themeShowcaseStoriesStyles.verticalStackGap16}>
                     <Progress value={progressValue} />
-                    <div
-                      style={{
-                        display: 'flex',
-                        gap: '16px',
-                        alignItems: 'center',
-                      }}
-                    >
+                    <div style={themeShowcaseStoriesStyles.horizontalGap16Center}>
                       <Spinner size={Size.SM} />
                       <Spinner size={Size.MD} />
                       <Spinner size={Size.LG} />
@@ -192,13 +168,7 @@ export const LightTheme: Story = {
                   <CardTitle>Tooltip & Dropdown</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: '16px',
-                      alignItems: 'center',
-                    }}
-                  >
+                  <div style={themeShowcaseStoriesStyles.horizontalGap16Center}>
                     <Tooltip content="This is a tooltip">
                       <Button>Hover for tooltip</Button>
                     </Tooltip>
@@ -225,13 +195,7 @@ export const LightTheme: Story = {
                   <CardTitle>Divider</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '16px',
-                    }}
-                  >
+                  <div style={themeShowcaseStoriesStyles.verticalStackGap16}>
                     <p>Content above divider</p>
                     <Divider />
                     <p>Content below divider</p>
@@ -242,20 +206,13 @@ export const LightTheme: Story = {
           </Grid>
 
           {/* Modal */}
-          <div style={{ marginTop: '40px', textAlign: 'center' }}>
+          <div style={themeShowcaseStoriesStyles.modalOpenSection}>
             <Button onClick={() => setModalOpen(true)}>Open Modal</Button>
           </div>
 
           <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="Demo Modal">
             <p>This is a modal content. All components should respect the current theme.</p>
-            <div
-              style={{
-                marginTop: '20px',
-                display: 'flex',
-                gap: '12px',
-                justifyContent: 'flex-end',
-              }}
-            >
+            <div style={themeShowcaseStoriesStyles.modalActionsRow}>
               <Button variant={ButtonVariant.SECONDARY} onClick={() => setModalOpen(false)}>
                 Cancel
               </Button>
@@ -275,17 +232,9 @@ export const DarkTheme: Story = {
     const [progressValue, _setProgressValue] = useState(65);
 
     return (
-      <div style={{ padding: '40px', background: '#06090E', minHeight: '100vh' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <h1
-            style={{
-              marginBottom: '40px',
-              textAlign: 'center',
-              color: '#FFFFFF',
-            }}
-          >
-            UI Components - Dark Theme
-          </h1>
+      <div style={themeShowcaseStoriesStyles.darkPageShell}>
+        <div style={themeShowcaseStoriesStyles.contentShell}>
+          <h1 style={themeShowcaseStoriesStyles.pageHeadingOnDark}>UI Components - Dark Theme</h1>
 
           <Grid columns={2} gap={Size.MD}>
             {/* Buttons */}
@@ -295,7 +244,7 @@ export const DarkTheme: Story = {
                   <CardTitle>Buttons</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+                  <div style={themeShowcaseStoriesStyles.buttonRow}>
                     <Button variant={ButtonVariant.PRIMARY}>Primary</Button>
                     <Button variant={ButtonVariant.SECONDARY}>Secondary</Button>
                     <Button variant={ButtonVariant.OUTLINE}>Outline</Button>
@@ -316,18 +265,12 @@ export const DarkTheme: Story = {
                   <CardTitle>Inputs</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '16px',
-                    }}
-                  >
+                  <div style={themeShowcaseStoriesStyles.verticalStackGap16}>
                     <Input
                       label="Default Input"
                       placeholder="Enter text..."
                       value={inputValue}
-                      onChange={e => setInputValue(e.target.value)}
+                      onChange={(changeEvent) => setInputValue(changeEvent.target.value)}
                     />
                     <Input
                       label="Input with Error"
@@ -348,14 +291,7 @@ export const DarkTheme: Story = {
                   <CardTitle>Badges & Avatars</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '16px',
-                      flexWrap: 'wrap',
-                    }}
-                  >
+                  <div style={themeShowcaseStoriesStyles.badgeAvatarRow}>
                     <Badge variant={BadgeVariant.PRIMARY}>Default</Badge>
                     <Badge variant={BadgeVariant.SECONDARY}>Secondary</Badge>
                     <Badge variant={BadgeVariant.DANGER}>Destructive</Badge>
@@ -375,21 +311,9 @@ export const DarkTheme: Story = {
                   <CardTitle>Progress & Spinner</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '16px',
-                    }}
-                  >
+                  <div style={themeShowcaseStoriesStyles.verticalStackGap16}>
                     <Progress value={progressValue} />
-                    <div
-                      style={{
-                        display: 'flex',
-                        gap: '16px',
-                        alignItems: 'center',
-                      }}
-                    >
+                    <div style={themeShowcaseStoriesStyles.horizontalGap16Center}>
                       <Spinner size={Size.SM} />
                       <Spinner size={Size.MD} />
                       <Spinner size={Size.LG} />
@@ -434,13 +358,7 @@ export const DarkTheme: Story = {
                   <CardTitle>Tooltip & Dropdown</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: '16px',
-                      alignItems: 'center',
-                    }}
-                  >
+                  <div style={themeShowcaseStoriesStyles.horizontalGap16Center}>
                     <Tooltip content="This is a tooltip">
                       <Button>Hover for tooltip</Button>
                     </Tooltip>
@@ -467,13 +385,7 @@ export const DarkTheme: Story = {
                   <CardTitle>Divider</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '16px',
-                    }}
-                  >
+                  <div style={themeShowcaseStoriesStyles.verticalStackGap16}>
                     <p>Content above divider</p>
                     <Divider />
                     <p>Content below divider</p>
@@ -484,20 +396,13 @@ export const DarkTheme: Story = {
           </Grid>
 
           {/* Modal */}
-          <div style={{ marginTop: '40px', textAlign: 'center' }}>
+          <div style={themeShowcaseStoriesStyles.modalOpenSection}>
             <Button onClick={() => setModalOpen(true)}>Open Modal</Button>
           </div>
 
           <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="Demo Modal">
             <p>This is a modal content. All components should respect the current theme.</p>
-            <div
-              style={{
-                marginTop: '20px',
-                display: 'flex',
-                gap: '12px',
-                justifyContent: 'flex-end',
-              }}
-            >
+            <div style={themeShowcaseStoriesStyles.modalActionsRow}>
               <Button variant={ButtonVariant.SECONDARY} onClick={() => setModalOpen(false)}>
                 Cancel
               </Button>
@@ -509,4 +414,3 @@ export const DarkTheme: Story = {
     );
   },
 };
-

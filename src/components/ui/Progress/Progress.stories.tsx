@@ -5,6 +5,7 @@ import { Progress, useProgress, useStepper } from './';
 import { Size } from '../../../types/sizes';
 import type { ProgressStep } from '../../../types/ui';
 import { DOC_PROGRESS } from '@/components/ui/storyDocs/uiKitDocs';
+import { progressStoriesStyles } from './Progress.stories.styles';
 
 const meta: Meta<typeof Progress> = {
   title: 'UI Kit/Data Display/Progress',
@@ -254,7 +255,7 @@ export const Linear: Story = {
     showValueLabel: true,
   },
   render: (args) => (
-    <div style={{ padding: '24px', maxWidth: 360 }}>
+    <div style={progressStoriesStyles.paddedCard}>
       <Progress {...args} />
     </div>
   ),
@@ -276,7 +277,7 @@ export const LinearWithLabel: Story = {
     showValueLabel: true,
   },
   render: (args) => (
-    <div style={{ padding: '24px', maxWidth: 360 }}>
+    <div style={progressStoriesStyles.paddedCard}>
       <Progress {...args} />
     </div>
   ),
@@ -454,10 +455,10 @@ export const StepperAllSizes: Story = {
       { id: 3, label: 'Шаг 3' },
     ];
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div style={progressStoriesStyles.sectionColumn24}>
         {Object.values(Size).map((size) => (
           <div key={size}>
-            <p style={{ marginBottom: '8px', fontSize: '14px', fontWeight: 600 }}>Размер: {size}</p>
+            <p style={progressStoriesStyles.heading14}>Размер: {size}</p>
             <Progress variant="stepper" steps={steps} activeStep={1} size={size} />
           </div>
         ))}
@@ -505,10 +506,10 @@ export const StepperCircularAllSizes: Story = {
       { id: 3, label: 'Шаг 3' },
     ];
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div style={progressStoriesStyles.sectionColumn24}>
         {Object.values(Size).map((size) => (
           <div key={size}>
-            <p style={{ marginBottom: '8px', fontSize: '14px', fontWeight: 600 }}>Размер: {size}</p>
+            <p style={progressStoriesStyles.heading14}>Размер: {size}</p>
             <Progress variant="stepper-circle" steps={steps} activeStep={1} size={size} />
           </div>
         ))}
@@ -572,18 +573,17 @@ export const OnComplete: Story = {
 
     const handleComplete = fn(() => {
       setCompleted(true);
-      alert('Загрузка завершена!');
     });
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={progressStoriesStyles.sectionColumn16}>
         <Progress
           value={value}
           label="Загрузка файла"
           onComplete={handleComplete}
           animated={true}
         />
-        {completed && <p style={{ color: 'green', fontWeight: 600 }}>✓ Загрузка завершена!</p>}
+        {completed && <p style={progressStoriesStyles.successText}>✓ Загрузка завершена!</p>}
       </div>
     );
   },
@@ -609,21 +609,17 @@ export const AnimatedProgress: Story = {
     }, [value]);
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div style={progressStoriesStyles.sectionColumn24}>
         <div>
-          <p style={{ marginBottom: '8px', fontSize: '14px', fontWeight: 600 }}>
-            С анимацией (по умолчанию)
-          </p>
+          <p style={progressStoriesStyles.heading14}>С анимацией (по умолчанию)</p>
           <Progress value={value} label="С анимацией" animated={true} />
         </div>
         <div>
-          <p style={{ marginBottom: '8px', fontSize: '14px', fontWeight: 600 }}>Без анимации</p>
+          <p style={progressStoriesStyles.heading14}>Без анимации</p>
           <Progress value={value} label="Без анимации" animated={false} />
         </div>
         <div>
-          <p style={{ marginBottom: '8px', fontSize: '14px', fontWeight: 600 }}>
-            Быстрая анимация (150ms)
-          </p>
+          <p style={progressStoriesStyles.heading14}>Быстрая анимация (150ms)</p>
           <Progress
             value={value}
             label="Быстрая анимация"
@@ -632,9 +628,7 @@ export const AnimatedProgress: Story = {
           />
         </div>
         <div>
-          <p style={{ marginBottom: '8px', fontSize: '14px', fontWeight: 600 }}>
-            Медленная анимация (1000ms)
-          </p>
+          <p style={progressStoriesStyles.heading14}>Медленная анимация (1000ms)</p>
           <Progress
             value={value}
             label="Медленная анимация"
@@ -694,11 +688,9 @@ export const LoadingAnimationCircular: Story = {
 export const LoadingSpinner: Story = {
   render: () => {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '500px' }}>
+      <div style={progressStoriesStyles.maxWidth500Column}>
         <div>
-          <h3 style={{ marginBottom: '12px', fontSize: '14px', fontWeight: 600 }}>
-            Линейный вариант со спиннером
-          </h3>
+          <h3 style={progressStoriesStyles.heading14WithSpace}>Линейный вариант со спиннером</h3>
           <Progress
             value={65}
             variant="linear"
@@ -707,15 +699,13 @@ export const LoadingSpinner: Story = {
             showStatusIcon={true}
             animated={true}
           />
-          <p style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
+          <p style={progressStoriesStyles.helperText}>
             Спиннер отображается справа от прогресс-бара при статусе loading
           </p>
         </div>
 
         <div>
-          <h3 style={{ marginBottom: '12px', fontSize: '14px', fontWeight: 600 }}>
-            Круговой вариант со спиннером
-          </h3>
+          <h3 style={progressStoriesStyles.heading14WithSpace}>Круговой вариант со спиннером</h3>
           <Progress
             value={65}
             variant="circle"
@@ -725,14 +715,14 @@ export const LoadingSpinner: Story = {
             animated={true}
             size={Size.MD}
           />
-          <p style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
+          <p style={progressStoriesStyles.helperText}>
             Спиннер отображается в центре круга при статусе loading (когда не показывается галочка и
             не indeterminate)
           </p>
         </div>
 
         <div>
-          <h3 style={{ marginBottom: '12px', fontSize: '14px', fontWeight: 600 }}>
+          <h3 style={progressStoriesStyles.heading14WithSpace}>
             Спиннер скрыт (showStatusIcon=false)
           </h3>
           <Progress
@@ -743,7 +733,7 @@ export const LoadingSpinner: Story = {
             showStatusIcon={false}
             animated={true}
           />
-          <p style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
+          <p style={progressStoriesStyles.helperText}>
             Спиннер можно скрыть, установив showStatusIcon в false
           </p>
         </div>
@@ -763,30 +753,34 @@ export const LoadingSpinner: Story = {
 export const BestPractices: Story = {
   render: () => {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', maxWidth: '800px' }}>
+      <div style={progressStoriesStyles.maxWidth800Column}>
         <div>
-          <h3 style={{ marginBottom: '16px' }}>1. Всегда используйте label для доступности</h3>
+          <h3 style={progressStoriesStyles.heading16}>
+            1. Всегда используйте label для доступности
+          </h3>
           <Progress value={45} variant="linear" label="Загрузка файла" />
-          <p style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
+          <p style={progressStoriesStyles.helperText}>
             Label помогает пользователям понять, что показывает прогресс-бар
           </p>
         </div>
 
         <div>
-          <h3 style={{ marginBottom: '16px' }}>2. Используйте статусы для обратной связи</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <h3 style={progressStoriesStyles.heading16}>2. Используйте статусы для обратной связи</h3>
+          <div style={progressStoriesStyles.sectionColumn12}>
             <Progress value={30} variant="linear" label="Ожидание" status="await" />
             <Progress value={60} variant="linear" label="Загрузка" status="loading" />
             <Progress value={100} variant="linear" label="Завершено" status="success" />
             <Progress value={50} variant="linear" label="Ошибка" status="error" />
           </div>
-          <p style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
+          <p style={progressStoriesStyles.helperText}>
             Статусы автоматически меняют цвет и помогают пользователю понять состояние процесса
           </p>
         </div>
 
         <div>
-          <h3 style={{ marginBottom: '16px' }}>3. Используйте onStatusChange для отслеживания</h3>
+          <h3 style={progressStoriesStyles.heading16}>
+            3. Используйте onStatusChange для отслеживания
+          </h3>
           <Progress
             value={75}
             variant="linear"
@@ -796,23 +790,23 @@ export const BestPractices: Story = {
               console.log('Статус изменился:', status);
             })}
           />
-          <p style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
+          <p style={progressStoriesStyles.helperText}>
             Колбек позволяет отслеживать изменения статуса и реагировать на них
           </p>
         </div>
 
         <div>
-          <h3 style={{ marginBottom: '16px' }}>
+          <h3 style={progressStoriesStyles.heading16}>
             4. Используйте indeterminate для неизвестного прогресса
           </h3>
           <Progress variant="linear" label="Подключение..." indeterminate />
-          <p style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
+          <p style={progressStoriesStyles.helperText}>
             Когда точный прогресс неизвестен, используйте indeterminate режим
           </p>
         </div>
 
         <div>
-          <h3 style={{ marginBottom: '16px' }}>5. Добавляйте дополнительную информацию</h3>
+          <h3 style={progressStoriesStyles.heading16}>5. Добавляйте дополнительную информацию</h3>
           <Progress
             value={65}
             variant="linear"
@@ -820,13 +814,13 @@ export const BestPractices: Story = {
             estimatedTime={45}
             speed="2.5 MB/s"
           />
-          <p style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
+          <p style={progressStoriesStyles.helperText}>
             estimatedTime и speed помогают пользователю понять, сколько времени осталось
           </p>
         </div>
 
         <div>
-          <h3 style={{ marginBottom: '16px' }}>
+          <h3 style={progressStoriesStyles.heading16}>
             6. Используйте степпер для многошаговых процессов
           </h3>
           <Progress
@@ -839,38 +833,33 @@ export const BestPractices: Story = {
             activeStep={1}
             showNextStepInfo={true}
           />
-          <p style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
+          <p style={progressStoriesStyles.helperText}>
             Степпер идеально подходит для процессов с несколькими этапами
           </p>
         </div>
 
         <div>
-          <h3 style={{ marginBottom: '16px' }}>7. Используйте хуки для управления состоянием</h3>
-          <p style={{ fontSize: '12px', color: '#666', marginBottom: '8px' }}>
+          <h3 style={progressStoriesStyles.heading16}>
+            7. Используйте хуки для управления состоянием
+          </h3>
+          <p style={progressStoriesStyles.helperTextNoTopWithBottom}>
             Используйте useProgress или useStepper для упрощения управления состоянием:
           </p>
-          <pre
-            style={{
-              background: '#f5f5f5',
-              padding: '12px',
-              borderRadius: '4px',
-              fontSize: '12px',
-            }}
-          >
+          <pre style={progressStoriesStyles.preCode}>
             {`const { value, increment, complete } = useProgress(0);
 const { activeStep, nextStep } = useStepper(steps, 0);`}
           </pre>
         </div>
 
         <div>
-          <h3 style={{ marginBottom: '16px' }}>8. Правильно выбирайте размер</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <h3 style={progressStoriesStyles.heading16}>8. Правильно выбирайте размер</h3>
+          <div style={progressStoriesStyles.sectionColumn12}>
             <Progress value={50} variant="linear" size={Size.XS} label="XS" />
             <Progress value={50} variant="linear" size={Size.SM} label="SM" />
             <Progress value={50} variant="linear" size={Size.MD} label="MD" />
             <Progress value={50} variant="linear" size={Size.LG} label="LG" />
           </div>
-          <p style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
+          <p style={progressStoriesStyles.helperText}>
             Размер должен соответствовать контексту использования
           </p>
         </div>
@@ -940,7 +929,7 @@ export const WithRetry: Story = {
     });
 
     return (
-      <div style={{ maxWidth: 400 }}>
+      <div style={progressStoriesStyles.maxWidth400}>
         <Progress
           value={value}
           variant="linear"
@@ -982,7 +971,7 @@ export const WithPause: Story = {
     });
 
     return (
-      <div style={{ maxWidth: 400 }}>
+      <div style={progressStoriesStyles.maxWidth400}>
         <Progress
           value={value}
           variant="linear"
@@ -1046,7 +1035,7 @@ export const StepperWithIcons: Story = {
     ];
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={progressStoriesStyles.sectionColumn16}>
         <Progress
           variant="stepper"
           steps={steps}
@@ -1054,7 +1043,7 @@ export const StepperWithIcons: Story = {
           showNextStepInfo={true}
           size={Size.MD}
         />
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={progressStoriesStyles.rowGap8}>
           <button
             onClick={() => setActiveStep((prev) => Math.max(0, prev - 1))}
             disabled={activeStep === 0}
@@ -1085,9 +1074,9 @@ export const SegmentedVariant: Story = {
     variant: 'segmented',
     label: 'Прогресс по категориям',
     segments: [
-      { value: 30, color: '#94D263', label: 'Завершено' },
-      { value: 50, color: '#FFA726', label: 'В процессе' },
-      { value: 20, color: '#E0E0E0', label: 'Ожидание' },
+      { value: 30, color: progressStoriesStyles.segmentedSuccess, label: 'Завершено' },
+      { value: 50, color: progressStoriesStyles.segmentedWarning, label: 'В процессе' },
+      { value: 20, color: progressStoriesStyles.segmentedAwait, label: 'Ожидание' },
     ],
     size: Size.MD,
   },
@@ -1112,7 +1101,7 @@ export const StepperAllSteps: Story = {
     ];
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '500px' }}>
+      <div style={progressStoriesStyles.maxWidth500Column16}>
         <Progress
           variant="stepper"
           steps={steps}
@@ -1121,7 +1110,7 @@ export const StepperAllSteps: Story = {
           showAllSteps={true}
           size={Size.MD}
         />
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={progressStoriesStyles.rowGap8}>
           <button
             onClick={() => setActiveStep((prev) => Math.max(0, prev - 1))}
             disabled={activeStep === 0}
@@ -1159,7 +1148,7 @@ export const VerticalStepper: Story = {
     ];
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '400px' }}>
+      <div style={progressStoriesStyles.maxWidth400Column16}>
         <Progress
           variant="stepper"
           steps={steps}
@@ -1168,7 +1157,7 @@ export const VerticalStepper: Story = {
           stepperOrientation="vertical"
           size={Size.MD}
         />
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={progressStoriesStyles.rowGap8}>
           <button
             onClick={() => setActiveStep((prev) => Math.max(0, prev - 1))}
             disabled={activeStep === 0}
@@ -1373,9 +1362,7 @@ export const CustomStyling: Story = {
     trackClassName: 'custom-track',
     fillClassName: 'custom-fill',
     style: {
-      padding: '16px',
-      backgroundColor: '#f5f5f5',
-      borderRadius: '8px',
+      ...progressStoriesStyles.customStylingRoot,
     },
   },
   render: (args) => {
@@ -1385,10 +1372,10 @@ export const CustomStyling: Story = {
         <style>
           {`
             .custom-track {
-              border: 2px solid #e0e0e0;
+              border: 2px solid ${progressStoriesStyles.customTrackBorderColor};
             }
             .custom-fill {
-              background: linear-gradient(90deg, #4CAF50, #8BC34A);
+              background: ${progressStoriesStyles.customFillGradient};
             }
           `}
         </style>
@@ -1420,7 +1407,7 @@ export const StepperWithClickableSteps: Story = {
     });
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={progressStoriesStyles.sectionColumn16}>
         <Progress
           variant="stepper"
           steps={steps}
@@ -1429,7 +1416,7 @@ export const StepperWithClickableSteps: Story = {
           size={Size.MD}
           onStepClick={handleStepClick}
         />
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={progressStoriesStyles.rowGap8}>
           <button
             onClick={() => setActiveStep((prev) => Math.max(0, prev - 1))}
             disabled={activeStep === 0}
@@ -1443,7 +1430,7 @@ export const StepperWithClickableSteps: Story = {
             Вперед
           </button>
         </div>
-        <p style={{ fontSize: '12px', color: '#666' }}>
+        <p style={progressStoriesStyles.helperTextNoTop}>
           Кликните на название текущего шага, чтобы перейти к нему
         </p>
       </div>
@@ -1465,9 +1452,9 @@ export const UseProgressHook: Story = {
       useProgress(0);
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={progressStoriesStyles.sectionColumn16}>
         <Progress value={value} label="Управление через хук" animated={true} />
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        <div style={progressStoriesStyles.rowGap8Wrap}>
           <button onClick={() => increment(10)} disabled={isComplete}>
             +10%
           </button>
@@ -1484,7 +1471,7 @@ export const UseProgressHook: Story = {
           </button>
           <button onClick={reset}>Сбросить</button>
         </div>
-        <p style={{ fontSize: '12px', color: '#666' }}>
+        <p style={progressStoriesStyles.helperTextNoTop}>
           Текущее значение: {value}% {isComplete && '✓ Завершено'}
         </p>
       </div>
@@ -1525,7 +1512,7 @@ export const UseStepperHook: Story = {
     } = useStepper(steps, 0);
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={progressStoriesStyles.sectionColumn16}>
         <Progress
           variant="stepper"
           steps={steps}
@@ -1533,7 +1520,7 @@ export const UseStepperHook: Story = {
           showNextStepInfo={true}
           size={Size.MD}
         />
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        <div style={progressStoriesStyles.rowGap8Wrap}>
           <button onClick={previousStep} disabled={!canGoPrevious}>
             Назад
           </button>
@@ -1545,7 +1532,7 @@ export const UseStepperHook: Story = {
           <button onClick={() => goToStep(2)}>Шаг 2</button>
           <button onClick={reset}>Сбросить</button>
         </div>
-        <div style={{ fontSize: '12px', color: '#666' }}>
+        <div style={progressStoriesStyles.helperTextNoTop}>
           <p>Активный шаг: {activeStep}</p>
           <p>Прогресс: {Math.round(progress)}%</p>
           {currentStep && <p>Текущий: {currentStep.label}</p>}
@@ -1575,7 +1562,7 @@ export const StepperInteractive: Story = {
     ];
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={progressStoriesStyles.sectionColumn16}>
         <Progress
           variant="stepper"
           steps={steps}
@@ -1583,7 +1570,7 @@ export const StepperInteractive: Story = {
           showNextStepInfo={true}
           size={Size.MD}
         />
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={progressStoriesStyles.rowGap8}>
           <button
             onClick={() => setActiveStep((prev) => Math.max(0, prev - 1))}
             disabled={activeStep === 0}
@@ -1674,7 +1661,7 @@ export const StatusChangeCallback: Story = {
     });
 
     return (
-      <div style={{ maxWidth: 360 }}>
+      <div style={progressStoriesStyles.paddedCardNoPadding}>
         <Progress
           variant="linear"
           value={value}
@@ -1682,7 +1669,7 @@ export const StatusChangeCallback: Story = {
           showValueLabel
           onStatusChange={handleStatusChange}
         />
-        <div style={{ marginTop: '16px', fontSize: '14px', color: '#666' }}>
+        <div style={progressStoriesStyles.statusInfoText}>
           Текущий статус: <strong>{status}</strong>
         </div>
       </div>
@@ -1704,27 +1691,20 @@ export const CustomColors: Story = {
     variant: 'linear',
     value: 55,
     label: 'Onboarding',
-    trackColor: '#F0F4FF',
-    progressColor: '#4F46E5',
+    trackColor: progressStoriesStyles.customTrackColor,
+    progressColor: progressStoriesStyles.customProgressColor,
   },
 };
 
 export const DashboardExample: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-        gap: '24px',
-        width: '100%',
-      }}
-    >
+    <div style={progressStoriesStyles.dashboardGrid}>
       <div>
-        <h4 style={{ margin: '0 0 12px' }}>Релиз мобильного приложения</h4>
+        <h4 style={progressStoriesStyles.h4Title}>Релиз мобильного приложения</h4>
         <Progress value={92} variant="linear" showValueLabel label="Этап тестирования" />
       </div>
       <div>
-        <h4 style={{ margin: '0 0 12px' }}>Спринт разработчиков</h4>
+        <h4 style={progressStoriesStyles.h4Title}>Спринт разработчиков</h4>
         <Progress value={68} variant="circle" label="Sprint 23" circleSize={140} />
       </div>
       <div>
@@ -1770,7 +1750,7 @@ export const AnimatedLinear: Story = {
     }, []);
 
     return (
-      <div style={{ maxWidth: 340 }}>
+      <div style={progressStoriesStyles.maxWidth340}>
         <Progress value={progress} variant="linear" label="Синхронизация" showValueLabel />
       </div>
     );
@@ -1779,4 +1759,3 @@ export const AnimatedLinear: Story = {
     controls: { exclude: /.*/ },
   },
 };
-

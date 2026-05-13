@@ -1,6 +1,6 @@
 import React, { forwardRef, useCallback, useId, useMemo, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, useReducedMotion } from 'framer-motion';
 import { clsx } from 'clsx';
 import type { SheetProps } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
@@ -20,7 +20,7 @@ import {
   SheetTitle,
   SheetBody,
 } from './Sheet.style';
-import { sheetOverlayMotion, getSheetPanelMotion, sheetSizeToCss } from './handlers';
+import { getSheetOverlayMotion, getSheetPanelMotion, sheetSizeToCss } from './handlers';
 import { useOverlayVisibility } from '../../../hooks/useOverlayVisibility';
 import { useOverlayPortal } from '../../../hooks/useOverlayPortal';
 import { useOverlayPresentation } from '../../../hooks/useOverlayPresentation';
@@ -66,6 +66,7 @@ export const Sheet = forwardRef<HTMLElement, SheetProps>(
     },
     ref,
   ) => {
+    const prefersReducedMotion = useReducedMotion();
     useModalEscape({ isOpen, closeOnEscape, closeOnEscapeKeyDown, onClose });
     const titleId = useId();
     const contentRef = useRef<HTMLDivElement>(null);
@@ -99,7 +100,14 @@ export const Sheet = forwardRef<HTMLElement, SheetProps>(
       portalZIndex,
     });
 
-    const panelMotion = useMemo(() => getSheetPanelMotion(placement), [placement]);
+    const panelMotion = useMemo(
+      () => getSheetPanelMotion(placement, Boolean(prefersReducedMotion)),
+      [placement, prefersReducedMotion],
+    );
+    const overlayMotion = useMemo(
+      () => getSheetOverlayMotion(Boolean(prefersReducedMotion)),
+      [prefersReducedMotion],
+    );
 
     const widthCss = useMemo(
       () =>
@@ -117,11 +125,12 @@ export const Sheet = forwardRef<HTMLElement, SheetProps>(
       [placement, height],
     );
 
-    const { shouldRenderPortal, shouldRenderContent, isHidden } = useOverlayVisibility({
-      isOpen,
-      unmountOnClose,
-      lazy,
-    });
+    const { shouldRenderPortal, shouldRenderContent, isHidden, notifyPresenceExitComplete } =
+      useOverlayVisibility({
+        isOpen,
+        unmountOnClose,
+        lazy,
+      });
 
     const { overlayPresentationStyle, ariaHidden } = useOverlayPresentation({
       isOpen,
@@ -137,10 +146,10 @@ export const Sheet = forwardRef<HTMLElement, SheetProps>(
       <SheetOverlay
         $sheetPlacement={placement}
         $overlayVariant={overlayVariant}
-        initial={sheetOverlayMotion.initial}
-        animate={sheetOverlayMotion.animate}
-        exit={sheetOverlayMotion.exit}
-        transition={sheetOverlayMotion.transition}
+        initial={overlayMotion.initial}
+        animate={overlayMotion.animate}
+        exit={overlayMotion.exit}
+        transition={overlayMotion.transition}
         onClick={handleOverlayClick}
         className={overlayClassName}
         style={overlayPresentationStyle}
@@ -161,20 +170,22 @@ export const Sheet = forwardRef<HTMLElement, SheetProps>(
           animate={panelMotion.animate}
           exit={panelMotion.exit}
           transition={panelMotion.transition}
-          onClick={event => event.stopPropagation()}
+          onClick={(event) => event.stopPropagation()}
         >
           {headerSlot ? (
             <SheetHeader>{headerSlot}</SheetHeader>
-          ) : (title || showCloseButton) && (
-            <SheetHeader>
-              {title ? <SheetTitle id={titleId}>{title}</SheetTitle> : null}
-              {!title && showCloseButton ? <SheetHeaderSpacer aria-hidden /> : null}
-              {showCloseButton ? (
-                <CloseButton type="button" onClick={onClose} aria-label="Закрыть">
-                  <Icon name="PhosphorX" size={IconSize.MD} color="#9E9E9E" />
-                </CloseButton>
-              ) : null}
-            </SheetHeader>
+          ) : (
+            (title || showCloseButton) && (
+              <SheetHeader>
+                {title ? <SheetTitle id={titleId}>{title}</SheetTitle> : null}
+                {!title && showCloseButton ? <SheetHeaderSpacer aria-hidden /> : null}
+                {showCloseButton ? (
+                  <CloseButton type="button" onClick={onClose} aria-label="Закрыть">
+                    <Icon name="PhosphorX" size={IconSize.MD} color="#9E9E9E" />
+                  </CloseButton>
+                ) : null}
+              </SheetHeader>
+            )
           )}
           <SheetBody ref={contentRef} tabIndex={-1}>
             {children}
@@ -184,7 +195,7 @@ export const Sheet = forwardRef<HTMLElement, SheetProps>(
     );
 
     return createPortal(
-      <AnimatePresence>
+      <AnimatePresence onExitComplete={notifyPresenceExitComplete}>
         {shouldRenderContent ? sheetBody : null}
       </AnimatePresence>,
       mountNode,

@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components';
 import { InputContainer } from '../shared/InputStyles';
+import { buildHoverPressMotionCss } from '../../../../handlers/uiMotionStyleHandlers';
 
 /**
  * Нативный `select` визуально как текстовое поле: без системной стрелки, кастомный шеврон снаружи.
@@ -65,6 +66,7 @@ export const SelectChevronFlip = styled.span.withConfig({
   align-items: center;
   justify-content: center;
   transform: ${({ $isOpen }) => ($isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
+  will-change: transform;
   transition: transform 0.2s ease;
 `;
 
@@ -111,8 +113,7 @@ export const SelectMultiPlaceholder = styled.span.withConfig({
 })<{ $isPlaceholder?: boolean }>`
   min-width: 0;
   line-height: 1.25;
-  color: ${({ theme, $isPlaceholder }) =>
-    $isPlaceholder ? theme.colors.textTertiary : 'inherit'};
+  color: ${({ theme, $isPlaceholder }) => ($isPlaceholder ? theme.colors.textTertiary : 'inherit')};
 `;
 
 /** Обёртка одного чипа (капсула с подписью и кнопкой снятия). */
@@ -128,6 +129,13 @@ export const SelectMultiChip = styled.span`
   background: ${({ theme }) => theme.colors.backgroundTertiary};
   color: ${({ theme }) => theme.colors.text};
   box-sizing: border-box;
+  transition: transform 0.12s ease;
+  ${buildHoverPressMotionCss({
+    hoverSelector: '&:hover',
+    activeSelector: '&:active',
+    hoverTransform: 'none',
+    activeTransform: 'scale(0.98)',
+  })}
 `;
 
 /** Текст чипа с обрезкой длинных подписей. */
@@ -154,6 +162,9 @@ export const SelectMultiChipRemove = styled.button`
   background: transparent;
   cursor: pointer;
   color: ${({ theme }) => theme.colors.textSecondary};
+  transition:
+    color 0.15s ease,
+    transform 0.12s ease;
 
   &:disabled {
     cursor: not-allowed;
@@ -161,6 +172,17 @@ export const SelectMultiChipRemove = styled.button`
   }
 
   &:hover:not(:disabled) {
+    color: ${({ theme }) => theme.colors.text};
+  }
+
+  ${buildHoverPressMotionCss({
+    hoverSelector: '&:hover:not(:disabled)',
+    activeSelector: '&:active:not(:disabled)',
+    hoverTransform: 'translateY(-1px)',
+    activeTransform: 'scale(0.96)',
+  })}
+
+  &:active:not(:disabled) {
     color: ${({ theme }) => theme.colors.text};
   }
 
@@ -188,7 +210,9 @@ export const SelectMultiClearAllBtn = styled.button.withConfig({
   background: transparent;
   cursor: pointer;
   color: ${({ theme }) => theme.colors.textSecondary};
-  transition: color 0.15s ease;
+  transition:
+    color 0.15s ease,
+    transform 0.12s ease;
   box-sizing: border-box;
   width: 22px;
   height: 22px;
@@ -209,6 +233,17 @@ export const SelectMultiClearAllBtn = styled.button.withConfig({
   }
 
   &:hover:not(:disabled) {
+    color: ${({ theme }) => theme.colors.text};
+  }
+
+  ${buildHoverPressMotionCss({
+    hoverSelector: '&:hover:not(:disabled)',
+    activeSelector: '&:active:not(:disabled)',
+    hoverTransform: 'translateY(-1px)',
+    activeTransform: 'scale(0.96)',
+  })}
+
+  &:active:not(:disabled) {
     color: ${({ theme }) => theme.colors.text};
   }
 
@@ -235,6 +270,7 @@ export const SelectMultiSelectAllFooterBtn = styled.button`
   line-height: 1.35;
   cursor: pointer;
   color: ${({ theme }) => theme.colors.primary};
+  transition: transform 0.12s ease;
 
   &:disabled {
     cursor: not-allowed;
@@ -244,6 +280,12 @@ export const SelectMultiSelectAllFooterBtn = styled.button`
   &:hover:not(:disabled) {
     text-decoration: underline;
   }
+  ${buildHoverPressMotionCss({
+    hoverSelector: '&:hover:not(:disabled)',
+    activeSelector: '&:active:not(:disabled)',
+    hoverTransform: 'translateY(-1px)',
+    activeTransform: 'scale(0.98)',
+  })}
 `;
 
 /**
@@ -264,15 +306,22 @@ export const SelectTriggerButton = styled.button.withConfig({
   outline: none;
   background: transparent;
   font: inherit;
-  color: ${({ theme, $isPlaceholder }) =>
-    $isPlaceholder ? theme.colors.textTertiary : 'inherit'};
+  color: ${({ theme, $isPlaceholder }) => ($isPlaceholder ? theme.colors.textTertiary : 'inherit')};
   cursor: pointer;
   text-align: ${({ textAlign = 'left' }) => textAlign};
   padding: 0;
+  transition: transform 0.12s ease;
 
   &:disabled {
     cursor: not-allowed;
   }
+
+  ${buildHoverPressMotionCss({
+    hoverSelector: '&:hover:not(:disabled)',
+    activeSelector: '&:active:not(:disabled)',
+    hoverTransform: 'translateY(-1px)',
+    activeTransform: 'scale(0.98)',
+  })}
 `;
 
 /**
@@ -293,8 +342,7 @@ export const SelectTriggerInput = styled.input.withConfig({
   outline: none;
   background: transparent;
   font: inherit;
-  color: ${({ theme, $isPlaceholder }) =>
-    $isPlaceholder ? theme.colors.textTertiary : 'inherit'};
+  color: ${({ theme, $isPlaceholder }) => ($isPlaceholder ? theme.colors.textTertiary : 'inherit')};
   cursor: text;
   text-align: ${({ textAlign = 'left' }) => textAlign};
   padding: 0;

@@ -4,7 +4,7 @@ import type { SkeletonGroupDirection } from '../../../types/ui';
 /**
  * Анимация shimmer для эффекта загрузки
  */
-const createShimmer = (speed: number) => keyframes`
+const createShimmer = (_speed: number) => keyframes`
   0% {
     background-position: -200% 0;
   }

@@ -7,6 +7,7 @@ import { ButtonVariant } from '@/types/ui';
 import { IconSize, Size } from '@/types/sizes';
 import { Icon } from '../../Icon/Icon';
 import { DOC_BUTTON_GROUP } from '@/components/ui/storyDocs/uiKitDocs';
+import { buttonGroupStoriesStyles } from './ButtonGroup.stories.styles';
 
 interface SelectableButtonGroupStoryProps extends React.ComponentProps<typeof ButtonGroup> {
   children: React.ReactNode;
@@ -145,15 +146,9 @@ export const Attached: Story = {
       inactiveButtonVariant={ButtonVariant.OUTLINE}
       ariaLabel="Режим attached"
     >
-      <Button size={Size.MD}>
-        День
-      </Button>
-      <Button size={Size.MD}>
-        Неделя
-      </Button>
-      <Button size={Size.MD}>
-        Месяц
-      </Button>
+      <Button size={Size.MD}>День</Button>
+      <Button size={Size.MD}>Неделя</Button>
+      <Button size={Size.MD}>Месяц</Button>
     </SelectableButtonGroupStory>
   ),
 };
@@ -168,12 +163,8 @@ export const AttachedPrimaryOutline: Story = {
       inactiveButtonVariant={ButtonVariant.OUTLINE}
       ariaLabel="Вид"
     >
-      <Button size={Size.MD}>
-        Список
-      </Button>
-      <Button size={Size.MD}>
-        Сетка
-      </Button>
+      <Button size={Size.MD}>Список</Button>
+      <Button size={Size.MD}>Сетка</Button>
     </SelectableButtonGroupStory>
   ),
 };
@@ -197,7 +188,7 @@ export const Selectable: Story = {
 /** Три размера — разный внешний радиус сегмента */
 export const AttachedSizes: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <div style={buttonGroupStoriesStyles.columnGap16}>
       <SelectableButtonGroupStory
         attached
         size={Size.SM}
@@ -205,12 +196,8 @@ export const AttachedSizes: Story = {
         inactiveButtonVariant={ButtonVariant.OUTLINE}
         ariaLabel="SM"
       >
-        <Button size={Size.SM}>
-          Button
-        </Button>
-        <Button size={Size.SM}>
-          Button
-        </Button>
+        <Button size={Size.SM}>Button</Button>
+        <Button size={Size.SM}>Button</Button>
       </SelectableButtonGroupStory>
       <SelectableButtonGroupStory
         attached
@@ -219,12 +206,8 @@ export const AttachedSizes: Story = {
         inactiveButtonVariant={ButtonVariant.OUTLINE}
         ariaLabel="MD"
       >
-        <Button size={Size.MD}>
-          Button
-        </Button>
-        <Button size={Size.MD}>
-          Button
-        </Button>
+        <Button size={Size.MD}>Button</Button>
+        <Button size={Size.MD}>Button</Button>
       </SelectableButtonGroupStory>
       <SelectableButtonGroupStory
         attached
@@ -233,12 +216,8 @@ export const AttachedSizes: Story = {
         inactiveButtonVariant={ButtonVariant.OUTLINE}
         ariaLabel="LG"
       >
-        <Button size={Size.LG}>
-          Button
-        </Button>
-        <Button size={Size.LG}>
-          Button
-        </Button>
+        <Button size={Size.LG}>Button</Button>
+        <Button size={Size.LG}>Button</Button>
       </SelectableButtonGroupStory>
     </div>
   ),
@@ -255,12 +234,8 @@ export const AttachedPill: Story = {
       inactiveButtonVariant={ButtonVariant.OUTLINE}
       ariaLabel="Pill"
     >
-      <Button size={Size.MD}>
-        Опция A
-      </Button>
-      <Button size={Size.MD}>
-        Опция B
-      </Button>
+      <Button size={Size.MD}>Опция A</Button>
+      <Button size={Size.MD}>Опция B</Button>
     </SelectableButtonGroupStory>
   ),
 };
@@ -268,7 +243,7 @@ export const AttachedPill: Story = {
 /** Текст + иконка / иконка + текст */
 export const AttachedWithIcons: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+    <div style={buttonGroupStoriesStyles.columnGap12}>
       <SelectableButtonGroupStory
         attached
         size={Size.MD}
@@ -276,10 +251,7 @@ export const AttachedWithIcons: Story = {
         inactiveButtonVariant={ButtonVariant.OUTLINE}
         ariaLabel="Текст и стрелка справа"
       >
-        <Button
-          size={Size.MD}
-          iconEnd={<Icon name="IconPlainerArrowRight" size={IconSize.SM} />}
-        >
+        <Button size={Size.MD} iconEnd={<Icon name="IconPlainerArrowRight" size={IconSize.SM} />}>
           Button
         </Button>
         <Button size={Size.MD} iconEnd={<Icon name="IconPlainerArrowRight" size={IconSize.SM} />}>
@@ -293,16 +265,10 @@ export const AttachedWithIcons: Story = {
         inactiveButtonVariant={ButtonVariant.OUTLINE}
         ariaLabel="Стрелка слева от текста"
       >
-        <Button
-          size={Size.MD}
-          iconStart={<Icon name="IconPlainerArrowRight" size={IconSize.SM} />}
-        >
+        <Button size={Size.MD} iconStart={<Icon name="IconPlainerArrowRight" size={IconSize.SM} />}>
           Button
         </Button>
-        <Button
-          size={Size.MD}
-          iconStart={<Icon name="IconPlainerArrowRight" size={IconSize.SM} />}
-        >
+        <Button size={Size.MD} iconStart={<Icon name="IconPlainerArrowRight" size={IconSize.SM} />}>
           Button
         </Button>
       </SelectableButtonGroupStory>
@@ -320,12 +286,8 @@ export const Vertical: Story = {
       inactiveButtonVariant={ButtonVariant.OUTLINE}
       ariaLabel="Вертикальная группа"
     >
-      <Button size={Size.SM}>
-        Вверх
-      </Button>
-      <Button size={Size.SM}>
-        Вниз
-      </Button>
+      <Button size={Size.SM}>Вверх</Button>
+      <Button size={Size.SM}>Вниз</Button>
     </SelectableButtonGroupStory>
   ),
 };
@@ -357,7 +319,7 @@ export const WithIconButtons: Story = {
 
 export const FullWidth: Story = {
   render: () => (
-    <div style={{ maxWidth: 480 }}>
+    <div style={buttonGroupStoriesStyles.maxWidth480}>
       <SelectableButtonGroupStory
         attached
         fullWidth
@@ -366,12 +328,8 @@ export const FullWidth: Story = {
         inactiveButtonVariant={ButtonVariant.OUTLINE}
         ariaLabel="Полная ширина"
       >
-        <Button size={Size.MD}>
-          Сохранить
-        </Button>
-        <Button size={Size.MD}>
-          Отмена
-        </Button>
+        <Button size={Size.MD}>Сохранить</Button>
+        <Button size={Size.MD}>Отмена</Button>
       </SelectableButtonGroupStory>
     </div>
   ),
@@ -380,7 +338,7 @@ export const FullWidth: Story = {
 /** Склеенная группа на всю ширину: сегменты делят ширину поровну */
 export const AttachedFullWidth: Story = {
   render: () => (
-    <div style={{ maxWidth: 400 }}>
+    <div style={buttonGroupStoriesStyles.maxWidth400}>
       <SelectableButtonGroupStory
         attached
         fullWidth
@@ -389,12 +347,8 @@ export const AttachedFullWidth: Story = {
         inactiveButtonVariant={ButtonVariant.OUTLINE}
         ariaLabel="Две равные колонки"
       >
-        <Button size={Size.MD}>
-          Нет
-        </Button>
-        <Button size={Size.MD}>
-          Да
-        </Button>
+        <Button size={Size.MD}>Нет</Button>
+        <Button size={Size.MD}>Да</Button>
       </SelectableButtonGroupStory>
     </div>
   ),
@@ -415,32 +369,30 @@ export const AllButtonVariants: Story = {
     ];
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {allButtonVariants.map((buttonVariant) => (
+      <div style={buttonGroupStoriesStyles.columnGap12}>
+        {allButtonVariants.map((buttonVariant) =>
           (() => {
             const inactiveVariantForRow =
               buttonVariant === ButtonVariant.GHOST || buttonVariant === ButtonVariant.LINE
                 ? buttonVariant
                 : ButtonVariant.OUTLINE;
-
             return (
-          <SelectableButtonGroupStory
-            key={`all-variants-${buttonVariant}`}
-            attached
-            size={Size.MD}
-            activeButtonVariant={buttonVariant}
-            inactiveButtonVariant={inactiveVariantForRow}
-            ariaLabel={`Вариант ${buttonVariant}`}
-          >
-            <Button size={Size.MD}>Button</Button>
-            <Button size={Size.MD}>Button</Button>
-            <Button size={Size.MD}>Button</Button>
-          </SelectableButtonGroupStory>
+              <SelectableButtonGroupStory
+                key={`all-variants-${buttonVariant}`}
+                attached
+                size={Size.MD}
+                activeButtonVariant={buttonVariant}
+                inactiveButtonVariant={inactiveVariantForRow}
+                ariaLabel={`Вариант ${buttonVariant}`}
+              >
+                <Button size={Size.MD}>Button</Button>
+                <Button size={Size.MD}>Button</Button>
+                <Button size={Size.MD}>Button</Button>
+              </SelectableButtonGroupStory>
             );
-          })()
-        ))}
+          })(),
+        )}
       </div>
     );
   },
 };
-

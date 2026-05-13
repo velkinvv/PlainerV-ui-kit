@@ -53,9 +53,9 @@ describe('Calendar handlers', () => {
   it('isDateOutsideMinMax', () => {
     const d = new Date(2025, 8, 1);
     expect(isDateOutsideMinMax(d, new Date(2025, 8, 10), undefined)).toBe(true);
-    expect(isDateOutsideMinMax(new Date(2025, 8, 15), new Date(2025, 8, 1), new Date(2025, 8, 30))).toBe(
-      false,
-    );
+    expect(
+      isDateOutsideMinMax(new Date(2025, 8, 15), new Date(2025, 8, 1), new Date(2025, 8, 30)),
+    ).toBe(false);
   });
 
   it('monthYearKey и parseMonthYearKey', () => {

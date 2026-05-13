@@ -26,9 +26,7 @@ export const FloatingMenuDragHandle: React.FC<FloatingMenuDragHandleProps> = ({
       data-floating-menu-drag-handle
       aria-label="Переместить панель"
     >
-      {children ?? (
-        <FloatingMenuDragHandleGrip aria-hidden>⋮⋮</FloatingMenuDragHandleGrip>
-      )}
+      {children ?? <FloatingMenuDragHandleGrip aria-hidden>⋮⋮</FloatingMenuDragHandleGrip>}
     </FloatingMenuDragHandleRoot>
   );
 };

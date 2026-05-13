@@ -4,6 +4,7 @@ import { Checkbox } from './Checkbox';
 import { CheckboxGroup as CheckboxGroupField } from './CheckboxGroup';
 import { Size } from '../../../types/sizes';
 import { DOC_CHECKBOX } from '@/components/ui/storyDocs/uiKitDocs';
+import { checkboxStoriesStyles } from './Checkbox.stories.styles';
 
 const meta: Meta<typeof Checkbox> = {
   title: 'UI Kit/Inputs/Checkbox',
@@ -152,7 +153,7 @@ export const Sizes: Story = {
     const [largeChecked, setLargeChecked] = useState(false);
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={checkboxStoriesStyles.sizesColumn}>
         <Checkbox
           size={Size.SM}
           label="Маленький чекбокс (16px)"
@@ -216,13 +217,11 @@ const CheckboxGroupDemo = ({ flexDirection }: { flexDirection: 'column' | 'row' 
       helperText={`${selectionSummaryLabel}. Можно отметить несколько пунктов.`}
     >
       <div
-        style={{
-          display: 'flex',
-          flexDirection,
-          flexWrap: isHorizontalLayout ? 'wrap' : 'nowrap',
-          gap: '12px',
-          alignItems: isHorizontalLayout ? 'center' : 'stretch',
-        }}
+        style={
+          isHorizontalLayout
+            ? checkboxStoriesStyles.checkboxGroupHorizontal
+            : checkboxStoriesStyles.checkboxGroupColumn
+        }
       >
         {checkboxGroupOptions.map((item) => (
           <Checkbox
@@ -353,7 +352,7 @@ function CheckboxGroupFooterDemo() {
       error={hasSelection ? undefined : 'Отметьте хотя бы один канал.'}
       extraText="Push-уведомления можно отключить в настройках приложения."
     >
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <div style={checkboxStoriesStyles.checkboxGroupColumn}>
         {checkboxGroupOptions.map((item) => (
           <Checkbox
             key={item.id}
@@ -388,7 +387,7 @@ function CheckboxGroupSuccessDemo() {
       success
       extraText="Права обновятся в течение минуты после сохранения формы."
     >
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <div style={checkboxStoriesStyles.checkboxGroupColumn}>
         {checkboxGroupOptions.map((item) => (
           <Checkbox
             key={item.id}
@@ -405,4 +404,3 @@ function CheckboxGroupSuccessDemo() {
 export const CheckboxGroupWithSuccessAndExtra: Story = {
   render: () => <CheckboxGroupSuccessDemo />,
 };
-

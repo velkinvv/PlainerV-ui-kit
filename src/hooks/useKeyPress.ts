@@ -22,7 +22,7 @@ export function useKeyPress({
       if (!enabled) return;
 
       const keys = Array.isArray(targetKey) ? targetKey : [targetKey];
-      const isTargetKey = keys.some(key => event.key.toLowerCase() === key.toLowerCase());
+      const isTargetKey = keys.some((key) => event.key.toLowerCase() === key.toLowerCase());
 
       if (!isTargetKey) return;
 

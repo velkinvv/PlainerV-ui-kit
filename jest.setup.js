@@ -56,6 +56,20 @@ const STYLED_DOM_BLOCKLIST = new Set([
   'hasIcon',
   'isDisabled',
   'showSeconds',
+  // Grid / GridItem: в моке withConfig не применяется — без списка пропсы утекают на div
+  'mode',
+  'container',
+  'columns',
+  'rows',
+  'gap',
+  'rowGap',
+  'columnGap',
+  'justifyContent',
+  'alignItems',
+  'minHeight',
+  'maxHeight',
+  'autoFit',
+  'autoFill',
 ]);
 
 /**

@@ -24,11 +24,11 @@ const GroupContainer = styled.div<{
   'data-full-width'?: boolean;
 }>`
   display: flex;
-  flex-direction: ${props => {
+  flex-direction: ${(props) => {
     const orientation = props['data-orientation'];
     return orientation === RadioButtonGroupOrientation.VERTICAL ? 'column' : 'row';
   }};
-  gap: ${props => {
+  gap: ${(props) => {
     const orientation = props['data-orientation'];
     const theme = props.theme;
     return orientation === RadioButtonGroupOrientation.VERTICAL
@@ -36,7 +36,7 @@ const GroupContainer = styled.div<{
       : theme.radioButton.spacing.groupHorizontal;
   }};
   flex-wrap: wrap;
-  width: ${props => {
+  width: ${(props) => {
     const fullWidth = props['data-full-width'];
     return fullWidth ? '100%' : 'auto';
   }};
@@ -168,7 +168,11 @@ export const RadioButtonGroup = React.memo<RadioButtonGroupProps>(
       }
     };
 
-    const handleClick = (event: React.MouseEvent<HTMLLabelElement>, optionValue: string, option: typeof options[0]) => {
+    const handleClick = (
+      event: React.MouseEvent<HTMLLabelElement>,
+      optionValue: string,
+      option: (typeof options)[0],
+    ) => {
       if (!disabled && !readOnly && onClick) {
         onClick(optionValue, option);
       }
@@ -229,7 +233,7 @@ export const RadioButtonGroup = React.memo<RadioButtonGroupProps>(
                 key={optionValue}
                 checked={isChecked}
                 onChange={handleChange}
-                onClick={e => handleClick(e, optionValue, option)}
+                onClick={(e) => handleClick(e, optionValue, option)}
                 name={name}
                 value={optionValue}
                 disabled={disabled || option.disabled}

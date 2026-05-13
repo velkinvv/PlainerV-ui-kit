@@ -7,6 +7,7 @@ import {
 } from '../../../types/ui';
 import type { TabItemTextOrientation } from '../../../types/ui';
 import { ThemeMode } from '../../../types/theme';
+import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
 
 /** Трек группы табов: контейнер списка + контента */
 export const TabItemGroupContainer = styled.div<{
@@ -42,7 +43,9 @@ export const TabItemGroupList = styled.div<{
           padding: 4px;
           border-radius: 9999px;
           border: none;
-          background: ${theme.mode === ThemeMode.DARK ? '#1c1c1c' : theme.colors.backgroundTertiary};
+          background: ${theme.mode === ThemeMode.DARK
+            ? '#1c1c1c'
+            : theme.colors.backgroundTertiary};
         `
       : css`
           border-bottom: ${$direction === TabsDirection.HORIZONTAL
@@ -132,7 +135,9 @@ export const TabItemTrigger = styled.button<{
   transition:
     background 0.2s ease,
     color 0.2s ease,
-    box-shadow 0.2s ease;
+    box-shadow 0.2s ease,
+    transform 0.18s ease;
+  will-change: transform, background-color, color;
   white-space: nowrap;
   display: flex;
   align-items: center;
@@ -205,6 +210,12 @@ export const TabItemTrigger = styled.button<{
                   `
               : ''}
           }
+          ${buildHoverPressMotionCss({
+            hoverSelector: '&:hover:enabled',
+            activeSelector: '&:active:enabled',
+            hoverTransform: !$disabled ? 'translateY(-1px)' : 'none',
+            activeTransform: !$disabled ? 'scale(0.98)' : 'none',
+          })}
 
           &:focus {
             outline: none;
@@ -218,7 +229,11 @@ export const TabItemTrigger = styled.button<{
       : css`
           padding: 12px 24px;
           background: ${$isActive && !$disabled ? theme.colors.primary : 'transparent'};
-          color: ${$isActive && !$disabled ? '#ffffff' : $disabled ? theme.colors.textDisabled : theme.colors.textSecondary};
+          color: ${$isActive && !$disabled
+            ? '#ffffff'
+            : $disabled
+              ? theme.colors.textDisabled
+              : theme.colors.textSecondary};
           border-bottom: ${$direction === TabsDirection.HORIZONTAL
             ? `2px solid ${$isActive && !$disabled ? theme.colors.primary : 'transparent'}`
             : 'none'};
@@ -231,6 +246,12 @@ export const TabItemTrigger = styled.button<{
             background: ${$isActive ? theme.colors.primary : theme.colors.backgroundTertiary};
             color: ${$isActive ? '#ffffff' : theme.colors.text};
           }
+          ${buildHoverPressMotionCss({
+            hoverSelector: '&:hover:enabled',
+            activeSelector: '&:active:enabled',
+            hoverTransform: !$disabled ? 'translateY(-1px)' : 'none',
+            activeTransform: !$disabled ? 'scale(0.98)' : 'none',
+          })}
 
           &:focus {
             outline: none;

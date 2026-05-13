@@ -13,6 +13,8 @@ import { ButtonVariant } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
 import { IconSize, Size } from '../../../types/sizes';
 import { DOC_HINT } from '@/components/ui/storyDocs/uiKitDocs';
+import { lightTheme } from '@/themes/themes';
+import { hintStoriesStyles } from './Hint.stories.styles';
 
 const meta: Meta<typeof Hint> = {
   title: 'UI Kit/Feedback/Hint',
@@ -244,7 +246,7 @@ export const RightPosition: Story = {
 // Демонстрация размеров
 export const Sizes: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+    <div style={hintStoriesStyles.rowCenter20}>
       <Hint content="Маленькая подсказка" size={Size.SM}>
         <Button variant={ButtonVariant.PRIMARY}>SM</Button>
       </Hint>
@@ -270,13 +272,7 @@ export const Sizes: Story = {
 // Демонстрация всех вариантов (теперь все используют стандартные цвета)
 export const AllVariants: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'grid',
-        gap: '20px',
-        gridTemplateColumns: 'repeat(2, 1fr)',
-      }}
-    >
+    <div style={hintStoriesStyles.grid2Gap20}>
       <Hint content="Стандартная подсказка" variant={HintVariant.DEFAULT}>
         <Button variant={ButtonVariant.PRIMARY}>DEFAULT</Button>
       </Hint>
@@ -311,14 +307,7 @@ export const AllVariants: Story = {
 // Демонстрация всех позиций
 export const AllPositions: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'grid',
-        gap: '20px',
-        gridTemplateColumns: 'repeat(2, 1fr)',
-        padding: '40px',
-      }}
-    >
+    <div style={hintStoriesStyles.grid2Gap20Padded40}>
       <Hint content="Подсказка сверху" placement={HintPosition.TOP}>
         <Button variant={ButtonVariant.PRIMARY}>TOP</Button>
       </Hint>
@@ -348,7 +337,7 @@ export const AllPositions: Story = {
 // Демонстрация с иконками
 export const WithIcons: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+    <div style={hintStoriesStyles.rowCenter20}>
       <Hint content="Информация">
         <Icon name="IconExInfoSquare" size={IconSize.MD} />
       </Hint>
@@ -382,7 +371,7 @@ export const WithIcons: Story = {
 // Демонстрация с разными задержками
 export const DifferentDelays: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+    <div style={hintStoriesStyles.rowCenter20}>
       <Hint content="Без задержки" delay={0}>
         <Button variant={ButtonVariant.PRIMARY}>0мс</Button>
       </Hint>
@@ -412,14 +401,7 @@ export const DifferentDelays: Story = {
 // Демонстрация стрелок
 export const ArrowDemo: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'flex',
-        gap: '20px',
-        alignItems: 'center',
-        padding: '40px',
-      }}
-    >
+    <div style={hintStoriesStyles.arrowDemoRow}>
       <Hint content="Стрелка вниз" placement={HintPosition.TOP} showArrow>
         <Button variant={ButtonVariant.PRIMARY}>Top</Button>
       </Hint>
@@ -477,7 +459,7 @@ export const WithVisibilityChange: Story = {
     };
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center' }}>
+      <div style={hintStoriesStyles.centeredColumnGap20}>
         <Hint
           content="Наведи на меня и посмотри в консоль/логи"
           onVisibilityChange={handleVisibilityChange}
@@ -485,27 +467,14 @@ export const WithVisibilityChange: Story = {
           <Button variant={ButtonVariant.PRIMARY}>Наведи на меня</Button>
         </Hint>
 
-        <div
-          style={{
-            padding: '16px',
-            backgroundColor: '#f5f5f5',
-            borderRadius: '8px',
-            minWidth: '300px',
-            maxHeight: '200px',
-            overflowY: 'auto',
-          }}
-        >
-          <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: 600 }}>
-            Лог изменений видимости:
-          </h4>
+        <div style={hintStoriesStyles.logPanel}>
+          <h4 style={hintStoriesStyles.logTitle}>Лог изменений видимости:</h4>
           {visibilityLog.length === 0 ? (
-            <p style={{ margin: 0, color: '#666', fontSize: '12px' }}>
-              Наведите на кнопку, чтобы увидеть события
-            </p>
+            <p style={hintStoriesStyles.hintText12}>Наведите на кнопку, чтобы увидеть события</p>
           ) : (
-            <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '12px' }}>
+            <ul style={hintStoriesStyles.list12}>
               {visibilityLog.map((log, index) => (
-                <li key={index} style={{ marginBottom: '4px' }}>
+                <li key={index} style={hintStoriesStyles.listItemGap4}>
                   {log}
                 </li>
               ))}
@@ -536,7 +505,7 @@ export const WithHintClick: Story = {
     };
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center' }}>
+      <div style={hintStoriesStyles.centeredColumnGap20}>
         <Hint
           content="Кликни на меня! (Клик по hint будет залогирован)"
           onHintClick={handleHintClick}
@@ -544,27 +513,16 @@ export const WithHintClick: Story = {
           <Button variant={ButtonVariant.PRIMARY}>Наведи на меня</Button>
         </Hint>
 
-        <div
-          style={{
-            padding: '16px',
-            backgroundColor: '#f5f5f5',
-            borderRadius: '8px',
-            minWidth: '300px',
-            maxHeight: '200px',
-            overflowY: 'auto',
-          }}
-        >
-          <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: 600 }}>
-            Лог кликов по hint:
-          </h4>
+        <div style={hintStoriesStyles.logPanel}>
+          <h4 style={hintStoriesStyles.logTitle}>Лог кликов по hint:</h4>
           {clickLog.length === 0 ? (
-            <p style={{ margin: 0, color: '#666', fontSize: '12px' }}>
+            <p style={hintStoriesStyles.hintText12}>
               Наведите на кнопку и кликните по hint, чтобы увидеть события
             </p>
           ) : (
-            <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '12px' }}>
+            <ul style={hintStoriesStyles.list12}>
               {clickLog.map((log, index) => (
-                <li key={index} style={{ marginBottom: '4px' }}>
+                <li key={index} style={hintStoriesStyles.listItemGap4}>
                   {log}
                 </li>
               ))}
@@ -590,10 +548,10 @@ export const WithAnchorCssMixin: Story = {
     content: 'Подсказка с кастомным CSS миксином для внешнего контейнера',
     children: <Button variant={ButtonVariant.PRIMARY}>Наведи на меня</Button>,
     anchorCssMixin: css`
-      border: 2px dashed rgba(59, 130, 246, 0.5);
+      border: 2px dashed color-mix(in srgb, ${lightTheme.colors.info} 50%, transparent);
       border-radius: 8px;
       padding: 8px;
-      background: rgba(59, 130, 246, 0.05);
+      background: color-mix(in srgb, ${lightTheme.colors.info} 5%, transparent);
 
       &::before {
         content: 'AnchorWrapper';
@@ -601,7 +559,7 @@ export const WithAnchorCssMixin: Story = {
         top: -20px;
         left: 0;
         font-size: 10px;
-        color: rgba(59, 130, 246, 0.7);
+        color: color-mix(in srgb, ${lightTheme.colors.info} 70%, transparent);
         font-weight: 600;
       }
     `,
@@ -675,8 +633,8 @@ export const PositioningModeAutoFit: Story = {
 export const PositioningModesComparison: Story = {
   render: () => {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '40px', padding: '100px' }}>
-        <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+      <div style={hintStoriesStyles.comparisonRoot}>
+        <div style={hintStoriesStyles.rowCenter20}>
           <Hint
             content="Default режим - может выйти за границы"
             placement={HintPosition.TOP}
@@ -699,7 +657,7 @@ export const PositioningModesComparison: Story = {
             <Button variant={ButtonVariant.PRIMARY}>AutoFit</Button>
           </Hint>
         </div>
-        <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginTop: '200px' }}>
+        <div style={hintStoriesStyles.rowCenter20MarginTop200}>
           <Hint
             content="Default режим - может выйти за границы"
             placement={HintPosition.BOTTOM}
@@ -741,7 +699,7 @@ export const ControlledMode: Story = {
     const [isOpen, setIsOpen] = React.useState(false);
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', padding: '40px' }}>
+      <div style={hintStoriesStyles.columnGap20Padding40}>
         <div>
           <Hint
             content="Контролируемая подсказка. Видимость управляется извне через проп isOpen."
@@ -755,11 +713,11 @@ export const ControlledMode: Story = {
           <Button
             variant={ButtonVariant.SECONDARY}
             onClick={() => setIsOpen(!isOpen)}
-            style={{ marginRight: '10px' }}
+            style={hintStoriesStyles.buttonMarginRight10}
           >
             {isOpen ? 'Скрыть' : 'Показать'} подсказку
           </Button>
-          <span style={{ fontSize: '14px', color: '#666' }}>
+          <span style={hintStoriesStyles.statusText14}>
             Текущее состояние: {isOpen ? 'открыта' : 'закрыта'}
           </span>
         </div>
@@ -782,7 +740,7 @@ export const UncontrolledMode: Story = {
     const [openState, setOpenState] = React.useState<boolean | null>(null);
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', padding: '40px' }}>
+      <div style={hintStoriesStyles.columnGap20Padding40}>
         <div>
           <Hint
             content="Неконтролируемая подсказка с начальным состоянием defaultOpen={true}. Видимость управляется внутренним состоянием компонента."
@@ -793,7 +751,7 @@ export const UncontrolledMode: Story = {
           </Hint>
         </div>
         <div>
-          <span style={{ fontSize: '14px', color: '#666' }}>
+          <span style={hintStoriesStyles.statusText14}>
             Последнее изменение состояния:{' '}
             {openState === null ? 'не было' : openState ? 'открыта' : 'закрыта'}
           </span>
@@ -817,7 +775,7 @@ export const ControlledWithClick: Story = {
     const [isOpen, setIsOpen] = React.useState(false);
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', padding: '40px' }}>
+      <div style={hintStoriesStyles.columnGap20Padding40}>
         <div>
           <Hint
             content="Контролируемая подсказка с click триггером. Клик по кнопке вызывает onOpenChange, но состояние управляется извне."
@@ -832,11 +790,11 @@ export const ControlledWithClick: Story = {
           <Button
             variant={ButtonVariant.SECONDARY}
             onClick={() => setIsOpen(!isOpen)}
-            style={{ marginRight: '10px' }}
+            style={hintStoriesStyles.buttonMarginRight10}
           >
             {isOpen ? 'Закрыть' : 'Открыть'} программно
           </Button>
-          <span style={{ fontSize: '14px', color: '#666' }}>
+          <span style={hintStoriesStyles.statusText14}>
             Состояние: {isOpen ? 'открыта' : 'закрыта'}
           </span>
         </div>
@@ -856,15 +814,8 @@ export const ControlledWithClick: Story = {
 // Демонстрация стрелок для всех вариантов
 export const ArrowsWithVariants: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '30px',
-        padding: '40px',
-      }}
-    >
-      <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+    <div style={hintStoriesStyles.arrowsVariantsRoot}>
+      <div style={hintStoriesStyles.rowCenter20}>
         <Hint
           content="Default с стрелкой"
           placement={HintPosition.TOP}
@@ -921,15 +872,8 @@ export const ArrowsWithVariants: Story = {
 // Демонстрация стрелок для угловых позиций
 export const ArrowsCornerPositions: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '30px',
-        padding: '100px',
-      }}
-    >
-      <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+    <div style={hintStoriesStyles.arrowsCornersRoot}>
+      <div style={hintStoriesStyles.rowCenter20}>
         <Hint content="Top-Left" placement={HintPosition.TOP_LEFT} showArrow>
           <Button variant={ButtonVariant.PRIMARY}>Top-Left</Button>
         </Hint>
@@ -937,7 +881,7 @@ export const ArrowsCornerPositions: Story = {
           <Button variant={ButtonVariant.PRIMARY}>Top-Right</Button>
         </Hint>
       </div>
-      <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginTop: '200px' }}>
+      <div style={hintStoriesStyles.rowCenter20MarginTop200}>
         <Hint content="Bottom-Left" placement={HintPosition.BOTTOM_LEFT} showArrow>
           <Button variant={ButtonVariant.PRIMARY}>Bottom-Left</Button>
         </Hint>
@@ -960,8 +904,8 @@ export const ArrowsCornerPositions: Story = {
 // Демонстрация closeOnScroll
 export const CloseOnScroll: Story = {
   render: () => (
-    <div style={{ padding: '40px', height: '200vh' }}>
-      <div style={{ marginBottom: '20px' }}>
+    <div style={hintStoriesStyles.closeOnScrollRoot}>
+      <div style={hintStoriesStyles.marginBottom20}>
         <Hint
           content="Эта подсказка закроется при прокрутке страницы (closeOnScroll={true})"
           closeOnScroll={true}
@@ -969,7 +913,7 @@ export const CloseOnScroll: Story = {
           <Button variant={ButtonVariant.PRIMARY}>Наведи и прокрути</Button>
         </Hint>
       </div>
-      <div style={{ marginTop: '100vh' }}>
+      <div style={hintStoriesStyles.marginTop100vh}>
         <Hint
           content="Эта подсказка останется открытой при прокрутке (closeOnScroll={false}, по умолчанию)"
           closeOnScroll={false}
@@ -977,7 +921,7 @@ export const CloseOnScroll: Story = {
           <Button variant={ButtonVariant.SECONDARY}>Наведи и прокрути</Button>
         </Hint>
       </div>
-      <p style={{ marginTop: '20px', fontSize: '14px', color: '#666' }}>
+      <p style={hintStoriesStyles.helperTextWithMarginTop20}>
         Прокрутите страницу вниз, чтобы увидеть разницу в поведении
       </p>
     </div>
@@ -1011,16 +955,8 @@ export const TourGuide: Story = {
     };
 
     return (
-      <div
-        style={{
-          padding: '40px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '30px',
-          alignItems: 'center',
-        }}
-      >
-        <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+      <div style={hintStoriesStyles.tourRoot}>
+        <div style={hintStoriesStyles.rowCenter20}>
           <Hint
             content="Шаг 1: Это первая кнопка в экскурсии"
             tourStep={currentStep === 1 ? 1 : undefined}
@@ -1066,11 +1002,11 @@ export const TourGuide: Story = {
             <Button variant={ButtonVariant.DANGER}>Кнопка 4</Button>
           </Hint>
         </div>
-        <div style={{ marginTop: '20px', textAlign: 'center' }}>
-          <p style={{ fontSize: '14px', color: '#666', marginBottom: '10px' }}>
+        <div style={hintStoriesStyles.tourFooter}>
+          <p style={hintStoriesStyles.tourStatusText}>
             Текущий шаг: {currentStep} из {totalSteps}
           </p>
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+          <div style={hintStoriesStyles.tourControlsRow}>
             <Button
               variant={ButtonVariant.OUTLINE}
               size={Size.SM}
@@ -1101,4 +1037,3 @@ export const TourGuide: Story = {
     },
   },
 };
-

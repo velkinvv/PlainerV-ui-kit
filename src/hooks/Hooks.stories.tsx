@@ -1,40 +1,23 @@
 ﻿import type { Meta, StoryObj } from '@storybook/react';
+import { motion } from 'framer-motion';
 import React from 'react';
+import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
+import {
+  storybookFadeSlideVariants,
+  storybookStaggerContainerVariants,
+  storybookStaggerItemVariants,
+  useStorybookMotionTransitions,
+} from '@/handlers/storybookMotion';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
 import { Tag } from '../components/ui/Tag';
-import { Button } from '../components/ui/buttons/Button';
-
-const codeBlockContainerStyle: React.CSSProperties = {
-  backgroundColor: '#2d3748',
-  color: '#e2e8f0',
-  padding: '16px',
-  borderRadius: '6px',
-  fontFamily: 'Monaco, Consolas, "Courier New", monospace',
-  fontSize: '14px',
-  overflow: 'auto',
-  userSelect: 'text',
-  WebkitUserSelect: 'text',
-};
-
-const codeBlockPreStyle: React.CSSProperties = {
-  margin: 0,
-  whiteSpace: 'pre-wrap',
-  userSelect: 'text',
-  WebkitUserSelect: 'text',
-};
-
-const hookDescriptionStyle: React.CSSProperties = {
-  color: '#334155',
-  backgroundColor: '#e2e8f0',
-  border: '1px solid #cbd5e1',
-  borderRadius: '999px',
-  padding: '4px 10px',
-  display: 'inline-flex',
-  alignItems: 'center',
-  fontSize: '12px',
-  lineHeight: '16px',
-};
+import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
+import {
+  HOOK_OVERVIEW_CARD_BORDER_ACCENTS,
+  hookOverviewCardStyle,
+  hooksOverviewCodeBlockWithBottomMargin,
+  hooksOverviewStoriesStyles,
+} from './hooksOverview.stories.styles';
 
 const meta: Meta = {
   title: 'UI Kit/Hooks/Overview',
@@ -62,7 +45,7 @@ const meta: Meta = {
 - **useKeyPress** - обработка нажатий клавиш
 - **useMediaQuery** - отслеживание медиа-запросов
 - **useScrollPosition** - отслеживание позиции скролла
-- **useWindowSize** - отслеживание размера окна
+- **useWindowSize** - отслеживание размера окна (**useIsDesktop** по ширине innerWidth)
 
 ## Особенности:
 
@@ -82,6 +65,8 @@ type Story = StoryObj<typeof meta>;
 
 // Компонент для обзора хуков
 const HooksOverview = () => {
+  const motionTransitions = useStorybookMotionTransitions();
+
   const hooks = [
     {
       category: 'State Management',
@@ -90,32 +75,32 @@ const HooksOverview = () => {
           name: 'useModal',
           description: 'Управление модальными окнами',
           features: ['Открытие/закрытие', 'Переключение состояния', 'Начальное состояние'],
-          color: '#e3f2fd',
-          borderColor: '#2196f3',
           icon: '🪟',
         },
         {
           name: 'useToast',
           description: 'Стек Toast (карточки, портал в body)',
-          features: ['Типы success/error/warning/info', 'Заголовок и текст', 'Таймер и ручное закрытие'],
-          color: '#e8f5e8',
-          borderColor: '#4caf50',
+          features: [
+            'Типы success/error/warning/info',
+            'Заголовок и текст',
+            'Таймер и ручное закрытие',
+          ],
           icon: '🔔',
         },
         {
           name: 'useSnackbar',
           description: 'Стек Snackbar (компактная полоса снизу)',
-          features: ['Опция действия actionLabel + onAction', 'Таймер по умолчанию 4 с', 'Позиция bottom-*'],
-          color: '#eceff1',
-          borderColor: '#607d8b',
+          features: [
+            'Опция действия actionLabel + onAction',
+            'Таймер по умолчанию 4 с',
+            'Позиция bottom-*',
+          ],
           icon: '📣',
         },
         {
           name: 'useLocalStorage',
           description: 'Работа с localStorage',
           features: ['Синхронизация между вкладками', 'Обработка ошибок', 'TypeScript типизация'],
-          color: '#fff3e0',
-          borderColor: '#ff9800',
           icon: '💾',
         },
       ],
@@ -127,16 +112,12 @@ const HooksOverview = () => {
           name: 'useDebounce',
           description: 'Задержка выполнения операций',
           features: ['Задержка значений', 'Задержка функций', 'Настраиваемая задержка'],
-          color: '#f3e5f5',
-          borderColor: '#9c27b0',
           icon: '⏱️',
         },
         {
           name: 'useClickOutside',
           description: 'Обработка кликов вне элемента',
           features: ['Отслеживание кликов', 'Включение/отключение', 'Множественные элементы'],
-          color: '#e0f2f1',
-          borderColor: '#009688',
           icon: '👆',
         },
       ],
@@ -148,32 +129,29 @@ const HooksOverview = () => {
           name: 'useKeyPress',
           description: 'Обработка нажатий клавиш',
           features: ['Одиночные клавиши', 'Комбинации с модификаторами', 'Множественные клавиши'],
-          color: '#fce4ec',
-          borderColor: '#e91e63',
           icon: '⌨️',
         },
         {
           name: 'useMediaQuery',
           description: 'Отслеживание медиа-запросов',
           features: ['Адаптивность', 'Ориентация', 'Поддержка устройств'],
-          color: '#e8f5e8',
-          borderColor: '#4caf50',
           icon: '📱',
         },
         {
           name: 'useScrollPosition',
           description: 'Отслеживание позиции скролла',
           features: ['Позиция окна', 'Позиция элемента', 'Throttling'],
-          color: '#e3f2fd',
-          borderColor: '#2196f3',
           icon: '📜',
         },
         {
           name: 'useWindowSize',
           description: 'Отслеживание размера окна',
-          features: ['Размер окна', 'Размер экрана', 'Доступный размер'],
-          color: '#fff3e0',
-          borderColor: '#ff9800',
+          features: [
+            'Размер окна',
+            'Размер экрана',
+            'Доступный размер',
+            'useIsDesktop по innerWidth',
+          ],
           icon: '🖥️',
         },
       ],
@@ -186,92 +164,120 @@ const HooksOverview = () => {
         Обзор хуков
       </Typography>
 
-      <div style={{ marginBottom: '24px' }}>
+      <div style={storybookDemoStyles.marginBottom24}>
         <Typography variant="body1" marginBottom="md">
           Хуки предоставляют готовые решения для управления состоянием и побочными эффектами в React
           приложениях.
         </Typography>
       </div>
 
-      {hooks.map((category, categoryIndex) => (
-        <div key={categoryIndex} style={{ marginBottom: '32px' }}>
-          <Typography variant="h4" marginBottom="md" style={{ color: '#333' }}>
-            {category.category}
-          </Typography>
+      {hooks.map((category, categoryIndex) => {
+        const hooksBeforeCount = hooks
+          .slice(0, categoryIndex)
+          .reduce((total, categoryItem) => total + categoryItem.hooks.length, 0);
 
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: '16px',
-            }}
-          >
-            {category.hooks.map((hook, hookIndex) => (
-              <div
-                key={hookIndex}
-                style={{
-                  padding: '20px',
-                  backgroundColor: hook.color,
-                  border: `2px solid ${hook.borderColor}`,
-                  borderRadius: '12px',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
-                  <Typography variant="h4" style={{ marginRight: '12px' }}>
-                    {hook.icon}
-                  </Typography>
-                  <Typography variant="h5">{hook.name}</Typography>
-                </div>
+        return (
+          <div key={category.category} style={storybookDemoStyles.marginBottom32}>
+            <Typography
+              variant="h4"
+              marginBottom="md"
+              style={hooksOverviewStoriesStyles.sectionHeading}
+            >
+              {category.category}
+            </Typography>
 
-                <Typography variant="body1" marginBottom="md" style={{ color: '#666' }}>
-                  {hook.description}
-                </Typography>
+            <motion.div
+              style={hooksOverviewStoriesStyles.overviewCardGrid}
+              variants={storybookStaggerContainerVariants(motionTransitions.stagger)}
+              initial="hidden"
+              animate="visible"
+            >
+              {category.hooks.map((hook, hookIndex) => {
+                const accentBorder =
+                  HOOK_OVERVIEW_CARD_BORDER_ACCENTS[
+                    (hooksBeforeCount + hookIndex) % HOOK_OVERVIEW_CARD_BORDER_ACCENTS.length
+                  ];
 
-                <Typography variant="body2" marginBottom="sm" style={{ fontWeight: 'bold' }}>
-                  Возможности:
-                </Typography>
+                return (
+                  <motion.div
+                    key={hook.name}
+                    style={hookOverviewCardStyle(accentBorder)}
+                    variants={storybookStaggerItemVariants}
+                    transition={motionTransitions.springSoft}
+                  >
+                    <div style={hooksOverviewStoriesStyles.flexAlignCenterMarginBottom12}>
+                      <Typography variant="h4" style={{ marginRight: '12px' }}>
+                        {hook.icon}
+                      </Typography>
+                      <Typography variant="h5">{hook.name}</Typography>
+                    </div>
 
-                <ul style={{ margin: 0, paddingLeft: '20px' }}>
-                  {hook.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} style={{ marginBottom: '4px' }}>
-                      <Typography variant="body2">{feature}</Typography>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+                    <Typography
+                      variant="body1"
+                      marginBottom="md"
+                      style={hooksOverviewStoriesStyles.bodyTextMuted}
+                    >
+                      {hook.description}
+                    </Typography>
+
+                    <Typography variant="body2" marginBottom="sm" style={{ fontWeight: 'bold' }}>
+                      Возможности:
+                    </Typography>
+
+                    <ul style={hooksOverviewStoriesStyles.listUnstyled}>
+                      {hook.features.map((feature, featureIndex) => (
+                        <li
+                          key={featureIndex}
+                          style={hooksOverviewStoriesStyles.listItemMarginBottom4}
+                        >
+                          <Typography variant="body2">{feature}</Typography>
+                        </li>
+                      ))}
+                    </ul>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
           </div>
-        </div>
-      ))}
+        );
+      })}
 
-      <div style={{ padding: '16px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <motion.div
+        style={hooksOverviewStoriesStyles.principlesPanel}
+        variants={storybookFadeSlideVariants}
+        initial="hidden"
+        animate="visible"
+        transition={motionTransitions.panel}
+      >
         <Typography variant="body1" marginBottom="sm">
           <strong>Общие принципы:</strong>
         </Typography>
-        <ul style={{ margin: 0, paddingLeft: '20px' }}>
-          <li style={{ marginBottom: '4px' }}>
+        <ul style={hooksOverviewStoriesStyles.listUnstyled}>
+          <li style={hooksOverviewStoriesStyles.listItemMarginBottom4}>
             <Typography variant="body2">Единообразный API для всех хуков</Typography>
           </li>
-          <li style={{ marginBottom: '4px' }}>
+          <li style={hooksOverviewStoriesStyles.listItemMarginBottom4}>
             <Typography variant="body2">TypeScript типизация</Typography>
           </li>
-          <li style={{ marginBottom: '4px' }}>
+          <li style={hooksOverviewStoriesStyles.listItemMarginBottom4}>
             <Typography variant="body2">Оптимизация производительности</Typography>
           </li>
-          <li style={{ marginBottom: '4px' }}>
+          <li style={hooksOverviewStoriesStyles.listItemMarginBottom4}>
             <Typography variant="body2">Обработка edge cases</Typography>
           </li>
           <li>
             <Typography variant="body2">SSR совместимость</Typography>
           </li>
         </ul>
-      </div>
+      </motion.div>
     </Card>
   );
 };
 
 // Компонент для демонстрации использования
 const HooksUsageExamples = () => {
+  const motionTransitions = useStorybookMotionTransitions();
+
   const examples = [
     {
       title: 'State Management',
@@ -445,15 +451,17 @@ const MyComponent = () => {
         {
           name: 'useMediaQuery',
           code: `import { useMediaQuery, useIsMobile } from '@/hooks';
+import { useTheme } from 'styled-components';
 
 const ResponsiveComponent = () => {
+  const theme = useTheme();
   const isMobile = useIsMobile();
   const isDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
   return (
     <div style={{
       padding: isMobile ? '16px' : '32px',
-      backgroundColor: isDarkMode ? '#333' : '#fff'
+      backgroundColor: isDarkMode ? theme.colors.background : theme.colors.backgroundSecondary
     }}>
       {isMobile ? 'Мобильная версия' : 'Десктопная версия'}
     </div>
@@ -481,15 +489,16 @@ const ScrollComponent = () => {
         },
         {
           name: 'useWindowSize',
-          code: `import { useWindowSize } from '@/hooks';
+          code: `import { useWindowSize, useIsDesktop } from '@/hooks';
 
 const SizeComponent = () => {
   const { width, height } = useWindowSize();
+  const isDesktop = useIsDesktop();
 
   return (
     <div>
       <div>Размер окна: {width} × {height}</div>
-      <div>Тип устройства: {width <= 768 ? 'Мобильное' : 'Десктоп'}</div>
+      <div>Десктоп (innerWidth ≥ 1025): {isDesktop ? 'да' : 'нет'}</div>
     </div>
   );
 };`,
@@ -505,44 +514,50 @@ const SizeComponent = () => {
         Примеры использования
       </Typography>
 
-      <div style={{ marginBottom: '24px' }}>
+      <div style={storybookDemoStyles.marginBottom24}>
         <Typography variant="body1" marginBottom="md">
           Практические примеры использования хуков в React компонентах.
         </Typography>
       </div>
 
-      {examples.map((category, categoryIndex) => (
-        <div key={categoryIndex} style={{ marginBottom: '32px' }}>
-          <Typography variant="h4" marginBottom="md" style={{ color: '#333' }}>
+      {examples.map((category) => (
+        <div key={category.title} style={storybookDemoStyles.marginBottom32}>
+          <Typography
+            variant="h4"
+            marginBottom="md"
+            style={hooksOverviewStoriesStyles.sectionHeading}
+          >
             {category.title}
           </Typography>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            {category.hooks.map((hook, hookIndex) => (
-              <div
-                key={hookIndex}
-                style={{
-                  padding: '20px',
-                  backgroundColor: '#f8f9fa',
-                  border: '1px solid #dee2e6',
-                  borderRadius: '8px',
-                }}
+          <motion.div
+            style={hooksOverviewStoriesStyles.columnFlexGap20}
+            variants={storybookStaggerContainerVariants(motionTransitions.stagger)}
+            initial="hidden"
+            animate="visible"
+          >
+            {category.hooks.map((hook) => (
+              <motion.div
+                key={hook.name}
+                style={hooksOverviewStoriesStyles.hookExampleCard}
+                variants={storybookStaggerItemVariants}
+                transition={motionTransitions.springSoft}
               >
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+                <div style={hooksOverviewStoriesStyles.flexAlignCenterMarginBottom12}>
                   <Typography variant="h5" marginRight="sm">
                     {hook.name}
                   </Typography>
-                  <span style={hookDescriptionStyle}>{hook.description}</span>
+                  <span style={hooksOverviewStoriesStyles.hookDescriptionPill}>
+                    {hook.description}
+                  </span>
                 </div>
 
-                <div
-                  style={codeBlockContainerStyle}
-                >
-                  <pre style={codeBlockPreStyle}>{hook.code}</pre>
+                <div style={hooksOverviewStoriesStyles.codeBlockContainer}>
+                  <pre style={hooksOverviewStoriesStyles.codeBlockPre}>{hook.code}</pre>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       ))}
     </Card>
@@ -551,6 +566,8 @@ const SizeComponent = () => {
 
 // Компонент для демонстрации лучших практик
 const HooksBestPractices = () => {
+  const motionTransitions = useStorybookMotionTransitions();
+
   const practices = [
     {
       title: 'Импорт хуков',
@@ -651,67 +668,61 @@ const MyComponent = () => {
         Лучшие практики
       </Typography>
 
-      <div style={{ marginBottom: '24px' }}>
+      <div style={storybookDemoStyles.marginBottom24}>
         <Typography variant="body1" marginBottom="md">
           Рекомендации по эффективному использованию хуков в приложениях.
         </Typography>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <motion.div
+        style={hooksOverviewStoriesStyles.columnFlexGap24}
+        variants={storybookStaggerContainerVariants(motionTransitions.stagger)}
+        initial="hidden"
+        animate="visible"
+      >
         {practices.map((practice, index) => (
-          <div
-            key={index}
-            style={{
-              padding: '20px',
-              backgroundColor: '#f8f9fa',
-              border: '1px solid #dee2e6',
-              borderRadius: '8px',
-            }}
+          <motion.div
+            key={practice.title}
+            style={hooksOverviewStoriesStyles.hookExampleCard}
+            variants={storybookStaggerItemVariants}
+            transition={motionTransitions.springSoft}
           >
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+            <div style={hooksOverviewStoriesStyles.flexAlignCenterMarginBottom12}>
               <Tag
                 colorVariant="primary"
                 appearance="filled"
-                style={{
-                  marginRight: '12px',
-                  minWidth: '24px',
-                  height: '24px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
+                style={hooksOverviewStoriesStyles.tagNumberBadge}
               >
                 {index + 1}
               </Tag>
               <Typography variant="h5">{practice.title}</Typography>
             </div>
 
-            <Typography variant="body1" marginBottom="md" style={{ color: '#666' }}>
+            <Typography
+              variant="body1"
+              marginBottom="md"
+              style={hooksOverviewStoriesStyles.bodyTextMuted}
+            >
               {practice.description}
             </Typography>
 
-            <div
-              style={{
-                ...codeBlockContainerStyle,
-                marginBottom: '16px',
-              }}
-            >
-              <pre style={codeBlockPreStyle}>{practice.code}</pre>
+            <div style={hooksOverviewCodeBlockWithBottomMargin}>
+              <pre style={hooksOverviewStoriesStyles.codeBlockPre}>{practice.code}</pre>
             </div>
 
             <Typography variant="body2" marginBottom="sm" style={{ fontWeight: 'bold' }}>
               Советы:
             </Typography>
-            <ul style={{ margin: 0, paddingLeft: '20px' }}>
+            <ul style={hooksOverviewStoriesStyles.listUnstyled}>
               {practice.tips.map((tip, tipIndex) => (
-                <li key={tipIndex} style={{ marginBottom: '4px' }}>
+                <li key={tipIndex} style={hooksOverviewStoriesStyles.listItemMarginBottom4}>
                   <Typography variant="body2">{tip}</Typography>
                 </li>
               ))}
             </ul>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </Card>
   );
 };
@@ -730,11 +741,10 @@ export const BestPractices: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <StorybookStaggerStack>
       <HooksOverview />
       <HooksUsageExamples />
       <HooksBestPractices />
-    </div>
+    </StorybookStaggerStack>
   ),
 };
-

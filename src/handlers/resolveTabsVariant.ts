@@ -5,7 +5,10 @@ import { TabsDirection, TabsVariant } from '@/types/ui';
  * @param direction — горизонтальный или вертикальный список
  * @param variant — если задан, используется как есть; иначе: вертикально LINE, горизонтально PILL (макет Figma)
  */
-export const resolveTabsVariant = (direction: TabsDirection, variant?: TabsVariant): TabsVariant => {
+export const resolveTabsVariant = (
+  direction: TabsDirection,
+  variant?: TabsVariant,
+): TabsVariant => {
   if (variant !== undefined) {
     return variant;
   }

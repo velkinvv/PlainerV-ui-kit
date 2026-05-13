@@ -59,9 +59,8 @@ export const getModalMountNode = (
   return document.body ?? null;
 };
 
-export const hasModalButtons = (
-  buttons?: ModalButtonProps[],
-): buttons is ModalButtonProps[] => Array.isArray(buttons) && buttons.length > 0;
+export const hasModalButtons = (buttons?: ModalButtonProps[]): buttons is ModalButtonProps[] =>
+  Array.isArray(buttons) && buttons.length > 0;
 
 interface UseModalFocusParams {
   isOpen: boolean;
@@ -96,10 +95,7 @@ export const useModalFocus = ({
 const FOCUSABLE_SELECTOR =
   'a[href], area[href], input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
 
-export const useFocusTrap = (
-  isOpen: boolean,
-  containerRef: React.RefObject<HTMLElement>,
-) => {
+export const useFocusTrap = (isOpen: boolean, containerRef: React.RefObject<HTMLElement>) => {
   useEffect(() => {
     if (!isOpen || !containerRef.current) {
       return;
@@ -112,7 +108,9 @@ export const useFocusTrap = (
 
       const focusable = Array.from(
         container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
-      ).filter(element => !element.hasAttribute('disabled') && !element.getAttribute('aria-hidden'));
+      ).filter(
+        (element) => !element.hasAttribute('disabled') && !element.getAttribute('aria-hidden'),
+      );
 
       if (focusable.length === 0) {
         event.preventDefault();

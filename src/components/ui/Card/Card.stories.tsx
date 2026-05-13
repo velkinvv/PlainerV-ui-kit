@@ -1,9 +1,24 @@
 ﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { fn } from '@storybook/test';
+import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import { Card } from './Card';
+import { Calendar } from '../Calendar/Calendar';
+import { Avatar } from '../Avatar/Avatar';
+import { Badge } from '../Badge/Badge';
+import { Button } from '../buttons/Button';
+import { Divider } from '../Divider/Divider';
+import { Progress } from '../Progress/Progress';
+import { Typography } from '../Typography/Typography';
 import { CardVariant } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 import { DOC_CARD } from '@/components/ui/storyDocs/uiKitDocs';
+import { darkTheme } from '../../../themes/themes';
+import {
+  buildDarkCardSurfaceStyle,
+  buildDarkTertiaryCardStyle,
+  cardStoriesStyles,
+} from './Card.stories.styles';
 
 const meta: Meta<typeof Card> = {
   title: 'UI Kit/Surfaces/Card',
@@ -67,8 +82,8 @@ export const Default: Story = {
   args: {
     children: (
       <div>
-        <h3>Card Title</h3>
-        <p>This is a basic card with some content.</p>
+        <Typography variant="h3">Card Title</Typography>
+        <Typography>This is a basic card with some content.</Typography>
       </div>
     ),
   },
@@ -79,9 +94,11 @@ export const Elevated: Story = {
     variant: CardVariant.ELEVATED,
     children: (
       <div>
-        <h3>Elevated Card</h3>
-        <p>This card has an enhanced elevated shadow effect with subtle border.</p>
-        <p>Карточка с усиленной тенью и лёгкой обводкой.</p>
+        <Typography variant="h3">Elevated Card</Typography>
+        <Typography>
+          This card has an enhanced elevated shadow effect with subtle border.
+        </Typography>
+        <Typography>Карточка с усиленной тенью и лёгкой обводкой.</Typography>
       </div>
     ),
   },
@@ -92,8 +109,8 @@ export const Outlined: Story = {
     variant: CardVariant.OUTLINED,
     children: (
       <div>
-        <h3>Outlined Card</h3>
-        <p>This card has an outlined border.</p>
+        <Typography variant="h3">Outlined Card</Typography>
+        <Typography>This card has an outlined border.</Typography>
       </div>
     ),
   },
@@ -104,8 +121,8 @@ export const Filled: Story = {
     variant: CardVariant.FILLED,
     children: (
       <div>
-        <h3>Filled Card</h3>
-        <p>This card has a filled background.</p>
+        <Typography variant="h3">Filled Card</Typography>
+        <Typography>This card has a filled background.</Typography>
       </div>
     ),
   },
@@ -116,8 +133,8 @@ export const Small: Story = {
     size: Size.SM,
     children: (
       <div>
-        <h4>Small Card</h4>
-        <p>Compact card with small size.</p>
+        <Typography variant="h4">Small Card</Typography>
+        <Typography>Compact card with small size.</Typography>
       </div>
     ),
   },
@@ -128,8 +145,8 @@ export const Medium: Story = {
     size: Size.MD,
     children: (
       <div>
-        <h3>Medium Card</h3>
-        <p>Standard sized card.</p>
+        <Typography variant="h3">Medium Card</Typography>
+        <Typography>Standard sized card.</Typography>
       </div>
     ),
   },
@@ -140,8 +157,8 @@ export const Large: Story = {
     size: Size.LG,
     children: (
       <div>
-        <h2>Large Card</h2>
-        <p>Large card with more space for content.</p>
+        <Typography variant="h2">Large Card</Typography>
+        <Typography>Large card with more space for content.</Typography>
       </div>
     ),
   },
@@ -152,8 +169,8 @@ export const Hoverable: Story = {
     hoverable: true,
     children: (
       <div>
-        <h3>Hoverable Card</h3>
-        <p>Hover over this card to see the effect.</p>
+        <Typography variant="h3">Hoverable Card</Typography>
+        <Typography>Hover over this card to see the effect.</Typography>
       </div>
     ),
   },
@@ -162,11 +179,11 @@ export const Hoverable: Story = {
 export const Clickable: Story = {
   args: {
     clickable: true,
-    onClick: () => alert('Card clicked!'),
+    onClick: fn(),
     children: (
       <div>
-        <h3>Clickable Card</h3>
-        <p>Click this card to trigger an action.</p>
+        <Typography variant="h3">Clickable Card</Typography>
+        <Typography>Click this card to trigger an action.</Typography>
       </div>
     ),
   },
@@ -176,9 +193,9 @@ export const NoPadding: Story = {
   args: {
     padding: undefined,
     children: (
-      <div style={{ padding: '16px' }}>
-        <h3>No Padding Card</h3>
-        <p>This card has no internal padding.</p>
+      <div style={cardStoriesStyles.noPaddingContent}>
+        <Typography variant="h3">No Padding Card</Typography>
+        <Typography>This card has no internal padding.</Typography>
       </div>
     ),
   },
@@ -189,8 +206,8 @@ export const FullWidth: Story = {
     fullWidth: true,
     children: (
       <div>
-        <h3>Full Width Card</h3>
-        <p>This card takes the full width of its container.</p>
+        <Typography variant="h3">Full Width Card</Typography>
+        <Typography>This card takes the full width of its container.</Typography>
       </div>
     ),
   },
@@ -206,740 +223,160 @@ export const WithImage: Story = {
         <img
           src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=200&fit=crop"
           alt="Card Image"
-          style={{
-            width: '100%',
-            height: '200px',
-            objectFit: 'cover',
-            borderRadius: '8px 8px 0 0',
-          }}
+          style={cardStoriesStyles.imagePreview}
         />
-        <div style={{ padding: '16px' }}>
-          <h3>Card with Image</h3>
-          <p>This card includes an image at the top.</p>
+        <div style={cardStoriesStyles.imageContent}>
+          <Typography variant="h3">Card with Image</Typography>
+          <Typography>This card includes an image at the top.</Typography>
         </div>
       </div>
     ),
   },
 };
 
-// Карточка новости — составной пример
+const darkSurfaceTheme = darkTheme;
+const newsCardSurfaceStyle = buildDarkCardSurfaceStyle(
+  darkSurfaceTheme,
+  cardStoriesStyles.newsCardRoot,
+);
+const compositeCardSurfaceStyle = buildDarkCardSurfaceStyle(
+  darkSurfaceTheme,
+  cardStoriesStyles.compositeCard,
+);
+const primaryTaskSurfaceStyle = buildDarkTertiaryCardStyle(
+  darkSurfaceTheme,
+  cardStoriesStyles.taskPrimaryCard,
+);
+const rowTaskSurfaceStyle = buildDarkTertiaryCardStyle(
+  darkSurfaceTheme,
+  cardStoriesStyles.taskRowCard,
+);
+
+// Карточка новости — составной пример (на компонентах UI-kit + токены темы)
 export const NewsCard: Story = {
   render: () => (
-    <Card
-      variant={CardVariant.ELEVATED}
-      style={{
-        width: '742px',
-        borderRadius: '20px',
-        background: '#101C26',
-        padding: '30px',
-      }}
-    >
-      {/* Шапка новости */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '25px',
-        }}
-      >
-        {/* Пользователь */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '18px',
-          }}
-        >
-          {/* Аватар */}
-          <div
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              background: '#C4C4C4',
-              position: 'relative',
-            }}
-          >
-            {/* Индикатор онлайн */}
-            <div
-              style={{
-                position: 'absolute',
-                bottom: '0',
-                right: '0',
-                width: '10px',
-                height: '10px',
-                borderRadius: '50%',
-                background: '#94D263',
-                border: '2px solid #101C26',
-              }}
-            />
-          </div>
-
-          {/* Информация о пользователе */}
-          <div>
-            <div
-              style={{
-                color: '#FFFFFF',
-                fontSize: '14px',
-                fontWeight: '400',
-                marginBottom: '5px',
-              }}
-            >
-              Александр Филимонов
-            </div>
-            <div
-              style={{
-                color: 'rgba(255, 255, 255, 0.6)',
-                fontSize: '12px',
-                fontWeight: '400',
-              }}
-            >
-              3 мая 2022
-            </div>
-          </div>
-        </div>
-
-        {/* Действия */}
-        <div
-          style={{
-            display: 'flex',
-            gap: '14px',
-            alignItems: 'center',
-          }}
-        >
-          {/* Лайк */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '8px 16px 8px 8px',
-              background: '#162431',
-              borderRadius: '25px',
-              width: '77px',
-            }}
-          >
-            <div
-              style={{
-                width: '24px',
-                height: '24px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#FFFFFF',
-              }}
-            >
-              ♥
-            </div>
-            <span
-              style={{
-                color: '#FFFFFF',
-                fontSize: '14px',
-                fontWeight: '400',
-              }}
-            >
-              124
-            </span>
-          </div>
-
-          {/* Меню */}
-          <div
-            style={{
-              display: 'flex',
-              gap: '10px',
-              padding: '8px',
-              background: '#162431',
-              borderRadius: '25px',
-              width: '40px',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '3px',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <div
-                style={{
-                  width: '3px',
-                  height: '3px',
-                  borderRadius: '50%',
-                  background: '#FFFFFF',
-                }}
-              />
-              <div
-                style={{
-                  width: '3px',
-                  height: '3px',
-                  borderRadius: '50%',
-                  background: '#FFFFFF',
-                }}
-              />
-              <div
-                style={{
-                  width: '3px',
-                  height: '3px',
-                  borderRadius: '50%',
-                  background: '#FFFFFF',
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Контент */}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '15px',
-          marginBottom: '25px',
-        }}
-      >
-        <h2
-          style={{
-            color: '#FFFFFF',
-            fontSize: '20px',
-            fontWeight: '600',
-            lineHeight: '1.3',
-            margin: 0,
-          }}
-        >
-          элементы политического процесса ассоциативно распределены по отраслям
-        </h2>
-        <p
-          style={{
-            color: '#FFFFFF',
-            fontSize: '14px',
-            fontWeight: '400',
-            lineHeight: '1.8',
-            margin: 0,
-          }}
-        >
-          Вот вам яркий пример современных тенденций - базовый вектор развития выявляет срочную
-          потребность экспериментов, поражающих по своей масштабности и грандиозности. Внезапно,
-          диаграммы связей неоднозначны и будут разоблачены. С учётом сложившейся международной
-          обстановки, разбавленное изрядной долей эмпатии, рациональное мышление однозначно
-          фиксирует необходимость направлений прогрессивного развития.
-        </p>
-      </div>
-
-      {/* Изображения */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '14px',
-          alignItems: 'flex-start',
-        }}
-      >
-        {/* Основное изображение */}
-        <div
-          style={{
-            width: '427px',
-            height: '316px',
-            background: '#C4C4C4',
-            borderRadius: '18px',
-            flex: 1,
-          }}
-        />
-
-        {/* Дополнительные изображения */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '18px',
-            width: '241px',
-          }}
-        >
-          <div
-            style={{
-              width: '241px',
-              height: '149px',
-              background: '#C4C4C4',
-              borderRadius: '18px',
-            }}
-          />
-
-          {/* Изображение с оверлеем */}
-          <div
-            style={{
-              width: '241px',
-              height: '149px',
-              background: '#C4C4C4',
-              borderRadius: '18px',
-              position: 'relative',
-              overflow: 'hidden',
-            }}
-          >
-            {/* Оверлей */}
-            <div
-              style={{
-                position: 'absolute',
-                top: '0',
-                left: '0',
-                right: '0',
-                bottom: '0',
-                background: 'rgba(255, 255, 255, 0.5)',
-                backdropFilter: 'blur(6px)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '5px',
-                  padding: '10px 20px',
-                  background: 'rgba(22, 36, 49, 0.8)',
-                  borderRadius: '10px',
-                }}
+    <StyledThemeProvider theme={darkSurfaceTheme}>
+      <Card variant={CardVariant.ELEVATED} style={newsCardSurfaceStyle}>
+        <header style={cardStoriesStyles.newsHeader}>
+          <div style={cardStoriesStyles.newsAuthorGroup}>
+            <Avatar userName="Александр Филимонов" />
+            <div>
+              <Typography style={cardStoriesStyles.newsText} color={darkSurfaceTheme.colors.text}>
+                Александр Филимонов
+              </Typography>
+              <Typography
+                style={cardStoriesStyles.newsText}
+                color={darkSurfaceTheme.colors.textSecondary}
               >
-                <div
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#FFFFFF',
-                  }}
-                >
-                  📷
-                </div>
-                <span
-                  style={{
-                    color: '#FFFFFF',
-                    fontSize: '16px',
-                    fontWeight: '500',
-                  }}
-                >
-                  6
-                </span>
-              </div>
+                3 мая 2022
+              </Typography>
             </div>
           </div>
-        </div>
-      </div>
-    </Card>
+          <div style={cardStoriesStyles.newsActionGroup}>
+            <Badge>124</Badge>
+            <Button size={Size.SM}>Подробнее</Button>
+          </div>
+        </header>
+
+        <section style={cardStoriesStyles.newsBodySection}>
+          <Typography
+            variant="h2"
+            style={cardStoriesStyles.newsTitle}
+            color={darkSurfaceTheme.colors.text}
+          >
+            Элементы политического процесса распределены по отраслям
+          </Typography>
+          <Typography
+            style={cardStoriesStyles.newsText}
+            color={darkSurfaceTheme.colors.textSecondary}
+          >
+            Пример композиции карточки на базовых компонентах UI-kit с токенами темы, без самописных
+            декоративных блоков.
+          </Typography>
+        </section>
+
+        <Divider />
+
+        <section style={cardStoriesStyles.newsProgressSection}>
+          <Progress value={55} variant="linear" label="Прогресс публикации" showValueLabel />
+        </section>
+      </Card>
+    </StyledThemeProvider>
   ),
   parameters: {
     layout: 'padded',
   },
 };
 
-// Две карточки: календарь и список дел
+// Две карточки: календарь и список дел (оба блока — на компонентах UI-kit)
 export const CompositeCardsShowcase: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'flex',
-        gap: '20px',
-        flexWrap: 'wrap',
-        maxWidth: '800px',
-      }}
-    >
-      {/* Календарь */}
-      <Card
-        variant={CardVariant.ELEVATED}
-        style={{
-          width: '400px',
-          borderRadius: '20px',
-          background: 'linear-gradient(-19deg, rgba(6, 13, 21, 1) 0%, rgba(14, 26, 40, 1) 75%)',
-        }}
-      >
-        <div style={{ padding: '20px' }}>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '20px',
-              padding: '0 5px',
-            }}
+    <StyledThemeProvider theme={darkSurfaceTheme}>
+      <div style={cardStoriesStyles.compositeRoot}>
+        <Card variant={CardVariant.ELEVATED} style={compositeCardSurfaceStyle}>
+          <Typography
+            variant="h3"
+            style={cardStoriesStyles.compositeCardTitle}
+            color={darkSurfaceTheme.colors.text}
           >
-            <h3
-              style={{
-                color: '#FFFFFF',
-                fontSize: '16px',
-                fontWeight: '500',
-                margin: 0,
-              }}
-            >
-              Календарь
-            </h3>
-          </div>
+            Календарь
+          </Typography>
+          <Calendar
+            embedded
+            fullWidth
+            locale="ru-RU"
+            defaultVisibleMonth={new Date(2022, 4, 1)}
+            defaultValue={new Date(2022, 4, 18)}
+            showMonthPicker={false}
+          />
+        </Card>
 
-          <div
-            style={{
-              background: '#101C26',
-              borderRadius: '20px',
-              padding: '10px',
-            }}
+        <Card variant={CardVariant.ELEVATED} style={compositeCardSurfaceStyle}>
+          <Typography
+            variant="h3"
+            style={cardStoriesStyles.compositeCardTitle}
+            color={darkSurfaceTheme.colors.text}
           >
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '20px',
-                padding: '0 5px',
-              }}
-            >
-              <h4
-                style={{
-                  color: '#FFFFFF',
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  margin: 0,
-                }}
-              >
-                Май 2022
-              </h4>
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <button
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#FFFFFF',
-                    cursor: 'pointer',
-                  }}
-                >
-                  ←
-                </button>
-                <button
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#FFFFFF',
-                    cursor: 'pointer',
-                  }}
-                >
-                  →
-                </button>
-              </div>
-            </div>
-
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(7, 1fr)',
-                gap: '5px',
-                textAlign: 'center',
-              }}
-            >
-              {/* Дни недели */}
-              {['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map((day) => (
-                <div
-                  key={day}
-                  style={{
-                    padding: '10px',
-                    color: '#FFFFFF',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                  }}
-                >
-                  {day}
-                </div>
-              ))}
-
-              {/* Даты */}
-              {Array.from({ length: 35 }, (_, i) => {
-                const day = i + 1;
-                const isActive = day === 18;
-                const isInactive = day > 30;
-
-                return (
-                  <div
-                    key={day}
-                    style={{
-                      padding: '5px',
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: '36px',
-                        height: '36px',
-                        borderRadius: '36px',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        fontSize: '14px',
-                        fontWeight: isActive ? '600' : '400',
-                        color: isInactive ? 'rgba(255, 255, 255, 0.4)' : '#FFFFFF',
-                        background: isActive ? '#68D5F8' : 'transparent',
-                        border: isInactive ? '1px solid #101C26' : '1px solid #F2F2F2',
-                      }}
-                    >
-                      {day > 30 ? day - 30 : day}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </Card>
-
-      {/* Список дел */}
-      <Card
-        variant={CardVariant.ELEVATED}
-        style={{
-          width: '400px',
-          borderRadius: '20px',
-          background: '#101C26',
-        }}
-      >
-        <div style={{ padding: '20px' }}>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginBottom: '20px',
-            }}
-          >
-            <h3
-              style={{
-                color: '#FFFFFF',
-                fontSize: '16px',
-                fontWeight: '500',
-                margin: 0,
-              }}
-            >
-              Список дел
-            </h3>
-          </div>
-
-          {/* Первый элемент с прогрессом */}
-          <div
-            style={{
-              background: 'linear-gradient(-19deg, rgba(6, 13, 21, 1) 0%, rgba(14, 26, 40, 1) 75%)',
-              borderRadius: '20px',
-              padding: '10px 15px 20px',
-              marginBottom: '10px',
-              border: '1px solid #1C3140',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '15px',
-              }}
-            >
-              <h4
-                style={{
-                  color: '#FFFFFF',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  margin: 0,
-                }}
-              >
+            Список дел
+          </Typography>
+          <div style={cardStoriesStyles.tasksList}>
+            <Card variant={CardVariant.FILLED} style={primaryTaskSurfaceStyle}>
+              <Typography style={cardStoriesStyles.taskTitle} color={darkSurfaceTheme.colors.text}>
                 Заголовок дела
-              </h4>
-              <div
-                style={{
-                  background: '#1C3140',
-                  borderRadius: '25px',
-                  padding: '8px',
-                  display: 'flex',
-                  gap: '3px',
-                }}
+              </Typography>
+              <Typography
+                style={cardStoriesStyles.taskTimePrimary}
+                color={darkSurfaceTheme.colors.textSecondary}
               >
-                <div
-                  style={{
-                    width: '3px',
-                    height: '3px',
-                    background: '#FFFFFF',
-                    borderRadius: '50%',
-                  }}
-                ></div>
-                <div
-                  style={{
-                    width: '3px',
-                    height: '3px',
-                    background: '#FFFFFF',
-                    borderRadius: '50%',
-                  }}
-                ></div>
-                <div
-                  style={{
-                    width: '3px',
-                    height: '3px',
-                    background: '#FFFFFF',
-                    borderRadius: '50%',
-                  }}
-                ></div>
-              </div>
-            </div>
+                20:00 28 сентября
+              </Typography>
+              <Progress value={55} variant="linear" showValueLabel />
+            </Card>
 
-            <div
-              style={{
-                color: 'rgba(255, 255, 255, 0.6)',
-                fontSize: '14px',
-                marginBottom: '15px',
-              }}
-            >
-              20:00 28 сентября
-            </div>
+            <Divider />
 
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '15px',
-              }}
-            >
-              <div
-                style={{
-                  flex: 1,
-                  height: '3px',
-                  background: '#1C3140',
-                  borderRadius: '2px',
-                  position: 'relative',
-                }}
-              >
-                <div
-                  style={{
-                    width: '55%',
-                    height: '100%',
-                    background: '#94D263',
-                    borderRadius: '2px',
-                    boxShadow: '0px 4px 11px 0px rgba(148, 210, 99, 0.2)',
-                  }}
-                ></div>
-              </div>
-              <span
-                style={{
-                  color: 'rgba(255, 255, 255, 0.6)',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                }}
-              >
-                55%
-              </span>
-            </div>
-          </div>
-
-          {/* Разделитель */}
-          <div
-            style={{
-              height: '1px',
-              background: '#1C3140',
-              margin: '10px 0',
-            }}
-          ></div>
-
-          {/* Обычные элементы */}
-          {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              style={{
-                padding: '0 15px 10px',
-                marginBottom: '5px',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: '5px',
-                }}
-              >
-                <h4
-                  style={{
-                    color: '#FFFFFF',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    margin: 0,
-                  }}
+            {['21:00 28 сентября', '21:30 28 сентября', '22:00 28 сентября'].map((taskTime) => (
+              <Card key={taskTime} variant={CardVariant.FILLED} style={rowTaskSurfaceStyle}>
+                <Typography
+                  style={cardStoriesStyles.taskTitle}
+                  color={darkSurfaceTheme.colors.text}
                 >
                   Заголовок дела
-                </h4>
-                <div
-                  style={{
-                    background: '#F9F9F9',
-                    borderRadius: '25px',
-                    padding: '8px',
-                    display: 'flex',
-                    gap: '3px',
-                  }}
+                </Typography>
+                <Typography
+                  style={cardStoriesStyles.taskTimeSecondary}
+                  color={darkSurfaceTheme.colors.textSecondary}
                 >
-                  <div
-                    style={{
-                      width: '3px',
-                      height: '3px',
-                      background: 'rgba(255, 255, 255, 0.6)',
-                      borderRadius: '50%',
-                    }}
-                  ></div>
-                  <div
-                    style={{
-                      width: '3px',
-                      height: '3px',
-                      background: 'rgba(255, 255, 255, 0.6)',
-                      borderRadius: '50%',
-                    }}
-                  ></div>
-                  <div
-                    style={{
-                      width: '3px',
-                      height: '3px',
-                      background: 'rgba(255, 255, 255, 0.6)',
-                      borderRadius: '50%',
-                    }}
-                  ></div>
-                </div>
-              </div>
-              <div
-                style={{
-                  color: 'rgba(255, 255, 255, 0.6)',
-                  fontSize: '14px',
-                }}
-              >
-                21:00 28 сентября
-              </div>
-            </div>
-          ))}
+                  {taskTime}
+                </Typography>
+              </Card>
+            ))}
 
-          {/* Кнопка закрытия */}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              marginTop: '20px',
-            }}
-          >
-            <button
-              style={{
-                background: '#68D5F8',
-                border: 'none',
-                borderRadius: '59px',
-                padding: '16px',
-                cursor: 'pointer',
-                color: '#FFFFFF',
-                fontSize: '18px',
-              }}
-            >
-              ✕
-            </button>
+            <Button fullWidth>Закрыть</Button>
           </div>
-        </div>
-      </Card>
-    </div>
+        </Card>
+      </div>
+    </StyledThemeProvider>
   ),
   parameters: {
     layout: 'padded',
@@ -948,18 +385,18 @@ export const CompositeCardsShowcase: Story = {
 
 export const AllVariants: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-      <Card variant={CardVariant.ELEVATED} style={{ width: '200px' }}>
-        <h4>Elevated</h4>
-        <p>Elevated variant</p>
+    <div style={cardStoriesStyles.variantsRow}>
+      <Card variant={CardVariant.ELEVATED} style={cardStoriesStyles.variantCard}>
+        <Typography variant="h4">Elevated</Typography>
+        <Typography>Elevated variant</Typography>
       </Card>
-      <Card variant={CardVariant.OUTLINED} style={{ width: '200px' }}>
-        <h4>Outlined</h4>
-        <p>Outlined variant</p>
+      <Card variant={CardVariant.OUTLINED} style={cardStoriesStyles.variantCard}>
+        <Typography variant="h4">Outlined</Typography>
+        <Typography>Outlined variant</Typography>
       </Card>
-      <Card variant={CardVariant.FILLED} style={{ width: '200px' }}>
-        <h4>Filled</h4>
-        <p>Filled variant</p>
+      <Card variant={CardVariant.FILLED} style={cardStoriesStyles.variantCard}>
+        <Typography variant="h4">Filled</Typography>
+        <Typography>Filled variant</Typography>
       </Card>
     </div>
   ),
@@ -970,18 +407,18 @@ export const AllVariants: Story = {
 
 export const AllSizes: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-      <Card size={Size.SM} style={{ width: '150px' }}>
-        <h4>Small</h4>
-        <p>Small size</p>
+    <div style={cardStoriesStyles.sizesRow}>
+      <Card size={Size.SM} style={cardStoriesStyles.sizeCardSmall}>
+        <Typography variant="h4">Small</Typography>
+        <Typography>Small size</Typography>
       </Card>
-      <Card size={Size.MD} style={{ width: '200px' }}>
-        <h3>Medium</h3>
-        <p>Medium size</p>
+      <Card size={Size.MD} style={cardStoriesStyles.sizeCardMedium}>
+        <Typography variant="h3">Medium</Typography>
+        <Typography>Medium size</Typography>
       </Card>
-      <Card size={Size.LG} style={{ width: '250px' }}>
-        <h2>Large</h2>
-        <p>Large size</p>
+      <Card size={Size.LG} style={cardStoriesStyles.sizeCardLarge}>
+        <Typography variant="h2">Large</Typography>
+        <Typography>Large size</Typography>
       </Card>
     </div>
   ),
@@ -989,4 +426,3 @@ export const AllSizes: Story = {
     layout: 'padded',
   },
 };
-

@@ -39,7 +39,7 @@ import { SkeletonEffect } from '../shared';
 
 // Стилизованные компоненты
 const Container = styled.div.withConfig({
-  shouldForwardProp: prop => !['error'].includes(prop),
+  shouldForwardProp: (prop) => !['error'].includes(prop),
 })<{ disabled?: boolean; error?: boolean }>`
   position: relative;
   width: 100%;
@@ -85,7 +85,7 @@ const LoadingSpinner = styled.div<{ size?: Size }>`
 `;
 
 const InputWrapper = styled.div.withConfig({
-  shouldForwardProp: prop => !['focused', 'error', 'status'].includes(prop),
+  shouldForwardProp: (prop) => !['focused', 'error', 'status'].includes(prop),
 })<{
   focused: boolean;
   disabled?: boolean;
@@ -129,7 +129,7 @@ const InputWrapper = styled.div.withConfig({
 `;
 
 const _StyledInput = styled.input.withConfig({
-  shouldForwardProp: prop => !['textAlign'].includes(prop),
+  shouldForwardProp: (prop) => !['textAlign'].includes(prop),
 })<{
   size?: Size;
   hasIcon?: boolean;
@@ -181,7 +181,7 @@ const IconWrapper = styled.div<{ size?: Size }>`
 `;
 
 const _Label = styled.label.withConfig({
-  shouldForwardProp: prop => !['focused', 'error'].includes(prop),
+  shouldForwardProp: (prop) => !['focused', 'error'].includes(prop),
 })<{
   focused: boolean;
   disabled?: boolean;
@@ -233,7 +233,7 @@ const _Label = styled.label.withConfig({
 `;
 
 const AbsoluteLabel = styled.label.withConfig({
-  shouldForwardProp: prop => !['focused', 'error'].includes(prop),
+  shouldForwardProp: (prop) => !['focused', 'error'].includes(prop),
 })<{
   focused: boolean;
   disabled?: boolean;
@@ -348,7 +348,7 @@ const CharacterCounter = styled.div<{
 `;
 
 const TimePickerPopup = styled.div.withConfig({
-  shouldForwardProp: prop => !['isOpen', 'showSeconds'].includes(prop),
+  shouldForwardProp: (prop) => !['isOpen', 'showSeconds'].includes(prop),
 })<{
   isOpen: boolean;
   size?: Size;
@@ -426,7 +426,7 @@ const TimeColumnContent = styled.div`
 `;
 
 const TimeOption = styled.button.withConfig({
-  shouldForwardProp: prop => !['isSelected', 'isCurrent', 'isDisabled'].includes(prop),
+  shouldForwardProp: (prop) => !['isSelected', 'isCurrent', 'isDisabled'].includes(prop),
 })<{
   isSelected: boolean;
   isCurrent: boolean;
@@ -503,7 +503,7 @@ const ActionButton = styled(Button)`
 
 // Стили для range режима
 const RangeContainer = styled.div.withConfig({
-  shouldForwardProp: prop => !['showSeconds'].includes(prop),
+  shouldForwardProp: (prop) => !['showSeconds'].includes(prop),
 })<{ showSeconds?: boolean }>`
   display: flex;
   flex-direction: column;
@@ -519,7 +519,7 @@ const RangePickersWrapper = styled.div`
 `;
 
 const RangePickerContainer = styled.div.withConfig({
-  shouldForwardProp: prop => !['isActive'].includes(prop),
+  shouldForwardProp: (prop) => !['isActive'].includes(prop),
 })<{ isActive: boolean }>`
   display: flex;
   flex-direction: column;
@@ -576,7 +576,7 @@ const RangeFooter = styled.div`
 
 // Компоненты для сегментированного отображения времени
 const TimeSegmentsContainer = styled.div.withConfig({
-  shouldForwardProp: prop => !['textAlign'].includes(prop),
+  shouldForwardProp: (prop) => !['textAlign'].includes(prop),
 })<{
   size?: Size;
   textAlign?: 'left' | 'center' | 'right';
@@ -613,7 +613,7 @@ const TimeSegmentsContainer = styled.div.withConfig({
 `;
 
 const TimeSegment = styled.span.withConfig({
-  shouldForwardProp: prop => !['isActive'].includes(prop),
+  shouldForwardProp: (prop) => !['isActive'].includes(prop),
 })<{
   isActive: boolean;
   size?: Size;
@@ -697,7 +697,7 @@ const RangeTimeSeparator = styled.span`
 
 // Стилизованный input для обычного режима ввода времени
 const RegularTimeInput = styled.input.withConfig({
-  shouldForwardProp: prop => !['textAlign', 'hasIcon', 'size'].includes(prop),
+  shouldForwardProp: (prop) => !['textAlign', 'hasIcon', 'size'].includes(prop),
 })<{
   size?: Size;
   hasIcon?: boolean;
@@ -1744,7 +1744,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
               size={size}
               disabled={disabled}
               onClick={() => handleSegmentClick('hours', pickerType)}
-              onKeyDown={e => handleSegmentKeyDown(e, 'hours', pickerType)}
+              onKeyDown={(e) => handleSegmentKeyDown(e, 'hours', pickerType)}
               tabIndex={0}
             >
               --
@@ -1758,7 +1758,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
               size={size}
               disabled={disabled}
               onClick={() => handleSegmentClick('minutes', pickerType)}
-              onKeyDown={e => handleSegmentKeyDown(e, 'minutes', pickerType)}
+              onKeyDown={(e) => handleSegmentKeyDown(e, 'minutes', pickerType)}
               tabIndex={0}
             >
               --
@@ -1775,7 +1775,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                   size={size}
                   disabled={disabled}
                   onClick={() => handleSegmentClick('seconds', pickerType)}
-                  onKeyDown={e => handleSegmentKeyDown(e, 'seconds', pickerType)}
+                  onKeyDown={(e) => handleSegmentKeyDown(e, 'seconds', pickerType)}
                   tabIndex={0}
                 >
                   --
@@ -1800,7 +1800,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
             size={size}
             disabled={disabled}
             onClick={() => handleSegmentClick('hours', pickerType)}
-            onKeyDown={e => handleSegmentKeyDown(e, 'hours', pickerType)}
+            onKeyDown={(e) => handleSegmentKeyDown(e, 'hours', pickerType)}
             tabIndex={0}
           >
             {hours}
@@ -1814,7 +1814,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
             size={size}
             disabled={disabled}
             onClick={() => handleSegmentClick('minutes', pickerType)}
-            onKeyDown={e => handleSegmentKeyDown(e, 'minutes', pickerType)}
+            onKeyDown={(e) => handleSegmentKeyDown(e, 'minutes', pickerType)}
             tabIndex={0}
           >
             {minutes}
@@ -1830,7 +1830,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                 size={size}
                 disabled={disabled}
                 onClick={() => handleSegmentClick('seconds', pickerType)}
-                onKeyDown={e => handleSegmentKeyDown(e, 'seconds', pickerType)}
+                onKeyDown={(e) => handleSegmentKeyDown(e, 'seconds', pickerType)}
                 tabIndex={0}
               >
                 {seconds}
@@ -1926,10 +1926,10 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                 size={size}
                 hasIcon={showIcon}
                 textAlign={textAlign}
-                onSelect={disableCopying ? e => e.preventDefault() : undefined}
-                onCopy={disableCopying ? e => e.preventDefault() : undefined}
-                onCut={disableCopying ? e => e.preventDefault() : undefined}
-                onPaste={disableCopying ? e => e.preventDefault() : undefined}
+                onSelect={disableCopying ? (e) => e.preventDefault() : undefined}
+                onCopy={disableCopying ? (e) => e.preventDefault() : undefined}
+                onCut={disableCopying ? (e) => e.preventDefault() : undefined}
+                onPaste={disableCopying ? (e) => e.preventDefault() : undefined}
                 {...props}
               />
             )}
@@ -2007,7 +2007,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                     <TimeColumn>
                       <TimeColumnLabel>Часы</TimeColumnLabel>
                       <TimeColumnContent>
-                        {hours.map(hour => {
+                        {hours.map((hour) => {
                           const currentTime = rangeStart || getCurrentTime();
                           const time = createTime(
                             hour,
@@ -2023,7 +2023,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                               }
                               isCurrent={isCurrentTime(time)}
                               isDisabled={isHourDisabled(hour, currentTime)}
-                              onClick={e => {
+                              onClick={(e) => {
                                 e.stopPropagation();
                                 setActivePicker('start');
                                 handleTimeClick('hour', hour, 'start');
@@ -2039,7 +2039,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                     <TimeColumn>
                       <TimeColumnLabel>Минуты</TimeColumnLabel>
                       <TimeColumnContent>
-                        {minutes.map(minute => {
+                        {minutes.map((minute) => {
                           const currentTime = rangeStart || getCurrentTime();
                           const time = createTime(
                             getHoursFromTime(currentTime),
@@ -2055,7 +2055,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                               }
                               isCurrent={isCurrentTime(time)}
                               isDisabled={isMinuteDisabled(minute, currentTime)}
-                              onClick={e => {
+                              onClick={(e) => {
                                 e.stopPropagation();
                                 setActivePicker('start');
                                 handleTimeClick('minute', minute, 'start');
@@ -2072,7 +2072,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                       <TimeColumn>
                         <TimeColumnLabel>Секунды</TimeColumnLabel>
                         <TimeColumnContent>
-                          {seconds.map(second => {
+                          {seconds.map((second) => {
                             const currentTime = rangeStart || getCurrentTime();
                             const time = createTime(
                               getHoursFromTime(currentTime),
@@ -2088,7 +2088,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                                 }
                                 isCurrent={isCurrentTime(time)}
                                 isDisabled={isSecondDisabled(second, currentTime)}
-                                onClick={e => {
+                                onClick={(e) => {
                                   e.stopPropagation();
                                   setActivePicker('start');
                                   handleTimeClick('second', second, 'start');
@@ -2117,7 +2117,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                     <TimeColumn>
                       <TimeColumnLabel>Часы</TimeColumnLabel>
                       <TimeColumnContent>
-                        {hours.map(hour => {
+                        {hours.map((hour) => {
                           const currentTime = rangeEnd || getCurrentTime();
                           const time = createTime(
                             hour,
@@ -2133,7 +2133,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                               }
                               isCurrent={isCurrentTime(time)}
                               isDisabled={isHourDisabled(hour, currentTime)}
-                              onClick={e => {
+                              onClick={(e) => {
                                 e.stopPropagation();
                                 setActivePicker('end');
                                 handleTimeClick('hour', hour, 'end');
@@ -2149,7 +2149,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                     <TimeColumn>
                       <TimeColumnLabel>Минуты</TimeColumnLabel>
                       <TimeColumnContent>
-                        {minutes.map(minute => {
+                        {minutes.map((minute) => {
                           const currentTime = rangeEnd || getCurrentTime();
                           const time = createTime(
                             getHoursFromTime(currentTime),
@@ -2165,7 +2165,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                               }
                               isCurrent={isCurrentTime(time)}
                               isDisabled={isMinuteDisabled(minute, currentTime)}
-                              onClick={e => {
+                              onClick={(e) => {
                                 e.stopPropagation();
                                 setActivePicker('end');
                                 handleTimeClick('minute', minute, 'end');
@@ -2182,7 +2182,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                       <TimeColumn>
                         <TimeColumnLabel>Секунды</TimeColumnLabel>
                         <TimeColumnContent>
-                          {seconds.map(second => {
+                          {seconds.map((second) => {
                             const currentTime = rangeEnd || getCurrentTime();
                             const time = createTime(
                               getHoursFromTime(currentTime),
@@ -2198,7 +2198,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                                 }
                                 isCurrent={isCurrentTime(time)}
                                 isDisabled={isSecondDisabled(second, currentTime)}
-                                onClick={e => {
+                                onClick={(e) => {
                                   e.stopPropagation();
                                   setActivePicker('end');
                                   handleTimeClick('second', second, 'end');
@@ -2237,7 +2237,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                 <TimeColumn>
                   <TimeColumnLabel>Часы</TimeColumnLabel>
                   <TimeColumnContent>
-                    {hours.map(hour => {
+                    {hours.map((hour) => {
                       const activeTime = getActiveTime();
                       const time = createTime(
                         hour,
@@ -2268,7 +2268,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                 <TimeColumn>
                   <TimeColumnLabel>Минуты</TimeColumnLabel>
                   <TimeColumnContent>
-                    {minutes.map(minute => {
+                    {minutes.map((minute) => {
                       const activeTime = getActiveTime();
                       const time = createTime(
                         getHoursFromTime(activeTime),
@@ -2300,7 +2300,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                   <TimeColumn>
                     <TimeColumnLabel>Секунды</TimeColumnLabel>
                     <TimeColumnContent>
-                      {seconds.map(second => {
+                      {seconds.map((second) => {
                         const activeTime = getActiveTime();
                         const time = createTime(
                           getHoursFromTime(activeTime),

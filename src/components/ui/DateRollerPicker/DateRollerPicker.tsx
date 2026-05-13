@@ -60,14 +60,17 @@ const RollerColumn = ({
     return idx >= 0 ? idx : 0;
   }, [items, selectedValue]);
 
-  const scrollToIndex = useCallback((index: number, behavior: ScrollBehavior = 'auto') => {
-    const el = viewportRef.current;
-    if (!el) {
-      return;
-    }
-    const clamped = Math.max(0, Math.min(items.length - 1, index));
-    el.scrollTo({ top: clamped * DATE_ROLLER_ITEM_PX, behavior });
-  }, [items.length]);
+  const scrollToIndex = useCallback(
+    (index: number, behavior: ScrollBehavior = 'auto') => {
+      const el = viewportRef.current;
+      if (!el) {
+        return;
+      }
+      const clamped = Math.max(0, Math.min(items.length - 1, index));
+      el.scrollTo({ top: clamped * DATE_ROLLER_ITEM_PX, behavior });
+    },
+    [items.length],
+  );
 
   useLayoutEffect(() => {
     scrollToIndex(selectedIndex, 'auto');
@@ -221,7 +224,12 @@ export const DateRollerPicker: React.FC<DateRollerPickerProps> = ({
   );
 
   return (
-    <DateRollerRoot className={className} $size={size} role="group" aria-label="Выбор даты роллерами">
+    <DateRollerRoot
+      className={className}
+      $size={size}
+      role="group"
+      aria-label="Выбор даты роллерами"
+    >
       <RollerColumn
         ariaLabel="День"
         items={dayItems}

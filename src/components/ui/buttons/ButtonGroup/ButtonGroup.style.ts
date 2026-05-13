@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import type { ButtonGroupAttachedShape, ButtonGroupOrientation } from '@/types/ui';
-import { Size } from '@/types/sizes';
+import type { Size } from '@/types/sizes';
 import { getButtonGroupAttachedOuterRadius } from './handlers';
 
 /**
@@ -55,15 +55,27 @@ export const ButtonGroupRoot = styled.div<{
             }
 
             ${attachedSegmentChildSelector}:first-of-type {
-              border-top-left-radius: ${getButtonGroupAttachedOuterRadius($size, $attachedShape)} !important;
-              border-bottom-left-radius: ${getButtonGroupAttachedOuterRadius($size, $attachedShape)} !important;
+              border-top-left-radius: ${getButtonGroupAttachedOuterRadius(
+                $size,
+                $attachedShape,
+              )} !important;
+              border-bottom-left-radius: ${getButtonGroupAttachedOuterRadius(
+                $size,
+                $attachedShape,
+              )} !important;
               border-top-right-radius: 0 !important;
               border-bottom-right-radius: 0 !important;
             }
 
             ${attachedSegmentChildSelector}:last-of-type {
-              border-top-right-radius: ${getButtonGroupAttachedOuterRadius($size, $attachedShape)} !important;
-              border-bottom-right-radius: ${getButtonGroupAttachedOuterRadius($size, $attachedShape)} !important;
+              border-top-right-radius: ${getButtonGroupAttachedOuterRadius(
+                $size,
+                $attachedShape,
+              )} !important;
+              border-bottom-right-radius: ${getButtonGroupAttachedOuterRadius(
+                $size,
+                $attachedShape,
+              )} !important;
               border-top-left-radius: 0 !important;
               border-bottom-left-radius: 0 !important;
             }
@@ -74,15 +86,27 @@ export const ButtonGroupRoot = styled.div<{
             }
 
             ${attachedSegmentChildSelector}:first-of-type {
-              border-top-left-radius: ${getButtonGroupAttachedOuterRadius($size, $attachedShape)} !important;
-              border-top-right-radius: ${getButtonGroupAttachedOuterRadius($size, $attachedShape)} !important;
+              border-top-left-radius: ${getButtonGroupAttachedOuterRadius(
+                $size,
+                $attachedShape,
+              )} !important;
+              border-top-right-radius: ${getButtonGroupAttachedOuterRadius(
+                $size,
+                $attachedShape,
+              )} !important;
               border-bottom-left-radius: 0 !important;
               border-bottom-right-radius: 0 !important;
             }
 
             ${attachedSegmentChildSelector}:last-of-type {
-              border-bottom-left-radius: ${getButtonGroupAttachedOuterRadius($size, $attachedShape)} !important;
-              border-bottom-right-radius: ${getButtonGroupAttachedOuterRadius($size, $attachedShape)} !important;
+              border-bottom-left-radius: ${getButtonGroupAttachedOuterRadius(
+                $size,
+                $attachedShape,
+              )} !important;
+              border-bottom-right-radius: ${getButtonGroupAttachedOuterRadius(
+                $size,
+                $attachedShape,
+              )} !important;
               border-top-left-radius: 0 !important;
               border-top-right-radius: 0 !important;
             }

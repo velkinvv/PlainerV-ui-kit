@@ -1,6 +1,12 @@
 import styled, { css } from 'styled-components';
 import { TooltipPosition } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
+import {
+  buildHoverPressMotionCss,
+  buildSurfaceTransitionCss,
+  uiMotionSurfaceDuration,
+  uiMotionSurfaceEasing,
+} from '../../../handlers/uiMotionStyleHandlers';
 import { ZIndexHandler } from '../../../handlers/uiHandlers';
 
 /**
@@ -42,6 +48,7 @@ export const TooltipContent = styled.div<{
   align-items: center;
   justify-content: center;
   gap: 10px; // Gap из макета
+  will-change: transform, opacity;
 
   /* Размеры согласно макету */
   ${({ $size }) => {
@@ -91,10 +98,11 @@ export const TooltipContent = styled.div<{
     const scale = $isVisible ? 'scale(1)' : 'scale(0.8)';
     return `${baseTransform} ${scale}`;
   }};
-  transition:
-    opacity 0.2s ease-in-out,
-    visibility 0.2s ease-in-out,
-    transform 0.2s ease-in-out;
+  ${buildSurfaceTransitionCss(
+    `opacity ${uiMotionSurfaceDuration} ${uiMotionSurfaceEasing},
+     visibility ${uiMotionSurfaceDuration} ${uiMotionSurfaceEasing},
+     transform ${uiMotionSurfaceDuration} ${uiMotionSurfaceEasing}`,
+  )}
 
   /* Позиционирование */
   left: ${({ $position, $placement }) => {
@@ -186,4 +194,11 @@ export const TooltipContent = styled.div<{
 export const TooltipTrigger = styled.div`
   display: inline-block;
   cursor: help;
+  transition: transform 0.12s ease;
+  ${buildHoverPressMotionCss({
+    hoverSelector: '&:hover',
+    activeSelector: '&:active',
+    hoverTransform: 'none',
+    activeTransform: 'scale(0.98)',
+  })}
 `;

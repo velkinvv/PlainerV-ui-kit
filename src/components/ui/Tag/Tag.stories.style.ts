@@ -1,10 +1,18 @@
 import styled from 'styled-components';
+import { lightTheme } from '@/themes/themes';
 
 /** Вертикальный стек секций сторис */
 export const TagStoriesStack = styled.div`
   display: flex;
   flex-direction: column;
   gap: 28px;
+`;
+
+/** Уплотнённый стек для матрицы цветов */
+export const TagStoriesCompactStack = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 `;
 
 /** Заголовок секции */
@@ -86,3 +94,22 @@ export const TagStoriesMatrixLabel = styled.span`
   font-family: ${({ theme }) => theme.typography.caption.fontFamily};
   color: ${({ theme }) => theme.colors.textSecondary};
 `;
+
+/** Кастомные цвета для примеров `customColors` в сторис */
+export const tagStoriesCustomColors = {
+  customSurface: {
+    background: `color-mix(in srgb, ${lightTheme.colors.tagPrimaryAccent} 18%, transparent)`,
+    border: lightTheme.colors.tagPrimaryAccent,
+    backgroundHover: `color-mix(in srgb, ${lightTheme.colors.tagPrimaryAccent} 28%, transparent)`,
+    color: lightTheme.colors.text,
+  },
+  orangeMarker: {
+    marker: lightTheme.colors.warning,
+  },
+  purpleMarker: {
+    marker: lightTheme.colors.tagAccentPurple,
+  },
+  tealMarker: {
+    marker: lightTheme.colors.tagAccentTeal,
+  },
+};

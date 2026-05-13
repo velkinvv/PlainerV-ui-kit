@@ -21,7 +21,12 @@ import {
   shouldShowInputClearButton,
   hasInputRightControls,
 } from '../shared';
-import { StyledTextArea, TextAreaWrapper, TextAreaClearButton, TextAreaSkeleton } from './TextArea.style';
+import {
+  StyledTextArea,
+  TextAreaWrapper,
+  TextAreaClearButton,
+  TextAreaSkeleton,
+} from './TextArea.style';
 import { getTextAreaCurrentLength, getTextAreaStatus, shouldShowTextAreaCounter } from './handlers';
 
 export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(

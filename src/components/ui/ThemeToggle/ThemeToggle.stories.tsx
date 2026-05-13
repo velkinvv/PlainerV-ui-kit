@@ -2,6 +2,7 @@
 import { ThemeToggle } from './ThemeToggle';
 import React from 'react';
 import { DOC_THEME_TOGGLE } from '@/components/ui/storyDocs/uiKitDocs';
+import { themeToggleStoriesStyles } from './ThemeToggle.stories.styles';
 
 const meta: Meta<typeof ThemeToggle> = {
   title: 'UI Kit/Utils/ThemeToggle',
@@ -26,19 +27,9 @@ export const Default: Story = {
 
 export const WithBackground: Story = {
   render: () => (
-    <div
-      style={{
-        padding: '20px',
-        background: 'var(--background)',
-        borderRadius: '8px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '16px',
-      }}
-    >
+    <div style={themeToggleStoriesStyles.withBackgroundContainer}>
       <span>Light/Dark Theme:</span>
       <ThemeToggle />
     </div>
   ),
 };
-

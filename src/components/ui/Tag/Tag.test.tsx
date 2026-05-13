@@ -27,7 +27,10 @@ describe('Tag', () => {
 
   it('иконки слева и справа', () => {
     renderWithTheme(
-      <Tag leftIcon={<Icon name="IconExCopy" size={IconSize.XS} />} rightIcon={<Icon name="IconExCopy" size={IconSize.XS} />}>
+      <Tag
+        leftIcon={<Icon name="IconExCopy" size={IconSize.XS} />}
+        rightIcon={<Icon name="IconExCopy" size={IconSize.XS} />}
+      >
         Tag
       </Tag>,
     );

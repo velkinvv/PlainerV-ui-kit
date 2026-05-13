@@ -4,14 +4,25 @@ import { Size } from '../../../types/sizes';
 import { DropdownMenu } from './DropdownMenu';
 import { DropdownMenuItem } from './DropdownMenuItem';
 import { DOC_DROPDOWN_MENU } from '@/components/ui/storyDocs/uiKitDocs';
+import { lightTheme } from '@/themes/themes';
+import {
+  createDropdownMenuStoryThemeStyles,
+  dropdownMenuStoriesStyles,
+} from './DropdownMenu.stories.styles';
+
+const dropdownMenuStoryThemeStyles = createDropdownMenuStoryThemeStyles(lightTheme);
+const dropdownMenuCustomMetaStyle = {
+  ...dropdownMenuStoriesStyles.customContentMeta,
+  ...dropdownMenuStoryThemeStyles.customContentMeta,
+};
 
 const meta: Meta<typeof DropdownMenu> = {
   title: 'UI Kit/Navigation/Dropdown/DropdownMenu',
   component: DropdownMenu,
   subcomponents: { DropdownMenuItem },
   decorators: [
-    Story => (
-      <div style={{ maxWidth: 320 }}>
+    (Story) => (
+      <div style={dropdownMenuStoriesStyles.storyDecoratorRoot}>
         <Story />
       </div>
     ),
@@ -137,13 +148,13 @@ export const CustomContent: Story = {
   render: () => (
     <DropdownMenu>
       <DropdownMenuItem>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <span style={{ fontWeight: 600 }}>System update</span>
-          <span style={{ fontSize: 12, color: '#6b7280' }}>System will be updated tonight</span>
+        <div style={dropdownMenuStoriesStyles.customContentColumn}>
+          <span style={dropdownMenuStoriesStyles.customContentTitle}>System update</span>
+          <span style={dropdownMenuCustomMetaStyle}>System will be updated tonight</span>
         </div>
       </DropdownMenuItem>
       <DropdownMenuItem>
-        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+        <div style={dropdownMenuStoriesStyles.customContentRow}>
           <span>Toggle dark mode</span>
           <input type="checkbox" aria-label="Dark mode" />
         </div>
@@ -159,4 +170,3 @@ export const CustomContent: Story = {
     },
   },
 };
-

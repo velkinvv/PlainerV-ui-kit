@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Skeleton } from './Skeleton';
 import { SkeletonVariant, SkeletonGroupDirection } from '../../../types/ui';
 import { DOC_SKELETON } from '@/components/ui/storyDocs/uiKitDocs';
+import { skeletonStoriesStyles } from './Skeleton.stories.styles';
 
 const meta: Meta<typeof Skeleton> = {
   title: 'UI Kit/Data Display/Skeleton',
@@ -16,8 +17,8 @@ const meta: Meta<typeof Skeleton> = {
     },
   },
   decorators: [
-    Story => (
-      <div style={{ padding: 24 }}>
+    (Story) => (
+      <div style={skeletonStoriesStyles.decoratorPadding24}>
         <Story />
       </div>
     ),
@@ -120,17 +121,17 @@ export const Circle: Story = {
 
 export const Variants: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: 320 }}>
+    <div style={skeletonStoriesStyles.panelColumn24Width320}>
       <div>
-        <h3 style={{ marginBottom: 8 }}>Text variant</h3>
+        <h3 style={skeletonStoriesStyles.headingMarginBottom8}>Text variant</h3>
         <Skeleton variant={SkeletonVariant.TEXT} count={3} />
       </div>
       <div>
-        <h3 style={{ marginBottom: 8 }}>Avatar variant</h3>
+        <h3 style={skeletonStoriesStyles.headingMarginBottom8}>Avatar variant</h3>
         <Skeleton variant={SkeletonVariant.AVATAR} />
       </div>
       <div>
-        <h3 style={{ marginBottom: 8 }}>Button variant</h3>
+        <h3 style={skeletonStoriesStyles.headingMarginBottom8}>Button variant</h3>
         <Skeleton variant={SkeletonVariant.BUTTON} />
       </div>
     </div>
@@ -146,9 +147,9 @@ export const Variants: Story = {
 
 export const AnimatedList: Story = {
   render: () => (
-    <div style={{ width: 320, display: 'flex', flexDirection: 'column', gap: 16 }}>
-      {Array.from({ length: 3 }).map((_, idx) => (
-        <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <div style={skeletonStoriesStyles.panelColumn16Width320}>
+      {Array.from({ length: 3 }).map((_unusedItem, itemIndex) => (
+        <div key={itemIndex} style={skeletonStoriesStyles.rowAlignCenterGap12}>
           <Skeleton width={40} height={40} shape="circle" />
           <Skeleton count={2} height={12} width="80%" />
         </div>
@@ -168,17 +169,17 @@ export const Static: Story = {
 
 export const CustomAnimationSpeed: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: 320 }}>
+    <div style={skeletonStoriesStyles.panelColumn16Width320}>
       <div>
-        <h3 style={{ marginBottom: 8 }}>Медленная анимация (3s)</h3>
+        <h3 style={skeletonStoriesStyles.headingMarginBottom8}>Медленная анимация (3s)</h3>
         <Skeleton width="100%" height={16} animationSpeed={3} />
       </div>
       <div>
-        <h3 style={{ marginBottom: 8 }}>Стандартная анимация (1.5s)</h3>
+        <h3 style={skeletonStoriesStyles.headingMarginBottom8}>Стандартная анимация (1.5s)</h3>
         <Skeleton width="100%" height={16} animationSpeed={1.5} />
       </div>
       <div>
-        <h3 style={{ marginBottom: 8 }}>Быстрая анимация (0.5s)</h3>
+        <h3 style={skeletonStoriesStyles.headingMarginBottom8}>Быстрая анимация (0.5s)</h3>
         <Skeleton width="100%" height={16} animationSpeed={0.5} />
       </div>
     </div>
@@ -229,17 +230,17 @@ export const ColumnDirection: Story = {
 
 export const CustomBorderRadius: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: 320 }}>
+    <div style={skeletonStoriesStyles.panelColumn16Width320}>
       <div>
-        <h3 style={{ marginBottom: 8 }}>Стандартный (12px)</h3>
+        <h3 style={skeletonStoriesStyles.headingMarginBottom8}>Стандартный (12px)</h3>
         <Skeleton width="100%" height={40} />
       </div>
       <div>
-        <h3 style={{ marginBottom: 8 }}>Кастомный (4px)</h3>
+        <h3 style={skeletonStoriesStyles.headingMarginBottom8}>Кастомный (4px)</h3>
         <Skeleton width="100%" height={40} borderRadius={4} />
       </div>
       <div>
-        <h3 style={{ marginBottom: 8 }}>Кастомный (24px)</h3>
+        <h3 style={skeletonStoriesStyles.headingMarginBottom8}>Кастомный (24px)</h3>
         <Skeleton width="100%" height={40} borderRadius={24} />
       </div>
     </div>
@@ -271,10 +272,10 @@ export const Accessibility: Story = {
 
 export const ComplexLayout: Story = {
   render: () => (
-    <div style={{ width: 400, display: 'flex', flexDirection: 'column', gap: 24 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+    <div style={skeletonStoriesStyles.complexRoot}>
+      <div style={skeletonStoriesStyles.rowAlignCenterGap16}>
         <Skeleton variant={SkeletonVariant.AVATAR} />
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div style={skeletonStoriesStyles.flexibleColumnGap8}>
           <Skeleton variant={SkeletonVariant.TEXT} width="60%" />
           <Skeleton variant={SkeletonVariant.TEXT} width="80%" />
         </div>
@@ -282,7 +283,7 @@ export const ComplexLayout: Story = {
       <div>
         <Skeleton variant={SkeletonVariant.TEXT} count={3} gap={8} />
       </div>
-      <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+      <div style={skeletonStoriesStyles.rowEndGap12}>
         <Skeleton variant={SkeletonVariant.BUTTON} width={100} />
         <Skeleton variant={SkeletonVariant.BUTTON} width={100} />
       </div>
@@ -296,4 +297,3 @@ export const ComplexLayout: Story = {
     },
   },
 };
-

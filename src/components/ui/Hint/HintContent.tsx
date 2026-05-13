@@ -83,10 +83,7 @@ export const HintContent: React.FC<HintContentProps> = ({
             }
           >
             {allowHTML && typeof content === 'string' ? (
-              <span
-                dangerouslySetInnerHTML={{ __html: content }}
-                style={{ display: 'block' }}
-              />
+              <span dangerouslySetInnerHTML={{ __html: content }} style={{ display: 'block' }} />
             ) : renderContent ? (
               renderContent()
             ) : (
@@ -148,11 +145,7 @@ export const HintContent: React.FC<HintContentProps> = ({
         </>
       )}
       {visibilityTrigger === HintVisibilityTrigger.CLICK && (
-        <HintCloseButton
-          type="button"
-          onClick={onCloseClick}
-          aria-label="Закрыть подсказку"
-        />
+        <HintCloseButton type="button" onClick={onCloseClick} aria-label="Закрыть подсказку" />
       )}
     </HintContentWrapper>
   );

@@ -1,9 +1,7 @@
 import type { Dispatch, SetStateAction } from 'react';
 import { createContext, useContext } from 'react';
-import {
-  FloatingMenuDragSource,
-  FloatingMenuGroupVariant,
-} from '@/types/ui';
+import type { FloatingMenuDragSource } from '@/types/ui';
+import { FloatingMenuGroupVariant } from '@/types/ui';
 
 /** Контекст корня плавающего меню */
 export interface FloatingMenuRootContextValue {

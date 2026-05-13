@@ -6,6 +6,7 @@ import { Icon } from '../Icon/Icon';
 import { IconSize, Size } from '../../../types/sizes';
 import type { TagAppearance, TagColorVariant } from '../../../types/ui';
 import {
+  TagStoriesCompactStack,
   TagStoriesStack,
   TagStoriesSectionTitle,
   TagStoriesRow,
@@ -17,6 +18,7 @@ import {
   TagStoriesMatrixAppearanceTitle,
   TagStoriesMatrixColorRow,
   TagStoriesMatrixLabel,
+  tagStoriesCustomColors,
 } from './Tag.stories.style';
 import { DOC_TAG } from '@/components/ui/storyDocs/uiKitDocs';
 
@@ -177,7 +179,7 @@ export const PaletteMatrix: Story = {
       {TAG_APPEARANCES.map((appearance) => (
         <TagStoriesMatrixSection key={appearance}>
           <TagStoriesMatrixAppearanceTitle>{appearance}</TagStoriesMatrixAppearanceTitle>
-          <TagStoriesStack style={{ gap: 10 }}>
+          <TagStoriesCompactStack>
             {TAG_COLORS.map((colorVariant) => (
               <TagStoriesMatrixColorRow key={colorVariant}>
                 <TagStoriesMatrixLabel>{colorVariant}</TagStoriesMatrixLabel>
@@ -192,7 +194,7 @@ export const PaletteMatrix: Story = {
                 </Tag>
               </TagStoriesMatrixColorRow>
             ))}
-          </TagStoriesStack>
+          </TagStoriesCompactStack>
         </TagStoriesMatrixSection>
       ))}
     </TagStoriesStack>
@@ -276,7 +278,12 @@ export const Disabled: Story = {
           <TagStoriesSectionTitle>{appearance}</TagStoriesSectionTitle>
           <TagStoriesRow>
             {TAG_COLORS.map((colorVariant) => (
-              <Tag key={`${appearance}-${colorVariant}`} appearance={appearance} colorVariant={colorVariant} disabled>
+              <Tag
+                key={`${appearance}-${colorVariant}`}
+                appearance={appearance}
+                colorVariant={colorVariant}
+                disabled
+              >
                 Недоступно
               </Tag>
             ))}
@@ -402,7 +409,12 @@ export const StatusMarkerKind: Story = {
       <TagStoriesSectionTitle>filled</TagStoriesSectionTitle>
       <TagStoriesRow>
         {TAG_COLORS.map((colorVariant) => (
-          <Tag key={`m-${colorVariant}`} statusDisplay="marker" colorVariant={colorVariant} appearance="filled">
+          <Tag
+            key={`m-${colorVariant}`}
+            statusDisplay="marker"
+            colorVariant={colorVariant}
+            appearance="filled"
+          >
             {colorVariant}
           </Tag>
         ))}
@@ -410,7 +422,12 @@ export const StatusMarkerKind: Story = {
       <TagStoriesSectionTitle>outline</TagStoriesSectionTitle>
       <TagStoriesRow>
         {TAG_COLORS.map((colorVariant) => (
-          <Tag key={`mo-${colorVariant}`} statusDisplay="marker" colorVariant={colorVariant} appearance="outline">
+          <Tag
+            key={`mo-${colorVariant}`}
+            statusDisplay="marker"
+            colorVariant={colorVariant}
+            appearance="outline"
+          >
             {colorVariant}
           </Tag>
         ))}
@@ -442,35 +459,33 @@ export const CustomSurfaceColors: Story = {
     <TagStoriesStack>
       <TagStoriesSectionTitle>Полная кастомная пилюля (`background`)</TagStoriesSectionTitle>
       <TagStoriesRow>
-        <Tag
-          customColors={{
-            background: 'color-mix(in srgb, #6366f1 18%, transparent)',
-            border: '#6366f1',
-            backgroundHover: 'color-mix(in srgb, #6366f1 28%, transparent)',
-            color: '#312e81',
-          }}
-          onClick={fn()}
-        >
+        <Tag customColors={tagStoriesCustomColors.customSurface} onClick={fn()}>
           Кастом
         </Tag>
       </TagStoriesRow>
-      <TagStoriesSectionTitle>Только кастомный маркер (`marker`, фон из темы)</TagStoriesSectionTitle>
+      <TagStoriesSectionTitle>
+        Только кастомный маркер (`marker`, фон из темы)
+      </TagStoriesSectionTitle>
       <TagStoriesRow>
         <Tag
           statusDisplay="marker"
           colorVariant="neutral"
-          customColors={{ marker: '#f97316' }}
+          customColors={tagStoriesCustomColors.orangeMarker}
         >
           Orange dot
         </Tag>
         <Tag
           statusDisplay="marker"
           colorVariant="info"
-          customColors={{ marker: '#a855f7' }}
+          customColors={tagStoriesCustomColors.purpleMarker}
         >
           Info + purple marker
         </Tag>
-        <Tag statusDisplay="marker" colorVariant="custom" customColors={{ marker: '#14b8a6' }}>
+        <Tag
+          statusDisplay="marker"
+          colorVariant="custom"
+          customColors={tagStoriesCustomColors.tealMarker}
+        >
           custom + teal marker
         </Tag>
       </TagStoriesRow>

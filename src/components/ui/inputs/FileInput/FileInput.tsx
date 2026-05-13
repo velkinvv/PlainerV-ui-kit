@@ -238,7 +238,7 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
         if (effectiveFileLayout === 'dropzone') {
           e.preventDefault();
           e.stopPropagation();
-          setDragDepth(d => d + 1);
+          setDragDepth((d) => d + 1);
         }
         onDragEnterProp?.(e);
       },
@@ -250,7 +250,7 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
         if (effectiveFileLayout === 'dropzone') {
           e.preventDefault();
           e.stopPropagation();
-          setDragDepth(d => Math.max(0, d - 1));
+          setDragDepth((d) => Math.max(0, d - 1));
         }
         onDragLeaveProp?.(e);
       },
@@ -360,7 +360,9 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
           <FileCardMain htmlFor={fileInputId} $disabled={disabled}>
             <FileCardThumb>
               <Icon name="IconExDocument" size={iconSz} color="currentColor" />
-              {extensionBadge ? <FileCardExtensionBadge>{extensionBadge}</FileCardExtensionBadge> : null}
+              {extensionBadge ? (
+                <FileCardExtensionBadge>{extensionBadge}</FileCardExtensionBadge>
+              ) : null}
             </FileCardThumb>
             <FileCardTexts>
               <FileCardCaption>{fileCardLabel}</FileCardCaption>

@@ -1,14 +1,7 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { clsx } from 'clsx';
-import {
-  FloatingMenuDragSource,
-  FloatingMenuPlacement,
-  type FloatingMenuProps,
-} from '@/types/ui';
-import {
-  FloatingMenuRootContext,
-  type FloatingMenuRootContextValue,
-} from './FloatingMenuContext';
+import { FloatingMenuDragSource, FloatingMenuPlacement, type FloatingMenuProps } from '@/types/ui';
+import { FloatingMenuRootContext, type FloatingMenuRootContextValue } from './FloatingMenuContext';
 import { FloatingMenuBar, FloatingMenuRoot } from './FloatingMenu.style';
 import { clampFloatingMenuToViewport, getFloatingMenuFixedStyles } from './handlers';
 import { FloatingMenuDivider } from './FloatingMenuDivider';
@@ -46,9 +39,13 @@ export const FloatingMenu: React.FC<FloatingMenuProps> & {
   children,
 }) => {
   const rootRef = useRef<HTMLDivElement>(null);
-  const dragRef = useRef<{ pointerId: number; ox: number; oy: number; sx: number; sy: number } | null>(
-    null,
-  );
+  const dragRef = useRef<{
+    pointerId: number;
+    ox: number;
+    oy: number;
+    sx: number;
+    sy: number;
+  } | null>(null);
 
   const [offset, setOffset] = useState<{ x: number; y: number } | null>(null);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
@@ -205,7 +202,7 @@ export const FloatingMenu: React.FC<FloatingMenuProps> & {
         return;
       }
       const rect = el.getBoundingClientRect();
-      setOffset(prev =>
+      setOffset((prev) =>
         prev ? clampFloatingMenuToViewport(prev.x, prev.y, rect.width, rect.height, SAFE) : prev,
       );
     };

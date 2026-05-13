@@ -2,6 +2,7 @@ import React, { forwardRef } from 'react';
 import { clsx } from 'clsx';
 import { type BadgeProps, BadgeVariant } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
+import { useUiMotionPresets } from '../../../hooks/useUiMotion';
 import { BadgeContainer } from './Badge.style';
 
 export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
@@ -17,6 +18,8 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
     },
     ref,
   ) => {
+    const uiMotion = useUiMotionPresets();
+
     // Функция для форматирования содержимого Badge
     const formatBadgeContent = (content: React.ReactNode): React.ReactNode => {
       if (isDot) return null;
@@ -46,8 +49,7 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
         rounded={rounded}
         className={clsx('ui-badge', className)}
         onClick={onClick}
-        whileHover={onClick ? { scale: 1.05 } : undefined}
-        whileTap={onClick ? { scale: 0.95 } : undefined}
+        {...uiMotion.badge(Boolean(onClick))}
       >
         {formatBadgeContent(children)}
       </BadgeContainer>

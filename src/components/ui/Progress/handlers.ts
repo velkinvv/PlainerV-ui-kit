@@ -182,9 +182,7 @@ export const getStepperSteps = (
  * @param status - статус прогресса
  * @returns текст статуса
  */
-export const getStatusLabel = (
-  status: 'await' | 'loading' | 'success' | 'error',
-): string => {
+export const getStatusLabel = (status: 'await' | 'loading' | 'success' | 'error'): string => {
   switch (status) {
     case 'await':
       return 'Ожидание';
@@ -215,7 +213,9 @@ export const getAccessibilityProps = (
   computedValue: number,
   max: number,
   label: React.ReactNode | undefined,
-  info: { title?: React.ReactNode; value?: React.ReactNode; description?: React.ReactNode } | undefined,
+  info:
+    | { title?: React.ReactNode; value?: React.ReactNode; description?: React.ReactNode }
+    | undefined,
   computedStatus: 'await' | 'loading' | 'success' | 'error',
   indeterminate: boolean | undefined,
   labelId?: string,

@@ -10,7 +10,15 @@ const renderWithTheme = (ui: React.ReactElement) => render(<ThemeProvider>{ui}</
 
 describe('Slider', () => {
   it('рендерит роль slider и подписи min/max', () => {
-    renderWithTheme(<Slider min={0} max={10} defaultValue={5} formatMinLabel={() => '0'} formatMaxLabel={() => '10'} />);
+    renderWithTheme(
+      <Slider
+        min={0}
+        max={10}
+        defaultValue={5}
+        formatMinLabel={() => '0'}
+        formatMaxLabel={() => '10'}
+      />,
+    );
     expect(screen.getByRole('slider')).toBeInTheDocument();
     expect(screen.getByText('0')).toBeInTheDocument();
     expect(screen.getByText('10')).toBeInTheDocument();
@@ -66,7 +74,15 @@ describe('RangeSlider', () => {
   });
 
   it('в режиме скелетона не показывает бегунки', () => {
-    renderWithTheme(<RangeSlider skeleton min={0} max={100} formatMinLabel={() => ''} formatMaxLabel={() => ''} />);
+    renderWithTheme(
+      <RangeSlider
+        skeleton
+        min={0}
+        max={100}
+        formatMinLabel={() => ''}
+        formatMaxLabel={() => ''}
+      />,
+    );
     expect(screen.queryByRole('slider')).not.toBeInTheDocument();
   });
 });

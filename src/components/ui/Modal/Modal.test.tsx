@@ -15,7 +15,7 @@ describe('Modal', () => {
     renderWithTheme(
       <Modal isOpen={false} onClose={jest.fn()}>
         <div>Содержимое модального окна</div>
-      </Modal>
+      </Modal>,
     );
 
     expect(screen.queryByText('Содержимое модального окна')).not.toBeInTheDocument();
@@ -25,7 +25,7 @@ describe('Modal', () => {
     renderWithTheme(
       <Modal isOpen={true} onClose={jest.fn()}>
         <div>Содержимое модального окна</div>
-      </Modal>
+      </Modal>,
     );
 
     expect(screen.getByText('Содержимое модального окна')).toBeInTheDocument();
@@ -36,7 +36,7 @@ describe('Modal', () => {
     renderWithTheme(
       <Modal isOpen={true} onClose={handleClose} closeOnOverlayClick>
         <div>Содержимое</div>
-      </Modal>
+      </Modal>,
     );
 
     // Находим overlay и кликаем на него
@@ -51,7 +51,7 @@ describe('Modal', () => {
     renderWithTheme(
       <Modal isOpen={true} onClose={jest.fn()} title="Заголовок модального окна">
         <div>Содержимое</div>
-      </Modal>
+      </Modal>,
     );
 
     expect(screen.getByText('Заголовок модального окна')).toBeInTheDocument();
@@ -66,7 +66,7 @@ describe('Modal', () => {
         description="Описание модального окна"
       >
         <div>Содержимое</div>
-      </Modal>
+      </Modal>,
     );
 
     expect(screen.getByText('Описание модального окна')).toBeInTheDocument();
@@ -77,7 +77,7 @@ describe('Modal', () => {
     renderWithTheme(
       <Modal isOpen={true} onClose={handleClose} showCloseButton>
         <div>Содержимое</div>
-      </Modal>
+      </Modal>,
     );
 
     // Ищем кнопку закрытия (обычно это кнопка с иконкой закрытия)

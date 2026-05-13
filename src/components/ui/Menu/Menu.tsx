@@ -36,12 +36,9 @@ export const Menu: React.FC<MenuProps> & { Item: typeof MenuItem } = ({
     [dense],
   );
 
-  const onListKeyDown = useCallback(
-    (event: React.KeyboardEvent<HTMLUListElement>) => {
-      handleMenuListKeyboardNavigation(listRef.current, event);
-    },
-    [],
-  );
+  const onListKeyDown = useCallback((event: React.KeyboardEvent<HTMLUListElement>) => {
+    handleMenuListKeyboardNavigation(listRef.current, event);
+  }, []);
 
   useEffect(() => {
     if (!autoFocusFirstItem) {

@@ -6,6 +6,7 @@ import { Toast } from './Toast';
 import { ToastProvider, useToast } from './ToastProvider';
 import { ToastAppearance, type ToastItem, type ToastPlacement } from '@/types/ui';
 import { DOC_TOAST } from '@/components/ui/storyDocs/uiKitDocs';
+import { toastStoriesStyles } from './Toast.stories.styles';
 
 const meta: Meta<typeof Toast> = {
   title: 'UI Kit/Feedback/Toast',
@@ -233,14 +234,8 @@ const AdvancedToastControls = () => {
     playToasts('hover-pause-toast');
   };
 
-  const controlsContainerStyle: React.CSSProperties = {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '8px',
-  };
-
   return (
-    <div style={controlsContainerStyle}>
+    <div style={toastStoriesStyles.controlsRow}>
       <Button onClick={handleShowHoverToast}>Pause on hover</Button>
       <Button onClick={handleShowAndUpdate}>Update by id</Button>
       <Button variant="outlined" onClick={handlePauseAll}>
@@ -287,7 +282,7 @@ const ToastLimitDemoControls = () => {
   };
 
   return (
-    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+    <div style={toastStoriesStyles.controlsRow}>
       <Button onClick={handlePushMany}>Показать 5 уведомлений</Button>
       <Button variant="outlined" onClick={clearToasts}>
         Очистить
@@ -311,4 +306,3 @@ export const LimitNewestOnTopStacked: Story = {
     },
   },
 };
-

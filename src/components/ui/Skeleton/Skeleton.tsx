@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
-import type { SkeletonProps } from '../../../types/ui';
-import { SkeletonVariant, SkeletonGroupDirection } from '../../../types/ui';
+import type { SkeletonProps, SkeletonVariant } from '../../../types/ui';
+import { SkeletonGroupDirection } from '../../../types/ui';
 import { SkeletonGroup, SkeletonWrapper } from './Skeleton.style';
 
 /**
@@ -45,7 +45,9 @@ interface SkeletonNumericProps {
  * Валидирует count, gap и скорость анимации
  * @param props — подмножество пропсов скелетона
  */
-const validateNumericProps = (props: Pick<SkeletonProps, 'count' | 'gap' | 'animationSpeed'>): SkeletonNumericProps => {
+const validateNumericProps = (
+  props: Pick<SkeletonProps, 'count' | 'gap' | 'animationSpeed'>,
+): SkeletonNumericProps => {
   const count = props.count ?? 1;
   const gap = props.gap ?? 8;
   const animationSpeed = props.animationSpeed ?? 1.5;
@@ -121,6 +123,32 @@ export const Skeleton: React.FC<SkeletonProps> = ({
     [ariaLabel, animated],
   );
 
+  const groupItems = useMemo(
+    (): React.ReactElement[] =>
+      Array.from({ length: validatedProps.count }, (_, index) => (
+        <SkeletonWrapper
+          key={`skeleton-${index}`}
+          $width={finalWidth}
+          $height={finalHeight}
+          $shape={finalShape}
+          $animated={animated}
+          $animationSpeed={validatedProps.animationSpeed}
+          $borderRadius={finalBorderRadius}
+          $inline={inline}
+        />
+      )),
+    [
+      validatedProps.count,
+      finalWidth,
+      finalHeight,
+      finalShape,
+      animated,
+      validatedProps.animationSpeed,
+      finalBorderRadius,
+      inline,
+    ],
+  );
+
   // Рендерим один элемент
   if (validatedProps.count <= 1) {
     return (
@@ -139,32 +167,6 @@ export const Skeleton: React.FC<SkeletonProps> = ({
     );
   }
 
-  // Рендерим группу элементов
-  const items = useMemo((): React.ReactElement[] =>
-    Array.from({ length: validatedProps.count }, (_, index) => (
-      <SkeletonWrapper
-        key={`skeleton-${index}`}
-        $width={finalWidth}
-        $height={finalHeight}
-        $shape={finalShape}
-        $animated={animated}
-        $animationSpeed={validatedProps.animationSpeed}
-        $borderRadius={finalBorderRadius}
-        $inline={inline}
-      />
-    )),
-    [
-      validatedProps.count,
-      finalWidth,
-      finalHeight,
-      finalShape,
-      animated,
-      validatedProps.animationSpeed,
-      finalBorderRadius,
-      inline,
-    ],
-  );
-
   return (
     <SkeletonGroup
       className={className}
@@ -173,7 +175,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
       $direction={direction}
       {...ariaAttributes}
     >
-      {items}
+      {groupItems}
     </SkeletonGroup>
   );
 };

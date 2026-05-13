@@ -1,13 +1,12 @@
 import styled, { keyframes, css } from 'styled-components';
-import type { SpinnerProps } from '../../../types/ui';
-import { SpinnerVariant } from '../../../types/ui';
-import { Size } from '../../../types/sizes';
+import type { SpinnerVariant } from '../../../types/ui';
+import type { Size } from '../../../types/sizes';
 import { ColorHandler, SpinnerSizeHandler } from '../../../handlers/uiHandlers';
 
 /**
  * Анимация вращения для circle варианта
  */
-const createSpin = (speed: number) => keyframes`
+const createSpin = (_speed: number) => keyframes`
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 `;
@@ -15,7 +14,7 @@ const createSpin = (speed: number) => keyframes`
 /**
  * Анимация для dots варианта
  */
-const createDots = (speed: number) => keyframes`
+const createDots = (_speed: number) => keyframes`
   0%, 80%, 100% {
     transform: scale(0);
     opacity: 0.5;
@@ -29,7 +28,7 @@ const createDots = (speed: number) => keyframes`
 /**
  * Анимация для bars варианта
  */
-const createBars = (speed: number) => keyframes`
+const createBars = (_speed: number) => keyframes`
   0%, 40%, 100% {
     transform: scaleY(0.4);
     opacity: 0.5;
@@ -43,7 +42,7 @@ const createBars = (speed: number) => keyframes`
 /**
  * Анимация пульсации для pulse варианта
  */
-const createPulse = (speed: number) => keyframes`
+const createPulse = (_speed: number) => keyframes`
   0%, 100% {
     opacity: 1;
     transform: scale(1);
@@ -97,7 +96,7 @@ export const SpinnerContainer = styled.div<{
           height: ${spinnerSize};
           border: ${$thickness}px solid ${theme.colors.borderSecondary};
           border-top: ${$thickness}px solid ${spinnerColor};
-  border-radius: 50%;
+          border-radius: 50%;
           animation: ${createSpin($speed)} ${$speed}s linear infinite;
         `;
     }
@@ -157,8 +156,8 @@ export const SpinnerDots = styled.div<{
     height: calc(${({ $size, theme }) => SpinnerSizeHandler($size ?? theme.globalSize)} / 3);
     background-color: ${({ $color, theme }) => ColorHandler($color, theme.colors.primary)};
     border-radius: 50%;
-    animation: ${({ $speed }) => createDots($speed)} ${({ $speed }) => $speed * 1.4}s
-      ease-in-out infinite;
+    animation: ${({ $speed }) => createDots($speed)} ${({ $speed }) => $speed * 1.4}s ease-in-out
+      infinite;
 
     &:nth-child(1) {
       animation-delay: -${({ $speed }) => $speed * 0.32}s;
@@ -195,8 +194,8 @@ export const SpinnerBars = styled.div<{
     height: ${({ $size, theme }) => SpinnerSizeHandler($size ?? theme.globalSize)};
     background-color: ${({ $color, theme }) => ColorHandler($color, theme.colors.primary)};
     border-radius: 2px;
-    animation: ${({ $speed }) => createBars($speed)} ${({ $speed }) => $speed * 1.2}s
-      ease-in-out infinite;
+    animation: ${({ $speed }) => createBars($speed)} ${({ $speed }) => $speed * 1.2}s ease-in-out
+      infinite;
 
     &:nth-child(1) {
       animation-delay: -${({ $speed }) => $speed * 0.4}s;

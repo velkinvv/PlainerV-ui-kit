@@ -804,7 +804,7 @@ const ProgressComponent = forwardRef<HTMLDivElement, ProgressProps>(
                 </ProgressValue>
               )}
             </ProgressRow>
-            {segments.some(s => s.label) && (
+            {segments.some((s) => s.label) && (
               <div
                 style={{
                   display: 'flex',

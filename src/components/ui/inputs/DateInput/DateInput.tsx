@@ -40,7 +40,7 @@ import {
 // Используем IconWrapper из общих стилей
 
 const _Label = styled.label.withConfig({
-  shouldForwardProp: prop => !['focused', 'disabled', 'error', 'size'].includes(prop),
+  shouldForwardProp: (prop) => !['focused', 'disabled', 'error', 'size'].includes(prop),
 })<{
   focused: boolean;
   disabled?: boolean;
@@ -93,7 +93,7 @@ const _Label = styled.label.withConfig({
 `;
 
 const AbsoluteLabel = styled.label.withConfig({
-  shouldForwardProp: prop => !['focused', 'disabled', 'error', 'size'].includes(prop),
+  shouldForwardProp: (prop) => !['focused', 'disabled', 'error', 'size'].includes(prop),
 })<{
   focused: boolean;
   disabled?: boolean;
@@ -207,7 +207,7 @@ const IconButton = styled.button`
 
 /** Ширина как у `InputWrapper`, чтобы счётчик и подписи не растягивались на 100% ширины внешнего контейнера */
 const DateInputFieldStack = styled.div.withConfig({
-  shouldForwardProp: prop => !['fullWidth'].includes(prop),
+  shouldForwardProp: (prop) => !['fullWidth'].includes(prop),
 })<{ fullWidth?: boolean }>`
   display: flex;
   flex-direction: column;
@@ -217,7 +217,7 @@ const DateInputFieldStack = styled.div.withConfig({
 `;
 
 const CalendarPopup = styled.div.withConfig({
-  shouldForwardProp: prop => !['isOpen', 'size', '$calendarFullWidth'].includes(prop),
+  shouldForwardProp: (prop) => !['isOpen', 'size', '$calendarFullWidth'].includes(prop),
 })<{ isOpen: boolean; size?: Size; $calendarFullWidth?: boolean }>`
   position: absolute;
   top: 100%;
@@ -241,7 +241,7 @@ const CalendarPopup = styled.div.withConfig({
 
 // Стилизованные компоненты для сегментированного ввода даты
 const DateSegmentsContainer = styled.div.withConfig({
-  shouldForwardProp: prop => !['size', 'textAlign'].includes(prop),
+  shouldForwardProp: (prop) => !['size', 'textAlign'].includes(prop),
 })<{
   size?: Size;
   textAlign?: 'left' | 'center' | 'right';
@@ -263,7 +263,7 @@ const DateSegmentsContainer = styled.div.withConfig({
 `;
 
 const DateSegment = styled.span.withConfig({
-  shouldForwardProp: prop => !['isActive', 'size', 'disabled'].includes(prop),
+  shouldForwardProp: (prop) => !['isActive', 'size', 'disabled'].includes(prop),
 })<{
   isActive: boolean;
   size?: Size;
@@ -1117,7 +1117,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
       // Проверяем disabledDates
       if (
         disabledDates.some(
-          disabledDate =>
+          (disabledDate) =>
             disabledDate.getFullYear() === date.getFullYear() &&
             disabledDate.getMonth() === date.getMonth() &&
             disabledDate.getDate() === date.getDate(),
@@ -1169,7 +1169,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
             size={size}
             disabled={disabled}
             onClick={() => handleSegmentClick('day', pickerType)}
-            onKeyDown={e => handleSegmentKeyDown(e, 'day', pickerType)}
+            onKeyDown={(e) => handleSegmentKeyDown(e, 'day', pickerType)}
             tabIndex={0}
           >
             {getDisplayValue('day')}
@@ -1181,7 +1181,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
             size={size}
             disabled={disabled}
             onClick={() => handleSegmentClick('month', pickerType)}
-            onKeyDown={e => handleSegmentKeyDown(e, 'month', pickerType)}
+            onKeyDown={(e) => handleSegmentKeyDown(e, 'month', pickerType)}
             tabIndex={0}
           >
             {getDisplayValue('month')}
@@ -1193,7 +1193,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
             size={size}
             disabled={disabled}
             onClick={() => handleSegmentClick('year', pickerType)}
-            onKeyDown={e => handleSegmentKeyDown(e, 'year', pickerType)}
+            onKeyDown={(e) => handleSegmentKeyDown(e, 'year', pickerType)}
             tabIndex={0}
           >
             {getDisplayValue('year')}
@@ -1275,100 +1275,106 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
           </div>
         )}
         <DateInputFieldStack fullWidth={fullWidth}>
-        {skeleton ? (
-          <SkeletonEffect size={size} fullWidth />
-        ) : (
-          <InputWrapper focused={isOpen} error={error} size={size} status={status} fullWidth={fullWidth}>
-            {showIcon && (
-              <IconWrapper size={size}>
-                {isLoading ? (
-                  <LoadingSpinner size={size} />
+          {skeleton ? (
+            <SkeletonEffect size={size} fullWidth />
+          ) : (
+            <InputWrapper
+              focused={isOpen}
+              error={error}
+              size={size}
+              status={status}
+              fullWidth={fullWidth}
+            >
+              {showIcon && (
+                <IconWrapper size={size}>
+                  {isLoading ? (
+                    <LoadingSpinner size={size} />
+                  ) : (
+                    <IconButton onClick={handleIconClick}>
+                      {icon ? (
+                        icon
+                      ) : (
+                        <Icon
+                          name="IconPlainerCalendar"
+                          size={
+                            size === Size.SM
+                              ? IconSize.XS
+                              : size === Size.LG
+                                ? IconSize.MD
+                                : IconSize.SM
+                          }
+                        />
+                      )}
+                    </IconButton>
+                  )}
+                </IconWrapper>
+              )}
+              {segmented ? (
+                // Сегментированный режим ввода даты
+                range ? (
+                  renderRangeDateSegments()
                 ) : (
-                  <IconButton onClick={handleIconClick}>
-                    {icon ? (
-                      icon
-                    ) : (
-                      <Icon
-                        name="IconPlainerCalendar"
-                        size={
-                          size === Size.SM
-                            ? IconSize.XS
-                            : size === Size.LG
-                              ? IconSize.MD
-                              : IconSize.SM
-                        }
-                      />
-                    )}
-                  </IconButton>
-                )}
-              </IconWrapper>
-            )}
-            {segmented ? (
-              // Сегментированный режим ввода даты
-              range ? (
-                renderRangeDateSegments()
+                  renderDateSegments(selectedDate, 'start')
+                )
               ) : (
-                renderDateSegments(selectedDate, 'start')
-              )
-            ) : (
-              // Обычный режим ввода даты
-              <StyledInput
-                ref={ref || inputRef}
-                type="text"
-                value={inputValue}
-                onChange={handleInputChange}
-                onKeyDown={handleInputKeyDown}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-                onClick={handleInputClick}
-                disabled={disabled}
-                readOnly={readOnly}
-                placeholder={placeholder || 'Выберите дату'}
-                textAlign={textAlign}
-                onSelect={disableCopying ? e => e.preventDefault() : undefined}
-                onCopy={disableCopying ? e => e.preventDefault() : undefined}
-                onCut={disableCopying ? e => e.preventDefault() : undefined}
-                onPaste={disableCopying ? e => e.preventDefault() : undefined}
-                {...props}
-              />
-            )}
-            {displayClearIcon && inputValue && !disabled && (
-              <IconWrapper size={size} style={{ marginLeft: 'auto' }}>
-                <IconButton onClick={handleClearIconClick}>
-                  <Icon
-                    name="IconPlainerClose"
-                    size={getClearIconSizeForInputField(size)}
-                    {...clearIconProps}
-                  />
-                </IconButton>
-              </IconWrapper>
-            )}
-          </InputWrapper>
-        )}
-        {error && <ErrorMessage size={size}>{error}</ErrorMessage>}
-        {extraText && <ExtraText size={size}>{extraText}</ExtraText>}
-        {helperText && <ExtraText size={size}>{helperText}</ExtraText>}
-        {displayCharacterCounter &&
-          props.maxLength &&
-          (() => {
-            const currentValue = inputValue || '';
-            const currentLength = ignoreMaskCharacters
-              ? currentValue.replace(/[.\-/]/g, '').length
-              : currentValue.length;
+                // Обычный режим ввода даты
+                <StyledInput
+                  ref={ref || inputRef}
+                  type="text"
+                  value={inputValue}
+                  onChange={handleInputChange}
+                  onKeyDown={handleInputKeyDown}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  onClick={handleInputClick}
+                  disabled={disabled}
+                  readOnly={readOnly}
+                  placeholder={placeholder || 'Выберите дату'}
+                  textAlign={textAlign}
+                  onSelect={disableCopying ? (e) => e.preventDefault() : undefined}
+                  onCopy={disableCopying ? (e) => e.preventDefault() : undefined}
+                  onCut={disableCopying ? (e) => e.preventDefault() : undefined}
+                  onPaste={disableCopying ? (e) => e.preventDefault() : undefined}
+                  {...props}
+                />
+              )}
+              {displayClearIcon && inputValue && !disabled && (
+                <IconWrapper size={size} style={{ marginLeft: 'auto' }}>
+                  <IconButton onClick={handleClearIconClick}>
+                    <Icon
+                      name="IconPlainerClose"
+                      size={getClearIconSizeForInputField(size)}
+                      {...clearIconProps}
+                    />
+                  </IconButton>
+                </IconWrapper>
+              )}
+            </InputWrapper>
+          )}
+          {error && <ErrorMessage size={size}>{error}</ErrorMessage>}
+          {extraText && <ExtraText size={size}>{extraText}</ExtraText>}
+          {helperText && <ExtraText size={size}>{helperText}</ExtraText>}
+          {displayCharacterCounter &&
+            props.maxLength &&
+            (() => {
+              const currentValue = inputValue || '';
+              const currentLength = ignoreMaskCharacters
+                ? currentValue.replace(/[.\-/]/g, '').length
+                : currentValue.length;
 
-            // Проверяем threshold для отображения счетчика
-            const shouldShowCounter =
-              characterCounterVisibilityThreshold === 0 ||
-              (characterCounterVisibilityThreshold === 1
-                ? false
-                : currentLength >= props.maxLength! * characterCounterVisibilityThreshold);
+              // Проверяем threshold для отображения счетчика
+              const shouldShowCounter =
+                characterCounterVisibilityThreshold === 0 ||
+                (characterCounterVisibilityThreshold === 1
+                  ? false
+                  : currentLength >= props.maxLength! * characterCounterVisibilityThreshold);
 
-            return shouldShowCounter ? (
-              <CharacterCounter $size={size} $isOverLimit={currentLength > props.maxLength!}>
-                {`${currentLength}/${props.maxLength}`}
-              </CharacterCounter>
-            ) : null;
-          })()}
+              return shouldShowCounter ? (
+                <CharacterCounter $size={size} $isOverLimit={currentLength > props.maxLength!}>
+                  {`${currentLength}/${props.maxLength}`}
+                </CharacterCounter>
+              ) : null;
+            })()}
         </DateInputFieldStack>
 
         <CalendarPopup isOpen={isOpen} size={size} $calendarFullWidth={calendarFullWidth}>
@@ -1382,7 +1388,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
             embedded
             showTitle={false}
             visibleMonth={currentDate}
-            onVisibleMonthChange={monthStart => setCurrentDate(monthStart)}
+            onVisibleMonthChange={(monthStart) => setCurrentDate(monthStart)}
             locale="ru-RU"
             weekStartsOn={1}
             headerMode="monthYear"
@@ -1406,11 +1412,21 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
             weekdays={getWeekdayNames()}
             footer={
               <>
-                <Button variant={ButtonVariant.SECONDARY} size={size} type="button" onClick={handleClear}>
+                <Button
+                  variant={ButtonVariant.SECONDARY}
+                  size={size}
+                  type="button"
+                  onClick={handleClear}
+                >
                   Очистить
                 </Button>
                 {range ? (
-                  <Button variant={ButtonVariant.PRIMARY} size={size} type="button" onClick={handleApply}>
+                  <Button
+                    variant={ButtonVariant.PRIMARY}
+                    size={size}
+                    type="button"
+                    onClick={handleApply}
+                  >
                     Применить
                   </Button>
                 ) : null}

@@ -44,4 +44,8 @@ export {
 } from './InputStyles';
 
 // Общие хелперы поведения для Input/TextArea
-export { getInputDisplayValue, shouldShowInputClearButton, hasInputRightControls } from './handlers';
+export {
+  getInputDisplayValue,
+  shouldShowInputClearButton,
+  hasInputRightControls,
+} from './handlers';

@@ -37,11 +37,7 @@ export const composeNormalizedDate = (year: number, monthIndex0: number, day: nu
  * @param minDate - Нижняя граница (опционально).
  * @param maxDate - Верхняя граница (опционально).
  */
-export const clampDateToMinMaxCalendar = (
-  date: Date,
-  minDate?: Date,
-  maxDate?: Date,
-): Date => {
+export const clampDateToMinMaxCalendar = (date: Date, minDate?: Date, maxDate?: Date): Date => {
   let t = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
   if (minDate) {
     const minT = new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate()).getTime();

@@ -71,10 +71,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     },
     ref,
   ) => {
-    const inputId = useMemo(
-      () => id ?? `input-${Math.random().toString(36).slice(2, 10)}`,
-      [id],
-    );
+    const inputId = useMemo(() => id ?? `input-${Math.random().toString(36).slice(2, 10)}`, [id]);
 
     const [focused, setFocused] = React.useState(false);
     const [internalValue, setInternalValue] = React.useState(value || '');

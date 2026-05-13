@@ -4,6 +4,7 @@ import { TimeInput } from './TimeInput';
 import { Size, IconSize } from '../../../../types/sizes';
 import { Icon } from '../../Icon/Icon';
 import { DOC_TIME_INPUT } from '@/components/ui/storyDocs/uiKitDocs';
+import { timeInputStoriesStyles } from './TimeInput.stories.styles';
 
 const meta: Meta<typeof TimeInput> = {
   title: 'UI Kit/Inputs/TimeInput',
@@ -86,7 +87,10 @@ const meta: Meta<typeof TimeInput> = {
       control: { type: 'boolean' },
       description: 'Показывать кнопку с крестиком очистки',
     },
-    onClearIconClick: { action: 'clearIconClick', description: 'После сброса времени в компоненте' },
+    onClearIconClick: {
+      action: 'clearIconClick',
+      description: 'После сброса времени в компоненте',
+    },
     clearIconProps: {
       control: 'object',
       description:
@@ -130,7 +134,7 @@ export const Default: Story = {
   args: {
     placeholder: 'Выберите время',
     value: '14:30',
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
   },
 };
 
@@ -138,7 +142,7 @@ export const WithLabel: Story = {
   args: {
     label: 'Время начала',
     placeholder: 'Выберите время',
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
   },
 };
 
@@ -146,7 +150,7 @@ export const WithValue: Story = {
   args: {
     value: '14:30:00',
     placeholder: 'Выберите время',
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
   },
 };
 
@@ -154,7 +158,7 @@ export const Range: Story = {
   args: {
     range: true,
     placeholder: 'Выберите диапазон времени',
-    onChange: value => console.log('Time range changed:', value),
+    onChange: (value) => console.log('Time range changed:', value),
   },
 };
 
@@ -162,7 +166,7 @@ export const WithSeconds: Story = {
   args: {
     showSeconds: true,
     placeholder: 'Выберите время с секундами',
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
   },
 };
 
@@ -172,7 +176,7 @@ export const CustomSteps: Story = {
     secondStep: 30,
     showSeconds: true,
     placeholder: 'Время с шагом 15 минут и 30 секунд',
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
   },
 };
 
@@ -180,7 +184,7 @@ export const Small: Story = {
   args: {
     size: Size.SM,
     placeholder: 'Маленький размер',
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
   },
 };
 
@@ -188,7 +192,7 @@ export const Large: Story = {
   args: {
     size: Size.LG,
     placeholder: 'Большой размер',
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
   },
 };
 
@@ -197,7 +201,7 @@ export const Disabled: Story = {
     disabled: true,
     value: '14:30:00',
     placeholder: 'Отключенное поле',
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
   },
 };
 
@@ -205,7 +209,7 @@ export const WithError: Story = {
   args: {
     error: 'Неверный формат времени',
     placeholder: 'Поле с ошибкой',
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
   },
 };
 
@@ -213,7 +217,7 @@ export const WithoutIcon: Story = {
   args: {
     showIcon: false,
     placeholder: 'Без иконки',
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
   },
 };
 
@@ -225,7 +229,7 @@ export const RangeWithValue: Story = {
       end: '17:30:00',
     },
     placeholder: 'Диапазон времени',
-    onChange: value => console.log('Time range changed:', value),
+    onChange: (value) => console.log('Time range changed:', value),
   },
 };
 
@@ -235,7 +239,7 @@ export const DisabledSpecificTimes: Story = {
     label: 'Дизейбл конкретных времен',
     placeholder: '15:30 и 16:45 недоступны',
     disabledTimes: ['15:30', '16:45'],
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
   },
 };
 
@@ -244,7 +248,7 @@ export const DisabledHours: Story = {
     label: 'Дизейбл ночных часов',
     placeholder: 'Часы 0-2 и 22-23 недоступны',
     disabledHours: [0, 1, 2, 22, 23],
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
   },
 };
 
@@ -257,7 +261,7 @@ export const DisabledMinutes: Story = {
       28, 29, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 46, 47, 48, 49, 50, 51, 52,
       53, 54, 55, 56, 57, 58, 59,
     ],
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
   },
 };
 
@@ -271,7 +275,7 @@ export const DisabledSeconds: Story = {
       27, 28, 29, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
       51, 52, 53, 54, 55, 56, 57, 58, 59,
     ],
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
   },
 };
 
@@ -280,7 +284,7 @@ export const WorkingHours: Story = {
     label: 'Рабочие часы (9:00 - 18:00)',
     placeholder: 'Только рабочие часы',
     disabledHours: [0, 1, 2, 3, 4, 5, 6, 7, 8, 19, 20, 21, 22, 23],
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
   },
 };
 
@@ -299,7 +303,7 @@ export const LunchBreakDisabled: Story = {
       '13:45',
       '14:00',
     ],
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
   },
 };
 
@@ -314,7 +318,7 @@ export const CombinedDisabled: Story = {
       28, 29, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 46, 47, 48, 49, 50, 51, 52,
       53, 54, 55, 56, 57, 58, 59,
     ],
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
   },
 };
 
@@ -325,7 +329,7 @@ export const RangeWithDisabled: Story = {
     placeholder: 'Диапазон с ограничениями',
     disabledHours: [0, 1, 2, 22, 23],
     disabledTimes: ['15:30', '16:45'],
-    onChange: value => console.log('Time range changed:', value),
+    onChange: (value) => console.log('Time range changed:', value),
   },
 };
 
@@ -341,7 +345,7 @@ export const RangeWithSecondsDisabled: Story = {
       27, 28, 29, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
       51, 52, 53, 54, 55, 56, 57, 58, 59,
     ],
-    onChange: value => console.log('Time range changed:', value),
+    onChange: (value) => console.log('Time range changed:', value),
   },
 };
 
@@ -352,7 +356,7 @@ export const WithClearIcon: Story = {
     placeholder: 'Выберите время',
     displayClearIcon: true,
     value: '14:30',
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
     onClearIconClick: () => console.log('Clear icon clicked'),
   },
 };
@@ -367,7 +371,7 @@ export const RangeWithClearIcon: Story = {
       start: '09:00',
       end: '17:30',
     },
-    onChange: value => console.log('Time range changed:', value),
+    onChange: (value) => console.log('Time range changed:', value),
     onClearIconClick: () => console.log('Clear icon clicked'),
   },
 };
@@ -379,7 +383,7 @@ export const WithClearIconAndSeconds: Story = {
     showSeconds: true,
     displayClearIcon: true,
     value: '14:30:45',
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
     onClearIconClick: () => console.log('Clear icon clicked'),
   },
 };
@@ -390,7 +394,7 @@ export const SegmentedInput: Story = {
     label: 'Сегментированный ввод времени',
     placeholder: 'Кликните по сегментам для редактирования',
     value: '14:30',
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
   },
   parameters: {
     docs: {
@@ -408,7 +412,7 @@ export const SegmentedInputWithSeconds: Story = {
     placeholder: 'Кликните по сегментам для редактирования',
     showSeconds: true,
     value: '14:30:45',
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
   },
   parameters: {
     docs: {
@@ -429,7 +433,7 @@ export const SegmentedRangeInput: Story = {
       start: '09:00',
       end: '17:30',
     },
-    onChange: value => console.log('Time range changed:', value),
+    onChange: (value) => console.log('Time range changed:', value),
   },
   parameters: {
     docs: {
@@ -447,7 +451,7 @@ export const KeyboardInput: Story = {
     label: 'Ввод с клавиатуры',
     placeholder: 'Кликните на сегмент и введите цифры',
     value: '14:30',
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
   },
   parameters: {
     docs: {
@@ -465,7 +469,7 @@ export const KeyboardInputWithSeconds: Story = {
     placeholder: 'Кликните на сегмент и введите цифры',
     showSeconds: true,
     value: '14:30:45',
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
   },
   parameters: {
     docs: {
@@ -486,7 +490,7 @@ export const KeyboardRangeInput: Story = {
       start: '09:00',
       end: '17:30',
     },
-    onChange: value => console.log('Time range changed:', value),
+    onChange: (value) => console.log('Time range changed:', value),
   },
   parameters: {
     docs: {
@@ -505,7 +509,7 @@ export const TextAlignLeft: Story = {
     placeholder: 'Выберите время',
     textAlign: 'left',
     value: '14:30',
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
   },
   parameters: {
     docs: {
@@ -522,7 +526,7 @@ export const TextAlignCenter: Story = {
     placeholder: 'Выберите время',
     textAlign: 'center',
     value: '14:30',
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
   },
   parameters: {
     docs: {
@@ -539,7 +543,7 @@ export const TextAlignRight: Story = {
     placeholder: 'Выберите время',
     textAlign: 'right',
     value: '14:30',
-    onChange: value => console.log('Time changed:', value),
+    onChange: (value) => console.log('Time changed:', value),
   },
   parameters: {
     docs: {
@@ -552,20 +556,13 @@ export const TextAlignRight: Story = {
 
 export const TextAlignComparison: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '16px',
-        width: '400px',
-      }}
-    >
+    <div style={timeInputStoriesStyles.columnGap16Width400}>
       <TimeInput
         label="По левому краю (по умолчанию)"
         placeholder="Выберите время"
         textAlign="left"
         value="14:30"
-        onChange={value => console.log('Left aligned time changed:', value)}
+        onChange={(value) => console.log('Left aligned time changed:', value)}
       />
 
       <TimeInput
@@ -573,7 +570,7 @@ export const TextAlignComparison: Story = {
         placeholder="Выберите время"
         textAlign="center"
         value="14:30"
-        onChange={value => console.log('Center aligned time changed:', value)}
+        onChange={(value) => console.log('Center aligned time changed:', value)}
       />
 
       <TimeInput
@@ -581,7 +578,7 @@ export const TextAlignComparison: Story = {
         placeholder="Выберите время"
         textAlign="right"
         value="14:30"
-        onChange={value => console.log('Right aligned time changed:', value)}
+        onChange={(value) => console.log('Right aligned time changed:', value)}
       />
     </div>
   ),
@@ -597,14 +594,7 @@ export const TextAlignComparison: Story = {
 
 export const RangeTextAlignComparison: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '16px',
-        width: '600px',
-      }}
-    >
+    <div style={timeInputStoriesStyles.columnGap16Width600}>
       <TimeInput
         label="Range по левому краю"
         range={true}
@@ -614,7 +604,7 @@ export const RangeTextAlignComparison: Story = {
           start: '09:00',
           end: '17:30',
         }}
-        onChange={value => console.log('Left aligned range changed:', value)}
+        onChange={(value) => console.log('Left aligned range changed:', value)}
       />
 
       <TimeInput
@@ -626,7 +616,7 @@ export const RangeTextAlignComparison: Story = {
           start: '09:00',
           end: '17:30',
         }}
-        onChange={value => console.log('Center aligned range changed:', value)}
+        onChange={(value) => console.log('Center aligned range changed:', value)}
       />
 
       <TimeInput
@@ -638,7 +628,7 @@ export const RangeTextAlignComparison: Story = {
           start: '09:00',
           end: '17:30',
         }}
-        onChange={value => console.log('Right aligned range changed:', value)}
+        onChange={(value) => console.log('Right aligned range changed:', value)}
       />
     </div>
   ),
@@ -658,7 +648,7 @@ export const RegularInputMode: Story = {
     label: 'Обычный ввод времени',
     placeholder: 'Введите время',
     segmented: false,
-    onChange: value => console.log('Regular input changed:', value),
+    onChange: (value) => console.log('Regular input changed:', value),
   },
   parameters: {
     docs: {
@@ -673,7 +663,7 @@ export const SegmentedInputMode: Story = {
   args: {
     label: 'Сегментированный ввод времени',
     segmented: true,
-    onChange: value => console.log('Segmented input changed:', value),
+    onChange: (value) => console.log('Segmented input changed:', value),
   },
   parameters: {
     docs: {
@@ -690,7 +680,7 @@ export const RegularRangeInputMode: Story = {
     placeholder: 'HH:mm — HH:mm',
     range: true,
     segmented: false,
-    onChange: value => console.log('Regular range input changed:', value),
+    onChange: (value) => console.log('Regular range input changed:', value),
   },
   parameters: {
     docs: {
@@ -707,7 +697,7 @@ export const SegmentedRangeInputMode: Story = {
     label: 'Сегментированный ввод диапазона времени',
     range: true,
     segmented: true,
-    onChange: value => console.log('Segmented range input changed:', value),
+    onChange: (value) => console.log('Segmented range input changed:', value),
   },
   parameters: {
     docs: {
@@ -720,25 +710,18 @@ export const SegmentedRangeInputMode: Story = {
 
 export const InputModeComparison: Story = {
   render: () => (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '24px',
-        width: '400px',
-      }}
-    >
+    <div style={timeInputStoriesStyles.columnGap24Width400}>
       <TimeInput
         label="Обычный ввод"
         placeholder="Введите время"
         segmented={false}
-        onChange={value => console.log('Regular:', value)}
+        onChange={(value) => console.log('Regular:', value)}
       />
 
       <TimeInput
         label="Сегментированный ввод"
         segmented={true}
-        onChange={value => console.log('Segmented:', value)}
+        onChange={(value) => console.log('Segmented:', value)}
       />
 
       <TimeInput
@@ -746,14 +729,14 @@ export const InputModeComparison: Story = {
         placeholder="HH:mm — HH:mm"
         range={true}
         segmented={false}
-        onChange={value => console.log('Regular range:', value)}
+        onChange={(value) => console.log('Regular range:', value)}
       />
 
       <TimeInput
         label="Сегментированный ввод диапазона"
         range={true}
         segmented={true}
-        onChange={value => console.log('Segmented range:', value)}
+        onChange={(value) => console.log('Segmented range:', value)}
       />
     </div>
   ),
@@ -776,20 +759,13 @@ export const TimeFormatDemo: Story = {
     const [time5, setTime5] = React.useState('14:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="HH:mm (24-часовой формат)"
           placeholder="Выберите время"
           format="HH:mm"
           value={time1}
-          onChange={value => setTime1(value as string)}
+          onChange={(value) => setTime1(value as string)}
         />
 
         <TimeInput
@@ -798,7 +774,7 @@ export const TimeFormatDemo: Story = {
           format="HH:mm:ss"
           showSeconds={true}
           value={time2}
-          onChange={value => setTime2(value as string)}
+          onChange={(value) => setTime2(value as string)}
         />
 
         <TimeInput
@@ -806,7 +782,7 @@ export const TimeFormatDemo: Story = {
           placeholder="Выберите время"
           format="h:mm A"
           value={time3}
-          onChange={value => setTime3(value as string)}
+          onChange={(value) => setTime3(value as string)}
         />
 
         <TimeInput
@@ -815,7 +791,7 @@ export const TimeFormatDemo: Story = {
           format="h:mm:ss A"
           showSeconds={true}
           value={time4}
-          onChange={value => setTime4(value as string)}
+          onChange={(value) => setTime4(value as string)}
         />
 
         <TimeInput
@@ -824,7 +800,7 @@ export const TimeFormatDemo: Story = {
           format="HH:mm:ss"
           showSeconds={true}
           value={time5}
-          onChange={value => setTime5(value as string)}
+          onChange={(value) => setTime5(value as string)}
         />
       </div>
     );
@@ -847,21 +823,14 @@ export const SegmentedTimeFormatDemo: Story = {
     const [time3, setTime3] = React.useState('14:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           segmented={true}
           label="Сегментированный HH:mm"
           placeholder="Выберите время"
           format="HH:mm"
           value={time1}
-          onChange={value => setTime1(value as string)}
+          onChange={(value) => setTime1(value as string)}
         />
 
         <TimeInput
@@ -871,7 +840,7 @@ export const SegmentedTimeFormatDemo: Story = {
           format="HH:mm:ss"
           showSeconds={true}
           value={time2}
-          onChange={value => setTime2(value as string)}
+          onChange={(value) => setTime2(value as string)}
         />
 
         <TimeInput
@@ -880,7 +849,7 @@ export const SegmentedTimeFormatDemo: Story = {
           placeholder="Выберите время"
           format="h:mm A"
           value={time3}
-          onChange={value => setTime3(value as string)}
+          onChange={(value) => setTime3(value as string)}
         />
       </div>
     );
@@ -912,21 +881,14 @@ export const RangeTimeFormatDemo: Story = {
     });
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           range={true}
           label="Диапазон HH:mm"
           placeholder="Выберите диапазон времени"
           format="HH:mm"
           value={range1}
-          onChange={value => setRange1(value as any)}
+          onChange={(value) => setRange1(value as any)}
         />
 
         <TimeInput
@@ -936,7 +898,7 @@ export const RangeTimeFormatDemo: Story = {
           format="HH:mm:ss"
           showSeconds={true}
           value={range2}
-          onChange={value => setRange2(value as any)}
+          onChange={(value) => setRange2(value as any)}
         />
 
         <TimeInput
@@ -945,7 +907,7 @@ export const RangeTimeFormatDemo: Story = {
           placeholder="Выберите диапазон времени"
           format="h:mm A"
           value={range3}
-          onChange={value => setRange3(value as any)}
+          onChange={(value) => setRange3(value as any)}
         />
       </div>
     );
@@ -986,19 +948,12 @@ export const CustomIconDemo: Story = {
     const [time4, setTime4] = React.useState('14:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="Стандартная иконка часов"
           placeholder="Выберите время"
           value={time1}
-          onChange={value => setTime1(value as string)}
+          onChange={(value) => setTime1(value as string)}
         />
 
         <TimeInput
@@ -1006,7 +961,7 @@ export const CustomIconDemo: Story = {
           placeholder="Выберите время"
           icon={<Icon name="IconPlainerSun" size={IconSize.SM} />}
           value={time2}
-          onChange={value => setTime2(value as string)}
+          onChange={(value) => setTime2(value as string)}
         />
 
         <TimeInput
@@ -1014,7 +969,7 @@ export const CustomIconDemo: Story = {
           placeholder="Выберите время"
           icon={<Icon name="IconPlainerMoon" size={IconSize.SM} />}
           value={time3}
-          onChange={value => setTime3(value as string)}
+          onChange={(value) => setTime3(value as string)}
         />
 
         <TimeInput
@@ -1022,7 +977,7 @@ export const CustomIconDemo: Story = {
           placeholder="Выберите время"
           icon={<Icon name="IconPlainerPlus" size={IconSize.SM} />}
           value={time4}
-          onChange={value => setTime4(value as string)}
+          onChange={(value) => setTime4(value as string)}
         />
       </div>
     );
@@ -1044,21 +999,14 @@ export const SegmentedCustomIconDemo: Story = {
     const [time2, setTime2] = React.useState('14:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           segmented={true}
           label="Сегментированный с иконкой солнца"
           placeholder="Выберите время"
           icon={<Icon name="IconPlainerSun" size={IconSize.SM} />}
           value={time1}
-          onChange={value => setTime1(value as string)}
+          onChange={(value) => setTime1(value as string)}
         />
 
         <TimeInput
@@ -1067,7 +1015,7 @@ export const SegmentedCustomIconDemo: Story = {
           placeholder="Выберите время"
           icon={<Icon name="IconPlainerMoon" size={IconSize.SM} />}
           value={time2}
-          onChange={value => setTime2(value as string)}
+          onChange={(value) => setTime2(value as string)}
         />
       </div>
     );
@@ -1094,21 +1042,14 @@ export const RangeCustomIconDemo: Story = {
     });
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           range={true}
           label="Диапазон с иконкой солнца"
           placeholder="Выберите диапазон времени"
           icon={<Icon name="IconPlainerSun" size={IconSize.SM} />}
           value={range1}
-          onChange={value => setRange1(value as any)}
+          onChange={(value) => setRange1(value as any)}
         />
 
         <TimeInput
@@ -1117,7 +1058,7 @@ export const RangeCustomIconDemo: Story = {
           placeholder="Выберите диапазон времени"
           icon={<Icon name="IconPlainerMoon" size={IconSize.SM} />}
           value={range2}
-          onChange={value => setRange2(value as any)}
+          onChange={(value) => setRange2(value as any)}
         />
       </div>
     );
@@ -1139,21 +1080,14 @@ export const BottomPanelDemo: Story = {
     const [time3, setTime3] = React.useState('14:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="С информационной панелью"
           placeholder="Выберите время"
           value={time1}
-          onChange={value => setTime1(value as string)}
+          onChange={(value) => setTime1(value as string)}
           renderBottomPanel={() => (
-            <div style={{ fontSize: '12px', color: '#666' }}>
+            <div style={timeInputStoriesStyles.smallNoteText}>
               ⏰ Выберите время для планирования встречи
             </div>
           )}
@@ -1163,44 +1097,26 @@ export const BottomPanelDemo: Story = {
           label="С кнопками быстрого выбора"
           placeholder="Выберите время"
           value={time2}
-          onChange={value => setTime2(value as string)}
+          onChange={(value) => setTime2(value as string)}
           renderBottomPanel={() => (
-            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+            <div style={timeInputStoriesStyles.rowGap8Centered}>
               <button
-                style={{
-                  padding: '4px 8px',
-                  fontSize: '12px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  background: 'white',
-                  cursor: 'pointer',
-                }}
+                type="button"
+                style={timeInputStoriesStyles.actionButtonCompact}
                 onClick={() => setTime2('09:00')}
               >
                 9:00
               </button>
               <button
-                style={{
-                  padding: '4px 8px',
-                  fontSize: '12px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  background: 'white',
-                  cursor: 'pointer',
-                }}
+                type="button"
+                style={timeInputStoriesStyles.actionButtonCompact}
                 onClick={() => setTime2('12:00')}
               >
                 12:00
               </button>
               <button
-                style={{
-                  padding: '4px 8px',
-                  fontSize: '12px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  background: 'white',
-                  cursor: 'pointer',
-                }}
+                type="button"
+                style={timeInputStoriesStyles.actionButtonCompact}
                 onClick={() => setTime2('18:00')}
               >
                 18:00
@@ -1213,19 +1129,13 @@ export const BottomPanelDemo: Story = {
           label="С кастомным контентом"
           placeholder="Выберите время"
           value={time3}
-          onChange={value => setTime3(value as string)}
+          onChange={(value) => setTime3(value as string)}
           renderBottomPanel={() => (
-            <div style={{ textAlign: 'center' }}>
-              <div
-                style={{
-                  fontSize: '14px',
-                  fontWeight: 'bold',
-                  marginBottom: '4px',
-                }}
-              >
-                🕐 Время
+            <div style={timeInputStoriesStyles.centerText}>
+              <div style={timeInputStoriesStyles.panelTitleBold}>🕐 Время</div>
+              <div style={timeInputStoriesStyles.extraSmallNoteText}>
+                Выберите время для продолжения
               </div>
-              <div style={{ fontSize: '11px', color: '#888' }}>Выберите время для продолжения</div>
             </div>
           )}
         />
@@ -1251,22 +1161,15 @@ export const RangeBottomPanelDemo: Story = {
     });
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           range={true}
           label="Диапазон с информационной панелью"
           placeholder="Выберите диапазон времени"
           value={range}
-          onChange={value => setRange(value as any)}
+          onChange={(value) => setRange(value as any)}
           renderBottomPanel={() => (
-            <div style={{ fontSize: '12px', color: '#666' }}>
+            <div style={timeInputStoriesStyles.smallNoteText}>
               📊 Выберите рабочие часы для планирования
             </div>
           )}
@@ -1291,21 +1194,14 @@ export const TopPanelDemo: Story = {
     const [time3, setTime3] = React.useState('14:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="С информационной панелью сверху"
           placeholder="Выберите время"
           value={time1}
-          onChange={value => setTime1(value as string)}
+          onChange={(value) => setTime1(value as string)}
           renderTopPanel={() => (
-            <div style={{ fontSize: '12px', color: '#666' }}>
+            <div style={timeInputStoriesStyles.smallNoteText}>
               ⏰ Выберите время для планирования встречи
             </div>
           )}
@@ -1315,44 +1211,26 @@ export const TopPanelDemo: Story = {
           label="С кнопками быстрого выбора сверху"
           placeholder="Выберите время"
           value={time2}
-          onChange={value => setTime2(value as string)}
+          onChange={(value) => setTime2(value as string)}
           renderTopPanel={() => (
-            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+            <div style={timeInputStoriesStyles.rowGap8Centered}>
               <button
-                style={{
-                  padding: '4px 8px',
-                  fontSize: '12px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  background: 'white',
-                  cursor: 'pointer',
-                }}
+                type="button"
+                style={timeInputStoriesStyles.actionButtonCompact}
                 onClick={() => setTime2('09:00')}
               >
                 9:00
               </button>
               <button
-                style={{
-                  padding: '4px 8px',
-                  fontSize: '12px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  background: 'white',
-                  cursor: 'pointer',
-                }}
+                type="button"
+                style={timeInputStoriesStyles.actionButtonCompact}
                 onClick={() => setTime2('12:00')}
               >
                 12:00
               </button>
               <button
-                style={{
-                  padding: '4px 8px',
-                  fontSize: '12px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  background: 'white',
-                  cursor: 'pointer',
-                }}
+                type="button"
+                style={timeInputStoriesStyles.actionButtonCompact}
                 onClick={() => setTime2('18:00')}
               >
                 18:00
@@ -1365,19 +1243,13 @@ export const TopPanelDemo: Story = {
           label="С кастомным контентом сверху"
           placeholder="Выберите время"
           value={time3}
-          onChange={value => setTime3(value as string)}
+          onChange={(value) => setTime3(value as string)}
           renderTopPanel={() => (
-            <div style={{ textAlign: 'center' }}>
-              <div
-                style={{
-                  fontSize: '14px',
-                  fontWeight: 'bold',
-                  marginBottom: '4px',
-                }}
-              >
-                🕐 Время
+            <div style={timeInputStoriesStyles.centerText}>
+              <div style={timeInputStoriesStyles.panelTitleBold}>🕐 Время</div>
+              <div style={timeInputStoriesStyles.extraSmallNoteText}>
+                Выберите время для продолжения
               </div>
-              <div style={{ fontSize: '11px', color: '#888' }}>Выберите время для продолжения</div>
             </div>
           )}
         />
@@ -1400,26 +1272,19 @@ export const TopAndBottomPanelsDemo: Story = {
     const [time, setTime] = React.useState('14:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="С панелями сверху и снизу"
           placeholder="Выберите время"
           value={time}
-          onChange={value => setTime(value as string)}
+          onChange={(value) => setTime(value as string)}
           renderTopPanel={() => (
-            <div style={{ fontSize: '12px', color: '#666', textAlign: 'center' }}>
+            <div style={timeInputStoriesStyles.smallNoteTextCentered}>
               ⏰ Выберите время для планирования
             </div>
           )}
           renderBottomPanel={() => (
-            <div style={{ fontSize: '12px', color: '#666', textAlign: 'center' }}>
+            <div style={timeInputStoriesStyles.smallNoteTextCentered}>
               💡 Подсказка: используйте стрелки для навигации
             </div>
           )}
@@ -1446,19 +1311,12 @@ export const StatusDemo: Story = {
     const [time4, setTime4] = React.useState('14:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="Обычное состояние"
           placeholder="Выберите время"
           value={time1}
-          onChange={value => setTime1(value as string)}
+          onChange={(value) => setTime1(value as string)}
         />
 
         <TimeInput
@@ -1466,7 +1324,7 @@ export const StatusDemo: Story = {
           placeholder="Выберите время"
           status="error"
           value={time2}
-          onChange={value => setTime2(value as string)}
+          onChange={(value) => setTime2(value as string)}
         />
 
         <TimeInput
@@ -1474,7 +1332,7 @@ export const StatusDemo: Story = {
           placeholder="Выберите время"
           status="success"
           value={time3}
-          onChange={value => setTime3(value as string)}
+          onChange={(value) => setTime3(value as string)}
         />
 
         <TimeInput
@@ -1482,7 +1340,7 @@ export const StatusDemo: Story = {
           placeholder="Выберите время"
           status="warning"
           value={time4}
-          onChange={value => setTime4(value as string)}
+          onChange={(value) => setTime4(value as string)}
         />
       </div>
     );
@@ -1505,21 +1363,14 @@ export const SegmentedStatusDemo: Story = {
     const [time3, setTime3] = React.useState('14:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           segmented={true}
           label="Сегментированный error"
           placeholder="Выберите время"
           status="error"
           value={time1}
-          onChange={value => setTime1(value as string)}
+          onChange={(value) => setTime1(value as string)}
         />
 
         <TimeInput
@@ -1528,7 +1379,7 @@ export const SegmentedStatusDemo: Story = {
           placeholder="Выберите время"
           status="success"
           value={time2}
-          onChange={value => setTime2(value as string)}
+          onChange={(value) => setTime2(value as string)}
         />
 
         <TimeInput
@@ -1537,7 +1388,7 @@ export const SegmentedStatusDemo: Story = {
           placeholder="Выберите время"
           status="warning"
           value={time3}
-          onChange={value => setTime3(value as string)}
+          onChange={(value) => setTime3(value as string)}
         />
       </div>
     );
@@ -1568,21 +1419,14 @@ export const RangeStatusDemo: Story = {
     });
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           range={true}
           label="Диапазон error"
           placeholder="Выберите диапазон времени"
           status="error"
           value={range1}
-          onChange={value => setRange1(value as any)}
+          onChange={(value) => setRange1(value as any)}
         />
 
         <TimeInput
@@ -1591,7 +1435,7 @@ export const RangeStatusDemo: Story = {
           placeholder="Выберите диапазон времени"
           status="success"
           value={range2}
-          onChange={value => setRange2(value as any)}
+          onChange={(value) => setRange2(value as any)}
         />
 
         <TimeInput
@@ -1600,7 +1444,7 @@ export const RangeStatusDemo: Story = {
           placeholder="Выберите диапазон времени"
           status="warning"
           value={range3}
-          onChange={value => setRange3(value as any)}
+          onChange={(value) => setRange3(value as any)}
         />
       </div>
     );
@@ -1633,20 +1477,13 @@ export const LoadingDemo: Story = {
     }, []);
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="Загрузка времени (3 сек)"
           placeholder="Выберите время"
           isLoading={isLoading1}
           value={time1}
-          onChange={value => setTime1(value as string)}
+          onChange={(value) => setTime1(value as string)}
         />
 
         <TimeInput
@@ -1654,7 +1491,7 @@ export const LoadingDemo: Story = {
           placeholder="Выберите время"
           isLoading={isLoading2}
           value={time2}
-          onChange={value => setTime2(value as string)}
+          onChange={(value) => setTime2(value as string)}
         />
 
         <TimeInput
@@ -1662,18 +1499,13 @@ export const LoadingDemo: Story = {
           placeholder="Выберите время"
           isLoading={isLoading3}
           value={time3}
-          onChange={value => setTime3(value as string)}
+          onChange={(value) => setTime3(value as string)}
         />
 
         <button
           onClick={() => setIsLoading3(!isLoading3)}
-          style={{
-            padding: '8px 16px',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            background: 'white',
-            cursor: 'pointer',
-          }}
+          type="button"
+          style={timeInputStoriesStyles.actionButtonMedium}
         >
           {isLoading3 ? 'Остановить загрузку' : 'Начать загрузку'}
         </button>
@@ -1709,20 +1541,13 @@ export const SkeletonDemo: Story = {
     }, []);
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="Skeleton эффект (3 сек)"
           placeholder="Выберите время"
           skeleton={skeleton1}
           value={time1}
-          onChange={value => setTime1(value as string)}
+          onChange={(value) => setTime1(value as string)}
         />
 
         <TimeInput
@@ -1730,7 +1555,7 @@ export const SkeletonDemo: Story = {
           placeholder="Выберите время"
           skeleton={skeleton2}
           value={time2}
-          onChange={value => setTime2(value as string)}
+          onChange={(value) => setTime2(value as string)}
         />
 
         <TimeInput
@@ -1738,18 +1563,13 @@ export const SkeletonDemo: Story = {
           placeholder="Выберите время"
           skeleton={skeleton3}
           value={time3}
-          onChange={value => setTime3(value as string)}
+          onChange={(value) => setTime3(value as string)}
         />
 
         <button
           onClick={() => setSkeleton3(!skeleton3)}
-          style={{
-            padding: '8px 16px',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            background: 'white',
-            cursor: 'pointer',
-          }}
+          type="button"
+          style={timeInputStoriesStyles.actionButtonMedium}
         >
           {skeleton3 ? 'Убрать skeleton' : 'Показать skeleton'}
         </button>
@@ -1774,26 +1594,19 @@ export const TooltipDemo: Story = {
     const [time3, setTime3] = React.useState('15:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="Обычный TimeInput"
           placeholder="Без подсказки"
           value={time1}
-          onChange={value => setTime1(value as string)}
+          onChange={(value) => setTime1(value as string)}
         />
 
         <TimeInput
           label="TimeInput с тултипом (сверху)"
           placeholder="Наведите курсор для показа тултипа"
           value={time2}
-          onChange={value => setTime2(value as string)}
+          onChange={(value) => setTime2(value as string)}
           tooltip="Это тултип с дополнительной информацией о выборе времени"
           tooltipType="tooltip"
           tooltipPosition="top"
@@ -1803,7 +1616,7 @@ export const TooltipDemo: Story = {
           label="TimeInput с хинтом (снизу)"
           placeholder="Наведите курсор для показа хинта"
           value={time3}
-          onChange={value => setTime3(value as string)}
+          onChange={(value) => setTime3(value as string)}
           tooltip="Это хинт с подробной информацией о формате времени и доступных действиях"
           tooltipType="hint"
           tooltipPosition="bottom"
@@ -1842,7 +1655,7 @@ export const TooltipDemo: Story = {
           }}
           icon={<Icon name="IconPlainerMoon" size={IconSize.SM} />}
           tooltip={
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={timeInputStoriesStyles.rowAlignCenterGap8}>
               <Icon name="IconPlainerMoon" size={IconSize.XS} />
               <span>Тултип с иконкой для TimeInput</span>
             </div>
@@ -1871,26 +1684,19 @@ export const CharacterCounterDemo: Story = {
     const [time3, setTime3] = React.useState('15:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="Обычный TimeInput"
           placeholder="Без maxLength"
           value={time1}
-          onChange={value => setTime1(value as string)}
+          onChange={(value) => setTime1(value as string)}
         />
 
         <TimeInput
           label="TimeInput с счетчиком символов"
           placeholder="С maxLength и счетчиком"
           value={time2}
-          onChange={value => setTime2(value as string)}
+          onChange={(value) => setTime2(value as string)}
           maxLength={10}
           displayCharacterCounter={true}
         />
@@ -1899,7 +1705,7 @@ export const CharacterCounterDemo: Story = {
           label="TimeInput без счетчика символов"
           placeholder="С maxLength но без счетчика"
           value={time3}
-          onChange={value => setTime3(value as string)}
+          onChange={(value) => setTime3(value as string)}
           maxLength={8}
           displayCharacterCounter={false}
         />
@@ -1934,26 +1740,19 @@ export const ExtraTextDemo: Story = {
     const [time2, setTime2] = React.useState('15:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="Обычный TimeInput"
           placeholder="Без дополнительного текста"
           value={time1}
-          onChange={value => setTime1(value as string)}
+          onChange={(value) => setTime1(value as string)}
         />
 
         <TimeInput
           label="TimeInput с extraText"
           placeholder="С дополнительным текстом"
           value={time2}
-          onChange={value => setTime2(value as string)}
+          onChange={(value) => setTime2(value as string)}
           extraText="Это дополнительный текст для TimeInput, который отображается ниже компонента"
         />
 
@@ -1987,19 +1786,12 @@ export const DisableCopyingDemo: Story = {
     const [time2, setTime2] = React.useState('15:30');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="Обычный TimeInput"
           placeholder="Можно выделять и копировать время"
           value={time1}
-          onChange={value => setTime1(value as string)}
+          onChange={(value) => setTime1(value as string)}
           helperText="Попробуйте выделить и скопировать время (Ctrl+C)"
         />
 
@@ -2007,7 +1799,7 @@ export const DisableCopyingDemo: Story = {
           label="Защищенный TimeInput"
           placeholder="Нельзя выделять и копировать время"
           value={time2}
-          onChange={value => setTime2(value as string)}
+          onChange={(value) => setTime2(value as string)}
           disableCopying={true}
           helperText="Попробуйте выделить и скопировать время - не получится!"
         />
@@ -2098,19 +1890,12 @@ export const HandleInputDemo: Story = {
     };
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="Время с маской HH:MM"
           placeholder="ЧЧ:ММ"
           value={time1}
-          onChange={value => setTime1(value as string)}
+          onChange={(value) => setTime1(value as string)}
           handleInput={timeMask}
         />
 
@@ -2118,7 +1903,7 @@ export const HandleInputDemo: Story = {
           label="Время с автоматическим двоеточием"
           placeholder="ЧЧ:ММ"
           value={time2}
-          onChange={value => setTime2(value as string)}
+          onChange={(value) => setTime2(value as string)}
           handleInput={autoTimeMask}
         />
       </div>
@@ -2141,19 +1926,12 @@ export const IgnoreMaskCharactersDemo: Story = {
     const [time2, setTime2] = useState('12:30:45');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="Обычный счетчик символов"
           placeholder="Введите время..."
           value={time1}
-          onChange={value => setTime1(value as string)}
+          onChange={(value) => setTime1(value as string)}
           maxLength={8}
           displayCharacterCounter={true}
           ignoreMaskCharacters={false}
@@ -2164,23 +1942,16 @@ export const IgnoreMaskCharactersDemo: Story = {
           label="Счетчик без символов маски"
           placeholder="Введите время..."
           value={time2}
-          onChange={value => setTime2(value as string)}
+          onChange={(value) => setTime2(value as string)}
           maxLength={6}
           displayCharacterCounter={true}
           ignoreMaskCharacters={true}
           helperText="Считаются только цифры, разделители игнорируются (6/6)"
         />
 
-        <div
-          style={{
-            marginTop: '16px',
-            padding: '12px',
-            backgroundColor: '#f5f5f5',
-            borderRadius: '4px',
-          }}
-        >
-          <h4 style={{ margin: '0 0 8px 0', fontSize: '14px' }}>Сравнение:</h4>
-          <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '12px' }}>
+        <div style={timeInputStoriesStyles.infoBoxWithTopMargin}>
+          <h4 style={timeInputStoriesStyles.heading14}>Сравнение:</h4>
+          <ul style={timeInputStoriesStyles.list12}>
             <li>
               <strong>ignoreMaskCharacters=false:</strong> &quot;12:30:45&quot; = 8 символов
             </li>
@@ -2210,19 +1981,12 @@ export const CharacterCounterThresholdDemo: Story = {
     const [time3, setTime3] = useState('');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="Всегда видимый счетчик (threshold=0)"
           placeholder="Введите время..."
           value={time1}
-          onChange={value => setTime1(value as string)}
+          onChange={(value) => setTime1(value as string)}
           maxLength={8}
           displayCharacterCounter={true}
           characterCounterVisibilityThreshold={0}
@@ -2233,7 +1997,7 @@ export const CharacterCounterThresholdDemo: Story = {
           label="Счетчик при 80% заполнения (threshold=0.8)"
           placeholder="Введите время..."
           value={time2}
-          onChange={value => setTime2(value as string)}
+          onChange={(value) => setTime2(value as string)}
           maxLength={8}
           displayCharacterCounter={true}
           characterCounterVisibilityThreshold={0.8}
@@ -2244,23 +2008,16 @@ export const CharacterCounterThresholdDemo: Story = {
           label="Скрытый счетчик (threshold=1)"
           placeholder="Введите время..."
           value={time3}
-          onChange={value => setTime3(value as string)}
+          onChange={(value) => setTime3(value as string)}
           maxLength={8}
           displayCharacterCounter={true}
           characterCounterVisibilityThreshold={1}
           helperText="Счетчик никогда не показывается"
         />
 
-        <div
-          style={{
-            marginTop: '16px',
-            padding: '12px',
-            backgroundColor: '#f5f5f5',
-            borderRadius: '4px',
-          }}
-        >
-          <h4 style={{ margin: '0 0 8px 0', fontSize: '14px' }}>Пороги видимости для времени:</h4>
-          <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '12px' }}>
+        <div style={timeInputStoriesStyles.infoBoxWithTopMargin}>
+          <h4 style={timeInputStoriesStyles.heading14}>Пороги видимости для времени:</h4>
+          <ul style={timeInputStoriesStyles.list12}>
             <li>
               <strong>threshold=0:</strong> Счетчик всегда видим
             </li>
@@ -2296,20 +2053,13 @@ export const AdditionalLabelDemo: Story = {
     const [time3, setTime3] = useState('');
 
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          width: '400px',
-        }}
-      >
+      <div style={timeInputStoriesStyles.columnGap16Width400}>
         <TimeInput
           label="Время начала работы"
           additionalLabel="Укажите время в формате ЧЧ:ММ"
           placeholder="Введите время..."
           value={time1}
-          onChange={value => setTime1(value as string)}
+          onChange={(value) => setTime1(value as string)}
           helperText="Рабочий день начинается в указанное время"
         />
 
@@ -2318,7 +2068,7 @@ export const AdditionalLabelDemo: Story = {
           additionalLabel="Последний прием пациентов"
           placeholder="Выберите время..."
           value={time2}
-          onChange={value => setTime2(value as string)}
+          onChange={(value) => setTime2(value as string)}
           helperText="После этого времени новые записи не принимаются"
         />
 
@@ -2327,23 +2077,14 @@ export const AdditionalLabelDemo: Story = {
           additionalLabel="Автоматическая отправка в указанное время"
           placeholder="Введите время..."
           value={time3}
-          onChange={value => setTime3(value as string)}
+          onChange={(value) => setTime3(value as string)}
           showSeconds={true}
           helperText="Уведомления отправляются ежедневно в указанное время"
         />
 
-        <div
-          style={{
-            marginTop: '16px',
-            padding: '12px',
-            backgroundColor: '#f5f5f5',
-            borderRadius: '4px',
-          }}
-        >
-          <h4 style={{ margin: '0 0 8px 0', fontSize: '14px' }}>
-            Дополнительные метки для времени:
-          </h4>
-          <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '12px' }}>
+        <div style={timeInputStoriesStyles.infoBoxWithTopMargin}>
+          <h4 style={timeInputStoriesStyles.heading14}>Дополнительные метки для времени:</h4>
+          <ul style={timeInputStoriesStyles.list12}>
             <li>
               <strong>additionalLabel</strong> отображается справа и помогает уточнить формат ввода
               времени
@@ -2366,4 +2107,3 @@ export const AdditionalLabelDemo: Story = {
     },
   },
 };
-

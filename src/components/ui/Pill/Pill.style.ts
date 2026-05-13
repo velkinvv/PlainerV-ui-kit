@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components';
 import type { DefaultTheme } from 'styled-components';
 import { TransitionHandler } from '../../../handlers/uiHandlers';
+import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
 import type { PillGeometry } from './handlers';
 import type { PillStatus } from '../../../types/ui';
 import { ThemeMode } from '../../../types/theme';
@@ -32,10 +33,9 @@ export const resolvePillAccent = (theme: DefaultTheme, status: PillStatus | unde
  * @property $selected - Выбранное состояние
  * @property $status - Семантический акцент выбранного состояния
  */
-export const PillRoot = styled.button
-  .withConfig({
-    shouldForwardProp: prop => prop !== '$g' && prop !== '$selected' && prop !== '$status',
-  })<{ $g: PillGeometry; $selected?: boolean; $status?: PillStatus }>`
+export const PillRoot = styled.button.withConfig({
+  shouldForwardProp: (prop) => prop !== '$g' && prop !== '$selected' && prop !== '$status',
+})<{ $g: PillGeometry; $selected?: boolean; $status?: PillStatus }>`
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -77,6 +77,12 @@ export const PillRoot = styled.button
             background: ${theme.colors.backgroundQuaternary};
           `}
   }
+  ${buildHoverPressMotionCss({
+    hoverSelector: '&:hover:not(:disabled)',
+    activeSelector: '&:active:not(:disabled)',
+    hoverTransform: 'none',
+    activeTransform: 'scale(0.98)',
+  })}
 
   ${({ $selected, theme, $status }) =>
     $selected &&
@@ -109,11 +115,10 @@ export const PillRoot = styled.button
  * @property $disabled - Отключено
  * @property $status - Цвет кольца и точки в выбранном состоянии
  */
-export const PillIndicator = styled.span
-  .withConfig({
-    shouldForwardProp: prop =>
-      prop !== '$g' && prop !== '$selected' && prop !== '$disabled' && prop !== '$status',
-  })<{ $g: PillGeometry; $selected?: boolean; $disabled?: boolean; $status?: PillStatus }>`
+export const PillIndicator = styled.span.withConfig({
+  shouldForwardProp: (prop) =>
+    prop !== '$g' && prop !== '$selected' && prop !== '$disabled' && prop !== '$status',
+})<{ $g: PillGeometry; $selected?: boolean; $disabled?: boolean; $status?: PillStatus }>`
   position: relative;
   flex-shrink: 0;
   width: ${({ $g }) => $g.indicator}px;
@@ -169,10 +174,9 @@ export const PillIndicator = styled.span
  * @property $g — диаметр как у индикатора
  * @property $status — цвет активной дуги
  */
-export const PillLoadingIndicator = styled.span
-  .withConfig({
-    shouldForwardProp: prop => prop !== '$g' && prop !== '$status',
-  })<{ $g: PillGeometry; $status?: PillStatus }>`
+export const PillLoadingIndicator = styled.span.withConfig({
+  shouldForwardProp: (prop) => prop !== '$g' && prop !== '$status',
+})<{ $g: PillGeometry; $status?: PillStatus }>`
   flex-shrink: 0;
   width: ${({ $g }) => $g.indicator}px;
   height: ${({ $g }) => $g.indicator}px;

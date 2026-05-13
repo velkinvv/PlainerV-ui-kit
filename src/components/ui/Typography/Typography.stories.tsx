@@ -2,6 +2,7 @@
 import React from 'react';
 import { Typography } from './Typography';
 import { DOC_TYPOGRAPHY } from '@/components/ui/storyDocs/uiKitDocs';
+import { typographyStoriesStyles } from './Typography.stories.styles';
 
 const meta: Meta<typeof Typography> = {
   title: 'UI Kit/Data Display/Typography',
@@ -179,7 +180,7 @@ export const Default: Story = {
  */
 export const Headings: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div style={typographyStoriesStyles.columnGap16}>
       <Typography variant="h1">Заголовок H1</Typography>
       <Typography variant="h2">Заголовок H2</Typography>
       <Typography variant="h3">Заголовок H3</Typography>
@@ -202,7 +203,7 @@ export const Headings: Story = {
  */
 export const BodyText: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div style={typographyStoriesStyles.columnGap16}>
       <Typography variant="bodyLarge">
         Большой текст (bodyLarge) - используется для основного контента на странице.
       </Typography>
@@ -228,7 +229,7 @@ export const BodyText: Story = {
  */
 export const SpecialElements: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div style={typographyStoriesStyles.columnGap16}>
       <Typography variant="caption">
         Подпись (caption) - для мелкого текста и метаинформации
       </Typography>
@@ -253,7 +254,7 @@ export const SpecialElements: Story = {
  */
 export const Colors: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+    <div style={typographyStoriesStyles.columnGap12}>
       <Typography color="primary">Primary цвет - основной акцентный цвет</Typography>
       <Typography color="secondary">Secondary цвет - вторичный цвет</Typography>
       <Typography color="success">Success цвет - цвет успеха</Typography>
@@ -280,20 +281,17 @@ export const Colors: Story = {
  */
 export const Alignment: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      <Typography align="left" style={{ border: '1px solid #ccc', padding: '8px' }}>
+    <div style={typographyStoriesStyles.columnGap16}>
+      <Typography align="left" style={typographyStoriesStyles.alignmentDemoBox}>
         Текст выровнен по левому краю (align=&quot;left&quot;)
       </Typography>
-      <Typography align="center" style={{ border: '1px solid #ccc', padding: '8px' }}>
+      <Typography align="center" style={typographyStoriesStyles.alignmentDemoBox}>
         Текст выровнен по центру (align=&quot;center&quot;)
       </Typography>
-      <Typography align="right" style={{ border: '1px solid #ccc', padding: '8px' }}>
+      <Typography align="right" style={typographyStoriesStyles.alignmentDemoBox}>
         Текст выровнен по правому краю (align=&quot;right&quot;)
       </Typography>
-      <Typography
-        align="justify"
-        style={{ border: '1px solid #ccc', padding: '8px', width: '300px' }}
-      >
+      <Typography align="justify" style={typographyStoriesStyles.alignmentJustifyDemoBox}>
         Текст выровнен по ширине (align=&quot;justify&quot;). Этот текст будет растянут по всей
         ширине контейнера, создавая ровные края с обеих сторон.
       </Typography>
@@ -313,7 +311,7 @@ export const Alignment: Story = {
  */
 export const Decoration: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+    <div style={typographyStoriesStyles.columnGap12}>
       <Typography decoration="none">Обычный текст без декорации</Typography>
       <Typography decoration="underline">Подчеркнутый текст</Typography>
       <Typography decoration="line-through">Зачеркнутый текст</Typography>
@@ -333,7 +331,7 @@ export const Decoration: Story = {
  */
 export const TextTransform: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+    <div style={typographyStoriesStyles.columnGap12}>
       <Typography>Обычный текст без трансформации</Typography>
       <Typography uppercase>заглавные буквы (uppercase)</Typography>
       <Typography lowercase>СТРОЧНЫЕ БУКВЫ (lowercase)</Typography>
@@ -354,7 +352,7 @@ export const TextTransform: Story = {
  */
 export const CustomStyles: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div style={typographyStoriesStyles.columnGap16}>
       <Typography fontWeight="bold" fontSize="xl" color="primary">
         Жирный большой текст primary цвета
       </Typography>
@@ -381,14 +379,14 @@ export const CustomStyles: Story = {
  */
 export const NoWrap: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      <div style={{ width: '200px', border: '1px solid #ccc', padding: '8px' }}>
+    <div style={typographyStoriesStyles.columnGap16}>
+      <div style={typographyStoriesStyles.noWrapDemoContainer}>
         <Typography>
           Обычный текст с переносом строк. Этот текст будет переноситься на новую строку, если не
           помещается в контейнер.
         </Typography>
       </div>
-      <div style={{ width: '200px', border: '1px solid #ccc', padding: '8px' }}>
+      <div style={typographyStoriesStyles.noWrapDemoContainer}>
         <Typography noWrap>
           Текст без переноса строк (noWrap). Этот текст не будет переноситься и будет обрезан с
           многоточием.
@@ -410,7 +408,7 @@ export const NoWrap: Story = {
  */
 export const CustomComponents: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div style={typographyStoriesStyles.columnGap16}>
       <Typography component="div" variant="h3" color="primary">
         Заголовок как div элемент
       </Typography>
@@ -439,9 +437,13 @@ export const CustomComponents: Story = {
  */
 export const ThemeFonts: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <div style={typographyStoriesStyles.columnGap20}>
       <div>
-        <Typography variant="h3" color="primary" style={{ marginBottom: '12px' }}>
+        <Typography
+          variant="h3"
+          color="primary"
+          style={typographyStoriesStyles.themeFontSectionHeading}
+        >
           Основной шрифт (Montserrat)
         </Typography>
         <Typography fontFamily="primary" fontSize="lg">
@@ -451,7 +453,11 @@ export const ThemeFonts: Story = {
       </div>
 
       <div>
-        <Typography variant="h3" color="primary" style={{ marginBottom: '12px' }}>
+        <Typography
+          variant="h3"
+          color="primary"
+          style={typographyStoriesStyles.themeFontSectionHeading}
+        >
           Вторичный шрифт (Inter)
         </Typography>
         <Typography fontFamily="secondary" fontSize="lg">
@@ -461,7 +467,11 @@ export const ThemeFonts: Story = {
       </div>
 
       <div>
-        <Typography variant="h3" color="primary" style={{ marginBottom: '12px' }}>
+        <Typography
+          variant="h3"
+          color="primary"
+          style={typographyStoriesStyles.themeFontSectionHeading}
+        >
           Моноширинный шрифт
         </Typography>
         <Typography fontFamily="monospace" fontSize="base" color="textSecondary">
@@ -471,10 +481,14 @@ export const ThemeFonts: Story = {
       </div>
 
       <div>
-        <Typography variant="h3" color="primary" style={{ marginBottom: '12px' }}>
+        <Typography
+          variant="h3"
+          color="primary"
+          style={typographyStoriesStyles.themeFontSectionHeading}
+        >
           Различные веса шрифта
         </Typography>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div style={typographyStoriesStyles.columnGap8}>
           <Typography fontWeight="thin">Thin (100) - Очень тонкий шрифт</Typography>
           <Typography fontWeight="light">Light (300) - Светлый шрифт</Typography>
           <Typography fontWeight="regular">Regular (400) - Обычный шрифт</Typography>
@@ -521,4 +535,3 @@ export const Interactive: Story = {
     },
   },
 };
-

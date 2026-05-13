@@ -5,6 +5,7 @@ import { Pill } from './Pill';
 import { Size } from '../../../types/sizes';
 import type { PillStatus } from '../../../types/ui';
 import { DOC_PILL } from '@/components/ui/storyDocs/uiKitDocs';
+import { pillStoriesStyles } from './Pill.stories.styles';
 
 const meta: Meta<typeof Pill> = {
   title: 'UI Kit/Data Display/Pill',
@@ -105,7 +106,7 @@ export const StatusVariants: Story = {
   render: () => {
     const statuses: PillStatus[] = ['default', 'success', 'warning', 'danger', 'info'];
     return (
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
+      <div style={pillStoriesStyles.statusRow}>
         {statuses.map((pillStatus) => (
           <Pill key={pillStatus} selected status={pillStatus}>
             {pillStatus}
@@ -122,7 +123,7 @@ export const StatusUnselected: Story = {
   render: () => {
     const statuses: PillStatus[] = ['default', 'success', 'warning', 'danger', 'info'];
     return (
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
+      <div style={pillStoriesStyles.statusRow}>
         {statuses.map((pillStatus) => (
           <Pill key={pillStatus} selected={false} status={pillStatus}>
             {pillStatus}
@@ -156,7 +157,7 @@ export const Skeleton: Story = {
 export const SkeletonWidths: Story = {
   name: 'Скелетон — ширины',
   render: () => (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'center' }}>
+    <div style={pillStoriesStyles.skeletonRow}>
       <Pill skeleton skeletonWidth={72} size={Size.SM}>
         —
       </Pill>
@@ -177,24 +178,17 @@ export const StatesMatrix: Story = {
     const sizes = [Size.SM, Size.MD, Size.LG] as const;
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: `120px repeat(${cols.length}, minmax(100px, 1fr))`,
-            gap: 12,
-            alignItems: 'center',
-          }}
-        >
+      <div style={pillStoriesStyles.statesMatrixColumn}>
+        <div style={pillStoriesStyles.statesMatrixGrid}>
           <span />
           {cols.map((columnLabel) => (
-            <span key={columnLabel} style={{ fontSize: 12, color: '#888' }}>
+            <span key={columnLabel} style={pillStoriesStyles.matrixMetaCaption}>
               {columnLabel}
             </span>
           ))}
           {sizes.map((sizeValue) => (
             <React.Fragment key={sizeValue}>
-              <span style={{ fontSize: 12, color: '#888' }}>{sizeValue}</span>
+              <span style={pillStoriesStyles.matrixMetaCaption}>{sizeValue}</span>
               <Pill size={sizeValue}>Pill</Pill>
               <Pill size={sizeValue}>Pill</Pill>
               <Pill size={sizeValue}>Pill</Pill>
@@ -207,9 +201,9 @@ export const StatesMatrix: Story = {
             </React.Fragment>
           ))}
         </div>
-        <p style={{ fontSize: 12, color: '#666', maxWidth: 560 }}>
-          Колонки Hover / Active в Storybook совпадают с Default — интерактивные состояния проверяйте
-          наведением и удержанием мыши на первых трёх кнопках в строке.
+        <p style={pillStoriesStyles.matrixFootnote}>
+          Колонки Hover / Active в Storybook совпадают с Default — интерактивные состояния
+          проверяйте наведением и удержанием мыши на первых трёх кнопках в строке.
         </p>
       </div>
     );
@@ -221,11 +215,7 @@ export const RadioGroup: Story = {
   render: () => {
     const [value, setValue] = useState('b');
     return (
-      <div
-        role="radiogroup"
-        aria-label="Пример группы"
-        style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}
-      >
+      <div role="radiogroup" aria-label="Пример группы" style={pillStoriesStyles.radioGroupRow}>
         {(['a', 'b', 'c'] as const).map((id) => (
           <Pill
             key={id}
@@ -251,11 +241,11 @@ export const ControlledToggle: Story = {
   render: function ControlledToggleRender() {
     const [isSelected, setIsSelected] = useState(false);
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'flex-start' }}>
+      <div style={pillStoriesStyles.controlledColumn}>
         <Pill selected={isSelected} onChange={(nextSelected) => setIsSelected(nextSelected)}>
           {isSelected ? 'Включено' : 'Выключено'}
         </Pill>
-        <span style={{ fontSize: 12, color: '#64748b' }}>selected = {String(isSelected)}</span>
+        <span style={pillStoriesStyles.controlledStateLabel}>selected = {String(isSelected)}</span>
       </div>
     );
   },

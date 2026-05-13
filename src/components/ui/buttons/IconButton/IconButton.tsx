@@ -2,6 +2,7 @@ import React, { forwardRef } from 'react';
 import { clsx } from 'clsx';
 import { type IconButtonProps, ButtonVariant } from '../../../../types/ui';
 import { Size } from '../../../../types/sizes';
+import { useUiMotionPresets } from '../../../../hooks/useUiMotion';
 import { StyledIconButton, LoadingSpinner, IconContentWrapper } from './IconButton.style';
 import { Tooltip } from '../../Tooltip/Tooltip';
 
@@ -22,6 +23,8 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(functio
   },
   ref,
 ) {
+  const uiMotion = useUiMotionPresets();
+
   const renderContent = () => {
     if (loading) {
       return <LoadingSpinner />;
@@ -42,6 +45,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(functio
       icon={icon}
       className={clsx('ui-icon-button', className)}
       onClick={onClick}
+      {...uiMotion.buttonPress(!(disabled || loading))}
       {...props}
     >
       <IconContentWrapper className="ui-icon-button-content">{renderContent()}</IconContentWrapper>

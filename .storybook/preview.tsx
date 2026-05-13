@@ -3,8 +3,10 @@ import addonThemes from '@storybook/addon-themes';
 import { withThemeByDataAttribute } from '@storybook/addon-themes';
 import { withStorybookUiKitTheme } from './withStorybookUiKitTheme';
 import { withStoryCanvasRoom } from './withStoryCanvasRoom';
+import { withStorybookMotion } from './withStorybookMotion';
 import './preview-storybook-overlays.css';
 import './preview-storybook-docs-theme.css';
+import './preview-storybook-motion.css';
 
 const themeAddonAnnotations = addonThemes();
 
@@ -49,6 +51,7 @@ const preview: Preview = {
      * Порядок декораторов Storybook: первый в массиве — внутренний (ближе к сторис), следующие — снаружи.
      * Итог: снаружи — `data-theme` на документе и запас по высоте (`withStoryCanvasRoom`), внутри — тема и сторис.
      */
+    withStorybookMotion,
     withStorybookUiKitTheme,
     withStoryCanvasRoom,
     withThemeByDataAttribute({
@@ -136,7 +139,7 @@ const preview: Preview = {
             'NavigationMenu',
             'Pagination',
             'Stepper',
-            'Sidebar',
+            'Sidemenu',
             'Tabs',
             'Tabs/TabItem',
           ],

@@ -10,7 +10,9 @@ function isDataGridSortCriterionList(
  * Приводит модель сортировки к массиву критериев (порядок = приоритет).
  * @param model — одно поле, массив полей или отсутствие сортировки
  */
-export function normalizeDataGridSortModel(model: DataGridSortModel | null | undefined): DataGridSortCriterion[] {
+export function normalizeDataGridSortModel(
+  model: DataGridSortModel | null | undefined,
+): DataGridSortCriterion[] {
   if (model == null) {
     return [];
   }
@@ -29,7 +31,7 @@ export function getDataGridSortCriterionIndexForField(
   criteria: readonly DataGridSortCriterion[],
   field: string,
 ): number {
-  return criteria.findIndex(item => item.field === field);
+  return criteria.findIndex((item) => item.field === field);
 }
 
 export type ResolveNextDataGridSortModelParams = {
@@ -46,7 +48,9 @@ export type ResolveNextDataGridSortModelParams = {
  * Одиночный режим: всегда одно поле, переключение asc ↔ desc по тому же полю, смена поля — новая сортировка asc.
  * Мульти: добавление asc, затем desc, затем исключение поля из списка; пустой список → `null`.
  */
-export function resolveNextDataGridSortModel(params: ResolveNextDataGridSortModelParams): DataGridSortModel {
+export function resolveNextDataGridSortModel(
+  params: ResolveNextDataGridSortModelParams,
+): DataGridSortModel {
   const { current, field, multiColumnSort } = params;
   const list = normalizeDataGridSortModel(current);
   const index = getDataGridSortCriterionIndexForField(list, field);

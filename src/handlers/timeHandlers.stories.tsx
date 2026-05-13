@@ -8,8 +8,6 @@ import {
   parseTime,
   formatTimeForDisplay,
   parseTimeRange,
-  toISOTimeString,
-  getCurrentTime,
   isCurrentTime,
   getHours,
   getMinutes,
@@ -26,6 +24,9 @@ import {
   formatSeconds,
   isValidTime,
 } from './timeHandlers';
+import { inputFieldStoriesStyles } from '@/handlers/inputFieldStories.styles';
+import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
+import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
 
 const meta: Meta = {
   title: 'UI Kit/Utils/Handlers/Time Handlers',
@@ -85,17 +86,17 @@ const TimeParserDemo = () => {
       <Typography variant="h3" marginBottom="md">
         Парсинг времени
       </Typography>
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.rowFlexGap12MarginBottom16}>
         <Input
           value={input}
-          onChange={e => setInput(e.target.value)}
+          onChange={(e) => setInput(e.target.value)}
           placeholder="Введите время (например: 14:30)"
-          style={{ flex: 1 }}
+          style={storybookDemoStyles.flexGrowFull}
         />
         <Button onClick={handleParse}>Парсить</Button>
       </div>
       {result && (
-        <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+        <div style={storybookDemoStyles.demoResultPanel}>
           <Typography variant="body1" marginBottom="sm">
             <strong>Результат:</strong>
           </Typography>
@@ -128,12 +129,12 @@ const TimeFormatterDemo = () => {
       <Typography variant="h3" marginBottom="md">
         Форматирование времени
       </Typography>
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Typography variant="body1" marginBottom="sm">
           Выберите формат:
         </Typography>
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          {formats.map(fmt => (
+        <div style={inputFieldStoriesStyles.rowWrapGap8}>
+          {formats.map((fmt) => (
             <Button
               key={fmt}
               variant={format === fmt ? 'primary' : 'outlined'}
@@ -145,7 +146,7 @@ const TimeFormatterDemo = () => {
           ))}
         </div>
       </div>
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body2" marginBottom="xs">
           <strong>Исходное время:</strong> {time.toLocaleTimeString()}
         </Typography>
@@ -172,17 +173,17 @@ const TimeRangeDemo = () => {
       <Typography variant="h3" marginBottom="md">
         Парсинг диапазонов времени
       </Typography>
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.rowFlexGap12MarginBottom16}>
         <Input
           value={rangeInput}
-          onChange={e => setRangeInput(e.target.value)}
+          onChange={(e) => setRangeInput(e.target.value)}
           placeholder="Введите диапазон (например: 09:00 — 18:00)"
-          style={{ flex: 1 }}
+          style={storybookDemoStyles.flexGrowFull}
         />
         <Button onClick={handleParseRange}>Парсить</Button>
       </div>
       {rangeResult && (
-        <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+        <div style={storybookDemoStyles.demoResultPanel}>
           <Typography variant="body1" marginBottom="sm">
             <strong>Результат:</strong>
           </Typography>
@@ -220,17 +221,17 @@ const TimeCreatorDemo = () => {
         Создание времени
       </Typography>
 
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.rowFlexGap12MarginBottom16}>
         <div>
           <Typography variant="body2" marginBottom="xs">
             Часы:
           </Typography>
           <select
             value={hours}
-            onChange={e => setHours(parseInt(e.target.value))}
-            style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+            onChange={(e) => setHours(parseInt(e.target.value))}
+            style={storybookDemoStyles.nativeSelectBordered}
           >
-            {hoursOptions.map(h => (
+            {hoursOptions.map((h) => (
               <option key={h} value={h}>
                 {formatHours(h)}
               </option>
@@ -244,10 +245,10 @@ const TimeCreatorDemo = () => {
           </Typography>
           <select
             value={minutes}
-            onChange={e => setMinutes(parseInt(e.target.value))}
-            style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+            onChange={(e) => setMinutes(parseInt(e.target.value))}
+            style={storybookDemoStyles.nativeSelectBordered}
           >
-            {minutesOptions.map(m => (
+            {minutesOptions.map((m) => (
               <option key={m} value={m}>
                 {formatMinutes(m)}
               </option>
@@ -261,10 +262,10 @@ const TimeCreatorDemo = () => {
           </Typography>
           <select
             value={seconds}
-            onChange={e => setSeconds(parseInt(e.target.value))}
-            style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+            onChange={(e) => setSeconds(parseInt(e.target.value))}
+            style={storybookDemoStyles.nativeSelectBordered}
           >
-            {secondsOptions.map(s => (
+            {secondsOptions.map((s) => (
               <option key={s} value={s}>
                 {formatSeconds(s)}
               </option>
@@ -272,13 +273,13 @@ const TimeCreatorDemo = () => {
           </select>
         </div>
 
-        <Button onClick={handleCreateTime} style={{ alignSelf: 'flex-end' }}>
+        <Button onClick={handleCreateTime} style={storybookDemoStyles.alignSelfFlexEnd}>
           Создать
         </Button>
       </div>
 
       {createdTime && (
-        <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+        <div style={storybookDemoStyles.demoResultPanel}>
           <Typography variant="body1" marginBottom="sm">
             <strong>Созданное время:</strong>
           </Typography>
@@ -316,14 +317,7 @@ const TimeValidationDemo = () => {
         Проверка времени
       </Typography>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '16px',
-          marginBottom: '16px',
-        }}
-      >
+      <div style={storybookDemoStyles.gridTwoColumnsGap16MarginBottom16}>
         <div>
           <Typography variant="body2" marginBottom="xs">
             Тестовое время:
@@ -331,7 +325,7 @@ const TimeValidationDemo = () => {
           <Input
             type="time"
             value={testTime.toTimeString().slice(0, 5)}
-            onChange={e => {
+            onChange={(e) => {
               const [hours, minutes] = e.target.value.split(':').map(Number);
               setTestTime(new Date(2023, 0, 1, hours, minutes));
             }}
@@ -345,7 +339,7 @@ const TimeValidationDemo = () => {
           <Input
             type="time"
             value={startTime.toTimeString().slice(0, 5)}
-            onChange={e => {
+            onChange={(e) => {
               const [hours, minutes] = e.target.value.split(':').map(Number);
               setStartTime(new Date(2023, 0, 1, hours, minutes));
             }}
@@ -359,7 +353,7 @@ const TimeValidationDemo = () => {
           <Input
             type="time"
             value={endTime.toTimeString().slice(0, 5)}
-            onChange={e => {
+            onChange={(e) => {
               const [hours, minutes] = e.target.value.split(':').map(Number);
               setEndTime(new Date(2023, 0, 1, hours, minutes));
             }}
@@ -367,7 +361,7 @@ const TimeValidationDemo = () => {
         </div>
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Результаты проверки:</strong>
         </Typography>
@@ -411,13 +405,12 @@ export const TimeValidation: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <StorybookStaggerStack>
       <TimeParserDemo />
       <TimeFormatterDemo />
       <TimeRangeDemo />
       <TimeCreatorDemo />
       <TimeValidationDemo />
-    </div>
+    </StorybookStaggerStack>
   ),
 };
-

@@ -1,9 +1,21 @@
 ﻿import type { Meta, StoryObj } from '@storybook/react';
+import { AnimatePresence, motion } from 'framer-motion';
 import React, { useState } from 'react';
+import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
+import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
+import {
+  storybookBackdropFadeVariants,
+  storybookDropdownRevealVariants,
+  storybookFadeSlideVariants,
+  storybookModalPopVariants,
+  useStorybookMotionTransitions,
+} from '@/handlers/storybookMotion';
+import { lightTheme } from '@/themes/themes';
 import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
 import { useClickOutside } from './useClickOutside';
+import { ClickOutsideDropdownOptionButton } from './useClickOutside.stories.styles';
 
 const meta: Meta = {
   title: 'UI Kit/Hooks/useClickOutside',
@@ -48,14 +60,34 @@ return <div ref={ref}>Элемент</div>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+/** Демо-трилементы с цветами из темы (фон панели + акцент рамки). */
+const clickOutsideMultiDemoElements = [
+  {
+    title: 'Элемент 1',
+    panelBackground: lightTheme.colors.backgroundTertiary,
+    borderAccent: lightTheme.colors.primary,
+  },
+  {
+    title: 'Элемент 2',
+    panelBackground: lightTheme.colors.backgroundTertiary,
+    borderAccent: lightTheme.colors.success,
+  },
+  {
+    title: 'Элемент 3',
+    panelBackground: lightTheme.colors.backgroundQuaternary,
+    borderAccent: lightTheme.colors.warning,
+  },
+] as const;
+
 // Компонент для демонстрации базового использования
 const BasicClickOutsideDemo = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [clickCount, setClickCount] = useState(0);
+  const motionTransitions = useStorybookMotionTransitions();
 
   const ref = useClickOutside(() => {
     setIsOpen(false);
-    setClickCount(prev => prev + 1);
+    setClickCount((prev) => prev + 1);
   });
 
   return (
@@ -64,34 +96,36 @@ const BasicClickOutsideDemo = () => {
         Базовое использование useClickOutside
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Button onClick={() => setIsOpen(!isOpen)}>{isOpen ? 'Закрыть' : 'Открыть'} элемент</Button>
       </div>
 
-      {isOpen && (
-        <div
-          ref={ref}
-          style={{
-            padding: '20px',
-            backgroundColor: '#e3f2fd',
-            border: '2px solid #2196f3',
-            borderRadius: '8px',
-            marginBottom: '16px',
-          }}
-        >
-          <Typography variant="h4" marginBottom="sm">
-            Отслеживаемый элемент
-          </Typography>
-          <Typography variant="body1" marginBottom="md">
-            Кликните вне этого элемента, чтобы закрыть его.
-          </Typography>
-          <Typography variant="body2" style={{ color: '#666' }}>
-            Этот элемент отслеживается с помощью useClickOutside
-          </Typography>
-        </div>
-      )}
+      <AnimatePresence mode="sync">
+        {isOpen && (
+          <motion.div
+            key="basic-tracked-panel"
+            ref={ref}
+            style={storybookDemoStyles.clickOutsideTrackedPanel}
+            variants={storybookFadeSlideVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            transition={motionTransitions.panel}
+          >
+            <Typography variant="h4" marginBottom="sm">
+              Отслеживаемый элемент
+            </Typography>
+            <Typography variant="body1" marginBottom="md">
+              Кликните вне этого элемента, чтобы закрыть его.
+            </Typography>
+            <Typography variant="body2" style={{ color: lightTheme.colors.textSecondary }}>
+              Этот элемент отслеживается с помощью useClickOutside
+            </Typography>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Статус:</strong>
         </Typography>
@@ -109,11 +143,16 @@ const DisabledClickOutsideDemo = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isEnabled, setIsEnabled] = useState(true);
   const [clickCount, setClickCount] = useState(0);
+  const motionTransitions = useStorybookMotionTransitions();
 
   const ref = useClickOutside(() => {
     setIsOpen(false);
-    setClickCount(prev => prev + 1);
+    setClickCount((prev) => prev + 1);
   }, isEnabled);
+
+  const trackedPanelStyle = isEnabled
+    ? storybookDemoStyles.clickOutsideTrackedPanel
+    : storybookDemoStyles.clickOutsideTrackedPanelHookDisabled;
 
   return (
     <Card padding="lg">
@@ -121,7 +160,7 @@ const DisabledClickOutsideDemo = () => {
         Управление состоянием useClickOutside
       </Typography>
 
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
+      <div style={storybookDemoStyles.rowFlexGap12MarginBottom16Wrap}>
         <Button onClick={() => setIsOpen(!isOpen)}>{isOpen ? 'Закрыть' : 'Открыть'} элемент</Button>
         <Button
           variant={isEnabled ? 'primary' : 'outlined'}
@@ -131,32 +170,34 @@ const DisabledClickOutsideDemo = () => {
         </Button>
       </div>
 
-      {isOpen && (
-        <div
-          ref={ref}
-          style={{
-            padding: '20px',
-            backgroundColor: isEnabled ? '#e3f2fd' : '#fff3cd',
-            border: `2px solid ${isEnabled ? '#2196f3' : '#ffc107'}`,
-            borderRadius: '8px',
-            marginBottom: '16px',
-          }}
-        >
-          <Typography variant="h4" marginBottom="sm">
-            Отслеживаемый элемент
-          </Typography>
-          <Typography variant="body1" marginBottom="md">
-            {isEnabled
-              ? 'Кликните вне этого элемента, чтобы закрыть его.'
-              : 'Отслеживание отключено. Клики вне элемента не обрабатываются.'}
-          </Typography>
-          <Typography variant="body2" style={{ color: '#666' }}>
-            Статус отслеживания: {isEnabled ? 'Включено' : 'Отключено'}
-          </Typography>
-        </div>
-      )}
+      <AnimatePresence mode="sync">
+        {isOpen && (
+          <motion.div
+            key="disabled-demo-panel"
+            ref={ref}
+            style={trackedPanelStyle}
+            variants={storybookFadeSlideVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            transition={motionTransitions.panel}
+          >
+            <Typography variant="h4" marginBottom="sm">
+              Отслеживаемый элемент
+            </Typography>
+            <Typography variant="body1" marginBottom="md">
+              {isEnabled
+                ? 'Кликните вне этого элемента, чтобы закрыть его.'
+                : 'Отслеживание отключено. Клики вне элемента не обрабатываются.'}
+            </Typography>
+            <Typography variant="body2" style={{ color: lightTheme.colors.textSecondary }}>
+              Статус отслеживания: {isEnabled ? 'Включено' : 'Отключено'}
+            </Typography>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Статус:</strong>
         </Typography>
@@ -178,7 +219,7 @@ const MultipleElementsDemo = () => {
   const [clickCounts, setClickCounts] = useState<Record<number, number>>({});
 
   const toggleElement = (index: number) => {
-    setOpenElements(prev => {
+    setOpenElements((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(index)) {
         newSet.delete(index);
@@ -190,22 +231,16 @@ const MultipleElementsDemo = () => {
   };
 
   const createClickOutsideHandler = (index: number) => () => {
-    setOpenElements(prev => {
+    setOpenElements((prev) => {
       const newSet = new Set(prev);
       newSet.delete(index);
       return newSet;
     });
-    setClickCounts(prev => ({
+    setClickCounts((prev) => ({
       ...prev,
       [index]: (prev[index] || 0) + 1,
     }));
   };
-
-  const elements = [
-    { title: 'Элемент 1', color: '#e3f2fd', borderColor: '#2196f3' },
-    { title: 'Элемент 2', color: '#e8f5e8', borderColor: '#4caf50' },
-    { title: 'Элемент 3', color: '#fff3e0', borderColor: '#ff9800' },
-  ];
 
   return (
     <Card padding="lg">
@@ -213,34 +248,37 @@ const MultipleElementsDemo = () => {
         Множественные элементы
       </Typography>
 
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
-        {elements.map((element, index) => (
+      <div style={storybookDemoStyles.rowFlexGap12MarginBottom16Wrap}>
+        {clickOutsideMultiDemoElements.map((element, index) => (
           <Button
-            key={index}
+            key={element.title}
             onClick={() => toggleElement(index)}
-            style={{ backgroundColor: element.borderColor }}
+            style={{ backgroundColor: element.borderAccent }}
           >
             {openElements.has(index) ? 'Закрыть' : 'Открыть'} {element.title}
           </Button>
         ))}
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '16px' }}>
-        {elements.map((element, index) => {
+      <div style={storybookDemoStyles.columnFlexGap16MarginBottom16}>
+        {clickOutsideMultiDemoElements.map((element, index) => {
           const isOpen = openElements.has(index);
           const clickCount = clickCounts[index] || 0;
 
           return (
-            <div key={index}>
-              {isOpen && (
-                <ClickOutsideElement
-                  title={element.title}
-                  color={element.color}
-                  borderColor={element.borderColor}
-                  onClose={createClickOutsideHandler(index)}
-                />
-              )}
-              <div style={{ padding: '8px', backgroundColor: '#f8f9fa', borderRadius: '4px' }}>
+            <div key={element.title}>
+              <AnimatePresence mode="popLayout">
+                {isOpen && (
+                  <ClickOutsideElement
+                    key={element.title}
+                    title={element.title}
+                    panelBackground={element.panelBackground}
+                    borderAccent={element.borderAccent}
+                    onClose={createClickOutsideHandler(index)}
+                  />
+                )}
+              </AnimatePresence>
+              <div style={storybookDemoStyles.demoStatusStripCompact}>
                 <Typography variant="body2">
                   {element.title}: {isOpen ? 'Открыт' : 'Закрыт'} | Кликов вне: {clickCount}
                 </Typography>
@@ -256,26 +294,34 @@ const MultipleElementsDemo = () => {
 // Компонент для отдельного отслеживаемого элемента
 const ClickOutsideElement = ({
   title,
-  color,
-  borderColor,
+  panelBackground,
+  borderAccent,
   onClose,
 }: {
   title: string;
-  color: string;
-  borderColor: string;
+  /** Фон панели из палитры темы. */
+  panelBackground: string;
+  /** Цвет рамки из палитры темы. */
+  borderAccent: string;
   onClose: () => void;
 }) => {
   const ref = useClickOutside(onClose);
+  const motionTransitions = useStorybookMotionTransitions();
 
   return (
-    <div
+    <motion.div
       ref={ref}
       style={{
         padding: '20px',
-        backgroundColor: color,
-        border: `2px solid ${borderColor}`,
+        backgroundColor: panelBackground,
+        border: `2px solid ${borderAccent}`,
         borderRadius: '8px',
       }}
+      variants={storybookFadeSlideVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      transition={motionTransitions.panel}
     >
       <Typography variant="h4" marginBottom="sm">
         {title}
@@ -283,10 +329,10 @@ const ClickOutsideElement = ({
       <Typography variant="body1" marginBottom="md">
         Кликните вне этого элемента, чтобы закрыть его.
       </Typography>
-      <Typography variant="body2" style={{ color: '#666' }}>
+      <Typography variant="body2" style={{ color: lightTheme.colors.textSecondary }}>
         Этот элемент отслеживается с помощью useClickOutside
       </Typography>
-    </div>
+    </motion.div>
   );
 };
 
@@ -294,10 +340,11 @@ const ClickOutsideElement = ({
 const ModalIntegrationDemo = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalClickCount, setModalClickCount] = useState(0);
+  const motionTransitions = useStorybookMotionTransitions();
 
   const modalRef = useClickOutside(() => {
     setIsModalOpen(false);
-    setModalClickCount(prev => prev + 1);
+    setModalClickCount((prev) => prev + 1);
   });
 
   return (
@@ -306,52 +353,48 @@ const ModalIntegrationDemo = () => {
         Интеграция с модальными окнами
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
         <Button onClick={() => setIsModalOpen(true)}>Открыть модальное окно</Button>
       </div>
 
-      {isModalOpen && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-          }}
-        >
-          <div
-            ref={modalRef}
-            style={{
-              backgroundColor: 'white',
-              padding: '24px',
-              borderRadius: '8px',
-              maxWidth: '400px',
-              width: '90%',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-            }}
+      <AnimatePresence>
+        {isModalOpen && (
+          <motion.div
+            key="modal-demo-backdrop"
+            style={storybookDemoStyles.modalStoryBackdrop}
+            variants={storybookBackdropFadeVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            transition={motionTransitions.backdrop}
           >
-            <Typography variant="h4" marginBottom="md">
-              Модальное окно
-            </Typography>
-            <Typography variant="body1" marginBottom="lg">
-              Это модальное окно закрывается при клике вне его области.
-            </Typography>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-              <Button variant="outlined" onClick={() => setIsModalOpen(false)}>
-                Закрыть
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+            <motion.div
+              key="modal-demo-panel"
+              ref={modalRef}
+              style={storybookDemoStyles.modalStoryPanel}
+              variants={storybookModalPopVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              transition={motionTransitions.panel}
+            >
+              <Typography variant="h4" marginBottom="md">
+                Модальное окно
+              </Typography>
+              <Typography variant="body1" marginBottom="lg">
+                Это модальное окно закрывается при клике вне его области.
+              </Typography>
+              <div style={storybookDemoStyles.rowFlexGap12JustifyFlexEnd}>
+                <Button variant="outlined" onClick={() => setIsModalOpen(false)}>
+                  Закрыть
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Статус:</strong>
         </Typography>
@@ -369,10 +412,11 @@ const DropdownDemo = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string>('');
   const [clickCount, setClickCount] = useState(0);
+  const motionTransitions = useStorybookMotionTransitions();
 
   const dropdownRef = useClickOutside(() => {
     setIsDropdownOpen(false);
-    setClickCount(prev => prev + 1);
+    setClickCount((prev) => prev + 1);
   });
 
   const options = ['Опция 1', 'Опция 2', 'Опция 3', 'Опция 4'];
@@ -383,56 +427,43 @@ const DropdownDemo = () => {
         Дропдаун с useClickOutside
       </Typography>
 
-      <div style={{ marginBottom: '16px' }}>
-        <div style={{ position: 'relative', display: 'inline-block' }}>
+      <div style={storybookDemoStyles.marginBottom16}>
+        <div style={storybookDemoStyles.inlineBlockRelative}>
           <Button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
             {selectedOption || 'Выберите опцию'} ▼
           </Button>
 
-          {isDropdownOpen && (
-            <div
-              ref={dropdownRef}
-              style={{
-                position: 'absolute',
-                top: '100%',
-                left: 0,
-                right: 0,
-                backgroundColor: 'white',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-                zIndex: 1000,
-                marginTop: '4px',
-              }}
-            >
-              {options.map((option, index) => (
-                <div
-                  key={index}
-                  onClick={() => {
-                    setSelectedOption(option);
-                    setIsDropdownOpen(false);
-                  }}
-                  style={{
-                    padding: '8px 12px',
-                    cursor: 'pointer',
-                    borderBottom: index < options.length - 1 ? '1px solid #eee' : 'none',
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.backgroundColor = '#f5f5f5';
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.backgroundColor = 'white';
-                  }}
-                >
-                  <Typography variant="body2">{option}</Typography>
-                </div>
-              ))}
-            </div>
-          )}
+          <AnimatePresence>
+            {isDropdownOpen && (
+              <motion.div
+                key="dropdown-panel"
+                ref={dropdownRef}
+                style={storybookDemoStyles.dropdownStoryMenuPanel}
+                variants={storybookDropdownRevealVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                transition={motionTransitions.panel}
+              >
+                {options.map((option, index) => (
+                  <ClickOutsideDropdownOptionButton
+                    key={option}
+                    $withBottomDivider={index < options.length - 1}
+                    onClick={() => {
+                      setSelectedOption(option);
+                      setIsDropdownOpen(false);
+                    }}
+                  >
+                    <Typography variant="body2">{option}</Typography>
+                  </ClickOutsideDropdownOptionButton>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
-      <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+      <div style={storybookDemoStyles.demoResultPanel}>
         <Typography variant="body1" marginBottom="sm">
           <strong>Статус:</strong>
         </Typography>
@@ -470,13 +501,12 @@ export const DropdownExample: Story = {
 
 export const AllExamples: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <StorybookStaggerStack>
       <BasicClickOutsideDemo />
       <DisabledClickOutsideDemo />
       <MultipleElementsDemo />
       <ModalIntegrationDemo />
       <DropdownDemo />
-    </div>
+    </StorybookStaggerStack>
   ),
 };
-

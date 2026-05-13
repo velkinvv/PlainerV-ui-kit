@@ -22,7 +22,12 @@ import {
 import { getTableSelectionAggregate } from '@/handlers/tableSelectionHandlers';
 import { clampTablePageZeroBased, getTableTotalPages, toggleTableSortDirection } from './handlers';
 import { TABLE_STORY_DEMO_ROWS, type TableStoryDemoRow } from './tableStoryDemoData';
-import { StoryLoadMoreHint, StoryTableInline, StoryTableLoadMore, StoryTableLoadMoreCell } from './Table.stories.style';
+import {
+  StoryLoadMoreHint,
+  StoryTableInline,
+  StoryTableLoadMore,
+  StoryTableLoadMoreCell,
+} from './Table.stories.style';
 
 type SortKey = 'user' | 'state' | 'date';
 
@@ -54,7 +59,10 @@ export function TableStoriesDataGridDemo(): React.ReactElement {
     return copy;
   }, [order, orderBy]);
 
-  const totalPages = useMemo(() => getTableTotalPages(sortedRows.length, rowsPerPage), [sortedRows.length, rowsPerPage]);
+  const totalPages = useMemo(
+    () => getTableTotalPages(sortedRows.length, rowsPerPage),
+    [sortedRows.length, rowsPerPage],
+  );
   const safePage = useMemo(() => clampTablePageZeroBased(page, totalPages), [page, totalPages]);
 
   const pageSlice = useMemo(() => {
@@ -62,23 +70,23 @@ export function TableStoriesDataGridDemo(): React.ReactElement {
     return sortedRows.slice(start, start + rowsPerPage);
   }, [safePage, rowsPerPage, sortedRows]);
 
-  const pageIds = useMemo(() => pageSlice.map(r => r.id), [pageSlice]);
+  const pageIds = useMemo(() => pageSlice.map((r) => r.id), [pageSlice]);
   const selectionAggregate = useMemo(
     () => getTableSelectionAggregate(pageIds, selectedIds),
     [pageIds, selectedIds],
   );
 
   const toggleSelectAllOnPage = useCallback(() => {
-    setSelectedIds(prev => {
+    setSelectedIds((prev) => {
       const next = new Set(prev);
       const isFull = selectionAggregate === 'all';
       const isPartial = selectionAggregate === 'partial';
       if (isFull || isPartial) {
-        pageIds.forEach(id => {
+        pageIds.forEach((id) => {
           next.delete(id);
         });
       } else {
-        pageIds.forEach(id => {
+        pageIds.forEach((id) => {
           next.add(id);
         });
       }
@@ -87,7 +95,7 @@ export function TableStoriesDataGridDemo(): React.ReactElement {
   }, [pageIds, selectionAggregate]);
 
   const toggleRow = useCallback((id: string) => {
-    setSelectedIds(prev => {
+    setSelectedIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) {
         next.delete(id);
@@ -126,7 +134,7 @@ export function TableStoriesDataGridDemo(): React.ReactElement {
   return (
     <TableContainer elevated>
       <TableContainerScroll embeddedPaginationBelow>
-      <Table striped size="md" aria-label="Демо таблицы с выбором строк и тегами">
+        <Table striped size="md" aria-label="Демо таблицы с выбором строк и тегами">
           <TableHead>
             <TableRow>
               <TableCell padding="checkbox">
@@ -179,7 +187,7 @@ export function TableStoriesDataGridDemo(): React.ReactElement {
             </TableRow>
           </TableHead>
           <TableBody>
-            {pageSlice.map(row => {
+            {pageSlice.map((row) => {
               const checked = selectedIds.has(row.id);
               const rowDisabled = Boolean(row.disableRow);
               return (
@@ -227,12 +235,14 @@ export function TableStoriesDataGridDemo(): React.ReactElement {
                 <StoryTableLoadMore
                   type="button"
                   onClick={() => {
-                    setLoadMoreClicks(c => c + 1);
+                    setLoadMoreClicks((c) => c + 1);
                   }}
                 >
                   Загрузить больше
                   <Icon name="PhosphorArrowFatLineDown" size={IconSize.SM} color="currentColor" />
-                  {loadMoreClicks > 0 ? <StoryLoadMoreHint>({loadMoreClicks})</StoryLoadMoreHint> : null}
+                  {loadMoreClicks > 0 ? (
+                    <StoryLoadMoreHint>({loadMoreClicks})</StoryLoadMoreHint>
+                  ) : null}
                 </StoryTableLoadMore>
               </StoryTableLoadMoreCell>
             </TableRow>
@@ -249,7 +259,7 @@ export function TableStoriesDataGridDemo(): React.ReactElement {
         onPageChange={(_event, nextPageZeroBased) => {
           setPage(nextPageZeroBased);
         }}
-        onRowsPerPageChange={changeEvent => {
+        onRowsPerPageChange={(changeEvent) => {
           const nextPageSize = Number(changeEvent.target.value);
           setRowsPerPage(nextPageSize);
           setPage(0);

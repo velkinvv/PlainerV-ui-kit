@@ -82,7 +82,11 @@ export const FloatingMenuItemButton = styled.button<{
 
   &:hover {
     background: ${({ theme, $disabled }) =>
-      $disabled ? 'transparent' : theme.mode === ThemeMode.DARK ? 'rgba(255,255,255,0.08)' : '#f5f5f5'};
+      $disabled
+        ? 'transparent'
+        : theme.mode === ThemeMode.DARK
+          ? 'rgba(255,255,255,0.08)'
+          : '#f5f5f5'};
   }
 
   ${({ $active, $insetGroup, theme }) => {
@@ -91,8 +95,7 @@ export const FloatingMenuItemButton = styled.button<{
     }
     /* Подложка: theme.colors.info (яркий акцент), не theme.colors.primary (тёмный blue из макета) */
     const primaryButtonStyles = getButtonVariant(theme.buttons, ButtonVariant.PRIMARY);
-    const activeTextOnInfo =
-      primaryButtonStyles.hover.color ?? primaryButtonStyles.color;
+    const activeTextOnInfo = primaryButtonStyles.hover.color ?? primaryButtonStyles.color;
     return css`
       background: ${theme.colors.info};
       color: ${primaryButtonStyles.color};
@@ -107,14 +110,18 @@ export const FloatingMenuItemButton = styled.button<{
   ${({ $active, $insetGroup, theme }) =>
     $active && $insetGroup
       ? css`
-          background: ${theme.mode === ThemeMode.DARK ? theme.colors.backgroundSecondary : '#ffffff'};
+          background: ${theme.mode === ThemeMode.DARK
+            ? theme.colors.backgroundSecondary
+            : '#ffffff'};
           /* Акцент иконки — тот же яркий info, что и у залитого активного пункта */
           color: ${theme.colors.info};
           box-shadow: 0 0 0 1px
             ${theme.mode === ThemeMode.DARK ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.06)'};
 
           &:hover {
-            background: ${theme.mode === ThemeMode.DARK ? theme.colors.backgroundSecondary : '#ffffff'};
+            background: ${theme.mode === ThemeMode.DARK
+              ? theme.colors.backgroundSecondary
+              : '#ffffff'};
             color: ${theme.colors.infoHover};
           }
         `

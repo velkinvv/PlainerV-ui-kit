@@ -22,7 +22,13 @@ export { Badge } from './Badge';
 export type { BadgeProps } from '@/types/ui';
 
 export { Tag } from './Tag';
-export type { TagProps, TagColorVariant, TagAppearance, TagStatusDisplay, TagCustomColors } from '@/types/ui';
+export type {
+  TagProps,
+  TagColorVariant,
+  TagAppearance,
+  TagStatusDisplay,
+  TagCustomColors,
+} from '@/types/ui';
 
 export { Breadcrumb } from './Breadcrumb';
 export type { BreadcrumbProps, BreadcrumbItem } from '@/types/ui';
@@ -167,7 +173,7 @@ export {
   getSortChevronTones,
   getTableSortChevronColor,
   parseTablePageJumpInput,
-} from './Table';
+} from './table';
 export type {
   TableContainerProps,
   TableProps,
@@ -183,9 +189,9 @@ export type {
   TableCellVariant,
   TableSortDirection,
 } from '@/types/ui';
-export type { TableSortChevronTone, TableContainerScrollProps } from './Table';
+export type { TableSortChevronTone, TableContainerScrollProps } from './table';
 
-export { DataGrid } from './Table';
+export { DataGrid } from './table';
 export {
   applyDataGridColDragGhostPreview,
   applyDataGridRowDragGhostPreview,
@@ -204,7 +210,7 @@ export {
   normalizeDataGridSortModel,
   resolveNextDataGridSortModel,
   getDataGridSortCriterionIndexForField,
-} from './Table';
+} from './table';
 export type {
   DataGridProps,
   DataGridBaseRow,
@@ -226,7 +232,7 @@ export type {
   ColumnFilterPanelPresentation,
 } from '@/types/ui';
 
-export { ColumnFilterPanel } from './Table';
+export { ColumnFilterPanel } from './table';
 
 export { Icon } from './Icon';
 export type { IconProps } from '@/types/ui';
@@ -234,8 +240,8 @@ export type { IconProps } from '@/types/ui';
 export { ThemeToggle } from './ThemeToggle';
 export type { ThemeToggleProps } from '@/types/ui';
 
-export { Sidebar } from './sidebar';
-export type { SidebarProps } from '@/types/ui';
+export { Sidemenu } from './sidemenu';
+export type { SidemenuProps } from '@/types/ui';
 
 export { Checkbox, CheckboxGroup } from './Checkbox';
 export type { CheckboxProps, CheckboxGroupProps } from '@/types/ui';

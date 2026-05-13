@@ -20,11 +20,7 @@ describe('Pill', () => {
 
   it('вызывает onClick', () => {
     const handleClick = jest.fn();
-    renderWithTheme(
-      <Pill onClick={handleClick}>
-        A
-      </Pill>,
-    );
+    renderWithTheme(<Pill onClick={handleClick}>A</Pill>);
     fireEvent.click(screen.getByRole('button'));
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
@@ -40,7 +36,9 @@ describe('Pill', () => {
     fireEvent.click(screen.getByRole('button'));
     expect(handleChange).toHaveBeenCalledWith(true, expect.any(Object));
     expect(handleClick).toHaveBeenCalledTimes(1);
-    expect(handleChange.mock.invocationCallOrder[0]).toBeLessThan(handleClick.mock.invocationCallOrder[0]);
+    expect(handleChange.mock.invocationCallOrder[0]).toBeLessThan(
+      handleClick.mock.invocationCallOrder[0],
+    );
   });
 
   it('при role="radio" onChange передаёт true', () => {

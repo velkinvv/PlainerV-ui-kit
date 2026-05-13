@@ -59,7 +59,7 @@ export const FloatingMenuGroupItem: React.FC<FloatingMenuGroupItemProps> = ({
   }, [disabled, hasMenu, itemId, setOpenDropdownId]);
 
   const close = useCallback(() => {
-    setOpenDropdownId(prev => (prev === itemId ? null : prev));
+    setOpenDropdownId((prev) => (prev === itemId ? null : prev));
   }, [itemId, setOpenDropdownId]);
 
   const toggle = useCallback(() => {
@@ -187,7 +187,9 @@ export const FloatingMenuGroupItem: React.FC<FloatingMenuGroupItemProps> = ({
       onMouseLeave={handleButtonMouseLeave}
     >
       <FloatingMenuItemIconSlot>{icon}</FloatingMenuItemIconSlot>
-      {hasDropdown && hasMenu ? <FloatingMenuItemChevron aria-hidden>▾</FloatingMenuItemChevron> : null}
+      {hasDropdown && hasMenu ? (
+        <FloatingMenuItemChevron aria-hidden>▾</FloatingMenuItemChevron>
+      ) : null}
     </FloatingMenuItemButton>
   );
 

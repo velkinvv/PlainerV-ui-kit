@@ -7,7 +7,10 @@ import { Icon } from '../../Icon/Icon';
 import { Input } from '../../inputs/Input/Input';
 import { ColumnFilterPanel } from '../columnFilter/ColumnFilterPanel';
 import { DataGrid } from '../dataGrid/DataGrid';
-import { TABLE_STORY_DEMO_ROWS, type DataGridStoryDemoRow } from '../dataGrid/dataGridStoryDemoData';
+import {
+  TABLE_STORY_DEMO_ROWS,
+  type DataGridStoryDemoRow,
+} from '../dataGrid/dataGridStoryDemoData';
 import {
   Table,
   TableBody,
@@ -119,11 +122,13 @@ function TextFilterColumnHeader({
             setMenuOpen(false);
           }}
         >
-          <StoryColumnFilterFieldLabel htmlFor={filterInputDomId}>Значение:</StoryColumnFilterFieldLabel>
+          <StoryColumnFilterFieldLabel htmlFor={filterInputDomId}>
+            Значение:
+          </StoryColumnFilterFieldLabel>
           <Input
             id={filterInputDomId}
             value={draftValue}
-            onChange={event => {
+            onChange={(event) => {
               setDraftValue(event.target.value);
             }}
             placeholder="Введите текст"
@@ -150,11 +155,13 @@ export const TableWithTextFilterInHeader: Story = {
 
     const rows = useMemo(
       () =>
-        TABLE_STORY_DEMO_ROWS.slice(0, 6).filter(row => {
+        TABLE_STORY_DEMO_ROWS.slice(0, 6).filter((row) => {
           if (!userFilter) {
             return true;
           }
-          return row.user.toLocaleLowerCase('ru-RU').includes(userFilter.toLocaleLowerCase('ru-RU'));
+          return row.user
+            .toLocaleLowerCase('ru-RU')
+            .includes(userFilter.toLocaleLowerCase('ru-RU'));
         }),
       [userFilter],
     );
@@ -162,8 +169,8 @@ export const TableWithTextFilterInHeader: Story = {
     return (
       <StoryColumnFiltersPage>
         <StoryColumnFiltersIntro>
-          Фильтр по подстроке в колонке «Пользователь». Панель — ColumnFilterPanel внутри Dropdown с multiSelection, чтобы
-          клики по полю не закрывали меню до «Применить».
+          Фильтр по подстроке в колонке «Пользователь». Панель — ColumnFilterPanel внутри Dropdown с
+          multiSelection, чтобы клики по полю не закрывали меню до «Применить».
         </StoryColumnFiltersIntro>
         <TableContainer elevated>
           <TableContainerScroll>
@@ -185,7 +192,7 @@ export const TableWithTextFilterInHeader: Story = {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.map(row => (
+                {rows.map((row) => (
                   <TableRow key={row.id}>
                     <TableCell>{row.user}</TableCell>
                     <TableCell>{row.tag?.label ?? '—'}</TableCell>
@@ -243,11 +250,13 @@ export const DataGridWithTextFilterInHeader: Story = {
 
     const filteredRows = useMemo(
       () =>
-        TABLE_STORY_DEMO_ROWS.slice(0, 8).filter(row => {
+        TABLE_STORY_DEMO_ROWS.slice(0, 8).filter((row) => {
           if (!userFilter) {
             return true;
           }
-          return row.user.toLocaleLowerCase('ru-RU').includes(userFilter.toLocaleLowerCase('ru-RU'));
+          return row.user
+            .toLocaleLowerCase('ru-RU')
+            .includes(userFilter.toLocaleLowerCase('ru-RU'));
         }),
       [userFilter],
     );
@@ -255,8 +264,8 @@ export const DataGridWithTextFilterInHeader: Story = {
     return (
       <StoryColumnFiltersPageWide>
         <StoryColumnFiltersIntro>
-          DataGrid без пагинации: фильтр в первой колонке, в rows передаётся уже отфильтрованный срез (как при
-          клиентской фильтрации).
+          DataGrid без пагинации: фильтр в первой колонке, в rows передаётся уже отфильтрованный
+          срез (как при клиентской фильтрации).
         </StoryColumnFiltersIntro>
         <DataGrid<DataGridStoryDemoRow>
           tableId="story-datagrid-column-filter"

@@ -1,0 +1,16 @@
+/**
+ * Лёгкое улучшение «живости» превью Storybook без конфликта с темами.
+ * При prefers-reduced-motion — только мгновенные переходы по системной настройке ОС.
+ */
+
+@media (prefers-reduced-motion: no-preference) {
+  .sb-show-main.sb-main-padded,
+  .sb-show-main .sb-story {
+    scroll-behavior: smooth;
+  }
+
+  /* Документация: чуть плавнее появление блоков при раскрытии секций (если браузер поддерживает) */
+  .sbdocs-content details {
+    transition: box-shadow 0.2s ease;
+  }
+}

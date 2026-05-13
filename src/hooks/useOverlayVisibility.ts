@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 type UseOverlayVisibilityParameters = {
   /**
@@ -29,6 +29,12 @@ type UseOverlayVisibilityResult = {
    * Скрыто ли содержимое в режиме `unmountOnClose=false`.
    */
   isHidden: boolean;
+  /**
+   * Передать в `AnimatePresence` как `onExitComplete`: после выходной анимации
+   * снимает «удержание» портала при `unmountOnClose=true`, иначе портал исчезает
+   * вместе с деревом до проигрывания `exit`.
+   */
+  notifyPresenceExitComplete: () => void;
 };
 
 /**
@@ -39,28 +45,39 @@ type UseOverlayVisibilityResult = {
 export const useOverlayVisibility = (
   overlayVisibilityParameters: UseOverlayVisibilityParameters,
 ): UseOverlayVisibilityResult => {
-  const {
-    isOpen,
-    unmountOnClose = true,
-    lazy = true,
-  } = overlayVisibilityParameters;
+  const { isOpen, unmountOnClose = true, lazy = true } = overlayVisibilityParameters;
 
   const [isInitialized, setIsInitialized] = useState<boolean>(isOpen);
+  /**
+   * После `true` при `unmountOnClose` портал можно снять (выходная анимация закончилась).
+   * Пока `false` при закрытом `isOpen` портал остаётся смонтированным ради `AnimatePresence`.
+   */
+  const [allowPortalUnmountAfterClose, setAllowPortalUnmountAfterClose] = useState(true);
 
   useEffect(() => {
     if (isOpen) {
       setIsInitialized(true);
+      setAllowPortalUnmountAfterClose(false);
     }
   }, [isOpen]);
 
   const shouldRenderByLazy = !lazy || isOpen || isInitialized;
-  const shouldRenderPortal = shouldRenderByLazy && (isOpen || !unmountOnClose);
+  const shouldRenderPortal =
+    shouldRenderByLazy &&
+    (!unmountOnClose || isOpen || (isInitialized && !allowPortalUnmountAfterClose));
   const shouldRenderContent = unmountOnClose ? isOpen : shouldRenderByLazy;
   const isHidden = !isOpen && !unmountOnClose;
+
+  const notifyPresenceExitComplete = useCallback(() => {
+    if (unmountOnClose) {
+      setAllowPortalUnmountAfterClose(true);
+    }
+  }, [unmountOnClose]);
 
   return {
     shouldRenderPortal,
     shouldRenderContent,
     isHidden,
+    notifyPresenceExitComplete,
   };
 };
