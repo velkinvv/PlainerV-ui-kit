@@ -10,8 +10,13 @@ import { ToastAppearance } from '@/types/ui';
 
 jest.useFakeTimers();
 
+/** FIFO в массиве `toasts`, как при последовательных `showToast` (без newestOnTop) */
 const wrapper = ({ children }: { children: React.ReactNode }) =>
-  React.createElement(ThemeProvider, null, React.createElement(ToastProvider, null, children));
+  React.createElement(
+    ThemeProvider,
+    null,
+    React.createElement(ToastProvider, { newestOnTop: false }, children),
+  );
 
 describe('useToast', () => {
   beforeEach(() => {

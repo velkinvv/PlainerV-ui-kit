@@ -152,10 +152,33 @@ const generateGapStyles = (
   return '';
 };
 
+/** Пропсы только для CSS; не пробрасывать на DOM (React warning на нативном div). */
+const GRID_STYLE_ONLY_PROPS = new Set([
+  'mode',
+  'container',
+  'columns',
+  'rows',
+  'gap',
+  'rowGap',
+  'columnGap',
+  'justifyContent',
+  'alignItems',
+  'width',
+  'height',
+  'minHeight',
+  'maxHeight',
+  'autoFit',
+  'autoFill',
+  'minColumnWidth',
+  'maxColumnWidth',
+]);
+
 /**
  * Обертка для Grid компонента
  */
-export const GridWrapper = styled.div<GridProps>`
+export const GridWrapper = styled.div.withConfig({
+  shouldForwardProp: (prop) => !GRID_STYLE_ONLY_PROPS.has(prop),
+})<GridProps>`
   display: grid;
 
   /* Режим контейнера */
