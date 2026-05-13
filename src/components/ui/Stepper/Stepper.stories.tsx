@@ -149,16 +149,12 @@ export const CompactInteractive: Story = {
           totalSteps={totalSteps}
           title={`Шаг ${currentStep} из ${totalSteps}`}
           subtitle={currentStep < totalSteps ? `Далее: шаг ${currentStep + 1}` : 'Завершение'}
-          onBack={() =>
-            setCurrentStep((previousStepValue) => Math.max(1, previousStepValue - 1))
-          }
+          onBack={() => setCurrentStep((previousStepValue) => Math.max(1, previousStepValue - 1))}
         />
         <button
           type="button"
           onClick={() =>
-            setCurrentStep((previousStepValue) =>
-              Math.min(totalSteps, previousStepValue + 1),
-            )
+            setCurrentStep((previousStepValue) => Math.min(totalSteps, previousStepValue + 1))
           }
         >
           Вперёд (демо)
@@ -213,4 +209,3 @@ export const LinearCustomLabels: Story = {
     />
   ),
 };
-

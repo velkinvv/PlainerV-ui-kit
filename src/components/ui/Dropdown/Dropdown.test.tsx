@@ -21,11 +21,7 @@ describe('Dropdown', () => {
 
   it('рендерится с trigger', () => {
     renderWithTheme(
-      <Dropdown
-        trigger={<Button>Открыть меню</Button>}
-        items={items}
-        onSelect={jest.fn()}
-      />
+      <Dropdown trigger={<Button>Открыть меню</Button>} items={items} onSelect={jest.fn()} />,
     );
 
     expect(screen.getByText('Открыть меню')).toBeInTheDocument();
@@ -33,11 +29,7 @@ describe('Dropdown', () => {
 
   it('открывается при клике на trigger', () => {
     renderWithTheme(
-      <Dropdown
-        trigger={<Button>Открыть меню</Button>}
-        items={items}
-        onSelect={jest.fn()}
-      />
+      <Dropdown trigger={<Button>Открыть меню</Button>} items={items} onSelect={jest.fn()} />,
     );
 
     const trigger = screen.getByText('Открыть меню');
@@ -50,11 +42,7 @@ describe('Dropdown', () => {
   it('вызывает onSelect при выборе элемента', () => {
     const handleSelect = jest.fn();
     renderWithTheme(
-      <Dropdown
-        trigger={<Button>Открыть меню</Button>}
-        items={items}
-        onSelect={handleSelect}
-      />
+      <Dropdown trigger={<Button>Открыть меню</Button>} items={items} onSelect={handleSelect} />,
     );
 
     const trigger = screen.getByText('Открыть меню');
@@ -68,11 +56,7 @@ describe('Dropdown', () => {
 
   it('закрывается при выборе элемента', () => {
     renderWithTheme(
-      <Dropdown
-        trigger={<Button>Открыть меню</Button>}
-        items={items}
-        onSelect={jest.fn()}
-      />
+      <Dropdown trigger={<Button>Открыть меню</Button>} items={items} onSelect={jest.fn()} />,
     );
 
     const trigger = screen.getByText('Открыть меню');
@@ -92,7 +76,7 @@ describe('Dropdown', () => {
         items={items}
         onSelect={jest.fn()}
         searchable
-      />
+      />,
     );
 
     const trigger = screen.getByText('Открыть меню');
@@ -111,7 +95,7 @@ describe('Dropdown', () => {
         size={Size.SM}
         items={items}
         onSelect={jest.fn()}
-      />
+      />,
     );
 
     fireEvent.click(screen.getByText('Тег-меню'));
@@ -129,7 +113,7 @@ describe('Dropdown', () => {
         size={Size.SM}
         items={items}
         onSelect={jest.fn()}
-      />
+      />,
     );
 
     expect(screen.getByText('Пункт 2')).toBeInTheDocument();

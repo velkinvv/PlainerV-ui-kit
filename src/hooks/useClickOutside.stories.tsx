@@ -87,7 +87,7 @@ const BasicClickOutsideDemo = () => {
 
   const ref = useClickOutside(() => {
     setIsOpen(false);
-    setClickCount(prev => prev + 1);
+    setClickCount((prev) => prev + 1);
   });
 
   return (
@@ -147,7 +147,7 @@ const DisabledClickOutsideDemo = () => {
 
   const ref = useClickOutside(() => {
     setIsOpen(false);
-    setClickCount(prev => prev + 1);
+    setClickCount((prev) => prev + 1);
   }, isEnabled);
 
   const trackedPanelStyle = isEnabled
@@ -219,7 +219,7 @@ const MultipleElementsDemo = () => {
   const [clickCounts, setClickCounts] = useState<Record<number, number>>({});
 
   const toggleElement = (index: number) => {
-    setOpenElements(prev => {
+    setOpenElements((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(index)) {
         newSet.delete(index);
@@ -231,12 +231,12 @@ const MultipleElementsDemo = () => {
   };
 
   const createClickOutsideHandler = (index: number) => () => {
-    setOpenElements(prev => {
+    setOpenElements((prev) => {
       const newSet = new Set(prev);
       newSet.delete(index);
       return newSet;
     });
-    setClickCounts(prev => ({
+    setClickCounts((prev) => ({
       ...prev,
       [index]: (prev[index] || 0) + 1,
     }));
@@ -344,7 +344,7 @@ const ModalIntegrationDemo = () => {
 
   const modalRef = useClickOutside(() => {
     setIsModalOpen(false);
-    setModalClickCount(prev => prev + 1);
+    setModalClickCount((prev) => prev + 1);
   });
 
   return (
@@ -416,7 +416,7 @@ const DropdownDemo = () => {
 
   const dropdownRef = useClickOutside(() => {
     setIsDropdownOpen(false);
-    setClickCount(prev => prev + 1);
+    setClickCount((prev) => prev + 1);
   });
 
   const options = ['Опция 1', 'Опция 2', 'Опция 3', 'Опция 4'];

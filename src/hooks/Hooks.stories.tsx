@@ -11,7 +11,6 @@ import {
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
 import { Tag } from '../components/ui/Tag';
-import { Button } from '../components/ui/buttons/Button';
 import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
 import {
   HOOK_OVERVIEW_CARD_BORDER_ACCENTS,
@@ -81,13 +80,21 @@ const HooksOverview = () => {
         {
           name: 'useToast',
           description: 'Стек Toast (карточки, портал в body)',
-          features: ['Типы success/error/warning/info', 'Заголовок и текст', 'Таймер и ручное закрытие'],
+          features: [
+            'Типы success/error/warning/info',
+            'Заголовок и текст',
+            'Таймер и ручное закрытие',
+          ],
           icon: '🔔',
         },
         {
           name: 'useSnackbar',
           description: 'Стек Snackbar (компактная полоса снизу)',
-          features: ['Опция действия actionLabel + onAction', 'Таймер по умолчанию 4 с', 'Позиция bottom-*'],
+          features: [
+            'Опция действия actionLabel + onAction',
+            'Таймер по умолчанию 4 с',
+            'Позиция bottom-*',
+          ],
           icon: '📣',
         },
         {
@@ -139,7 +146,12 @@ const HooksOverview = () => {
         {
           name: 'useWindowSize',
           description: 'Отслеживание размера окна',
-          features: ['Размер окна', 'Размер экрана', 'Доступный размер', 'useIsDesktop по innerWidth'],
+          features: [
+            'Размер окна',
+            'Размер экрана',
+            'Доступный размер',
+            'useIsDesktop по innerWidth',
+          ],
           icon: '🖥️',
         },
       ],
@@ -166,7 +178,11 @@ const HooksOverview = () => {
 
         return (
           <div key={category.category} style={storybookDemoStyles.marginBottom32}>
-            <Typography variant="h4" marginBottom="md" style={hooksOverviewStoriesStyles.sectionHeading}>
+            <Typography
+              variant="h4"
+              marginBottom="md"
+              style={hooksOverviewStoriesStyles.sectionHeading}
+            >
               {category.category}
             </Typography>
 
@@ -196,7 +212,11 @@ const HooksOverview = () => {
                       <Typography variant="h5">{hook.name}</Typography>
                     </div>
 
-                    <Typography variant="body1" marginBottom="md" style={hooksOverviewStoriesStyles.bodyTextMuted}>
+                    <Typography
+                      variant="body1"
+                      marginBottom="md"
+                      style={hooksOverviewStoriesStyles.bodyTextMuted}
+                    >
                       {hook.description}
                     </Typography>
 
@@ -206,7 +226,10 @@ const HooksOverview = () => {
 
                     <ul style={hooksOverviewStoriesStyles.listUnstyled}>
                       {hook.features.map((feature, featureIndex) => (
-                        <li key={featureIndex} style={hooksOverviewStoriesStyles.listItemMarginBottom4}>
+                        <li
+                          key={featureIndex}
+                          style={hooksOverviewStoriesStyles.listItemMarginBottom4}
+                        >
                           <Typography variant="body2">{feature}</Typography>
                         </li>
                       ))}
@@ -497,9 +520,13 @@ const SizeComponent = () => {
         </Typography>
       </div>
 
-      {examples.map(category => (
+      {examples.map((category) => (
         <div key={category.title} style={storybookDemoStyles.marginBottom32}>
-          <Typography variant="h4" marginBottom="md" style={hooksOverviewStoriesStyles.sectionHeading}>
+          <Typography
+            variant="h4"
+            marginBottom="md"
+            style={hooksOverviewStoriesStyles.sectionHeading}
+          >
             {category.title}
           </Typography>
 
@@ -509,7 +536,7 @@ const SizeComponent = () => {
             initial="hidden"
             animate="visible"
           >
-            {category.hooks.map(hook => (
+            {category.hooks.map((hook) => (
               <motion.div
                 key={hook.name}
                 style={hooksOverviewStoriesStyles.hookExampleCard}
@@ -520,7 +547,9 @@ const SizeComponent = () => {
                   <Typography variant="h5" marginRight="sm">
                     {hook.name}
                   </Typography>
-                  <span style={hooksOverviewStoriesStyles.hookDescriptionPill}>{hook.description}</span>
+                  <span style={hooksOverviewStoriesStyles.hookDescriptionPill}>
+                    {hook.description}
+                  </span>
                 </div>
 
                 <div style={hooksOverviewStoriesStyles.codeBlockContainer}>
@@ -669,7 +698,11 @@ const MyComponent = () => {
               <Typography variant="h5">{practice.title}</Typography>
             </div>
 
-            <Typography variant="body1" marginBottom="md" style={hooksOverviewStoriesStyles.bodyTextMuted}>
+            <Typography
+              variant="body1"
+              marginBottom="md"
+              style={hooksOverviewStoriesStyles.bodyTextMuted}
+            >
               {practice.description}
             </Typography>
 
@@ -715,4 +748,3 @@ export const AllExamples: Story = {
     </StorybookStaggerStack>
   ),
 };
-

@@ -16,7 +16,11 @@ describe('FileInput handlers', () => {
   it('formatFileListSummary', () => {
     // В jsdom нет DataTransfer — достаточно минимального FileList для проверки логики.
     const file = new File(['x'], 'a.txt');
-    const files = { length: 1, 0: file, item: (i: number) => (i === 0 ? file : null) } as unknown as FileList;
+    const files = {
+      length: 1,
+      0: file,
+      item: (i: number) => (i === 0 ? file : null),
+    } as unknown as FileList;
     expect(formatFileListSummary(files, false)).toBe('a.txt');
     expect(formatFileListSummary(files, true)).toBe('a.txt');
   });
@@ -24,7 +28,12 @@ describe('FileInput handlers', () => {
   it('formatFileListSummary для нескольких файлов', () => {
     const f1 = new File(['a'], 'a.txt');
     const f2 = new File(['b'], 'b.txt');
-    const files = { length: 2, 0: f1, 1: f2, item: (i: number) => [f1, f2][i] ?? null } as unknown as FileList;
+    const files = {
+      length: 2,
+      0: f1,
+      1: f2,
+      item: (i: number) => [f1, f2][i] ?? null,
+    } as unknown as FileList;
     expect(formatFileListSummary(files, true)).toBe('Выбрано файлов: 2');
   });
 });

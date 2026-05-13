@@ -101,7 +101,6 @@ const menuItemButtonStyles = (props: {
       outline: 2px solid ${theme.colors.primary};
       outline-offset: 0;
     }
-
   `;
 };
 
@@ -113,5 +112,5 @@ type MenuItemControlProps = {
 
 /** Кнопка пункта меню (`role="menuitem"`) */
 export const MenuItemControl = styled.button<MenuItemControlProps>`
-  ${props => menuItemButtonStyles(props)}
+  ${(props) => menuItemButtonStyles(props)}
 `;

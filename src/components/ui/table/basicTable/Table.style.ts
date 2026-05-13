@@ -1,5 +1,8 @@
 import styled, { css } from 'styled-components';
-import { PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR, tableBorderRadiusFromTheme } from './tableThemeRadiusHandlers';
+import {
+  PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR,
+  tableBorderRadiusFromTheme,
+} from './tableThemeRadiusHandlers';
 import type { ThemeType } from '@/types/theme';
 import type { TablePaginationToolbarAlign, TableSize } from '@/types/ui';
 
@@ -60,7 +63,7 @@ export const TableContainerRoot = styled.div<{ $elevated: boolean }>`
  * тогда скругление только сверху; иначе — со всех сторон (таблица без встроенного футера).
  */
 export const TableContainerScrollClip = styled.div.withConfig({
-  shouldForwardProp: prop => prop !== '$embeddedPaginationBelow',
+  shouldForwardProp: (prop) => prop !== '$embeddedPaginationBelow',
 })<{ $embeddedPaginationBelow?: boolean }>`
   box-sizing: border-box;
   width: 100%;
@@ -88,7 +91,7 @@ export const TableContainerScrollClip = styled.div.withConfig({
  * С `max-height` — единая область `overflow: auto` внутри трека, липкая шапка относительно неё.
  */
 export const TableContainerScrollTrack = styled.div.withConfig({
-  shouldForwardProp: prop => prop !== '$scrollAreaMaxHeight',
+  shouldForwardProp: (prop) => prop !== '$scrollAreaMaxHeight',
 })<{
   /**
    * Максимальная высота области с вертикальным скроллом (число — пиксели). Без пропа вертикальная
@@ -248,7 +251,7 @@ const cellPadding = (size: TableSize, padding: 'normal' | 'checkbox' | 'none') =
 };
 
 export const TableCellBase = styled('td').withConfig({
-  shouldForwardProp: prop =>
+  shouldForwardProp: (prop) =>
     ![
       '$align',
       '$padding',
@@ -278,9 +281,9 @@ export const TableCellBase = styled('td').withConfig({
   vertical-align: middle;
   font-size: ${({ theme }) => theme.fontSizes?.sm ?? '14px'};
   line-height: ${({ theme }) => theme.lineHeights?.normal ?? 1.4};
-  color: ${({ theme, $isHead }) =>
-    $isHead ? theme.tables.cell.textHead : theme.tables.cell.text};
-  font-weight: ${({ theme, $isHead }) => ($isHead ? theme.fontWeights?.semiBold ?? 600 : theme.fontWeights?.regular ?? 400)};
+  color: ${({ theme, $isHead }) => ($isHead ? theme.tables.cell.textHead : theme.tables.cell.text)};
+  font-weight: ${({ theme, $isHead }) =>
+    $isHead ? (theme.fontWeights?.semiBold ?? 600) : (theme.fontWeights?.regular ?? 400)};
   padding: ${({ $size, $padding }) => cellPadding($size, $padding)};
   ${({ $isHead, $isFooter, $size }) =>
     ($isHead || $isFooter) &&
@@ -302,7 +305,7 @@ export const TableCellBase = styled('td').withConfig({
       }
     `}
 
-  ${({ $isHead, theme, $headerMaxLines }) =>
+  ${({ $isHead, theme: _theme, $headerMaxLines }) =>
     $isHead &&
     css`
       &:first-of-type {
@@ -321,7 +324,7 @@ export const TableCellBase = styled('td').withConfig({
 `;
 
 export const TableSortLabelButton = styled.button.withConfig({
-  shouldForwardProp: prop => !['$disabled', '$headerClampLayout'].includes(String(prop)),
+  shouldForwardProp: (prop) => !['$disabled', '$headerClampLayout'].includes(String(prop)),
 })<{ $disabled?: boolean; $headerClampLayout?: boolean }>`
   display: ${({ $headerClampLayout }) => ($headerClampLayout ? 'flex' : 'inline-flex')};
   align-items: ${({ $headerClampLayout }) => ($headerClampLayout ? 'flex-start' : 'center')};
@@ -445,7 +448,7 @@ export const TablePaginationRowsSelect = styled.label<{ $compact?: boolean }>`
   align-items: center;
   gap: ${({ $compact }) => ($compact ? '6px' : '8px')};
   font-size: ${({ theme, $compact }) =>
-    $compact ? theme.fontSizes?.xs ?? '12px' : theme.fontSizes?.sm ?? '14px'};
+    $compact ? (theme.fontSizes?.xs ?? '12px') : (theme.fontSizes?.sm ?? '14px')};
   color: ${({ theme }) => theme.tables.pagination.textSecondary};
 `;
 

@@ -19,5 +19,7 @@ export const NavigationMenuDepthProvider: React.FC<NavigationMenuDepthProviderPr
   depth,
   children,
 }) => (
-  <NavigationMenuDepthContext.Provider value={depth}>{children}</NavigationMenuDepthContext.Provider>
+  <NavigationMenuDepthContext.Provider value={depth}>
+    {children}
+  </NavigationMenuDepthContext.Provider>
 );

@@ -363,7 +363,12 @@ export const AllFeatures: Story = {
       </Grid>
 
       <h3>3. Auto-fit Grid</h3>
-      <Grid autoFit minColumnWidth="200px" gap={16} style={gridStoriesStyles.sectionSpacingMarginBottom40}>
+      <Grid
+        autoFit
+        minColumnWidth="200px"
+        gap={16}
+        style={gridStoriesStyles.sectionSpacingMarginBottom40}
+      >
         <Card>Auto-fit 1</Card>
         <Card>Auto-fit 2</Card>
         <Card>Auto-fit 3</Card>
@@ -427,4 +432,3 @@ export const AllFeatures: Story = {
     },
   },
 };
-

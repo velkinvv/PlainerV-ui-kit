@@ -45,11 +45,7 @@ type UseOverlayVisibilityResult = {
 export const useOverlayVisibility = (
   overlayVisibilityParameters: UseOverlayVisibilityParameters,
 ): UseOverlayVisibilityResult => {
-  const {
-    isOpen,
-    unmountOnClose = true,
-    lazy = true,
-  } = overlayVisibilityParameters;
+  const { isOpen, unmountOnClose = true, lazy = true } = overlayVisibilityParameters;
 
   const [isInitialized, setIsInitialized] = useState<boolean>(isOpen);
   /**

@@ -122,11 +122,7 @@ export const getRangeDayVisualFlags = (
  * @param minDate - Нижняя граница (опционально).
  * @param maxDate - Верхняя граница (опционально).
  */
-export const clampVisibleMonthStart = (
-  visible: Date,
-  minDate?: Date,
-  maxDate?: Date,
-): Date => {
+export const clampVisibleMonthStart = (visible: Date, minDate?: Date, maxDate?: Date): Date => {
   let v = startOfMonth(visible);
   if (minDate) {
     const minM = startOfMonth(minDate);
@@ -210,10 +206,7 @@ export type MonthYearOption = {
  */
 export const getWeekdayLabels = (locale: string, weekStartsOn: 0 | 1): string[] => {
   const fmt = new Intl.DateTimeFormat(locale, { weekday: 'short' });
-  const anchor =
-    weekStartsOn === 1
-      ? new Date(2024, 0, 1)
-      : new Date(2024, 0, 7);
+  const anchor = weekStartsOn === 1 ? new Date(2024, 0, 1) : new Date(2024, 0, 7);
   const out: string[] = [];
   for (let i = 0; i < 7; i += 1) {
     const d = new Date(anchor);

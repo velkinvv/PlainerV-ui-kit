@@ -84,7 +84,7 @@ export const DropdownSizes: Story = {
   render: () => (
     <div style={storybookDemoStyles.columnFlexGap20}>
       <h3>Размеры Dropdown</h3>
-      {Object.values(Size).map(size => (
+      {Object.values(Size).map((size) => (
         <div key={size}>
           <h4>Размер: {size}</h4>
           <div style={storybookDemoStyles.rowFlexGap10AlignCenter}>
@@ -103,7 +103,7 @@ export const DropdownVariants: Story = {
   render: () => (
     <div style={storybookDemoStyles.columnFlexGap20}>
       <h3>Варианты Dropdown</h3>
-      {(['default', 'elevated', 'outlined'] as const).map(variant => (
+      {(['default', 'elevated', 'outlined'] as const).map((variant) => (
         <div key={variant}>
           <h4>Вариант: {variant}</h4>
           <div style={storybookDemoStyles.rowFlexGap10AlignCenter}>
@@ -124,7 +124,7 @@ export const DropdownStates: Story = {
   render: () => (
     <div style={storybookDemoStyles.columnFlexGap20}>
       <h3>Состояния Dropdown</h3>
-      {(['hover', 'active', 'disabled', 'selected'] as const).map(state => (
+      {(['hover', 'active', 'disabled', 'selected'] as const).map((state) => (
         <div key={state}>
           <h4>Состояние: {state}</h4>
           <div style={storybookDemoStyles.rowFlexGap10AlignCenter}>
@@ -185,7 +185,7 @@ export const DropdownItemStyles: Story = {
   render: () => (
     <div style={storybookDemoStyles.columnFlexGap20}>
       <h3>Стили элементов Dropdown</h3>
-      {Object.values(Size).map(size => (
+      {Object.values(Size).map((size) => (
         <div key={size}>
           <h4>Размер: {size}</h4>
           <div style={storybookDemoStyles.rowFlexGap10AlignCenter}>
@@ -206,7 +206,7 @@ export const DropdownContainerStyles: Story = {
   render: () => (
     <div style={storybookDemoStyles.columnFlexGap20}>
       <h3>Стили контейнера Dropdown</h3>
-      {(['default', 'elevated', 'outlined'] as const).map(variant => (
+      {(['default', 'elevated', 'outlined'] as const).map((variant) => (
         <div key={variant}>
           <h4>Вариант: {variant}</h4>
           <div style={storybookDemoStyles.rowFlexGap10AlignCenter}>
@@ -297,4 +297,3 @@ const DropdownItem = ({ size, state, children }) => {
     </div>
   ),
 };
-

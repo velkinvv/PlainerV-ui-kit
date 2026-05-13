@@ -1,4 +1,5 @@
-import { css, keyframes } from 'styled-components';
+import type { keyframes } from 'styled-components';
+import { css } from 'styled-components';
 
 /** Единый easing для мягкого появления surface-элементов (Tooltip/Hint/Popover). */
 export const uiMotionSurfaceEasing = 'cubic-bezier(0.2, 0, 0.2, 1)';
@@ -95,11 +96,8 @@ export const buildReducedMotionTransitionDurationCss = (duration: string = '0.05
  * Переопределяет transform в режиме reduced motion.
  * @param reducedMotionTransformValue - значение transform при prefers-reduced-motion
  */
-export const buildReducedMotionTransformCss = (
-  reducedMotionTransformValue: string = 'none',
-) => css`
+export const buildReducedMotionTransformCss = (reducedMotionTransformValue: string = 'none') => css`
   @media (prefers-reduced-motion: reduce) {
     transform: ${reducedMotionTransformValue};
   }
 `;
-

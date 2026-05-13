@@ -207,10 +207,7 @@ export const SidemenuOffScreenHoverShell: React.FC<SidemenuOffScreenHoverShellPr
             applyRevealed(true);
           }}
         />
-        <OffScreenPanelColumn
-          $panelWidthPx={panelWidthPx}
-          $isInteractive={revealed}
-        >
+        <OffScreenPanelColumn $panelWidthPx={panelWidthPx} $isInteractive={revealed}>
           <OffScreenPanelMotion
             $panelWidthPx={panelWidthPx}
             initial={false}

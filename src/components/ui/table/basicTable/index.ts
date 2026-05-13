@@ -21,7 +21,10 @@ export {
   parseTablePageJumpInput,
 } from './handlers';
 export type { TableSortChevronTone, TableSelectionAggregate } from './handlers';
-export { TABLE_HEADER_MAX_LINES_CAP, normalizeTableHeaderMaxLines } from './tableHeaderClampHandlers';
+export {
+  TABLE_HEADER_MAX_LINES_CAP,
+  normalizeTableHeaderMaxLines,
+} from './tableHeaderClampHandlers';
 export {
   PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR,
   tableBorderRadiusFromTheme,

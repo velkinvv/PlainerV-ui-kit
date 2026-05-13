@@ -30,7 +30,8 @@ const pillSkeletonShimmer = css`
  * @property $widthPx — ширина полоски
  */
 export const PillSkeletonRoot = styled.span.withConfig({
-  shouldForwardProp: prop => !['$borderRadius', '$minHeightPx', '$widthPx'].includes(String(prop)),
+  shouldForwardProp: (prop) =>
+    !['$borderRadius', '$minHeightPx', '$widthPx'].includes(String(prop)),
 })<{ $borderRadius: string; $minHeightPx: number; $widthPx: number }>`
   display: inline-block;
   vertical-align: middle;

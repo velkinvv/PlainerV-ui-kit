@@ -43,7 +43,9 @@ export const TabItemGroupList = styled.div<{
           padding: 4px;
           border-radius: 9999px;
           border: none;
-          background: ${theme.mode === ThemeMode.DARK ? '#1c1c1c' : theme.colors.backgroundTertiary};
+          background: ${theme.mode === ThemeMode.DARK
+            ? '#1c1c1c'
+            : theme.colors.backgroundTertiary};
         `
       : css`
           border-bottom: ${$direction === TabsDirection.HORIZONTAL
@@ -227,7 +229,11 @@ export const TabItemTrigger = styled.button<{
       : css`
           padding: 12px 24px;
           background: ${$isActive && !$disabled ? theme.colors.primary : 'transparent'};
-          color: ${$isActive && !$disabled ? '#ffffff' : $disabled ? theme.colors.textDisabled : theme.colors.textSecondary};
+          color: ${$isActive && !$disabled
+            ? '#ffffff'
+            : $disabled
+              ? theme.colors.textDisabled
+              : theme.colors.textSecondary};
           border-bottom: ${$direction === TabsDirection.HORIZONTAL
             ? `2px solid ${$isActive && !$disabled ? theme.colors.primary : 'transparent'}`
             : 'none'};

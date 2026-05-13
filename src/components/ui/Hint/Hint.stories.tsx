@@ -468,13 +468,9 @@ export const WithVisibilityChange: Story = {
         </Hint>
 
         <div style={hintStoriesStyles.logPanel}>
-          <h4 style={hintStoriesStyles.logTitle}>
-            Лог изменений видимости:
-          </h4>
+          <h4 style={hintStoriesStyles.logTitle}>Лог изменений видимости:</h4>
           {visibilityLog.length === 0 ? (
-            <p style={hintStoriesStyles.hintText12}>
-              Наведите на кнопку, чтобы увидеть события
-            </p>
+            <p style={hintStoriesStyles.hintText12}>Наведите на кнопку, чтобы увидеть события</p>
           ) : (
             <ul style={hintStoriesStyles.list12}>
               {visibilityLog.map((log, index) => (
@@ -518,9 +514,7 @@ export const WithHintClick: Story = {
         </Hint>
 
         <div style={hintStoriesStyles.logPanel}>
-          <h4 style={hintStoriesStyles.logTitle}>
-            Лог кликов по hint:
-          </h4>
+          <h4 style={hintStoriesStyles.logTitle}>Лог кликов по hint:</h4>
           {clickLog.length === 0 ? (
             <p style={hintStoriesStyles.hintText12}>
               Наведите на кнопку и кликните по hint, чтобы увидеть события
@@ -1043,4 +1037,3 @@ export const TourGuide: Story = {
     },
   },
 };
-

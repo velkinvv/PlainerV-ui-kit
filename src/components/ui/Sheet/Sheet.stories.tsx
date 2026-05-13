@@ -38,8 +38,7 @@ const meta: Meta<typeof Sheet> = {
     },
     lazy: {
       control: { type: 'boolean' },
-      description:
-        'Ленивая инициализация: sheet монтируется только после первого открытия.',
+      description: 'Ленивая инициализация: sheet монтируется только после первого открытия.',
       table: {
         defaultValue: { summary: 'true' },
       },
@@ -160,7 +159,9 @@ const LifecycleCheatsheetSheetDemo = () => {
           type="button"
           variant={unmountOnCloseEnabled ? ButtonVariant.PRIMARY : ButtonVariant.OUTLINE}
           onClick={() =>
-            setUnmountOnCloseEnabled((previousUnmountOnCloseEnabled) => !previousUnmountOnCloseEnabled)
+            setUnmountOnCloseEnabled(
+              (previousUnmountOnCloseEnabled) => !previousUnmountOnCloseEnabled,
+            )
           }
         >
           unmountOnClose: {String(unmountOnCloseEnabled)}
@@ -204,4 +205,3 @@ export const LifecycleCheatsheet: Story = {
     },
   },
 };
-

@@ -1,10 +1,8 @@
 import styled, { css } from 'styled-components';
 import { motion } from 'framer-motion';
 import { ThemeMode, type ThemeType } from '@/types/theme';
-import {
-  NavigationMenuActiveAppearance,
-  NavigationMenuItemStatus,
-} from '@/types/ui';
+import type { NavigationMenuItemStatus } from '@/types/ui';
+import { NavigationMenuActiveAppearance } from '@/types/ui';
 import { getNavigationMenuItemStatusBackgroundTint } from '@/handlers/navigationMenuItemStatusHandlers';
 
 /** Корневой контейнер меню навигации */
@@ -223,12 +221,12 @@ type NavigationMenuItemSurfaceProps = {
 
 /** Интерактивная поверхность пункта (кнопка) */
 export const NavigationMenuItemButton = styled.button<NavigationMenuItemSurfaceProps>`
-  ${props => navigationMenuItemSurface(props)}
+  ${(props) => navigationMenuItemSurface(props)}
 `;
 
 /** Интерактивная поверхность пункта (ссылка) */
 export const NavigationMenuItemAnchor = styled.a<NavigationMenuItemSurfaceProps>`
-  ${props => navigationMenuItemSurface(props)}
+  ${(props) => navigationMenuItemSurface(props)}
 `;
 
 /** Обёртка иконки (для «плавающего» бейджа в collapsed) */

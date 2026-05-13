@@ -18,7 +18,7 @@ import { primary } from '../../../variables/colors/primary';
  * @property $fullWidth — блок на всю ширину родителя (иначе `inline-block` сжимает триггер, как у `Select fullWidth`)
  */
 export const DropdownContainer = styled.div.withConfig({
-  shouldForwardProp: prop => prop !== '$alignSelf' && prop !== '$fullWidth',
+  shouldForwardProp: (prop) => prop !== '$alignSelf' && prop !== '$fullWidth',
 })<{ $alignSelf?: DropdownAlignSelf; $fullWidth?: boolean }>`
   position: relative;
   ${({ $fullWidth }) =>
@@ -106,7 +106,9 @@ export const DropdownContent = styled.div<{
   }};
   ${({ theme }) => {
     const animations = getDropdownAnimations(theme.dropdowns);
-    return buildSurfaceTransitionCss(`${animations.openAnimation.duration} ${animations.openAnimation.easing}`);
+    return buildSurfaceTransitionCss(
+      `${animations.openAnimation.duration} ${animations.openAnimation.easing}`,
+    );
   }}
 
   left: ${({ $position }) => $position.x}px;
@@ -260,7 +262,8 @@ export const DropdownMenuTreeExpandButton = styled.button`
   cursor: pointer;
 
   &:hover {
-    background: ${({ theme }) => (theme.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)')};
+    background: ${({ theme }) =>
+      theme.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)'};
   }
 
   &:active {
@@ -277,7 +280,6 @@ export const DropdownMenuTreeExpandButton = styled.button`
     outline: 2px solid ${({ theme }) => theme.colors?.primary ?? '#2563eb'};
     outline-offset: 1px;
   }
-
 `;
 
 /**
@@ -285,7 +287,7 @@ export const DropdownMenuTreeExpandButton = styled.button`
  */
 /** Обёртка списка пунктов; при `compact` без лишнего вертикального зазора между строками */
 export const DropdownMenuWrapper = styled.div.withConfig({
-  shouldForwardProp: prop => prop !== '$density',
+  shouldForwardProp: (prop) => prop !== '$density',
 })<{ $density?: 'default' | 'compact' }>`
   display: flex;
   flex-direction: column;
@@ -305,7 +307,7 @@ const spin = keyframes`
  * @param state - состояние элемента
  */
 export const DropdownItem = styled.div.withConfig({
-  shouldForwardProp: prop => !['$density', '$size', '$state'].includes(prop),
+  shouldForwardProp: (prop) => !['$density', '$size', '$state'].includes(prop),
 })<{
   $size?: Size;
   $state?: 'hover' | 'active' | 'disabled' | 'selected' | 'focus';

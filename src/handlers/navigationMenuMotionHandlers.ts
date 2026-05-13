@@ -5,7 +5,10 @@
  * @param width — число или css-строка
  * @param fallbackPx — значение по умолчанию в пикселях
  */
-export function coerceWidthForMotion(width: number | string | undefined, fallbackPx: number): number {
+export function coerceWidthForMotion(
+  width: number | string | undefined,
+  fallbackPx: number,
+): number {
   if (typeof width === 'number' && !Number.isNaN(width)) {
     return width;
   }

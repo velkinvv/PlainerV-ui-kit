@@ -190,7 +190,9 @@ export const NestedGridItems: Story = {
               <div style={gridStoriesStyles.nestedDemoNeutralCell}>Вложенный элемент 2</div>
             </GridItem>
             <GridItem columnSpan={2}>
-              <div style={gridStoriesStyles.nestedDemoNeutralCellEmphasis}>Широкий вложенный элемент</div>
+              <div style={gridStoriesStyles.nestedDemoNeutralCellEmphasis}>
+                Широкий вложенный элемент
+              </div>
             </GridItem>
           </Grid>
         </Card>
@@ -211,4 +213,3 @@ export const NestedGridItems: Story = {
     </Grid>
   ),
 };
-

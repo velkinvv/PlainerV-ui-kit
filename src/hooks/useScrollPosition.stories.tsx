@@ -82,8 +82,18 @@ const renderScrollDirectionTag = (
   scrollDirection: 'up' | 'down' | null,
   isCompact: boolean = false,
 ) => {
-  const directionLabel = scrollDirection === 'down' ? (isCompact ? '↓' : '↓ Вниз') : scrollDirection === 'up' ? (isCompact ? '↑' : '↑ Вверх') : '—';
-  const colorVariant = scrollDirection === 'down' ? 'success' : scrollDirection === 'up' ? 'warning' : 'neutral';
+  const directionLabel =
+    scrollDirection === 'down'
+      ? isCompact
+        ? '↓'
+        : '↓ Вниз'
+      : scrollDirection === 'up'
+        ? isCompact
+          ? '↑'
+          : '↑ Вверх'
+        : '—';
+  const colorVariant =
+    scrollDirection === 'down' ? 'success' : scrollDirection === 'up' ? 'warning' : 'neutral';
   const appearance = scrollDirection ? 'filled' : 'outline';
 
   return (
@@ -230,7 +240,7 @@ const ThrottlingDemo = () => {
   const [updateCount, setUpdateCount] = React.useState(0);
 
   React.useEffect(() => {
-    setUpdateCount(prev => prev + 1);
+    setUpdateCount((prev) => prev + 1);
   }, [x, y]);
 
   return (
@@ -391,7 +401,10 @@ const EnabledDisabledDemo = () => {
           <Typography variant="body2" marginBottom="xs">
             <strong>Статус</strong>
           </Typography>
-          <Tag colorVariant={isEnabled ? 'success' : 'neutral'} appearance={isEnabled ? 'filled' : 'outline'}>
+          <Tag
+            colorVariant={isEnabled ? 'success' : 'neutral'}
+            appearance={isEnabled ? 'filled' : 'outline'}
+          >
             {isEnabled ? 'Активно' : 'Отключено'}
           </Tag>
         </div>
@@ -504,4 +517,3 @@ export const AllExamples: Story = {
     </StorybookStaggerStack>
   ),
 };
-

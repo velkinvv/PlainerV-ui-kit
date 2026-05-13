@@ -237,13 +237,10 @@ export const OnDarkSurface: Story = {
     const [value, setValue] = useState<Date | null>(new Date(2025, 8, 18));
     return (
       <StyledThemeProvider theme={darkTheme}>
-        <div
-          style={calendarDarkSurfaceStyle}
-        >
+        <div style={calendarDarkSurfaceStyle}>
           <Calendar value={value} onChange={setValue} defaultVisibleMonth={new Date(2025, 8, 1)} />
         </div>
       </StyledThemeProvider>
     );
   },
 };
-

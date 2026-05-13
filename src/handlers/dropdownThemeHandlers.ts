@@ -1,4 +1,4 @@
-import { Size } from '../types/sizes';
+import type { Size } from '../types/sizes';
 import type { DropdownTheme } from '../types/theme';
 
 /**
@@ -97,16 +97,15 @@ export const getDropdownItemStyles = (
   const stateStyles = state ? getDropdownState(theme, state) : {};
 
   // Используем fontWeight из состояния, если он есть, иначе из настроек
-  const fontWeight = stateStyles && 'fontWeight' in stateStyles
-    ? stateStyles.fontWeight
-    : theme.settings.fontWeight;
+  const fontWeight =
+    stateStyles && 'fontWeight' in stateStyles ? stateStyles.fontWeight : theme.settings.fontWeight;
 
   return {
     ...sizeStyles,
     ...stateStyles,
     transition: theme.animations.transition,
     fontFamily: theme.settings.fontFamily,
-    fontWeight: fontWeight,
+    fontWeight,
     lineHeight: theme.settings.lineHeight,
     textAlign: theme.settings.textAlign,
     userSelect: theme.settings.userSelect,

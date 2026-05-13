@@ -166,16 +166,18 @@ export const Tooltip: React.FC<TooltipProps> = forwardRef<HTMLDivElement, Toolti
         };
 
         const preferredPosition = getPositionForPlacement(triggerRect, preferredPlacement);
-        const preferredBounds = getTooltipBounds(preferredPosition, preferredPlacement, tooltipSize);
+        const preferredBounds = getTooltipBounds(
+          preferredPosition,
+          preferredPlacement,
+          tooltipSize,
+        );
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
         const hasOverflowOnPrimaryAxis =
-          (preferredPlacement === TooltipPosition.TOP &&
-            preferredBounds.top < viewportPadding) ||
+          (preferredPlacement === TooltipPosition.TOP && preferredBounds.top < viewportPadding) ||
           (preferredPlacement === TooltipPosition.BOTTOM &&
             preferredBounds.bottom > viewportHeight - viewportPadding) ||
-          (preferredPlacement === TooltipPosition.LEFT &&
-            preferredBounds.left < viewportPadding) ||
+          (preferredPlacement === TooltipPosition.LEFT && preferredBounds.left < viewportPadding) ||
           (preferredPlacement === TooltipPosition.RIGHT &&
             preferredBounds.right > viewportWidth - viewportPadding);
 
@@ -211,7 +213,7 @@ export const Tooltip: React.FC<TooltipProps> = forwardRef<HTMLDivElement, Toolti
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
-      setTooltipState(prev => ({ ...prev, isVisible: false }));
+      setTooltipState((prev) => ({ ...prev, isVisible: false }));
     }, []);
 
     // Обработчики событий
@@ -245,7 +247,7 @@ export const Tooltip: React.FC<TooltipProps> = forwardRef<HTMLDivElement, Toolti
       const updateTooltipPosition = () => {
         if (tooltipState.isVisible) {
           const tooltipGeometry = resolveTooltipGeometry(position);
-          setTooltipState(prev => ({
+          setTooltipState((prev) => ({
             ...prev,
             position: tooltipGeometry.position,
             placement: tooltipGeometry.placement,
@@ -268,7 +270,7 @@ export const Tooltip: React.FC<TooltipProps> = forwardRef<HTMLDivElement, Toolti
       }
 
       const tooltipGeometry = resolveTooltipGeometry(position);
-      setTooltipState(prev => {
+      setTooltipState((prev) => {
         if (
           prev.placement === tooltipGeometry.placement &&
           prev.position.x === tooltipGeometry.position.x &&

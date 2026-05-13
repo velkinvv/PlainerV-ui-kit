@@ -277,4 +277,3 @@ export const NumberLimiting: Story = {
     layout: 'padded',
   },
 };
-

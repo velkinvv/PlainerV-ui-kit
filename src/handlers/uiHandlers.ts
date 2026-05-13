@@ -342,14 +342,7 @@ export const BoxShadowHandler = (size: Size = Size.MD): string => {
  * @param level - имя слоя
  */
 export const ZIndexHandler = (
-  level:
-    | 'dropdown'
-    | 'sticky'
-    | 'fixed'
-    | 'modal'
-    | 'popover'
-    | 'tooltip'
-    | 'hint' = 'dropdown',
+  level: 'dropdown' | 'sticky' | 'fixed' | 'modal' | 'popover' | 'tooltip' | 'hint' = 'dropdown',
 ): number => {
   const zIndexMap: Record<string, number> = {
     dropdown: 1000,

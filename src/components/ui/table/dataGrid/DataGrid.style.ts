@@ -86,11 +86,7 @@ export const DataGridExpandedInner = styled.div<{ $tableSize: 'sm' | 'md'; $open
   min-height: 0;
   min-width: 0;
   padding: ${({ $open, $tableSize }) =>
-    !$open
-      ? '0'
-      : $tableSize === 'sm'
-        ? '8px 12px'
-        : '12px 16px'};
+    !$open ? '0' : $tableSize === 'sm' ? '8px 12px' : '12px 16px'};
   transition: padding ${datagridExpandedEaseMs} ${datagridExpandedEaseCurve};
   ${buildReducedMotionTransitionDurationCss()}
 `;
@@ -143,7 +139,9 @@ export const DataGridColumnResizeHandle = styled.button`
 `;
 
 /** Строка заголовка колонки: подпись + опциональная кнопка фильтра */
-export const DataGridColumnHeaderRow = styled.div<{ $filterIconPosition: DataGridColumnFilterIconPosition }>`
+export const DataGridColumnHeaderRow = styled.div<{
+  $filterIconPosition: DataGridColumnFilterIconPosition;
+}>`
   display: flex;
   align-items: flex-start;
   gap: 6px;

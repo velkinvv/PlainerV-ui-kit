@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { RadioButton } from './RadioButton';
 import { Size, IconSize } from '../../../types/sizes';
-import { RadioButtonVariant, RadioButtonLabelPosition, TooltipPosition } from '../../../types/ui';
+import { RadioButtonVariant, RadioButtonLabelPosition } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
 
 const renderWithTheme = (component: React.ReactElement) => {
@@ -185,12 +185,7 @@ describe('RadioButton', () => {
 
     it('имеет aria-invalid при наличии ошибки', () => {
       renderWithTheme(
-        <RadioButton
-          label="Test Radio"
-          name="test"
-          value="test-value"
-          error="Ошибка"
-        />,
+        <RadioButton label="Test Radio" name="test" value="test-value" error="Ошибка" />,
       );
 
       const radio = screen.getByRole('radio');
@@ -245,28 +240,14 @@ describe('RadioButton', () => {
 
   describe('Индикатор обязательности', () => {
     it('отображает индикатор обязательности', () => {
-      renderWithTheme(
-        <RadioButton
-          label="Test Radio"
-          name="test"
-          value="test-value"
-          required
-        />,
-      );
+      renderWithTheme(<RadioButton label="Test Radio" name="test" value="test-value" required />);
 
       const label = screen.getByText('Test Radio');
       expect(label.parentElement).toHaveTextContent('*');
     });
 
     it('имеет aria-required при required', () => {
-      renderWithTheme(
-        <RadioButton
-          label="Test Radio"
-          name="test"
-          value="test-value"
-          required
-        />,
-      );
+      renderWithTheme(<RadioButton label="Test Radio" name="test" value="test-value" required />);
 
       const radio = screen.getByRole('radio');
       expect(radio).toHaveAttribute('aria-required', 'true');
@@ -276,12 +257,7 @@ describe('RadioButton', () => {
   describe('Tooltip', () => {
     it('отображает tooltip при наведении', () => {
       renderWithTheme(
-        <RadioButton
-          label="Test Radio"
-          name="test"
-          value="test-value"
-          tooltip="Подсказка"
-        />,
+        <RadioButton label="Test Radio" name="test" value="test-value" tooltip="Подсказка" />,
       );
 
       // Tooltip может быть не виден сразу, проверяем что компонент рендерится
@@ -321,12 +297,7 @@ describe('RadioButton', () => {
   describe('Status', () => {
     it('применяет статус success', () => {
       renderWithTheme(
-        <RadioButton
-          label="Test Radio"
-          name="test"
-          value="test-value"
-          status="success"
-        />,
+        <RadioButton label="Test Radio" name="test" value="test-value" status="success" />,
       );
 
       expect(screen.getByText('Test Radio')).toBeInTheDocument();
@@ -334,12 +305,7 @@ describe('RadioButton', () => {
 
     it('применяет статус error', () => {
       renderWithTheme(
-        <RadioButton
-          label="Test Radio"
-          name="test"
-          value="test-value"
-          status="error"
-        />,
+        <RadioButton label="Test Radio" name="test" value="test-value" status="error" />,
       );
 
       expect(screen.getByText('Test Radio')).toBeInTheDocument();
@@ -347,12 +313,7 @@ describe('RadioButton', () => {
 
     it('применяет статус warning', () => {
       renderWithTheme(
-        <RadioButton
-          label="Test Radio"
-          name="test"
-          value="test-value"
-          status="warning"
-        />,
+        <RadioButton label="Test Radio" name="test" value="test-value" status="warning" />,
       );
 
       expect(screen.getByText('Test Radio')).toBeInTheDocument();
@@ -361,14 +322,7 @@ describe('RadioButton', () => {
 
   describe('FullWidth', () => {
     it('применяет fullWidth', () => {
-      renderWithTheme(
-        <RadioButton
-          label="Test Radio"
-          name="test"
-          value="test-value"
-          fullWidth
-        />,
-      );
+      renderWithTheme(<RadioButton label="Test Radio" name="test" value="test-value" fullWidth />);
 
       expect(screen.getByText('Test Radio')).toBeInTheDocument();
     });
@@ -396,12 +350,7 @@ describe('RadioButton', () => {
 
     it('имеет aria-disabled при disabled', () => {
       renderWithTheme(
-        <RadioButton
-          label="Test Radio"
-          name="test"
-          value="test-value"
-          disabled={true}
-        />,
+        <RadioButton label="Test Radio" name="test" value="test-value" disabled={true} />,
       );
 
       const radio = screen.getByRole('radio');
@@ -527,12 +476,7 @@ describe('RadioButton', () => {
       const handleClick = jest.fn();
 
       renderWithTheme(
-        <RadioButton
-          label="Test Radio"
-          name="test"
-          value="test-value"
-          onClick={handleClick}
-        />,
+        <RadioButton label="Test Radio" name="test" value="test-value" onClick={handleClick} />,
       );
 
       const label = screen.getByText('Test Radio');

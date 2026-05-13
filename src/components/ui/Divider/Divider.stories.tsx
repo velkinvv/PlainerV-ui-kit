@@ -175,4 +175,3 @@ export const InList: Story = {
     layout: 'padded',
   },
 };
-

@@ -74,7 +74,7 @@ export const RadioTextContainer = styled.div<{
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.radioButton.spacing.textContainer};
-  text-align: ${props => {
+  text-align: ${(props) => {
     const position = props['data-label-position'];
     switch (position) {
       case 'top':
@@ -272,7 +272,7 @@ export const RadioIconContainer = styled.div<{ 'data-position'?: 'left' | 'right
   display: flex;
   align-items: center;
   justify-content: center;
-  ${props => {
+  ${(props) => {
     const position = props['data-position'];
     const theme = props.theme;
     if (position === 'left') {
@@ -324,7 +324,7 @@ export const RadioHelperText = styled.span`
 export const RadioWrapper = styled.div<{ 'data-full-width'?: boolean }>`
   display: flex;
   flex-direction: column;
-  width: ${props => {
+  width: ${(props) => {
     const fullWidth = props['data-full-width'];
     return fullWidth ? '100%' : 'auto';
   }};

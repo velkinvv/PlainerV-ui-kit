@@ -13,19 +13,19 @@ type SvgIconComponent = React.ComponentType<IconComponentProps>;
 
 // Create a mapping of icon names without prefixes for easier access
 const plainerIconMap: Record<string, SvgIconComponent> = {};
-Object.keys(PlainerIcons).forEach(key => {
+Object.keys(PlainerIcons).forEach((key) => {
   const name = key.replace('IconPlainer', '');
   plainerIconMap[name] = PlainerIcons[key as keyof typeof PlainerIcons] as SvgIconComponent;
 });
 
 const iconexIconMap: Record<string, SvgIconComponent> = {};
-Object.keys(IconExIcons).forEach(key => {
+Object.keys(IconExIcons).forEach((key) => {
   const name = key.replace('IconEx', '');
   iconexIconMap[name] = IconExIcons[key as keyof typeof IconExIcons] as SvgIconComponent;
 });
 
 const phosphorIconMap: Record<string, SvgIconComponent> = {};
-Object.keys(PhosphorIcons).forEach(key => {
+Object.keys(PhosphorIcons).forEach((key) => {
   const name = key.replace('Phosphor', '');
   phosphorIconMap[name] = PhosphorIcons[key as keyof typeof PhosphorIcons] as SvgIconComponent;
 });

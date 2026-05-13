@@ -110,8 +110,7 @@ export const NavigationMenuItem = React.forwardRef<
     const hasNestedBranch = Boolean(nestedItems != null && nestedItems.length > 0 && !skeleton);
 
     /** В компактном режиме ветка показывает **items** в поповере справа (не в колонке) */
-    const collapsedFlyoutNested =
-      collapsed && collapsedNestedFlyout && hasNestedBranch;
+    const collapsedFlyoutNested = collapsed && collapsedNestedFlyout && hasNestedBranch;
 
     const descendantActive =
       hasNestedBranch && navigationMenuSubtreeContainsActiveId(nestedItems, activeId);
@@ -121,10 +120,7 @@ export const NavigationMenuItem = React.forwardRef<
       if (!hasNestedBranch || nestedItems == null) {
         return false;
       }
-      return (
-        defaultNestedExpanded ??
-        navigationMenuSubtreeContainsActiveId(nestedItems, activeId)
-      );
+      return defaultNestedExpanded ?? navigationMenuSubtreeContainsActiveId(nestedItems, activeId);
     });
 
     useEffect(() => {
@@ -144,8 +140,7 @@ export const NavigationMenuItem = React.forwardRef<
         return false;
       }
       return Boolean(
-        defaultNestedExpanded ??
-          navigationMenuSubtreeContainsActiveId(nestedItems, activeId),
+        defaultNestedExpanded ?? navigationMenuSubtreeContainsActiveId(nestedItems, activeId),
       );
     });
 
@@ -193,8 +188,7 @@ export const NavigationMenuItem = React.forwardRef<
 
     const resolvedTitle = getNavigationMenuItemDisplayTitle(collapsed, label, title);
 
-    const allowLeafActivationForPopover =
-      popover == null || popoverActivateNavigation === true;
+    const allowLeafActivationForPopover = popover == null || popoverActivateNavigation === true;
 
     const handleLeafActivate = useCallback(
       (event: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
@@ -207,15 +201,7 @@ export const NavigationMenuItem = React.forwardRef<
         }
         setActiveId(id);
       },
-      [
-        allowLeafActivationForPopover,
-        disabled,
-        id,
-        loading,
-        onClick,
-        setActiveId,
-        skeleton,
-      ],
+      [allowLeafActivationForPopover, disabled, id, loading, onClick, setActiveId, skeleton],
     );
 
     const handleBranchClick = useCallback(
@@ -225,7 +211,7 @@ export const NavigationMenuItem = React.forwardRef<
           return;
         }
         event.preventDefault();
-        setNestedOpen(previous => !previous);
+        setNestedOpen((previous) => !previous);
       },
       [disabled, loading, onClick, skeleton],
     );
@@ -237,15 +223,14 @@ export const NavigationMenuItem = React.forwardRef<
           return;
         }
         event.preventDefault();
-        setNestedFlyoutOpen(previous => !previous);
+        setNestedFlyoutOpen((previous) => !previous);
       },
       [disabled, loading, onClick, skeleton],
     );
 
     const showFloatingBadge = !!(collapsed && badge != null && badge !== false);
     const showInlineBadge = !!(!collapsed && badge != null && badge !== false);
-    const useLink =
-      Boolean(href) && !disabled && !loading && !skeleton && !hasNestedBranch;
+    const useLink = Boolean(href) && !disabled && !loading && !skeleton && !hasNestedBranch;
 
     const surfaceInteractiveDisabled = disabled || skeleton;
 
@@ -274,8 +259,7 @@ export const NavigationMenuItem = React.forwardRef<
       className: clsx('ui-navigation-menu-item', className),
       'aria-current': active && !hasNestedBranch ? ('page' as const) : undefined,
       /* Нативный title убираем, если показываем Hint/Tooltip — иначе дублируется «браузерная» подсказка */
-      title:
-        hint != null || effectiveTooltip != null ? undefined : resolvedTitle,
+      title: hint != null || effectiveTooltip != null ? undefined : resolvedTitle,
     };
 
     const spinnerColor = theme?.colors?.primary ?? '#68d5f8';
@@ -288,18 +272,13 @@ export const NavigationMenuItem = React.forwardRef<
       },
       transition: navigationMenuItemContentMotionTransition,
       style: {
-        pointerEvents:
-          isVisible && !skeleton ? ('auto' as const) : ('none' as const),
+        pointerEvents: isVisible && !skeleton ? ('auto' as const) : ('none' as const),
       },
       'aria-hidden': !isVisible,
     };
 
     const showNestedPanel =
-      hasNestedBranch &&
-      !collapsed &&
-      nestedOpen &&
-      nestedItems != null &&
-      nestedItems.length > 0;
+      hasNestedBranch && !collapsed && nestedOpen && nestedItems != null && nestedItems.length > 0;
 
     const resolvedSuffix =
       suffix ??
@@ -374,9 +353,7 @@ export const NavigationMenuItem = React.forwardRef<
 
     if (hasNestedBranch && nestedItems != null) {
       const branchLabelForAria =
-        typeof label === 'string' || typeof label === 'number'
-          ? String(label)
-          : 'Вложенное меню';
+        typeof label === 'string' || typeof label === 'number' ? String(label) : 'Вложенное меню';
 
       const branchButton = (
         <NavigationMenuItemButton
@@ -387,13 +364,7 @@ export const NavigationMenuItem = React.forwardRef<
           {...commonSurface}
           onClick={collapsedFlyoutNested ? handleBranchFlyoutClick : handleBranchClick}
           aria-busy={loading ? true : undefined}
-          aria-expanded={
-            collapsedFlyoutNested
-              ? nestedFlyoutOpen
-              : !collapsed
-                ? nestedOpen
-                : false
-          }
+          aria-expanded={collapsedFlyoutNested ? nestedFlyoutOpen : !collapsed ? nestedOpen : false}
           aria-controls={nestedGroupId}
         >
           {innerRowContent}
@@ -442,7 +413,7 @@ export const NavigationMenuItem = React.forwardRef<
                           $inFlyout
                         >
                           <NavigationMenuDepthProvider depth={depth + 1}>
-                            {nestedItems.map(childItem => (
+                            {nestedItems.map((childItem) => (
                               <NavigationMenuItem key={childItem.id} {...childItem} />
                             ))}
                           </NavigationMenuDepthProvider>
@@ -475,7 +446,7 @@ export const NavigationMenuItem = React.forwardRef<
                 aria-labelledby={branchControlId}
               >
                 <NavigationMenuDepthProvider depth={depth + 1}>
-                  {nestedItems.map(childItem => (
+                  {nestedItems.map((childItem) => (
                     <NavigationMenuItem key={childItem.id} {...childItem} />
                   ))}
                 </NavigationMenuDepthProvider>

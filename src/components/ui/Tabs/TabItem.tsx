@@ -9,10 +9,10 @@ import {
   TabItemIconSlot,
   TabItemVerticalTextWrap,
 } from './TabItem.style';
+import type { TabsVariant } from '../../../types/ui';
 import {
   TabsDirection,
   TabsVerticalPosition,
-  TabsVariant,
   TabItemTextPosition as TabItemTextPositionEnum,
   type TabItemTextOrientation,
   type TabItemTextPosition,
@@ -111,8 +111,11 @@ export const TabItem: React.FC<TabItemProps> & {
   const [internalActive, setInternalActive] = useState(defaultActive);
   const isControlled = controlledActive !== undefined;
 
-  const { onClick: triggerOnClick, disabled: triggerDisabled, ...restTriggerProps } =
-    triggerProps ?? {};
+  const {
+    onClick: triggerOnClick,
+    disabled: triggerDisabled,
+    ...restTriggerProps
+  } = triggerProps ?? {};
   const isDisabled = !!(disabled || triggerDisabled);
 
   if (groupContext) {
@@ -271,7 +274,7 @@ export const TabItemGroup: React.FC<TabItemGroupProps> = ({
   const allTabItems: Array<{ value: string; children: React.ReactNode }> = [];
 
   const collectTabItems = (node: React.ReactNode): void => {
-    React.Children.forEach(node, child => {
+    React.Children.forEach(node, (child) => {
       if (React.isValidElement(child)) {
         if (child.type === TabItem) {
           const tabItem = child as React.ReactElement<TabItemProps>;
@@ -297,7 +300,7 @@ export const TabItemGroup: React.FC<TabItemGroupProps> = ({
       setActiveTab(defaultActiveTab);
     } else if (allTabItems.length > 0) {
       const firstTabValue = allTabItems[0].value;
-      setActiveTab(prev => (prev === '' ? firstTabValue : prev));
+      setActiveTab((prev) => (prev === '' ? firstTabValue : prev));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultActiveTab]);
@@ -312,7 +315,7 @@ export const TabItemGroup: React.FC<TabItemGroupProps> = ({
   const otherChildren: React.ReactNode[] = [];
 
   const processChildren = (node: React.ReactNode): void => {
-    React.Children.forEach(node, child => {
+    React.Children.forEach(node, (child) => {
       if (React.isValidElement(child)) {
         if (child.type === TabItem) {
           const tabItem = child as React.ReactElement<TabItemProps>;
@@ -339,7 +342,7 @@ export const TabItemGroup: React.FC<TabItemGroupProps> = ({
           );
         } else if (child.type === TabItemGroupList) {
           const listChildren: React.ReactNode[] = [];
-          React.Children.forEach(child.props.children, listChild => {
+          React.Children.forEach(child.props.children, (listChild) => {
             if (React.isValidElement(listChild) && listChild.type === TabItem) {
               const tabItem = listChild as React.ReactElement<TabItemProps>;
               const tabValue = tabItem.props.value;

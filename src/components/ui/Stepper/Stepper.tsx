@@ -44,10 +44,7 @@ const compactRingCircumference = 2 * Math.PI * COMPACT_RING_R;
  */
 export const Stepper = forwardRef<HTMLElement, StepperProps>((props, ref) => {
   const theme = useTheme() as ThemeType;
-  const appearance = resolveStepperAppearance(
-    props.appearance,
-    theme.mode ?? ThemeMode.LIGHT,
-  );
+  const appearance = resolveStepperAppearance(props.appearance, theme.mode ?? ThemeMode.LIGHT);
 
   const backLabel = props.backButtonLabel ?? 'Назад';
 
@@ -100,77 +97,96 @@ const StepperCompactView = forwardRef<
     title: React.ReactNode;
     subtitle?: React.ReactNode;
   }
->(({ appearance, backLabel, onBack, className, fullWidth, currentStep, totalSteps, title, subtitle }, ref) => {
-  const theme = useTheme() as ThemeType;
-  const fraction = useMemo(
-    () => getCompactRingProgressFraction(currentStep, totalSteps),
-    [currentStep, totalSteps],
-  );
-  const dashoffset = useMemo(
-    () => getCircleProgressStrokeDashoffset(compactRingCircumference, fraction),
-    [fraction],
-  );
-  const counterText = useMemo(
-    () => formatStepperCounterLabel(currentStep, totalSteps),
-    [currentStep, totalSteps],
-  );
+>(
+  (
+    {
+      appearance,
+      backLabel,
+      onBack,
+      className,
+      fullWidth,
+      currentStep,
+      totalSteps,
+      title,
+      subtitle,
+    },
+    ref,
+  ) => {
+    const theme = useTheme() as ThemeType;
+    const fraction = useMemo(
+      () => getCompactRingProgressFraction(currentStep, totalSteps),
+      [currentStep, totalSteps],
+    );
+    const dashoffset = useMemo(
+      () => getCircleProgressStrokeDashoffset(compactRingCircumference, fraction),
+      [fraction],
+    );
+    const counterText = useMemo(
+      () => formatStepperCounterLabel(currentStep, totalSteps),
+      [currentStep, totalSteps],
+    );
 
-  const trackStroke =
-    appearance === 'dark' ? 'rgba(255,255,255,0.12)' : theme.colors?.progressTrack ?? '#e0e0e0';
-  const progressStroke = theme.colors?.progressFill ?? '#93e850';
+    const trackStroke =
+      appearance === 'dark' ? 'rgba(255,255,255,0.12)' : (theme.colors?.progressTrack ?? '#e0e0e0');
+    const progressStroke = theme.colors?.progressFill ?? '#93e850';
 
-  return (
-    <StepperRoot
-      ref={ref as React.Ref<HTMLElement>}
-      $appearance={appearance}
-      $fullWidth={fullWidth}
-      className={className}
-      aria-label="Прогресс по шагам"
-    >
-      {onBack ? (
-        <StepperBackButton
-          type="button"
-          $appearance={appearance}
-          aria-label={backLabel}
-          onClick={onBack}
-        >
-          <Icon name="IconPlainerArrowLeft" size={IconSize.SM} color="currentColor" />
-        </StepperBackButton>
-      ) : null}
-      <StepperCompactSvgWrap aria-hidden>
-        <svg width={COMPACT_SVG_SIZE} height={COMPACT_SVG_SIZE} viewBox={`0 0 ${COMPACT_SVG_SIZE} ${COMPACT_SVG_SIZE}`}>
-          <circle
-            cx={COMPACT_SVG_SIZE / 2}
-            cy={COMPACT_SVG_SIZE / 2}
-            r={COMPACT_RING_R}
-            fill="none"
-            stroke={trackStroke}
-            strokeWidth={COMPACT_RING_STROKE}
-          />
-          <circle
-            cx={COMPACT_SVG_SIZE / 2}
-            cy={COMPACT_SVG_SIZE / 2}
-            r={COMPACT_RING_R}
-            fill="none"
-            stroke={progressStroke}
-            strokeWidth={COMPACT_RING_STROKE}
-            strokeLinecap="round"
-            strokeDasharray={compactRingCircumference}
-            strokeDashoffset={dashoffset}
-            transform={`rotate(-90 ${COMPACT_SVG_SIZE / 2} ${COMPACT_SVG_SIZE / 2})`}
-          />
-        </svg>
-        <StepperCompactCounter>{counterText}</StepperCompactCounter>
-      </StepperCompactSvgWrap>
-      <StepperCompactTextCol $appearance={appearance}>
-        <StepperCompactTitle>{title}</StepperCompactTitle>
-        {subtitle != null ? (
-          <StepperCompactSubtitle $appearance={appearance}>{subtitle}</StepperCompactSubtitle>
+    return (
+      <StepperRoot
+        ref={ref as React.Ref<HTMLElement>}
+        $appearance={appearance}
+        $fullWidth={fullWidth}
+        className={className}
+        aria-label="Прогресс по шагам"
+      >
+        {onBack ? (
+          <StepperBackButton
+            type="button"
+            $appearance={appearance}
+            aria-label={backLabel}
+            onClick={onBack}
+          >
+            <Icon name="IconPlainerArrowLeft" size={IconSize.SM} color="currentColor" />
+          </StepperBackButton>
         ) : null}
-      </StepperCompactTextCol>
-    </StepperRoot>
-  );
-});
+        <StepperCompactSvgWrap aria-hidden>
+          <svg
+            width={COMPACT_SVG_SIZE}
+            height={COMPACT_SVG_SIZE}
+            viewBox={`0 0 ${COMPACT_SVG_SIZE} ${COMPACT_SVG_SIZE}`}
+          >
+            <circle
+              cx={COMPACT_SVG_SIZE / 2}
+              cy={COMPACT_SVG_SIZE / 2}
+              r={COMPACT_RING_R}
+              fill="none"
+              stroke={trackStroke}
+              strokeWidth={COMPACT_RING_STROKE}
+            />
+            <circle
+              cx={COMPACT_SVG_SIZE / 2}
+              cy={COMPACT_SVG_SIZE / 2}
+              r={COMPACT_RING_R}
+              fill="none"
+              stroke={progressStroke}
+              strokeWidth={COMPACT_RING_STROKE}
+              strokeLinecap="round"
+              strokeDasharray={compactRingCircumference}
+              strokeDashoffset={dashoffset}
+              transform={`rotate(-90 ${COMPACT_SVG_SIZE / 2} ${COMPACT_SVG_SIZE / 2})`}
+            />
+          </svg>
+          <StepperCompactCounter>{counterText}</StepperCompactCounter>
+        </StepperCompactSvgWrap>
+        <StepperCompactTextCol $appearance={appearance}>
+          <StepperCompactTitle>{title}</StepperCompactTitle>
+          {subtitle != null ? (
+            <StepperCompactSubtitle $appearance={appearance}>{subtitle}</StepperCompactSubtitle>
+          ) : null}
+        </StepperCompactTextCol>
+      </StepperRoot>
+    );
+  },
+);
 
 StepperCompactView.displayName = 'StepperCompactView';
 

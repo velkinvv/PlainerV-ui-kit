@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const IconPlainerArrowLeft: React.FC<React.SVGProps<SVGSVGElement>> = props => (
+export const IconPlainerArrowLeft: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <svg
     width="16"
     height="16"

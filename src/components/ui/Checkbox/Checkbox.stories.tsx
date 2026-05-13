@@ -404,4 +404,3 @@ function CheckboxGroupSuccessDemo() {
 export const CheckboxGroupWithSuccessAndExtra: Story = {
   render: () => <CheckboxGroupSuccessDemo />,
 };
-

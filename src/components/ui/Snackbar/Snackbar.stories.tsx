@@ -1,6 +1,5 @@
 ﻿import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
-import React from 'react';
 import { Snackbar } from './Snackbar';
 import type { SnackbarItem } from '@/types/ui';
 import { DOC_SNACKBAR } from '@/components/ui/storyDocs/uiKitDocs';
@@ -71,4 +70,3 @@ export const WithAction: Story = {
     onActionClick: fn(),
   },
 };
-

@@ -202,8 +202,8 @@ export const StatesMatrix: Story = {
           ))}
         </div>
         <p style={pillStoriesStyles.matrixFootnote}>
-          Колонки Hover / Active в Storybook совпадают с Default — интерактивные состояния проверяйте
-          наведением и удержанием мыши на первых трёх кнопках в строке.
+          Колонки Hover / Active в Storybook совпадают с Default — интерактивные состояния
+          проверяйте наведением и удержанием мыши на первых трёх кнопках в строке.
         </p>
       </div>
     );
@@ -215,11 +215,7 @@ export const RadioGroup: Story = {
   render: () => {
     const [value, setValue] = useState('b');
     return (
-      <div
-        role="radiogroup"
-        aria-label="Пример группы"
-        style={pillStoriesStyles.radioGroupRow}
-      >
+      <div role="radiogroup" aria-label="Пример группы" style={pillStoriesStyles.radioGroupRow}>
         {(['a', 'b', 'c'] as const).map((id) => (
           <Pill
             key={id}

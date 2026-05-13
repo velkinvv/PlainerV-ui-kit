@@ -21,8 +21,11 @@ describe('dataGridHandlers', () => {
       { id: '2', user: { name: 'b' }, age: 2 },
       { id: '3', user: { name: 'c' }, age: 3 },
     ];
-    expect(sliceRowsForPagination(rows, { page: 0, pageSize: 2 }).map(r => r.id)).toEqual(['1', '2']);
-    expect(sliceRowsForPagination(rows, { page: 1, pageSize: 2 }).map(r => r.id)).toEqual(['3']);
+    expect(sliceRowsForPagination(rows, { page: 0, pageSize: 2 }).map((r) => r.id)).toEqual([
+      '1',
+      '2',
+    ]);
+    expect(sliceRowsForPagination(rows, { page: 1, pageSize: 2 }).map((r) => r.id)).toEqual(['3']);
   });
 
   it('getDataGridCellValue ╤З╨╕╤В╨░╨╡╤В ╨▓╨╗╨╛╨╢╨╡╨╜╨╜╨╛╨╡ ╨┐╨╛╨╗╨╡ ╨┐╨╛ ╤В╨╛╤З╨║╨╡', () => {

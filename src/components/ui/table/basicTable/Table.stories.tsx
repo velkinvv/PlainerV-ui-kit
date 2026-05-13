@@ -98,7 +98,10 @@ export const Basic: Story = {
   render: () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(2);
-    const totalPages = useMemo(() => getTableTotalPages(sampleRows.length, rowsPerPage), [rowsPerPage]);
+    const totalPages = useMemo(
+      () => getTableTotalPages(sampleRows.length, rowsPerPage),
+      [rowsPerPage],
+    );
     const safePage = clampTablePageZeroBased(page, totalPages);
     const slice = useMemo(() => {
       const start = safePage * rowsPerPage;
@@ -109,29 +112,33 @@ export const Basic: Story = {
       <>
         <TableContainer elevated>
           <TableContainerScroll>
-          <Table size="md" striped aria-label="Пример таблицы">
-            <TableHead>
-              <TableRow>
-                <TableCell>Блюдо</TableCell>
-                <TableCell align="right">Ккал</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {slice.map((rowItem) => (
-                <TableRow key={rowItem.id}>
-                  <TableCell>{rowItem.name}</TableCell>
-                  <TableCell align="right">{rowItem.calories}</TableCell>
+            <Table size="md" striped aria-label="Пример таблицы">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Блюдо</TableCell>
+                  <TableCell align="right">Ккал</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TableCell colSpan={2} align="center" style={tableStoriesStyles.footerCellPadding}>
-                  Загрузить больше
-                </TableCell>
-              </TableRow>
-            </TableFooter>
-          </Table>
+              </TableHead>
+              <TableBody>
+                {slice.map((rowItem) => (
+                  <TableRow key={rowItem.id}>
+                    <TableCell>{rowItem.name}</TableCell>
+                    <TableCell align="right">{rowItem.calories}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+              <TableFooter>
+                <TableRow>
+                  <TableCell
+                    colSpan={2}
+                    align="center"
+                    style={tableStoriesStyles.footerCellPadding}
+                  >
+                    Загрузить больше
+                  </TableCell>
+                </TableRow>
+              </TableFooter>
+            </Table>
           </TableContainerScroll>
         </TableContainer>
 
@@ -170,7 +177,10 @@ export const PlainBody: Story = {
   render: () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(2);
-    const totalPages = useMemo(() => getTableTotalPages(sampleRows.length, rowsPerPage), [rowsPerPage]);
+    const totalPages = useMemo(
+      () => getTableTotalPages(sampleRows.length, rowsPerPage),
+      [rowsPerPage],
+    );
     const safePage = clampTablePageZeroBased(page, totalPages);
     const slice = useMemo(() => {
       const start = safePage * rowsPerPage;
@@ -198,7 +208,11 @@ export const PlainBody: Story = {
               </TableBody>
               <TableFooter>
                 <TableRow>
-                  <TableCell colSpan={2} align="center" style={tableStoriesStyles.footerCellPadding}>
+                  <TableCell
+                    colSpan={2}
+                    align="center"
+                    style={tableStoriesStyles.footerCellPadding}
+                  >
                     Загрузить больше
                   </TableCell>
                 </TableRow>
@@ -275,57 +289,55 @@ export const SortableHead: Story = {
     return (
       <TableContainer elevated>
         <TableContainerScroll>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell activeColumn={orderBy === 'name'}>
-                <TableSortLabel
-                  active={orderBy === 'name'}
-                  direction={orderBy === 'name' ? order : false}
-                  onClick={() => {
-                    if (orderBy === 'name') {
-                      setOrder(toggleTableSortDirection(order));
-                    } else {
-                      setOrderBy('name');
-                      setOrder('asc');
-                    }
-                  }}
-                >
-                  Блюдо
-                </TableSortLabel>
-              </TableCell>
-              <TableCell align="right" activeColumn={orderBy === 'calories'}>
-                <TableSortLabel
-                  active={orderBy === 'calories'}
-                  direction={orderBy === 'calories' ? order : false}
-                  onClick={() => {
-                    if (orderBy === 'calories') {
-                      setOrder(toggleTableSortDirection(order));
-                    } else {
-                      setOrderBy('calories');
-                      setOrder('asc');
-                    }
-                  }}
-                >
-                  Ккал
-                </TableSortLabel>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {sorted.map((rowItem, rowIndex) => (
-              <TableRow key={rowItem.id} selected={rowIndex === 1}>
-                <TableCell>{rowItem.name}</TableCell>
-                <TableCell align="right">{rowItem.calories}</TableCell>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell activeColumn={orderBy === 'name'}>
+                  <TableSortLabel
+                    active={orderBy === 'name'}
+                    direction={orderBy === 'name' ? order : false}
+                    onClick={() => {
+                      if (orderBy === 'name') {
+                        setOrder(toggleTableSortDirection(order));
+                      } else {
+                        setOrderBy('name');
+                        setOrder('asc');
+                      }
+                    }}
+                  >
+                    Блюдо
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell align="right" activeColumn={orderBy === 'calories'}>
+                  <TableSortLabel
+                    active={orderBy === 'calories'}
+                    direction={orderBy === 'calories' ? order : false}
+                    onClick={() => {
+                      if (orderBy === 'calories') {
+                        setOrder(toggleTableSortDirection(order));
+                      } else {
+                        setOrderBy('calories');
+                        setOrder('asc');
+                      }
+                    }}
+                  >
+                    Ккал
+                  </TableSortLabel>
+                </TableCell>
               </TableRow>
-            ))}
-            <TableRow disabled>
-              <TableCell colSpan={2}>
-                Неактивная строка (disabled)
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+            </TableHead>
+            <TableBody>
+              {sorted.map((rowItem, rowIndex) => (
+                <TableRow key={rowItem.id} selected={rowIndex === 1}>
+                  <TableCell>{rowItem.name}</TableCell>
+                  <TableCell align="right">{rowItem.calories}</TableCell>
+                </TableRow>
+              ))}
+              <TableRow disabled>
+                <TableCell colSpan={2}>Неактивная строка (disabled)</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
         </TableContainerScroll>
       </TableContainer>
     );
@@ -368,7 +380,8 @@ export const HeadMaxLinesClamp: Story = {
             <TableRow>
               <TableCell headerMaxLines={2}>
                 <TableSortLabel active direction="asc" maxLines={2} onClick={() => {}}>
-                  Очень длинный заголовок колонки для проверки переноса и обрезки максимум на двух строках
+                  Очень длинный заголовок колонки для проверки переноса и обрезки максимум на двух
+                  строках
                 </TableSortLabel>
               </TableCell>
               <TableCell headerMaxLines={2}>
@@ -405,7 +418,10 @@ export const PaginationEmbeddedInCard: Story = {
   render: () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(3);
-    const totalPages = useMemo(() => getTableTotalPages(sampleRows.length, rowsPerPage), [rowsPerPage]);
+    const totalPages = useMemo(
+      () => getTableTotalPages(sampleRows.length, rowsPerPage),
+      [rowsPerPage],
+    );
     const safePage = clampTablePageZeroBased(page, totalPages);
     const slice = useMemo(() => {
       const start = safePage * rowsPerPage;
@@ -415,22 +431,22 @@ export const PaginationEmbeddedInCard: Story = {
     return (
       <TableContainer elevated>
         <TableContainerScroll embeddedPaginationBelow>
-        <Table size="md" striped aria-label="Таблица с встроенной пагинацией">
-          <TableHead>
-            <TableRow>
-              <TableCell>Блюдо</TableCell>
-              <TableCell align="right">Ккал</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {slice.map(row => (
-              <TableRow key={row.id}>
-                <TableCell>{row.name}</TableCell>
-                <TableCell align="right">{row.calories}</TableCell>
+          <Table size="md" striped aria-label="Таблица с встроенной пагинацией">
+            <TableHead>
+              <TableRow>
+                <TableCell>Блюдо</TableCell>
+                <TableCell align="right">Ккал</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHead>
+            <TableBody>
+              {slice.map((row) => (
+                <TableRow key={row.id}>
+                  <TableCell>{row.name}</TableCell>
+                  <TableCell align="right">{row.calories}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </TableContainerScroll>
 
         <TablePagination
@@ -442,7 +458,7 @@ export const PaginationEmbeddedInCard: Story = {
           onPageChange={(_event, nextPageZeroBased) => {
             setPage(nextPageZeroBased);
           }}
-          onRowsPerPageChange={changeEvent => {
+          onRowsPerPageChange={(changeEvent) => {
             const nextPageSize = Number(changeEvent.target.value);
             setRowsPerPage(nextPageSize);
             setPage(0);
@@ -477,7 +493,7 @@ export const StickyHeader: Story = {
             </TableRow>
           </TableHead>
           <TableBody>
-            {sampleRows.map(rowItem => (
+            {sampleRows.map((rowItem) => (
               <TableRow key={rowItem.id}>
                 <TableCell>{rowItem.name}</TableCell>
                 <TableCell align="right">{rowItem.calories}</TableCell>
@@ -506,45 +522,44 @@ export const StripedSizes: Story = {
     <div style={tableStoriesStyles.stripedSizesContainer}>
       <TableContainer elevated>
         <TableContainerScroll>
-        <Table striped size="sm" aria-label="Плотность sm">
-          <TableHead>
-            <TableRow>
-              <TableCell>Блюдо</TableCell>
-              <TableCell align="right">Ккал</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {sampleRows.slice(0, 5).map(rowItem => (
-              <TableRow key={rowItem.id}>
-                <TableCell>{rowItem.name}</TableCell>
-                <TableCell align="right">{rowItem.calories}</TableCell>
+          <Table striped size="sm" aria-label="Плотность sm">
+            <TableHead>
+              <TableRow>
+                <TableCell>Блюдо</TableCell>
+                <TableCell align="right">Ккал</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHead>
+            <TableBody>
+              {sampleRows.slice(0, 5).map((rowItem) => (
+                <TableRow key={rowItem.id}>
+                  <TableCell>{rowItem.name}</TableCell>
+                  <TableCell align="right">{rowItem.calories}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </TableContainerScroll>
       </TableContainer>
       <TableContainer elevated>
         <TableContainerScroll>
-        <Table striped size="md" aria-label="Плотность md">
-          <TableHead>
-            <TableRow>
-              <TableCell>Блюдо</TableCell>
-              <TableCell align="right">Ккал</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {sampleRows.slice(0, 5).map(rowItem => (
-              <TableRow key={rowItem.id}>
-                <TableCell>{rowItem.name}</TableCell>
-                <TableCell align="right">{rowItem.calories}</TableCell>
+          <Table striped size="md" aria-label="Плотность md">
+            <TableHead>
+              <TableRow>
+                <TableCell>Блюдо</TableCell>
+                <TableCell align="right">Ккал</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHead>
+            <TableBody>
+              {sampleRows.slice(0, 5).map((rowItem) => (
+                <TableRow key={rowItem.id}>
+                  <TableCell>{rowItem.name}</TableCell>
+                  <TableCell align="right">{rowItem.calories}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </TableContainerScroll>
       </TableContainer>
     </div>
   ),
 };
-

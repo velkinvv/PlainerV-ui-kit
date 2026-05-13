@@ -62,7 +62,9 @@ describe('Pagination', () => {
 
   it('в режиме compact вызывает onPageChange по стрелкам', () => {
     const onPageChange = jest.fn();
-    wrap(<Pagination totalPages={5} defaultPage={3} variant="compact" onPageChange={onPageChange} />);
+    wrap(
+      <Pagination totalPages={5} defaultPage={3} variant="compact" onPageChange={onPageChange} />,
+    );
     fireEvent.click(screen.getByRole('button', { name: 'Предыдущая страница' }));
     expect(onPageChange).toHaveBeenCalledWith(2);
     expect(screen.getByText('2')).toHaveAttribute('aria-current', 'page');

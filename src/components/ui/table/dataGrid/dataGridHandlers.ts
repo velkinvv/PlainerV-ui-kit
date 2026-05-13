@@ -44,7 +44,10 @@ export function sliceRowsForPagination<Row extends DataGridBaseRow>(
  * @param row - ╨Ю╨▒╤К╨╡╨║╤В ╤Б╤В╤А╨╛╨║╨╕
  * @param field - ╨Ъ╨╗╤О╤З ╨╕╨╗╨╕ ╨┐╤Г╤В╤М ╤З╨╡╤А╨╡╨╖ `.`
  */
-export function getDataGridCellValue<Row extends DataGridBaseRow>(row: Row, field: keyof Row | string): unknown {
+export function getDataGridCellValue<Row extends DataGridBaseRow>(
+  row: Row,
+  field: keyof Row | string,
+): unknown {
   const key = String(field);
   if (!key.includes('.')) {
     return row[key as keyof Row];

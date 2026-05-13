@@ -1,9 +1,12 @@
 import styled, { css, keyframes } from 'styled-components';
 
-import { Size } from '@/types/sizes';
+import type { Size } from '@/types/sizes';
 import type { PopoverVariant } from '@/types/ui';
 
-import { getDropdownAnimations, getDropdownContainerStyles } from '../../../handlers/dropdownThemeHandlers';
+import {
+  getDropdownAnimations,
+  getDropdownContainerStyles,
+} from '../../../handlers/dropdownThemeHandlers';
 import {
   buildSurfaceRevealAnimationCss,
   buildSurfaceTransitionCss,
@@ -35,7 +38,9 @@ const widthCss = ($contentWidth?: string | number) =>
 const maxHeightCss = ($contentMaxHeight?: string | number) =>
   $contentMaxHeight !== undefined
     ? css`
-        max-height: ${typeof $contentMaxHeight === 'number' ? `${$contentMaxHeight}px` : $contentMaxHeight};
+        max-height: ${typeof $contentMaxHeight === 'number'
+          ? `${$contentMaxHeight}px`
+          : $contentMaxHeight};
         overflow-y: auto;
         overflow-x: hidden;
       `
@@ -85,7 +90,9 @@ export const PopoverSurface = styled.div<PopoverSurfaceStyledProps>`
       overflow-wrap: break-word;
       backdrop-filter: ${styles.backdropFilter};
       transform: ${animations.openAnimation.transform};
-      ${buildSurfaceTransitionCss(`${animations.openAnimation.duration} ${animations.openAnimation.easing}`)}
+      ${buildSurfaceTransitionCss(
+        `${animations.openAnimation.duration} ${animations.openAnimation.easing}`,
+      )}
     `;
   }}
   ${buildSurfaceRevealAnimationCss(popoverSurfaceReveal)}

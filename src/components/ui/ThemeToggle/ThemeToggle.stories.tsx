@@ -33,4 +33,3 @@ export const WithBackground: Story = {
     </div>
   ),
 };
-

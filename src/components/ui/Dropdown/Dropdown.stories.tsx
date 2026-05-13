@@ -20,10 +20,7 @@ import { DropdownMenuItem } from './DropdownMenuItem';
 import { DOC_DROPDOWN } from '@/components/ui/storyDocs/uiKitDocs';
 import { Typography } from '../Typography/Typography';
 import { lightTheme } from '@/themes/themes';
-import {
-  createDropdownStoryThemeStyles,
-  dropdownStoriesStyles,
-} from './Dropdown.stories.styles';
+import { createDropdownStoryThemeStyles, dropdownStoriesStyles } from './Dropdown.stories.styles';
 
 const dropdownStoryThemeStyles = createDropdownStoryThemeStyles(lightTheme);
 const dropdownStoryPalette = dropdownStoryThemeStyles.palette;
@@ -278,8 +275,7 @@ const meta: Meta<typeof Dropdown> = {
       control: false,
       table: {
         type: {
-          summary:
-            '(value: строка или число, опционально undefined; event: MouseEvent) => void',
+          summary: '(value: строка или число, опционально undefined; event: MouseEvent) => void',
         },
       },
     },
@@ -405,7 +401,8 @@ const meta: Meta<typeof Dropdown> = {
       control: false,
     },
     emptyMessage: {
-      description: 'Сообщение по умолчанию для пустого состояния, если `renderEmptyState` не задан.',
+      description:
+        'Сообщение по умолчанию для пустого состояния, если `renderEmptyState` не задан.',
       control: { type: 'text' },
       table: {
         defaultValue: { summary: 'Нет данных' },
@@ -580,7 +577,7 @@ export const WithDivider: Story = {
 export const Sizes: Story = {
   render: () => (
     <div style={dropdownStoriesStyles.wrappedRowGap24}>
-      {[Size.SM, Size.MD, Size.LG].map(size => {
+      {[Size.SM, Size.MD, Size.LG].map((size) => {
         const caption =
           size === Size.SM ? 'SM / 32px' : size === Size.MD ? 'MD / 40px' : 'LG / 48px';
 
@@ -634,7 +631,7 @@ export const Variants: Story = {
           buttonVariant: ButtonVariant.OUTLINE,
           label: 'Вариант outlined',
         },
-      ].map(variantConfig => (
+      ].map((variantConfig) => (
         <Dropdown
           key={variantConfig.dropdownVariant}
           variant={variantConfig.dropdownVariant as 'default' | 'elevated' | 'outlined'}
@@ -667,9 +664,7 @@ export const UserMenu: Story = {
   args: {
     trigger: (
       <div style={userMenuTriggerStyle}>
-        <div style={userMenuAvatarStyle}>
-          JD
-        </div>
+        <div style={userMenuAvatarStyle}>JD</div>
         <span>John Doe</span>
         <span>▼</span>
       </div>
@@ -688,13 +683,9 @@ export const NotificationDropdown: Story = {
     buttonProps: {
       variant: ButtonVariant.GHOST,
       children: (
-        <span
-          style={dropdownStoriesStyles.inlineFlexRelativeGap6}
-        >
+        <span style={dropdownStoriesStyles.inlineFlexRelativeGap6}>
           🔔 Notifications
-          <span style={notificationBadgeStyle}>
-            3
-          </span>
+          <span style={notificationBadgeStyle}>3</span>
         </span>
       ),
     },
@@ -903,9 +894,7 @@ export const ControlledMenu: Story = {
               ] as DropdownMenuItemProps[]
             }
           />
-          <span style={controlledMenuStateTextStyle}>
-            Меню {isOpen ? 'открыто' : 'закрыто'}
-          </span>
+          <span style={controlledMenuStateTextStyle}>Меню {isOpen ? 'открыто' : 'закрыто'}</span>
         </div>
       </div>
     );
@@ -991,8 +980,7 @@ export const CustomContainerStyle: Story = {
     dropContainerStyle: {
       border: `2px dashed ${dropdownStoryPalette.iconAccent}`,
       boxShadow: `0 12px 24px color-mix(in srgb, ${dropdownStoryPalette.iconAccent} 35%, transparent)`,
-      background:
-        `linear-gradient(135deg, color-mix(in srgb, ${dropdownStoryPalette.iconAccent} 12%, transparent) 0%, color-mix(in srgb, ${dropdownStoryPalette.iconAccent} 18%, transparent) 100%)`,
+      background: `linear-gradient(135deg, color-mix(in srgb, ${dropdownStoryPalette.iconAccent} 12%, transparent) 0%, color-mix(in srgb, ${dropdownStoryPalette.iconAccent} 18%, transparent) 100%)`,
       backdropFilter: 'blur(6px)',
     },
     items: [
@@ -1142,7 +1130,7 @@ export const KeyboardNavigationStory: Story = {
 export const AsyncItems: Story = {
   render: function RenderAsyncDropdown() {
     const loadItems = React.useCallback(() => {
-      return new Promise<DropdownMenuItemProps[]>(resolve => {
+      return new Promise<DropdownMenuItemProps[]>((resolve) => {
         setTimeout(() => {
           resolve([
             { label: 'Отчёты', description: 'Финансовая аналитика' },
@@ -1163,7 +1151,8 @@ export const AsyncItems: Story = {
   parameters: {
     docs: {
       description: {
-        story: '`loadItems` лениво подгружает список при открытии меню и показывает состояние загрузки/ошибки.',
+        story:
+          '`loadItems` лениво подгружает список при открытии меню и показывает состояние загрузки/ошибки.',
       },
     },
   },
@@ -1224,7 +1213,8 @@ export const EmptyStateStory: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Если `items` пустой массив, будет показано стандартное или кастомное пустое состояние.',
+        story:
+          'Если `items` пустой массив, будет показано стандартное или кастомное пустое состояние.',
       },
     },
   },
@@ -1297,10 +1287,7 @@ export const CustomPortalContainer: Story = {
 
     return (
       <div style={portalContainerStyle}>
-        <div
-          ref={portalRef}
-          style={dropdownStoriesStyles.portalTargetOverlay}
-        />
+        <div ref={portalRef} style={dropdownStoriesStyles.portalTargetOverlay} />
         <Dropdown
           buttonProps={{ variant: ButtonVariant.PRIMARY, children: 'Внутренний портал' }}
           defaultOpen
@@ -1330,10 +1317,7 @@ export const WithTargetElement: Story = {
 
     return (
       <div style={dropdownStoriesStyles.controlColumnGap24}>
-        <div
-          ref={targetRef}
-          style={targetElementBoxStyle}
-        >
+        <div ref={targetRef} style={targetElementBoxStyle}>
           Целевой элемент для позиционирования
         </div>
         <Dropdown
@@ -1376,7 +1360,7 @@ export const WithActivateItem: Story = {
             children: 'Меню с обработчиком hover',
           }}
           defaultOpen={true}
-          onActivateItem={value => {
+          onActivateItem={(value) => {
             setActivatedValue(value as string);
           }}
           items={
@@ -1422,12 +1406,7 @@ export const WithTopPanel: Story = {
                 Размер: {size}, Вариант: {variant}
               </span>
             </div>
-            <input
-              type="text"
-              placeholder="Поиск..."
-              disabled={disabled}
-              style={panelInputStyle}
-            />
+            <input type="text" placeholder="Поиск..." disabled={disabled} style={panelInputStyle} />
           </div>
         )}
         items={
@@ -1467,10 +1446,7 @@ export const WithBottomPanel: Story = {
                 Размер: {size}, Вариант: {variant}
               </span>
             </div>
-            <button
-              disabled={disabled}
-              style={getPanelSecondaryButtonStyle(disabled)}
-            >
+            <button disabled={disabled} style={getPanelSecondaryButtonStyle(disabled)}>
               Применить
             </button>
           </div>
@@ -1507,30 +1483,17 @@ export const WithBothPanels: Story = {
         renderTopPanel={({ size, variant, disabled }) => (
           <div style={getPanelContainerStyle(disabled)}>
             <span style={dropdownStoriesStyles.panelHeading}>Поиск</span>
-            <input
-              type="text"
-              placeholder="Поиск..."
-              disabled={disabled}
-              style={panelInputStyle}
-            />
+            <input type="text" placeholder="Поиск..." disabled={disabled} style={panelInputStyle} />
           </div>
         )}
         renderBottomPanel={({ size, variant, disabled }) => (
           <div style={getPanelContainerStyle(disabled)}>
-            <span style={panelMetaTextStyle}>
-              Выбрано: 0 элементов
-            </span>
+            <span style={panelMetaTextStyle}>Выбрано: 0 элементов</span>
             <div style={dropdownStoriesStyles.rowGap8AlignCenter}>
-              <button
-                disabled={disabled}
-                style={getPanelSecondaryButtonStyle(disabled)}
-              >
+              <button disabled={disabled} style={getPanelSecondaryButtonStyle(disabled)}>
                 Сбросить
               </button>
-              <button
-                disabled={disabled}
-                style={getPanelPrimaryButtonStyle(disabled)}
-              >
+              <button disabled={disabled} style={getPanelPrimaryButtonStyle(disabled)}>
                 Применить
               </button>
             </div>
@@ -1563,9 +1526,9 @@ export const MultiSelection: Story = {
     const handleSelect = (value?: DropdownMenuItemValue) => {
       if (value === undefined) return;
 
-      setSelectedValues(prev => {
+      setSelectedValues((prev) => {
         if (prev.includes(value)) {
-          return prev.filter(v => v !== value);
+          return prev.filter((v) => v !== value);
         }
         return [...prev, value];
       });
@@ -1619,9 +1582,9 @@ export const MultiSelectionWithDisabled: Story = {
     const handleSelect = (value?: DropdownMenuItemValue) => {
       if (value === undefined) return;
 
-      setSelectedValues(prev => {
+      setSelectedValues((prev) => {
         if (prev.includes(value)) {
-          return prev.filter(v => v !== value);
+          return prev.filter((v) => v !== value);
         }
         return [...prev, value];
       });
@@ -1676,9 +1639,9 @@ export const MultiSelectionWithoutHighlight: Story = {
     const handleSelect = (value?: DropdownMenuItemValue) => {
       if (value === undefined) return;
 
-      setSelectedValues(prev => {
+      setSelectedValues((prev) => {
         if (prev.includes(value)) {
-          return prev.filter(v => v !== value);
+          return prev.filter((v) => v !== value);
         }
         return [...prev, value];
       });
@@ -1758,7 +1721,7 @@ export const TreeMultiSelect: Story = {
       const checkedFromCheckbox = (
         event as React.MouseEvent<HTMLElement> & { dropdownTreeCheckboxChecked?: boolean }
       )?.dropdownTreeCheckboxChecked;
-      setSelectedValues(previous =>
+      setSelectedValues((previous) =>
         applyTreeMultiSelectionToValues(
           previous,
           String(value),
@@ -1770,11 +1733,7 @@ export const TreeMultiSelect: Story = {
 
     return (
       <div style={dropdownStoriesStyles.treeContainer}>
-        <Typography
-          as="p"
-          variant="body2"
-          style={treeDescriptionStyle}
-        >
+        <Typography as="p" variant="body2" style={treeDescriptionStyle}>
           Клик по строке родителя: если в ветке никого не выбрано — выбирается всё поддерево; если
           выбрано хотя бы одно значение (частично или полностью) — снимается вся ветка. Чекбокс
           родителя по-прежнему явно включает или выключает всё поддерево. Листья можно переключать
@@ -1795,9 +1754,7 @@ export const TreeMultiSelect: Story = {
           items={dropdownTreeMultiItems}
         />
         {selectedValues.length > 0 ? (
-          <pre style={selectedValuesPreviewStyle}>
-            {JSON.stringify(selectedValues, null, 2)}
-          </pre>
+          <pre style={selectedValuesPreviewStyle}>{JSON.stringify(selectedValues, null, 2)}</pre>
         ) : null}
       </div>
     );
@@ -1827,7 +1784,7 @@ export const TreeMultiSelectCollapsedDefault: Story = {
       const checkedFromCheckbox = (
         event as React.MouseEvent<HTMLElement> & { dropdownTreeCheckboxChecked?: boolean }
       )?.dropdownTreeCheckboxChecked;
-      setSelectedValues(previous =>
+      setSelectedValues((previous) =>
         applyTreeMultiSelectionToValues(
           previous,
           String(value),
@@ -1859,7 +1816,8 @@ export const TreeMultiSelectCollapsedDefault: Story = {
   parameters: {
     docs: {
       description: {
-        story: '`treeDefaultExpanded="collapsed"`: при первом открытии дочерние списки скрыты, шеврон раскрывает ветку.',
+        story:
+          '`treeDefaultExpanded="collapsed"`: при первом открытии дочерние списки скрыты, шеврон раскрывает ветку.',
       },
     },
   },
@@ -1884,7 +1842,7 @@ export const TreeMultiSelectControlledBranches: Story = {
       const checkedFromCheckbox = (
         event as React.MouseEvent<HTMLElement> & { dropdownTreeCheckboxChecked?: boolean }
       )?.dropdownTreeCheckboxChecked;
-      setSelectedValues(previous =>
+      setSelectedValues((previous) =>
         applyTreeMultiSelectionToValues(
           previous,
           String(value),
@@ -1896,11 +1854,7 @@ export const TreeMultiSelectControlledBranches: Story = {
 
     return (
       <div style={dropdownStoriesStyles.treeControlledContainer}>
-        <Typography
-          as="p"
-          variant="caption"
-          style={treeKeysDescriptionStyle}
-        >
+        <Typography as="p" variant="caption" style={treeKeysDescriptionStyle}>
           Ключи раскрытых веток: <code>{expandedKeys.join(', ') || '—'}</code>
         </Typography>
         <Dropdown
@@ -1945,11 +1899,7 @@ export const VirtualScroll: Story = {
           <Typography as="h3" variant="h5" style={dropdownStoriesStyles.sectionTitle}>
             Виртуальный скролл с автоматической высотой (itemHeight="auto")
           </Typography>
-          <Typography
-            as="p"
-            variant="body2"
-            style={sectionDescriptionStyle}
-          >
+          <Typography as="p" variant="body2" style={sectionDescriptionStyle}>
             Высота элемента вычисляется автоматически из темы на основе размера dropdown.
           </Typography>
           <Dropdown
@@ -1967,11 +1917,7 @@ export const VirtualScroll: Story = {
           <Typography as="h3" variant="h5" style={dropdownStoriesStyles.sectionTitle}>
             Виртуальный скролл с фиксированной высотой (itemHeight=32)
           </Typography>
-          <Typography
-            as="p"
-            variant="body2"
-            style={sectionDescriptionStyle}
-          >
+          <Typography as="p" variant="body2" style={sectionDescriptionStyle}>
             Высота элемента задана явно в пикселях.
           </Typography>
           <Dropdown
@@ -1989,11 +1935,7 @@ export const VirtualScroll: Story = {
           <Typography as="h3" variant="h5" style={dropdownStoriesStyles.sectionTitle}>
             Без виртуального скролла (для сравнения)
           </Typography>
-          <Typography
-            as="p"
-            variant="body2"
-            style={sectionDescriptionStyle}
-          >
+          <Typography as="p" variant="body2" style={sectionDescriptionStyle}>
             Обычный скролл - все элементы рендерятся одновременно.
           </Typography>
           <Dropdown
@@ -2025,49 +1967,50 @@ export const WithTooltips: Story = {
         <Typography as="h3" variant="h5" style={dropdownStoriesStyles.sectionTitle}>
           Тултипы с кастомным текстом
         </Typography>
-        <Typography
-          as="p"
-          variant="body2"
-          style={sectionDescriptionStyle}
-        >
-          Элементы меню могут отображать тултипы при наведении. Полезно для длинных названий или дополнительной информации.
+        <Typography as="p" variant="body2" style={sectionDescriptionStyle}>
+          Элементы меню могут отображать тултипы при наведении. Полезно для длинных названий или
+          дополнительной информации.
         </Typography>
         <Dropdown
           buttonProps={{
             variant: ButtonVariant.PRIMARY,
             children: 'Меню с тултипами',
           }}
-          items={[
-            {
-              label: 'Редактировать профиль',
-              value: 'edit',
-              icon: <span>✏️</span>,
-              showTooltip: true,
-              tooltipText: 'Открыть форму редактирования профиля пользователя',
-            },
-            {
-              label: 'Настройки безопасности',
-              value: 'security',
-              icon: <span>🔒</span>,
-              showTooltip: true,
-              tooltipText: 'Управление паролями, двухфакторной аутентификацией и сессиями',
-            },
-            {
-              label: 'Очень длинное название пункта меню, которое не помещается в одну строку',
-              value: 'long',
-              icon: <span>📄</span>,
-              showTooltip: true,
-              tooltipText: 'Этот пункт имеет очень длинное название, поэтому тултип помогает увидеть полный текст',
-            },
-            {
-              label: 'Удалить аккаунт',
-              value: 'delete',
-              icon: <span>🗑️</span>,
-              tone: 'danger',
-              showTooltip: true,
-              tooltipText: 'Внимание! Это действие нельзя отменить. Все данные будут удалены безвозвратно.',
-            },
-          ] as DropdownMenuItemProps[]}
+          items={
+            [
+              {
+                label: 'Редактировать профиль',
+                value: 'edit',
+                icon: <span>✏️</span>,
+                showTooltip: true,
+                tooltipText: 'Открыть форму редактирования профиля пользователя',
+              },
+              {
+                label: 'Настройки безопасности',
+                value: 'security',
+                icon: <span>🔒</span>,
+                showTooltip: true,
+                tooltipText: 'Управление паролями, двухфакторной аутентификацией и сессиями',
+              },
+              {
+                label: 'Очень длинное название пункта меню, которое не помещается в одну строку',
+                value: 'long',
+                icon: <span>📄</span>,
+                showTooltip: true,
+                tooltipText:
+                  'Этот пункт имеет очень длинное название, поэтому тултип помогает увидеть полный текст',
+              },
+              {
+                label: 'Удалить аккаунт',
+                value: 'delete',
+                icon: <span>🗑️</span>,
+                tone: 'danger',
+                showTooltip: true,
+                tooltipText:
+                  'Внимание! Это действие нельзя отменить. Все данные будут удалены безвозвратно.',
+              },
+            ] as DropdownMenuItemProps[]
+          }
         />
       </div>
 
@@ -2075,35 +2018,34 @@ export const WithTooltips: Story = {
         <Typography as="h3" variant="h5" style={dropdownStoriesStyles.sectionTitle}>
           Тултипы с автоматическим текстом (из label)
         </Typography>
-        <Typography
-          as="p"
-          variant="body2"
-          style={sectionDescriptionStyle}
-        >
-          Если `tooltipText` не указан, но `showTooltip={true}`, тултип будет использовать текст из `label`.
+        <Typography as="p" variant="body2" style={sectionDescriptionStyle}>
+          Если `tooltipText` не указан, но `showTooltip={true}`, тултип будет использовать текст из
+          `label`.
         </Typography>
         <Dropdown
           buttonProps={{
             variant: ButtonVariant.OUTLINE,
             children: 'Автоматические тултипы',
           }}
-          items={[
-            {
-              label: 'Короткий пункт',
-              value: 'short',
-              showTooltip: true,
-            },
-            {
-              label: 'Средний пункт меню',
-              value: 'medium',
-              showTooltip: true,
-            },
-            {
-              label: 'Длинный пункт меню с описанием',
-              value: 'long',
-              showTooltip: true,
-            },
-          ] as DropdownMenuItemProps[]}
+          items={
+            [
+              {
+                label: 'Короткий пункт',
+                value: 'short',
+                showTooltip: true,
+              },
+              {
+                label: 'Средний пункт меню',
+                value: 'medium',
+                showTooltip: true,
+              },
+              {
+                label: 'Длинный пункт меню с описанием',
+                value: 'long',
+                showTooltip: true,
+              },
+            ] as DropdownMenuItemProps[]
+          }
         />
       </div>
 
@@ -2111,44 +2053,43 @@ export const WithTooltips: Story = {
         <Typography as="h3" variant="h5" style={dropdownStoriesStyles.sectionTitle}>
           Смешанные тултипы
         </Typography>
-        <Typography
-          as="p"
-          variant="body2"
-          style={sectionDescriptionStyle}
-        >
-          Некоторые элементы с тултипами, некоторые без. Тултипы автоматически отключаются для disabled элементов.
+        <Typography as="p" variant="body2" style={sectionDescriptionStyle}>
+          Некоторые элементы с тултипами, некоторые без. Тултипы автоматически отключаются для
+          disabled элементов.
         </Typography>
         <Dropdown
           buttonProps={{
             variant: ButtonVariant.PRIMARY,
             children: 'Смешанное меню',
           }}
-          items={[
-            {
-              label: 'С тултипом',
-              value: 'with-tooltip',
-              showTooltip: true,
-              tooltipText: 'Этот элемент имеет тултип',
-            },
-            {
-              label: 'Без тултипа',
-              value: 'without-tooltip',
-            },
-            {
-              label: 'Disabled с тултипом',
-              value: 'disabled',
-              disabled: true,
-              showTooltip: true,
-              tooltipText: 'Этот элемент отключен, тултип не показывается',
-            },
-            {
-              label: 'Loading с тултипом',
-              value: 'loading',
-              loading: true,
-              showTooltip: true,
-              tooltipText: 'Загрузка...',
-            },
-          ] as DropdownMenuItemProps[]}
+          items={
+            [
+              {
+                label: 'С тултипом',
+                value: 'with-tooltip',
+                showTooltip: true,
+                tooltipText: 'Этот элемент имеет тултип',
+              },
+              {
+                label: 'Без тултипа',
+                value: 'without-tooltip',
+              },
+              {
+                label: 'Disabled с тултипом',
+                value: 'disabled',
+                disabled: true,
+                showTooltip: true,
+                tooltipText: 'Этот элемент отключен, тултип не показывается',
+              },
+              {
+                label: 'Loading с тултипом',
+                value: 'loading',
+                loading: true,
+                showTooltip: true,
+                tooltipText: 'Загрузка...',
+              },
+            ] as DropdownMenuItemProps[]
+          }
         />
       </div>
     </div>
@@ -2162,4 +2103,3 @@ export const WithTooltips: Story = {
     },
   },
 };
-

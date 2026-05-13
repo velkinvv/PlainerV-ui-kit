@@ -37,30 +37,30 @@ function MyComponent() {
 
 ## Пропсы
 
-| Проп              | Тип                                                    | По умолчанию | Описание                                                                    |
-| ----------------- | ------------------------------------------------------ | ------------ | --------------------------------------------------------------------------- |
-| `checked`         | `boolean`                                              | `false`      | Выбрана ли радио кнопка                                                     |
-| `onChange`        | `(event: React.ChangeEvent<HTMLInputElement>) => void` | -            | Обработчик изменения                                                        |
-| `onClick`         | `(event: React.MouseEvent<HTMLLabelElement>) => void`  | -            | Обработчик клика по кнопке или лейблу                                       |
-| `label`           | `string`                                               | -            | Текстовая метка                                                             |
-| `disabled`        | `boolean`                                              | `false`      | Отключить радио кнопку                                                      |
-| `readOnly`        | `boolean`                                              | `false`      | Только для чтения (кнопка неактивна, но лейбл остается обычного цвета)      |
-| `size`            | `'sm' \| 'md' \| 'lg'`                                 | `'md'`       | Размер радио кнопки                                                         |
-| `name`            | `string`                                               | -            | Имя группы радио кнопок                                                     |
-| `value`           | `string`                                               | -            | Значение радио кнопки                                                       |
-| `variant`         | `'filled' \| 'outline'`                                | `'filled'`   | Вариант отображения: filled (залитая) или outline (с обводкой)            |
-| `labelPosition`   | `'right' \| 'left' \| 'top' \| 'bottom' \| 'none'`    | `'right'`    | Позиция лейбла относительно кнопки                                         |
-| `extraText`       | `string`                                               | -            | Дополнительный текст (подсказка), который выводится нижней строкой        |
-| `error`           | `string`                                               | -            | Сообщение об ошибке                                                         |
-| `helperText`      | `string`                                               | -            | Вспомогательный текст, отображаемый под радиокнопкой                       |
-| `tooltip`         | `React.ReactNode`                                      | -            | Подсказка, отображаемая при наведении                                      |
-| `tooltipPosition` | `'top' \| 'bottom' \| 'left' \| 'right'`              | `'top'`      | Позиция подсказки                                                           |
-| `required`        | `boolean`                                              | `false`      | Показывает индикатор обязательности поля                                   |
-| `leftIcon`        | `React.ReactNode`                                      | -            | Иконка слева от радиокнопки                                                |
-| `rightIcon`       | `React.ReactNode`                                      | -            | Иконка справа от радиокнопки                                                |
-| `fullWidth`       | `boolean`                                              | `false`      | Растягивает радиокнопку на всю доступную ширину                             |
-| `status`          | `'success' \| 'error' \| 'warning'`                    | -            | Визуальный статус радиокнопки                                               |
-| `className`       | `string`                                               | -            | Дополнительный CSS класс                                                   |
+| Проп              | Тип                                                    | По умолчанию | Описание                                                               |
+| ----------------- | ------------------------------------------------------ | ------------ | ---------------------------------------------------------------------- |
+| `checked`         | `boolean`                                              | `false`      | Выбрана ли радио кнопка                                                |
+| `onChange`        | `(event: React.ChangeEvent<HTMLInputElement>) => void` | -            | Обработчик изменения                                                   |
+| `onClick`         | `(event: React.MouseEvent<HTMLLabelElement>) => void`  | -            | Обработчик клика по кнопке или лейблу                                  |
+| `label`           | `string`                                               | -            | Текстовая метка                                                        |
+| `disabled`        | `boolean`                                              | `false`      | Отключить радио кнопку                                                 |
+| `readOnly`        | `boolean`                                              | `false`      | Только для чтения (кнопка неактивна, но лейбл остается обычного цвета) |
+| `size`            | `'sm' \| 'md' \| 'lg'`                                 | `'md'`       | Размер радио кнопки                                                    |
+| `name`            | `string`                                               | -            | Имя группы радио кнопок                                                |
+| `value`           | `string`                                               | -            | Значение радио кнопки                                                  |
+| `variant`         | `'filled' \| 'outline'`                                | `'filled'`   | Вариант отображения: filled (залитая) или outline (с обводкой)         |
+| `labelPosition`   | `'right' \| 'left' \| 'top' \| 'bottom' \| 'none'`     | `'right'`    | Позиция лейбла относительно кнопки                                     |
+| `extraText`       | `string`                                               | -            | Дополнительный текст (подсказка), который выводится нижней строкой     |
+| `error`           | `string`                                               | -            | Сообщение об ошибке                                                    |
+| `helperText`      | `string`                                               | -            | Вспомогательный текст, отображаемый под радиокнопкой                   |
+| `tooltip`         | `React.ReactNode`                                      | -            | Подсказка, отображаемая при наведении                                  |
+| `tooltipPosition` | `'top' \| 'bottom' \| 'left' \| 'right'`               | `'top'`      | Позиция подсказки                                                      |
+| `required`        | `boolean`                                              | `false`      | Показывает индикатор обязательности поля                               |
+| `leftIcon`        | `React.ReactNode`                                      | -            | Иконка слева от радиокнопки                                            |
+| `rightIcon`       | `React.ReactNode`                                      | -            | Иконка справа от радиокнопки                                           |
+| `fullWidth`       | `boolean`                                              | `false`      | Растягивает радиокнопку на всю доступную ширину                        |
+| `status`          | `'success' \| 'error' \| 'warning'`                    | -            | Визуальный статус радиокнопки                                          |
+| `className`       | `string`                                               | -            | Дополнительный CSS класс                                               |
 
 ## Размеры
 
@@ -186,7 +186,7 @@ function DeliveryForm() {
       <h3>Способ доставки:</h3>
       <RadioButton
         checked={deliveryMethod === 'courier'}
-        onChange={e => {
+        onChange={(e) => {
           setDeliveryMethod(e.target.value);
           setError('');
         }}
@@ -196,7 +196,7 @@ function DeliveryForm() {
       />
       <RadioButton
         checked={deliveryMethod === 'pickup'}
-        onChange={e => {
+        onChange={(e) => {
           setDeliveryMethod(e.target.value);
           setError('');
         }}

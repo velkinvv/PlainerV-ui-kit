@@ -9,14 +9,14 @@ import { ToastAppearance, type ToastType } from '@/types/ui';
 import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
 import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
 
-const withToast: Decorator = Story => (
+const withToast: Decorator = (Story) => (
   <ToastProvider>
     <Story />
   </ToastProvider>
 );
 
 /** Провайдер с внешним видом «пилюля» по умолчанию */
-const withPillToast: Decorator = Story => (
+const withPillToast: Decorator = (Story) => (
   <ToastProvider defaultAppearance={ToastAppearance.PILL}>
     <Story />
   </ToastProvider>
@@ -237,7 +237,11 @@ const PillToastDemo = () => {
       <Typography variant="h3" marginBottom="md">
         Внешний вид «пилюля» (по умолчанию у провайдера)
       </Typography>
-      <Typography variant="body2" marginBottom="md" style={storybookDemoStyles.typographyMutedParagraph}>
+      <Typography
+        variant="body2"
+        marginBottom="md"
+        style={storybookDemoStyles.typographyMutedParagraph}
+      >
         Типы уведомлений: иконка с glow, кнопка «Action» закрывает toast после колбэка.
       </Typography>
 
@@ -361,7 +365,8 @@ const BulkOperationsDemo = () => {
 };
 
 const AdvancedControlsDemo = () => {
-  const { showToast, updateToast, pauseToasts, playToasts, clearToasts, isActiveToast } = useToast();
+  const { showToast, updateToast, pauseToasts, playToasts, clearToasts, isActiveToast } =
+    useToast();
 
   const showPauseOnHover = () => {
     showToast('Наведи мышку на карточку: таймер остановится.', 'info', 'Pause on hover', 7000, {
@@ -525,7 +530,7 @@ export const AdvancedControls: Story = {
 
 export const LimitedStack: Story = {
   decorators: [
-    Story => (
+    (Story) => (
       <ToastProvider limit={3} newestOnTop stacked>
         <Story />
       </ToastProvider>
@@ -545,4 +550,3 @@ export const AllExamples: Story = {
     </StorybookStaggerStack>
   ),
 };
-

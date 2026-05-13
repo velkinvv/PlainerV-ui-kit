@@ -76,7 +76,8 @@ const meta: Meta<typeof RadioButtonGroup> = {
     },
     helperText: {
       control: 'text',
-      description: 'Вспомогательный текст под группой (не показывается при ошибке группы или success)',
+      description:
+        'Вспомогательный текст под группой (не показывается при ошибке группы или success)',
     },
     success: {
       control: 'boolean',
@@ -695,4 +696,3 @@ export const GroupComplexNew: RadioButtonGroupStory = {
     );
   },
 };
-

@@ -25,7 +25,10 @@ import {
   SidemenuStoryWithActiveState,
 } from './Sidemenu.stories.helpers';
 import { SidemenuLogoIconSlot, SidemenuLogoTitleText } from './Sidemenu.style';
-import { SidemenuDemoFooterActions, SidemenuDemoHeaderBrand } from './Sidemenu.stories.slots.styles';
+import {
+  SidemenuDemoFooterActions,
+  SidemenuDemoHeaderBrand,
+} from './Sidemenu.stories.slots.styles';
 import { lightTheme } from '@/themes/themes';
 import { createSidemenuStoryThemeStyles, sidemenuStoriesStyles } from './Sidemenu.stories.styles';
 
@@ -270,7 +273,7 @@ export const Expanded: Story = {
     },
     variant: SidemenuVariant.EXPANDED,
   },
-  render: args => (
+  render: (args) => (
     <SidemenuStoryWithActiveState
       itemsTemplate={defaultItems}
       initialActiveId="home"
@@ -286,7 +289,7 @@ export const Collapsed: Story = {
     },
     variant: SidemenuVariant.COLLAPSED,
   },
-  render: args => (
+  render: (args) => (
     <SidemenuStoryWithActiveState
       itemsTemplate={defaultItems}
       initialActiveId="home"
@@ -314,21 +317,14 @@ export const EdgeAttachedLayout: Story = {
       icon: <Icon name="IconExStar" size={IconSize.MD} />,
     },
   },
-  render: args => {
+  render: (args) => {
     const [activeId, setActiveId] = React.useState('home');
-    const items = React.useMemo(
-      () => applySidemenuActiveId(defaultItems, activeId),
-      [activeId],
-    );
+    const items = React.useMemo(() => applySidemenuActiveId(defaultItems, activeId), [activeId]);
     const sidemenuProps = pickSidemenuPropsFromStoryArgs(args);
 
     return (
       <div style={edgeAttachedPageRootStyle}>
-        <p
-          role="status"
-          aria-live="polite"
-          style={sidemenuStoriesStyles.edgeAttachedStatus}
-        >
+        <p role="status" aria-live="polite" style={sidemenuStoriesStyles.edgeAttachedStatus}>
           <span style={sidemenuStoriesStyles.edgeAttachedStatusMuted}>Активный пункт: </span>
           <strong>{activeId}</strong>
         </p>
@@ -336,7 +332,7 @@ export const EdgeAttachedLayout: Story = {
           <Sidemenu
             {...sidemenuProps}
             items={items}
-            onItemClick={item => {
+            onItemClick={(item) => {
               setActiveId(item.id);
               sidemenuProps.onItemClick?.(item);
             }}
@@ -357,7 +353,7 @@ export const WithNotifications: Story = {
     },
     variant: SidemenuVariant.EXPANDED,
   },
-  render: args => (
+  render: (args) => (
     <SidemenuStoryWithActiveState
       itemsTemplate={expandedItems}
       initialActiveId="dashboard"
@@ -370,7 +366,7 @@ export const WithoutLogo: Story = {
   args: {
     variant: SidemenuVariant.EXPANDED,
   },
-  render: args => (
+  render: (args) => (
     <SidemenuStoryWithActiveState
       itemsTemplate={defaultItems}
       initialActiveId="home"
@@ -386,7 +382,7 @@ export const WithLogoOnly: Story = {
     },
     variant: SidemenuVariant.EXPANDED,
   },
-  render: args => (
+  render: (args) => (
     <SidemenuStoryWithActiveState
       itemsTemplate={defaultItems}
       initialActiveId="home"
@@ -418,7 +414,7 @@ const InteractiveExample: React.FC = () => {
             <input
               type="checkbox"
               checked={variant === SidemenuVariant.COLLAPSED}
-              onChange={event =>
+              onChange={(event) =>
                 setVariant(
                   event.target.checked ? SidemenuVariant.COLLAPSED : SidemenuVariant.EXPANDED,
                 )
@@ -482,7 +478,7 @@ export const ExpandPanelOnHover: Story = {
     onExpand: fn(),
     onCollapse: fn(),
   },
-  render: args => (
+  render: (args) => (
     <SidemenuStoryWithActiveState
       itemsTemplate={defaultItems}
       initialActiveId="home"
@@ -699,9 +695,7 @@ export const ExpandPanelCustomToggle: Story = {
           type="button"
           style={customToggleButtonStyle}
           onClick={() => toggleExpanded()}
-          aria-label={
-            isExpanded ? 'Свернуть боковую панель' : 'Развернуть боковую панель'
-          }
+          aria-label={isExpanded ? 'Свернуть боковую панель' : 'Развернуть боковую панель'}
         >
           {isExpanded ? 'Свернуть' : 'Меню'}
         </button>
@@ -730,7 +724,7 @@ export const ExpandPanelOnClick: Story = {
     onExpand: fn(),
     onCollapse: fn(),
   },
-  render: args => (
+  render: (args) => (
     <SidemenuStoryWithActiveState
       itemsTemplate={defaultItems}
       initialActiveId="home"

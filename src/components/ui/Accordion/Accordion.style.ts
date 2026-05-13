@@ -60,7 +60,6 @@ export const AccordionTrigger = styled.button<{ $size?: Size }>`
   &[data-state='open'] .chevron {
     transform: rotate(-90deg); /* Поворот на -90 градусов для стрелки вниз */
   }
-
 `;
 
 /**

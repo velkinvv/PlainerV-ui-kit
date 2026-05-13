@@ -91,8 +91,10 @@ export interface AccordionItemProps extends React.HTMLAttributes<HTMLDivElement>
   position?: 'start' | 'center' | 'last';
 }
 
-export interface AccordionTriggerProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'title'> {
+export interface AccordionTriggerProps extends Omit<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  'title'
+> {
   children?: React.ReactNode;
   title?: React.ReactNode; // Заголовок может содержать любые React компоненты
   subtitle?: React.ReactNode; // Подзаголовок может содержать любые React компоненты
@@ -178,7 +180,9 @@ export const AccordionContentComponent: React.FC<AccordionContentProps> = ({
       {isOpen && (
         <AccordionContent
           className={clsx('ui-accordion-content', className)}
-          initial={prefersReducedMotion ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }}
+          initial={
+            prefersReducedMotion ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }
+          }
           animate={{ height: 'auto', opacity: 1 }}
           exit={prefersReducedMotion ? { height: 0, opacity: 0.98 } : { height: 0, opacity: 0 }}
           transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.2, ease: 'easeInOut' }}

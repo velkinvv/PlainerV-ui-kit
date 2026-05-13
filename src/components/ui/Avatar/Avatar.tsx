@@ -62,7 +62,7 @@ const generateInitials = (userName: string): string => {
     // Если несколько слов, берем первые буквы первых двух слов
     return words
       .slice(0, 2)
-      .map(word => word.charAt(0))
+      .map((word) => word.charAt(0))
       .join('')
       .toUpperCase();
   }
@@ -245,7 +245,7 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
               size={size === Size.LG ? Size.MD : Size.SM}
               rounded={true}
             >
-              {(messageCount ?? 0) > 99 ? '99+' : messageCount ?? 0}
+              {(messageCount ?? 0) > 99 ? '99+' : (messageCount ?? 0)}
             </Badge>
           </AvatarMessageBadgeAnchor>
         )}

@@ -1,6 +1,9 @@
 import type { TableSortDirection } from '@/types/ui';
 
-export { getTableSelectionAggregate, type TableSelectionAggregate } from '@/handlers/tableSelectionHandlers';
+export {
+  getTableSelectionAggregate,
+  type TableSelectionAggregate,
+} from '@/handlers/tableSelectionHandlers';
 
 /** Тон шеврона сортировки (активный / приглушённый / нейтральный). */
 export type TableSortChevronTone = 'active' | 'muted' | 'idle';

@@ -20,7 +20,7 @@ import { Form, Input } from '@/components/ui';
 function LoginForm() {
   return (
     <Form
-      onSubmit={e => {
+      onSubmit={(e) => {
         e.preventDefault();
         console.log('Форма отправлена');
       }}
@@ -55,7 +55,7 @@ import { Form, FileInput, Button } from '@/components/ui';
 <Form onSubmit={handleSubmit}>
   <FileInput label="Скан" name="scan" accept="application/pdf" helperText="Только PDF" required />
   <Button type="submit">Отправить</Button>
-</Form>
+</Form>;
 ```
 
 ### Switch в форме
@@ -68,7 +68,7 @@ import { Form, Switch } from '@/components/ui';
 <Form onSubmit={handleSubmit}>
   <Switch label="Показывать превью" name="preview" defaultChecked />
   <button type="submit">Сохранить</button>
-</Form>
+</Form>;
 ```
 
 ### Уведомления после действия в форме

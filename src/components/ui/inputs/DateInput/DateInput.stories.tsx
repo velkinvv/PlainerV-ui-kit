@@ -1226,7 +1226,9 @@ export const BottomPanelDemo: Story = {
           value={date1}
           onChange={(value) => setDate1(value as string)}
           renderBottomPanel={() => (
-            <div style={dateInputStoriesStyles.smallNoteText}>💡 Выберите дату для планирования встречи</div>
+            <div style={dateInputStoriesStyles.smallNoteText}>
+              💡 Выберите дату для планирования встречи
+            </div>
           )}
         />
 
@@ -1263,7 +1265,9 @@ export const BottomPanelDemo: Story = {
           renderBottomPanel={() => (
             <div style={dateInputStoriesStyles.centerText}>
               <div style={dateInputStoriesStyles.panelTitleBold}>📅 Календарь</div>
-              <div style={dateInputStoriesStyles.extraSmallNoteText}>Выберите дату для продолжения</div>
+              <div style={dateInputStoriesStyles.extraSmallNoteText}>
+                Выберите дату для продолжения
+              </div>
             </div>
           )}
         />
@@ -1297,7 +1301,9 @@ export const RangeBottomPanelDemo: Story = {
           value={range}
           onChange={(value) => setRange(value as DateTimeRange)}
           renderBottomPanel={() => (
-            <div style={dateInputStoriesStyles.smallNoteText}>📊 Выберите период для анализа данных</div>
+            <div style={dateInputStoriesStyles.smallNoteText}>
+              📊 Выберите период для анализа данных
+            </div>
           )}
         />
       </div>
@@ -1327,7 +1333,9 @@ export const TopPanelDemo: Story = {
           value={date1}
           onChange={(value) => setDate1(value as string)}
           renderTopPanel={() => (
-            <div style={dateInputStoriesStyles.smallNoteText}>📅 Выберите дату для планирования встречи</div>
+            <div style={dateInputStoriesStyles.smallNoteText}>
+              📅 Выберите дату для планирования встречи
+            </div>
           )}
         />
 
@@ -1364,7 +1372,9 @@ export const TopPanelDemo: Story = {
           renderTopPanel={() => (
             <div style={dateInputStoriesStyles.centerText}>
               <div style={dateInputStoriesStyles.panelTitleBold}>📅 Календарь</div>
-              <div style={dateInputStoriesStyles.extraSmallNoteText}>Выберите дату для продолжения</div>
+              <div style={dateInputStoriesStyles.extraSmallNoteText}>
+                Выберите дату для продолжения
+              </div>
             </div>
           )}
         />
@@ -2286,4 +2296,3 @@ export const AdditionalLabelDemo: Story = {
     },
   },
 };
-

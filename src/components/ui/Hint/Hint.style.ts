@@ -223,7 +223,8 @@ export const HintContent = styled.div<{
 
     const variantConfig = theme.hints.variants[$variant as keyof typeof theme.hints.variants];
     // Извлекаем цвет границы для стрелки (убираем "1px solid " если есть)
-    const borderColor = variantConfig.border.replace(/^\d+px\s+solid\s+/, '') || variantConfig.border;
+    const borderColor =
+      variantConfig.border.replace(/^\d+px\s+solid\s+/, '') || variantConfig.border;
 
     return css`
       &::after {

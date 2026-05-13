@@ -1,4 +1,7 @@
-import { TABLE_HEADER_MAX_LINES_CAP, normalizeTableHeaderMaxLines } from './tableHeaderClampHandlers';
+import {
+  TABLE_HEADER_MAX_LINES_CAP,
+  normalizeTableHeaderMaxLines,
+} from './tableHeaderClampHandlers';
 
 describe('tableHeaderClampHandlers', () => {
   it('normalizeTableHeaderMaxLines отбрасывает нечисла и значения ниже 1', () => {
@@ -11,6 +14,8 @@ describe('tableHeaderClampHandlers', () => {
   it('normalizeTableHeaderMaxLines округляет вниз и ограничивает потолком', () => {
     expect(normalizeTableHeaderMaxLines(2.7)).toBe(2);
     expect(normalizeTableHeaderMaxLines(3)).toBe(3);
-    expect(normalizeTableHeaderMaxLines(TABLE_HEADER_MAX_LINES_CAP + 5)).toBe(TABLE_HEADER_MAX_LINES_CAP);
+    expect(normalizeTableHeaderMaxLines(TABLE_HEADER_MAX_LINES_CAP + 5)).toBe(
+      TABLE_HEADER_MAX_LINES_CAP,
+    );
   });
 });

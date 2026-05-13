@@ -128,7 +128,7 @@ describe('AvatarGroup', () => {
 
   it('обрабатывает клики по аватарам', () => {
     const handleClick = jest.fn();
-    const avatarsWithClick = sampleAvatars.map(avatar => ({
+    const avatarsWithClick = sampleAvatars.map((avatar) => ({
       ...avatar,
       onClick: handleClick,
     }));
@@ -145,7 +145,7 @@ describe('AvatarGroup', () => {
     render(<AvatarGroup avatars={sampleAvatars} showTooltip={true} />);
 
     const avatars = screen.getAllByTestId('avatar');
-    avatars.forEach(avatar => {
+    avatars.forEach((avatar) => {
       expect(avatar).toHaveAttribute('data-show-tooltip', 'true');
     });
   });
@@ -154,7 +154,7 @@ describe('AvatarGroup', () => {
     render(<AvatarGroup avatars={sampleAvatars} showTooltip={false} />);
 
     const avatars = screen.getAllByTestId('avatar');
-    avatars.forEach(avatar => {
+    avatars.forEach((avatar) => {
       expect(avatar).toHaveAttribute('data-show-tooltip', 'false');
     });
   });

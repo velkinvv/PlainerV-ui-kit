@@ -22,12 +22,9 @@ describe('useDebounce', () => {
   });
 
   it('обновляет значение после задержки', () => {
-    const { result, rerender } = renderHook(
-      ({ value, delay }) => useDebounce(value, delay),
-      {
-        initialProps: { value: 'test', delay: 500 },
-      }
-    );
+    const { result, rerender } = renderHook(({ value, delay }) => useDebounce(value, delay), {
+      initialProps: { value: 'test', delay: 500 },
+    });
 
     expect(result.current).toBe('test');
 
@@ -46,12 +43,9 @@ describe('useDebounce', () => {
   });
 
   it('отменяет предыдущее обновление при новом изменении', () => {
-    const { result, rerender } = renderHook(
-      ({ value, delay }) => useDebounce(value, delay),
-      {
-        initialProps: { value: 'test', delay: 500 },
-      }
-    );
+    const { result, rerender } = renderHook(({ value, delay }) => useDebounce(value, delay), {
+      initialProps: { value: 'test', delay: 500 },
+    });
 
     act(() => {
       rerender({ value: 'value1', delay: 500 });

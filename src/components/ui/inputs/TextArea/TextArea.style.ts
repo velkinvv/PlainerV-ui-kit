@@ -1,6 +1,10 @@
 import styled from 'styled-components';
 import { ClearButton, InputWrapper } from '../shared';
-import { BorderRadiusHandler, InputPaddingHandler, InputSizeHandler } from '../../../../handlers/uiHandlers';
+import {
+  BorderRadiusHandler,
+  InputPaddingHandler,
+  InputSizeHandler,
+} from '../../../../handlers/uiHandlers';
 import { Size } from '../../../../types/sizes';
 
 export const TextAreaWrapper = styled(InputWrapper)`
@@ -8,7 +12,8 @@ export const TextAreaWrapper = styled(InputWrapper)`
 `;
 
 export const StyledTextArea = styled.textarea.withConfig({
-  shouldForwardProp: prop => !['textAlign', 'readOnly', 'resize', '$hasRightControls'].includes(prop),
+  shouldForwardProp: (prop) =>
+    !['textAlign', 'readOnly', 'resize', '$hasRightControls'].includes(prop),
 })<{
   textAlign?: 'left' | 'center' | 'right';
   readOnly?: boolean;
@@ -61,7 +66,7 @@ export const TextAreaClearButton = styled(ClearButton)`
  * Скелетон textarea, повторяющий размеры реального поля и учитывающий `rows`.
  */
 export const TextAreaSkeleton = styled.div.withConfig({
-  shouldForwardProp: prop => !['fullWidth', '$rows'].includes(prop),
+  shouldForwardProp: (prop) => !['fullWidth', '$rows'].includes(prop),
 })<{ fullWidth?: boolean; $rows?: number }>`
   position: relative;
   overflow: hidden;

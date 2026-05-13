@@ -245,7 +245,7 @@ interface GridItemProps {
 
 ```tsx
 <Grid columns={{ xs: 1, sm: 2, md: 3, lg: 4 }} gap={{ xs: 16, sm: 20, md: 24 }}>
-  {items.map(item => (
+  {items.map((item) => (
     <Card key={item.id}>
       <h3>{item.title}</h3>
       <p>{item.description}</p>

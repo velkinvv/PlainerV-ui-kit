@@ -145,9 +145,7 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
 
     const triggerLabel = useMemo(() => {
       const refDate =
-        headerMode === 'monthYear'
-          ? effectiveVisible
-          : selected ?? effectiveVisible;
+        headerMode === 'monthYear' ? effectiveVisible : (selected ?? effectiveVisible);
       if (headerMode === 'full') {
         return new Intl.DateTimeFormat(locale, {
           day: 'numeric',
@@ -315,7 +313,11 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
                     >
                       <CalendarMonthTriggerLabel>{triggerLabel}</CalendarMonthTriggerLabel>
                       <CalendarChevronFlip $open={monthMenuOpen} aria-hidden>
-                        <Icon name="IconPlainerChevronDown" size={IconSize.MD} color="currentColor" />
+                        <Icon
+                          name="IconPlainerChevronDown"
+                          size={IconSize.MD}
+                          color="currentColor"
+                        />
                       </CalendarChevronFlip>
                     </CalendarMonthTrigger>
                   }
@@ -389,7 +391,9 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
             const customDis = isDateDisabled?.(dayOnly) ?? false;
             const isDis = disabled || outside || customDis;
             const isSel =
-              selectionMode === 'single' && selected != null && isSameCalendarDay(dayOnly, selected);
+              selectionMode === 'single' &&
+              selected != null &&
+              isSameCalendarDay(dayOnly, selected);
             const rangeFlags = getRangeDayVisualFlags(
               dayOnly,
               selectionMode,

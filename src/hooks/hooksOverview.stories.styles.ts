@@ -101,7 +101,6 @@ export const hooksOverviewStoriesStyles = {
   bodyTextMuted: {
     color: lightTheme.colors.textSecondary,
   } satisfies CSSProperties,
-
 };
 
 /** Акцентные цвета рамок карточек хуков (цикл по списку). */

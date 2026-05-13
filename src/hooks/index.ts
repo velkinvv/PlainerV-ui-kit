@@ -25,5 +25,8 @@ export {
 } from './useWindowSize';
 export type { WindowSize } from './useWindowSize';
 export { useNavigationMenuExpand } from './useNavigationMenuExpand';
-export type { UseNavigationMenuExpandParams, UseNavigationMenuExpandResult } from './useNavigationMenuExpand';
+export type {
+  UseNavigationMenuExpandParams,
+  UseNavigationMenuExpandResult,
+} from './useNavigationMenuExpand';
 export { useUiMotionPresets } from './useUiMotion';

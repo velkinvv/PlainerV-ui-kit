@@ -32,4 +32,3 @@ export const CustomColor: Story = {
     </div>
   ),
 };
-

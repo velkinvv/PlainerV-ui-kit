@@ -108,7 +108,7 @@ export function DataGridColumnHeaderContent({
         filterApplied ? `Фильтр по колонке ${field}, фильтр активен` : `Фильтр по колонке ${field}`
       }
       $filterApplied={filterApplied}
-      onClick={event => {
+      onClick={(event) => {
         event.stopPropagation();
         onColumnFilterClick?.({ field, nativeEvent: event });
       }}

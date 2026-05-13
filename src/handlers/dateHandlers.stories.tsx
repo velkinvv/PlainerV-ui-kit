@@ -9,13 +9,8 @@ import {
   parseDate,
   formatDateForDisplay,
   parseDateRange,
-  toISODateString,
   getCurrentDate,
   isToday,
-  isInRange,
-  isRangeStart,
-  isRangeEnd,
-  isValidDate,
 } from './dateHandlers';
 import { inputFieldStoriesStyles } from '@/handlers/inputFieldStories.styles';
 import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
@@ -82,7 +77,7 @@ const DateParserDemo = () => {
       <div style={storybookDemoStyles.rowFlexGap12MarginBottom16}>
         <Input
           value={input}
-          onChange={e => setInput(e.target.value)}
+          onChange={(e) => setInput(e.target.value)}
           placeholder="Введите дату (например: 25.12.2023)"
           style={storybookDemoStyles.flexGrowFull}
         />
@@ -127,7 +122,7 @@ const DateFormatterDemo = () => {
           Выберите формат:
         </Typography>
         <div style={inputFieldStoriesStyles.rowWrapGap8}>
-          {formats.map(fmt => (
+          {formats.map((fmt) => (
             <Button
               key={fmt}
               variant={format === fmt ? 'primary' : 'outlined'}
@@ -169,7 +164,7 @@ const DateRangeDemo = () => {
       <div style={storybookDemoStyles.rowFlexGap12MarginBottom16}>
         <Input
           value={rangeInput}
-          onChange={e => setRangeInput(e.target.value)}
+          onChange={(e) => setRangeInput(e.target.value)}
           placeholder="Введите диапазон (например: 01.01.2023 — 31.12.2023)"
           style={storybookDemoStyles.flexGrowFull}
         />
@@ -256,4 +251,3 @@ export const AllExamples: Story = {
     </StorybookStaggerStack>
   ),
 };
-

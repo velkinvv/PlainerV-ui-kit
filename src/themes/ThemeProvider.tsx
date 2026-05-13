@@ -58,7 +58,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 
   const theme = useMemo(() => (mode === ThemeMode.LIGHT ? lightTheme : darkTheme), [mode]);
 
-  const toggle = () => setMode(m => (m === ThemeMode.LIGHT ? ThemeMode.DARK : ThemeMode.LIGHT));
+  const toggle = () => setMode((m) => (m === ThemeMode.LIGHT ? ThemeMode.DARK : ThemeMode.LIGHT));
 
   const themeWithType = useMemo(() => ({ ...theme, type: theme.mode }), [theme]);
 

@@ -21,7 +21,7 @@ const meta: Meta<typeof DropdownMenu> = {
   component: DropdownMenu,
   subcomponents: { DropdownMenuItem },
   decorators: [
-    Story => (
+    (Story) => (
       <div style={dropdownMenuStoriesStyles.storyDecoratorRoot}>
         <Story />
       </div>
@@ -150,11 +150,7 @@ export const CustomContent: Story = {
       <DropdownMenuItem>
         <div style={dropdownMenuStoriesStyles.customContentColumn}>
           <span style={dropdownMenuStoriesStyles.customContentTitle}>System update</span>
-          <span
-            style={dropdownMenuCustomMetaStyle}
-          >
-            System will be updated tonight
-          </span>
+          <span style={dropdownMenuCustomMetaStyle}>System will be updated tonight</span>
         </div>
       </DropdownMenuItem>
       <DropdownMenuItem>
@@ -174,4 +170,3 @@ export const CustomContent: Story = {
     },
   },
 };
-

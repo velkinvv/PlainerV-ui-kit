@@ -26,17 +26,17 @@ const getExistingIcons = () => {
   // Получаем иконки Plainer
   const plainerIcons = Object.keys(PlainerIconsModule)
     // .map(key => key.replace('IconPlainer', ''))
-    .filter(name => name.length > 0);
+    .filter((name) => name.length > 0);
 
   // Получаем иконки IconEx
   const iconexIcons = Object.keys(IconExIconsModule)
     // .map(key => key.replace('IconEx', ''))
-    .filter(name => name.length > 0);
+    .filter((name) => name.length > 0);
 
   // Получаем иконки Phosphor
   const phosphorIcons = Object.keys(PhosphorIconsModule)
     // .map(key => key.replace('Phosphor', ''))
-    .filter(name => name.length > 0);
+    .filter((name) => name.length > 0);
 
   return { plainerIcons, iconexIcons, phosphorIcons };
 };
@@ -161,9 +161,7 @@ export const AllIcons: Story = {
               <strong>{iconName}</strong>
             </div>
             <div style={iconStoriesStyles.hintMeta}>Библиотека: {variant}</div>
-            <div style={iconStoriesStyles.hintCode}>
-              {code}
-            </div>
+            <div style={iconStoriesStyles.hintCode}>{code}</div>
             <button
               className={`icon-copy-button ${copiedIcon === code ? 'copied' : ''}`}
               onClick={(clickEvent) => {
@@ -297,12 +295,8 @@ export const AllIcons: Story = {
                     size={selectedSize}
                     // variant={variant}
                   />
-                  <div style={iconStoriesStyles.iconNameLabelFlexible}>
-                    {String(iconName)}
-                  </div>
-                  <div style={iconStoriesStyles.iconVariantLabel}>
-                    {variant}
-                  </div>
+                  <div style={iconStoriesStyles.iconNameLabelFlexible}>{String(iconName)}</div>
+                  <div style={iconStoriesStyles.iconVariantLabel}>{variant}</div>
                 </div>
               </Hint>
             );
@@ -348,18 +342,13 @@ export const PlainerIcons: Story = {
     return (
       <div style={iconStoriesStyles.fixedSixColumnGrid}>
         {plainerIconNames.map((iconName) => (
-          <div
-            key={iconName}
-            style={iconStoriesStyles.iconPreviewCard}
-          >
+          <div key={iconName} style={iconStoriesStyles.iconPreviewCard}>
             <Icon
               name={iconName as IconName}
               size={IconSize.LG}
               // variant="plainer"
             />
-            <div style={iconStoriesStyles.iconNameLabel}>
-              {iconName}
-            </div>
+            <div style={iconStoriesStyles.iconNameLabel}>{iconName}</div>
           </div>
         ))}
       </div>
@@ -515,18 +504,13 @@ export const IconExIcons: Story = {
     return (
       <div style={iconStoriesStyles.fixedSixColumnGrid}>
         {iconExIconNames.slice(0, 20).map((iconName) => (
-          <div
-            key={iconName}
-            style={iconStoriesStyles.iconPreviewCard}
-          >
+          <div key={iconName} style={iconStoriesStyles.iconPreviewCard}>
             <Icon
               name={iconName as IconName}
               size={IconSize.LG}
               // variant="iconEx"
             />
-            <div style={iconStoriesStyles.iconNameLabel}>
-              {iconName}
-            </div>
+            <div style={iconStoriesStyles.iconNameLabel}>{iconName}</div>
           </div>
         ))}
       </div>
@@ -599,18 +583,13 @@ export const PhosphorIcons: Story = {
     return (
       <div style={iconStoriesStyles.fixedSixColumnGrid}>
         {phosphorIconNames.map((iconName) => (
-          <div
-            key={iconName}
-            style={iconStoriesStyles.iconPreviewCard}
-          >
+          <div key={iconName} style={iconStoriesStyles.iconPreviewCard}>
             <Icon
               name={iconName as IconName}
               size={IconSize.LG}
               // variant="phosphor"
             />
-            <div style={iconStoriesStyles.iconNameLabel}>
-              {iconName}
-            </div>
+            <div style={iconStoriesStyles.iconNameLabel}>{iconName}</div>
           </div>
         ))}
       </div>
@@ -730,4 +709,3 @@ export const IconColors: Story = {
     </div>
   ),
 };
-

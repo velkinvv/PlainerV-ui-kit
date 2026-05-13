@@ -170,20 +170,22 @@ export const Sheet = forwardRef<HTMLElement, SheetProps>(
           animate={panelMotion.animate}
           exit={panelMotion.exit}
           transition={panelMotion.transition}
-          onClick={event => event.stopPropagation()}
+          onClick={(event) => event.stopPropagation()}
         >
           {headerSlot ? (
             <SheetHeader>{headerSlot}</SheetHeader>
-          ) : (title || showCloseButton) && (
-            <SheetHeader>
-              {title ? <SheetTitle id={titleId}>{title}</SheetTitle> : null}
-              {!title && showCloseButton ? <SheetHeaderSpacer aria-hidden /> : null}
-              {showCloseButton ? (
-                <CloseButton type="button" onClick={onClose} aria-label="Закрыть">
-                  <Icon name="PhosphorX" size={IconSize.MD} color="#9E9E9E" />
-                </CloseButton>
-              ) : null}
-            </SheetHeader>
+          ) : (
+            (title || showCloseButton) && (
+              <SheetHeader>
+                {title ? <SheetTitle id={titleId}>{title}</SheetTitle> : null}
+                {!title && showCloseButton ? <SheetHeaderSpacer aria-hidden /> : null}
+                {showCloseButton ? (
+                  <CloseButton type="button" onClick={onClose} aria-label="Закрыть">
+                    <Icon name="PhosphorX" size={IconSize.MD} color="#9E9E9E" />
+                  </CloseButton>
+                ) : null}
+              </SheetHeader>
+            )
           )}
           <SheetBody ref={contentRef} tabIndex={-1}>
             {children}

@@ -27,7 +27,6 @@ import {
   InnerOverlayContainer,
   ModalContentActions,
   PortalArea,
-  ReadableParagraph,
   RelativePortalContainer,
   RowGap8,
   SizesButtonsWrap,
@@ -943,7 +942,9 @@ export const BestPractices: Story = {
           description="Комбинация рекомендаций: initialFocusSelector, async кнопки, кастомный футер."
           initialFocusRef={submitBtnRef}
           modalVariant="info"
-          footerSlot={<FooterHintText>Нажимая подтвердить, вы соглашаетесь с условиями.</FooterHintText>}
+          footerSlot={
+            <FooterHintText>Нажимая подтвердить, вы соглашаетесь с условиями.</FooterHintText>
+          }
           buttons={[
             {
               label: 'Отменить',
@@ -1018,9 +1019,7 @@ export const ConfirmationModal: Story = {
   render: () => (
     <ModalWrapper size={ModalSize.SM}>
       <CenteredContentPadding24>
-        <WarningIconCircle>
-          ⚠️
-        </WarningIconCircle>
+        <WarningIconCircle>⚠️</WarningIconCircle>
         <h3>Confirm Action</h3>
         <p>Are you sure you want to delete this item? This action cannot be undone.</p>
         <CenteredActionRow>
@@ -1437,7 +1436,9 @@ const LifecycleCheatsheetDemo = () => {
         <Button
           variant={unmountOnCloseEnabled ? ButtonVariant.PRIMARY : ButtonVariant.OUTLINE}
           onClick={() =>
-            setUnmountOnCloseEnabled((previousUnmountOnCloseEnabled) => !previousUnmountOnCloseEnabled)
+            setUnmountOnCloseEnabled(
+              (previousUnmountOnCloseEnabled) => !previousUnmountOnCloseEnabled,
+            )
           }
         >
           unmountOnClose: {String(unmountOnCloseEnabled)}
@@ -1483,4 +1484,3 @@ export const LifecycleCheatsheet: Story = {
     },
   },
 };
-

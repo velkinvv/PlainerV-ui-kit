@@ -19,8 +19,11 @@ const sidemenuStoryStatusMutedStyle: React.CSSProperties = {
  * @param sourceItems — дерево пунктов без учёта активного (флаги из шаблона будут перезаписаны)
  * @param activeId — выбранный id листа или узла
  */
-export function applySidemenuActiveId(sourceItems: SidemenuItem[], activeId: string): SidemenuItem[] {
-  return sourceItems.map(entry => ({
+export function applySidemenuActiveId(
+  sourceItems: SidemenuItem[],
+  activeId: string,
+): SidemenuItem[] {
+  return sourceItems.map((entry) => ({
     ...entry,
     active: entry.id === activeId,
     items: entry.items != null ? applySidemenuActiveId(entry.items, activeId) : undefined,

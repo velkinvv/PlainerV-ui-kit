@@ -108,4 +108,3 @@ export const StepBadge = styled.div`
   align-items: center;
   justify-content: center;
 `;
-

@@ -3,10 +3,7 @@ import { clsx } from 'clsx';
 
 import { NavigationMenu } from '../NavigationMenu';
 import { Icon } from '../Icon/Icon';
-import {
-  NavigationMenuActiveAppearance,
-  NavigationMenuExpandInteraction,
-} from '@/types/ui';
+import { NavigationMenuActiveAppearance, NavigationMenuExpandInteraction } from '@/types/ui';
 import type { SidemenuProps, SidemenuItem } from '../../../types/ui';
 import { SidemenuVariant } from '../../../types/ui';
 import { IconSize } from '../../../types/sizes';
@@ -110,8 +107,7 @@ export const Sidemenu: React.FC<SidemenuProps> = ({
   onExpandToggleClick,
   showExpandToggleButton = false,
 }) => {
-  const expandInteraction =
-    expandInteractionProp ?? NavigationMenuExpandInteraction.NONE;
+  const expandInteraction = expandInteractionProp ?? NavigationMenuExpandInteraction.NONE;
 
   const expand = useNavigationMenuExpand({
     expandInteraction,
@@ -152,35 +148,33 @@ export const Sidemenu: React.FC<SidemenuProps> = ({
 
   const expandToggleSlot =
     expand.isExpandInteractionEnabled &&
-    (expandToggleRender != null || shouldShowDefaultExpandToggleButton)
-      ? expandToggleRender != null
-        ? expandToggleRender({
-            isExpanded: expand.isExpanded,
-            toggleExpanded: handleToggleExpandedFromContext,
-          })
-        : (
-            <SidemenuExpandToggleButton
-              type="button"
-              onClick={handleBuiltInExpandToggleClick}
-              aria-expanded={expand.isExpanded}
-              aria-label={
-                expand.isExpanded ? 'Свернуть боковую панель' : 'Развернуть боковую панель'
-              }
-            >
-              <SidemenuExpandToggleIconWrap
-                $expanded={expand.isExpanded}
-                $chevronAxis={
-                  expandInteraction === NavigationMenuExpandInteraction.TOGGLE_BUTTON
-                    ? 'horizontal'
-                    : 'vertical'
-                }
-                aria-hidden
-              >
-                <Icon name="IconPlainerChevronDown" size={IconSize.SM} color="currentColor" />
-              </SidemenuExpandToggleIconWrap>
-            </SidemenuExpandToggleButton>
-          )
-      : null;
+    (expandToggleRender != null || shouldShowDefaultExpandToggleButton) ? (
+      expandToggleRender != null ? (
+        expandToggleRender({
+          isExpanded: expand.isExpanded,
+          toggleExpanded: handleToggleExpandedFromContext,
+        })
+      ) : (
+        <SidemenuExpandToggleButton
+          type="button"
+          onClick={handleBuiltInExpandToggleClick}
+          aria-expanded={expand.isExpanded}
+          aria-label={expand.isExpanded ? 'Свернуть боковую панель' : 'Развернуть боковую панель'}
+        >
+          <SidemenuExpandToggleIconWrap
+            $expanded={expand.isExpanded}
+            $chevronAxis={
+              expandInteraction === NavigationMenuExpandInteraction.TOGGLE_BUTTON
+                ? 'horizontal'
+                : 'vertical'
+            }
+            aria-hidden
+          >
+            <Icon name="IconPlainerChevronDown" size={IconSize.SM} color="currentColor" />
+          </SidemenuExpandToggleIconWrap>
+        </SidemenuExpandToggleButton>
+      )
+    ) : null;
 
   const handleItemClick = (item: SidemenuItem) => {
     onItemClick?.(item);
@@ -204,21 +198,17 @@ export const Sidemenu: React.FC<SidemenuProps> = ({
    */
   const shouldRenderLogoHeader =
     logoSlot != null ||
-    (logo != null &&
-      (Boolean(logo?.icon) || (isFullLayout && Boolean(logo?.title))));
+    (logo != null && (Boolean(logo?.icon) || (isFullLayout && Boolean(logo?.title))));
 
   const hasLogoStartBlock =
-    logoSlot != null ||
-    Boolean(logo?.icon) ||
-    (isFullLayout && Boolean(logo?.title));
+    logoSlot != null || Boolean(logo?.icon) || (isFullLayout && Boolean(logo?.title));
 
   const shouldRenderHeaderRow = shouldRenderLogoHeader || expandToggleSlot != null;
 
   /** При expandInteraction === none значение совпадает с variant; ширина всегда из motion */
   const targetPanelWidth = expand.isExpanded ? expandExpandedWidth : expandCompactWidth;
 
-  const offScreenEdgeWidthPx =
-    offScreenEdgeWidth ?? DEFAULT_OFF_SCREEN_EDGE_WIDTH_PX;
+  const offScreenEdgeWidthPx = offScreenEdgeWidth ?? DEFAULT_OFF_SCREEN_EDGE_WIDTH_PX;
   const offScreenLayerZIndex = offScreenZIndex ?? DEFAULT_OFF_SCREEN_Z_INDEX;
 
   /** У режима «за краем» входная анимация только обрезкой снаружи, без сдвига x с экрана */
@@ -245,10 +235,7 @@ export const Sidemenu: React.FC<SidemenuProps> = ({
     >
       {shouldRenderHeaderRow ? (
         <SidemenuHeaderSection style={slotStyles?.header}>
-          <SidemenuLogoRow
-            $withToggle={expandToggleSlot != null}
-            $hasLogoBlock={hasLogoStartBlock}
-          >
+          <SidemenuLogoRow $withToggle={expandToggleSlot != null} $hasLogoBlock={hasLogoStartBlock}>
             {hasLogoStartBlock ? (
               <SidemenuLogoRowStart data-prevent-navigation-expand-toggle>
                 {logoSlot != null ? (
@@ -291,7 +278,7 @@ export const Sidemenu: React.FC<SidemenuProps> = ({
           aria-label="Основная навигация приложения"
           className="ui-sidemenu__navigation"
         >
-          {items.map(menuEntry => (
+          {items.map((menuEntry) => (
             <NavigationMenu.Item
               key={menuEntry.id}
               {...mapSidemenuItemToNavigationProps(menuEntry)}

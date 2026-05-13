@@ -59,7 +59,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
   useEffect(() => {
     if (!isControlled && totalPages >= 1) {
-      setInternalPage(p => Math.min(Math.max(1, p), totalPages));
+      setInternalPage((p) => Math.min(Math.max(1, p), totalPages));
     }
   }, [totalPages, isControlled]);
 
@@ -131,7 +131,7 @@ export const Pagination: React.FC<PaginationProps> = ({
               </PaginationCompactCurrent>
             </PaginationListItem>
           ) : (
-            segments.map(seg => {
+            segments.map((seg) => {
               if (seg.kind === 'gap') {
                 return (
                   <PaginationListItem key={seg.id}>

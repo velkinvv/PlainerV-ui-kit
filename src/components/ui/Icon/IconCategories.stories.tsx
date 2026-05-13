@@ -18,12 +18,12 @@ const getExistingIcons = () => {
   // Получаем иконки Plainer
   const plainerIcons = Object.keys(PlainerIconsModule)
     // .map(key => key.replace('IconPlainer', ''))
-    .filter(name => name.length > 0);
+    .filter((name) => name.length > 0);
 
   // Получаем иконки IconEx
   const iconexIcons = Object.keys(IconExIconsModule)
     // .map(key => key.replace('IconEx', ''))
-    .filter(name => name.length > 0);
+    .filter((name) => name.length > 0);
 
   return {
     plainerIcons: plainerIcons as IconName[],
@@ -44,8 +44,9 @@ const iconExists = (name: string, variant: IconVariant): boolean => {
   }
 
   if (variant === 'iconEx') {
-    const iconexIconName = (name.startsWith('IconEx') ? name : `IconEx${name}`) as keyof
-      typeof IconExIconsModule;
+    const iconexIconName = (
+      name.startsWith('IconEx') ? name : `IconEx${name}`
+    ) as keyof typeof IconExIconsModule;
     return !!(
       IconExIconsModule[iconexIconName] && typeof IconExIconsModule[iconexIconName] === 'function'
     );
@@ -84,10 +85,7 @@ const IconGrid = ({
   <div style={iconStoriesStyles.pageSection}>
     <style>{iconStoriesStyles.hintTooltipCss}</style>
     <h3 style={iconStoriesStyles.titleWithMargin}>{title}</h3>
-    <div
-      className="icon-stories-scroll"
-      style={buildIconStoriesScrollableGridStyle(0, 600)}
-    >
+    <div className="icon-stories-scroll" style={buildIconStoriesScrollableGridStyle(0, 600)}>
       {icons.map((iconName: IconName) => (
         <div
           key={iconName}
@@ -100,9 +98,7 @@ const IconGrid = ({
             size={IconSize.MD}
             // variant={variant}
           />
-          <span style={iconStoriesStyles.iconNameLabel}>
-            {iconName}
-          </span>
+          <span style={iconStoriesStyles.iconNameLabel}>{iconName}</span>
         </div>
       ))}
     </div>
@@ -112,21 +108,21 @@ const IconGrid = ({
 // Категории иконок
 const iconCategories = {
   navigation: {
-    plainer: ['ArrowUp', 'ArrowRight', 'ArrowLeft', 'ChevronDown'].filter(name =>
+    plainer: ['ArrowUp', 'ArrowRight', 'ArrowLeft', 'ChevronDown'].filter((name) =>
       iconExists(name, 'plainer'),
     ) as IconName[],
-    iconex: ['IconExHome', 'IconExBurger', 'IconExLocation', 'IconExLink'].filter(name =>
+    iconex: ['IconExHome', 'IconExBurger', 'IconExLocation', 'IconExLink'].filter((name) =>
       iconExists(name, 'iconEx'),
     ) as IconName[],
   },
   user: {
-    plainer: ['IconPlainerUser'].filter(name => iconExists(name, 'plainer')) as IconName[],
-    iconex: ['IconExUsers', 'IconExAddUser'].filter(name =>
+    plainer: ['IconPlainerUser'].filter((name) => iconExists(name, 'plainer')) as IconName[],
+    iconex: ['IconExUsers', 'IconExAddUser'].filter((name) =>
       iconExists(name, 'iconEx'),
     ) as IconName[],
   },
   actions: {
-    plainer: ['IconPlainerPlus', 'IconPlainerClose', 'IconPlainerSearch'].filter(name =>
+    plainer: ['IconPlainerPlus', 'IconPlainerClose', 'IconPlainerSearch'].filter((name) =>
       iconExists(name, 'plainer'),
     ) as IconName[],
     iconex: [
@@ -141,7 +137,7 @@ const iconCategories = {
       'IconExDots',
       'IconExMoreSquare',
       'IconExMoreCircle',
-    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+    ].filter((name) => iconExists(name, 'iconEx')) as IconName[],
   },
   media: {
     plainer: [],
@@ -158,7 +154,7 @@ const iconCategories = {
       'IconExStop',
       'IconExCamera',
       'IconExMicrophone',
-    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+    ].filter((name) => iconExists(name, 'iconEx')) as IconName[],
   },
   communication: {
     plainer: [],
@@ -170,7 +166,7 @@ const iconCategories = {
       'IconExCall',
       'IconExCalling',
       'IconExCallMissed',
-    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+    ].filter((name) => iconExists(name, 'iconEx')) as IconName[],
   },
   security: {
     plainer: [],
@@ -183,7 +179,7 @@ const iconCategories = {
       'IconExShield2',
       'IconExShield3',
       'IconExKey',
-    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+    ].filter((name) => iconExists(name, 'iconEx')) as IconName[],
   },
   files: {
     plainer: [],
@@ -198,7 +194,7 @@ const iconCategories = {
       'IconExCloud',
       'IconExCloudDownload',
       'IconExCloudUpload',
-    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+    ].filter((name) => iconExists(name, 'iconEx')) as IconName[],
   },
   settings: {
     plainer: [],
@@ -208,7 +204,7 @@ const iconCategories = {
       'IconExToggleLeft',
       'IconExFilter',
       'IconExFilter2',
-    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+    ].filter((name) => iconExists(name, 'iconEx')) as IconName[],
   },
   time: {
     plainer: [],
@@ -218,7 +214,7 @@ const iconCategories = {
       'IconExTimeCircle',
       'IconExCalendar',
       'IconExAlarmClock',
-    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+    ].filter((name) => iconExists(name, 'iconEx')) as IconName[],
   },
   status: {
     plainer: [],
@@ -229,7 +225,7 @@ const iconCategories = {
       'IconExInfoSquare',
       'IconExInfoCircle',
       'IconExDanger',
-    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+    ].filter((name) => iconExists(name, 'iconEx')) as IconName[],
   },
   shopping: {
     plainer: [],
@@ -246,7 +242,7 @@ const iconCategories = {
       'IconExCoupon1',
       'IconExCoupon2',
       'IconExCoupon3',
-    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+    ].filter((name) => iconExists(name, 'iconEx')) as IconName[],
   },
   entertainment: {
     plainer: [],
@@ -258,7 +254,7 @@ const iconCategories = {
       'IconExMusicPlate',
       'IconExVideo',
       'IconExHeadPhones',
-    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+    ].filter((name) => iconExists(name, 'iconEx')) as IconName[],
   },
   tools: {
     plainer: [],
@@ -273,7 +269,7 @@ const iconCategories = {
       'IconExLaptop',
       'IconExIphone',
       'IconExMouse',
-    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+    ].filter((name) => iconExists(name, 'iconEx')) as IconName[],
   },
   business: {
     plainer: [],
@@ -286,7 +282,7 @@ const iconCategories = {
       'IconExCategory2',
       'IconExBox1',
       'IconExBox2',
-    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+    ].filter((name) => iconExists(name, 'iconEx')) as IconName[],
   },
   nature: {
     plainer: [],
@@ -296,7 +292,7 @@ const iconCategories = {
       'IconExFlag',
       'IconExCompass',
       'IconExColorPalette',
-    ].filter(name => iconExists(name, 'iconEx')) as IconName[],
+    ].filter((name) => iconExists(name, 'iconEx')) as IconName[],
   },
 };
 
@@ -460,4 +456,3 @@ export const NatureIcons: Story = {
     <IconGrid icons={iconCategories.nature.iconex} variant="iconEx" title="Иконки природы" />
   ),
 };
-

@@ -18,7 +18,7 @@ const meta: Meta<typeof FloatingMenu> = {
   title: 'UI Kit/Navigation/FloatingMenu',
   component: FloatingMenu,
   decorators: [
-    Story => (
+    (Story) => (
       <div style={floatingMenuStoriesStyles.decoratorContainer}>
         <Story />
       </div>
@@ -227,4 +227,3 @@ export const Placements: Story = {
     );
   },
 };
-

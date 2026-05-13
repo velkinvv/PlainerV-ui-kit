@@ -20,7 +20,7 @@ const formatValue = (value: number | string | undefined): string | undefined => 
  * @param placeSelf - выравнивание по обеим осям
  */
 export const GridItemWrapper = styled.div.withConfig({
-  shouldForwardProp: prop =>
+  shouldForwardProp: (prop) =>
     ![
       'column',
       'row',

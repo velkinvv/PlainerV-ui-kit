@@ -19,7 +19,7 @@ export const VisuallyHiddenFileInput = styled.input.attrs({ type: 'file' })`
  * @property $isDropzoneFill — растянуть по высоте dropzone и центрировать содержимое (макет Figma).
  */
 export const FileInputRow = styled.div.withConfig({
-  shouldForwardProp: prop => prop !== '$isDropzoneFill',
+  shouldForwardProp: (prop) => prop !== '$isDropzoneFill',
 })<{ $isDropzoneFill?: boolean }>`
   display: flex;
   align-items: center;

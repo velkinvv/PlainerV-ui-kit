@@ -113,8 +113,7 @@ export const SelectMultiPlaceholder = styled.span.withConfig({
 })<{ $isPlaceholder?: boolean }>`
   min-width: 0;
   line-height: 1.25;
-  color: ${({ theme, $isPlaceholder }) =>
-    $isPlaceholder ? theme.colors.textTertiary : 'inherit'};
+  color: ${({ theme, $isPlaceholder }) => ($isPlaceholder ? theme.colors.textTertiary : 'inherit')};
 `;
 
 /** Обёртка одного чипа (капсула с подписью и кнопкой снятия). */
@@ -191,7 +190,6 @@ export const SelectMultiChipRemove = styled.button`
     outline: 2px solid ${({ theme }) => theme.colors.primary};
     outline-offset: 1px;
   }
-
 `;
 
 /**
@@ -253,7 +251,6 @@ export const SelectMultiClearAllBtn = styled.button.withConfig({
     outline: 2px solid ${({ theme }) => theme.colors.primary};
     outline-offset: 2px;
   }
-
 `;
 
 /**
@@ -309,8 +306,7 @@ export const SelectTriggerButton = styled.button.withConfig({
   outline: none;
   background: transparent;
   font: inherit;
-  color: ${({ theme, $isPlaceholder }) =>
-    $isPlaceholder ? theme.colors.textTertiary : 'inherit'};
+  color: ${({ theme, $isPlaceholder }) => ($isPlaceholder ? theme.colors.textTertiary : 'inherit')};
   cursor: pointer;
   text-align: ${({ textAlign = 'left' }) => textAlign};
   padding: 0;
@@ -346,8 +342,7 @@ export const SelectTriggerInput = styled.input.withConfig({
   outline: none;
   background: transparent;
   font: inherit;
-  color: ${({ theme, $isPlaceholder }) =>
-    $isPlaceholder ? theme.colors.textTertiary : 'inherit'};
+  color: ${({ theme, $isPlaceholder }) => ($isPlaceholder ? theme.colors.textTertiary : 'inherit')};
   cursor: text;
   text-align: ${({ textAlign = 'left' }) => textAlign};
   padding: 0;

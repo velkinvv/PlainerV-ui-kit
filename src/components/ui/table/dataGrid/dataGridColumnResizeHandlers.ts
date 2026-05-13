@@ -78,7 +78,11 @@ export function parseDataGridColumnMinWidthConstraintPx(
  * @param minPx - минимум
  * @param maxPx - максимум
  */
-export function clampDataGridColumnResizeWidthPx(widthPx: number, minPx: number, maxPx: number): number {
+export function clampDataGridColumnResizeWidthPx(
+  widthPx: number,
+  minPx: number,
+  maxPx: number,
+): number {
   const low = Math.min(minPx, maxPx);
   const high = Math.max(minPx, maxPx);
   return Math.min(high, Math.max(low, widthPx));

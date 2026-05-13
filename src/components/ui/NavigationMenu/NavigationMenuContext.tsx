@@ -18,19 +18,13 @@ export interface NavigationMenuContextValue {
 /**
  * Внутри всплывающего подменю — визуально развёрнутый вид (подписи видны), без смены корня **NavigationMenu**.
  */
-export function NavigationMenuFlyoutBranchProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function NavigationMenuFlyoutBranchProvider({ children }: { children: React.ReactNode }) {
   const parent = useNavigationMenuContext();
   const value = useMemo<NavigationMenuContextValue>(
     () => ({ ...parent, collapsed: false }),
     [parent],
   );
-  return (
-    <NavigationMenuContext.Provider value={value}>{children}</NavigationMenuContext.Provider>
-  );
+  return <NavigationMenuContext.Provider value={value}>{children}</NavigationMenuContext.Provider>;
 }
 
 export const NavigationMenuContext = createContext<NavigationMenuContextValue | undefined>(

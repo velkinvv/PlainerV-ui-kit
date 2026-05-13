@@ -142,8 +142,7 @@ export const SidemenuExpandToggleSlot = styled.div<{ $standaloneToggle: boolean 
   display: flex;
   min-width: 0;
   flex: ${({ $standaloneToggle }) => ($standaloneToggle ? '0 1 auto' : '1 1 auto')};
-  justify-content: ${({ $standaloneToggle }) =>
-    $standaloneToggle ? 'center' : 'flex-end'};
+  justify-content: ${({ $standaloneToggle }) => ($standaloneToggle ? 'center' : 'flex-end')};
   align-items: center;
 `;
 

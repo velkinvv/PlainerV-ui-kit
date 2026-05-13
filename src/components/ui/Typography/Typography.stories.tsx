@@ -439,7 +439,11 @@ export const ThemeFonts: Story = {
   render: () => (
     <div style={typographyStoriesStyles.columnGap20}>
       <div>
-        <Typography variant="h3" color="primary" style={typographyStoriesStyles.themeFontSectionHeading}>
+        <Typography
+          variant="h3"
+          color="primary"
+          style={typographyStoriesStyles.themeFontSectionHeading}
+        >
           Основной шрифт (Montserrat)
         </Typography>
         <Typography fontFamily="primary" fontSize="lg">
@@ -449,7 +453,11 @@ export const ThemeFonts: Story = {
       </div>
 
       <div>
-        <Typography variant="h3" color="primary" style={typographyStoriesStyles.themeFontSectionHeading}>
+        <Typography
+          variant="h3"
+          color="primary"
+          style={typographyStoriesStyles.themeFontSectionHeading}
+        >
           Вторичный шрифт (Inter)
         </Typography>
         <Typography fontFamily="secondary" fontSize="lg">
@@ -459,7 +467,11 @@ export const ThemeFonts: Story = {
       </div>
 
       <div>
-        <Typography variant="h3" color="primary" style={typographyStoriesStyles.themeFontSectionHeading}>
+        <Typography
+          variant="h3"
+          color="primary"
+          style={typographyStoriesStyles.themeFontSectionHeading}
+        >
           Моноширинный шрифт
         </Typography>
         <Typography fontFamily="monospace" fontSize="base" color="textSecondary">
@@ -469,7 +481,11 @@ export const ThemeFonts: Story = {
       </div>
 
       <div>
-        <Typography variant="h3" color="primary" style={typographyStoriesStyles.themeFontSectionHeading}>
+        <Typography
+          variant="h3"
+          color="primary"
+          style={typographyStoriesStyles.themeFontSectionHeading}
+        >
           Различные веса шрифта
         </Typography>
         <div style={typographyStoriesStyles.columnGap8}>
@@ -519,4 +535,3 @@ export const Interactive: Story = {
     },
   },
 };
-

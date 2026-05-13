@@ -12,7 +12,9 @@ describe('Tag handlers', () => {
   });
 
   it('getTagSkeletonDefaultWidthPx: растёт с размером', () => {
-    expect(getTagSkeletonDefaultWidthPx(Size.XS)).toBeLessThan(getTagSkeletonDefaultWidthPx(Size.XL));
+    expect(getTagSkeletonDefaultWidthPx(Size.XS)).toBeLessThan(
+      getTagSkeletonDefaultWidthPx(Size.XL),
+    );
     expect(getTagSkeletonDefaultWidthPx(Size.MD)).toBe(80);
   });
 

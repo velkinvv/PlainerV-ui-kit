@@ -15,7 +15,7 @@ import { Size } from '../../../../types/sizes';
 // ============================================================================
 
 export const InputContainer = styled.div.withConfig({
-  shouldForwardProp: prop => !['fullWidth'].includes(prop),
+  shouldForwardProp: (prop) => !['fullWidth'].includes(prop),
 })<{ fullWidth?: boolean }>`
   display: flex;
   flex-direction: column;
@@ -24,7 +24,7 @@ export const InputContainer = styled.div.withConfig({
 `;
 
 export const InputContainerWithPadding = styled.div.withConfig({
-  shouldForwardProp: prop => !['disabled', 'error'].includes(prop),
+  shouldForwardProp: (prop) => !['disabled', 'error'].includes(prop),
 })<{ disabled?: boolean; error?: boolean }>`
   position: relative;
   width: 100%;
@@ -72,10 +72,17 @@ export const RightLabel = styled(AbsoluteLabel)`
 // ============================================================================
 
 export const InputWrapper = styled(motion.div).withConfig({
-  shouldForwardProp: prop =>
-    !['error', 'success', 'fullWidth', 'focused', 'status', 'readOnly', '$fileSurface', '$dragActive'].includes(
-      prop,
-    ),
+  shouldForwardProp: (prop) =>
+    ![
+      'error',
+      'success',
+      'fullWidth',
+      'focused',
+      'status',
+      'readOnly',
+      '$fileSurface',
+      '$dragActive',
+    ].includes(prop),
 })<{
   variant?: InputVariant;
   size?: Size;
@@ -134,9 +141,13 @@ export const InputWrapper = styled(motion.div).withConfig({
   ${({ focused, theme, status, error }) =>
     focused &&
     css`
-      border-color: ${status === 'error' || Boolean(error) ? theme.colors.danger : theme.colors.primary};
+      border-color: ${status === 'error' || Boolean(error)
+        ? theme.colors.danger
+        : theme.colors.primary};
       box-shadow: 0 0 0 2px
-        ${status === 'error' || Boolean(error) ? `${theme.colors.danger}33` : `${theme.colors.primary}20`};
+        ${status === 'error' || Boolean(error)
+          ? `${theme.colors.danger}33`
+          : `${theme.colors.primary}20`};
     `}
 
   ${({ readOnly }) =>
@@ -194,7 +205,7 @@ export const InputWrapper = styled(motion.div).withConfig({
 // ============================================================================
 
 export const StyledInput = styled.input.withConfig({
-  shouldForwardProp: prop => !['textAlign', 'readOnly'].includes(prop),
+  shouldForwardProp: (prop) => !['textAlign', 'readOnly'].includes(prop),
 })<{
   textAlign?: 'left' | 'center' | 'right';
   readOnly?: boolean;
@@ -261,7 +272,7 @@ export const SuccessText = styled(HelperText)`
 // ============================================================================
 
 export const IconContainer = styled.div.withConfig({
-  shouldForwardProp: prop => !['$position', 'size'].includes(prop),
+  shouldForwardProp: (prop) => !['$position', 'size'].includes(prop),
 })<{
   $position?: 'left' | 'right';
   size?: Size;
@@ -349,7 +360,7 @@ export const LoadingSpinner = styled.div<{ size?: Size }>`
  * @param $layout — `field` (по умолчанию) или `compact` (короткая полоска под лейбл в skeleton-режиме)
  */
 export const SkeletonEffect = styled.div.withConfig({
-  shouldForwardProp: prop => !['size', 'fullWidth', '$layout'].includes(prop),
+  shouldForwardProp: (prop) => !['size', 'fullWidth', '$layout'].includes(prop),
 })<{
   size?: Size;
   fullWidth?: boolean;

@@ -1420,7 +1420,9 @@ export const PasswordComparison: Story = {
     return (
       <div style={inputStoriesStyles.columnGap32}>
         <div>
-          <h3 style={inputStoriesStyles.sectionTitleRegistration}>✅ Форма регистрации (новые пароли)</h3>
+          <h3 style={inputStoriesStyles.sectionTitleRegistration}>
+            ✅ Форма регистрации (новые пароли)
+          </h3>
           <Form formId="registration-form" onSubmit={(e) => e.preventDefault()}>
             <div style={inputStoriesStyles.columnGap16}>
               <Input
@@ -1606,4 +1608,3 @@ export const AutocompleteDemo: Story = {
     },
   },
 };
-

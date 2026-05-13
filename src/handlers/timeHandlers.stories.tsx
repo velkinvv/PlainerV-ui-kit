@@ -8,8 +8,6 @@ import {
   parseTime,
   formatTimeForDisplay,
   parseTimeRange,
-  toISOTimeString,
-  getCurrentTime,
   isCurrentTime,
   getHours,
   getMinutes,
@@ -91,7 +89,7 @@ const TimeParserDemo = () => {
       <div style={storybookDemoStyles.rowFlexGap12MarginBottom16}>
         <Input
           value={input}
-          onChange={e => setInput(e.target.value)}
+          onChange={(e) => setInput(e.target.value)}
           placeholder="Введите время (например: 14:30)"
           style={storybookDemoStyles.flexGrowFull}
         />
@@ -136,7 +134,7 @@ const TimeFormatterDemo = () => {
           Выберите формат:
         </Typography>
         <div style={inputFieldStoriesStyles.rowWrapGap8}>
-          {formats.map(fmt => (
+          {formats.map((fmt) => (
             <Button
               key={fmt}
               variant={format === fmt ? 'primary' : 'outlined'}
@@ -178,7 +176,7 @@ const TimeRangeDemo = () => {
       <div style={storybookDemoStyles.rowFlexGap12MarginBottom16}>
         <Input
           value={rangeInput}
-          onChange={e => setRangeInput(e.target.value)}
+          onChange={(e) => setRangeInput(e.target.value)}
           placeholder="Введите диапазон (например: 09:00 — 18:00)"
           style={storybookDemoStyles.flexGrowFull}
         />
@@ -230,10 +228,10 @@ const TimeCreatorDemo = () => {
           </Typography>
           <select
             value={hours}
-            onChange={e => setHours(parseInt(e.target.value))}
+            onChange={(e) => setHours(parseInt(e.target.value))}
             style={storybookDemoStyles.nativeSelectBordered}
           >
-            {hoursOptions.map(h => (
+            {hoursOptions.map((h) => (
               <option key={h} value={h}>
                 {formatHours(h)}
               </option>
@@ -247,10 +245,10 @@ const TimeCreatorDemo = () => {
           </Typography>
           <select
             value={minutes}
-            onChange={e => setMinutes(parseInt(e.target.value))}
+            onChange={(e) => setMinutes(parseInt(e.target.value))}
             style={storybookDemoStyles.nativeSelectBordered}
           >
-            {minutesOptions.map(m => (
+            {minutesOptions.map((m) => (
               <option key={m} value={m}>
                 {formatMinutes(m)}
               </option>
@@ -264,10 +262,10 @@ const TimeCreatorDemo = () => {
           </Typography>
           <select
             value={seconds}
-            onChange={e => setSeconds(parseInt(e.target.value))}
+            onChange={(e) => setSeconds(parseInt(e.target.value))}
             style={storybookDemoStyles.nativeSelectBordered}
           >
-            {secondsOptions.map(s => (
+            {secondsOptions.map((s) => (
               <option key={s} value={s}>
                 {formatSeconds(s)}
               </option>
@@ -327,7 +325,7 @@ const TimeValidationDemo = () => {
           <Input
             type="time"
             value={testTime.toTimeString().slice(0, 5)}
-            onChange={e => {
+            onChange={(e) => {
               const [hours, minutes] = e.target.value.split(':').map(Number);
               setTestTime(new Date(2023, 0, 1, hours, minutes));
             }}
@@ -341,7 +339,7 @@ const TimeValidationDemo = () => {
           <Input
             type="time"
             value={startTime.toTimeString().slice(0, 5)}
-            onChange={e => {
+            onChange={(e) => {
               const [hours, minutes] = e.target.value.split(':').map(Number);
               setStartTime(new Date(2023, 0, 1, hours, minutes));
             }}
@@ -355,7 +353,7 @@ const TimeValidationDemo = () => {
           <Input
             type="time"
             value={endTime.toTimeString().slice(0, 5)}
-            onChange={e => {
+            onChange={(e) => {
               const [hours, minutes] = e.target.value.split(':').map(Number);
               setEndTime(new Date(2023, 0, 1, hours, minutes));
             }}
@@ -416,4 +414,3 @@ export const AllExamples: Story = {
     </StorybookStaggerStack>
   ),
 };
-

@@ -95,7 +95,9 @@ export const Elevated: Story = {
     children: (
       <div>
         <Typography variant="h3">Elevated Card</Typography>
-        <Typography>This card has an enhanced elevated shadow effect with subtle border.</Typography>
+        <Typography>
+          This card has an enhanced elevated shadow effect with subtle border.
+        </Typography>
         <Typography>Карточка с усиленной тенью и лёгкой обводкой.</Typography>
       </div>
     ),
@@ -254,10 +256,7 @@ const rowTaskSurfaceStyle = buildDarkTertiaryCardStyle(
 export const NewsCard: Story = {
   render: () => (
     <StyledThemeProvider theme={darkSurfaceTheme}>
-      <Card
-        variant={CardVariant.ELEVATED}
-        style={newsCardSurfaceStyle}
-      >
+      <Card variant={CardVariant.ELEVATED} style={newsCardSurfaceStyle}>
         <header style={cardStoriesStyles.newsHeader}>
           <div style={cardStoriesStyles.newsAuthorGroup}>
             <Avatar userName="Александр Филимонов" />
@@ -280,12 +279,19 @@ export const NewsCard: Story = {
         </header>
 
         <section style={cardStoriesStyles.newsBodySection}>
-          <Typography variant="h2" style={cardStoriesStyles.newsTitle} color={darkSurfaceTheme.colors.text}>
+          <Typography
+            variant="h2"
+            style={cardStoriesStyles.newsTitle}
+            color={darkSurfaceTheme.colors.text}
+          >
             Элементы политического процесса распределены по отраслям
           </Typography>
-          <Typography style={cardStoriesStyles.newsText} color={darkSurfaceTheme.colors.textSecondary}>
-            Пример композиции карточки на базовых компонентах UI-kit с токенами темы, без
-            самописных декоративных блоков.
+          <Typography
+            style={cardStoriesStyles.newsText}
+            color={darkSurfaceTheme.colors.textSecondary}
+          >
+            Пример композиции карточки на базовых компонентах UI-kit с токенами темы, без самописных
+            декоративных блоков.
           </Typography>
         </section>
 
@@ -307,10 +313,7 @@ export const CompositeCardsShowcase: Story = {
   render: () => (
     <StyledThemeProvider theme={darkSurfaceTheme}>
       <div style={cardStoriesStyles.compositeRoot}>
-        <Card
-          variant={CardVariant.ELEVATED}
-          style={compositeCardSurfaceStyle}
-        >
+        <Card variant={CardVariant.ELEVATED} style={compositeCardSurfaceStyle}>
           <Typography
             variant="h3"
             style={cardStoriesStyles.compositeCardTitle}
@@ -328,10 +331,7 @@ export const CompositeCardsShowcase: Story = {
           />
         </Card>
 
-        <Card
-          variant={CardVariant.ELEVATED}
-          style={compositeCardSurfaceStyle}
-        >
+        <Card variant={CardVariant.ELEVATED} style={compositeCardSurfaceStyle}>
           <Typography
             variant="h3"
             style={cardStoriesStyles.compositeCardTitle}
@@ -340,14 +340,14 @@ export const CompositeCardsShowcase: Story = {
             Список дел
           </Typography>
           <div style={cardStoriesStyles.tasksList}>
-            <Card
-              variant={CardVariant.FILLED}
-              style={primaryTaskSurfaceStyle}
-            >
+            <Card variant={CardVariant.FILLED} style={primaryTaskSurfaceStyle}>
               <Typography style={cardStoriesStyles.taskTitle} color={darkSurfaceTheme.colors.text}>
                 Заголовок дела
               </Typography>
-              <Typography style={cardStoriesStyles.taskTimePrimary} color={darkSurfaceTheme.colors.textSecondary}>
+              <Typography
+                style={cardStoriesStyles.taskTimePrimary}
+                color={darkSurfaceTheme.colors.textSecondary}
+              >
                 20:00 28 сентября
               </Typography>
               <Progress value={55} variant="linear" showValueLabel />
@@ -355,16 +355,18 @@ export const CompositeCardsShowcase: Story = {
 
             <Divider />
 
-            {['21:00 28 сентября', '21:30 28 сентября', '22:00 28 сентября'].map(taskTime => (
-              <Card
-                key={taskTime}
-                variant={CardVariant.FILLED}
-                style={rowTaskSurfaceStyle}
-              >
-                <Typography style={cardStoriesStyles.taskTitle} color={darkSurfaceTheme.colors.text}>
+            {['21:00 28 сентября', '21:30 28 сентября', '22:00 28 сентября'].map((taskTime) => (
+              <Card key={taskTime} variant={CardVariant.FILLED} style={rowTaskSurfaceStyle}>
+                <Typography
+                  style={cardStoriesStyles.taskTitle}
+                  color={darkSurfaceTheme.colors.text}
+                >
                   Заголовок дела
                 </Typography>
-                <Typography style={cardStoriesStyles.taskTimeSecondary} color={darkSurfaceTheme.colors.textSecondary}>
+                <Typography
+                  style={cardStoriesStyles.taskTimeSecondary}
+                  color={darkSurfaceTheme.colors.textSecondary}
+                >
                   {taskTime}
                 </Typography>
               </Card>
@@ -424,4 +426,3 @@ export const AllSizes: Story = {
     layout: 'padded',
   },
 };
-

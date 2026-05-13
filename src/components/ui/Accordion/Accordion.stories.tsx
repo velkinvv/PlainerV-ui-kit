@@ -527,4 +527,3 @@ export const AutoCloseWithMultiple: Story = {
     },
   },
 };
-

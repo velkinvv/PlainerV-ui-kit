@@ -159,11 +159,11 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
 
     const handleButtonAction = useCallback(async (button: ModalButtonProps, index: number) => {
       if (button.asyncOnClick) {
-        setAsyncButtonsState(prev => ({ ...prev, [index]: true }));
+        setAsyncButtonsState((prev) => ({ ...prev, [index]: true }));
         try {
           await button.asyncOnClick();
         } finally {
-          setAsyncButtonsState(prev => ({ ...prev, [index]: false }));
+          setAsyncButtonsState((prev) => ({ ...prev, [index]: false }));
         }
       }
       button.onClick?.();

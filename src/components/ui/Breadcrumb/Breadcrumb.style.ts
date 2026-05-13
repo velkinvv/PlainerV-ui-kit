@@ -72,8 +72,9 @@ export const BreadcrumbCrumbRow = styled.span`
  * Слот иконки слева.
  * @property $muted - Приглушение (disabled)
  */
-export const BreadcrumbCrumbIcon = styled.span
-  .withConfig({ shouldForwardProp: p => p !== '$muted' })<{ $muted?: boolean }>`
+export const BreadcrumbCrumbIcon = styled.span.withConfig({
+  shouldForwardProp: (p) => p !== '$muted',
+})<{ $muted?: boolean }>`
   display: inline-flex;
   flex-shrink: 0;
   align-items: center;
@@ -147,22 +148,25 @@ const crumbInteractive = css`
 `;
 
 /** Ссылка в цепочке. */
-export const BreadcrumbCrumbLink = styled.a
-  .withConfig({ shouldForwardProp: p => p !== '$pill' && p !== '$muted' })<CrumbShell>`
+export const BreadcrumbCrumbLink = styled.a.withConfig({
+  shouldForwardProp: (p) => p !== '$pill' && p !== '$muted',
+})<CrumbShell>`
   ${crumbShell}
   ${crumbInteractive}
 `;
 
 /** Кнопка-крошка (без `href`, с `onClick`). */
-export const BreadcrumbCrumbButton = styled.button
-  .withConfig({ shouldForwardProp: p => p !== '$pill' && p !== '$muted' })<CrumbShell>`
+export const BreadcrumbCrumbButton = styled.button.withConfig({
+  shouldForwardProp: (p) => p !== '$pill' && p !== '$muted',
+})<CrumbShell>`
   ${crumbShell}
   ${crumbInteractive}
 `;
 
 /** Текущая страница или неактивный текст. */
-export const BreadcrumbCrumbText = styled.span
-  .withConfig({ shouldForwardProp: p => p !== '$pill' && p !== '$muted' })<CrumbShell>`
+export const BreadcrumbCrumbText = styled.span.withConfig({
+  shouldForwardProp: (p) => p !== '$pill' && p !== '$muted',
+})<CrumbShell>`
   ${crumbShell}
 `;
 
@@ -170,8 +174,9 @@ export const BreadcrumbCrumbText = styled.span
  * Свернутый сегмент «…» (макет Figma).
  * @property $disabled - Блокировка
  */
-export const BreadcrumbEllipsisButton = styled.button
-  .withConfig({ shouldForwardProp: p => p !== '$disabled' })<{ $disabled?: boolean }>`
+export const BreadcrumbEllipsisButton = styled.button.withConfig({
+  shouldForwardProp: (p) => p !== '$disabled',
+})<{ $disabled?: boolean }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;

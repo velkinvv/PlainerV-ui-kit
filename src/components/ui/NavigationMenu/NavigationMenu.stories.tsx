@@ -32,7 +32,7 @@ const meta: Meta<typeof NavigationMenu> = {
     },
   },
   decorators: [
-    Story => (
+    (Story) => (
       <div style={navigationMenuStoriesStyles.storyContainer}>
         <Story />
       </div>
@@ -102,7 +102,7 @@ export const NestedLevels: Story = {
     defaultActiveId: 'leaf-deep',
     activeAppearance: NavigationMenuActiveAppearance.HIGHLIGHTED,
   },
-  render: args => (
+  render: (args) => (
     <NavigationMenuStoryWithState
       initialActiveId={initialActiveIdFromStoryArgs(args, 'leaf-deep')}
       navigationMenuProps={pickNavigationMenuPropsFromStoryArgs(args)}
@@ -145,7 +145,11 @@ export const NestedLevels: Story = {
             },
           ]}
         />
-        <NavigationMenuItem id="settings" label="Настройки" icon={<Icon name="IconExSettings" size="md" />} />
+        <NavigationMenuItem
+          id="settings"
+          label="Настройки"
+          icon={<Icon name="IconExSettings" size="md" />}
+        />
       </>
     </NavigationMenuStoryWithState>
   ),
@@ -165,7 +169,7 @@ export const Expanded: Story = {
     defaultActiveId: 'home',
     activeAppearance: NavigationMenuActiveAppearance.BAR,
   },
-  render: args => (
+  render: (args) => (
     <NavigationMenuStoryWithState
       initialActiveId={initialActiveIdFromStoryArgs(args, 'home')}
       navigationMenuProps={pickNavigationMenuPropsFromStoryArgs(args)}
@@ -201,7 +205,7 @@ export const HighlightedActive: Story = {
     defaultActiveId: 'inbox',
     activeAppearance: NavigationMenuActiveAppearance.HIGHLIGHTED,
   },
-  render: args => (
+  render: (args) => (
     <NavigationMenuStoryWithState
       initialActiveId={initialActiveIdFromStoryArgs(args, 'inbox')}
       navigationMenuProps={pickNavigationMenuPropsFromStoryArgs(args)}
@@ -226,7 +230,7 @@ export const SolidActive: Story = {
     defaultActiveId: 'home',
     activeAppearance: NavigationMenuActiveAppearance.SOLID,
   },
-  render: args => (
+  render: (args) => (
     <NavigationMenuStoryWithState
       initialActiveId={initialActiveIdFromStoryArgs(args, 'home')}
       navigationMenuProps={pickNavigationMenuPropsFromStoryArgs(args)}
@@ -249,7 +253,7 @@ export const Collapsed: Story = {
     'aria-label': 'Навигация',
     defaultActiveId: 'inbox',
   },
-  render: args => (
+  render: (args) => (
     <NavigationMenuStoryWithState
       initialActiveId={initialActiveIdFromStoryArgs(args, 'inbox')}
       navigationMenuProps={pickNavigationMenuPropsFromStoryArgs(args)}
@@ -283,7 +287,7 @@ export const ItemTooltipHintPopoverOverview: Story = {
     'aria-label': 'Демо: tooltip, hint и popover у пунктов',
     defaultActiveId: 'row-tooltip',
   },
-  render: args => (
+  render: (args) => (
     <NavigationMenuStoryWithState
       initialActiveId={initialActiveIdFromStoryArgs(args, 'row-tooltip')}
       navigationMenuProps={{
@@ -303,7 +307,8 @@ export const ItemTooltipHintPopoverOverview: Story = {
           label="Hint"
           icon={<Icon name="IconExUser" size="md" />}
           hint={{
-            content: 'Расширенная подсказка (Hint) при наведении или по настройкам visibilityTrigger',
+            content:
+              'Расширенная подсказка (Hint) при наведении или по настройкам visibilityTrigger',
             placement: HintPosition.RIGHT,
           }}
         />
@@ -312,7 +317,10 @@ export const ItemTooltipHintPopoverOverview: Story = {
           label="Hint важнее tooltip"
           icon={<Icon name="IconExBell" size="md" />}
           tooltip={{ content: 'Не показывается, если задан hint', position: TooltipPosition.RIGHT }}
-          hint={{ content: 'При одновременной передаче hint и tooltip показывается hint', placement: HintPosition.RIGHT }}
+          hint={{
+            content: 'При одновременной передаче hint и tooltip показывается hint',
+            placement: HintPosition.RIGHT,
+          }}
         />
         <NavigationMenuItem
           id="row-popover"
@@ -321,7 +329,11 @@ export const ItemTooltipHintPopoverOverview: Story = {
           popover={{
             size: Size.MD,
             contentAriaLabel: 'Дополнительный блок',
-            children: <div style={popoverPanelStyle}>Панель поповера: клик по строке открывает; activeId по умолчанию не меняется.</div>,
+            children: (
+              <div style={popoverPanelStyle}>
+                Панель поповера: клик по строке открывает; activeId по умолчанию не меняется.
+              </div>
+            ),
           }}
         />
         <NavigationMenuItem
@@ -360,7 +372,7 @@ export const ItemTooltipAndHint: Story = {
     'aria-label': 'Навигация с подсказками',
     defaultActiveId: 'home',
   },
-  render: args => (
+  render: (args) => (
     <NavigationMenuStoryWithState
       initialActiveId={initialActiveIdFromStoryArgs(args, 'home')}
       navigationMenuProps={pickNavigationMenuPropsFromStoryArgs(args)}
@@ -386,7 +398,10 @@ export const ItemTooltipAndHint: Story = {
           id="settings"
           label="Настройки"
           icon={<Icon name="IconExSettings" size="md" />}
-          tooltip={{ content: 'Если бы был и hint — показался бы он', position: TooltipPosition.RIGHT }}
+          tooltip={{
+            content: 'Если бы был и hint — показался бы он',
+            position: TooltipPosition.RIGHT,
+          }}
           hint={{ content: 'Hint имеет приоритет над tooltip', placement: HintPosition.RIGHT }}
         />
       </>
@@ -409,7 +424,7 @@ export const ItemWithPopover: Story = {
     'aria-label': 'Навигация с поповером',
     defaultActiveId: 'home',
   },
-  render: args => (
+  render: (args) => (
     <NavigationMenuStoryWithState
       initialActiveId={initialActiveIdFromStoryArgs(args, 'home')}
       navigationMenuProps={pickNavigationMenuPropsFromStoryArgs(args)}
@@ -423,7 +438,9 @@ export const ItemWithPopover: Story = {
           popover={{
             size: Size.MD,
             contentAriaLabel: 'Дополнительные действия',
-            children: <div style={popoverPanelStyle}>Содержимое панели: форма, ссылки, список.</div>,
+            children: (
+              <div style={popoverPanelStyle}>Содержимое панели: форма, ссылки, список.</div>
+            ),
           }}
         />
         <NavigationMenuItem
@@ -463,7 +480,11 @@ const expandStoryChildren = (
       icon={<Icon name="IconExUser" size="md" />}
       badge={3}
     />
-    <NavigationMenuItem id="settings" label="Настройки" icon={<Icon name="IconExSettings" size="md" />} />
+    <NavigationMenuItem
+      id="settings"
+      label="Настройки"
+      icon={<Icon name="IconExSettings" size="md" />}
+    />
   </>
 );
 
@@ -480,7 +501,7 @@ export const ExpandOnHover: Story = {
     onExpand: fn(),
     onCollapse: fn(),
   },
-  render: args => (
+  render: (args) => (
     <NavigationMenuStoryWithState
       initialActiveId={initialActiveIdFromStoryArgs(args, 'home')}
       navigationMenuProps={pickNavigationMenuPropsFromStoryArgs(args)}
@@ -491,7 +512,8 @@ export const ExpandOnHover: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Наведите курсор на меню — панель раскроется; уберите — свернётся. Колбэки **onExpand** / **onCollapse**.',
+        story:
+          'Наведите курсор на меню — панель раскроется; уберите — свернётся. Колбэки **onExpand** / **onCollapse**.',
       },
     },
   },
@@ -510,7 +532,7 @@ export const ExpandOnClick: Story = {
     onExpand: fn(),
     onCollapse: fn(),
   },
-  render: args => (
+  render: (args) => (
     <NavigationMenuStoryWithState
       initialActiveId={initialActiveIdFromStoryArgs(args, 'home')}
       navigationMenuProps={pickNavigationMenuPropsFromStoryArgs(args)}
@@ -533,7 +555,7 @@ export const WithNavigationMenuItemAlias: Story = {
   args: {
     defaultActiveId: 'a',
   },
-  render: args => (
+  render: (args) => (
     <NavigationMenuStoryWithState
       initialActiveId={initialActiveIdFromStoryArgs(args, 'a')}
       navigationMenuProps={pickNavigationMenuPropsFromStoryArgs(args)}
@@ -552,7 +574,7 @@ export const ItemStatuses: Story = {
     'aria-label': 'Навигация со статусами',
     defaultActiveId: 'ok',
   },
-  render: args => (
+  render: (args) => (
     <NavigationMenuStoryWithState
       initialActiveId={initialActiveIdFromStoryArgs(args, 'ok')}
       navigationMenuProps={pickNavigationMenuPropsFromStoryArgs(args)}
@@ -588,8 +610,7 @@ export const ItemStatuses: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          'Проп **status** добавляет фон с оттенком из темы; не отменяет логику **active**.',
+        story: 'Проп **status** добавляет фон с оттенком из темы; не отменяет логику **active**.',
       },
     },
   },
@@ -601,7 +622,7 @@ export const ItemLoading: Story = {
     'aria-label': 'Навигация',
     defaultActiveId: 'a',
   },
-  render: args => (
+  render: (args) => (
     <NavigationMenuStoryWithState
       initialActiveId={initialActiveIdFromStoryArgs(args, 'a')}
       navigationMenuProps={pickNavigationMenuPropsFromStoryArgs(args)}
@@ -633,7 +654,7 @@ export const ItemSkeleton: Story = {
     'aria-label': 'Навигация',
     defaultActiveId: 'a',
   },
-  render: args => (
+  render: (args) => (
     <NavigationMenuStoryWithState
       initialActiveId={initialActiveIdFromStoryArgs(args, 'a')}
       navigationMenuProps={pickNavigationMenuPropsFromStoryArgs(args)}
@@ -660,13 +681,16 @@ const ItemVisibilityToggleExample: React.FC = () => {
       <p style={itemVisibilityToggleToolbarStyle}>
         <button
           type="button"
-          onClick={() => setIsOptionalVisible(previous => !previous)}
+          onClick={() => setIsOptionalVisible((previous) => !previous)}
           style={navigationMenuStoriesStyles.toggleVisibilityButton}
         >
           {isOptionalVisible ? 'Скрыть' : 'Показать'} пункт «Скрываемый»
         </button>
       </p>
-      <NavigationMenuStoryWithState initialActiveId="a" navigationMenuProps={{ 'aria-label': 'Навигация' }}>
+      <NavigationMenuStoryWithState
+        initialActiveId="a"
+        navigationMenuProps={{ 'aria-label': 'Навигация' }}
+      >
         <NavigationMenuItem id="a" label="Всегда" icon={<Icon name="IconExHome" size="md" />} />
         <NavigationMenuItem
           id="opt"
@@ -692,4 +716,3 @@ export const ItemVisibilityToggle: Story = {
     },
   },
 };
-

@@ -388,7 +388,8 @@ export interface LinkAnchorCommon {
  * @property textVariant - `default` — акцентный цвет; `line` — с подчёркиванием; `muted` — вторичный цвет
  */
 export interface LinkTextProps
-  extends LinkAnchorCommon,
+  extends
+    LinkAnchorCommon,
     Omit<
       React.AnchorHTMLAttributes<HTMLAnchorElement>,
       'href' | 'children' | 'className' | 'target' | 'rel' | 'download'
@@ -530,8 +531,10 @@ export interface InputProps extends BaseInputProps {
  * @property resize - Режим изменения размеров textarea (CSS `resize`)
  * @property rows - Высота в строках (`HTMLTextAreaElement.rows`, по умолчанию в компоненте 4)
  */
-export interface TextAreaProps
-  extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'size'> {
+export interface TextAreaProps extends Omit<
+  React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+  'size'
+> {
   label?: ReactNode;
   error?: string;
   success?: boolean;
@@ -595,20 +598,19 @@ export interface TextAreaProps
  */
 export type FileInputLayout = 'field' | 'dropzone' | 'file' | 'trigger';
 
-export interface FileInputProps
-  extends Omit<
-    BaseInputProps,
-    | 'type'
-    | 'handleInput'
-    | 'displayCharacterCounter'
-    | 'ignoreMaskCharacters'
-    | 'characterCounterVisibilityThreshold'
-    | 'disableCopying'
-    | 'textAlign'
-    | 'readOnly'
-    | 'value'
-    | 'defaultValue'
-  > {
+export interface FileInputProps extends Omit<
+  BaseInputProps,
+  | 'type'
+  | 'handleInput'
+  | 'displayCharacterCounter'
+  | 'ignoreMaskCharacters'
+  | 'characterCounterVisibilityThreshold'
+  | 'disableCopying'
+  | 'textAlign'
+  | 'readOnly'
+  | 'value'
+  | 'defaultValue'
+> {
   variant?: InputVariant;
   size?: Size;
   status?: 'error' | 'success' | 'warning';
@@ -711,7 +713,8 @@ export type TagStatusDisplay = 'surface' | 'marker';
  * @property tooltipWhenTruncated - Показывать `Tooltip`, если текст не помещается (нужен `maxWidth` или `width`)
  * @property tooltipContent - Текст тултипа при обрезании (иначе — строковые `children`)
  */
-export interface TagProps extends BaseComponentProps, Omit<React.HTMLAttributes<HTMLSpanElement>, 'children'> {
+export interface TagProps
+  extends BaseComponentProps, Omit<React.HTMLAttributes<HTMLSpanElement>, 'children'> {
   children?: React.ReactNode;
   colorVariant?: TagColorVariant;
   appearance?: TagAppearance;
@@ -749,7 +752,10 @@ export type DropdownDefaultTriggerKind = 'button' | 'tag';
 /**
  * Пропсы тега при `defaultTriggerKind="tag"` (подпись триггера — `buttonProps.children`).
  */
-export type DropdownTagTriggerProps = Omit<TagProps, 'children' | 'onClick' | 'as' | 'disabled' | 'skeleton'>;
+export type DropdownTagTriggerProps = Omit<
+  TagProps,
+  'children' | 'onClick' | 'as' | 'disabled' | 'skeleton'
+>;
 
 /**
  * Семантический акцент Pill: граница, текст и индикатор в выбранном состоянии (вместо `primary`).
@@ -770,7 +776,8 @@ export type PillStatus = 'default' | 'success' | 'warning' | 'danger' | 'info';
  * Остальные пропсы передаются на нативную кнопку (`type="button"` по умолчанию) или на корень скелетона.
  */
 export interface PillProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'size' | 'onChange'>,
+  extends
+    Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'size' | 'onChange'>,
     BaseComponentProps {
   children: React.ReactNode;
   selected?: boolean;
@@ -2165,11 +2172,9 @@ export type CalendarMonthYearLayout = 'combined' | 'split';
 export type CalendarSelectionMode = 'single' | 'range';
 
 export interface CalendarProps
-  extends BaseComponentProps,
-    Omit<
-      React.HTMLAttributes<HTMLDivElement>,
-      'children' | 'onChange' | 'defaultValue' | 'value'
-    > {
+  extends
+    BaseComponentProps,
+    Omit<React.HTMLAttributes<HTMLDivElement>, 'children' | 'onChange' | 'defaultValue' | 'value'> {
   value?: Date | null;
   defaultValue?: Date | null;
   visibleMonth?: Date;
@@ -2594,7 +2599,8 @@ export interface SelectOption {
  * @property defaultValue - Аналогично `value` для неконтролируемого режима
  */
 export interface SelectProps
-  extends Omit<
+  extends
+    Omit<
       React.SelectHTMLAttributes<HTMLSelectElement>,
       'size' | 'children' | 'value' | 'defaultValue' | 'onFocus' | 'onBlur'
     >,
@@ -3154,8 +3160,10 @@ export enum RadioButtonGroupOrientation {
  * Опция для RadioButtonGroup
  * Содержит все пропсы для отдельной радиокнопки
  */
-export interface RadioButtonGroupOption
-  extends Omit<RadioButtonProps, 'checked' | 'onChange' | 'name' | 'disabled' | 'readOnly'> {
+export interface RadioButtonGroupOption extends Omit<
+  RadioButtonProps,
+  'checked' | 'onChange' | 'name' | 'disabled' | 'readOnly'
+> {
   value: string; // Значение опции (обязательно)
   label: ReactNode; // Лейбл опции (обязательно)
   disabled?: boolean; // Отключить конкретную опцию (переопределяет disabled группы)
@@ -3352,8 +3360,10 @@ export interface TimeInputProps extends Omit<BaseInputProps, 'value' | 'onChange
  * @property name - Имя поля для форм
  * @property id - Явный id (иначе генерируется внутри компонента)
  */
-export interface SwitchProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type' | 'size' | 'role'> {
+export interface SwitchProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'type' | 'size' | 'role'
+> {
   checked?: boolean;
   defaultChecked?: boolean;
   label?: ReactNode;
@@ -3714,7 +3724,8 @@ export interface TableContainerProps extends BaseComponentProps {
  * @property style - Инлайн-стили таблицы
  */
 export interface TableProps
-  extends BaseComponentProps,
+  extends
+    BaseComponentProps,
     Omit<React.TableHTMLAttributes<HTMLTableElement>, 'children' | 'className' | 'style'> {
   stickyHeader?: boolean;
   size?: TableSize;
@@ -3730,7 +3741,8 @@ export interface TableProps
  * @property children - Строки `TableRow` с ячейками `TableCell` (`variant="head"` или `component="th"`)
  */
 export interface TableHeadProps
-  extends BaseComponentProps,
+  extends
+    BaseComponentProps,
     Omit<React.HTMLAttributes<HTMLTableSectionElement>, 'children' | 'className' | 'style'> {
   style?: React.CSSProperties;
 }
@@ -3739,7 +3751,8 @@ export interface TableHeadProps
  * Секция тела (`tbody`).
  */
 export interface TableBodyProps
-  extends BaseComponentProps,
+  extends
+    BaseComponentProps,
     Omit<React.HTMLAttributes<HTMLTableSectionElement>, 'children' | 'className' | 'style'> {
   style?: React.CSSProperties;
 }
@@ -3748,7 +3761,8 @@ export interface TableBodyProps
  * Секция подвала (`tfoot`), например «Загрузить ещё».
  */
 export interface TableFooterProps
-  extends BaseComponentProps,
+  extends
+    BaseComponentProps,
     Omit<React.HTMLAttributes<HTMLTableSectionElement>, 'children' | 'className' | 'style'> {
   style?: React.CSSProperties;
 }
@@ -3760,7 +3774,8 @@ export interface TableFooterProps
  * @property disabled - Пониженная непрозрачность (disabled-состояние макета)
  * @property dragging - Строка удерживается при перетаскивании (источник HTML5 DnD): приглушение и подсказка рамкой
  */
-export interface TableRowProps extends BaseComponentProps, React.HTMLAttributes<HTMLTableRowElement> {
+export interface TableRowProps
+  extends BaseComponentProps, React.HTMLAttributes<HTMLTableRowElement> {
   selected?: boolean;
   hover?: boolean;
   disabled?: boolean;
@@ -3782,8 +3797,7 @@ export type TableCellVariant = 'head' | 'body' | 'footer';
  * @property colSpan / rowSpan / scope — стандартные атрибуты таблицы
  */
 export interface TableCellProps
-  extends BaseComponentProps,
-    Omit<React.TdHTMLAttributes<HTMLTableCellElement>, 'align'> {
+  extends BaseComponentProps, Omit<React.TdHTMLAttributes<HTMLTableCellElement>, 'align'> {
   align?: 'inherit' | 'left' | 'center' | 'right' | 'justify';
   component?: React.ElementType;
   variant?: TableCellVariant;
@@ -3873,8 +3887,12 @@ export type TableSortDirection = 'asc' | 'desc';
  * @property maxLines - Максимум строк у текста заголовка рядом с иконкой сортировки (`line-clamp`)
  */
 export interface TableSortLabelProps
-  extends BaseComponentProps,
-    Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'className' | 'style' | 'type'> {
+  extends
+    BaseComponentProps,
+    Omit<
+      React.ButtonHTMLAttributes<HTMLButtonElement>,
+      'children' | 'className' | 'style' | 'type'
+    > {
   active?: boolean;
   direction?: TableSortDirection | false;
   hideSortIcon?: boolean;
@@ -3981,7 +3999,9 @@ export interface DataGridColumnFilterClickParams {
 }
 
 /** Частичные пропсы `Icon` для встроенной иконки фильтра в заголовке колонки `DataGrid` */
-export type DataGridColumnFilterIconProps = Partial<Pick<IconProps, 'name' | 'size' | 'color' | 'className'>>;
+export type DataGridColumnFilterIconProps = Partial<
+  Pick<IconProps, 'name' | 'size' | 'color' | 'className'>
+>;
 
 /**
  * Горизонтальное расположение встроенной кнопки-фильтра в заголовке колонки (`filterable`).
@@ -4119,7 +4139,9 @@ export interface DataGridExpandedRowChangeParams {
  * @property striped — зебра строк в `tbody`; в компоненте `DataGrid` по умолчанию `true`, у примитива `Table` — `false`
  * @property size — `Size` дизайн-системы → плотность `Table` и размеры контролов
  */
-export interface DataGridProps<Row extends DataGridBaseRow = DataGridBaseRow> extends BaseComponentProps {
+export interface DataGridProps<
+  Row extends DataGridBaseRow = DataGridBaseRow,
+> extends BaseComponentProps {
   tableId: string;
   columns: readonly DataGridColumn<Row>[];
   rows: readonly Row[];

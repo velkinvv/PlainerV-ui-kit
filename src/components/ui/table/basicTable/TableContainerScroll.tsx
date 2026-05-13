@@ -36,7 +36,9 @@ export function TableContainerScroll({
       className={clsx(className)}
       $embeddedPaginationBelow={embeddedPaginationBelow}
     >
-      <TableContainerScrollTrack $scrollAreaMaxHeight={scrollAreaMaxHeight}>{children}</TableContainerScrollTrack>
+      <TableContainerScrollTrack $scrollAreaMaxHeight={scrollAreaMaxHeight}>
+        {children}
+      </TableContainerScrollTrack>
     </TableContainerScrollClip>
   );
 }

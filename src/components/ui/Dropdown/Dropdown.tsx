@@ -180,12 +180,12 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       setAsyncError(null);
 
       loadItems()
-        ?.then(result => {
+        ?.then((result) => {
           if (isCancelled) return;
           setAsyncItems(result);
           setAsyncStatus('success');
         })
-        .catch(error => {
+        .catch((error) => {
           if (isCancelled) return;
           setAsyncError(error);
           setAsyncStatus('error');
@@ -386,7 +386,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       document.addEventListener('scroll', handleScroll, true);
 
       const scrollableElements = findScrollableParents(dropdownRef.current);
-      scrollableElements.forEach(element => {
+      scrollableElements.forEach((element) => {
         if (element instanceof HTMLElement) {
           element.addEventListener('scroll', handleScroll, true);
         }
@@ -531,9 +531,9 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       if (!searchable || !normalizedSearchQuery) return resolvedDefinitions;
 
       const next: (DropdownMenuItemProps | DropdownMenuGroup)[] = [];
-      resolvedDefinitions.forEach(definition => {
+      resolvedDefinitions.forEach((definition) => {
         if (isDropdownGroup(definition)) {
-          const matchedItems = definition.items.filter(item => doesItemMatchSearch(item));
+          const matchedItems = definition.items.filter((item) => doesItemMatchSearch(item));
           if (matchedItems.length > 0) {
             next.push({ ...definition, items: matchedItems });
           }
@@ -745,7 +745,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       if (!children) {
         return null;
       }
-      return React.Children.map(children as React.ReactNode, child => {
+      return React.Children.map(children as React.ReactNode, (child) => {
         if (!React.isValidElement(child)) {
           return child;
         }
@@ -804,7 +804,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
     const hasDefinitionsMenuChild = React.useMemo(
       () =>
         React.Children.toArray(children).some(
-          node =>
+          (node) =>
             React.isValidElement(node) &&
             (node.type as React.ComponentType) === DropdownMenuFromDefinitions,
         ),
@@ -841,8 +841,9 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       : null;
 
     /** В `inline` меню внутри контейнера — колбэки только на корне; в портале панель вне DOM-дерева триггера — дублируем на `DropdownContent`. */
-    const dropdownContentFocusProps: Pick<DropdownProps, 'onFocus' | 'onBlur'> | Record<string, never> =
-      inline ? {} : { onFocus, onBlur };
+    const dropdownContentFocusProps:
+      | Pick<DropdownProps, 'onFocus' | 'onBlur'>
+      | Record<string, never> = inline ? {} : { onFocus, onBlur };
 
     const dropdownContent = (
       <DropdownContent
@@ -895,7 +896,9 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
               style={{
                 cursor: disabled ? 'not-allowed' : 'pointer',
                 opacity: disabled ? 0.6 : 1,
-                ...(fullWidth ? { width: '100%', display: 'block', boxSizing: 'border-box' as const } : {}),
+                ...(fullWidth
+                  ? { width: '100%', display: 'block', boxSizing: 'border-box' as const }
+                  : {}),
               }}
             >
               {trigger}
@@ -954,7 +957,14 @@ interface DefaultTriggerButtonProps {
 
 const DefaultTriggerButton = React.forwardRef<HTMLButtonElement, DefaultTriggerButtonProps>(
   (
-    { onToggle, buttonProps, skeleton = false, disabled = false, fieldSize = Size.MD, openMenuIconProps },
+    {
+      onToggle,
+      buttonProps,
+      skeleton = false,
+      disabled = false,
+      fieldSize = Size.MD,
+      openMenuIconProps,
+    },
     ref,
   ) => {
     const {

@@ -22,10 +22,10 @@ import {
 // Функция для получения реально существующих иконок
 const getExistingIcons = () => {
   // Получаем иконки Plainer (сохраняем полные имена)
-  const plainerIcons = Object.keys(PlainerIconsModule).filter(name => name.length > 0);
+  const plainerIcons = Object.keys(PlainerIconsModule).filter((name) => name.length > 0);
 
   // Получаем иконки IconEx (сохраняем полные имена)
-  const iconexIcons = Object.keys(IconExIconsModule).filter(name => name.length > 0);
+  const iconexIcons = Object.keys(IconExIconsModule).filter((name) => name.length > 0);
 
   return { plainerIcons, iconexIcons };
 };
@@ -90,12 +90,10 @@ export const AllIcons: Story = {
               <strong>{iconName}</strong>
             </div>
             <div style={iconStoriesStyles.hintMeta}>Библиотека: {variant}</div>
-            <div style={iconStoriesStyles.hintCode}>
-              {code}
-            </div>
+            <div style={iconStoriesStyles.hintCode}>{code}</div>
             <button
               className={`icon-copy-button ${copiedIcon === code ? 'copied' : ''}`}
-              onClick={clickEvent => {
+              onClick={(clickEvent) => {
                 clickEvent.stopPropagation();
                 copyIconCode(code);
               }}
@@ -211,9 +209,7 @@ export const AllIcons: Story = {
                     size={selectedSize}
                     // variant={variant}
                   />
-                  <div style={iconStoriesStyles.iconVariantLabel}>
-                    {variant}
-                  </div>
+                  <div style={iconStoriesStyles.iconVariantLabel}>{variant}</div>
                 </div>
               </Hint>
             );
@@ -231,4 +227,3 @@ export const AllIcons: Story = {
     },
   },
 };
-

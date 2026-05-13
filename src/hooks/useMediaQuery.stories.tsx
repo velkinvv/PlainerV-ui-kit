@@ -1,6 +1,5 @@
 ﻿import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
-import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
 import { Tag } from '../components/ui/Tag';
@@ -171,7 +170,11 @@ const PredefinedHooksDemo = () => {
           <Typography variant="body2" marginBottom="xs">
             <strong>Mobile</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
+          <Typography
+            variant="body2"
+            marginBottom="xs"
+            style={storybookDemoStyles.typographyFinePrint12}
+          >
             ≤ 768px
           </Typography>
           {renderMediaQueryStatusTag(isMobile, 'Да', 'Нет')}
@@ -181,7 +184,11 @@ const PredefinedHooksDemo = () => {
           <Typography variant="body2" marginBottom="xs">
             <strong>Tablet</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
+          <Typography
+            variant="body2"
+            marginBottom="xs"
+            style={storybookDemoStyles.typographyFinePrint12}
+          >
             769px - 1024px
           </Typography>
           {renderMediaQueryStatusTag(isTablet, 'Да', 'Нет')}
@@ -191,7 +198,11 @@ const PredefinedHooksDemo = () => {
           <Typography variant="body2" marginBottom="xs">
             <strong>Desktop</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
+          <Typography
+            variant="body2"
+            marginBottom="xs"
+            style={storybookDemoStyles.typographyFinePrint12}
+          >
             ≥ 1025px
           </Typography>
           {renderMediaQueryStatusTag(isDesktop, 'Да', 'Нет')}
@@ -201,7 +212,11 @@ const PredefinedHooksDemo = () => {
           <Typography variant="body2" marginBottom="xs">
             <strong>Large</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
+          <Typography
+            variant="body2"
+            marginBottom="xs"
+            style={storybookDemoStyles.typographyFinePrint12}
+          >
             ≥ 1440px
           </Typography>
           {renderMediaQueryStatusTag(isLargeScreen, 'Да', 'Нет')}
@@ -325,7 +340,11 @@ const DeviceSupportDemo = () => {
           <Typography variant="body1" marginBottom="xs">
             <strong>Hover</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
+          <Typography
+            variant="body2"
+            marginBottom="xs"
+            style={storybookDemoStyles.typographyFinePrint12}
+          >
             Поддержка наведения
           </Typography>
           {renderMediaQueryStatusTag(supportsHover, 'Поддерживается', 'Не поддерживается')}
@@ -345,7 +364,11 @@ const DeviceSupportDemo = () => {
           <Typography variant="body1" marginBottom="xs">
             <strong>Touch</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
+          <Typography
+            variant="body2"
+            marginBottom="xs"
+            style={storybookDemoStyles.typographyFinePrint12}
+          >
             Сенсорное управление
           </Typography>
           {renderMediaQueryStatusTag(supportsTouch, 'Поддерживается', 'Не поддерживается')}
@@ -467,7 +490,11 @@ const CustomMediaQueryDemo = () => {
           <Typography variant="body2" marginBottom="xs">
             <strong>Темная тема</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
+          <Typography
+            variant="body2"
+            marginBottom="xs"
+            style={storybookDemoStyles.typographyFinePrint12}
+          >
             prefers-color-scheme: dark
           </Typography>
           {renderMediaQueryStatusTag(isDarkMode, 'Включена', 'Выключена')}
@@ -477,7 +504,11 @@ const CustomMediaQueryDemo = () => {
           <Typography variant="body2" marginBottom="xs">
             <strong>Высокий контраст</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
+          <Typography
+            variant="body2"
+            marginBottom="xs"
+            style={storybookDemoStyles.typographyFinePrint12}
+          >
             prefers-contrast: high
           </Typography>
           {renderMediaQueryStatusTag(isHighContrast, 'Включен', 'Выключен')}
@@ -487,7 +518,11 @@ const CustomMediaQueryDemo = () => {
           <Typography variant="body2" marginBottom="xs">
             <strong>Уменьшенное движение</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
+          <Typography
+            variant="body2"
+            marginBottom="xs"
+            style={storybookDemoStyles.typographyFinePrint12}
+          >
             prefers-reduced-motion: reduce
           </Typography>
           {renderMediaQueryStatusTag(isReducedMotion, 'Включено', 'Выключено')}
@@ -497,7 +532,11 @@ const CustomMediaQueryDemo = () => {
           <Typography variant="body2" marginBottom="xs">
             <strong>Печать</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
+          <Typography
+            variant="body2"
+            marginBottom="xs"
+            style={storybookDemoStyles.typographyFinePrint12}
+          >
             print
           </Typography>
           {renderMediaQueryStatusTag(isPrint)}
@@ -559,4 +598,3 @@ export const AllExamples: Story = {
     </StorybookStaggerStack>
   ),
 };
-

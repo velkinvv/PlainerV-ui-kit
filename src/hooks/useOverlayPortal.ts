@@ -39,12 +39,7 @@ type UseOverlayPortalResult = {
 export const useOverlayPortal = (
   overlayPortalParameters: UseOverlayPortalParameters,
 ): UseOverlayPortalResult => {
-  const {
-    container,
-    portalTargetId,
-    overlayStyle,
-    portalZIndex,
-  } = overlayPortalParameters;
+  const { container, portalTargetId, overlayStyle, portalZIndex } = overlayPortalParameters;
 
   const mountNode = useMemo(
     () => getModalMountNode(container, portalTargetId),

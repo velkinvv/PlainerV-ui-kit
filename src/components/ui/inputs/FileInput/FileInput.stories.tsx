@@ -50,7 +50,10 @@ const meta: Meta<typeof FileInput> = {
     },
     fileName: { description: 'Контролируемая подпись выбранных файлов' },
     displayClearIcon: { control: 'boolean', description: 'Кнопка сброса выбора (крестик)' },
-    onClearIconClick: { action: 'clearIconClick', description: 'После сброса `input` и внутренней подписи' },
+    onClearIconClick: {
+      action: 'clearIconClick',
+      description: 'После сброса `input` и внутренней подписи',
+    },
     clearIconProps: {
       control: 'object',
       description:
@@ -73,7 +76,8 @@ const meta: Meta<typeof FileInput> = {
     fileLayout: {
       control: { type: 'select' },
       options: ['field', 'dropzone', 'file', 'trigger'],
-      description: 'Вариант разметки поля; допустимые значения: `field`, `dropzone`, `file`, `trigger`',
+      description:
+        'Вариант разметки поля; допустимые значения: `field`, `dropzone`, `file`, `trigger`',
     },
     dropzoneText: { description: 'Текст в режиме dropzone' },
     fileCardLabel: { description: 'Подпись над именем в карточке' },
@@ -119,7 +123,7 @@ export const FileCard: Story = {
           fileName={name}
           uploadProgress={progress}
           onChange={() => {
-            setProgress(p => (p != null && p < 100 ? Math.min(100, (p ?? 0) + 25) : p));
+            setProgress((p) => (p != null && p < 100 ? Math.min(100, (p ?? 0) + 25) : p));
           }}
           helperText="Клик по карточке — сменить файл"
         />
@@ -194,4 +198,3 @@ export const Multiple: Story = {
     placeholder: 'Ни одного файла',
   },
 };
-

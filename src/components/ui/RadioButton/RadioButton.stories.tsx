@@ -1,18 +1,9 @@
 ﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useId, useState } from 'react';
 import { RadioButton } from './RadioButton';
-import {
-  AdditionalLabel,
-  InputContainer,
-  Label,
-  RequiredIndicator,
-} from '../inputs/shared';
+import { AdditionalLabel, InputContainer, Label, RequiredIndicator } from '../inputs/shared';
 import { Size, IconSize } from '../../../types/sizes';
-import {
-  TooltipPosition,
-  RadioButtonLabelPosition,
-  RadioButtonVariant,
-} from '../../../types/ui';
+import { TooltipPosition, RadioButtonLabelPosition, RadioButtonVariant } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
 import { DOC_RADIO_BUTTON } from '@/components/ui/storyDocs/uiKitDocs';
 import { radioButtonStoriesStyles } from './RadioButton.stories.styles';
@@ -208,9 +199,7 @@ export const Sizes: Story = {
 
     return (
       <fieldset style={radioButtonStoriesStyles.fieldsetReset}>
-        <legend style={radioButtonStoriesStyles.legendBase}>
-          Размеры (одна активная группа)
-        </legend>
+        <legend style={radioButtonStoriesStyles.legendBase}>Размеры (одна активная группа)</legend>
         <div style={radioButtonStoriesStyles.columnGap16}>
           <RadioButton
             checked={selectedSize === 'small'}
@@ -306,7 +295,9 @@ export const SharedFieldCaptionMultipleRadios: Story = {
           Способ доставки
           <RequiredIndicator>*</RequiredIndicator>
         </Label>
-        <AdditionalLabel>Все варианты относятся к одному заказу; доступен только один способ.</AdditionalLabel>
+        <AdditionalLabel>
+          Все варианты относятся к одному заказу; доступен только один способ.
+        </AdditionalLabel>
         <div role="radiogroup" aria-labelledby={groupHeadingCaptionId}>
           <div style={radioButtonStoriesStyles.columnGap12}>
             <RadioButton
@@ -357,7 +348,7 @@ export const RadioGroup: Story = {
     return (
       <div style={radioButtonStoriesStyles.columnGap12}>
         <h3 style={radioButtonStoriesStyles.headingWithBottom16}>Выберите тему оформления:</h3>
-        {options.map(option => (
+        {options.map((option) => (
           <RadioButton
             key={option.value}
             checked={selectedValue === option.value}
@@ -410,9 +401,7 @@ export const WithError: Story = {
           value="post"
         />
         {hasError && (
-          <div style={radioButtonStoriesStyles.errorText}>
-            Пожалуйста, выберите способ доставки
-          </div>
+          <div style={radioButtonStoriesStyles.errorText}>Пожалуйста, выберите способ доставки</div>
         )}
       </div>
     );
@@ -785,4 +774,3 @@ export const ComplexExample: Story = {
     );
   },
 };
-

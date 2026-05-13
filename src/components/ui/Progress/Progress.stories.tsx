@@ -611,9 +611,7 @@ export const AnimatedProgress: Story = {
     return (
       <div style={progressStoriesStyles.sectionColumn24}>
         <div>
-          <p style={progressStoriesStyles.heading14}>
-            С анимацией (по умолчанию)
-          </p>
+          <p style={progressStoriesStyles.heading14}>С анимацией (по умолчанию)</p>
           <Progress value={value} label="С анимацией" animated={true} />
         </div>
         <div>
@@ -621,9 +619,7 @@ export const AnimatedProgress: Story = {
           <Progress value={value} label="Без анимации" animated={false} />
         </div>
         <div>
-          <p style={progressStoriesStyles.heading14}>
-            Быстрая анимация (150ms)
-          </p>
+          <p style={progressStoriesStyles.heading14}>Быстрая анимация (150ms)</p>
           <Progress
             value={value}
             label="Быстрая анимация"
@@ -632,9 +628,7 @@ export const AnimatedProgress: Story = {
           />
         </div>
         <div>
-          <p style={progressStoriesStyles.heading14}>
-            Медленная анимация (1000ms)
-          </p>
+          <p style={progressStoriesStyles.heading14}>Медленная анимация (1000ms)</p>
           <Progress
             value={value}
             label="Медленная анимация"
@@ -696,9 +690,7 @@ export const LoadingSpinner: Story = {
     return (
       <div style={progressStoriesStyles.maxWidth500Column}>
         <div>
-          <h3 style={progressStoriesStyles.heading14WithSpace}>
-            Линейный вариант со спиннером
-          </h3>
+          <h3 style={progressStoriesStyles.heading14WithSpace}>Линейный вариант со спиннером</h3>
           <Progress
             value={65}
             variant="linear"
@@ -713,9 +705,7 @@ export const LoadingSpinner: Story = {
         </div>
 
         <div>
-          <h3 style={progressStoriesStyles.heading14WithSpace}>
-            Круговой вариант со спиннером
-          </h3>
+          <h3 style={progressStoriesStyles.heading14WithSpace}>Круговой вариант со спиннером</h3>
           <Progress
             value={65}
             variant="circle"
@@ -765,7 +755,9 @@ export const BestPractices: Story = {
     return (
       <div style={progressStoriesStyles.maxWidth800Column}>
         <div>
-          <h3 style={progressStoriesStyles.heading16}>1. Всегда используйте label для доступности</h3>
+          <h3 style={progressStoriesStyles.heading16}>
+            1. Всегда используйте label для доступности
+          </h3>
           <Progress value={45} variant="linear" label="Загрузка файла" />
           <p style={progressStoriesStyles.helperText}>
             Label помогает пользователям понять, что показывает прогресс-бар
@@ -786,7 +778,9 @@ export const BestPractices: Story = {
         </div>
 
         <div>
-          <h3 style={progressStoriesStyles.heading16}>3. Используйте onStatusChange для отслеживания</h3>
+          <h3 style={progressStoriesStyles.heading16}>
+            3. Используйте onStatusChange для отслеживания
+          </h3>
           <Progress
             value={75}
             variant="linear"
@@ -845,7 +839,9 @@ export const BestPractices: Story = {
         </div>
 
         <div>
-          <h3 style={progressStoriesStyles.heading16}>7. Используйте хуки для управления состоянием</h3>
+          <h3 style={progressStoriesStyles.heading16}>
+            7. Используйте хуки для управления состоянием
+          </h3>
           <p style={progressStoriesStyles.helperTextNoTopWithBottom}>
             Используйте useProgress или useStepper для упрощения управления состоянием:
           </p>
@@ -1763,4 +1759,3 @@ export const AnimatedLinear: Story = {
     controls: { exclude: /.*/ },
   },
 };
-

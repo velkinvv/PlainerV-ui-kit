@@ -9,13 +9,21 @@ import { BorderRadiusHandler } from '../../../handlers/uiHandlers';
  * @property $drawerPlacement - Сторона выезда панели
  */
 export const DrawerOverlay = styled(Overlay).withConfig({
-  shouldForwardProp: prop => prop !== '$drawerPlacement',
+  shouldForwardProp: (prop) => prop !== '$drawerPlacement',
 })<{ $drawerPlacement: DrawerPlacement }>`
   padding: 0 !important;
   justify-content: ${({ $drawerPlacement }) =>
-    $drawerPlacement === 'right' ? 'flex-end' : $drawerPlacement === 'left' ? 'flex-start' : 'center'};
+    $drawerPlacement === 'right'
+      ? 'flex-end'
+      : $drawerPlacement === 'left'
+        ? 'flex-start'
+        : 'center'};
   align-items: ${({ $drawerPlacement }) =>
-    $drawerPlacement === 'bottom' ? 'flex-end' : $drawerPlacement === 'top' ? 'flex-start' : 'stretch'};
+    $drawerPlacement === 'bottom'
+      ? 'flex-end'
+      : $drawerPlacement === 'top'
+        ? 'flex-start'
+        : 'stretch'};
   flex-direction: ${({ $drawerPlacement }) =>
     $drawerPlacement === 'top' || $drawerPlacement === 'bottom' ? 'column' : 'row'};
 `;
@@ -27,7 +35,7 @@ export const DrawerOverlay = styled(Overlay).withConfig({
  * @property $placement - Сторона (влияет на скругления углов)
  */
 export const DrawerPanel = styled(motion.aside).withConfig({
-  shouldForwardProp: prop => !['$widthCss', '$heightCss', '$placement'].includes(prop),
+  shouldForwardProp: (prop) => !['$widthCss', '$heightCss', '$placement'].includes(prop),
 })<{
   $widthCss: string;
   $heightCss: string;

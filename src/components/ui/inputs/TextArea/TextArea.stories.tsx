@@ -52,7 +52,10 @@ const meta: Meta<typeof TextArea> = {
     readOnly: { control: 'boolean', description: 'Только чтение (серый фон, без resize)' },
     disabled: { control: 'boolean', description: 'Отключено' },
     skeleton: { control: 'boolean', description: 'Скелетон вместо поля' },
-    isLoading: { control: 'boolean', description: 'Показать индикатор загрузки в правой части поля' },
+    isLoading: {
+      control: 'boolean',
+      description: 'Показать индикатор загрузки в правой части поля',
+    },
     displayClearIcon: {
       control: 'boolean',
       description: 'Показывать кнопку очистки значения (для непустого и доступного поля)',
@@ -366,4 +369,3 @@ export const InFormWithSubmit: Story = {
     );
   },
 };
-

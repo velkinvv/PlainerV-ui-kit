@@ -221,7 +221,12 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           aria-invalid={error ? true : undefined}
           aria-describedby={ariaDescribedByForInput}
         />
-        <CheckboxBox checked={checked} indeterminate={indeterminate} disabled={disabled} size={size}>
+        <CheckboxBox
+          checked={checked}
+          indeterminate={indeterminate}
+          disabled={disabled}
+          size={size}
+        >
           <CheckIcon checked={checked} indeterminate={indeterminate} size={size}>
             {indeterminate ? (
               <svg
@@ -232,12 +237,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
                 xmlns="http://www.w3.org/2000/svg"
                 preserveAspectRatio="xMidYMid meet"
               >
-                <path
-                  d="M2 6H10"
-                  stroke={neutral[10]}
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
+                <path d="M2 6H10" stroke={neutral[10]} strokeWidth="1.5" strokeLinecap="round" />
               </svg>
             ) : null}
             {!indeterminate && checked ? (
@@ -277,8 +277,9 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       : null;
 
     /** Оболочка поля: заголовки, ширина и/или текстовые хвосты как у инпутов */
-    const useStructuredFieldWrapper =
-      Boolean(fieldLabel || additionalLabel || fullWidth || hasFooterTexts);
+    const useStructuredFieldWrapper = Boolean(
+      fieldLabel || additionalLabel || fullWidth || hasFooterTexts,
+    );
 
     if (!useStructuredFieldWrapper) {
       return (

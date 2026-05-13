@@ -84,7 +84,9 @@ describe('TimeInput', () => {
 
   it('handles range mode', async () => {
     const onChange = jest.fn();
-    const { container } = renderWithTheme(<TimeInput {...defaultProps} range onChange={onChange} />);
+    const { container } = renderWithTheme(
+      <TimeInput {...defaultProps} range onChange={onChange} />,
+    );
     clickClockIcon(container);
     await waitFor(() => {
       expect(screen.getByText('Очистить')).toBeInTheDocument();

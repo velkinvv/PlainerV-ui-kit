@@ -151,34 +151,34 @@ const HandlersOverview = () => {
         initial="hidden"
         animate="visible"
       >
-        {handlers.map(handler => (
+        {handlers.map((handler) => (
           <motion.div key={handler.name} variants={storybookStaggerItemVariants}>
             <HandlerCard $backgroundColor={handler.color} $borderColor={handler.borderColor}>
-            <HandlerCardHeader>
-              <Typography variant="h4" marginRight="sm">
-                {handler.icon}
+              <HandlerCardHeader>
+                <Typography variant="h4" marginRight="sm">
+                  {handler.icon}
+                </Typography>
+                <Typography variant="h4">{handler.name}</Typography>
+              </HandlerCardHeader>
+
+              <MutedDescriptionText>
+                <Typography variant="body1" marginBottom="md">
+                  {handler.description}
+                </Typography>
+              </MutedDescriptionText>
+
+              <Typography variant="body2" marginBottom="sm" fontWeight="bold">
+                Основные возможности:
               </Typography>
-              <Typography variant="h4">{handler.name}</Typography>
-            </HandlerCardHeader>
 
-            <MutedDescriptionText>
-              <Typography variant="body1" marginBottom="md">
-                {handler.description}
-              </Typography>
-            </MutedDescriptionText>
-
-            <Typography variant="body2" marginBottom="sm" fontWeight="bold">
-              Основные возможности:
-            </Typography>
-
-            <HandlerFeaturesList>
-              {handler.features.map((feature, featureIndex) => (
-                <HandlerFeatureListItem key={featureIndex}>
-                  <Typography variant="body2">{feature}</Typography>
-                </HandlerFeatureListItem>
-              ))}
-            </HandlerFeaturesList>
-          </HandlerCard>
+              <HandlerFeaturesList>
+                {handler.features.map((feature, featureIndex) => (
+                  <HandlerFeatureListItem key={featureIndex}>
+                    <Typography variant="body2">{feature}</Typography>
+                  </HandlerFeatureListItem>
+                ))}
+              </HandlerFeaturesList>
+            </HandlerCard>
           </motion.div>
         ))}
       </HandlersGrid>
@@ -284,7 +284,7 @@ const MyComponent = () => {
         initial="hidden"
         animate="visible"
       >
-        {examples.map(example => (
+        {examples.map((example) => (
           <motion.div key={example.title} variants={storybookStaggerItemVariants}>
             <ExampleCard>
               <ExampleHeader>
@@ -387,14 +387,11 @@ const handleDateParse = (input: string): DateParseResult => {
         initial="hidden"
         animate="visible"
       >
-        {integrationSteps.map(step => (
+        {integrationSteps.map((step) => (
           <motion.div key={step.title} variants={storybookStaggerItemVariants}>
             <IntegrationStepCard>
               <IntegrationStepHeader>
-                <Badge
-                  variant="primary"
-                  as={StepBadge}
-                >
+                <Badge variant="primary" as={StepBadge}>
                   {step.step}
                 </Badge>
                 <Typography variant="h5">{step.title}</Typography>
@@ -438,4 +435,3 @@ export const AllExamples: Story = {
     </StorybookStaggerStack>
   ),
 };
-

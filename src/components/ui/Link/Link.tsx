@@ -16,8 +16,15 @@ export const Link = forwardRef<HTMLAnchorElement | HTMLButtonElement, LinkProps>
   const safeRel = mergeAnchorRel(target, rel);
 
   if (props.mode === LinkMode.BUTTON) {
-    const { mode: _mode, href: _h, target: _t, rel: _r, download: _d, className: _c, ...buttonProps } =
-      props as LinkButtonProps;
+    const {
+      mode: _mode,
+      href: _h,
+      target: _t,
+      rel: _r,
+      download: _d,
+      className: _c,
+      ...buttonProps
+    } = props as LinkButtonProps;
     return (
       <Button
         ref={ref as React.Ref<HTMLAnchorElement>}

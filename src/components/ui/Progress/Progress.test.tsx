@@ -177,9 +177,12 @@ describe('Progress Component', () => {
         </ThemeProvider>,
       );
 
-      await waitFor(() => {
-        expect(onStatusChange).toHaveBeenCalledWith('success');
-      }, { timeout: 1000 });
+      await waitFor(
+        () => {
+          expect(onStatusChange).toHaveBeenCalledWith('success');
+        },
+        { timeout: 1000 },
+      );
     });
 
     it('должен вызывать onComplete при достижении 100%', async () => {
@@ -197,9 +200,12 @@ describe('Progress Component', () => {
         </ThemeProvider>,
       );
 
-      await waitFor(() => {
-        expect(onComplete).toHaveBeenCalled();
-      }, { timeout: 1000 });
+      await waitFor(
+        () => {
+          expect(onComplete).toHaveBeenCalled();
+        },
+        { timeout: 1000 },
+      );
     });
 
     it('должен вызывать onStepClick при клике на шаг в степпере', async () => {
@@ -286,12 +292,7 @@ describe('Progress Component', () => {
 
     it('должен скрывать значение если showValueLabel=false и showPercentage не указан', () => {
       renderWithTheme(
-        <Progress
-          value={50}
-          variant="linear"
-          showValueLabel={false}
-          showPercentage={false}
-        />,
+        <Progress value={50} variant="linear" showValueLabel={false} showPercentage={false} />,
       );
       // Проверяем, что процент не отображается
       expect(screen.queryByText('50%')).not.toBeInTheDocument();
@@ -345,12 +346,7 @@ describe('Progress Component', () => {
 
     it('должен показывать галочку при завершении в круговом варианте', () => {
       renderWithTheme(
-        <Progress
-          value={100}
-          variant="circle"
-          showCheckmarkOnComplete={true}
-          size={Size.MD}
-        />,
+        <Progress value={100} variant="circle" showCheckmarkOnComplete={true} size={Size.MD} />,
       );
       const progressbar = screen.getByRole('progressbar');
       expect(progressbar).toBeInTheDocument();
@@ -359,9 +355,7 @@ describe('Progress Component', () => {
 
   describe('Размеры', () => {
     it('должен применять разные размеры', () => {
-      const { rerender } = renderWithTheme(
-        <Progress value={50} variant="linear" size={Size.XS} />,
-      );
+      const { rerender } = renderWithTheme(<Progress value={50} variant="linear" size={Size.XS} />);
       expect(screen.getByRole('progressbar')).toBeInTheDocument();
 
       rerender(
@@ -375,9 +369,7 @@ describe('Progress Component', () => {
 
   describe('Дополнительная информация', () => {
     it('должен отображать estimatedTime', () => {
-      renderWithTheme(
-        <Progress value={50} variant="linear" label="Загрузка" estimatedTime={30} />,
-      );
+      renderWithTheme(<Progress value={50} variant="linear" label="Загрузка" estimatedTime={30} />);
       // estimatedTime форматируется как "30 сек"
       const label = screen.getByText('Загрузка');
       expect(label).toBeInTheDocument();
@@ -386,9 +378,7 @@ describe('Progress Component', () => {
     });
 
     it('должен отображать speed', () => {
-      renderWithTheme(
-        <Progress value={50} variant="linear" label="Загрузка" speed="2.5 MB/s" />,
-      );
+      renderWithTheme(<Progress value={50} variant="linear" label="Загрузка" speed="2.5 MB/s" />);
       // speed отображается рядом с label
       expect(screen.getByText(/2.5 MB\/s/)).toBeInTheDocument();
     });

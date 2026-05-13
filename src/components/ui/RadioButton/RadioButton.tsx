@@ -223,10 +223,7 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
     const hasFooterMessages = Boolean(error || success || helperText || extraFooterText);
 
     const useFieldShell =
-      Boolean(fieldLabel) ||
-      Boolean(additionalLabel) ||
-      Boolean(fullWidth) ||
-      hasFooterMessages;
+      Boolean(fieldLabel) || Boolean(additionalLabel) || Boolean(fullWidth) || hasFooterMessages;
 
     const radioContent = (
       <RadioContainerWrapper
@@ -240,23 +237,23 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
         tabIndex={disabled || readOnly ? -1 : 0}
       >
         <RadioContainer htmlFor={radioDomId} disabled={disabled} readOnly={readOnly}>
-        <RadioInput
-          ref={ref}
-          id={radioDomId}
-          type="radio"
-          name={name}
-          value={value}
-          checked={checked}
-          onChange={handleChange}
-          disabled={disabled}
+          <RadioInput
+            ref={ref}
+            id={radioDomId}
+            type="radio"
+            name={name}
+            value={value}
+            checked={checked}
+            onChange={handleChange}
+            disabled={disabled}
             readOnly={readOnly}
             required={required || Boolean(formRequired)}
             aria-invalid={error ? true : undefined}
             aria-required={required || Boolean(formRequired) ? 'true' : undefined}
             aria-disabled={disabled ? 'true' : undefined}
             aria-describedby={ariaDescribedBy}
-          {...props}
-        />
+            {...props}
+          />
           {showLeftIcon && <RadioIconContainer data-position="left">{leftIcon}</RadioIconContainer>}
           <RadioCircle
             checked={checked}
@@ -268,7 +265,7 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
             status={status}
           >
             <RadioDot checked={checked} size={size} variant={variant} />
-        </RadioCircle>
+          </RadioCircle>
           {shouldShowLabel && (
             <RadioTextContainer data-label-position={labelPosition}>
               {label && (
@@ -287,7 +284,7 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
           {showRightIcon && (
             <RadioIconContainer data-position="right">{rightIcon}</RadioIconContainer>
           )}
-      </RadioContainer>
+        </RadioContainer>
       </RadioContainerWrapper>
     );
 
@@ -301,9 +298,7 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
           radioContent
         )}
         {error ? <ErrorText id={radioFooterErrorIdentifier}>{error}</ErrorText> : null}
-        {success ? (
-          <SuccessText id={radioFooterSuccessIdentifier}>Успешно</SuccessText>
-        ) : null}
+        {success ? <SuccessText id={radioFooterSuccessIdentifier}>Успешно</SuccessText> : null}
         {helperText && !error && !success ? (
           <HelperText id={radioFooterHelperIdentifier}>{helperText}</HelperText>
         ) : null}

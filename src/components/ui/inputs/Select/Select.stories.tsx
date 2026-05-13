@@ -174,7 +174,8 @@ const meta: Meta<typeof Select> = {
     },
     onClearIconClick: {
       action: 'clearIconClick',
-      description: 'Колбэк после сброса значения (и строки поиска в `searchSelect`) по клику на иконку очистки',
+      description:
+        'Колбэк после сброса значения (и строки поиска в `searchSelect`) по клику на иконку очистки',
     },
     showMultiSelectionCountBadge: {
       control: 'boolean',
@@ -200,7 +201,7 @@ const meta: Meta<typeof Select> = {
     clearInputValueAfterSelect: {
       control: 'boolean',
       description:
-        'Только `searchSelect`: после выбора пункта из списка очищать строку в поле фильтра (`onSearch(\'\')` при контроле — обновите `searchValue`)',
+        "Только `searchSelect`: после выбора пункта из списка очищать строку в поле фильтра (`onSearch('')` при контроле — обновите `searchValue`)",
     },
     searchPlaceholder: { description: 'Плейсхолдер поля поиска в панели' },
     onInputChange: {
@@ -245,7 +246,8 @@ const meta: Meta<typeof Select> = {
     dropdownVariant: {
       control: 'radio',
       options: ['default', 'elevated', 'outlined'],
-      description: 'Вариант оформления панели `Dropdown`; значения: `default`, `elevated`, `outlined`',
+      description:
+        'Вариант оформления панели `Dropdown`; значения: `default`, `elevated`, `outlined`',
     },
     menuMaxHeight: {
       description:
@@ -856,4 +858,3 @@ export const InFormWithSubmit: Story = {
     );
   },
 };
-

@@ -1,4 +1,7 @@
-import { defaultDropdownSearchMatches, getDropdownItemSearchHaystackParts } from './dropdownSearchMatchHandlers';
+import {
+  defaultDropdownSearchMatches,
+  getDropdownItemSearchHaystackParts,
+} from './dropdownSearchMatchHandlers';
 
 describe('defaultDropdownSearchMatches', () => {
   const parts = { labelLower: 'new york city', descriptionLower: '' };

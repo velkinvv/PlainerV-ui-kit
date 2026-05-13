@@ -1,6 +1,5 @@
 import type { ProgressTheme } from '../../types/theme';
 import { Size } from '../../types/sizes';
-import { fontFamily } from '../fonts';
 import { colors } from '../../variables/colors';
 
 /**

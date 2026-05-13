@@ -170,16 +170,18 @@ export const Drawer = forwardRef<HTMLElement, DrawerProps>(
         >
           {headerSlot ? (
             <DrawerHeader>{headerSlot}</DrawerHeader>
-          ) : (title || showCloseButton) && (
-            <DrawerHeader>
-              {title ? <DrawerTitle id={titleId}>{title}</DrawerTitle> : null}
-              {!title && showCloseButton ? <DrawerHeaderSpacer aria-hidden /> : null}
-              {showCloseButton ? (
-                <CloseButton type="button" onClick={onClose} aria-label="Закрыть">
-                  <Icon name="PhosphorX" size={IconSize.MD} color="#9E9E9E" />
-                </CloseButton>
-              ) : null}
-            </DrawerHeader>
+          ) : (
+            (title || showCloseButton) && (
+              <DrawerHeader>
+                {title ? <DrawerTitle id={titleId}>{title}</DrawerTitle> : null}
+                {!title && showCloseButton ? <DrawerHeaderSpacer aria-hidden /> : null}
+                {showCloseButton ? (
+                  <CloseButton type="button" onClick={onClose} aria-label="Закрыть">
+                    <Icon name="PhosphorX" size={IconSize.MD} color="#9E9E9E" />
+                  </CloseButton>
+                ) : null}
+              </DrawerHeader>
+            )
           )}
           <DrawerBody ref={contentRef} tabIndex={-1}>
             {children}

@@ -80,13 +80,10 @@ export const Default: Story = {
     contentAriaLabel: 'Дополнительная информация',
   },
   render: (storyArgs) => (
-    <Popover
-      {...storyArgs}
-      trigger={<Button variant="secondary">Открыть popover</Button>}
-    >
+    <Popover {...storyArgs} trigger={<Button variant="secondary">Открыть popover</Button>}>
       <div style={popoverStoriesStyles.maxWidth280}>
-        Текст и действия внутри панели. Радиусы, отступы и тень совпадают с токенами выпадающего меню (
-        <code>theme.dropdowns</code>).
+        Текст и действия внутри панели. Радиусы, отступы и тень совпадают с токенами выпадающего
+        меню (<code>theme.dropdowns</code>).
       </div>
     </Popover>
   ),
@@ -139,7 +136,10 @@ export const Controlled: Story = {
             Состояние снаружи: <strong>{isOpen ? 'открыто' : 'закрыто'}</strong>
           </div>
         </Popover>
-        <Button variant="ghost" onClick={() => setIsOpen((previousOpenState) => !previousOpenState)}>
+        <Button
+          variant="ghost"
+          onClick={() => setIsOpen((previousOpenState) => !previousOpenState)}
+        >
           Переключить извне
         </Button>
       </div>
@@ -155,10 +155,7 @@ export const ScrollableContent: Story = {
     contentAriaLabel: 'Длинный список',
   },
   render: (storyArgs) => (
-    <Popover
-      {...storyArgs}
-      trigger={<Button variant="secondary">С прокруткой</Button>}
-    >
+    <Popover {...storyArgs} trigger={<Button variant="secondary">С прокруткой</Button>}>
       <ul style={popoverStoriesStyles.scrollableList}>
         {Array.from({ length: 20 }, (_unusedItem, lineNumber) => (
           <li key={lineNumber}>Строка {lineNumber + 1}</li>
@@ -171,14 +168,18 @@ export const ScrollableContent: Story = {
 export const InlineInCard: Story = {
   render: () => (
     <div style={popoverStoriesStyles.inlineCard}>
-      <p style={popoverStoriesStyles.paragraphNoTopMargin}>Панель позиционируется относительно корня popover (relative).</p>
+      <p style={popoverStoriesStyles.paragraphNoTopMargin}>
+        Панель позиционируется относительно корня popover (relative).
+      </p>
       <Popover
         inline
         positioningMode="autoFit"
         contentAriaLabel="Внутри карточки"
         trigger={<Button variant="secondary">Inline popover</Button>}
       >
-        <div style={popoverStoriesStyles.width240}>Содержимое без портала в body — удобно в модалках и overflow-контейнерах.</div>
+        <div style={popoverStoriesStyles.width240}>
+          Содержимое без портала в body — удобно в модалках и overflow-контейнерах.
+        </div>
       </Popover>
     </div>
   ),

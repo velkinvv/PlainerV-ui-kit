@@ -91,7 +91,7 @@ const BasicLocalStorageDemo = () => {
           <Typography variant="body1" marginBottom="sm">
             Имя:
           </Typography>
-          <Input value={name} onChange={e => setName(e.target.value)} placeholder="Введите имя" />
+          <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Введите имя" />
           <ActionsRowTop>
             <Button size={Size.SM} onClick={() => setName('')}>
               Очистить
@@ -109,7 +109,7 @@ const BasicLocalStorageDemo = () => {
           <Input
             type="number"
             value={age}
-            onChange={e => setAge(parseInt(e.target.value) || 0)}
+            onChange={(e) => setAge(parseInt(e.target.value) || 0)}
             placeholder="Введите возраст"
           />
           <ActionsRowTop>
@@ -168,14 +168,14 @@ const ObjectLocalStorageDemo = () => {
   });
 
   const updateUser = (fieldName: string, fieldValue: string) => {
-    setUser(prev => ({
+    setUser((prev) => ({
       ...prev,
       [fieldName]: fieldValue,
     }));
   };
 
   const updatePreferences = (fieldName: string, fieldValue: string | boolean) => {
-    setUser(prev => ({
+    setUser((prev) => ({
       ...prev,
       preferences: {
         ...prev?.preferences,
@@ -197,7 +197,7 @@ const ObjectLocalStorageDemo = () => {
           </Typography>
           <Input
             value={user.name}
-            onChange={e => updateUser('name', e.target.value)}
+            onChange={(e) => updateUser('name', e.target.value)}
             placeholder="Введите имя"
           />
         </div>
@@ -208,7 +208,7 @@ const ObjectLocalStorageDemo = () => {
           </Typography>
           <Input
             value={user.email}
-            onChange={e => updateUser('email', e.target.value)}
+            onChange={(e) => updateUser('email', e.target.value)}
             placeholder="Введите email"
           />
         </div>
@@ -258,23 +258,23 @@ const ObjectLocalStorageDemo = () => {
 
       <SectionContainer>
         <ActionsRow>
-        <Button onClick={removeUser} variant="outlined">
-          Удалить пользователя
-        </Button>
-        <Button
-          onClick={() =>
-            setUser({
-              name: 'Новый пользователь',
-              email: 'new@example.com',
-              preferences: {
-                theme: 'light',
-                notifications: false,
-              },
-            })
-          }
-        >
-          Сбросить к новому пользователю
-        </Button>
+          <Button onClick={removeUser} variant="outlined">
+            Удалить пользователя
+          </Button>
+          <Button
+            onClick={() =>
+              setUser({
+                name: 'Новый пользователь',
+                email: 'new@example.com',
+                preferences: {
+                  theme: 'light',
+                  notifications: false,
+                },
+              })
+            }
+          >
+            Сбросить к новому пользователю
+          </Button>
         </ActionsRow>
       </SectionContainer>
 
@@ -312,7 +312,7 @@ const SyncDemo = () => {
           </Typography>
           <Input
             value={sharedValue}
-            onChange={e => setSharedValue(e.target.value)}
+            onChange={(e) => setSharedValue(e.target.value)}
             placeholder="Введите значение"
           />
           <ActionsRowTop>
@@ -333,9 +333,7 @@ const SyncDemo = () => {
             <Button size={Size.SM} onClick={() => setCounter(counter - 1)}>
               -
             </Button>
-            <CounterValue variant="h4">
-              {counter}
-            </CounterValue>
+            <CounterValue variant="h4">{counter}</CounterValue>
             <Button size={Size.SM} onClick={() => setCounter(counter + 1)}>
               +
             </Button>
@@ -367,11 +365,11 @@ const ArrayLocalStorageDemo = () => {
 
   const addItem = () => {
     const newItem = `Элемент ${items.length + 1}`;
-    setItems(prev => [...prev, newItem]);
+    setItems((prev) => [...prev, newItem]);
   };
 
   const removeItem = (index: number) => {
-    setItems(prev => prev.filter((_, i) => i !== index));
+    setItems((prev) => prev.filter((_, i) => i !== index));
   };
 
   const clearItems = () => {
@@ -386,13 +384,13 @@ const ArrayLocalStorageDemo = () => {
 
       <SectionContainer>
         <ActionsRowWrap>
-        <Button onClick={addItem}>Добавить элемент</Button>
-        <Button onClick={clearItems} variant="outlined">
-          Очистить массив
-        </Button>
-        <Button onClick={removeItems} variant="outlined">
-          Удалить из localStorage
-        </Button>
+          <Button onClick={addItem}>Добавить элемент</Button>
+          <Button onClick={clearItems} variant="outlined">
+            Очистить массив
+          </Button>
+          <Button onClick={removeItems} variant="outlined">
+            Удалить из localStorage
+          </Button>
         </ActionsRowWrap>
       </SectionContainer>
 
@@ -401,9 +399,7 @@ const ArrayLocalStorageDemo = () => {
           Элементы ({items.length}):
         </Typography>
         {items.length === 0 ? (
-          <EmptyItemsText variant="body2">
-            Массив пуст
-          </EmptyItemsText>
+          <EmptyItemsText variant="body2">Массив пуст</EmptyItemsText>
         ) : (
           <ItemsList>
             {items.map((item, itemIndex) => (
@@ -460,4 +456,3 @@ export const AllExamples: Story = {
     </StorybookStaggerStack>
   ),
 };
-

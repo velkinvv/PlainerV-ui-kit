@@ -62,7 +62,7 @@ export const Default: Story = {
           <Input
             id="column-filter-demo-input"
             value={draftValue}
-            onChange={event => {
+            onChange={(event) => {
               setDraftValue(event.target.value);
             }}
             placeholder="Текст условия"
@@ -102,7 +102,7 @@ export const EmbeddedInDropdown: Story = {
           <Input
             id="column-filter-embedded-input"
             value={draftValue}
-            onChange={event => {
+            onChange={(event) => {
               setDraftValue(event.target.value);
             }}
             placeholder="Введите текст"

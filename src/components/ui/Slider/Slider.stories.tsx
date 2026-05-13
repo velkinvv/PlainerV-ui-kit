@@ -371,7 +371,7 @@ export const SmallIntegerScale: Story = {
               max={10}
               step={1}
               value={range}
-            onChange={(nextRangeValue) => setRange([nextRangeValue[0], nextRangeValue[1]])}
+              onChange={(nextRangeValue) => setRange([nextRangeValue[0], nextRangeValue[1]])}
               formatValue={(n) => String(n)}
               formatMinLabel={() => '0'}
               formatMaxLabel={() => '10'}
@@ -505,7 +505,14 @@ export const SkeletonLoading: Story = {
       <SliderStoriesStack>
         <SliderStoriesSection>
           <SliderStoriesSectionTitle>Одиночный, без лейбла</SliderStoriesSectionTitle>
-          <Slider skeleton fullWidth min={0} max={100} formatMinLabel={() => ''} formatMaxLabel={() => ''} />
+          <Slider
+            skeleton
+            fullWidth
+            min={0}
+            max={100}
+            formatMinLabel={() => ''}
+            formatMaxLabel={() => ''}
+          />
         </SliderStoriesSection>
         <SliderStoriesSection>
           <SliderStoriesSectionTitle>С лейблом и подсказкой</SliderStoriesSectionTitle>
@@ -520,7 +527,14 @@ export const SkeletonLoading: Story = {
         </SliderStoriesSection>
         <SliderStoriesSection>
           <SliderStoriesSectionTitle>Диапазон</SliderStoriesSectionTitle>
-          <RangeSlider skeleton fullWidth min={0} max={100} formatMinLabel={() => ''} formatMaxLabel={() => ''} />
+          <RangeSlider
+            skeleton
+            fullWidth
+            min={0}
+            max={100}
+            formatMinLabel={() => ''}
+            formatMaxLabel={() => ''}
+          />
         </SliderStoriesSection>
       </SliderStoriesStack>
     </SliderStoriesRoot>

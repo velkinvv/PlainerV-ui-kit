@@ -1,5 +1,4 @@
 ﻿import type { Meta, StoryObj } from '@storybook/react';
-import React from 'react';
 import { Link } from './Link';
 import { LinkMode } from '../../../types/ui';
 import { ButtonVariant } from '../../../types/ui';
@@ -96,4 +95,3 @@ export const ButtonPrimaryExternal: Story = {
     children: 'Открыть в новой вкладке',
   },
 };
-

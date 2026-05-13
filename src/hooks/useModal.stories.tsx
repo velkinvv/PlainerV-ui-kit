@@ -5,7 +5,6 @@ import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
 import {
   storybookStaggerContainerVariants,
   storybookStaggerItemVariants,
-  useStorybookMotionTransitions,
 } from '@/handlers/storybookMotion';
 import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
@@ -97,7 +96,7 @@ const BasicModalDemo = () => {
           },
           {
             label: 'Button',
-              variant: ButtonVariant.OUTLINE,
+            variant: ButtonVariant.OUTLINE,
             onClick: close,
             placement: 'primary',
           },
@@ -149,7 +148,7 @@ const InitialStateDemo = () => {
           },
           {
             label: 'Button',
-              variant: ButtonVariant.OUTLINE,
+            variant: ButtonVariant.OUTLINE,
             onClick: close,
             placement: 'primary',
           },
@@ -239,7 +238,7 @@ const IntegrationDemo = () => {
   const [counter, setCounter] = React.useState(0);
 
   const handleOpen = () => {
-    setCounter(prev => prev + 1);
+    setCounter((prev) => prev + 1);
     open();
   };
 
@@ -281,7 +280,7 @@ const IntegrationDemo = () => {
           },
           {
             label: 'Button',
-              variant: ButtonVariant.OUTLINE,
+            variant: ButtonVariant.OUTLINE,
             onClick: close,
             placement: 'primary',
           },
@@ -317,4 +316,3 @@ export const AllExamples: Story = {
     </StorybookStaggerStack>
   ),
 };
-

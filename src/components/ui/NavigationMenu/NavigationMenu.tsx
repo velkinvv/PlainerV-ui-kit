@@ -65,7 +65,7 @@ export const NavigationMenu: React.FC<NavigationMenuProps> & {
   const isControlled = activeIdProp !== undefined;
   const [internalActiveId, setInternalActiveId] = useState<string | null>(defaultActiveId ?? null);
 
-  const activeId = isControlled ? activeIdProp ?? null : internalActiveId;
+  const activeId = isControlled ? (activeIdProp ?? null) : internalActiveId;
 
   const setActiveId = useCallback(
     (id: string) => {

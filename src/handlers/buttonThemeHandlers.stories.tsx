@@ -90,9 +90,7 @@ const ButtonSizesDemo = () => {
         <Typography variant="body1" marginBottom="sm">
           <strong>Стили для размера {selectedSize}:</strong>
         </Typography>
-        <pre style={storybookDemoStyles.demoJsonPre12}>
-          {JSON.stringify(buttonSize, null, 2)}
-        </pre>
+        <pre style={storybookDemoStyles.demoJsonPre12}>{JSON.stringify(buttonSize, null, 2)}</pre>
       </div>
     </Card>
   );
@@ -232,9 +230,7 @@ const ButtonStatesDemo = () => {
             Стили для состояния {selectedState} варианта {selectedVariant}:
           </strong>
         </Typography>
-        <pre style={storybookDemoStyles.demoJsonPre12}>
-          {JSON.stringify(stateStyles, null, 2)}
-        </pre>
+        <pre style={storybookDemoStyles.demoJsonPre12}>{JSON.stringify(stateStyles, null, 2)}</pre>
       </div>
     </Card>
   );
@@ -270,9 +266,7 @@ const ButtonAnimationsDemo = () => {
             <strong>Настройки:</strong>
           </Typography>
           <div style={storybookDemoStyles.demoResultPanel}>
-            <pre style={storybookDemoStyles.demoJsonPre12}>
-              {JSON.stringify(settings, null, 2)}
-            </pre>
+            <pre style={storybookDemoStyles.demoJsonPre12}>{JSON.stringify(settings, null, 2)}</pre>
           </div>
         </div>
       </div>
@@ -411,4 +405,3 @@ export const AllExamples: Story = {
     </StorybookStaggerStack>
   ),
 };
-

@@ -6,7 +6,11 @@ import clsx from 'clsx';
 import { Size } from '@/types/sizes';
 import type { PopoverProps } from '@/types/ui';
 
-import { calculateDropdownPosition, handleClickOutsideEvent, isClickInsideDropdown } from '../Dropdown/handlers';
+import {
+  calculateDropdownPosition,
+  handleClickOutsideEvent,
+  isClickInsideDropdown,
+} from '../Dropdown/handlers';
 import { PopoverSurface } from './Popover.style';
 
 const defaultPortalRoot = (): HTMLElement | null =>
@@ -88,7 +92,7 @@ export const Popover: React.FC<PopoverProps> = ({
     if (!triggerElement || !menuElement) {
       return;
     }
-    const boundary = inline ? boundaryElement ?? triggerElement : undefined;
+    const boundary = inline ? (boundaryElement ?? triggerElement) : undefined;
     const next = calculateDropdownPosition({
       triggerElement,
       menuElement,

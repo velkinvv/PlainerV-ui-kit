@@ -89,8 +89,7 @@ export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuIte
       () => buildDropdownTreeBranchKey(treeAncestorKey ?? '', { id, value, label }, treeIndex),
       [treeAncestorKey, id, value, label, treeIndex],
     );
-    const treeBranchExpanded =
-      !hasNestedTree || (isTreeBranchExpanded?.(branchKey) ?? true);
+    const treeBranchExpanded = !hasNestedTree || (isTreeBranchExpanded?.(branchKey) ?? true);
 
     /** Чекбоксы в мультивыборе: по умолчанию показываем, пока родитель не передал `showCheckbox={false}` */
     const showMultiCheckbox = Boolean(multiSelection && showCheckboxFromMenu !== false);
@@ -308,7 +307,9 @@ export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuIte
         <DropdownMenuTreeExpandButton
           type="button"
           aria-expanded={treeBranchExpanded}
-          aria-label={treeBranchExpanded ? 'Свернуть вложенный список' : 'Развернуть вложенный список'}
+          aria-label={
+            treeBranchExpanded ? 'Свернуть вложенный список' : 'Развернуть вложенный список'
+          }
           onClick={(expandEvent) => {
             if (branchKey) {
               toggleTreeBranch?.(branchKey, expandEvent);
@@ -402,7 +403,8 @@ export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuIte
 
     const itemNode = skeleton ? skeletonNode : regularNode;
 
-    const resolvedTooltipContent = tooltip ?? (showTooltip ? (tooltipText ?? label ?? description) : null);
+    const resolvedTooltipContent =
+      tooltip ?? (showTooltip ? (tooltipText ?? label ?? description) : null);
     /** Для `disabled` / `loading` / `skeleton` подсказку у пункта не показываем (как у `Tooltip` с `disabled`). */
     const isItemHelpSuppressed = isDisabled || skeleton || loading;
 

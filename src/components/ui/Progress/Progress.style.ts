@@ -463,25 +463,25 @@ export const StepperStep = styled.div<{
   flex: 1;
   height: ${({ theme, $size }) => getProgressHeight($size, theme)};
   background: ${({ theme, $completed, $active, $isNext, $isFuture }) => {
-      if ($completed || $active) return theme.progress.colors.fill;
-      if ($isNext) {
-        // Следующий шаг - светло-зеленый (50% прозрачности)
-        // Конвертируем hex в rgba для прозрачности
-        const hex = theme.progress.colors.fill.replace('#', '');
-        const r = parseInt(hex.substring(0, 2), 16);
-        const g = parseInt(hex.substring(2, 4), 16);
-        const b = parseInt(hex.substring(4, 6), 16);
-        return `rgba(${r}, ${g}, ${b}, 0.5)`;
-      }
-      if ($isFuture) {
-        // Будущие шаги - очень светлый (20% прозрачности)
-        const hex = theme.progress.colors.fill.replace('#', '');
-        const r = parseInt(hex.substring(0, 2), 16);
-        const g = parseInt(hex.substring(2, 4), 16);
-        const b = parseInt(hex.substring(4, 6), 16);
-        return `rgba(${r}, ${g}, ${b}, 0.2)`;
-      }
-      return theme.progress.colors.track;
+    if ($completed || $active) return theme.progress.colors.fill;
+    if ($isNext) {
+      // Следующий шаг - светло-зеленый (50% прозрачности)
+      // Конвертируем hex в rgba для прозрачности
+      const hex = theme.progress.colors.fill.replace('#', '');
+      const r = parseInt(hex.substring(0, 2), 16);
+      const g = parseInt(hex.substring(2, 4), 16);
+      const b = parseInt(hex.substring(4, 6), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.5)`;
+    }
+    if ($isFuture) {
+      // Будущие шаги - очень светлый (20% прозрачности)
+      const hex = theme.progress.colors.fill.replace('#', '');
+      const r = parseInt(hex.substring(0, 2), 16);
+      const g = parseInt(hex.substring(2, 4), 16);
+      const b = parseInt(hex.substring(4, 6), 16);
+      return `rgba(${r}, ${g}, ${b}, 0.2)`;
+    }
+    return theme.progress.colors.track;
   }};
   border-radius: 2px;
   transition: background 0.3s ease;

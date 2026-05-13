@@ -446,9 +446,7 @@ export const MessageCountWithoutImage: Story = {
 
       <div style={avatarStoriesStyles.centeredCell}>
         <Avatar size={Size.MD} status={AvatarStatus.WARNING} messageCount={99} alt="99 messages" />
-        <p style={avatarStoriesStyles.caption}>
-          99 сообщений (Warning - без изображения)
-        </p>
+        <p style={avatarStoriesStyles.caption}>99 сообщений (Warning - без изображения)</p>
       </div>
 
       <div style={avatarStoriesStyles.centeredCell}>
@@ -458,9 +456,7 @@ export const MessageCountWithoutImage: Story = {
           messageCount={150}
           alt="150 messages"
         />
-        <p style={avatarStoriesStyles.caption}>
-          150+ сообщений (Offline - без изображения)
-        </p>
+        <p style={avatarStoriesStyles.caption}>150+ сообщений (Offline - без изображения)</p>
       </div>
     </div>
   ),
@@ -887,4 +883,3 @@ export const BadgeVariations: Story = {
     },
   },
 };
-

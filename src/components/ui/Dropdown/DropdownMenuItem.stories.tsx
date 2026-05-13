@@ -19,7 +19,9 @@ const meta: Meta<typeof DropdownMenuItem> = {
   title: 'UI Kit/Navigation/Dropdown/DropdownMenuItem',
   component: DropdownMenuItem,
   decorators: [
-    Story => <DropdownMenu style={dropdownMenuItemStoriesStyles.menuDecoratorRoot}>{Story()}</DropdownMenu>,
+    (Story) => (
+      <DropdownMenu style={dropdownMenuItemStoriesStyles.menuDecoratorRoot}>{Story()}</DropdownMenu>
+    ),
   ],
   parameters: {
     docs: {
@@ -30,7 +32,10 @@ const meta: Meta<typeof DropdownMenuItem> = {
   },
   argTypes: {
     label: { description: 'Основной текст пункта меню', control: { type: 'text' } },
-    description: { description: 'Дополнительное описание под заголовком', control: { type: 'text' } },
+    description: {
+      description: 'Дополнительное описание под заголовком',
+      control: { type: 'text' },
+    },
     value: {
       description: 'Полезное значение, которое вернётся в `onSelect`',
       control: { type: 'text' },
@@ -40,7 +45,10 @@ const meta: Meta<typeof DropdownMenuItem> = {
     },
     icon: { description: 'Левая иконка/аватар', control: false },
     rightSlot: { description: 'Правый слот (тег, статус, кастомный контент)', control: false },
-    shortcut: { description: 'Строка с сочетанием клавиш. Если указана, рендерится справа', control: { type: 'text' } },
+    shortcut: {
+      description: 'Строка с сочетанием клавиш. Если указана, рендерится справа',
+      control: { type: 'text' },
+    },
     disabled: { description: 'Отключает пункт меню', control: { type: 'boolean' } },
     loading: {
       description: 'Показывает индикатор загрузки и блокирует действие.',
@@ -48,7 +56,8 @@ const meta: Meta<typeof DropdownMenuItem> = {
       table: { defaultValue: { summary: false } },
     },
     tone: {
-      description: 'Тон оформления; допустимые значения: `default` (обычный), `danger` (акцент на опасное действие)',
+      description:
+        'Тон оформления; допустимые значения: `default` (обычный), `danger` (акцент на опасное действие)',
       options: ['default', 'danger'],
       control: { type: 'inline-radio' },
       table: { defaultValue: { summary: 'default' } },
@@ -128,7 +137,8 @@ export const LoadingItem: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Флаг `loading` отображает спиннер слева, блокирует клик и подсвечивает состояние ожидания.',
+        story:
+          'Флаг `loading` отображает спиннер слева, блокирует клик и подсвечивает состояние ожидания.',
       },
     },
   },
@@ -145,7 +155,8 @@ export const SelectedItem: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Проп `value` в `DropdownMenu` позволяет управлять состоянием выбранного элемента через сравнение с `value` каждого элемента. Полезно для контролируемых компонентов.',
+        story:
+          'Проп `value` в `DropdownMenu` позволяет управлять состоянием выбранного элемента через сравнение с `value` каждого элемента. Полезно для контролируемых компонентов.',
       },
     },
   },
@@ -164,7 +175,8 @@ export const MixedStates: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Демонстрирует различные состояния пунктов меню в одном списке: обычный, выбранный (через `value`), загрузка, отключённый и опасный.',
+        story:
+          'Демонстрирует различные состояния пунктов меню в одном списке: обычный, выбранный (через `value`), загрузка, отключённый и опасный.',
       },
     },
   },
@@ -176,22 +188,17 @@ export const CustomContent: Story = {
       <div style={dropdownMenuItemStoriesStyles.customContentRow}>
         <div style={dropdownMenuItemStoriesStyles.customContentColumn}>
           <span style={dropdownMenuItemStoriesStyles.customContentTitle}>System update</span>
-          <span
-            style={dropdownMenuItemMetaStyle}
-          >
-            Плановое обновление в 02:00
-          </span>
+          <span style={dropdownMenuItemMetaStyle}>Плановое обновление в 02:00</span>
         </div>
-        <span style={dropdownMenuItemMetaStyle}>
-          Через 1 час
-        </span>
+        <span style={dropdownMenuItemMetaStyle}>Через 1 час</span>
       </div>
     </DropdownMenuItem>
   ),
   parameters: {
     docs: {
       description: {
-        story: 'Демонстрирует полностью кастомный контент внутри элемента меню. Структура и стили наследуются от базового элемента.',
+        story:
+          'Демонстрирует полностью кастомный контент внутри элемента меню. Структура и стили наследуются от базового элемента.',
       },
     },
   },
@@ -232,4 +239,3 @@ export const WithHint: Story = {
     },
   },
 };
-

@@ -321,7 +321,11 @@ export const calculateDropdownPosition = ({
       (mode === 'autoFit' || spaceAbove >= menuHeight + offset || spaceAbove > spaceBelow);
 
     if (shouldFlipVertically) {
-      y = clamp(triggerRect.top - menuHeight - offset, offset, viewportHeight - menuHeight - offset);
+      y = clamp(
+        triggerRect.top - menuHeight - offset,
+        offset,
+        viewportHeight - menuHeight - offset,
+      );
     } else if (triggerRect.bottom + menuHeight + offset > viewportHeight) {
       y = clamp(viewportHeight - menuHeight - offset, offset, triggerRect.bottom + offset);
     }
@@ -358,7 +362,7 @@ const FOCUSABLE_SELECTORS =
 export const getFocusableElements = (container: HTMLElement | null): HTMLElement[] => {
   if (!container) return [];
   const elements = Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS)).filter(
-    element => {
+    (element) => {
       const isHidden = element.offsetParent === null && element !== document.activeElement;
       const isAriaDisabled = element.getAttribute('aria-disabled') === 'true';
       return !isHidden && !isAriaDisabled;
@@ -372,7 +376,7 @@ export const getFocusableElementIndex = (
   target: Element | null,
 ): number => {
   if (!target) return 0;
-  const index = elements.findIndex(element => element === target);
+  const index = elements.findIndex((element) => element === target);
   return index === -1 ? 0 : index;
 };
 
@@ -489,7 +493,7 @@ export const removeScrollListeners = (
   scrollableElements: (Window | Document | HTMLElement)[],
   handleScroll: () => void,
 ): void => {
-  scrollableElements.forEach(element => {
+  scrollableElements.forEach((element) => {
     if (element === window) {
       window.removeEventListener('scroll', handleScroll, true);
     } else if (element === document) {
@@ -572,7 +576,9 @@ export const flattenDropdownDefinitions = (
  * Позиция `Hint` для пункта меню: значения совпадают с `TooltipPosition` для сторон света.
  * @param tooltipPosition - значение из пропса пункта (`top` | `bottom` | `left` | `right`)
  */
-export const mapTooltipPositionToHintPlacement = (tooltipPosition: TooltipPosition): HintPosition => {
+export const mapTooltipPositionToHintPlacement = (
+  tooltipPosition: TooltipPosition,
+): HintPosition => {
   switch (tooltipPosition) {
     case TooltipPosition.BOTTOM:
       return HintPosition.BOTTOM;

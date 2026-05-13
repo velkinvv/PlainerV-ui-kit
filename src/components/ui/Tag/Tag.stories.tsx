@@ -278,7 +278,12 @@ export const Disabled: Story = {
           <TagStoriesSectionTitle>{appearance}</TagStoriesSectionTitle>
           <TagStoriesRow>
             {TAG_COLORS.map((colorVariant) => (
-              <Tag key={`${appearance}-${colorVariant}`} appearance={appearance} colorVariant={colorVariant} disabled>
+              <Tag
+                key={`${appearance}-${colorVariant}`}
+                appearance={appearance}
+                colorVariant={colorVariant}
+                disabled
+              >
                 Недоступно
               </Tag>
             ))}
@@ -404,7 +409,12 @@ export const StatusMarkerKind: Story = {
       <TagStoriesSectionTitle>filled</TagStoriesSectionTitle>
       <TagStoriesRow>
         {TAG_COLORS.map((colorVariant) => (
-          <Tag key={`m-${colorVariant}`} statusDisplay="marker" colorVariant={colorVariant} appearance="filled">
+          <Tag
+            key={`m-${colorVariant}`}
+            statusDisplay="marker"
+            colorVariant={colorVariant}
+            appearance="filled"
+          >
             {colorVariant}
           </Tag>
         ))}
@@ -412,7 +422,12 @@ export const StatusMarkerKind: Story = {
       <TagStoriesSectionTitle>outline</TagStoriesSectionTitle>
       <TagStoriesRow>
         {TAG_COLORS.map((colorVariant) => (
-          <Tag key={`mo-${colorVariant}`} statusDisplay="marker" colorVariant={colorVariant} appearance="outline">
+          <Tag
+            key={`mo-${colorVariant}`}
+            statusDisplay="marker"
+            colorVariant={colorVariant}
+            appearance="outline"
+          >
             {colorVariant}
           </Tag>
         ))}
@@ -444,14 +459,13 @@ export const CustomSurfaceColors: Story = {
     <TagStoriesStack>
       <TagStoriesSectionTitle>Полная кастомная пилюля (`background`)</TagStoriesSectionTitle>
       <TagStoriesRow>
-        <Tag
-          customColors={tagStoriesCustomColors.customSurface}
-          onClick={fn()}
-        >
+        <Tag customColors={tagStoriesCustomColors.customSurface} onClick={fn()}>
           Кастом
         </Tag>
       </TagStoriesRow>
-      <TagStoriesSectionTitle>Только кастомный маркер (`marker`, фон из темы)</TagStoriesSectionTitle>
+      <TagStoriesSectionTitle>
+        Только кастомный маркер (`marker`, фон из темы)
+      </TagStoriesSectionTitle>
       <TagStoriesRow>
         <Tag
           statusDisplay="marker"

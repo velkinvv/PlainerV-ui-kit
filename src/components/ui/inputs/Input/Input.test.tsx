@@ -20,9 +20,7 @@ describe('Input', () => {
 
   it('обрабатывает изменения значения', () => {
     const handleChange = jest.fn();
-    renderWithTheme(
-      <Input label="Email" onChange={handleChange} />
-    );
+    renderWithTheme(<Input label="Email" onChange={handleChange} />);
 
     const input = screen.getByLabelText('Email');
     fireEvent.change(input, { target: { value: 'test@example.com' } });
@@ -54,66 +52,50 @@ describe('Input', () => {
   });
 
   it('показывает ошибку', () => {
-    renderWithTheme(
-      <Input label="Email" error="Неверный email" />
-    );
+    renderWithTheme(<Input label="Email" error="Неверный email" />);
 
     expect(screen.getByText('Неверный email')).toBeInTheDocument();
   });
 
   it('показывает success сообщение', () => {
-    renderWithTheme(
-      <Input label="Email" success="Email валиден" />
-    );
+    renderWithTheme(<Input label="Email" success="Email валиден" />);
 
     expect(screen.getByText('Успешно')).toBeInTheDocument();
   });
 
   it('показывает helper text', () => {
-    renderWithTheme(
-      <Input label="Email" helperText="Введите ваш email" />
-    );
+    renderWithTheme(<Input label="Email" helperText="Введите ваш email" />);
 
     expect(screen.getByText('Введите ваш email')).toBeInTheDocument();
   });
 
   it('применяет placeholder', () => {
-    renderWithTheme(
-      <Input label="Email" placeholder="example@email.com" />
-    );
+    renderWithTheme(<Input label="Email" placeholder="example@email.com" />);
 
     expect(screen.getByPlaceholderText('example@email.com')).toBeInTheDocument();
   });
 
   it('применяет правильный variant', () => {
-    const { container } = renderWithTheme(
-      <Input label="Email" variant={InputVariant.DEFAULT} />
-    );
+    const { container } = renderWithTheme(<Input label="Email" variant={InputVariant.DEFAULT} />);
     const input = container.querySelector('input');
     expect(input).toBeInTheDocument();
   });
 
   it('применяет правильный size', () => {
-    const { container } = renderWithTheme(
-      <Input label="Email" size={Size.SM} />
-    );
+    const { container } = renderWithTheme(<Input label="Email" size={Size.SM} />);
     const input = container.querySelector('input');
     expect(input).toBeInTheDocument();
   });
 
   it('работает с disabled', () => {
-    renderWithTheme(
-      <Input label="Email" disabled />
-    );
+    renderWithTheme(<Input label="Email" disabled />);
 
     const input = screen.getByLabelText('Email');
     expect(input).toBeDisabled();
   });
 
   it('работает с required', () => {
-    renderWithTheme(
-      <Input label="Email" required />
-    );
+    renderWithTheme(<Input label="Email" required />);
 
     const input = screen.getByRole('textbox', { name: /Email/ });
     expect(input).toBeRequired();

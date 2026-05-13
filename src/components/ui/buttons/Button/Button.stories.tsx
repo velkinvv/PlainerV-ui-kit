@@ -515,4 +515,3 @@ export const IconVariations: Story = {
     },
   },
 };
-

@@ -20,7 +20,9 @@ interface SpinnerMotionProps {
  * Валидирует скорость и толщину линии спиннера
  * @param props — частичные пропсы со `speed` и `thickness`
  */
-const validateMotionProps = (props: Pick<SpinnerProps, 'speed' | 'thickness'>): SpinnerMotionProps => {
+const validateMotionProps = (
+  props: Pick<SpinnerProps, 'speed' | 'thickness'>,
+): SpinnerMotionProps => {
   const speed = props.speed ?? 1;
   const thickness = props.thickness ?? 2;
 
@@ -73,17 +75,6 @@ export const Spinner = forwardRef<HTMLDivElement, SpinnerProps>(
 
     // Рендерим спиннер в зависимости от варианта
     const renderSpinner = () => {
-      const commonProps = {
-        ref: variant === SpinnerVariant.CIRCLE || variant === SpinnerVariant.PULSE ? ref : undefined,
-        size,
-        color,
-        $speed: validatedProps.speed,
-        $thickness: validatedProps.thickness,
-        className: clsx('ui-spinner', className),
-        style,
-        ...ariaAttributes,
-      };
-
       switch (variant) {
         case SpinnerVariant.DOTS:
           return (
@@ -122,19 +113,23 @@ export const Spinner = forwardRef<HTMLDivElement, SpinnerProps>(
           );
 
         default:
-    return (
-      <SpinnerContainer
+          return (
+            <SpinnerContainer
               $variant={variant}
               $size={size}
               $color={color}
               $speed={validatedProps.speed}
               $thickness={validatedProps.thickness}
-        className={clsx('ui-spinner', className)}
+              className={clsx('ui-spinner', className)}
               style={style}
               {...ariaAttributes}
-              ref={variant === SpinnerVariant.CIRCLE || variant === SpinnerVariant.PULSE ? ref : undefined}
-      />
-    );
+              ref={
+                variant === SpinnerVariant.CIRCLE || variant === SpinnerVariant.PULSE
+                  ? ref
+                  : undefined
+              }
+            />
+          );
       }
     };
 
@@ -148,10 +143,16 @@ export const Spinner = forwardRef<HTMLDivElement, SpinnerProps>(
           $labelPosition={labelPosition}
           className={clsx('ui-spinner-wrapper', className)}
         >
-          {labelPosition === 'top' && <SpinnerLabel $position={labelPosition}>{label}</SpinnerLabel>}
-          {labelPosition === 'left' && <SpinnerLabel $position={labelPosition}>{label}</SpinnerLabel>}
+          {labelPosition === 'top' && (
+            <SpinnerLabel $position={labelPosition}>{label}</SpinnerLabel>
+          )}
+          {labelPosition === 'left' && (
+            <SpinnerLabel $position={labelPosition}>{label}</SpinnerLabel>
+          )}
           {spinner}
-          {labelPosition === 'right' && <SpinnerLabel $position={labelPosition}>{label}</SpinnerLabel>}
+          {labelPosition === 'right' && (
+            <SpinnerLabel $position={labelPosition}>{label}</SpinnerLabel>
+          )}
           {labelPosition === 'bottom' && (
             <SpinnerLabel $position={labelPosition}>{label}</SpinnerLabel>
           )}

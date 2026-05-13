@@ -46,8 +46,7 @@ export const CalendarRoot = styled.div.withConfig({
   }};
   border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
   background: ${({ theme }) => theme.colors.backgroundSecondary};
-  border: ${({ $embedded, theme }) =>
-    $embedded ? 'none' : `1px solid ${theme.colors.border}`};
+  border: ${({ $embedded, theme }) => ($embedded ? 'none' : `1px solid ${theme.colors.border}`)};
   box-shadow: ${({ $embedded, theme }) => ($embedded ? 'none' : theme.boxShadow.md)};
   width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'auto')};
   max-width: 100%;
@@ -324,7 +323,16 @@ export const CalendarDayButton = styled.button.withConfig({
   align-items: center;
   justify-content: center;
 
-  ${({ theme, $selected, $rangeStart, $rangeEnd, $inRange, $inCurrentMonth, $today, $disabled }) => {
+  ${({
+    theme,
+    $selected,
+    $rangeStart,
+    $rangeEnd,
+    $inRange,
+    $inCurrentMonth,
+    $today,
+    $disabled,
+  }) => {
     if ($disabled) {
       return css`
         border: 2px solid transparent;
@@ -346,10 +354,18 @@ export const CalendarDayButton = styled.button.withConfig({
       return css`
         border: 1px solid ${theme.colors.primary};
         border-radius: 50%;
-        background: color-mix(in srgb, ${theme.colors.primary} 14%, ${theme.colors.backgroundSecondary});
+        background: color-mix(
+          in srgb,
+          ${theme.colors.primary} 14%,
+          ${theme.colors.backgroundSecondary}
+        );
         color: ${theme.colors.primary};
         &:hover {
-          background: color-mix(in srgb, ${theme.colors.primary} 24%, ${theme.colors.backgroundSecondary});
+          background: color-mix(
+            in srgb,
+            ${theme.colors.primary} 24%,
+            ${theme.colors.backgroundSecondary}
+          );
           color: ${theme.colors.primaryActive};
           border-color: ${theme.colors.primaryActive};
         }
@@ -357,7 +373,9 @@ export const CalendarDayButton = styled.button.withConfig({
     }
     if ($inCurrentMonth) {
       return css`
-        border: ${$today ? `2px solid ${theme.colors.info}` : `1px solid ${theme.colors.borderSecondary}`};
+        border: ${$today
+          ? `2px solid ${theme.colors.info}`
+          : `1px solid ${theme.colors.borderSecondary}`};
         background: ${theme.colors.backgroundSecondary};
         color: ${theme.colors.text};
         &:hover {

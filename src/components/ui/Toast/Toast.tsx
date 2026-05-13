@@ -45,7 +45,13 @@ export interface ToastProps {
 /**
  * Визуальная карточка уведомления: по умолчанию «пилюля» по макету Figma, опционально классика с полосой слева (`ToastAppearance.CARD`).
  */
-export const Toast: React.FC<ToastProps> = ({ toast, onClose, onPauseTimer, onResumeTimer, timing }) => {
+export const Toast: React.FC<ToastProps> = ({
+  toast,
+  onClose,
+  onPauseTimer,
+  onResumeTimer,
+  timing,
+}) => {
   const { mode } = useTheme();
   const resolvedAppearance = toast.appearance ?? ToastAppearance.PILL;
 
@@ -184,7 +190,9 @@ const ToastPillView: React.FC<{
           <Icon name={iconName} size={IconSize.LG} color={pill.iconColor} />
         </ToastPillIconWrap>
         <ToastPillTextCol>
-          {toast.title ? <ToastPillTitle $color={pill.titleColor}>{toast.title}</ToastPillTitle> : null}
+          {toast.title ? (
+            <ToastPillTitle $color={pill.titleColor}>{toast.title}</ToastPillTitle>
+          ) : null}
           <ToastPillMessage $color={pill.bodyColor}>{toast.message}</ToastPillMessage>
         </ToastPillTextCol>
         {hasAction && toast.actionLabel ? (

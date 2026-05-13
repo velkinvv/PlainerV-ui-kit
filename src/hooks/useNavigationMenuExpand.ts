@@ -54,8 +54,7 @@ export function useNavigationMenuExpand({
 
   const prevExpandedRef = useRef<boolean | null>(null);
 
-  const isExpandInteractionEnabled =
-    expandInteraction !== NavigationMenuExpandInteraction.NONE;
+  const isExpandInteractionEnabled = expandInteraction !== NavigationMenuExpandInteraction.NONE;
 
   const effectiveCollapsed = isExpandInteractionEnabled ? !expanded : !!collapsedProp;
 
@@ -99,12 +98,12 @@ export function useNavigationMenuExpand({
         return;
       }
       const target = event.target as HTMLElement;
-    if (
-      target.closest('button, a') ||
-      target.closest('[data-prevent-navigation-expand-toggle]')
-    ) {
-      return;
-    }
+      if (
+        target.closest('button, a') ||
+        target.closest('[data-prevent-navigation-expand-toggle]')
+      ) {
+        return;
+      }
       applyExpanded(!expanded);
     },
     [applyExpanded, expandInteraction, expanded],

@@ -8,7 +8,7 @@ import { tableBorderRadiusFromTheme } from './tableThemeRadiusHandlers';
  * При `$filterApplied` — заливка `theme.colors.info` и контрастный цвет иконки (как у текста primary-кнопки).
  */
 export const TableHeaderFilterIconButton = styled.button.withConfig({
-  shouldForwardProp: prop => prop !== '$filterApplied',
+  shouldForwardProp: (prop) => prop !== '$filterApplied',
 })<{ $filterApplied?: boolean }>`
   display: inline-flex;
   align-items: center;
@@ -35,7 +35,7 @@ export const TableHeaderFilterIconButton = styled.button.withConfig({
       &:hover {
         background: ${theme.colors.infoHover};
         color: ${getButtonVariant(theme.buttons, ButtonVariant.PRIMARY).hover?.color ??
-          getButtonVariant(theme.buttons, ButtonVariant.PRIMARY).color};
+        getButtonVariant(theme.buttons, ButtonVariant.PRIMARY).color};
       }
     `}
 

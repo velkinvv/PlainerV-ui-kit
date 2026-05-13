@@ -22,7 +22,13 @@ export { Badge } from './Badge';
 export type { BadgeProps } from '@/types/ui';
 
 export { Tag } from './Tag';
-export type { TagProps, TagColorVariant, TagAppearance, TagStatusDisplay, TagCustomColors } from '@/types/ui';
+export type {
+  TagProps,
+  TagColorVariant,
+  TagAppearance,
+  TagStatusDisplay,
+  TagCustomColors,
+} from '@/types/ui';
 
 export { Breadcrumb } from './Breadcrumb';
 export type { BreadcrumbProps, BreadcrumbItem } from '@/types/ui';

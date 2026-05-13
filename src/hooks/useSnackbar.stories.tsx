@@ -7,7 +7,7 @@ import { SnackbarProvider } from '../components/ui/Snackbar';
 import { useSnackbar } from './useSnackbar';
 import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
 
-const withSnackbar: Decorator = Story => (
+const withSnackbar: Decorator = (Story) => (
   <SnackbarProvider>
     <Story />
   </SnackbarProvider>
@@ -84,4 +84,3 @@ const BasicDemo = () => {
 export const Default: Story = {
   render: () => <BasicDemo />,
 };
-

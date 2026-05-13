@@ -1,6 +1,5 @@
 ﻿import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
-import { Button } from '../components/ui/buttons/Button';
 import { Card } from '../components/ui/Card';
 import { Typography } from '../components/ui/Typography';
 import { Tag } from '../components/ui/Tag';
@@ -103,7 +102,11 @@ const BasicWindowSizeDemo = () => {
           <Typography variant="body2" marginBottom="xs">
             <strong>Окно браузера</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
+          <Typography
+            variant="body2"
+            marginBottom="xs"
+            style={storybookDemoStyles.typographyFinePrint12}
+          >
             innerWidth × innerHeight
           </Typography>
           <Typography variant="h6" style={storybookDemoStyles.windowSizeValuePrimary}>
@@ -115,7 +118,11 @@ const BasicWindowSizeDemo = () => {
           <Typography variant="body2" marginBottom="xs">
             <strong>Экран устройства</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
+          <Typography
+            variant="body2"
+            marginBottom="xs"
+            style={storybookDemoStyles.typographyFinePrint12}
+          >
             screen.width × screen.height
           </Typography>
           <Typography variant="h6" style={storybookDemoStyles.windowSizeValueSuccess}>
@@ -127,7 +134,11 @@ const BasicWindowSizeDemo = () => {
           <Typography variant="body2" marginBottom="xs">
             <strong>Доступный размер</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
+          <Typography
+            variant="body2"
+            marginBottom="xs"
+            style={storybookDemoStyles.typographyFinePrint12}
+          >
             screen.availWidth × screen.availHeight
           </Typography>
           <Typography variant="h6" style={storybookDemoStyles.windowSizeValueWarning}>
@@ -243,9 +254,7 @@ const ResponsiveDemo = () => {
         <Typography variant="body2" marginBottom="xs">
           Тип устройства: {device.type}
         </Typography>
-        <Typography variant="body2">
-          Соотношение сторон: {(width / height).toFixed(2)}
-        </Typography>
+        <Typography variant="body2">Соотношение сторон: {(width / height).toFixed(2)}</Typography>
       </div>
     </Card>
   );
@@ -288,7 +297,11 @@ const SizeComparisonDemo = () => {
           <Typography variant="body2" marginBottom="xs">
             <strong>Окно браузера</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
+          <Typography
+            variant="body2"
+            marginBottom="xs"
+            style={storybookDemoStyles.typographyFinePrint12}
+          >
             Видимая область
           </Typography>
           <Typography variant="h6" style={storybookDemoStyles.windowSizeValuePrimary}>
@@ -300,7 +313,11 @@ const SizeComparisonDemo = () => {
           <Typography variant="body2" marginBottom="xs">
             <strong>Экран устройства</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
+          <Typography
+            variant="body2"
+            marginBottom="xs"
+            style={storybookDemoStyles.typographyFinePrint12}
+          >
             Полный размер экрана
           </Typography>
           <Typography variant="h6" style={storybookDemoStyles.windowSizeValueSuccess}>
@@ -312,7 +329,11 @@ const SizeComparisonDemo = () => {
           <Typography variant="body2" marginBottom="xs">
             <strong>Доступный размер</strong>
           </Typography>
-          <Typography variant="body2" marginBottom="xs" style={storybookDemoStyles.typographyFinePrint12}>
+          <Typography
+            variant="body2"
+            marginBottom="xs"
+            style={storybookDemoStyles.typographyFinePrint12}
+          >
             Без панелей браузера
           </Typography>
           <Typography variant="h6" style={storybookDemoStyles.windowSizeValueWarning}>
@@ -361,7 +382,12 @@ const SizeComparisonDemo = () => {
           Доступный размер: {availableSize.width} × {availableSize.height}px
         </Typography>
         <Typography variant="body2">
-          Использование экрана: {((windowSize.width * windowSize.height) / (screenSize.width * screenSize.height) * 100).toFixed(1)}%
+          Использование экрана:{' '}
+          {(
+            ((windowSize.width * windowSize.height) / (screenSize.width * screenSize.height)) *
+            100
+          ).toFixed(1)}
+          %
         </Typography>
       </div>
     </Card>
@@ -425,7 +451,9 @@ const OrientationDemo = () => {
           <Typography variant="body2" style={storybookDemoStyles.typographyFinePrint12}>
             Ширина {'>'} Высоты
           </Typography>
-          <div style={storybookDemoStyles.marginTop8}>{renderWindowRangeStatusTag(isLandscape)}</div>
+          <div style={storybookDemoStyles.marginTop8}>
+            {renderWindowRangeStatusTag(isLandscape)}
+          </div>
         </div>
 
         <div
@@ -462,9 +490,7 @@ const OrientationDemo = () => {
         <Typography variant="body2" marginBottom="xs">
           Альбомная: {isLandscape ? 'Да' : 'Нет'}
         </Typography>
-        <Typography variant="body2">
-          Квадратная: {isSquare ? 'Да' : 'Нет'}
-        </Typography>
+        <Typography variant="body2">Квадратная: {isSquare ? 'Да' : 'Нет'}</Typography>
       </div>
     </Card>
   );
@@ -477,7 +503,7 @@ const RealTimeDemo = () => {
   const [lastChange, setLastChange] = React.useState<Date | null>(null);
 
   React.useEffect(() => {
-    setChangeCount(prev => prev + 1);
+    setChangeCount((prev) => prev + 1);
     setLastChange(new Date());
   }, [width, height]);
 
@@ -571,4 +597,3 @@ export const AllExamples: Story = {
     </StorybookStaggerStack>
   ),
 };
-

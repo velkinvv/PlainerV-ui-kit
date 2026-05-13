@@ -29,7 +29,7 @@ const tagSkeletonShimmer = css`
  * @property $widthPx — ширина полоски в px
  */
 export const TagSkeletonRoot = styled.span.withConfig({
-  shouldForwardProp: prop => !['$minHeight', '$widthPx'].includes(String(prop)),
+  shouldForwardProp: (prop) => !['$minHeight', '$widthPx'].includes(String(prop)),
 })<{ $minHeight: string; $widthPx: number }>`
   display: inline-block;
   vertical-align: middle;
