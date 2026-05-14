@@ -8,6 +8,7 @@ import {
   TabsVariant,
   TabItemTextOrientation,
   TabItemTextPosition,
+  type TabsItemDefinition,
 } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
 import { DOC_TABS } from '@/components/ui/storyDocs/uiKitDocs';
@@ -28,7 +29,33 @@ const meta: Meta<typeof Tabs> = {
   argTypes: {
     defaultActiveTab: {
       control: { type: 'text' },
-      description: 'Активная вкладка по умолчанию (value активного TabItem)',
+      description:
+        'Неконтролируемый начальный активный сегмент (алиас см. defaultValue); для вкладок с панелями — value активного TabItem.',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'undefined' },
+      },
+    },
+    defaultValue: {
+      control: { type: 'text' },
+      description: 'То же, что defaultActiveTab — удобное имя для сегментов без панелей.',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'undefined' },
+      },
+    },
+    value: {
+      control: { type: 'text' },
+      description: 'Контролируемый активный сегмент (вместе с onChange).',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'undefined' },
+      },
+    },
+    ariaLabel: {
+      description:
+        'Доступное имя группы (role="group" на корне); рекомендуется для сегментов без панелей.',
+      control: { type: 'text' },
       table: {
         type: { summary: 'string' },
         defaultValue: { summary: 'undefined' },
@@ -57,11 +84,11 @@ const meta: Meta<typeof Tabs> = {
     },
     variant: {
       control: { type: 'select' },
-      options: [TabsVariant.PILL, TabsVariant.LINE],
+      options: [TabsVariant.PILL, TabsVariant.LINE, TabsVariant.UNDERLINE],
       description:
-        'PILL — сегментированный трек. LINE — линия-индикатор. Если не задан: горизонтально pill, вертикально line.',
+        'PILL — сегментированный трек. LINE — линия и заливка активного пункта. UNDERLINE — только подпись и тонкая линия primary у активного (без фона трека). Если не задан: горизонтально pill, вертикально line.',
       table: {
-        type: { summary: '"pill", "line"' },
+        type: { summary: '"pill", "line", "underline"' },
         defaultValue: { summary: 'undefined (авто)' },
       },
     },
@@ -84,12 +111,21 @@ const meta: Meta<typeof Tabs> = {
     },
     children: {
       description:
-        'Дочерние элементы компонента. Обычно содержит Tabs.List с TabItem компонентами.',
+        'Дочерние **TabItem** / **Tabs.Item**: порядок совпадает с порядком сегментов на треке (список создаётся внутри **Tabs**). Если задан непустой **items**, для списка вкладок не используется.',
       table: {
         type: { summary: 'React.ReactNode' },
         defaultValue: { summary: 'undefined' },
       },
       control: false, // ReactNode не контролируется через UI
+    },
+    items: {
+      description:
+        'Массив **TabsItemDefinition** — вкладки из данных (**label**, **children** — панели, **disabled**, **loading**, **skeleton** и др.); при непустом значении заменяет **children** для списка.',
+      table: {
+        type: { summary: 'TabsItemDefinition[]' },
+        defaultValue: { summary: 'undefined' },
+      },
+      control: false,
     },
   },
 };
@@ -103,7 +139,6 @@ export const PillSegmentedWithIconsAndBadge: Story = {
     defaultActiveTab: 'inbox',
     children: (
       <>
-        <Tabs.List>
           <TabItem
             value="inbox"
             label="Входящие"
@@ -123,7 +158,6 @@ export const PillSegmentedWithIconsAndBadge: Story = {
           >
             <div style={tabsStoriesStyles.contentPadding16}>Контент «Архив»</div>
           </TabItem>
-        </Tabs.List>
       </>
     ),
   },
@@ -138,25 +172,183 @@ export const LineHorizontal: Story = {
     variant: TabsVariant.LINE,
     children: (
       <>
-        <Tabs.List>
           <TabItem value="a" label="Вкладка A">
             <div style={tabsStoriesStyles.contentPadding16}>Контент A</div>
           </TabItem>
           <TabItem value="b" label="Вкладка B">
             <div style={tabsStoriesStyles.contentPadding16}>Контент B</div>
           </TabItem>
-        </Tabs.List>
       </>
     ),
   },
   parameters: { layout: 'padded' },
 };
 
+/** Горизонтально: только текст и нижняя линия **primary** у активной вкладки (без обёртки трека). */
+export const UnderlineHorizontal: Story = {
+  args: {
+    variant: TabsVariant.UNDERLINE,
+    ariaLabel: 'Разделы с подчёркиванием',
+    children: (
+      <>
+        <TabItem value="a" label="Вкладка A">
+          <div style={tabsStoriesStyles.contentPadding16}>Контент A</div>
+        </TabItem>
+        <TabItem value="b" label="Вкладка B">
+          <div style={tabsStoriesStyles.contentPadding16}>Контент B</div>
+        </TabItem>
+        <TabItem value="c" label="Вкладка C">
+          <div style={tabsStoriesStyles.contentPadding16}>Контент C</div>
+        </TabItem>
+      </>
+    ),
+  },
+  parameters: { layout: 'padded' },
+};
+
+/** Вкладки из пропа **items** (**TabsItemDefinition**): те же поля, что у **TabItem** в группе. */
+export const WithItemsProp: Story = {
+  args: {
+    defaultValue: 'analytics',
+    ariaLabel: 'Разделы из items',
+    items: [
+      {
+        value: 'reports',
+        label: 'Отчёты',
+        children: (
+          <div style={tabsStoriesStyles.contentPadding16}>
+            <h3>Отчёты</h3>
+            <p>Панель задана через элемент массива **items** (**children** у строки описания).</p>
+          </div>
+        ),
+      },
+      {
+        value: 'analytics',
+        label: 'Аналитика',
+        iconStart: <Icon name="IconExUser" size="md" />,
+        children: (
+          <div style={tabsStoriesStyles.contentPadding16}>
+            <h3>Аналитика</h3>
+            <p>В той же строке можно передать **iconStart**, **badge**, **loading**, **skeleton** и т.д.</p>
+          </div>
+        ),
+      },
+      {
+        value: 'settings',
+        label: 'Настройки',
+        children: (
+          <div style={tabsStoriesStyles.contentPadding16}>
+            <h3>Настройки</h3>
+            <p>Переключение работает так же, как при дочерних **TabItem**.</p>
+          </div>
+        ),
+      },
+    ] satisfies TabsItemDefinition[],
+  },
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        story:
+          'Альтернатива дочерним **TabItem**: один массив **TabsItemDefinition** на корне **Tabs**.',
+      },
+    },
+  },
+};
+
+/** Состояния **loading**, **skeleton**, **disabled** на вкладках с панелями контента. */
+export const WithLoadingSkeletonDisabled: Story = {
+  args: {
+    defaultActiveTab: 'ready',
+    ariaLabel: 'Вкладки с состояниями',
+    children: (
+      <>
+        <TabItem value="ready" label="Готово">
+          <div style={tabsStoriesStyles.contentPadding16}>
+            <p>Обычная вкладка; переключение доступно.</p>
+          </div>
+        </TabItem>
+        <TabItem value="loading" label="Загрузка…" loading>
+          <div style={tabsStoriesStyles.contentPadding16}>
+            <p>Контент панели (переключение на эту вкладку заблокировано, на триггере спиннер).</p>
+          </div>
+        </TabItem>
+        <TabItem value="sk" label="" skeleton>
+          <div style={tabsStoriesStyles.contentPadding16}>
+            <p>Плейсхолдер сегмента; клик недоступен.</p>
+          </div>
+        </TabItem>
+        <TabItem value="locked" label="Недоступно" disabled>
+          <div style={tabsStoriesStyles.contentPadding16}>
+            <p>Вкладка явно отключена через **disabled**.</p>
+          </div>
+        </TabItem>
+      </>
+    ),
+  },
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        story:
+          '**loading** — спиннер и **aria-busy**, выбор недоступен. **skeleton** — скелетон вместо триггера. **disabled** — отключённая кнопка.',
+      },
+    },
+  },
+};
+
+/** Тот же сценарий **items**, но вариант **underline** и одна строка в состоянии **loading**. */
+export const WithItemsPropUnderlineAndLoading: Story = {
+  args: {
+    variant: TabsVariant.UNDERLINE,
+    defaultValue: 'list',
+    ariaLabel: 'Список из items, underline',
+    items: [
+      {
+        value: 'list',
+        label: 'Список',
+        children: (
+          <div style={tabsStoriesStyles.contentPadding16}>
+            <p>Вкладки из **items** с **TabsVariant.UNDERLINE**.</p>
+          </div>
+        ),
+      },
+      {
+        value: 'sync',
+        label: 'Синхронизация',
+        loading: true,
+        children: (
+          <div style={tabsStoriesStyles.contentPadding16}>
+            <p>После завершения загрузки можно снять **loading**.</p>
+          </div>
+        ),
+      },
+      {
+        value: 'archive',
+        label: 'Архив',
+        disabled: true,
+        children: (
+          <div style={tabsStoriesStyles.contentPadding16}>
+            <p>Отключённая вкладка в данных.</p>
+          </div>
+        ),
+      },
+    ] satisfies TabsItemDefinition[],
+  },
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        story: 'Комбинация **items**, **underline** и полей **loading** / **disabled** в типе строки.',
+      },
+    },
+  },
+};
+
 export const Default: Story = {
   args: {
     children: (
       <>
-        <Tabs.List>
           <TabItem value="overview" label="Overview">
             <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Overview</h3>
@@ -175,7 +367,6 @@ export const Default: Story = {
               <p>Configuration options and settings.</p>
             </div>
           </TabItem>
-        </Tabs.List>
       </>
     ),
   },
@@ -189,7 +380,6 @@ export const WithDefaultActive: Story = {
     defaultActiveTab: 'details',
     children: (
       <>
-        <Tabs.List>
           <TabItem value="overview" label="Overview">
             <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Overview</h3>
@@ -208,7 +398,6 @@ export const WithDefaultActive: Story = {
               <p>This tab is not active by default.</p>
             </div>
           </TabItem>
-        </Tabs.List>
       </>
     ),
   },
@@ -221,7 +410,6 @@ export const WithIcons: Story = {
   args: {
     children: (
       <>
-        <Tabs.List>
           <TabItem value="home" label="🏠 Home">
             <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Home</h3>
@@ -240,7 +428,6 @@ export const WithIcons: Story = {
               <p>Application settings and preferences.</p>
             </div>
           </TabItem>
-        </Tabs.List>
       </>
     ),
   },
@@ -253,7 +440,6 @@ export const WithComplexContent: Story = {
   args: {
     children: (
       <>
-        <Tabs.List>
           <TabItem value="code" label="Code">
             <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Code Example</h3>
@@ -262,14 +448,12 @@ export const WithComplexContent: Story = {
 import { TabItem } from './TabItem';
 
 <Tabs>
-  <Tabs.List>
     <TabItem value="tab1" label="Tab 1">
       Content for tab 1
     </TabItem>
     <TabItem value="tab2" label="Tab 2">
       Content for tab 2
     </TabItem>
-  </Tabs.List>
 </Tabs>`}
               </pre>
             </div>
@@ -307,7 +491,6 @@ import { TabItem } from './TabItem';
               </div>
             </div>
           </TabItem>
-        </Tabs.List>
       </>
     ),
   },
@@ -330,7 +513,6 @@ export const Controlled: Story = {
           Active tab: <strong>{activeTab}</strong>
         </p>
         <Tabs defaultActiveTab={activeTab} onChange={handleChange}>
-          <Tabs.List>
             <TabItem value="tab1" label="Tab 1">
               <div style={tabsStoriesStyles.contentPadding16}>
                 <h3>Tab 1 Content</h3>
@@ -349,7 +531,6 @@ export const Controlled: Story = {
                 <p>This is controlled externally as well.</p>
               </div>
             </TabItem>
-          </Tabs.List>
         </Tabs>
       </div>
     );
@@ -364,7 +545,6 @@ export const Vertical: Story = {
     direction: TabsDirection.VERTICAL,
     children: (
       <>
-        <Tabs.List>
           <TabItem value="overview" label="Overview">
             <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Overview</h3>
@@ -396,7 +576,6 @@ export const Vertical: Story = {
               <p>This demonstrates how vertical tabs can accommodate more content.</p>
             </div>
           </TabItem>
-        </Tabs.List>
       </>
     ),
   },
@@ -416,7 +595,6 @@ export const VerticalWithIcons: Story = {
     direction: TabsDirection.VERTICAL,
     children: (
       <>
-        <Tabs.List>
           <TabItem value="home" label="🏠 Home">
             <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Home</h3>
@@ -441,7 +619,6 @@ export const VerticalWithIcons: Story = {
               <p>Application settings in vertical layout.</p>
             </div>
           </TabItem>
-        </Tabs.List>
       </>
     ),
   },
@@ -460,7 +637,6 @@ export const Horizontal: Story = {
     direction: TabsDirection.HORIZONTAL,
     children: (
       <>
-        <Tabs.List>
           <TabItem value="overview" label="Overview">
             <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Overview</h3>
@@ -479,7 +655,6 @@ export const Horizontal: Story = {
               <p>Configuration options in horizontal layout.</p>
             </div>
           </TabItem>
-        </Tabs.List>
       </>
     ),
   },
@@ -499,7 +674,6 @@ export const VerticalWithVerticalText: Story = {
     direction: TabsDirection.VERTICAL,
     children: (
       <>
-        <Tabs.List>
           <TabItem
             value="overview"
             label="Overview"
@@ -541,7 +715,6 @@ export const VerticalWithVerticalText: Story = {
               <p>Advanced settings and options in vertical layout with vertical text.</p>
             </div>
           </TabItem>
-        </Tabs.List>
       </>
     ),
   },
@@ -561,7 +734,6 @@ export const VerticalWithVerticalTextLeft: Story = {
     direction: TabsDirection.VERTICAL,
     children: (
       <>
-        <Tabs.List>
           <TabItem
             value="overview"
             label="Overview"
@@ -595,7 +767,6 @@ export const VerticalWithVerticalTextLeft: Story = {
               <p>Settings with left-aligned vertical text.</p>
             </div>
           </TabItem>
-        </Tabs.List>
       </>
     ),
   },
@@ -615,7 +786,6 @@ export const VerticalWithVerticalTextRight: Story = {
     direction: TabsDirection.VERTICAL,
     children: (
       <>
-        <Tabs.List>
           <TabItem
             value="overview"
             label="Overview"
@@ -649,7 +819,6 @@ export const VerticalWithVerticalTextRight: Story = {
               <p>Settings with right-aligned vertical text.</p>
             </div>
           </TabItem>
-        </Tabs.List>
       </>
     ),
   },
@@ -669,7 +838,6 @@ export const VerticalWithVerticalTextAndIcons: Story = {
     direction: TabsDirection.VERTICAL,
     children: (
       <>
-        <Tabs.List>
           <TabItem
             value="home"
             label="Home"
@@ -703,7 +871,6 @@ export const VerticalWithVerticalTextAndIcons: Story = {
               <p>Application settings with vertical text and icon.</p>
             </div>
           </TabItem>
-        </Tabs.List>
       </>
     ),
   },
@@ -724,7 +891,6 @@ export const VerticalTabsOnRight: Story = {
     tabsPosition: TabsVerticalPosition.END,
     children: (
       <>
-        <Tabs.List>
           <TabItem value="overview" label="Overview">
             <div style={tabsStoriesStyles.contentPadding16}>
               <h3>Overview</h3>
@@ -743,7 +909,6 @@ export const VerticalTabsOnRight: Story = {
               <p>Configuration options. Tabs positioned on the right side.</p>
             </div>
           </TabItem>
-        </Tabs.List>
       </>
     ),
   },
@@ -764,7 +929,6 @@ export const VerticalTabsOnRightWithVerticalText: Story = {
     tabsPosition: TabsVerticalPosition.END,
     children: (
       <>
-        <Tabs.List>
           <TabItem
             value="overview"
             label="Overview"
@@ -795,7 +959,6 @@ export const VerticalTabsOnRightWithVerticalText: Story = {
               <p>Settings with tabs on the right and vertical text.</p>
             </div>
           </TabItem>
-        </Tabs.List>
       </>
     ),
   },

@@ -11,6 +11,11 @@ export const lightBoxShadow: BoxShadowType = lightShadows;
 // Размытие (импортировано из variables/blur.ts)
 export const lightBlur: BlurType = blurClasses;
 
+/** Акцент UI из палитры `colors.primary` — общий базис для **info** и **theme.colors.primary**. */
+const accentUiBase = colors.primary[500];
+const accentUiHover = colors.primary[600];
+const accentUiActive = colors.primary[700];
+
 // Цвета для светлой темы
 export const lightColors: Colors = {
   // Основные фоновые цвета
@@ -40,10 +45,10 @@ export const lightColors: Colors = {
   textTertiary: colors.grey[400], // Третичный текст
   textDisabled: colors.grey[400], // Текст отключённых элементов
 
-  // Основные цвета
-  primary: colors.blue[600], // Основной цвет
-  primaryHover: colors.blue[700], // Основной цвет при наведении
-  primaryActive: colors.blue[800], // Основной цвет при нажатии
+  // Основные цвета (совпадают с info — яркий синий из палитры primary, не colors.blue)
+  primary: accentUiBase,
+  primaryHover: accentUiHover,
+  primaryActive: accentUiActive,
   secondary: colors.grey[600], // Вторичный цвет
   secondaryHover: colors.grey[700], // Вторичный цвет при наведении
 
@@ -59,9 +64,9 @@ export const lightColors: Colors = {
   warning: colors.orange[500], // Предупреждение
   danger: colors.red[600], // Опасность
   dangerHover: colors.red[700], // Опасность при наведении
-  /* Яркий синий UI (календарь, инфо); не colors.blue — там тёмные брендовые оттенки */
-  info: colors.primary[500],
-  infoHover: colors.primary[600],
+  /* Яркий синий UI (календарь, инфо); синхронно с primary выше */
+  info: accentUiBase,
+  infoHover: accentUiHover,
   /** Тег Tag `primary`: насыщенный синий (отличается от `info`) */
   tagPrimaryAccent: colors.primary[600],
   tagAccentPurple: colors.purple[600],

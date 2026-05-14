@@ -11,6 +11,11 @@ export const darkBoxShadow: BoxShadowType = darkShadows;
 // Размытие (импортировано из variables/blur.ts)
 export const darkBlur: BlurType = blurClasses;
 
+/** Акцент UI из палитры `colors.primary` — общий базис для **info** и **theme.colors.primary**. */
+const accentUiBase = colors.primary[400];
+const accentUiHover = colors.primary[300];
+const accentUiActive = colors.primary[200];
+
 // Цвета для тёмной темы
 export const darkColors: Colors = {
   // Основные фоновые цвета
@@ -40,10 +45,10 @@ export const darkColors: Colors = {
   textTertiary: colors.grey[500], // Третичный текст
   textDisabled: colors.grey[600], // Текст отключённых элементов
 
-  // Основные цвета
-  primary: colors.blue[400], // Основной цвет
-  primaryHover: colors.blue[300], // Основной цвет при наведении
-  primaryActive: colors.blue[200], // Основной цвет при нажатии
+  // Основные цвета (совпадают с info — палитра primary)
+  primary: accentUiBase,
+  primaryHover: accentUiHover,
+  primaryActive: accentUiActive,
   secondary: colors.grey[400], // Вторичный цвет
   secondaryHover: colors.grey[300], // Вторичный цвет при наведении
 
@@ -59,8 +64,8 @@ export const darkColors: Colors = {
   warning: colors.orange[400], // Предупреждение
   danger: colors.red[400], // Опасность
   dangerHover: colors.red[300], // Опасность при наведении
-  info: colors.primary[400],
-  infoHover: colors.primary[300],
+  info: accentUiBase,
+  infoHover: accentUiHover,
   /** Тег Tag `primary`: чуть глубже `info` в тёмной теме */
   tagPrimaryAccent: colors.primary[600],
   tagAccentPurple: colors.purple[400],

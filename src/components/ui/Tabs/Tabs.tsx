@@ -1,40 +1,46 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { clsx } from 'clsx';
 import { TabsDirection, TabsVerticalPosition, type TabsProps } from '../../../types/ui';
-import { resolveTabsVariant } from '@/handlers/resolveTabsVariant';
-import {
-  TabItemGroup,
-  TabItemGroupContainer,
-  TabItemGroupList,
-  TabItemGroupContext,
-} from './TabItem';
+import { TabItem, TabItemGroup, TabItemGroupContainer } from './TabItem';
 
-// Стилизованные компоненты (используются для обратной совместимости)
+/** Обратная совместимость: контейнер группы вкладок */
 export const TabsContainer = TabItemGroupContainer;
-export const TabsList = TabItemGroupList;
 
 /**
- * Компонент Tabs - обёртка над TabItem.Group
- * Использует TabItem внутри для отображения вкладок
+ * Вкладки и сегменты: дочерние **TabItem** / **Tabs.Item** или проп **items** (**TabsItemDefinition[]**) — список попадает во внутренний трек (**TabItemGroupList**).
+ * Отдельная обёртка списка не нужна; атрибуты трека — **segmentTrackProps**.
+ *
+ * @param props.segmentTrackProps — **className**, **style** и др. для трека (добавляется **ui-tabs-list**)
+ * @param props.items — при непустом массиве вкладки строятся из данных (приоритет над **children** для списка)
  */
 export const Tabs: React.FC<TabsProps> & {
-  List: React.FC<TabsListProps>;
+  Item: typeof TabItem;
 } = ({
   children,
   className,
   defaultActiveTab,
+  defaultValue,
+  value,
   onChange,
   direction = TabsDirection.HORIZONTAL,
   tabsPosition = TabsVerticalPosition.START,
   variant,
+  ariaLabel,
+  segmentTrackProps,
+  items,
 }) => {
   return (
     <TabItemGroup
       defaultActiveTab={defaultActiveTab}
+      defaultValue={defaultValue}
+      value={value}
       onChange={onChange}
       direction={direction}
       tabsPosition={tabsPosition}
       variant={variant}
+      ariaLabel={ariaLabel}
+      segmentTrackProps={segmentTrackProps}
+      items={items}
       className={clsx('ui-tabs', className)}
     >
       {children}
@@ -42,29 +48,4 @@ export const Tabs: React.FC<TabsProps> & {
   );
 };
 
-// Интерфейс для подкомпонента List
-interface TabsListProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode;
-}
-
-// Подкомпонент List - обёртка над TabItemGroupList
-const TabsListComponent: React.FC<TabsListProps> = ({ children, className, ...props }) => {
-  // Получаем direction из контекста TabItem.Group
-  const groupContext = useContext(TabItemGroupContext);
-  // Используем direction из контекста или по умолчанию HORIZONTAL
-  const direction = groupContext?.direction ?? TabsDirection.HORIZONTAL;
-  const variant = groupContext?.variant ?? resolveTabsVariant(direction);
-
-  return (
-    <TabItemGroupList
-      className={clsx('ui-tabs-list', className)}
-      $direction={direction}
-      $variant={variant}
-      {...props}
-    >
-      {children}
-    </TabItemGroupList>
-  );
-};
-
-Tabs.List = TabsListComponent;
+Tabs.Item = TabItem;

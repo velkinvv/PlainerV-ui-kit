@@ -272,19 +272,97 @@ export const DOC_DROPDOWN_MENU_ITEM = `
 Атомарный пункт: **label**, **description**, **value**, **icon**, правый слот (**shortcut** и др.), **disabled**, **loading**, **tone** (\`danger\` для разрушительных действий).
 `.trim();
 
-/** @see TabsProps */
+/** @see TabsProps, TabItemProps */
 export const DOC_TABS = `
 ### Назначение
-Вкладки: **TabsVariant**, направление (**TabsDirection**), вертикальное положение контента (**TabsVerticalPosition**), активная вкладка (контролируемая или дефолтная), панели через **TabItem**.
+Единый компонент **Tabs**: вкладки с панелями (**TabItem** с **children**) и сегменты **без** панелей (**Tabs.Item** / **TabItem** без **children**). Список вкладок можно задать дочерними узлами или пропом **items** (непустой массив имеет приоритет). Дочерние сегменты автоматически попадают во внутренний трек (**TabItemGroupList**); отдельная обёртка списка не нужна. Атрибуты трека — проп **segmentTrackProps** на корне **Tabs**.
 
-Доступность: связка триггер ↔ панель (**aria-selected**, **aria-controls**).
+- **Варианты**: **TabsVariant.PILL**, **TabsVariant.LINE**, **TabsVariant.UNDERLINE** (только подпись и **1px** линия **primary** у активного пункта, без фона трека); если не задан — **resolveTabsVariant** (горизонтально чаще **pill**, вертикально — **line**).
+- **Направление**: **TabsDirection**, вертикально — **TabsVerticalPosition**.
+
+В режиме **pill** скругление сегментов — **BorderRadiusHandler(theme.borderRadius)**; оболочка трека — \`calc(radius + inset)\`; **overflow: hidden**; под активным сегментом анимированная «капля» (**PillSegmentThumb**).
+
+### Когда использовать
+| Сценарий | Как собрать |
+|----------|-------------|
+| Крупные блоки страницы с контентом под каждым заголовком | **Tabs** + **TabItem** с **children** |
+| Фильтр / режим без панели под пунктом | **Tabs** + **Tabs.Item** (или **TabItem** без **children**) |
+| Группа склеенных кнопок (**attached**) | **ButtonGroup** |
+
+### Пример: только сегменты
+\`\`\`tsx
+<Tabs defaultValue="details" onChange={setMode} ariaLabel="Раздел">
+  <Tabs.Item value="overview" label="Обзор" />
+  <Tabs.Item value="details" label="Детали" />
+  <Tabs.Item value="attachments" label="Вложения" />
+</Tabs>
+\`\`\`
+
+Из массива без ручного **map**: проп **items** (**TabsItemDefinition[]**) — при непустом массиве вкладки строятся внутри компонента (эквивалент **Tabs.Item** с теми же полями). Для только подписей без панелей достаточно **TabsSegmentOption** (подмножество полей).
+
+\`\`\`tsx
+const segmentItems: TabsItemDefinition[] = [
+  { value: 'overview', label: 'Обзор' },
+  { value: 'details', label: 'Детали' },
+  { value: 'attachments', label: 'Вложения' },
+];
+<Tabs defaultValue="details" items={segmentItems} ariaLabel="Раздел" />
+\`\`\`
+
+Классический вариант с **map**: \`items.map((row) => <Tabs.Item key={row.value} {...row} />)\` — тип строки для коротких сегментов **TabsSegmentOption**.
+
+### Пример: вкладки с панелями
+\`\`\`tsx
+<Tabs defaultActiveTab="a">
+  <TabItem value="a" label="Раздел A"><PanelA /></TabItem>
+  <TabItem value="b" label="Раздел B"><PanelB /></TabItem>
+</Tabs>
+\`\`\`
+
+### Пропсы корня **Tabs**
+| Проп | Описание |
+|------|----------|
+| \`children\` | **TabItem** / **Tabs.Item**, если **items** пуст или не задан. |
+| \`items\` | Непустой **TabsItemDefinition[]** — вкладки из данных (приоритет над **children** для списка). |
+| \`value\` | Контролируемый активный \`value\`. |
+| \`defaultValue\` | Неконтролируемое начальное \`value\`. |
+| \`defaultActiveTab\` | Алиас **defaultValue** (историческое имя). |
+| \`onChange(activeTab)\` | Смена активного сегмента. |
+| \`direction\` | **horizontal** \| **vertical**. |
+| \`tabsPosition\` | При вертикали — табы слева/справа от контента. |
+| \`variant\` | **pill** \| **line** \| **underline**. |
+| \`ariaLabel\` | **aria-label** группы (**role="group"** на корне). |
+| \`segmentTrackProps\` | **className**, **style**, **data-*** для трека; к **className** добавляется **ui-tabs-list**. |
+
+### **Tabs.Item** / **TabItem** (сегмент)
+| Проп | Описание |
+|------|----------|
+| \`value\` | Идентификатор; в \`onChange\`. |
+| \`label\` | Подпись (**ReactNode**). |
+| \`children\` | Опционально: панель контента под вкладкой. |
+| \`disabled\`, \`loading\`, \`skeleton\` | Неактивна; загрузка (**aria-busy**, спиннер); плейсхолдер без клика (**skeleton** имеет приоритет над отображением loading при одновременной передаче). |
+| \`iconStart\`, \`iconEnd\` | Иконки на триггере. |
+| \`badge\` | Счётчик/метка через компонент **Badge** (**DEFAULT**, **SM**). |
+
+### Низкоуровневый трек
+Для особых случаев можно вложить **TabItemGroupList** в **TabItem.Group** и задать свои стили; в типичном API **Tabs** трек создаётся сам.
+
+### Доступность
+- При \`ariaLabel\`: корень с \`role="group"\`.
+- Сегменты: кнопки с \`aria-pressed\`; при **loading** — \`aria-busy\`.
+
+### Контекст
+**TabItemGroupContext** / **useTabItemGroupContext** — для расширений внутри группы.
+
+### Storybook
+Основные вкладки с панелями — **UI Kit/Navigation/Tabs** (в т.ч. **WithItemsProp**, **WithLoadingSkeletonDisabled**, **WithItemsPropUnderlineAndLoading**); примеры только сегментов — **UI Kit/Navigation/Tabs/Segments**.
 `.trim();
 
 export const DOC_TAB_ITEM = `
 ### Назначение
-Элемент вкладки: объединяет триггер и панель (**value**, заголовок, **disabled**). Ориентация текста (**TabItemTextOrientation**, **TabItemTextPosition**).
+Элемент вкладки или сегмента: триггер и опциональная панель (**value**, заголовок). Состояния: **disabled**, **loading** (спиннер, блокировка выбора, **aria-busy**), **skeleton** (плейсхолдер без интерактива). Ориентация текста (**TabItemTextOrientation**, **TabItemTextPosition**).
 
-Используется внутри **Tabs**; для групп см. **TabItemGroupList** в модуле вкладок.
+Внутри **Tabs** или **TabItem.Group**: панель через **children** у **TabItem**; только переключатель — **Tabs.Item** без **children**. Альтернатива — проп **items** на **Tabs** / **TabItem.Group** (**TabsItemDefinition[]**, непустой массив заменяет дочерний список вкладок). Трек списка создаётся внутри корня; для атрибутов трека — **segmentTrackProps** на **Tabs** или **TabItem.Group**.
 `.trim();
 
 /** @see NavigationMenuProps */

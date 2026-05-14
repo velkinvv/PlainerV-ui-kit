@@ -100,7 +100,7 @@ function MyComponent() {
 - **Sidemenu**, **NavigationMenu**, **NavigationMenuItem** (+ контекст/хелперы).
 - **Menu**, **MenuItem**.
 - **FloatingMenu** (+ `FloatingMenuGroup`, `GroupItem`, `Divider`, `DragHandle`).
-- **Tabs**, **TabItem**, **Breadcrumb**, **Stepper**, **Pagination**, **Accordion**.
+- **Tabs** (**Tabs.Item**, **TabItem**, внутренний трек сегментов), **Breadcrumb**, **Stepper**, **Pagination**, **Accordion**.
 
 ### Отображение данных
 

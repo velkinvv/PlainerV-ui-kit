@@ -67,7 +67,7 @@ export { Popover } from './Popover/Popover';
 export type { PopoverProps, PopoverVariant } from '@/types/ui';
 
 export { Tabs } from './Tabs';
-export type { TabsProps } from '@/types/ui';
+export type { TabsProps, TabsSegmentOption, TabsItemDefinition } from '@/types/ui';
 export { TabsVariant } from '@/types/ui';
 export { TabItem } from './Tabs';
 export type { TabItemProps } from './Tabs';

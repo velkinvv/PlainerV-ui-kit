@@ -2,7 +2,7 @@ import type React from 'react';
 import type { Size, IconSize, ModalSize } from './sizes';
 import type { Target, Transition } from 'framer-motion';
 import type { IconName, icons } from '../icons';
-import type { HTMLAttributes, ReactNode } from 'react';
+import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from 'react';
 
 /**
  * Базовые типы для UI компонентов
@@ -1685,11 +1685,16 @@ export enum TabsVerticalPosition {
 }
 
 /**
- * Внешний вид табов (макет Figma: сегментированный «pill» или классическая линия)
+ * Внешний вид табов (pill, классическая линия с фоном или текстовые вкладки с индикатором)
  */
 export enum TabsVariant {
-  /** Нижняя/боковая линия-индикатор, фон панели */
+  /** Нижняя/боковая полоса-индикатор, заливка активного пункта, фон трека */
   LINE = 'line',
+  /**
+   * Без обёртки трека и без вида кнопки: только подписи и тонкая линия снизу (горизонталь)
+   * или справа (вертикаль) в цвете **primary** темы у активного пункта (в теме совпадает с **info**).
+   */
+  UNDERLINE = 'underline',
   /** Сегментированный контрол в скруглённом треке */
   PILL = 'pill',
 }
@@ -1710,8 +1715,51 @@ export enum TabItemTextPosition {
   RIGHT = 'right',
 }
 
+/**
+ * Описание одной вкладки для пропа **items** у **Tabs** / **TabItem.Group**: те же поля, что у **TabItem** внутри группы.
+ * Поля **direction**, **variant**, **defaultActive**, **active**, **onChange** задаются на корне группы, не в элементе.
+ *
+ * @property value — Уникальный идентификатор вкладки
+ * @property label — Подпись триггера (**ReactNode**)
+ * @property children — Панель контента под вкладкой (опционально; для чистых сегментов можно не передавать)
+ * @property iconStart — Иконка в начале триггера
+ * @property iconEnd — Иконка в конце триггера
+ * @property badge — Содержимое счётчика; рендер через **Badge** (**BadgeVariant.DEFAULT**, **Size.SM**)
+ * @property textOrientation — Ориентация текста на триггере
+ * @property textPosition — Позиция текста при вертикальной ориентации
+ * @property disabled — Отключить переключение
+ * @property loading — Индикатор загрузки на триггере
+ * @property skeleton — Плейсхолдер без интерактива
+ * @property triggerClassName — Класс кнопки-триггера
+ * @property contentClassName — Класс панели контента
+ * @property triggerProps — Доп. атрибуты кнопки-триггера
+ * @property contentProps — Доп. атрибуты панели контента
+ */
+export interface TabsItemDefinition {
+  value: string;
+  label?: React.ReactNode;
+  children?: React.ReactNode;
+  iconStart?: React.ReactNode;
+  iconEnd?: React.ReactNode;
+  badge?: React.ReactNode;
+  textOrientation?: TabItemTextOrientation;
+  textPosition?: TabItemTextPosition;
+  disabled?: boolean;
+  loading?: boolean;
+  skeleton?: boolean;
+  triggerClassName?: string;
+  contentClassName?: string;
+  triggerProps?: Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'value' | 'children'>;
+  contentProps?: Omit<HTMLAttributes<HTMLDivElement>, 'value' | 'children'>;
+}
+
 export interface TabsProps extends BaseComponentProps {
+  /** Неконтролируемый начальный id активной вкладки */
   defaultActiveTab?: string;
+  /** Алиас для **defaultActiveTab** */
+  defaultValue?: string;
+  /** Контролируемый id активной вкладки */
+  value?: string;
   onChange?: (activeTab: string) => void;
   /** Направление отображения табов */
   direction?: TabsDirection;
@@ -1721,7 +1769,33 @@ export interface TabsProps extends BaseComponentProps {
    * Вариант оформления. Если не задан: горизонтально — pill (макет сегментов), вертикально — line.
    */
   variant?: TabsVariant;
+  /** Доступное имя группы (**role="group"**); для сегментов без панелей рекомендуется задать явно */
+  ariaLabel?: string;
+  /**
+   * Атрибуты трека сегментов (внутренний **TabItemGroupList**): **className**, **style**, **data-*** и т.д.
+   * К **className** добавляется **ui-tabs-list**.
+   */
+  segmentTrackProps?: Omit<React.HTMLAttributes<HTMLDivElement>, 'children'>;
+  /**
+   * Вкладки из данных: при непустом массиве рендерятся как **Tabs.Item** с теми же полями; **children** у корня для списка вкладок не используется.
+   */
+  items?: TabsItemDefinition[];
 }
+
+/**
+ * Укороченная строка для сегментов без панели (подмножество **TabsItemDefinition**).
+ */
+export type TabsSegmentOption = Pick<
+  TabsItemDefinition,
+  | 'value'
+  | 'label'
+  | 'disabled'
+  | 'loading'
+  | 'skeleton'
+  | 'iconStart'
+  | 'iconEnd'
+  | 'badge'
+>;
 
 /**
  * Способ раскрытия компактного меню навигации до полного (подписи + ширина)
