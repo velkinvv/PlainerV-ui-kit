@@ -2,10 +2,10 @@ import styled, { css } from 'styled-components';
 import {
   TabsDirection,
   TabsVariant,
+  TabItemTextOrientation,
   TabItemTextPosition,
   TabsVerticalPosition,
 } from '../../../types/ui';
-import type { TabItemTextOrientation } from '../../../types/ui';
 import { ThemeMode } from '../../../types/theme';
 import { BorderRadiusHandler } from '../../../handlers/uiHandlers';
 import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
@@ -29,18 +29,52 @@ export const TabItemGroupContainer = styled.div<{
 `;
 
 /**
+ * Обёртка ряда триггеров: серая линия **borderSecondary** только на ширину/высоту вкладок (**TabsVariant.UNDERLINE**).
+ * @property $direction — горизонтальный или вертикальный ряд (совпадает с треком)
+ */
+export const TabUnderlineBaselineTrackInner = styled.div<{ $direction: TabsDirection }>`
+  display: flex;
+  flex-direction: ${({ $direction }) => ($direction === TabsDirection.VERTICAL ? 'column' : 'row')};
+  position: relative;
+  align-items: stretch;
+  box-sizing: border-box;
+  gap: ${({ $direction }) => ($direction === TabsDirection.HORIZONTAL ? '8px' : '0')};
+  width: ${({ $direction }) => ($direction === TabsDirection.HORIZONTAL ? 'fit-content' : '100%')};
+  max-width: ${({ $direction }) => ($direction === TabsDirection.HORIZONTAL ? '100%' : 'none')};
+  height: ${({ $direction }) => ($direction === TabsDirection.VERTICAL ? 'fit-content' : 'auto')};
+  max-height: ${({ $direction }) => ($direction === TabsDirection.VERTICAL ? '100%' : 'none')};
+  border-bottom: ${({ $direction, theme }) =>
+    $direction === TabsDirection.HORIZONTAL ? `1px solid ${theme.colors.borderSecondary}` : 'none'};
+  border-right: ${({ $direction, theme }) =>
+    $direction === TabsDirection.VERTICAL ? `1px solid ${theme.colors.borderSecondary}` : 'none'};
+`;
+
+/**
  * Список триггеров вкладок
  * @property $direction — горизонтальный или вертикальный ряд сегментов
- * @property $variant — pill, line или underline (только линия-индикатор без фона кнопки)
+ * @property $variant — **pill** или текстовый (**minimal** / **line** / **underline**)
+ * @property $filledSegmentTriggers — фон трека и «залитые» сегменты (**backgroundSecondary** + **primary** на активном)
  */
 export const TabItemGroupListRoot = styled.div<{
   $direction: TabsDirection;
   $variant: TabsVariant;
+  $filledSegmentTriggers?: boolean;
 }>`
   display: flex;
-  flex-direction: ${({ $direction }) => ($direction === TabsDirection.VERTICAL ? 'column' : 'row')};
+  box-sizing: border-box;
 
-  ${({ $variant, $direction, theme }) =>
+  ${({ $direction, $variant }) =>
+    $variant === TabsVariant.UNDERLINE
+      ? css`
+          flex-direction: ${$direction === TabsDirection.VERTICAL ? 'row' : 'column'};
+          align-items: flex-start;
+        `
+      : css`
+          flex-direction: ${$direction === TabsDirection.VERTICAL ? 'column' : 'row'};
+          align-items: stretch;
+        `}
+
+  ${({ $variant, $direction, $filledSegmentTriggers, theme }) =>
     $variant === TabsVariant.PILL
       ? css`
           position: relative;
@@ -55,23 +89,39 @@ export const TabItemGroupListRoot = styled.div<{
             ? '#1c1c1c'
             : theme.colors.backgroundTertiary};
         `
-      : $variant === TabsVariant.UNDERLINE
+      : $variant === TabsVariant.MINIMAL ||
+          $variant === TabsVariant.LINE ||
+          $variant === TabsVariant.UNDERLINE
         ? css`
-            align-items: stretch;
-            box-sizing: border-box;
-            gap: ${$direction === TabsDirection.HORIZONTAL ? '8px' : '0'};
+            position: relative;
+            padding: 0;
+            border: none;
+            background: ${$filledSegmentTriggers
+              ? theme.colors.backgroundSecondary
+              : 'transparent'};
+            ${$variant === TabsVariant.LINE
+              ? css`
+                  border-bottom: ${$direction === TabsDirection.HORIZONTAL
+                    ? `1px solid ${theme.colors.borderSecondary}`
+                    : 'none'};
+                  border-right: ${$direction === TabsDirection.VERTICAL
+                    ? `1px solid ${theme.colors.borderSecondary}`
+                    : 'none'};
+                `
+              : ''}
+            ${$variant === TabsVariant.UNDERLINE
+              ? css`
+                  gap: 0;
+                `
+              : css`
+                  gap: ${$direction === TabsDirection.HORIZONTAL ? '8px' : '0'};
+                `}
+          `
+        : css`
+            position: relative;
             padding: 0;
             border: none;
             background: transparent;
-          `
-        : css`
-            border-bottom: ${$direction === TabsDirection.HORIZONTAL
-              ? `1px solid ${theme.colors.borderSecondary}`
-              : 'none'};
-            border-right: ${$direction === TabsDirection.VERTICAL
-              ? `1px solid ${theme.colors.borderSecondary}`
-              : 'none'};
-            background: ${theme.colors.backgroundSecondary};
           `}
 
   ${({ $direction }) =>
@@ -120,15 +170,85 @@ export const PillSegmentThumb = styled.div<{ $metrics: PillSegmentMetrics | null
         `}
 `;
 
-/** Обёртка для вертикального текста с позицией RIGHT (разворот содержимого) */
-export const TabItemVerticalTextWrap = styled.span`
-  display: inline-block;
-  transform: rotate(180deg);
+/**
+ * Анимированная полоска активного сегмента для текстовых вариантов (**minimal** / **line** / **underline**).
+ * @property $metrics — позиция и размер активного триггера относительно трека
+ * @property $direction — горизонтальный или вертикальный ряд
+ * @property $thickIndicator — **true**: **2px** (режим **filledSegmentTriggers**); **false**: **1px**
+ */
+export const LineUnderlineTrackIndicator = styled.div<{
+  $metrics: PillSegmentMetrics | null;
+  $direction: TabsDirection;
+  $thickIndicator: boolean;
+}>`
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  box-sizing: border-box;
+  left: 0;
+  top: 0;
+  background: ${({ theme }) => theme.colors.primary};
+  opacity: ${({ $metrics }) => ($metrics ? 1 : 0)};
+  transition:
+    transform 0.46s cubic-bezier(0.34, 1.18, 0.46, 1),
+    width 0.46s cubic-bezier(0.34, 1.18, 0.46, 1),
+    height 0.46s cubic-bezier(0.34, 1.18, 0.46, 1),
+    opacity 0.16s ease;
+
+  ${({ $metrics, $direction, $thickIndicator }) => {
+    const thicknessPx = $thickIndicator ? 2 : 1;
+    if (!$metrics) {
+      return css`
+        width: 0;
+        height: 0;
+        transform: translate(0, 0);
+      `;
+    }
+    const { offsetX, offsetY, width, height } = $metrics;
+    if ($direction === TabsDirection.HORIZONTAL) {
+      const translateYPx = offsetY + height - thicknessPx;
+      return css`
+        width: ${width}px;
+        height: ${thicknessPx}px;
+        transform: translate(${offsetX}px, ${translateYPx}px);
+      `;
+    }
+    const translateXPx = offsetX + width - thicknessPx;
+    return css`
+      width: ${thicknessPx}px;
+      height: ${height}px;
+      transform: translate(${translateXPx}px, ${offsetY}px);
+    `;
+  }}
 `;
 
-/** Подпись вкладки на триггере; при **loading** слегка приглушена */
-export const TabItemTriggerLabel = styled.span<{ $loading?: boolean }>`
+/** Подпись вкладки; вертикальный текст только здесь — иконки не переворачиваются вместе с подписью */
+export const TabItemTriggerLabel = styled.span<{
+  $loading?: boolean;
+  $textOrientation?: TabItemTextOrientation;
+  $textPosition?: TabItemTextPosition;
+}>`
   opacity: ${({ $loading }) => ($loading ? 0.72 : 1)};
+
+  ${({ $textOrientation, $textPosition }) => {
+    if ($textOrientation !== TabItemTextOrientation.VERTICAL) {
+      return '';
+    }
+    const position = $textPosition ?? TabItemTextPosition.RIGHT;
+    if (position === TabItemTextPosition.RIGHT) {
+      return css`
+        display: inline-block;
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        transform: rotate(180deg);
+      `;
+    }
+    return css`
+      display: inline-block;
+      writing-mode: vertical-lr;
+      text-orientation: mixed;
+    `;
+  }}
 `;
 
 /** Слот спиннера при **loading** у вкладки */
@@ -147,6 +267,8 @@ export const TabItemLoadingSlot = styled.span`
 export const TabItemSkeletonRoot = styled.div<{
   $direction: TabsDirection;
   $variant: TabsVariant;
+  /** Компактные отступы (**minimal** / **line** / **underline** без заливки) vs широкие (заливка сегментов) */
+  $filledSegmentTriggers?: boolean;
 }>`
   display: flex;
   align-items: center;
@@ -155,7 +277,7 @@ export const TabItemSkeletonRoot = styled.div<{
   pointer-events: none;
   user-select: none;
 
-  ${({ $variant, $direction }) =>
+  ${({ $variant, $direction, $filledSegmentTriggers }) =>
     $variant === TabsVariant.PILL
       ? css`
           padding: ${$direction === TabsDirection.VERTICAL ? '10px 12px' : '8px 16px'};
@@ -163,25 +285,34 @@ export const TabItemSkeletonRoot = styled.div<{
           flex: ${$direction === TabsDirection.HORIZONTAL ? '1' : '0 0 auto'};
           width: ${$direction === TabsDirection.VERTICAL ? '100%' : 'auto'};
         `
-      : $variant === TabsVariant.UNDERLINE
-        ? css`
+      : $variant === TabsVariant.MINIMAL ||
+          $variant === TabsVariant.LINE ||
+          $variant === TabsVariant.UNDERLINE
+        ? !$filledSegmentTriggers
+          ? css`
+              padding: ${$direction === TabsDirection.VERTICAL ? '10px 10px' : '10px 8px'};
+              flex: 0 0 auto;
+              width: ${$direction === TabsDirection.VERTICAL ? '100%' : 'auto'};
+            `
+          : css`
+              padding: 12px 24px;
+              flex: ${$direction === TabsDirection.HORIZONTAL ? '0 0 auto' : '0 0 auto'};
+              width: ${$direction === TabsDirection.VERTICAL ? '100%' : 'auto'};
+            `
+        : css`
             padding: ${$direction === TabsDirection.VERTICAL ? '10px 10px' : '10px 8px'};
             flex: 0 0 auto;
-            width: ${$direction === TabsDirection.VERTICAL ? '100%' : 'auto'};
-          `
-        : css`
-            padding: 12px 24px;
-            flex: ${$direction === TabsDirection.HORIZONTAL ? '0 0 auto' : '0 0 auto'};
             width: ${$direction === TabsDirection.VERTICAL ? '100%' : 'auto'};
           `}
 `;
 
-/** Слот иконки: наследует цвет текста сегмента */
+/** Слот иконки; горизонтальный режим письма — SVG не «лежит боком» при вертикальной подписи */
 export const TabItemIconSlot = styled.span`
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  writing-mode: horizontal-tb;
   color: currentColor;
 
   & svg {
@@ -201,11 +332,12 @@ export const TabItemBadgeWrap = styled.span`
  * TabItemTrigger — кнопка сегмента вкладки
  * @property $isActive — выбранный сегмент
  * @property $direction — ось списка табов
- * @property $variant — pill, line или underline (минимальный вид)
+ * @property $variant — **pill** или текстовый (**minimal** / **line** / **underline**)
+ * @property $filledSegmentTriggers — «залитый» вид сегментов (**primary** на активном); только для текстовых вариантов
  * @property $disabled — неактивное состояние (без клика)
  * @property $textOrientation — горизонтальный или вертикальный текст внутри сегмента
  * @property $textPosition — выравнивание при вертикальном тексте
- * @property $hasIcons — влияет на отступы (legacy, для line)
+ * @property $hasIcons — влияет на отступы (legacy)
  * @property $flexDirection — направление иконок и подписи
  * @property $gap — зазор между иконкой и текстом
  */
@@ -215,6 +347,10 @@ export const TabItemTrigger = styled.button<{
   $variant: TabsVariant;
   $disabled?: boolean;
   $loading?: boolean;
+  /** В группе с текстовым вариантом: полоска активного таба на треке (без границы на кнопке) */
+  $slidingTrackIndicator?: boolean;
+  /** Заливка сегментов и более толстый индикатор на треке (только текстовые варианты) */
+  $filledSegmentTriggers?: boolean;
   $textOrientation?: TabItemTextOrientation;
   $textPosition?: TabItemTextPosition;
   $hasIcons?: boolean;
@@ -240,7 +376,15 @@ export const TabItemTrigger = styled.button<{
   gap: ${({ $gap }) => $gap || '0'};
   font-family: inherit;
 
-  ${({ $variant, $direction, $isActive, $disabled, theme }) =>
+  ${({
+    $variant,
+    $direction,
+    $isActive,
+    $disabled,
+    $slidingTrackIndicator,
+    $filledSegmentTriggers,
+    theme,
+  }) =>
     $variant === TabsVariant.PILL
       ? css`
           position: relative;
@@ -291,8 +435,10 @@ export const TabItemTrigger = styled.button<{
             outline-offset: -2px;
           }
         `
-      : $variant === TabsVariant.UNDERLINE
+      : !$filledSegmentTriggers
         ? css`
+            position: relative;
+            z-index: ${$slidingTrackIndicator ? 1 : 'auto'};
             box-sizing: border-box;
             padding: ${$direction === TabsDirection.VERTICAL ? '10px 10px' : '10px 8px'};
             min-height: auto;
@@ -303,10 +449,14 @@ export const TabItemTrigger = styled.button<{
             background: transparent;
 
             border-bottom: ${$direction === TabsDirection.HORIZONTAL
-              ? `1px solid ${$isActive && !$disabled ? theme.colors.primary : 'transparent'}`
+              ? $slidingTrackIndicator
+                ? '1px solid transparent'
+                : `1px solid ${$isActive && !$disabled ? theme.colors.primary : 'transparent'}`
               : 'none'};
             border-right: ${$direction === TabsDirection.VERTICAL
-              ? `1px solid ${$isActive && !$disabled ? theme.colors.primary : 'transparent'}`
+              ? $slidingTrackIndicator
+                ? '1px solid transparent'
+                : `1px solid ${$isActive && !$disabled ? theme.colors.primary : 'transparent'}`
               : 'none'};
 
             ${$disabled
@@ -340,65 +490,59 @@ export const TabItemTrigger = styled.button<{
             }
           `
         : css`
-          padding: 12px 24px;
-          background: ${$isActive && !$disabled ? theme.colors.primary : 'transparent'};
-          color: ${$isActive && !$disabled
-            ? '#ffffff'
-            : $disabled
-              ? theme.colors.textDisabled
-              : theme.colors.textSecondary};
-          border-bottom: ${$direction === TabsDirection.HORIZONTAL
-            ? `2px solid ${$isActive && !$disabled ? theme.colors.primary : 'transparent'}`
-            : 'none'};
-          border-right: ${$direction === TabsDirection.VERTICAL
-            ? `2px solid ${$isActive && !$disabled ? theme.colors.primary : 'transparent'}`
-            : 'none'};
-          border-radius: 0;
+            position: relative;
+            z-index: ${$slidingTrackIndicator ? 1 : 'auto'};
+            padding: 12px 24px;
+            ${$slidingTrackIndicator
+              ? css`
+                  transition:
+                    background 0.42s cubic-bezier(0.34, 1.18, 0.46, 1),
+                    color 0.35s ease,
+                    box-shadow 0.2s ease,
+                    transform 0.18s ease;
+                `
+              : ''}
+            background: ${$isActive && !$disabled ? theme.colors.primary : 'transparent'};
+            color: ${$isActive && !$disabled
+              ? '#ffffff'
+              : $disabled
+                ? theme.colors.textDisabled
+                : theme.colors.textSecondary};
+            border-bottom: ${$direction === TabsDirection.HORIZONTAL
+              ? $slidingTrackIndicator
+                ? '2px solid transparent'
+                : `2px solid ${$isActive && !$disabled ? theme.colors.primary : 'transparent'}`
+              : 'none'};
+            border-right: ${$direction === TabsDirection.VERTICAL
+              ? $slidingTrackIndicator
+                ? '2px solid transparent'
+                : `2px solid ${$isActive && !$disabled ? theme.colors.primary : 'transparent'}`
+              : 'none'};
+            border-radius: 0;
 
-          &:hover:enabled {
-            background: ${$isActive ? theme.colors.primary : theme.colors.backgroundTertiary};
-            color: ${$isActive ? '#ffffff' : theme.colors.text};
-          }
-          ${buildHoverPressMotionCss({
-            hoverSelector: '&:hover:enabled',
-            activeSelector: '&:active:enabled',
-            hoverTransform: !$disabled ? 'translateY(-1px)' : 'none',
-            activeTransform: !$disabled ? 'scale(0.98)' : 'none',
-          })}
+            &:hover:enabled {
+              background: ${$isActive ? theme.colors.primary : theme.colors.backgroundTertiary};
+              color: ${$isActive ? '#ffffff' : theme.colors.text};
+            }
+            ${buildHoverPressMotionCss({
+              hoverSelector: '&:hover:enabled',
+              activeSelector: '&:active:enabled',
+              hoverTransform: !$disabled ? 'translateY(-1px)' : 'none',
+              activeTransform: !$disabled ? 'scale(0.98)' : 'none',
+            })}
 
-          &:focus {
-            outline: none;
-          }
+            &:focus {
+              outline: none;
+            }
 
-          &:focus-visible {
-            outline: 2px solid ${theme.colors.primary};
-            outline-offset: -2px;
-          }
-        `}
-
-  /* Поворот текста (вертикальная подпись внутри сегмента) */
-  ${({ $textOrientation, $textPosition, $variant }) => {
-    if ($variant === TabsVariant.PILL) {
-      return '';
-    }
-    if ($textOrientation === 'vertical') {
-      const position = $textPosition || TabItemTextPosition.RIGHT;
-      if (position === TabItemTextPosition.RIGHT) {
-        return css`
-          writing-mode: vertical-rl;
-          text-orientation: mixed;
-        `;
-      }
-      return css`
-        writing-mode: vertical-lr;
-        text-orientation: mixed;
-      `;
-    }
-    return '';
-  }}
+            &:focus-visible {
+              outline: 2px solid ${theme.colors.primary};
+              outline-offset: -2px;
+            }
+          `}
 
   ${({ $textOrientation, $textPosition, $variant }) => {
-    if ($variant === TabsVariant.PILL || $textOrientation !== 'vertical') {
+    if ($variant === TabsVariant.PILL || $textOrientation !== TabItemTextOrientation.VERTICAL) {
       return '';
     }
     const position = $textPosition || TabItemTextPosition.RIGHT;

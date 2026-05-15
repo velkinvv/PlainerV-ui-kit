@@ -8,6 +8,11 @@ export interface TabItemGroupContextType {
   direction: TabsDirection;
   tabsPosition?: TabsVerticalPosition;
   variant: TabsVariant;
+  /**
+   * Заливка сегментов и фон трека (**backgroundSecondary**) для текстовых вариантов
+   * (**minimal** / **line** / **underline**), полоска индикатора **2px**.
+   */
+  filledSegmentTriggers: boolean;
 }
 
 export const TabItemGroupContext = createContext<TabItemGroupContextType | undefined>(undefined);

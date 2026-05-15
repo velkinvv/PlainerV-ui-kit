@@ -3,15 +3,17 @@ import {
   TabItemIconSlot,
   TabItemLoadingSlot,
   TabItemTriggerLabel,
-  TabItemVerticalTextWrap,
   TabItemBadgeWrap,
 } from './TabItem.style';
 import { Badge } from '../Badge/Badge';
-import { BadgeVariant } from '@/types/ui';
+import {
+  BadgeVariant,
+  SpinnerVariant,
+  type TabItemTextOrientation,
+  type TabItemTextPosition,
+} from '@/types/ui';
 import { Size } from '@/types/sizes';
 import { Spinner } from '../Spinner/Spinner';
-import { Size } from '@/types/sizes';
-import { SpinnerVariant } from '@/types/ui';
 
 /**
  * Содержимое кнопки вкладки: иконки, подпись, бейдж, при **loading** — спиннер.
@@ -22,7 +24,8 @@ import { SpinnerVariant } from '@/types/ui';
  * @param params.badge — бейдж справа от текста
  * @param params.loading — показывать спиннер и слегка приглушить подпись
  * @param params.spinnerColor — цвет спиннера из темы (**theme.colors.primary**)
- * @param params.shouldWrapText — обёртка для вертикального текста (позиция RIGHT)
+ * @param params.textOrientation — ориентация текста подписи (**horizontal** / **vertical**); вертикаль только у лейбла
+ * @param params.textPosition — при вертикальном тексте позиция (**left** / **right**)
  */
 export function renderTabItemTriggerInner(params: {
   iconStart?: React.ReactNode;
@@ -31,14 +34,24 @@ export function renderTabItemTriggerInner(params: {
   badge?: React.ReactNode;
   loading: boolean;
   spinnerColor: string;
-  shouldWrapText: boolean;
+  textOrientation?: TabItemTextOrientation;
+  textPosition?: TabItemTextPosition;
 }): React.ReactNode {
-  const { iconStart, iconEnd, label, badge, loading, spinnerColor, shouldWrapText } = params;
+  const { iconStart, iconEnd, label, badge, loading, spinnerColor, textOrientation, textPosition } =
+    params;
 
-  const inner = (
+  return (
     <>
       {iconStart ? <TabItemIconSlot>{iconStart}</TabItemIconSlot> : null}
-      {label ? <TabItemTriggerLabel $loading={loading}>{label}</TabItemTriggerLabel> : null}
+      {label ? (
+        <TabItemTriggerLabel
+          $loading={loading}
+          $textOrientation={textOrientation}
+          $textPosition={textPosition}
+        >
+          {label}
+        </TabItemTriggerLabel>
+      ) : null}
       {iconEnd ? <TabItemIconSlot>{iconEnd}</TabItemIconSlot> : null}
       {badge != null && badge !== false ? (
         <TabItemBadgeWrap>
@@ -60,6 +73,4 @@ export function renderTabItemTriggerInner(params: {
       ) : null}
     </>
   );
-
-  return shouldWrapText ? <TabItemVerticalTextWrap>{inner}</TabItemVerticalTextWrap> : inner;
 }

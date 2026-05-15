@@ -12,7 +12,7 @@ import {
   TabItemTextPosition as TabItemTextPositionEnum,
   TabsVariant,
   SkeletonVariant,
-  type TabItemTextOrientation,
+  TabItemTextOrientation,
   type TabItemTextPosition,
   type TabsItemDefinition,
 } from '../../../types/ui';
@@ -20,8 +20,8 @@ import { useTheme } from 'styled-components';
 import { Skeleton } from '../Skeleton/Skeleton';
 import { renderTabItemTriggerInner } from './tabItemTriggerInner';
 import { resolveTabsVariant } from '@/handlers/resolveTabsVariant';
-import { TabItemGroupContext } from './TabItemGroupContext';
-import { useTabItemGroupContext } from './TabItemGroupContext';
+import { isTabsTextSegmentVariant } from '@/handlers/tabsVariantHandlers';
+import { TabItemGroupContext, useTabItemGroupContext } from './TabItemGroupContext';
 import { TabItemGroupList } from './TabItemGroupList';
 import { usePillSegmentRegistration } from './pillSegmentTrack/PillSegmentRegistrationContext';
 import { mergeRefs } from '@/handlers/assignRefs';
@@ -46,6 +46,7 @@ export { TabItemGroupList } from './TabItemGroupList';
  * @property onChange - Обработчик изменения активности (для одиночного TabItem)
  * @property direction - Направление табов (для одиночного TabItem без группы)
  * @property variant - Вариант оформления для одиночного TabItem; в группе берётся из TabItem.Group / Tabs
+ * @property filledSegmentTriggers - У текстовых вариантов (**minimal** / **line** / **underline**): «залитые» сегменты как у прежнего **line**
  * @property disabled - Отключить переключение вкладки
  * @property loading - Загрузка: спиннер, клик заблокирован (**aria-busy**)
  * @property skeleton - Плейсхолдер без интерактива; при **true** вместе с **loading** показывается только скелетон
@@ -70,6 +71,8 @@ export interface TabItemProps {
   // Для группы TabItem
   direction?: TabsDirection;
   variant?: TabsVariant;
+  /** Заливка сегментов для текстовых вариантов (без группы — редкий случай; в группе задаётся на **Tabs** / **TabItem.Group**) */
+  filledSegmentTriggers?: boolean;
   disabled?: boolean;
   /** Индикатор загрузки: спиннер на триггере, переключение недоступно */
   loading?: boolean;
@@ -101,6 +104,7 @@ export const TabItem: React.FC<TabItemProps> & {
   onChange,
   direction: groupDirection,
   variant: tabVariantProp,
+  filledSegmentTriggers: tabFilledSegmentTriggersProp,
   disabled = false,
   loading = false,
   skeleton = false,
@@ -128,7 +132,12 @@ export const TabItem: React.FC<TabItemProps> & {
   const pillSegmentRegistration = usePillSegmentRegistration();
 
   const mergedGroupTriggerReference = useMemo(() => {
-    if (!groupContext || groupContext.variant !== TabsVariant.PILL) {
+    if (!groupContext) {
+      return externalTriggerReference;
+    }
+    const registersAnimatedIndicator =
+      groupContext.variant === TabsVariant.PILL || isTabsTextSegmentVariant(groupContext.variant);
+    if (!registersAnimatedIndicator) {
       return externalTriggerReference;
     }
     return mergeRefs(externalTriggerReference, (element) => {
@@ -137,20 +146,25 @@ export const TabItem: React.FC<TabItemProps> & {
   }, [groupContext, externalTriggerReference, pillSegmentRegistration, value]);
 
   if (groupContext) {
-    const { activeTab, setActiveTab, direction, variant: groupVariant } = groupContext;
+    const {
+      activeTab,
+      setActiveTab,
+      direction,
+      variant: groupVariant,
+      filledSegmentTriggers,
+    } = groupContext;
     const isActive = activeTab === value;
 
     const finalTextPosition =
-      textOrientation === 'vertical' && !textPosition
+      textOrientation === TabItemTextOrientation.VERTICAL && !textPosition
         ? TabItemTextPositionEnum.RIGHT
         : textPosition;
 
-    const shouldWrapText =
-      textOrientation === 'vertical' && finalTextPosition === TabItemTextPositionEnum.RIGHT;
-
-    const isVertical = textOrientation === 'vertical';
+    const isVertical = textOrientation === TabItemTextOrientation.VERTICAL;
     const flexDirection = isVertical ? 'column' : 'row';
     const gap = isVertical ? '4px' : '8px';
+
+    const slidingTrackIndicator = isTabsTextSegmentVariant(groupVariant);
 
     const handleGroupClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       triggerOnClick?.(e);
@@ -167,6 +181,7 @@ export const TabItem: React.FC<TabItemProps> & {
           className={clsx('ui-tab-item-skeleton', triggerClassName)}
           $direction={direction}
           $variant={groupVariant}
+          $filledSegmentTriggers={filledSegmentTriggers}
           aria-hidden
         >
           <Skeleton
@@ -189,7 +204,8 @@ export const TabItem: React.FC<TabItemProps> & {
       badge,
       loading,
       spinnerColor,
-      shouldWrapText,
+      textOrientation,
+      textPosition: finalTextPosition,
     });
 
     return (
@@ -202,6 +218,8 @@ export const TabItem: React.FC<TabItemProps> & {
         $disabled={isInteractionBlocked}
         disabled={isInteractionBlocked}
         $loading={loading}
+        $slidingTrackIndicator={slidingTrackIndicator}
+        $filledSegmentTriggers={filledSegmentTriggers}
         $textOrientation={textOrientation}
         $textPosition={finalTextPosition}
         $hasIcons={!!(iconStart || iconEnd)}
@@ -233,13 +251,11 @@ export const TabItem: React.FC<TabItemProps> & {
   };
 
   const finalTextPositionStandalone =
-    textOrientation === 'vertical' && !textPosition ? TabItemTextPositionEnum.RIGHT : textPosition;
+    textOrientation === TabItemTextOrientation.VERTICAL && !textPosition
+      ? TabItemTextPositionEnum.RIGHT
+      : textPosition;
 
-  const shouldWrapTextStandalone =
-    textOrientation === 'vertical' &&
-    finalTextPositionStandalone === TabItemTextPositionEnum.RIGHT;
-
-  const isVerticalStandalone = textOrientation === 'vertical';
+  const isVerticalStandalone = textOrientation === TabItemTextOrientation.VERTICAL;
   const flexDirectionStandalone = isVerticalStandalone ? 'column' : 'row';
   const gapStandalone = isVerticalStandalone ? '4px' : '8px';
 
@@ -254,6 +270,7 @@ export const TabItem: React.FC<TabItemProps> & {
           className={clsx('ui-tab-item-skeleton', triggerClassName)}
           $direction={direction}
           $variant={resolvedVariant}
+          $filledSegmentTriggers={Boolean(tabFilledSegmentTriggersProp)}
           aria-hidden
         >
           <Skeleton
@@ -285,7 +302,8 @@ export const TabItem: React.FC<TabItemProps> & {
     badge,
     loading,
     spinnerColor,
-    shouldWrapText: shouldWrapTextStandalone,
+    textOrientation,
+    textPosition: finalTextPositionStandalone,
   });
 
   return (
@@ -299,6 +317,7 @@ export const TabItem: React.FC<TabItemProps> & {
         $disabled={isInteractionBlocked}
         disabled={isInteractionBlocked}
         $loading={loading}
+        $filledSegmentTriggers={Boolean(tabFilledSegmentTriggersProp)}
         $textOrientation={textOrientation}
         $textPosition={finalTextPositionStandalone}
         $hasIcons={!!(iconStart || iconEnd)}
@@ -347,13 +366,18 @@ interface TabItemGroupProps extends Omit<React.HTMLAttributes<HTMLDivElement>, '
   /** Позиция табов в вертикальном режиме (слева или справа от контента) */
   tabsPosition?: TabsVerticalPosition;
   /**
-   * Вариант оформления. Если не задан: вертикально — line, горизонтально — pill (макет Figma).
+   * Вариант оформления. Если не задан: вертикально — **minimal**, горизонтально — **pill**.
    */
   variant?: TabsVariant;
   /** Доступное имя группы сегментов (**role="group"** на корне) */
   ariaLabel?: string;
   /** Пропсы внутреннего трека (**TabItemGroupList**); к **className** добавляется **ui-tabs-list** */
   segmentTrackProps?: Omit<React.HTMLAttributes<HTMLDivElement>, 'children'>;
+  /**
+   * У вариантов **minimal**, **line**, **underline**: «залитые» сегменты (**primary** на активном),
+   * фон трека **backgroundSecondary**, индикатор **2px**.
+   */
+  filledSegmentTriggers?: boolean;
 }
 
 // Компонент группы TabItem
@@ -370,9 +394,12 @@ export const TabItemGroup: React.FC<TabItemGroupProps> = ({
   variant: variantProp,
   ariaLabel,
   segmentTrackProps,
+  filledSegmentTriggers,
   ...props
 }) => {
   const resolvedVariant = resolveTabsVariant(direction, variantProp);
+
+  const resolvedFilledSegmentTriggers = Boolean(filledSegmentTriggers);
 
   const tabNodesFromItems = useMemo(() => {
     if (!items?.length) {
@@ -511,6 +538,7 @@ export const TabItemGroup: React.FC<TabItemGroupProps> = ({
               key: 'tab-item-group-list',
               $direction: direction,
               $variant: resolvedVariant,
+              $filledSegmentTriggers: resolvedFilledSegmentTriggers,
               ...segmentTrackProps,
               className: clsx(
                 'ui-tabs-list',
@@ -539,6 +567,7 @@ export const TabItemGroup: React.FC<TabItemGroupProps> = ({
         direction,
         tabsPosition,
         variant: resolvedVariant,
+        filledSegmentTriggers: resolvedFilledSegmentTriggers,
       }}
     >
       <TabItemGroupContainer
@@ -558,6 +587,7 @@ export const TabItemGroup: React.FC<TabItemGroupProps> = ({
             <TabItemGroupList
               $direction={direction}
               $variant={resolvedVariant}
+              $filledSegmentTriggers={resolvedFilledSegmentTriggers}
               {...segmentTrackProps}
               className={clsx('ui-tabs-list', segmentTrackProps?.className)}
             >

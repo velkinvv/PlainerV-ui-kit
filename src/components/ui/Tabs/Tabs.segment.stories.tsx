@@ -88,9 +88,19 @@ const meta: Meta<typeof Tabs> = {
     },
     variant: {
       control: { type: 'select' },
-      options: [TabsVariant.PILL, TabsVariant.LINE, TabsVariant.UNDERLINE],
+      options: [
+        TabsVariant.PILL,
+        TabsVariant.MINIMAL,
+        TabsVariant.LINE,
+        TabsVariant.UNDERLINE,
+      ],
       description:
-        '**pill**, **line** или **underline**; если не задан — **resolveTabsVariant** (горизонтально обычно **pill**, вертикально **line**).',
+        '**pill**, **minimal**, **line**, **underline**; если не задан — **resolveTabsVariant** (горизонтально **pill**, вертикально **minimal**).',
+    },
+    filledSegmentTriggers: {
+      control: { type: 'boolean' },
+      description:
+        'Заливка сегментов для **minimal** / **line** / **underline** — см. корневую документацию **Tabs**.',
     },
     ariaLabel: {
       description: '**aria-label** группы (**role="group"** на корне **Tabs**).',
@@ -165,13 +175,38 @@ export const SegmentHorizontalPill: Story = {
   ),
 };
 
-/** Горизонтальный **line**. */
-export const SegmentHorizontalLine: Story = {
-  name: 'Сегменты · Горизонтально line',
+/** Горизонтальный **minimal**: без серой базовой линии. */
+export const SegmentHorizontalMinimal: Story = {
+  name: 'Сегменты · Горизонтально minimal',
   parameters: {
     docs: {
       description: {
-        story: 'Линия-индикатор у активного сегмента.',
+        story: 'Только подписи и полоска **primary** у активного пункта.',
+      },
+    },
+  },
+  render: (storyArguments) => (
+    <TabsSegmentStoryHorizontalWrap>
+      <Tabs
+        {...storyArguments}
+        defaultValue="details"
+        direction={TabsDirection.HORIZONTAL}
+        variant={TabsVariant.MINIMAL}
+        ariaLabel="Горизонтально, minimal"
+      >
+        {tabsSegmentListFromOptions(threeSegmentLabels)}
+      </Tabs>
+    </TabsSegmentStoryHorizontalWrap>
+  ),
+};
+
+/** Горизонтальный **line** с **filledSegmentTriggers** (классический «залитый» ряд). */
+export const SegmentHorizontalLine: Story = {
+  name: 'Сегменты · Горизонтально line (filled)',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Вариант **line** с заливкой сегментов и фоном трека (**filledSegmentTriggers**).',
       },
     },
   },
@@ -182,7 +217,8 @@ export const SegmentHorizontalLine: Story = {
         defaultValue="details"
         direction={TabsDirection.HORIZONTAL}
         variant={TabsVariant.LINE}
-        ariaLabel="Горизонтально, line"
+        filledSegmentTriggers
+        ariaLabel="Горизонтально, line filled"
       >
         {tabsSegmentListFromOptions(threeSegmentLabels)}
       </Tabs>
@@ -190,13 +226,13 @@ export const SegmentHorizontalLine: Story = {
   ),
 };
 
-/** Горизонтальный **underline**: без фона трека, только **1px** линия **primary**. */
+/** Горизонтальный **underline**: серая линия только под триггерами. */
 export const SegmentHorizontalUnderline: Story = {
   name: 'Сегменты · Горизонтально underline',
   parameters: {
     docs: {
       description: {
-        story: 'Минимальный вид: подписи и тонкая нижняя линия активного пункта.',
+        story: '**TabsVariant.UNDERLINE**: общая серая полоска по ширине ряда вкладок.',
       },
     },
   },
@@ -240,13 +276,38 @@ export const SegmentVerticalPill: Story = {
   ),
 };
 
-/** Вертикальный **line**. */
-export const SegmentVerticalLine: Story = {
-  name: 'Сегменты · Вертикально line',
+/** Вертикальный **minimal**. */
+export const SegmentVerticalMinimal: Story = {
+  name: 'Сегменты · Вертикально minimal',
   parameters: {
     docs: {
       description: {
-        story: 'Боковая полоса у активного пункта.',
+        story: 'Компактная колонка без серой базовой линии.',
+      },
+    },
+  },
+  render: (storyArguments) => (
+    <TabsSegmentStoryVerticalWrap>
+      <Tabs
+        {...storyArguments}
+        defaultValue="overview"
+        direction={TabsDirection.VERTICAL}
+        variant={TabsVariant.MINIMAL}
+        ariaLabel="Вертикально, minimal"
+      >
+        {tabsSegmentListFromOptions(threeSegmentLabels)}
+      </Tabs>
+    </TabsSegmentStoryVerticalWrap>
+  ),
+};
+
+/** Вертикальный **line** с заливкой (**filledSegmentTriggers**). */
+export const SegmentVerticalLine: Story = {
+  name: 'Сегменты · Вертикально line (filled)',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Классический вертикальный ряд с фоном трека и заливкой активного сегмента.',
       },
     },
   },
@@ -257,7 +318,8 @@ export const SegmentVerticalLine: Story = {
         defaultValue="overview"
         direction={TabsDirection.VERTICAL}
         variant={TabsVariant.LINE}
-        ariaLabel="Вертикально, line"
+        filledSegmentTriggers
+        ariaLabel="Вертикально, line filled"
       >
         {tabsSegmentListFromOptions(threeSegmentLabels)}
       </Tabs>
@@ -265,13 +327,13 @@ export const SegmentVerticalLine: Story = {
   ),
 };
 
-/** Вертикальный **underline**. */
+/** Вертикальный **underline**: серая линия по высоте ряда триггеров. */
 export const SegmentVerticalUnderline: Story = {
   name: 'Сегменты · Вертикально underline',
   parameters: {
     docs: {
       description: {
-        story: 'Тонкая вертикальная линия **primary** у активного пункта.',
+        story: '**TabsVariant.UNDERLINE**: вертикальная серая базовая линия только у колонки вкладок.',
       },
     },
   },
@@ -297,7 +359,8 @@ export const SegmentMatrixDirectionAndVariant: Story = {
     layout: 'padded',
     docs: {
       description: {
-        story: 'Сводка вариантов на одной странице документации.',
+        story:
+          'Четыре варианта направления × оформления: **pill**, **minimal**, **line** (серая линия на весь трек, без **filledSegmentTriggers**), **underline** (серая линия под триггерами). Для «залитых» сегментов см. отдельные сторис **SegmentHorizontalLine** / **SegmentVerticalLine**.',
       },
     },
   },
@@ -317,7 +380,20 @@ export const SegmentMatrixDirectionAndVariant: Story = {
         </TabsSegmentStoryHorizontalWrap>
       </TabsSegmentStoryMatrixBlock>
       <TabsSegmentStoryMatrixBlock>
-        <TabsSegmentStorySectionTitle>Горизонтально · line</TabsSegmentStorySectionTitle>
+        <TabsSegmentStorySectionTitle>Горизонтально · minimal</TabsSegmentStorySectionTitle>
+        <TabsSegmentStoryHorizontalWrap>
+          <Tabs
+            ariaLabel="Матрица: горизонтально minimal"
+            defaultValue="details"
+            direction={TabsDirection.HORIZONTAL}
+            variant={TabsVariant.MINIMAL}
+          >
+            {tabsSegmentListFromOptions(threeSegmentLabels)}
+          </Tabs>
+        </TabsSegmentStoryHorizontalWrap>
+      </TabsSegmentStoryMatrixBlock>
+      <TabsSegmentStoryMatrixBlock>
+        <TabsSegmentStorySectionTitle>Горизонтально · line (серая линия на весь трек)</TabsSegmentStorySectionTitle>
         <TabsSegmentStoryHorizontalWrap>
           <Tabs
             ariaLabel="Матрица: горизонтально line"
@@ -356,7 +432,20 @@ export const SegmentMatrixDirectionAndVariant: Story = {
         </TabsSegmentStoryVerticalWrap>
       </TabsSegmentStoryMatrixBlock>
       <TabsSegmentStoryMatrixBlock>
-        <TabsSegmentStorySectionTitle>Вертикально · line</TabsSegmentStorySectionTitle>
+        <TabsSegmentStorySectionTitle>Вертикально · minimal</TabsSegmentStorySectionTitle>
+        <TabsSegmentStoryVerticalWrap>
+          <Tabs
+            ariaLabel="Матрица: вертикально minimal"
+            defaultValue="attachments"
+            direction={TabsDirection.VERTICAL}
+            variant={TabsVariant.MINIMAL}
+          >
+            {tabsSegmentListFromOptions(threeSegmentLabels)}
+          </Tabs>
+        </TabsSegmentStoryVerticalWrap>
+      </TabsSegmentStoryMatrixBlock>
+      <TabsSegmentStoryMatrixBlock>
+        <TabsSegmentStorySectionTitle>Вертикально · line (серая линия на весь трек)</TabsSegmentStorySectionTitle>
         <TabsSegmentStoryVerticalWrap>
           <Tabs
             ariaLabel="Матрица: вертикально line"
@@ -564,7 +653,7 @@ export const SegmentSeveralDisabled: Story = {
   },
   render: () => (
     <TabsSegmentStoryHorizontalWrap>
-      <Tabs ariaLabel="Этапы процесса" variant={TabsVariant.LINE} defaultValue="draft">
+      <Tabs ariaLabel="Этапы процесса" variant={TabsVariant.LINE} filledSegmentTriggers defaultValue="draft">
           <Tabs.Item value="draft" label="Черновик" />
           <Tabs.Item value="step2" label="Шаг 2" disabled />
           <Tabs.Item value="step3" label="Шаг 3" disabled />

@@ -277,10 +277,21 @@ export const DOC_TABS = `
 ### Назначение
 Единый компонент **Tabs**: вкладки с панелями (**TabItem** с **children**) и сегменты **без** панелей (**Tabs.Item** / **TabItem** без **children**). Список вкладок можно задать дочерними узлами или пропом **items** (непустой массив имеет приоритет). Дочерние сегменты автоматически попадают во внутренний трек (**TabItemGroupList**); отдельная обёртка списка не нужна. Атрибуты трека — проп **segmentTrackProps** на корне **Tabs**.
 
-- **Варианты**: **TabsVariant.PILL**, **TabsVariant.LINE**, **TabsVariant.UNDERLINE** (только подпись и **1px** линия **primary** у активного пункта, без фона трека); если не задан — **resolveTabsVariant** (горизонтально чаще **pill**, вертикально — **line**).
+- **Варианты**: **TabsVariant.PILL** (скруглённый трек и «капля»); **TabsVariant.MINIMAL**, **TabsVariant.LINE**, **TabsVariant.UNDERLINE** — один тип текстового ряда со скользящей полоской **primary**, различие только в серой базовой линии **borderSecondary**: у **minimal** её нет, у **line** она на всю ширину/высоту трека, у **underline** — только под рядом триггеров (**fit-content**). Если **variant** не задан — **resolveTabsVariant** (горизонтально **pill**, вертикально **minimal**).
+- **filledSegmentTriggers** (на корне **Tabs** / **TabItem.Group**): для **minimal** / **line** / **underline** включает «залитые» сегменты (**primary** на активном), фон трека **backgroundSecondary** и полоску индикатора **2px** (без пропа — **1px** и без заливки у текстовых вариантов).
 - **Направление**: **TabsDirection**, вертикально — **TabsVerticalPosition**.
 
-В режиме **pill** скругление сегментов — **BorderRadiusHandler(theme.borderRadius)**; оболочка трека — \`calc(radius + inset)\`; **overflow: hidden**; под активным сегментом анимированная «капля» (**PillSegmentThumb**).
+В режиме **pill** скругление сегментов — **BorderRadiusHandler(theme.borderRadius)**; оболочка трека — \`calc(radius + inset)\`; **overflow: hidden**; под активным сегментом анимированная «капля» (**PillSegmentThumb**). В текстовых вариантах активная отметка — скользящая полоска (**LineUnderlineTrackIndicator**) по нижнему (горизонталь) или правому (вертикаль) краю ряда триггеров.
+
+### Миграция с прежнего API
+| Раньше | Сейчас |
+|--------|--------|
+| **TabsVariant.UNDERLINE**, только текст и **primary**, без серой линии | **TabsVariant.MINIMAL** |
+| Серая линия на весь трек (старое **underline** + базовая линия **FULL**) | **TabsVariant.LINE**, без **filledSegmentTriggers** |
+| Серая линия под вкладками (**ITEMS**) | **TabsVariant.UNDERLINE** |
+| Старый **TabsVariant.LINE** с заливкой сегментов и фоном трека | **TabsVariant.LINE** + **filledSegmentTriggers** |
+
+Удалены пропы **underlineBaseline**, **underlineBaselineWidth** и перечисление **TabsUnderlineBaselineWidth**.
 
 ### Когда использовать
 | Сценарий | Как собрать |
@@ -330,7 +341,8 @@ const segmentItems: TabsItemDefinition[] = [
 | \`onChange(activeTab)\` | Смена активного сегмента. |
 | \`direction\` | **horizontal** \| **vertical**. |
 | \`tabsPosition\` | При вертикали — табы слева/справа от контента. |
-| \`variant\` | **pill** \| **line** \| **underline**. |
+| \`variant\` | **pill** \| **minimal** \| **line** \| **underline**. |
+| \`filledSegmentTriggers\` | У **minimal** / **line** / **underline**: заливка сегментов и фон трека (**filled**). |
 | \`ariaLabel\` | **aria-label** группы (**role="group"** на корне). |
 | \`segmentTrackProps\` | **className**, **style**, **data-*** для трека; к **className** добавляется **ui-tabs-list**. |
 
@@ -355,14 +367,18 @@ const segmentItems: TabsItemDefinition[] = [
 **TabItemGroupContext** / **useTabItemGroupContext** — для расширений внутри группы.
 
 ### Storybook
-Основные вкладки с панелями — **UI Kit/Navigation/Tabs** (в т.ч. **WithItemsProp**, **WithLoadingSkeletonDisabled**, **WithItemsPropUnderlineAndLoading**); примеры только сегментов — **UI Kit/Navigation/Tabs/Segments**.
+**UI Kit/Navigation/Tabs**: вкладки с панелями — **MinimalHorizontal**, **LineHorizontal** (**filledSegmentTriggers**), **TextVariantLineGrayFull**, **TextVariantUnderlineGrayItems**, **WithItemsProp**, **WithItemsPropMinimalAndLoading**, **WithLoadingSkeletonDisabled**.
+
+**UI Kit/Navigation/Tabs/Segments**: только переключатели — **SegmentHorizontalMinimal**, **SegmentHorizontalLine** (filled), **SegmentHorizontalUnderline**, **SegmentVerticalMinimal**, **SegmentVerticalLine** (filled), **SegmentVerticalUnderline**, **SegmentMatrixDirectionAndVariant** и др.
 `.trim();
 
 export const DOC_TAB_ITEM = `
 ### Назначение
 Элемент вкладки или сегмента: триггер и опциональная панель (**value**, заголовок). Состояния: **disabled**, **loading** (спиннер, блокировка выбора, **aria-busy**), **skeleton** (плейсхолдер без интерактива). Ориентация текста (**TabItemTextOrientation**, **TabItemTextPosition**).
 
-Внутри **Tabs** или **TabItem.Group**: панель через **children** у **TabItem**; только переключатель — **Tabs.Item** без **children**. Альтернатива — проп **items** на **Tabs** / **TabItem.Group** (**TabsItemDefinition[]**, непустой массив заменяет дочерний список вкладок). Трек списка создаётся внутри корня; для атрибутов трека — **segmentTrackProps** на **Tabs** или **TabItem.Group**.
+Внутри **Tabs** или **TabItem.Group**: панель через **children** у **TabItem**; только переключатель — **Tabs.Item** без **children**. Альтернатива — проп **items** на **Tabs** / **TabItem.Group** (**TabsItemDefinition[]**, непустой массив заменяет дочерний список вкладок). Трек списка создаётся внутри корня; для атрибутов трека — **segmentTrackProps**; для заливки сегментов в текстовых вариантах — **filledSegmentTriggers** на корне группы.
+
+Вариант оформления (**TabsVariant**: **pill**, **minimal**, **line**, **underline**) и **filledSegmentTriggers** задаются на **Tabs** / **TabItem.Group** и попадают в контекст. У одиночного **TabItem** вне группы можно передать **variant** и **filledSegmentTriggers** для редких случаев (обычно используйте **Tabs**).
 `.trim();
 
 /** @see NavigationMenuProps */

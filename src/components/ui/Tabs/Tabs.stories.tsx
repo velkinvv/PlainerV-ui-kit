@@ -84,12 +84,26 @@ const meta: Meta<typeof Tabs> = {
     },
     variant: {
       control: { type: 'select' },
-      options: [TabsVariant.PILL, TabsVariant.LINE, TabsVariant.UNDERLINE],
+      options: [
+        TabsVariant.PILL,
+        TabsVariant.MINIMAL,
+        TabsVariant.LINE,
+        TabsVariant.UNDERLINE,
+      ],
       description:
-        'PILL — сегментированный трек. LINE — линия и заливка активного пункта. UNDERLINE — только подпись и тонкая линия primary у активного (без фона трека). Если не задан: горизонтально pill, вертикально line.',
+        '**pill** — трек с «каплёй». **minimal** / **line** / **underline** — текстовый ряд; серая базовая линия: нет / на весь трек / под триггерами. Без **variant**: горизонтально **pill**, вертикально **minimal**.',
       table: {
-        type: { summary: '"pill", "line", "underline"' },
+        type: { summary: '"pill", "minimal", "line", "underline"' },
         defaultValue: { summary: 'undefined (авто)' },
+      },
+    },
+    filledSegmentTriggers: {
+      control: { type: 'boolean' },
+      description:
+        'Для **minimal** / **line** / **underline**: заливка **primary** активного сегмента, фон трека **backgroundSecondary**, индикатор **2px**.',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'undefined → false' },
       },
     },
     onChange: {
@@ -166,10 +180,11 @@ export const PillSegmentedWithIconsAndBadge: Story = {
   },
 };
 
-/** Горизонтальные табы с нижней линией (явный variant=LINE) */
+/** Горизонтально: вариант **line** с заливкой сегментов (**filledSegmentTriggers**) — прежний «классический» вид табов. */
 export const LineHorizontal: Story = {
   args: {
     variant: TabsVariant.LINE,
+    filledSegmentTriggers: true,
     children: (
       <>
           <TabItem value="a" label="Вкладка A">
@@ -184,11 +199,11 @@ export const LineHorizontal: Story = {
   parameters: { layout: 'padded' },
 };
 
-/** Горизонтально: только текст и нижняя линия **primary** у активной вкладки (без обёртки трека). */
-export const UnderlineHorizontal: Story = {
+/** Горизонтально: **minimal** — только текст и **1px** полоска **primary** у активной вкладки, без серой базовой линии. */
+export const MinimalHorizontal: Story = {
   args: {
-    variant: TabsVariant.UNDERLINE,
-    ariaLabel: 'Разделы с подчёркиванием',
+    variant: TabsVariant.MINIMAL,
+    ariaLabel: 'Разделы, минимальный вид',
     children: (
       <>
         <TabItem value="a" label="Вкладка A">
@@ -204,6 +219,78 @@ export const UnderlineHorizontal: Story = {
     ),
   },
   parameters: { layout: 'padded' },
+};
+
+/** Горизонтально: **line** без заливки — серая базовая линия на всю ширину трека (**TabsVariant.LINE**). */
+export const TextVariantLineGrayFull: Story = {
+  decorators: [
+    (StoryComponent) => (
+      <div style={{ ...tabsStoriesStyles.wideDashedPanel, width: 440 }}>
+        <StoryComponent />
+      </div>
+    ),
+  ],
+  args: {
+    variant: TabsVariant.LINE,
+    filledSegmentTriggers: false,
+    ariaLabel: 'Текстовый ряд, серая линия на всю ширину',
+    defaultValue: 'a',
+    children: (
+      <>
+        <TabItem value="a" label="Вкладка A">
+          <div style={tabsStoriesStyles.contentPadding16}>Контент A</div>
+        </TabItem>
+        <TabItem value="b" label="Вкладка B">
+          <div style={tabsStoriesStyles.contentPadding16}>Контент B</div>
+        </TabItem>
+      </>
+    ),
+  },
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        story:
+          '**TabsVariant.LINE** без **filledSegmentTriggers**: только общая серая линия и скользящая **primary**.',
+      },
+    },
+  },
+};
+
+/** Горизонтально: **underline** — серая линия только под рядом триггеров (**TabsVariant.UNDERLINE**). */
+export const TextVariantUnderlineGrayItems: Story = {
+  decorators: [
+    (StoryComponent) => (
+      <div style={{ ...tabsStoriesStyles.wideDashedPanel, width: 440 }}>
+        <StoryComponent />
+      </div>
+    ),
+  ],
+  args: {
+    variant: TabsVariant.UNDERLINE,
+    filledSegmentTriggers: false,
+    ariaLabel: 'Текстовый ряд, серая линия под вкладками',
+    defaultValue: 'a',
+    children: (
+      <>
+        <TabItem value="a" label="Вкладка A">
+          <div style={tabsStoriesStyles.contentPadding16}>Контент A</div>
+        </TabItem>
+        <TabItem value="b" label="Вкладка B">
+          <div style={tabsStoriesStyles.contentPadding16}>Контент B</div>
+        </TabItem>
+      </>
+    ),
+  },
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        story:
+          '**TabsVariant.UNDERLINE**: серая базовая линия по ширине триггеров (**fit-content**).',
+      },
+    },
+  },
 };
 
 /** Вкладки из пропа **items** (**TabsItemDefinition**): те же поля, что у **TabItem** в группе. */
@@ -297,19 +384,19 @@ export const WithLoadingSkeletonDisabled: Story = {
   },
 };
 
-/** Тот же сценарий **items**, но вариант **underline** и одна строка в состоянии **loading**. */
-export const WithItemsPropUnderlineAndLoading: Story = {
+/** Тот же сценарий **items**, но вариант **minimal** и одна строка в состоянии **loading**. */
+export const WithItemsPropMinimalAndLoading: Story = {
   args: {
-    variant: TabsVariant.UNDERLINE,
+    variant: TabsVariant.MINIMAL,
     defaultValue: 'list',
-    ariaLabel: 'Список из items, underline',
+    ariaLabel: 'Список из items, minimal',
     items: [
       {
         value: 'list',
         label: 'Список',
         children: (
           <div style={tabsStoriesStyles.contentPadding16}>
-            <p>Вкладки из **items** с **TabsVariant.UNDERLINE**.</p>
+            <p>Вкладки из **items** с **TabsVariant.MINIMAL**.</p>
           </div>
         ),
       },
@@ -339,7 +426,7 @@ export const WithItemsPropUnderlineAndLoading: Story = {
     layout: 'padded',
     docs: {
       description: {
-        story: 'Комбинация **items**, **underline** и полей **loading** / **disabled** в типе строки.',
+        story: 'Комбинация **items**, **minimal** и полей **loading** / **disabled** в типе строки.',
       },
     },
   },

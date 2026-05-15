@@ -26,6 +26,7 @@
 
 ### Changed
 
+- **Tabs** (**breaking**): варианты **TabsVariant** — **pill**, **minimal**, **line**, **underline** (серая базовая линия: нет / на весь трек / под триггерами). Заливка сегментов и фон трека — проп **filledSegmentTriggers**. Удалены **underlineBaseline**, **underlineBaselineWidth**, тип **TabsUnderlineBaselineWidth**. Без явного **variant** при вертикали по умолчанию **minimal** (не прежний визуал старого **line**). Таблица миграции — в **DOC_TABS** (Storybook «Tabs»).
 - **Tabs**: убран **Tabs.List** — сегменты передаются прямыми детьми **Tabs**, трек создаётся внутри; для стилей/атрибутов трека — **segmentTrackProps**.
 - Версия изменена с 1.0.0 на 0.1.0 (pre-release)
 

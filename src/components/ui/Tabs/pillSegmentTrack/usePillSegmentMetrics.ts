@@ -2,7 +2,7 @@ import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import type { PillSegmentMetrics } from './pillSegmentMetricsTypes';
 
 interface UsePillSegmentMetricsParams {
-  /** Включить наблюдатели и расчёт (только вариант pill) */
+  /** Включить наблюдатели и расчёт (**pill** или текстовые **minimal** / **line** / **underline**) */
   enabled: boolean;
   /** value активного сегмента */
   activeSegmentValue: string;
@@ -16,9 +16,9 @@ interface UsePillSegmentMetricsResult {
 }
 
 /**
- * Отслеживает положение и размер активной кнопки относительно трека для анимированного pill-thumb.
+ * Отслеживает положение и размер активного триггера относительно трека: pill-thumb или скользящая полоска текстовых вариантов (**minimal** / **line** / **underline**).
  *
- * @param params.enabled — считать метрики только в режиме pill
+ * @param params.enabled — считать метрики в режимах с анимированным индикатором
  * @param params.activeSegmentValue — какой сегмент считается выбранным
  */
 export function usePillSegmentMetrics(params: UsePillSegmentMetricsParams): UsePillSegmentMetricsResult {

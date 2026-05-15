@@ -12,6 +12,7 @@ export const TabsContainer = TabItemGroupContainer;
  *
  * @param props.segmentTrackProps — **className**, **style** и др. для трека (добавляется **ui-tabs-list**)
  * @param props.items — при непустом массиве вкладки строятся из данных (приоритет над **children** для списка)
+ * @param props.filledSegmentTriggers — у **minimal** / **line** / **underline**: заливка сегментов и фон трека (**filled**)
  */
 export const Tabs: React.FC<TabsProps> & {
   Item: typeof TabItem;
@@ -28,6 +29,7 @@ export const Tabs: React.FC<TabsProps> & {
   ariaLabel,
   segmentTrackProps,
   items,
+  filledSegmentTriggers,
 }) => {
   return (
     <TabItemGroup
@@ -41,6 +43,7 @@ export const Tabs: React.FC<TabsProps> & {
       ariaLabel={ariaLabel}
       segmentTrackProps={segmentTrackProps}
       items={items}
+      filledSegmentTriggers={filledSegmentTriggers}
       className={clsx('ui-tabs', className)}
     >
       {children}

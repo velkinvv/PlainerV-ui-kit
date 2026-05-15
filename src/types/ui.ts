@@ -1685,18 +1685,24 @@ export enum TabsVerticalPosition {
 }
 
 /**
- * Внешний вид табов (pill, классическая линия с фоном или текстовые вкладки с индикатором)
+ * Внешний вид табов: pill-трек или текстовые сегменты (**minimal** / **line** / **underline**) со скользящей полоской **primary**.
  */
 export enum TabsVariant {
-  /** Нижняя/боковая полоса-индикатор, заливка активного пункта, фон трека */
-  LINE = 'line',
-  /**
-   * Без обёртки трека и без вида кнопки: только подписи и тонкая линия снизу (горизонталь)
-   * или справа (вертикаль) в цвете **primary** темы у активного пункта (в теме совпадает с **info**).
-   */
-  UNDERLINE = 'underline',
   /** Сегментированный контрол в скруглённом треке */
   PILL = 'pill',
+  /**
+   * Только подписи и полоска **primary** у активного пункта; без серой базовой линии и без заливки сегментов
+   * (если не включён **filledSegmentTriggers**).
+   */
+  MINIMAL = 'minimal',
+  /**
+   * Как **minimal**, плюс серая базовая линия **borderSecondary** на всю ширину / высоту трека.
+   */
+  LINE = 'line',
+  /**
+   * Как **minimal**, плюс серая базовая линия только под фактическим рядом триггеров (**fit-content**).
+   */
+  UNDERLINE = 'underline',
 }
 
 /**
@@ -1766,7 +1772,7 @@ export interface TabsProps extends BaseComponentProps {
   /** Позиция табов в вертикальном режиме (слева или справа от контента) */
   tabsPosition?: TabsVerticalPosition;
   /**
-   * Вариант оформления. Если не задан: горизонтально — pill (макет сегментов), вертикально — line.
+   * Вариант оформления. Если не задан: горизонтально — **pill**, вертикально — **minimal**.
    */
   variant?: TabsVariant;
   /** Доступное имя группы (**role="group"**); для сегментов без панелей рекомендуется задать явно */
@@ -1776,6 +1782,11 @@ export interface TabsProps extends BaseComponentProps {
    * К **className** добавляется **ui-tabs-list**.
    */
   segmentTrackProps?: Omit<React.HTMLAttributes<HTMLDivElement>, 'children'>;
+  /**
+   * Для **minimal**, **line**, **underline**: вид «классических» сегментов — заливка **primary** активного пункта,
+   * фон трека **backgroundSecondary**, полоска-индикатор толще (**2px** вместо **1px**).
+   */
+  filledSegmentTriggers?: boolean;
   /**
    * Вкладки из данных: при непустом массиве рендерятся как **Tabs.Item** с теми же полями; **children** у корня для списка вкладок не используется.
    */

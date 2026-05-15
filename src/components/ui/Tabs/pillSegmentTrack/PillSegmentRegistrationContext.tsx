@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react';
 
-/** Регистрация кнопки сегмента pill-трека для расчёта позиции «капли» */
+/** Регистрация узла сегмента на треке для расчёта позиции анимированного индикатора (**pill** или текстовые **minimal** / **line** / **underline**) */
 export interface PillSegmentRegistrationContextValue {
   /** Учитывается только при активном pill-треке; иначе без эффекта */
   registerSegmentTriggerRef: (segmentValue: string, element: HTMLElement | null) => void;
