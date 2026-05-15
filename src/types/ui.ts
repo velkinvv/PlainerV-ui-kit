@@ -505,6 +505,109 @@ export interface InputProps extends BaseInputProps {
 }
 
 /**
+ * Числовое поле: те же пропсы и внешний вид, что у `Input`, но ввод ограничен цифрами.
+ * Атрибуты `type` и `inputMode` задаёт реализация компонента.
+ * @property allowDecimal - Разрешить одну десятичную точку (по умолчанию `true`); `,` нормализуется в `.`.
+ * @property allowNegative - Разрешить ведущий минус (по умолчанию `false`).
+ * @property clampOnBlur - При потере фокуса ограничить значение по `min`/`max`, если заданы (по умолчанию `true`).
+ */
+export type NumberInputProps = Omit<InputProps, 'type' | 'inputMode'> & {
+  allowDecimal?: boolean;
+  allowNegative?: boolean;
+  clampOnBlur?: boolean;
+};
+
+/**
+ * Событие смены токенов в `MultiInput` (удобно для форм и состояний).
+ * @property target.values - Актуальный массив строк-токенов.
+ * @property target.name - Атрибут `name` поля (если передан в пропсах).
+ */
+export interface MultiInputChangeEvent {
+  target: {
+    values: string[];
+    name?: string;
+  };
+}
+
+/** Политика повторяющихся токенов в `MultiInput`. */
+export type MultiInputDuplicatePolicy = 'allow' | 'reject';
+
+/**
+ * Мультиввод: внешний вид и базовые пропсы как у `Input`, значение — массив строк (теги в поле).
+ * По образцу полей ввода с несколькими значениями (см. Admiral MultiInputField).
+ * @property value - Контролируемый массив токенов.
+ * @property defaultValue - Начальный массив в неконтролируемом режиме.
+ * @property onValuesChange - Колбэк при любом изменении списка токенов.
+ * @property onChange - Событие с `target.values` и `target.name`.
+ * @property commitWithComma - По клавише `,` фиксировать текущий черновик как токен (по умолчанию `true`).
+ * @property commitOnBlur - При потере фокуса добавить непустой черновик (по умолчанию `true`).
+ * @property maxItems - Ограничение числа токенов.
+ * @property duplicates - `reject` — не добавлять дубликаты (по умолчанию `reject`).
+ * @property validateToken - Вернуть `false`, чтобы отклонить токен.
+ * @property displayTokenRemove - Показывать крестик снятия на каждом токене (по умолчанию `true`, если поле не `readOnly` и не `disabled`).
+ * @property maxTokenLength - Ограничение длины одного токена (`maxLength` у внутреннего поля).
+ */
+export type MultiInputProps = Omit<
+  InputProps,
+  'value' | 'defaultValue' | 'onChange' | 'handleInput' | 'type' | 'inputMode'
+> & {
+  value?: string[];
+  defaultValue?: string[];
+  onValuesChange?: (values: string[]) => void;
+  onChange?: (event: MultiInputChangeEvent) => void;
+  commitWithComma?: boolean;
+  commitOnBlur?: boolean;
+  maxItems?: number;
+  duplicates?: MultiInputDuplicatePolicy;
+  validateToken?: (token: string) => boolean;
+  displayTokenRemove?: boolean;
+  maxTokenLength?: number;
+};
+
+/**
+ * Поле «слайдер + ввод числа»: оболочка как у `Input` (рамка, лейбл, статусы, иконки), значение — число.
+ * Поведение рядом с [Admiral SliderInputField](https://admiralds.github.io/react-ui/?path=/docs/admiral-2-1-form-field-sliderinputfield--docs).
+ * @property value - Контролируемое значение шкалы.
+ * @property defaultValue - Начальное значение.
+ * @property onChange - Новое значение после слайдера, ввода или сброса (как у `Slider`).
+ * @property min / max / step - Границы и шаг.
+ * @property showValueLabel - Подпись текущего значения под бегунком.
+ * @property showScaleLabels - Подписи min и max над треком.
+ * @property showNumberField - Поле числа справа от слайдера (по умолчанию `true`).
+ * @property numberFieldWidth - Ширина колонки числа (CSS).
+ * @property numberPlaceholder - Плейсхолдер внутреннего поля числа.
+ * @property formatValue / formatMinLabel / formatMaxLabel - Форматирование подписей (как у `Slider`).
+ * @property trackRailHeightPx / trackActiveHeightPx - Толщина линий трека.
+ * @property sliderSize - Размер бегунка/трека; по умолчанию — как `size` поля.
+ * @property name - Скрытый `input` для отправки формы.
+ */
+export type SliderInputProps = Omit<
+  InputProps,
+  'value' | 'defaultValue' | 'onChange' | 'handleInput' | 'type' | 'inputMode' | 'maxLength' | 'placeholder'
+> & {
+  value?: number;
+  defaultValue?: number;
+  onChange?: (value: number) => void;
+  min?: number;
+  max?: number;
+  step?: number;
+  showValueLabel?: boolean;
+  showScaleLabels?: boolean;
+  showNumberField?: boolean;
+  numberFieldWidth?: string;
+  numberPlaceholder?: string;
+  formatValue?: (value: number) => string;
+  formatMinLabel?: (min: number) => string;
+  formatMaxLabel?: (max: number) => string;
+  trackRailHeightPx?: number;
+  trackActiveHeightPx?: number;
+  sliderSize?: Size;
+  name?: string;
+  /** Ограничение длины строки в поле числа и счётчик (как у `Input`). */
+  maxLength?: number;
+};
+
+/**
  * Пропсы текстовой области
  * @property label - Метка поля (`ReactNode`)
  * @property error - Сообщение об ошибке

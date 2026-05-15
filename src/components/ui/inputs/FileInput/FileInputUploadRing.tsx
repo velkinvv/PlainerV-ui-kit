@@ -1,24 +1,5 @@
 import React, { useMemo } from 'react';
-import styled from 'styled-components';
-
-const RingSvg = styled.svg`
-  flex-shrink: 0;
-
-  .track {
-    fill: none;
-    stroke: ${({ theme }) => theme.colors.borderSecondary};
-    stroke-width: 2;
-  }
-
-  .arc {
-    fill: none;
-    stroke: ${({ theme }) => theme.colors.progressStatusLoading};
-    stroke-width: 3;
-    stroke-linecap: round;
-    transform: rotate(-90deg);
-    transform-origin: center;
-  }
-`;
+import { FileInputUploadRingSvg } from './FileInputUploadRing.style';
 
 export type FileInputUploadRingProps = {
   /** Прогресс 0–100 */
@@ -47,7 +28,7 @@ export const FileInputUploadRing: React.FC<FileInputUploadRingProps> = ({
   const dashOffset = circumference * (1 - clamped / 100);
 
   return (
-    <RingSvg
+    <FileInputUploadRingSvg
       width={d}
       height={d}
       viewBox={`0 0 ${d} ${d}`}
@@ -66,7 +47,7 @@ export const FileInputUploadRing: React.FC<FileInputUploadRingProps> = ({
         strokeDasharray={circumference}
         strokeDashoffset={dashOffset}
       />
-    </RingSvg>
+    </FileInputUploadRingSvg>
   );
 };
 

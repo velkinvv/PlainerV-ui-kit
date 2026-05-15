@@ -7,7 +7,10 @@ export { IconButton } from './buttons';
 export type { IconButtonProps } from '@/types/ui';
 
 export { Input } from './inputs/Input';
-export type { InputProps } from '@/types/ui';
+export type { InputProps, NumberInputProps, MultiInputProps, MultiInputChangeEvent, MultiInputDuplicatePolicy, SliderInputProps } from '@/types/ui';
+export { NumberInput } from './inputs/NumberInput/NumberInput';
+export { MultiInput } from './inputs/MultiInput/MultiInput';
+export { SliderInput } from './inputs/SliderInput/SliderInput';
 export { TextArea } from './inputs/TextArea';
 export type { TextAreaProps } from '@/types/ui';
 export { FileInput } from './inputs/FileInput';

@@ -4,6 +4,12 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+    // Один экземпляр React для тестов: иначе ThemeProvider из styled-components и хуки приложения
+    // попадают на разные копии (например web@18 и корень монорепы@19) → useContext === null.
+    '^react$': '<rootDir>/node_modules/react',
+    '^react-dom$': '<rootDir>/node_modules/react-dom',
+    '^react/jsx-runtime$': '<rootDir>/node_modules/react/jsx-runtime',
+    '^react/jsx-dev-runtime$': '<rootDir>/node_modules/react/jsx-dev-runtime',
   },
   transform: {
     '^.+\\.(ts|tsx)$': 'ts-jest',

@@ -46,6 +46,7 @@ import {
   formatFileListSummary,
   getFileExtensionBadge,
   getFileInputStatus,
+  getFileInputTrailingIconSize,
 } from './handlers';
 
 const DEFAULT_BUTTON_LABEL = 'Выбрать файл';
@@ -53,20 +54,6 @@ const DEFAULT_BUTTON_LABEL = 'Выбрать файл';
 const DEFAULT_PLACEHOLDER = 'input_file';
 const DEFAULT_DROPZONE_TEXT = 'Перенесите для загрузки';
 const DEFAULT_FILE_CARD_LABEL = 'Название файла';
-
-/** Иконка справа в зависимости от размера поля */
-const fileInputIconSize = (size: Size): IconSize => {
-  switch (size) {
-    case Size.SM:
-    case Size.XS:
-      return IconSize.SM;
-    case Size.LG:
-    case Size.XL:
-      return IconSize.MD;
-    default:
-      return IconSize.SM;
-  }
-};
 
 /**
  * Поле выбора файла по макету Figma: режимы `field`, `dropzone`, `file`, либо прежний `trigger`.
@@ -321,7 +308,7 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
       />
     );
 
-    const iconSz = fileInputIconSize(size);
+    const iconSz = getFileInputTrailingIconSize(size);
 
     const rowContent =
       effectiveFileLayout === 'trigger' ? (

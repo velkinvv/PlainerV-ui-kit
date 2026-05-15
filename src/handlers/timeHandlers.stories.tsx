@@ -23,7 +23,7 @@ import {
   formatMinutes,
   formatSeconds,
   isValidTime,
-} from './timeHandlers';
+} from '../components/ui/inputs/TimeInput/handlers';
 import { inputFieldStoriesStyles } from '@/handlers/inputFieldStories.styles';
 import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
 import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';

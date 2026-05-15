@@ -6,7 +6,7 @@ export * from './linkHandlers';
 export * from './uiHandlers';
 export * from './portalOverlayHandlers';
 export * from './dateHandlers';
-export * from './timeHandlers';
+export * from '../components/ui/inputs/TimeInput/handlers';
 export * from './dropdownThemeHandlers';
 export * from './dropdownSearchMatchHandlers';
 export * from './navigationMenuMotionHandlers';
