@@ -13,7 +13,12 @@ export const TextAreaWrapper = styled(InputWrapper)`
 `;
 
 export const StyledTextArea = styled.textarea.withConfig({
-  shouldForwardProp: createStyledShouldForwardProp(['textAlign', 'readOnly', 'resize', '$hasRightControls']),
+  shouldForwardProp: createStyledShouldForwardProp([
+    'textAlign',
+    'readOnly',
+    'resize',
+    '$hasRightControls',
+  ]),
 })<{
   textAlign?: 'left' | 'center' | 'right';
   readOnly?: boolean;

@@ -4,11 +4,11 @@ import { css } from 'styled-components';
 import { Dropdown } from './Dropdown';
 import { DropdownDivider } from './Dropdown.style';
 import { Button } from '../buttons/Button/Button';
-import { ButtonVariant } from '../../../types/ui';
-import type {
-  DropdownMenuItemProps,
-  DropdownMenuItemValue,
-  DropdownProps,
+import {
+  ButtonVariant,
+  type DropdownMenuItemProps,
+  type DropdownMenuItemValue,
+  type DropdownProps,
 } from '../../../types/ui';
 import {
   applyTreeMultiSelectionToValues,
@@ -1480,13 +1480,13 @@ export const WithBothPanels: Story = {
           children: 'Меню с обеими панелями',
         }}
         defaultOpen={true}
-        renderTopPanel={({ size, variant, disabled }) => (
+        renderTopPanel={({ size: _size, variant: _variant, disabled }) => (
           <div style={getPanelContainerStyle(disabled)}>
             <span style={dropdownStoriesStyles.panelHeading}>Поиск</span>
             <input type="text" placeholder="Поиск..." disabled={disabled} style={panelInputStyle} />
           </div>
         )}
-        renderBottomPanel={({ size, variant, disabled }) => (
+        renderBottomPanel={({ size: _size, variant: _variant, disabled }) => (
           <div style={getPanelContainerStyle(disabled)}>
             <span style={panelMetaTextStyle}>Выбрано: 0 элементов</span>
             <div style={dropdownStoriesStyles.rowGap8AlignCenter}>
@@ -1897,7 +1897,7 @@ export const VirtualScroll: Story = {
       <div style={dropdownStoriesStyles.sectionColumn}>
         <div>
           <Typography as="h3" variant="h5" style={dropdownStoriesStyles.sectionTitle}>
-            Виртуальный скролл с автоматической высотой (itemHeight="auto")
+            Виртуальный скролл с автоматической высотой (itemHeight=&quot;auto&quot;)
           </Typography>
           <Typography as="p" variant="body2" style={sectionDescriptionStyle}>
             Высота элемента вычисляется автоматически из темы на основе размера dropdown.

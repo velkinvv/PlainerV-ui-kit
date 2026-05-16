@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { TabsDirection, TabsVariant, type TabsSegmentOption, type TabsItemDefinition } from '@/types/ui';
+import {
+  TabsDirection,
+  TabsVariant,
+  type TabsSegmentOption,
+  type TabsItemDefinition,
+} from '@/types/ui';
 import { Tabs } from './Tabs';
 import { Icon } from '../Icon/Icon';
 import { Typography } from '../Typography';
@@ -88,12 +93,7 @@ const meta: Meta<typeof Tabs> = {
     },
     variant: {
       control: { type: 'select' },
-      options: [
-        TabsVariant.PILL,
-        TabsVariant.MINIMAL,
-        TabsVariant.LINE,
-        TabsVariant.UNDERLINE,
-      ],
+      options: [TabsVariant.PILL, TabsVariant.MINIMAL, TabsVariant.LINE, TabsVariant.UNDERLINE],
       description:
         '**pill**, **minimal**, **line**, **underline**; если не задан — **resolveTabsVariant** (горизонтально **pill**, вертикально **minimal**).',
     },
@@ -333,7 +333,8 @@ export const SegmentVerticalUnderline: Story = {
   parameters: {
     docs: {
       description: {
-        story: '**TabsVariant.UNDERLINE**: вертикальная серая базовая линия только у колонки вкладок.',
+        story:
+          '**TabsVariant.UNDERLINE**: вертикальная серая базовая линия только у колонки вкладок.',
       },
     },
   },
@@ -393,7 +394,9 @@ export const SegmentMatrixDirectionAndVariant: Story = {
         </TabsSegmentStoryHorizontalWrap>
       </TabsSegmentStoryMatrixBlock>
       <TabsSegmentStoryMatrixBlock>
-        <TabsSegmentStorySectionTitle>Горизонтально · line (серая линия на весь трек)</TabsSegmentStorySectionTitle>
+        <TabsSegmentStorySectionTitle>
+          Горизонтально · line (серая линия на весь трек)
+        </TabsSegmentStorySectionTitle>
         <TabsSegmentStoryHorizontalWrap>
           <Tabs
             ariaLabel="Матрица: горизонтально line"
@@ -445,7 +448,9 @@ export const SegmentMatrixDirectionAndVariant: Story = {
         </TabsSegmentStoryVerticalWrap>
       </TabsSegmentStoryMatrixBlock>
       <TabsSegmentStoryMatrixBlock>
-        <TabsSegmentStorySectionTitle>Вертикально · line (серая линия на весь трек)</TabsSegmentStorySectionTitle>
+        <TabsSegmentStorySectionTitle>
+          Вертикально · line (серая линия на весь трек)
+        </TabsSegmentStorySectionTitle>
         <TabsSegmentStoryVerticalWrap>
           <Tabs
             ariaLabel="Матрица: вертикально line"
@@ -487,19 +492,19 @@ export const SegmentWithIconsBadgeDisabled: Story = {
   render: () => (
     <TabsSegmentStoryHorizontalWrap>
       <Tabs ariaLabel="Режим отображения" defaultValue="grid" variant={TabsVariant.PILL}>
-          <Tabs.Item value="list" label="Список" iconStart={<Icon name="IconExHome" size="sm" />} />
-          <Tabs.Item
-            value="grid"
-            label="Плитка"
-            iconStart={<Icon name="IconExUser" size="sm" />}
-            badge="12"
-          />
-          <Tabs.Item
-            value="map"
-            label="Карта"
-            iconStart={<Icon name="IconExSettings" size="sm" />}
-            disabled
-          />
+        <Tabs.Item value="list" label="Список" iconStart={<Icon name="IconExHome" size="sm" />} />
+        <Tabs.Item
+          value="grid"
+          label="Плитка"
+          iconStart={<Icon name="IconExUser" size="sm" />}
+          badge="12"
+        />
+        <Tabs.Item
+          value="map"
+          label="Карта"
+          iconStart={<Icon name="IconExSettings" size="sm" />}
+          disabled
+        />
       </Tabs>
     </TabsSegmentStoryHorizontalWrap>
   ),
@@ -541,18 +546,18 @@ export const SegmentIconStartAndEnd: Story = {
   render: () => (
     <TabsSegmentStoryHorizontalWrap>
       <Tabs ariaLabel="Представление данных" variant={TabsVariant.PILL} defaultValue="pickup">
-          <Tabs.Item
-            value="pickup"
-            label="Компактный"
-            iconStart={<Icon name="IconExPin" size="sm" />}
-            iconEnd={<Icon name="IconPlainerChevronDown" size="sm" />}
-          />
-          <Tabs.Item
-            value="courier"
-            label="Расширенный"
-            iconStart={<Icon name="IconExBox1" size="sm" />}
-            iconEnd={<Icon name="IconExSend" size="sm" />}
-          />
+        <Tabs.Item
+          value="pickup"
+          label="Компактный"
+          iconStart={<Icon name="IconExPin" size="sm" />}
+          iconEnd={<Icon name="IconPlainerChevronDown" size="sm" />}
+        />
+        <Tabs.Item
+          value="courier"
+          label="Расширенный"
+          iconStart={<Icon name="IconExBox1" size="sm" />}
+          iconEnd={<Icon name="IconExSend" size="sm" />}
+        />
       </Tabs>
     </TabsSegmentStoryHorizontalWrap>
   ),
@@ -571,28 +576,28 @@ export const SegmentLabelAsReactNode: Story = {
   render: () => (
     <TabsSegmentStoryHorizontalWrap>
       <Tabs ariaLabel="Структура данных" variant={TabsVariant.PILL} defaultValue="brief">
-          <Tabs.Item
-            value="brief"
-            label={
-              <TabsSegmentStoryInlineLabelWrap>
-                <Icon name="IconExChart" size="sm" />
-                <Typography variant="bodySmall" component="span">
-                  Кратко
-                </Typography>
-              </TabsSegmentStoryInlineLabelWrap>
-            }
-          />
-          <Tabs.Item
-            value="verbose"
-            label={
-              <TabsSegmentStoryInlineLabelWrap>
-                <Icon name="IconExDocument" size="sm" />
-                <Typography variant="bodySmall" component="span">
-                  Подробно
-                </Typography>
-              </TabsSegmentStoryInlineLabelWrap>
-            }
-          />
+        <Tabs.Item
+          value="brief"
+          label={
+            <TabsSegmentStoryInlineLabelWrap>
+              <Icon name="IconExChart" size="sm" />
+              <Typography variant="bodySmall" component="span">
+                Кратко
+              </Typography>
+            </TabsSegmentStoryInlineLabelWrap>
+          }
+        />
+        <Tabs.Item
+          value="verbose"
+          label={
+            <TabsSegmentStoryInlineLabelWrap>
+              <Icon name="IconExDocument" size="sm" />
+              <Typography variant="bodySmall" component="span">
+                Подробно
+              </Typography>
+            </TabsSegmentStoryInlineLabelWrap>
+          }
+        />
       </Tabs>
     </TabsSegmentStoryHorizontalWrap>
   ),
@@ -611,8 +616,8 @@ export const SegmentTwoSegments: Story = {
   render: () => (
     <TabsSegmentStoryHorizontalWrap>
       <Tabs ariaLabel="Интервал" variant={TabsVariant.PILL} defaultValue="day">
-          <Tabs.Item value="day" label="День" />
-          <Tabs.Item value="week" label="Неделя" />
+        <Tabs.Item value="day" label="День" />
+        <Tabs.Item value="week" label="Неделя" />
       </Tabs>
     </TabsSegmentStoryHorizontalWrap>
   ),
@@ -631,11 +636,11 @@ export const SegmentFiveSegments: Story = {
   render: () => (
     <TabsSegmentStoryHorizontalWrap>
       <Tabs ariaLabel="Глубина истории" variant={TabsVariant.PILL} defaultValue="1m">
-          <Tabs.Item value="1d" label="1Д" />
-          <Tabs.Item value="5d" label="5Д" />
-          <Tabs.Item value="1m" label="1М" />
-          <Tabs.Item value="3m" label="3М" />
-          <Tabs.Item value="all" label="Все" />
+        <Tabs.Item value="1d" label="1Д" />
+        <Tabs.Item value="5d" label="5Д" />
+        <Tabs.Item value="1m" label="1М" />
+        <Tabs.Item value="3m" label="3М" />
+        <Tabs.Item value="all" label="Все" />
       </Tabs>
     </TabsSegmentStoryHorizontalWrap>
   ),
@@ -653,11 +658,16 @@ export const SegmentSeveralDisabled: Story = {
   },
   render: () => (
     <TabsSegmentStoryHorizontalWrap>
-      <Tabs ariaLabel="Этапы процесса" variant={TabsVariant.LINE} filledSegmentTriggers defaultValue="draft">
-          <Tabs.Item value="draft" label="Черновик" />
-          <Tabs.Item value="step2" label="Шаг 2" disabled />
-          <Tabs.Item value="step3" label="Шаг 3" disabled />
-          <Tabs.Item value="final" label="Финал" />
+      <Tabs
+        ariaLabel="Этапы процесса"
+        variant={TabsVariant.LINE}
+        filledSegmentTriggers
+        defaultValue="draft"
+      >
+        <Tabs.Item value="draft" label="Черновик" />
+        <Tabs.Item value="step2" label="Шаг 2" disabled />
+        <Tabs.Item value="step3" label="Шаг 3" disabled />
+        <Tabs.Item value="final" label="Финал" />
       </Tabs>
     </TabsSegmentStoryHorizontalWrap>
   ),

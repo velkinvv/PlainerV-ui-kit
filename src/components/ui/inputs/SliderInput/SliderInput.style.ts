@@ -14,7 +14,7 @@ import {
   SliderTrackRingWrap,
   SliderTrackWrap,
 } from '../../Slider/Slider.style';
-import { Size } from '../../../../types/sizes';
+import type { Size } from '../../../../types/sizes';
 
 /** Скругления нижних углов как у рамки `Input`. */
 const sliderInputBottomCornerRadius = (theme: { borderRadius: Size }) => {

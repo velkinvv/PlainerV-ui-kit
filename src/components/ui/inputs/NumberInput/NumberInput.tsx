@@ -1,11 +1,7 @@
 import React, { forwardRef, useCallback, useMemo, useState } from 'react';
 import type { NumberInputProps } from '../../../../types/ui';
 import { Input } from '../Input/Input';
-import {
-  clampNumericStringOnBlur,
-  parseOptionalBound,
-  sanitizeNumericInput,
-} from './handlers';
+import { clampNumericStringOnBlur, parseOptionalBound, sanitizeNumericInput } from './handlers';
 
 /**
  * Числовое поле с тем же оформлением и пропсами, что `Input`: допускаются только цифры
@@ -102,7 +98,10 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
     const handleBlur = useCallback(
       (event: React.FocusEvent<HTMLInputElement>) => {
         const shouldClamp =
-          clampOnBlur && !readOnly && !disabled && (minBound !== undefined || maxBound !== undefined);
+          clampOnBlur &&
+          !readOnly &&
+          !disabled &&
+          (minBound !== undefined || maxBound !== undefined);
 
         if (shouldClamp) {
           const currentValue = event.target?.value ?? '';
@@ -125,16 +124,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
 
         onBlur?.(event);
       },
-      [
-        clampOnBlur,
-        readOnly,
-        disabled,
-        minBound,
-        maxBound,
-        isControlled,
-        onChange,
-        onBlur,
-      ],
+      [clampOnBlur, readOnly, disabled, minBound, maxBound, isControlled, onChange, onBlur],
     );
 
     const inputMode = allowDecimal ? 'decimal' : 'numeric';

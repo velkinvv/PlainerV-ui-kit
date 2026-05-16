@@ -779,7 +779,14 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
           },
         });
       });
-    }, [menuBodyFromItems, children, handleItemSelect, injectDropdownMenuShellProps]);
+    }, [
+      menuBodyFromItems,
+      children,
+      handleItemSelect,
+      injectDropdownMenuShellProps,
+      filteredDefinitions,
+      resolvedDefinitions,
+    ]);
 
     const isAsyncLoading = shouldUseAsyncItems && asyncStatus === 'loading';
     const isAsyncError = shouldUseAsyncItems && asyncStatus === 'error';

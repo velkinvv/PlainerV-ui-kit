@@ -7,6 +7,7 @@ import { Input } from '../../inputs/Input';
 import { ColumnFilterPanel } from './ColumnFilterPanel';
 import { DOC_COLUMN_FILTER_PANEL } from '@/components/ui/storyDocs/uiKitDocs';
 import { columnFilterPanelStoriesStyles } from './ColumnFilterPanel.stories.styles';
+import { noopHandler } from '@/handlers';
 
 const meta: Meta<typeof ColumnFilterPanel> = {
   title: 'UI Kit/Data Display/Table/ColumnFilterPanel',
@@ -123,7 +124,7 @@ export const CompactFooterButtons: Story = {
         Содержимое фильтра передаётся через <code>children</code>.
       </Typography>
     ),
-    onApply: () => {},
-    onClear: () => {},
+    onApply: noopHandler,
+    onClear: noopHandler,
   },
 };

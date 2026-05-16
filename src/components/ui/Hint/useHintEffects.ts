@@ -1,5 +1,11 @@
-import { useEffect } from 'react';
-import { HintVisibilityTrigger } from '../../../types/ui';
+import {
+  useEffect,
+  type Dispatch,
+  type MutableRefObject,
+  type RefObject,
+  type SetStateAction,
+} from 'react';
+import { HintVisibilityTrigger, type HintPosition } from '../../../types/ui';
 import {
   createClickOutsideHandler,
   createScrollHandler,
@@ -8,7 +14,6 @@ import {
   syncControlledState,
   type HintState,
 } from './handlers';
-import type React from 'react';
 
 /**
  * Опции для хука useHintClickOutside
@@ -16,8 +21,8 @@ import type React from 'react';
 export interface UseHintClickOutsideOptions {
   isVisible: boolean;
   visibilityTrigger: HintVisibilityTrigger;
-  triggerRef: React.RefObject<HTMLDivElement>;
-  hintContentRef: React.RefObject<HTMLDivElement>;
+  triggerRef: RefObject<HTMLDivElement>;
+  hintContentRef: RefObject<HTMLDivElement>;
   hideHint: () => void;
   hintStateIsVisible: boolean;
 }
@@ -66,12 +71,12 @@ export const useHintClickOutside = ({
  */
 export interface UseHintScrollPositionOptions {
   isVisible: boolean;
-  triggerRef: React.RefObject<HTMLDivElement>;
-  calculatePosition: () => { x: number; y: number; placement: any };
-  setHintState: React.Dispatch<React.SetStateAction<HintState>>;
+  triggerRef: RefObject<HTMLDivElement>;
+  calculatePosition: () => { x: number; y: number; placement: HintPosition };
+  setHintState: Dispatch<SetStateAction<HintState>>;
   closeOnScroll: boolean;
   hideHint: () => void;
-  hintStatePlacement: any;
+  hintStatePlacement: HintPosition;
 }
 
 /**
@@ -137,10 +142,10 @@ export const useHintScrollPosition = ({
 export interface UseHintControlledStateOptions {
   isOpenValue: boolean | undefined;
   useControlledMode: boolean;
-  triggerRef: React.RefObject<HTMLDivElement>;
-  calculatePosition: () => { x: number; y: number; placement: any };
-  setHintState: React.Dispatch<React.SetStateAction<HintState>>;
-  isVisibleRef: React.MutableRefObject<boolean>;
+  triggerRef: RefObject<HTMLDivElement>;
+  calculatePosition: () => { x: number; y: number; placement: HintPosition };
+  setHintState: Dispatch<SetStateAction<HintState>>;
+  isVisibleRef: MutableRefObject<boolean>;
   onVisibilityChange?: (visible: boolean) => void;
 }
 
@@ -182,18 +187,21 @@ export const useHintControlledState = ({
  * Хук для очистки таймеров при размонтировании
  */
 export const useHintCleanup = (
-  timeoutRef: React.MutableRefObject<NodeJS.Timeout | undefined>,
-  hideTimeoutRef: React.MutableRefObject<NodeJS.Timeout | undefined>,
+  timeoutRef: MutableRefObject<NodeJS.Timeout | undefined>,
+  hideTimeoutRef: MutableRefObject<NodeJS.Timeout | undefined>,
 ) => {
   useEffect(() => {
+    const timeout = timeoutRef;
+    const hideTimeout = hideTimeoutRef;
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+      const activeTimeoutId = timeout.current;
+      const activeHideTimeoutId = hideTimeout.current;
+      if (activeTimeoutId) {
+        clearTimeout(activeTimeoutId);
       }
-      if (hideTimeoutRef.current) {
-        clearTimeout(hideTimeoutRef.current);
+      if (activeHideTimeoutId) {
+        clearTimeout(activeHideTimeoutId);
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [timeoutRef, hideTimeoutRef]);
 };

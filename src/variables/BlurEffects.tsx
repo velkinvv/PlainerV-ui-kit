@@ -291,8 +291,8 @@ export const BlurEffects: React.FC<BlurEffectsProps> = ({ name, description, eff
     try {
       await navigator.clipboard.writeText(value);
       // Можно добавить уведомление об успешном копировании
-    } catch (err) {
-      console.error('Не удалось скопировать эффект:', err);
+    } catch {
+      // Копирование в буфер недоступно (например, без HTTPS) — игнорируем в демо-странице
     }
   };
 

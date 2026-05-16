@@ -1,7 +1,11 @@
 import React, { forwardRef } from 'react';
 import { clsx } from 'clsx';
-import type { LinkProps, LinkButtonProps, LinkTextProps } from '../../../types/ui';
-import { LinkMode } from '../../../types/ui';
+import {
+  LinkMode,
+  type LinkProps,
+  type LinkButtonProps,
+  type LinkTextProps,
+} from '../../../types/ui';
 import { Button } from '../buttons/Button';
 import { mergeAnchorRel } from '../../../handlers/linkHandlers';
 import { StyledTextLink } from './Link.style';

@@ -1,9 +1,8 @@
 import React, { forwardRef, useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { clsx } from 'clsx';
-import type { TagColorVariant, TagProps } from '../../../types/ui';
+import { TooltipPosition, type TagColorVariant, type TagProps } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 import { Tooltip } from '../Tooltip/Tooltip';
-import { TooltipPosition } from '../../../types/ui';
 import { TagRoot, TagIconSlot, TagLabel, TagStatusMarker } from './Tag.style';
 import { TagSkeletonRoot } from './TagSkeleton.style';
 import { getTagMetrics, getTagSkeletonDefaultWidthPx, tagLengthToCss } from './handlers';

@@ -1,6 +1,5 @@
-import styled, { css } from 'styled-components';
+import styled, { css, type DefaultTheme } from 'styled-components';
 import { createStyledShouldForwardProp } from '../../../handlers/styledComponentHandlers';
-import type { DefaultTheme } from 'styled-components';
 import { TransitionHandler } from '../../../handlers/uiHandlers';
 import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
 import type { PillGeometry } from './handlers';

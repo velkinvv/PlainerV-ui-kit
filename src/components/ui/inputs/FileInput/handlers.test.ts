@@ -1,4 +1,9 @@
-import { clampUploadProgress, formatFileListSummary, getFileExtensionBadge, getFileInputTrailingIconSize } from './handlers';
+import {
+  clampUploadProgress,
+  formatFileListSummary,
+  getFileExtensionBadge,
+  getFileInputTrailingIconSize,
+} from './handlers';
 import { IconSize, Size } from '../../../../types/sizes';
 
 describe('FileInput handlers', () => {

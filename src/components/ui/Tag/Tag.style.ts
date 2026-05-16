@@ -2,14 +2,13 @@ import styled, { css } from 'styled-components';
 import { createStyledShouldForwardProp } from '../../../handlers/styledComponentHandlers';
 import { TransitionHandler } from '../../../handlers/uiHandlers';
 import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
-import type { Colors } from '../../../types/theme';
+import { ThemeMode, type Colors } from '../../../types/theme';
 import type {
   TagAppearance,
   TagColorVariant,
   TagCustomColors,
   TagStatusDisplay,
 } from '../../../types/ui';
-import { ThemeMode } from '../../../types/theme';
 
 type TagRootProps = {
   $color: TagColorVariant;

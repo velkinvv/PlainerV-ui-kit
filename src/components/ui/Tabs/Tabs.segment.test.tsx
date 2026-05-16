@@ -3,11 +3,11 @@ jest.unmock('styled-components');
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
-import type { TabsSegmentOption } from '@/types/ui';
-import { TabsDirection } from '@/types/ui';
+import { TabsDirection, type TabsSegmentOption } from '@/types/ui';
 import { Tabs } from './Tabs';
 
-const renderWithTheme = (element: React.ReactElement) => render(<ThemeProvider>{element}</ThemeProvider>);
+const renderWithTheme = (element: React.ReactElement) =>
+  render(<ThemeProvider>{element}</ThemeProvider>);
 
 function tabsSegmentTrackFromOptions(optionRows: TabsSegmentOption[]): React.ReactElement {
   return (
@@ -59,13 +59,16 @@ describe('Tabs (сегменты без панелей)', () => {
     const handleChange = jest.fn();
     renderWithTheme(
       <Tabs defaultValue="x" onChange={handleChange}>
-          <Tabs.Item value="x" label="Доступно" />
-          <Tabs.Item value="y" label="Заблокировано" disabled />
+        <Tabs.Item value="x" label="Доступно" />
+        <Tabs.Item value="y" label="Заблокировано" disabled />
       </Tabs>,
     );
     fireEvent.click(screen.getByRole('button', { name: 'Заблокировано' }));
     expect(handleChange).not.toHaveBeenCalled();
-    expect(screen.getByRole('button', { name: 'Доступно' })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('button', { name: 'Доступно' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
   });
 
   it('поддерживает вертикальное направление без ошибки', () => {

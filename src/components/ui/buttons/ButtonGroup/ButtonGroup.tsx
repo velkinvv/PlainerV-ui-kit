@@ -1,7 +1,6 @@
 import React, { forwardRef, useMemo, useState } from 'react';
 import { clsx } from 'clsx';
-import type { ButtonGroupProps } from '@/types/ui';
-import { ButtonVariant } from '@/types/ui';
+import { ButtonVariant, type ButtonGroupProps } from '@/types/ui';
 import { Size } from '@/types/sizes';
 import { ButtonGroupRoot } from './ButtonGroup.style';
 

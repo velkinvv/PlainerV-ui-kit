@@ -1,6 +1,5 @@
 import React from 'react';
-import type { DataGridColumn } from '@/types/ui';
-import { ButtonVariant } from '@/types/ui';
+import { ButtonVariant, type DataGridColumn } from '@/types/ui';
 import { Size, IconSize } from '@/types/sizes';
 import { Avatar } from '../../Avatar/Avatar';
 import { Icon } from '../../Icon/Icon';

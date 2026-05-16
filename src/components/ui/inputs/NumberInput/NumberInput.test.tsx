@@ -14,9 +14,7 @@ const renderWithProviders = (component: React.ReactElement) => {
 describe('NumberInput', () => {
   it('оставляет только цифры при вводе', () => {
     const handleChange = jest.fn();
-    renderWithProviders(
-      <NumberInput label="Сумма" allowDecimal={false} onChange={handleChange} />,
-    );
+    renderWithProviders(<NumberInput label="Сумма" allowDecimal={false} onChange={handleChange} />);
 
     const input = screen.getByLabelText('Сумма');
     fireEvent.change(input, { target: { value: '12а3б', selectionStart: 6 } });

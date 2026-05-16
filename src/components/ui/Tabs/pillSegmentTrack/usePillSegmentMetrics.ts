@@ -21,7 +21,9 @@ interface UsePillSegmentMetricsResult {
  * @param params.enabled — считать метрики в режимах с анимированным индикатором
  * @param params.activeSegmentValue — какой сегмент считается выбранным
  */
-export function usePillSegmentMetrics(params: UsePillSegmentMetricsParams): UsePillSegmentMetricsResult {
+export function usePillSegmentMetrics(
+  params: UsePillSegmentMetricsParams,
+): UsePillSegmentMetricsResult {
   const { enabled, activeSegmentValue } = params;
   const trackRootRef = useRef<HTMLDivElement | null>(null);
   const segmentTriggersRef = useRef<Map<string, HTMLElement>>(new Map());

@@ -1,7 +1,6 @@
 ﻿import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { clsx } from 'clsx';
-import type { TimeInputProps } from '../../../../types/ui';
-import { ButtonVariant, TooltipPosition } from '../../../../types/ui';
+import { ButtonVariant, TooltipPosition, type TimeInputProps } from '../../../../types/ui';
 import {
   parseTime,
   formatTimeForDisplay,
@@ -1076,7 +1075,9 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
               size={size}
               disabled={disabled}
               onClick={() => handleSegmentClick('hours', pickerType)}
-              onKeyDown={(keyboardEvent: React.KeyboardEvent) => handleSegmentKeyDown(keyboardEvent, 'hours', pickerType)}
+              onKeyDown={(keyboardEvent: React.KeyboardEvent) =>
+                handleSegmentKeyDown(keyboardEvent, 'hours', pickerType)
+              }
               tabIndex={0}
             >
               --
@@ -1090,7 +1091,9 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
               size={size}
               disabled={disabled}
               onClick={() => handleSegmentClick('minutes', pickerType)}
-              onKeyDown={(keyboardEvent: React.KeyboardEvent) => handleSegmentKeyDown(keyboardEvent, 'minutes', pickerType)}
+              onKeyDown={(keyboardEvent: React.KeyboardEvent) =>
+                handleSegmentKeyDown(keyboardEvent, 'minutes', pickerType)
+              }
               tabIndex={0}
             >
               --
@@ -1107,7 +1110,9 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                   size={size}
                   disabled={disabled}
                   onClick={() => handleSegmentClick('seconds', pickerType)}
-                  onKeyDown={(keyboardEvent: React.KeyboardEvent) => handleSegmentKeyDown(keyboardEvent, 'seconds', pickerType)}
+                  onKeyDown={(keyboardEvent: React.KeyboardEvent) =>
+                    handleSegmentKeyDown(keyboardEvent, 'seconds', pickerType)
+                  }
                   tabIndex={0}
                 >
                   --
@@ -1132,7 +1137,9 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
             size={size}
             disabled={disabled}
             onClick={() => handleSegmentClick('hours', pickerType)}
-            onKeyDown={(keyboardEvent: React.KeyboardEvent) => handleSegmentKeyDown(keyboardEvent, 'hours', pickerType)}
+            onKeyDown={(keyboardEvent: React.KeyboardEvent) =>
+              handleSegmentKeyDown(keyboardEvent, 'hours', pickerType)
+            }
             tabIndex={0}
           >
             {hours}
@@ -1146,7 +1153,9 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
             size={size}
             disabled={disabled}
             onClick={() => handleSegmentClick('minutes', pickerType)}
-            onKeyDown={(keyboardEvent: React.KeyboardEvent) => handleSegmentKeyDown(keyboardEvent, 'minutes', pickerType)}
+            onKeyDown={(keyboardEvent: React.KeyboardEvent) =>
+              handleSegmentKeyDown(keyboardEvent, 'minutes', pickerType)
+            }
             tabIndex={0}
           >
             {minutes}
@@ -1162,7 +1171,9 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                 size={size}
                 disabled={disabled}
                 onClick={() => handleSegmentClick('seconds', pickerType)}
-                onKeyDown={(keyboardEvent: React.KeyboardEvent) => handleSegmentKeyDown(keyboardEvent, 'seconds', pickerType)}
+                onKeyDown={(keyboardEvent: React.KeyboardEvent) =>
+                  handleSegmentKeyDown(keyboardEvent, 'seconds', pickerType)
+                }
                 tabIndex={0}
               >
                 {seconds}
@@ -1305,7 +1316,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
           (() => {
             const currentValue = inputValue || '';
             const currentLength = ignoreMaskCharacters
-              ? currentValue.replace(/[-:\/]/g, '').length
+              ? currentValue.replace(/[-:/]/g, '').length
               : currentValue.length;
 
             // Проверяем threshold для отображения счетчика

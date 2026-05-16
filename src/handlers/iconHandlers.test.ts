@@ -1,8 +1,5 @@
 import { IconSize, Size } from '../types/sizes';
-import {
-  getInputSideIconSizeForField,
-  getInputSideIconSlotSizePx,
-} from './iconHandlers';
+import { getInputSideIconSizeForField, getInputSideIconSlotSizePx } from './iconHandlers';
 
 describe('iconHandlers — слот боковой иконки поля', () => {
   it('getInputSideIconSizeForField сопоставляет размер поля и IconSize', () => {

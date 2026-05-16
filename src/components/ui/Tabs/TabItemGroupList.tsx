@@ -23,13 +23,7 @@ type TabItemGroupListProps = React.ComponentProps<typeof TabItemGroupListRoot>;
  */
 export const TabItemGroupList = forwardRef<HTMLDivElement, TabItemGroupListProps>(
   function TabItemGroupList(props, forwardedReference) {
-    const {
-      children,
-      $direction,
-      $variant,
-      $filledSegmentTriggers,
-      ...restDomProps
-    } = props;
+    const { children, $direction, $variant, $filledSegmentTriggers, ...restDomProps } = props;
     const tabItemGroupContextValue = useContext(TabItemGroupContext);
 
     const activeSegmentValue = tabItemGroupContextValue?.activeTab ?? '';

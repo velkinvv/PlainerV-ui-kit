@@ -279,4 +279,3 @@ export const RangeDateLabel = styled.span<{ size?: Size }>`
 export const RangeDateSeparator = styled.span`
   color: ${({ theme }) => theme.colors.textSecondary};
 `;
-

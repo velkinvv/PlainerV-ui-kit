@@ -1,7 +1,6 @@
 import styled, { css } from 'styled-components';
 import { motion } from 'framer-motion';
-import type { CardProps } from '../../../types/ui';
-import { CardVariant } from '../../../types/ui';
+import { CardVariant, type CardProps } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 import type { ThemeType } from '../../../types/theme';
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import { clsx } from 'clsx';
-import type { DividerProps } from '../../../types/ui';
-import { DividerOrientation } from '../../../types/ui';
+import { DividerOrientation, type DividerProps } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 import { DividerContainer } from './Divider.style';
 

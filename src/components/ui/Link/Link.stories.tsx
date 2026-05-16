@@ -1,7 +1,6 @@
 ﻿import type { Meta, StoryObj } from '@storybook/react';
 import { Link } from './Link';
-import { LinkMode } from '../../../types/ui';
-import { ButtonVariant } from '../../../types/ui';
+import { LinkMode, ButtonVariant } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 import { DOC_LINK } from '@/components/ui/storyDocs/uiKitDocs';
 

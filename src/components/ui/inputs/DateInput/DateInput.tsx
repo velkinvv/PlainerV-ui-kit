@@ -841,7 +841,9 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
             size={size}
             disabled={disabled}
             onClick={() => handleSegmentClick('day', pickerType)}
-            onKeyDown={(keyboardEvent: React.KeyboardEvent) => handleSegmentKeyDown(keyboardEvent, 'day', pickerType)}
+            onKeyDown={(keyboardEvent: React.KeyboardEvent) =>
+              handleSegmentKeyDown(keyboardEvent, 'day', pickerType)
+            }
             tabIndex={0}
           >
             {getDisplayValue('day')}
@@ -853,7 +855,9 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
             size={size}
             disabled={disabled}
             onClick={() => handleSegmentClick('month', pickerType)}
-            onKeyDown={(keyboardEvent: React.KeyboardEvent) => handleSegmentKeyDown(keyboardEvent, 'month', pickerType)}
+            onKeyDown={(keyboardEvent: React.KeyboardEvent) =>
+              handleSegmentKeyDown(keyboardEvent, 'month', pickerType)
+            }
             tabIndex={0}
           >
             {getDisplayValue('month')}
@@ -865,7 +869,9 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
             size={size}
             disabled={disabled}
             onClick={() => handleSegmentClick('year', pickerType)}
-            onKeyDown={(keyboardEvent: React.KeyboardEvent) => handleSegmentKeyDown(keyboardEvent, 'year', pickerType)}
+            onKeyDown={(keyboardEvent: React.KeyboardEvent) =>
+              handleSegmentKeyDown(keyboardEvent, 'year', pickerType)
+            }
             tabIndex={0}
           >
             {getDisplayValue('year')}

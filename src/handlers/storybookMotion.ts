@@ -1,5 +1,4 @@
-import type { Transition, Variants } from 'framer-motion';
-import { useReducedMotion } from 'framer-motion';
+import { useReducedMotion, type Transition, type Variants } from 'framer-motion';
 
 /** Практически мгновенный переход при включённом «уменьшить движение». */
 export const storybookMotionInstantTransition: Transition = { duration: 0.02 };

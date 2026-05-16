@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Единые тексты для вкладки Storybook Docs по компонентам UI Kit.
  * Сверено с `types/ui.ts`; таблицы и сценарии использования — для разработчиков.
  */
@@ -44,8 +44,8 @@ export const DOC_BUTTON_GROUP = `
 ### Пропсы
 | Проп | Зачем |
 |------|--------|
-| \`orientation\` | horizontal \| vertical. |
-| \`attached\`, \`attachedShape\`, \`size\` | Склейка границ; segment \| pill; размер для радиусов. |
+| \`orientation\` | horizontal | vertical. |
+| \`attached\`, \`attachedShape\`, \`size\` | Склейка границ; segment | pill; размер для радиусов. |
 | \`fullWidth\` | Растянуть группу. |
 | \`selectable\`, \`activeIndex\`, \`defaultActiveIndex\`, \`onActiveIndexChange\` | Контролируемое выделение вкладки-кнопки. |
 | \`activeButtonVariant\`, \`inactiveButtonVariant\` | Стили активной и остальных. |
@@ -66,7 +66,7 @@ export const DOC_LINK = `
 | \`href\` | URL (обязателен). |
 | \`target\`, \`rel\`, \`download\` | Навигация и скачивание; для \`target="_blank"\` безопасный \`rel\` подмешивается в компоненте. |
 
-Текстовый режим: \`textVariant\` — default \| line \| muted.
+Текстовый режим: \`textVariant\` — default | line | muted.
 `.trim();
 
 /** @see InputProps, BaseInputProps */
@@ -77,12 +77,12 @@ export const DOC_INPUT = `
 ### Важные пропсы
 | Проп | Зачем |
 |------|--------|
-| \`variant\` | default \| clear (не selector/date — они у Select/DateInput). |
+| \`variant\` | default | clear (не selector/date — они у Select/DateInput). |
 | \`size\` | Размер контрола (**Size**). |
 | \`label\`, \`error\`, \`success\`, \`helperText\`, \`required\` | Форма и валидация. |
 | \`leftIcon\`, \`rightIcon\` | Иконки. |
 | \`displayClearIcon\`, \`onClearIconClick\`, \`clearIconProps\` | Кнопка очистки. |
-| \`status\` | error \| success \| warning — цвет обводки. |
+| \`status\` | error | success | warning — цвет обводки. |
 | \`readOnly\`, \`fullWidth\`, \`textAlign\` | Поведение и вёрстка. |
 | \`isLoading\`, \`skeleton\` | Индикаторы. |
 | \`tooltip\`, \`tooltipType\`, \`tooltipPosition\` | Подсказка к полю. |
@@ -339,9 +339,9 @@ const segmentItems: TabsItemDefinition[] = [
 | \`defaultValue\` | Неконтролируемое начальное \`value\`. |
 | \`defaultActiveTab\` | Алиас **defaultValue** (историческое имя). |
 | \`onChange(activeTab)\` | Смена активного сегмента. |
-| \`direction\` | **horizontal** \| **vertical**. |
+| \`direction\` | **horizontal** | **vertical**. |
 | \`tabsPosition\` | При вертикали — табы слева/справа от контента. |
-| \`variant\` | **pill** \| **minimal** \| **line** \| **underline**. |
+| \`variant\` | **pill** | **minimal** | **line** | **underline**. |
 | \`filledSegmentTriggers\` | У **minimal** / **line** / **underline**: заливка сегментов и фон трека (**filled**). |
 | \`ariaLabel\` | **aria-label** группы (**role="group"** на корне). |
 | \`segmentTrackProps\` | **className**, **style**, **data-*** для трека; к **className** добавляется **ui-tabs-list**. |
@@ -447,7 +447,7 @@ export const DOC_STEPPER = `
 ### Назначение
 Пошаговый процесс: **variant** — **compact** (кольцо «текущий/всего», заголовок и подзаголовок) или **linear** (цепочка шагов с соединителями).
 
-**appearance** light \| dark; скругления завязаны на **theme.borderRadius**. Для прогресса внутри формы см. **Progress** (\`variant="stepper"\`).
+**appearance** light | dark; скругления завязаны на **theme.borderRadius**. Для прогресса внутри формы см. **Progress** (\`variant="stepper"\`).
 `.trim();
 
 /** @see CalendarProps */
@@ -469,7 +469,7 @@ export const DOC_SPINNER = `
 /** @see SkeletonProps */
 export const DOC_SKELETON = `
 ### Назначение
-Плейсхолдер загрузки: **SkeletonVariant** (text, avatar, button, custom), форма (**shape** rect \| circle), **count** и **gap** для списка, направление группы (**SkeletonGroupDirection**), скорость анимации, **aria-label**.
+Плейсхолдер загрузки: **SkeletonVariant** (text, avatar, button, custom), форма (**shape** rect | circle), **count** и **gap** для списка, направление группы (**SkeletonGroupDirection**), скорость анимации, **aria-label**.
 
 **borderRadius** и размеры задаются числом (px) или CSS-строкой.
 `.trim();
@@ -477,7 +477,7 @@ export const DOC_SKELETON = `
 /** @see DividerProps */
 export const DOC_DIVIDER = `
 ### Назначение
-Разделитель: **orientation** horizontal \| vertical, отступы, цвет из темы.
+Разделитель: **orientation** horizontal | vertical, отступы, цвет из темы.
 `.trim();
 
 /** @see CheckboxProps */
@@ -499,7 +499,7 @@ export const DOC_RADIO_BUTTON = `
 /** @see RadioButtonGroupProps */
 export const DOC_RADIO_BUTTON_GROUP = `
 ### Назначение
-Группа опций: массив значений (**RadioButtonGroupOption**), **orientation** horizontal \| vertical, **value** / **onChange**, **disabled**, **readOnly**, **size**, ошибка (**error**), те же визуальные варианты, что у одиночной **RadioButton**.
+Группа опций: массив значений (**RadioButtonGroupOption**), **orientation** horizontal | vertical, **value** / **onChange**, **disabled**, **readOnly**, **size**, ошибка (**error**), те же визуальные варианты, что у одиночной **RadioButton**.
 `.trim();
 
 /** @see SwitchProps */
@@ -524,7 +524,7 @@ export const DOC_SLIDER = `
 **\`label\`**, **\`additionalLabel\`**, **\`helperText\`**, **\`extraText\`**, **\`error\`**, **\`success\`**, **\`required\`** — как у **Input** / **TextArea**. Подсказка скрывается при error/success; **\`status\`** усиливает цвет helperText.
 
 ### Состояния (**\`status\`**)
-**error** \| **success** \| **warning** — цвет активной полосы и обводка трека. Приоритет: **error** → **success** → **status** (\`resolveSliderAccentKind\`). **disabled** — прежнее затемнение.
+**error** | **success** | **warning** — цвет активной полосы и обводка трека. Приоритет: **error** → **success** → **status** (\`resolveSliderAccentKind\`). **disabled** — прежнее затемнение.
 
 ### Скелетон
 **\`skeleton\`** — шиммер вместо трека; **aria-busy** на контейнере; у range поля «От/До» скрыты.
@@ -546,7 +546,7 @@ export const DOC_BREADCRUMB = `
 /** @see GridProps */
 export const DOC_GRID = `
 ### Назначение
-Адаптивный **CSS Grid**: **GridMode** (fullscreen \| container), колонки и строки по breakpoints (**GridBreakpoint**), зазоры, вложенность областей.
+Адаптивный **CSS Grid**: **GridMode** (fullscreen | container), колонки и строки по breakpoints (**GridBreakpoint**), зазоры, вложенность областей.
 `.trim();
 
 /** @see GridItemProps */

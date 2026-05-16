@@ -1,10 +1,6 @@
 import { InputPaddingHandler } from '../../../../handlers/uiHandlers';
 import { Size } from '../../../../types/sizes';
-import {
-  clampSliderValue,
-  formatSliderNumberRu,
-  snapSliderToStep,
-} from '../../Slider/handlers';
+import { clampSliderValue, formatSliderNumberRu, snapSliderToStep } from '../../Slider/handlers';
 import { normalizeMultiInputToken } from '../MultiInput/handlers';
 
 /**

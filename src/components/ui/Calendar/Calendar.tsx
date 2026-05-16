@@ -1,5 +1,16 @@
-import React, { forwardRef, useCallback, useEffect, useMemo, useState, type ComponentProps } from 'react';
-import type { DropdownMenuItemProps, DropdownMenuItemValue } from '../../../types/ui';
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type ComponentProps,
+} from 'react';
+import type {
+  CalendarProps,
+  DropdownMenuItemProps,
+  DropdownMenuItemValue,
+} from '../../../types/ui';
 import { Size, IconSize } from '../../../types/sizes';
 import { Icon } from '../Icon/Icon';
 import { Dropdown } from '../Dropdown/Dropdown';
@@ -33,7 +44,6 @@ import {
   parseMonthYearKey,
   startOfMonth,
 } from './handlers';
-import type { CalendarProps } from '../../../types/ui';
 import { DateRollerPicker } from '../DateRollerPicker/DateRollerPicker';
 import { CalendarMonthYearSplit } from './CalendarMonthYearSplit';
 

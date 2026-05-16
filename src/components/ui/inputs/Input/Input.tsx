@@ -1,6 +1,5 @@
 import React, { forwardRef, useCallback, useMemo } from 'react';
-import type { InputProps, TooltipPosition } from '../../../../types/ui';
-import { InputVariant } from '../../../../types/ui';
+import { InputVariant, type InputProps, type TooltipPosition } from '../../../../types/ui';
 import { getClearIconSizeForInputField } from '../../../../handlers/iconHandlers';
 import { Size } from '../../../../types/sizes';
 import { Icon } from '../../Icon/Icon';

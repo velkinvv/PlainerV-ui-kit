@@ -583,7 +583,14 @@ export type MultiInputProps = Omit<
  */
 export type SliderInputProps = Omit<
   InputProps,
-  'value' | 'defaultValue' | 'onChange' | 'handleInput' | 'type' | 'inputMode' | 'maxLength' | 'placeholder'
+  | 'value'
+  | 'defaultValue'
+  | 'onChange'
+  | 'handleInput'
+  | 'type'
+  | 'inputMode'
+  | 'maxLength'
+  | 'placeholder'
 > & {
   value?: number;
   defaultValue?: number;
@@ -1909,14 +1916,7 @@ export interface TabsProps extends BaseComponentProps {
  */
 export type TabsSegmentOption = Pick<
   TabsItemDefinition,
-  | 'value'
-  | 'label'
-  | 'disabled'
-  | 'loading'
-  | 'skeleton'
-  | 'iconStart'
-  | 'iconEnd'
-  | 'badge'
+  'value' | 'label' | 'disabled' | 'loading' | 'skeleton' | 'iconStart' | 'iconEnd' | 'badge'
 >;
 
 /**
@@ -4301,8 +4301,7 @@ export type TableCellFormat<Row = unknown> =
     };
 
 /** Пропсы ячейки с декларативным форматированием (надстройка над `TableCell`). */
-export interface TableCellFormattedProps<Row = unknown>
-  extends Omit<TableCellProps, 'children'> {
+export interface TableCellFormattedProps<Row = unknown> extends Omit<TableCellProps, 'children'> {
   /** Значение для форматирования */
   value: unknown;
   /** Строка данных — нужна для шаблонов ссылок и кастомных форматтеров */

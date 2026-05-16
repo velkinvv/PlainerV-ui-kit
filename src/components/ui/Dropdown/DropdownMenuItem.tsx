@@ -2,7 +2,6 @@ import React from 'react';
 import { clsx } from 'clsx';
 import { TooltipPosition, type DropdownMenuItemProps } from '../../../types/ui';
 import { Hint, HintVariant } from '../Hint/Hint';
-import { mapTooltipPositionToHintPlacement } from './handlers';
 import {
   DropdownItem,
   DropdownItemContent,
@@ -30,6 +29,7 @@ import {
   isSelectedInMultiSelection as checkIsSelectedInMultiSelection,
   calculateMenuItemState,
   getMenuItemKey,
+  mapTooltipPositionToHintPlacement,
 } from './handlers';
 import { useDropdownMenuContext } from './DropdownMenu';
 import { Tooltip } from '../Tooltip/Tooltip';

@@ -1,6 +1,10 @@
 import React, { forwardRef, useCallback, useId, useMemo, useRef, useState } from 'react';
-import type { FileInputLayout, FileInputProps, TooltipPosition } from '../../../../types/ui';
-import { InputVariant } from '../../../../types/ui';
+import {
+  InputVariant,
+  type FileInputLayout,
+  type FileInputProps,
+  type TooltipPosition,
+} from '../../../../types/ui';
 import { getClearIconSizeForInputField } from '../../../../handlers/iconHandlers';
 import { Size, IconSize } from '../../../../types/sizes';
 import { Icon } from '../../Icon/Icon';

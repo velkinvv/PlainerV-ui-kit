@@ -20,6 +20,7 @@ import { TABLE_KIT_DOC } from '../storyDocs/documentation';
 import { TableCellHeadLineClamp } from './Table.style';
 import { TableWithTextFilterInHeader as tableColumnFilterTableStorySource } from './TableColumnFilters.stories';
 import { tableStoriesStyles } from './Table.stories.styles';
+import { noopHandler } from '@/handlers';
 
 const meta: Meta<typeof Table> = {
   title: 'UI Kit/Data Display/Table',
@@ -379,7 +380,7 @@ export const HeadMaxLinesClamp: Story = {
           <TableHead>
             <TableRow>
               <TableCell headerMaxLines={2}>
-                <TableSortLabel active direction="asc" maxLines={2} onClick={() => {}}>
+                <TableSortLabel active direction="asc" maxLines={2} onClick={noopHandler}>
                   Очень длинный заголовок колонки для проверки переноса и обрезки максимум на двух
                   строках
                 </TableSortLabel>

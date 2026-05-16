@@ -780,17 +780,21 @@ export function DataGrid<Row extends DataGridBaseRow>(
                       headerMaxLines={mergedHeaderMaxLinesRaw}
                       style={buildColumnDragCellStyle(colIndex, thStyle)}
                       draggable={enableColumnDrag && !col.disableReorder}
-                      onDragStart={(e) => {
+                      onDragStart={(dragEvent: React.DragEvent<HTMLTableCellElement>) => {
                         if (!enableColumnDrag || col.disableReorder) {
                           return;
                         }
-                        e.dataTransfer.effectAllowed = 'move';
-                        applyDataGridColDragGhostPreview(e);
+                        dragEvent.dataTransfer.effectAllowed = 'move';
+                        applyDataGridColDragGhostPreview(dragEvent);
                         const width =
-                          e.currentTarget instanceof HTMLElement ? e.currentTarget.offsetWidth : 0;
+                          dragEvent.currentTarget instanceof HTMLElement
+                            ? dragEvent.currentTarget.offsetWidth
+                            : 0;
                         beginColDrag(colIndex, width);
                       }}
-                      onDragOver={(e) => handleColDragOverTarget(colIndex, e)}
+                      onDragOver={(dragEvent: React.DragEvent<HTMLTableCellElement>) =>
+                        handleColDragOverTarget(colIndex, dragEvent)
+                      }
                       onDrop={() => {
                         handleColDrop(colIndex);
                       }}
@@ -833,7 +837,9 @@ export function DataGrid<Row extends DataGridBaseRow>(
                           onPointerUp={(pointerUpEvent: React.PointerEvent<HTMLButtonElement>) => {
                             endColumnResizeGesture(pointerUpEvent, true);
                           }}
-                          onPointerCancel={(pointerCancelEvent: React.PointerEvent<HTMLButtonElement>) => {
+                          onPointerCancel={(
+                            pointerCancelEvent: React.PointerEvent<HTMLButtonElement>,
+                          ) => {
                             endColumnResizeGesture(pointerCancelEvent, false);
                           }}
                         />
@@ -887,7 +893,7 @@ export function DataGrid<Row extends DataGridBaseRow>(
                         <DataGridRowDragHandle
                           $disabled={disabled}
                           draggable={!disabled}
-                          onDragStart={(dragEvent: React.DragEvent<HTMLButtonElement>) => {
+                          onDragStart={(dragEvent: React.DragEvent<HTMLSpanElement>) => {
                             dragEvent.dataTransfer.effectAllowed = 'move';
                             applyDataGridRowDragGhostPreview(dragEvent);
                             const sourceRow = dragEvent.currentTarget.closest('tr');
@@ -976,7 +982,9 @@ export function DataGrid<Row extends DataGridBaseRow>(
                                 : 'left'
                           }
                           style={buildColumnDragCellStyle(colIndex, tdStyle)}
-                          onDragOver={(e) => handleColDragOverTarget(colIndex, e)}
+                          onDragOver={(dragEvent: React.DragEvent<HTMLTableCellElement>) =>
+                            handleColDragOverTarget(colIndex, dragEvent)
+                          }
                           onDrop={() => {
                             handleColDrop(colIndex);
                           }}
@@ -1001,7 +1009,9 @@ export function DataGrid<Row extends DataGridBaseRow>(
                     onDoubleClick={(e) => {
                       onRowDoubleClick?.(row, e);
                     }}
-                    onDragOver={(e) => handleBodyRowDragOver(rowIndex, e)}
+                    onDragOver={(dragEvent: React.DragEvent<HTMLTableRowElement>) =>
+                      handleBodyRowDragOver(rowIndex, dragEvent)
+                    }
                     onDrop={() => {
                       if (enableRowDrag) {
                         handleRowDrop(rowIndex);
@@ -1027,7 +1037,9 @@ export function DataGrid<Row extends DataGridBaseRow>(
                           ...(rowDragShiftStyle ?? {}),
                           borderBottom: expanded ? undefined : 'none',
                         }}
-                        onDragOver={(e) => handleBodyRowDragOver(rowIndex, e)}
+                        onDragOver={(dragEvent: React.DragEvent<HTMLTableRowElement>) =>
+                          handleBodyRowDragOver(rowIndex, dragEvent)
+                        }
                       >
                         <TableCell
                           colSpan={colCount}

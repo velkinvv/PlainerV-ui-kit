@@ -1,7 +1,6 @@
 import styled, { css } from 'styled-components';
 import { motion } from 'framer-motion';
-import type { IconButtonProps } from '../../../../types/ui';
-import { ButtonVariant } from '../../../../types/ui';
+import { ButtonVariant, type IconButtonProps } from '../../../../types/ui';
 import { Size } from '../../../../types/sizes';
 import { getButtonSize } from '../../../../handlers/buttonThemeHandlers';
 import { createStyledShouldForwardProp } from '../../../../handlers/styledComponentHandlers';
@@ -26,7 +25,9 @@ const iconButtonStyleConfig = {
  * @param fullWidth - растянуть на всю ширину
  * @param rounded - скругленные углы
  */
-export const StyledIconButton = styled(motion.button).withConfig(iconButtonStyleConfig)<IconButtonProps>`
+export const StyledIconButton = styled(motion.button).withConfig(
+  iconButtonStyleConfig,
+)<IconButtonProps>`
   box-sizing: border-box;
   display: inline-flex;
   align-items: center;

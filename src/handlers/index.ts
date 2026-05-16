@@ -5,6 +5,7 @@ export * from './tableSelectionHandlers';
 export * from './linkHandlers';
 export * from './uiHandlers';
 export * from './styledComponentHandlers';
+export * from './noopHandler';
 export * from './portalOverlayHandlers';
 export * from './dateHandlers';
 export * from '../components/ui/inputs/TimeInput/handlers';

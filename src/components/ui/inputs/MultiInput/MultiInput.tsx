@@ -1,11 +1,11 @@
 import React, { forwardRef, useCallback, useMemo, useState } from 'react';
-import type {
-  MultiInputChangeEvent,
-  MultiInputDuplicatePolicy,
-  MultiInputProps,
-  TooltipPosition,
+import {
+  InputVariant,
+  type MultiInputChangeEvent,
+  type MultiInputDuplicatePolicy,
+  type MultiInputProps,
+  type TooltipPosition,
 } from '../../../../types/ui';
-import { InputVariant } from '../../../../types/ui';
 import { getClearIconSizeForInputField } from '../../../../handlers/iconHandlers';
 import { Size, IconSize } from '../../../../types/sizes';
 import { Icon } from '../../Icon/Icon';
@@ -29,7 +29,11 @@ import {
   RequiredIndicator,
   shouldShowInputClearButton,
 } from '../shared';
-import { SelectMultiChip, SelectMultiChipLabel, SelectMultiChipRemove } from '../Select/Select.style';
+import {
+  SelectMultiChip,
+  SelectMultiChipLabel,
+  SelectMultiChipRemove,
+} from '../Select/Select.style';
 import { MultiInputInner, MultiInputNativeInput } from './MultiInput.style';
 import {
   normalizeMultiInputToken,
@@ -109,14 +113,20 @@ export const MultiInput = forwardRef<HTMLInputElement, MultiInputProps>(
     },
     ref,
   ) => {
-    const inputId = useMemo(() => id ?? `multi-input-${Math.random().toString(36).slice(2, 10)}`, [id]);
+    const inputId = useMemo(
+      () => id ?? `multi-input-${Math.random().toString(36).slice(2, 10)}`,
+      [id],
+    );
     const formContext = useFormContext();
     const isControlled = valueFromProps !== undefined;
     const [internalItems, setInternalItems] = useState<string[]>(() => defaultValue ?? []);
     const [draft, setDraft] = useState('');
     const [focused, setFocused] = useState(false);
 
-    const items = isControlled ? (valueFromProps ?? []) : internalItems;
+    const items = React.useMemo(
+      () => (isControlled ? (valueFromProps ?? []) : internalItems),
+      [isControlled, valueFromProps, internalItems],
+    );
     const currentStatus = status || (error ? 'error' : success ? 'success' : undefined);
 
     const duplicatePolicy: MultiInputDuplicatePolicy = duplicates;
@@ -247,7 +257,16 @@ export const MultiInput = forwardRef<HTMLInputElement, MultiInputProps>(
 
         onKeyDown?.(event);
       },
-      [commitDraft, commitWithComma, disabled, draft, items.length, onKeyDown, readOnly, removeTokenAt],
+      [
+        commitDraft,
+        commitWithComma,
+        disabled,
+        draft,
+        items.length,
+        onKeyDown,
+        readOnly,
+        removeTokenAt,
+      ],
     );
 
     const handlePaste = useCallback(
@@ -292,8 +311,7 @@ export const MultiInput = forwardRef<HTMLInputElement, MultiInputProps>(
       [disableCopying],
     );
 
-    const showTokenRemove =
-      displayTokenRemoveProp ?? (!readOnly && !disabled);
+    const showTokenRemove = displayTokenRemoveProp ?? (!readOnly && !disabled);
 
     const hasVisibleValue = items.length > 0 || draft.length > 0;
     const showClearButton = shouldShowInputClearButton({
@@ -316,7 +334,12 @@ export const MultiInput = forwardRef<HTMLInputElement, MultiInputProps>(
         displayCharacterCounter &&
         (effectiveMaxLength ?? 0) > 0 &&
         currentLength >= characterCounterVisibilityThreshold,
-      [characterCounterVisibilityThreshold, currentLength, displayCharacterCounter, effectiveMaxLength],
+      [
+        characterCounterVisibilityThreshold,
+        currentLength,
+        displayCharacterCounter,
+        effectiveMaxLength,
+      ],
     );
 
     if (skeleton) {
@@ -369,7 +392,12 @@ export const MultiInput = forwardRef<HTMLInputElement, MultiInputProps>(
                     removeTokenAt(index);
                   }}
                 >
-                  <Icon name="IconExClose" size={IconSize.XS} color="currentColor" {...clearIconProps} />
+                  <Icon
+                    name="IconExClose"
+                    size={IconSize.XS}
+                    color="currentColor"
+                    {...clearIconProps}
+                  />
                 </SelectMultiChipRemove>
               ) : null}
             </SelectMultiChip>
