@@ -6,6 +6,8 @@
 
 Современная библиотека UI компонентов с поддержкой темизации и TypeScript.
 
+**Текущая версия:** `0.1.5` · ветка [`v_0.1.5`](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.1.5) · React 18+/19 · styled-components 6.x
+
 ## 🚀 Возможности
 
 - **🎨 Полная темизация** - Поддержка светлой и темной темы с автоматическим переключением
@@ -20,6 +22,8 @@
 
 ```bash
 npm i @velkinvv/plainerv
+# или конкретная версия:
+npm i @velkinvv/plainerv@0.1.5
 ```
 
 ## 📦 Импорт стилей и шрифтов
@@ -73,7 +77,7 @@ function MyComponent() {
 
 ## 🎯 Компоненты
 
-**Полный перечень публичных экспортов** пакета — в документации: `documentation/content/docs/ru/web/v_0.1.3/components-catalog.mdx` (на сайте: **Web → v0.1.3 → Справочник компонентов**). Ниже — краткая группировка.
+**Полный перечень публичных экспортов** — в [документации](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.1.5/documentation/content/docs/ru/web/v_0.1.5/components-catalog.mdx) (на сайте: **Web → v0.1.5 → Справочник компонентов**). Ниже — краткая группировка.
 
 ### Кнопки и ссылки
 
@@ -84,7 +88,7 @@ function MyComponent() {
 
 ### Ввод и формы
 
-- **Input**, **TextArea**, **FileInput**, **Select** — поля (`Form`-совместимые).
+- **Input**, **TextArea**, **FileInput**, **Select**, **MultiInput**, **SliderInput** — поля (`Form`-совместимые).
 - **Form**, **HiddenUsernameField**.
 - **Checkbox**, **CheckboxGroup**, **Switch**, **RadioButton**, **RadioButtonGroup**.
 - **DateInput**, **TimeInput**.
@@ -169,7 +173,11 @@ function Root() {
 
 ### Хуки и обработчики
 
-Также экспортируются **хуки** (`useModal`, `useLocalStorage`, `useDebounce`, `useClickOutside`, `useKeyPress`, `useMediaQuery`, `useScrollPosition`, `useWindowSize`, `useIsDesktop`, `useNavigationMenuExpand`, `useUiMotionPresets`, …) и **handlers** (дата/время, ссылки, таблица, dropdown, motion — см. `src/handlers/index.ts`).
+Также экспортируются **хуки** (`useModal`, `useLocalStorage`, `useDebounce`, `useClickOutside`, `useKeyPress`, `useMediaQuery`, `useScrollPosition`, `useWindowSize`, `useIsDesktop`, `useNavigationMenuExpand`, `useUiMotionPresets`, …) и **handlers** из `src/handlers/index.ts`:
+
+- дата/время, ссылки, таблица, dropdown, motion, форматирование ячеек (`tableCellFormat`, `formatTableCellValue`);
+- **`createStyledShouldForwardProp`** — фильтр `shouldForwardProp` для styled-components (transient-пропы `$…` и кастомные поля);
+- **`omitMotionConflictingDomHandlers`** — убирает HTML drag-обработчики перед `motion.button` / `motion.a` (совместимость с Framer Motion).
 
 **Storybook:** `Hooks/*`, `Components/Buttons/*`, `Components/Inputs/*`, `Components/Navigation/*`, `Components/Data Display/Table`, `Components/Data Display/DataGrid`, `Components/Surfaces/*`, `Components/Feedback/*`, и др.
 
@@ -270,11 +278,15 @@ npm run build
 npm run test
 ```
 
-### Линтинг
+### Линтинг и проверка типов
 
 ```bash
 npm run lint
+npm run type-check
+npm run quality:check   # type-check + lint + format
 ```
+
+Сборка (`npm run build`) проходит без предупреждений TypeScript от `@rollup/plugin-typescript`.
 
 ### React Doctor
 
@@ -344,7 +356,7 @@ function AppLayout() {
 
 ## 🌳 Tree-shaking
 
-Библиотека поддерживает tree-shaking благодаря настройке `sideEffects: false`. Это означает, что при импорте только необходимых компонентов, неиспользуемый код будет исключен из финального бандла.
+Библиотека поддерживает tree-shaking: в `package.json` указано `sideEffects: ["**/*.css"]`, поэтому JS-код неиспользуемых компонентов может быть удалён бандлером, а CSS нужно подключать явно (`import '@velkinvv/plainerv/styles'`).
 
 ```tsx
 // ✅ Хорошо - импортируется только Button
@@ -371,6 +383,15 @@ npm run analyze
 
 *Размеры будут обновлены после первой сборки*
 
+## 📋 Что нового в 0.1.5
+
+- Устранены все предупреждения TypeScript при production-сборке Rollup.
+- Хелперы styled-components: `createStyledShouldForwardProp`, `omitMotionConflictingDomHandlers`.
+- Совместимость с React 19 (`TabItem`, типизация обработчиков событий).
+- Исправлен регистр папки `src/components/ui/table` (Windows / TS1261).
+
+Подробности — в [CHANGELOG.md](CHANGELOG.md).
+
 ## 🤝 Contributing
 
 Мы приветствуем вклад в развитие библиотеки! Пожалуйста, ознакомьтесь с [руководством по контрибьютингу](CONTRIBUTING.md) перед отправкой PR.
@@ -388,6 +409,7 @@ MIT License - см. [LICENSE](LICENSE) для деталей.
 
 ## 🔗 Ссылки
 
-- [Документация](https://github.com/velkinvv/PlainerV-ui-kit#readme)
+- [Репозиторий](https://github.com/velkinvv/PlainerV-ui-kit)
+- [Ветка v0.1.5](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.1.5)
 - [Issues](https://github.com/velkinvv/PlainerV-ui-kit/issues)
-- [Changelog](CHANGELOG.md)
+- [Changelog](CHANGELOG.md) · [npm](https://www.npmjs.com/package/@velkinvv/plainerv)
