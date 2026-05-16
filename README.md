@@ -6,7 +6,7 @@
 
 Современная библиотека UI компонентов с поддержкой темизации и TypeScript.
 
-**Текущая версия:** `0.1.5` · ветка [`v_0.1.5`](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.1.5) · React 18+/19 · styled-components 6.x
+**Текущая версия:** `0.1.6` · ветка [`v_0.1.6`](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.1.6) · React 18+/19 · styled-components 6.x
 
 ## 🚀 Возможности
 
@@ -23,7 +23,7 @@
 ```bash
 npm i @velkinvv/plainerv
 # или конкретная версия:
-npm i @velkinvv/plainerv@0.1.5
+npm i @velkinvv/plainerv@0.1.6
 ```
 
 ## 📦 Импорт стилей и шрифтов
@@ -77,7 +77,7 @@ function MyComponent() {
 
 ## 🎯 Компоненты
 
-**Полный перечень публичных экспортов** — в [документации](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.1.5/documentation/content/docs/ru/web/v_0.1.5/components-catalog.mdx) (на сайте: **Web → v0.1.5 → Справочник компонентов**). Ниже — краткая группировка.
+**Полный перечень публичных экспортов** — в [документации](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.1.6/documentation/content/docs/ru/web/v_0.1.6/components-catalog.mdx) (на сайте: **Web → v0.1.6 → Справочник компонентов**). Ниже — краткая группировка.
 
 ### Кнопки и ссылки
 
@@ -383,14 +383,20 @@ npm run analyze
 
 *Размеры будут обновлены после первой сборки*
 
+## 📋 Что нового в 0.1.6
+
+- Устранены все предупреждения ESLint (`lint:fix-all`, 0 warnings).
+- Хелпер **`noopHandler`** для stories и тестов.
+- Исправлены типы `DragEvent` в **DataGrid**; уточнена типизация **Hint** и **Progress**.
+
+Подробности — в [CHANGELOG.md](CHANGELOG.md).
+
 ## 📋 Что нового в 0.1.5
 
 - Устранены все предупреждения TypeScript при production-сборке Rollup.
 - Хелперы styled-components: `createStyledShouldForwardProp`, `omitMotionConflictingDomHandlers`.
 - Совместимость с React 19 (`TabItem`, типизация обработчиков событий).
 - Исправлен регистр папки `src/components/ui/table` (Windows / TS1261).
-
-Подробности — в [CHANGELOG.md](CHANGELOG.md).
 
 ## 🤝 Contributing
 
@@ -410,6 +416,6 @@ MIT License - см. [LICENSE](LICENSE) для деталей.
 ## 🔗 Ссылки
 
 - [Репозиторий](https://github.com/velkinvv/PlainerV-ui-kit)
-- [Ветка v0.1.5](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.1.5)
+- [Ветка v0.1.6](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.1.6)
 - [Issues](https://github.com/velkinvv/PlainerV-ui-kit/issues)
 - [Changelog](CHANGELOG.md) · [npm](https://www.npmjs.com/package/@velkinvv/plainerv)

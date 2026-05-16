@@ -38,6 +38,24 @@
 
 ---
 
+## [0.1.6] - 2026-05-16
+
+### Fixed
+
+- Устранены все предупреждения ESLint (`lint:fix-all`, 0 warnings).
+- Исправлены типы `DragEvent` в **DataGrid** (handle, ячейки, строки).
+- Типизация **Hint** (`HintPosition`, очистка таймеров), **Progress** (`DefaultTheme`).
+
+### Added
+
+- Хелпер **`noopHandler`** для пустых колбэков в stories и тестах.
+
+### Changed
+
+- Версия пакета: **0.1.6**.
+
+---
+
 ## [0.1.5] - 2026-05-16
 
 ### Fixed
