@@ -841,7 +841,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
             size={size}
             disabled={disabled}
             onClick={() => handleSegmentClick('day', pickerType)}
-            onKeyDown={(e) => handleSegmentKeyDown(e, 'day', pickerType)}
+            onKeyDown={(keyboardEvent: React.KeyboardEvent) => handleSegmentKeyDown(keyboardEvent, 'day', pickerType)}
             tabIndex={0}
           >
             {getDisplayValue('day')}
@@ -853,7 +853,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
             size={size}
             disabled={disabled}
             onClick={() => handleSegmentClick('month', pickerType)}
-            onKeyDown={(e) => handleSegmentKeyDown(e, 'month', pickerType)}
+            onKeyDown={(keyboardEvent: React.KeyboardEvent) => handleSegmentKeyDown(keyboardEvent, 'month', pickerType)}
             tabIndex={0}
           >
             {getDisplayValue('month')}
@@ -865,7 +865,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
             size={size}
             disabled={disabled}
             onClick={() => handleSegmentClick('year', pickerType)}
-            onKeyDown={(e) => handleSegmentKeyDown(e, 'year', pickerType)}
+            onKeyDown={(keyboardEvent: React.KeyboardEvent) => handleSegmentKeyDown(keyboardEvent, 'year', pickerType)}
             tabIndex={0}
           >
             {getDisplayValue('year')}
@@ -1003,10 +1003,30 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
                   readOnly={readOnly}
                   placeholder={placeholder || 'Выберите дату'}
                   textAlign={textAlign}
-                  onSelect={disableCopying ? (e) => e.preventDefault() : undefined}
-                  onCopy={disableCopying ? (e) => e.preventDefault() : undefined}
-                  onCut={disableCopying ? (e) => e.preventDefault() : undefined}
-                  onPaste={disableCopying ? (e) => e.preventDefault() : undefined}
+                  onSelect={
+                    disableCopying
+                      ? (selectEvent: React.SyntheticEvent<HTMLInputElement>) =>
+                          selectEvent.preventDefault()
+                      : undefined
+                  }
+                  onCopy={
+                    disableCopying
+                      ? (clipboardEvent: React.ClipboardEvent<HTMLInputElement>) =>
+                          clipboardEvent.preventDefault()
+                      : undefined
+                  }
+                  onCut={
+                    disableCopying
+                      ? (clipboardEvent: React.ClipboardEvent<HTMLInputElement>) =>
+                          clipboardEvent.preventDefault()
+                      : undefined
+                  }
+                  onPaste={
+                    disableCopying
+                      ? (clipboardEvent: React.ClipboardEvent<HTMLInputElement>) =>
+                          clipboardEvent.preventDefault()
+                      : undefined
+                  }
                   {...props}
                 />
               )}

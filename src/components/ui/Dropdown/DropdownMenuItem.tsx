@@ -271,7 +271,7 @@ export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuIte
       if (showMultiCheckbox) {
         return (
           <DropdownItemIconSlot
-            onClick={(iconSlotClick) => {
+            onClick={(iconSlotClick: React.MouseEvent<HTMLSpanElement>) => {
               // Клик по чекбоксу не должен всплывать к строке меню: второй onItemSelect с «чистым» MouseEvent ломает каскад дерева.
               iconSlotClick.stopPropagation();
             }}
@@ -310,7 +310,7 @@ export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuIte
           aria-label={
             treeBranchExpanded ? 'Свернуть вложенный список' : 'Развернуть вложенный список'
           }
-          onClick={(expandEvent) => {
+          onClick={(expandEvent: React.MouseEvent<HTMLButtonElement>) => {
             if (branchKey) {
               toggleTreeBranch?.(branchKey, expandEvent);
             }

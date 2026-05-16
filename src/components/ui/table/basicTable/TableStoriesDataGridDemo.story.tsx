@@ -7,18 +7,16 @@ import { Tag } from '../../Tag/Tag';
 import { Size, IconSize } from '@/types/sizes';
 import type { TableSortDirection } from '@/types/ui';
 import { ButtonVariant } from '@/types/ui';
-import {
-  TableContainer,
-  TableContainerScroll,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  TableFooter,
-  TablePagination,
-  TableSortLabel,
-} from './index';
+import { TableContainer } from './TableContainer';
+import { TableContainerScroll } from './TableContainerScroll';
+import { Table } from './Table';
+import { TableHead } from './TableHead';
+import { TableBody } from './TableBody';
+import { TableRow } from './TableRow';
+import { TableCell } from './TableCell';
+import { TableFooter } from './TableFooter';
+import { TablePagination } from './TablePagination';
+import { TableSortLabel } from './TableSortLabel';
 import { getTableSelectionAggregate } from '@/handlers/tableSelectionHandlers';
 import { clampTablePageZeroBased, getTableTotalPages, toggleTableSortDirection } from './handlers';
 import { TABLE_STORY_DEMO_ROWS, type TableStoryDemoRow } from './tableStoryDemoData';
@@ -45,16 +43,16 @@ export function TableStoriesDataGridDemo(): React.ReactElement {
 
   const sortedRows = useMemo(() => {
     const copy = [...TABLE_STORY_DEMO_ROWS];
-    copy.sort((a, b) => {
-      let cmp = 0;
+    copy.sort((firstRow, secondRow) => {
+      let compareResult = 0;
       if (orderBy === 'user') {
-        cmp = a.user.localeCompare(b.user, 'ru');
+        compareResult = firstRow.user.localeCompare(secondRow.user, 'ru');
       } else if (orderBy === 'state') {
-        cmp = a.tag.color.localeCompare(b.tag.color, 'ru');
+        compareResult = firstRow.tag.color.localeCompare(secondRow.tag.color, 'ru');
       } else {
-        cmp = a.dateLabel.localeCompare(b.dateLabel, 'ru');
+        compareResult = firstRow.dateLabel.localeCompare(secondRow.dateLabel, 'ru');
       }
-      return order === 'asc' ? cmp : -cmp;
+      return order === 'asc' ? compareResult : -compareResult;
     });
     return copy;
   }, [order, orderBy]);
@@ -70,48 +68,48 @@ export function TableStoriesDataGridDemo(): React.ReactElement {
     return sortedRows.slice(start, start + rowsPerPage);
   }, [safePage, rowsPerPage, sortedRows]);
 
-  const pageIds = useMemo(() => pageSlice.map((r) => r.id), [pageSlice]);
+  const pageIds = useMemo(() => pageSlice.map((row) => row.id), [pageSlice]);
   const selectionAggregate = useMemo(
     () => getTableSelectionAggregate(pageIds, selectedIds),
     [pageIds, selectedIds],
   );
 
   const toggleSelectAllOnPage = useCallback(() => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
+    setSelectedIds((previousSelectedIds) => {
+      const nextSelectedIds = new Set(previousSelectedIds);
       const isFull = selectionAggregate === 'all';
       const isPartial = selectionAggregate === 'partial';
       if (isFull || isPartial) {
-        pageIds.forEach((id) => {
-          next.delete(id);
+        pageIds.forEach((rowId) => {
+          nextSelectedIds.delete(rowId);
         });
       } else {
-        pageIds.forEach((id) => {
-          next.add(id);
+        pageIds.forEach((rowId) => {
+          nextSelectedIds.add(rowId);
         });
       }
-      return next;
+      return nextSelectedIds;
     });
   }, [pageIds, selectionAggregate]);
 
-  const toggleRow = useCallback((id: string) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
+  const toggleRow = useCallback((rowId: string) => {
+    setSelectedIds((previousSelectedIds) => {
+      const nextSelectedIds = new Set(previousSelectedIds);
+      if (nextSelectedIds.has(rowId)) {
+        nextSelectedIds.delete(rowId);
       } else {
-        next.add(id);
+        nextSelectedIds.add(rowId);
       }
-      return next;
+      return nextSelectedIds;
     });
   }, []);
 
   const handleSortClick = useCallback(
-    (key: SortKey) => {
-      if (orderBy === key) {
+    (sortKey: SortKey) => {
+      if (orderBy === sortKey) {
         setOrder(toggleTableSortDirection(order));
       } else {
-        setOrderBy(key);
+        setOrderBy(sortKey);
         setOrder('asc');
       }
     },
@@ -235,7 +233,7 @@ export function TableStoriesDataGridDemo(): React.ReactElement {
                 <StoryTableLoadMore
                   type="button"
                   onClick={() => {
-                    setLoadMoreClicks((c) => c + 1);
+                    setLoadMoreClicks((clickCount) => clickCount + 1);
                   }}
                 >
                   Загрузить больше

@@ -473,7 +473,7 @@ export const SliderInput = forwardRef<HTMLInputElement, SliderInputProps>(
         readOnly={readOnly}
         className={className}
         onFocus={() => setFieldFocused(true)}
-        onBlur={(blurEvent) => {
+        onBlur={(blurEvent: React.FocusEvent<HTMLDivElement>) => {
           if (!blurEvent.currentTarget.contains(blurEvent.relatedTarget as Node)) {
             setFieldFocused(false);
           }

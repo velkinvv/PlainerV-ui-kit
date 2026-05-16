@@ -1076,7 +1076,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
               size={size}
               disabled={disabled}
               onClick={() => handleSegmentClick('hours', pickerType)}
-              onKeyDown={(e) => handleSegmentKeyDown(e, 'hours', pickerType)}
+              onKeyDown={(keyboardEvent: React.KeyboardEvent) => handleSegmentKeyDown(keyboardEvent, 'hours', pickerType)}
               tabIndex={0}
             >
               --
@@ -1090,7 +1090,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
               size={size}
               disabled={disabled}
               onClick={() => handleSegmentClick('minutes', pickerType)}
-              onKeyDown={(e) => handleSegmentKeyDown(e, 'minutes', pickerType)}
+              onKeyDown={(keyboardEvent: React.KeyboardEvent) => handleSegmentKeyDown(keyboardEvent, 'minutes', pickerType)}
               tabIndex={0}
             >
               --
@@ -1107,7 +1107,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                   size={size}
                   disabled={disabled}
                   onClick={() => handleSegmentClick('seconds', pickerType)}
-                  onKeyDown={(e) => handleSegmentKeyDown(e, 'seconds', pickerType)}
+                  onKeyDown={(keyboardEvent: React.KeyboardEvent) => handleSegmentKeyDown(keyboardEvent, 'seconds', pickerType)}
                   tabIndex={0}
                 >
                   --
@@ -1132,7 +1132,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
             size={size}
             disabled={disabled}
             onClick={() => handleSegmentClick('hours', pickerType)}
-            onKeyDown={(e) => handleSegmentKeyDown(e, 'hours', pickerType)}
+            onKeyDown={(keyboardEvent: React.KeyboardEvent) => handleSegmentKeyDown(keyboardEvent, 'hours', pickerType)}
             tabIndex={0}
           >
             {hours}
@@ -1146,7 +1146,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
             size={size}
             disabled={disabled}
             onClick={() => handleSegmentClick('minutes', pickerType)}
-            onKeyDown={(e) => handleSegmentKeyDown(e, 'minutes', pickerType)}
+            onKeyDown={(keyboardEvent: React.KeyboardEvent) => handleSegmentKeyDown(keyboardEvent, 'minutes', pickerType)}
             tabIndex={0}
           >
             {minutes}
@@ -1162,7 +1162,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                 size={size}
                 disabled={disabled}
                 onClick={() => handleSegmentClick('seconds', pickerType)}
-                onKeyDown={(e) => handleSegmentKeyDown(e, 'seconds', pickerType)}
+                onKeyDown={(keyboardEvent: React.KeyboardEvent) => handleSegmentKeyDown(keyboardEvent, 'seconds', pickerType)}
                 tabIndex={0}
               >
                 {seconds}
@@ -1255,13 +1255,33 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                 onClick={handleRegularInputClick}
                 disabled={disabled}
                 placeholder={placeholder || (range ? 'HH:mm — HH:mm' : 'HH:mm')}
-                size={size}
+                $inputSize={size}
                 hasIcon={showIcon}
                 textAlign={textAlign}
-                onSelect={disableCopying ? (e) => e.preventDefault() : undefined}
-                onCopy={disableCopying ? (e) => e.preventDefault() : undefined}
-                onCut={disableCopying ? (e) => e.preventDefault() : undefined}
-                onPaste={disableCopying ? (e) => e.preventDefault() : undefined}
+                onSelect={
+                  disableCopying
+                    ? (selectEvent: React.SyntheticEvent<HTMLInputElement>) =>
+                        selectEvent.preventDefault()
+                    : undefined
+                }
+                onCopy={
+                  disableCopying
+                    ? (clipboardEvent: React.ClipboardEvent<HTMLInputElement>) =>
+                        clipboardEvent.preventDefault()
+                    : undefined
+                }
+                onCut={
+                  disableCopying
+                    ? (clipboardEvent: React.ClipboardEvent<HTMLInputElement>) =>
+                        clipboardEvent.preventDefault()
+                    : undefined
+                }
+                onPaste={
+                  disableCopying
+                    ? (clipboardEvent: React.ClipboardEvent<HTMLInputElement>) =>
+                        clipboardEvent.preventDefault()
+                    : undefined
+                }
                 {...props}
               />
             )}
@@ -1355,8 +1375,8 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                               }
                               isCurrent={isCurrentTime(time)}
                               isDisabled={isHourDisabled(hour, currentTime)}
-                              onClick={(e) => {
-                                e.stopPropagation();
+                              onClick={(clickEvent: React.MouseEvent<HTMLElement>) => {
+                                clickEvent.stopPropagation();
                                 setActivePicker('start');
                                 handleTimeClick('hour', hour, 'start');
                               }}
@@ -1387,8 +1407,8 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                               }
                               isCurrent={isCurrentTime(time)}
                               isDisabled={isMinuteDisabled(minute, currentTime)}
-                              onClick={(e) => {
-                                e.stopPropagation();
+                              onClick={(clickEvent: React.MouseEvent<HTMLElement>) => {
+                                clickEvent.stopPropagation();
                                 setActivePicker('start');
                                 handleTimeClick('minute', minute, 'start');
                               }}
@@ -1420,8 +1440,8 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                                 }
                                 isCurrent={isCurrentTime(time)}
                                 isDisabled={isSecondDisabled(second, currentTime)}
-                                onClick={(e) => {
-                                  e.stopPropagation();
+                                onClick={(clickEvent: React.MouseEvent<HTMLElement>) => {
+                                  clickEvent.stopPropagation();
                                   setActivePicker('start');
                                   handleTimeClick('second', second, 'start');
                                 }}
@@ -1465,8 +1485,8 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                               }
                               isCurrent={isCurrentTime(time)}
                               isDisabled={isHourDisabled(hour, currentTime)}
-                              onClick={(e) => {
-                                e.stopPropagation();
+                              onClick={(clickEvent: React.MouseEvent<HTMLElement>) => {
+                                clickEvent.stopPropagation();
                                 setActivePicker('end');
                                 handleTimeClick('hour', hour, 'end');
                               }}
@@ -1497,8 +1517,8 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                               }
                               isCurrent={isCurrentTime(time)}
                               isDisabled={isMinuteDisabled(minute, currentTime)}
-                              onClick={(e) => {
-                                e.stopPropagation();
+                              onClick={(clickEvent: React.MouseEvent<HTMLElement>) => {
+                                clickEvent.stopPropagation();
                                 setActivePicker('end');
                                 handleTimeClick('minute', minute, 'end');
                               }}
@@ -1530,8 +1550,8 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                                 }
                                 isCurrent={isCurrentTime(time)}
                                 isDisabled={isSecondDisabled(second, currentTime)}
-                                onClick={(e) => {
-                                  e.stopPropagation();
+                                onClick={(clickEvent: React.MouseEvent<HTMLElement>) => {
+                                  clickEvent.stopPropagation();
                                   setActivePicker('end');
                                   handleTimeClick('second', second, 'end');
                                 }}

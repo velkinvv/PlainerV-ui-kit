@@ -361,7 +361,7 @@ export const MultiInput = forwardRef<HTMLInputElement, MultiInputProps>(
                   type="button"
                   disabled={disabled}
                   aria-label={`Удалить «${token}»`}
-                  onMouseDown={(mouseEvent) => {
+                  onMouseDown={(mouseEvent: React.MouseEvent<HTMLButtonElement>) => {
                     mouseEvent.preventDefault();
                     mouseEvent.stopPropagation();
                   }}

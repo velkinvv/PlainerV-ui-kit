@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components';
 import { BorderRadiusHandler } from '../../../handlers/uiHandlers';
+import { createStyledShouldForwardProp } from '../../../handlers/styledComponentHandlers';
 import { Size } from '../../../types/sizes';
 
 /** Размеры ячеек дня по размеру календаря */
@@ -35,7 +36,7 @@ const titleSize = (size: Size | undefined): string => {
  * @property $fullWidth - Ширина карточки 100% от контейнера; сетка дней распределяется по колонкам.
  */
 export const CalendarRoot = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['$size', '$embedded', '$fullWidth'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $size?: Size; $embedded?: boolean; $fullWidth?: boolean }>`
   box-sizing: border-box;
   padding: ${({ $size, $embedded }) => {
@@ -62,7 +63,7 @@ export const CalendarRoot = styled.div.withConfig({
  * @property $size - Размер шрифта.
  */
 export const CalendarTitle = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== '$size',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $size?: Size }>`
   text-align: center;
   font-weight: 600;
@@ -103,7 +104,7 @@ export const CalendarSplitMonthYearRow = styled.div`
  * @property $disabled - Заблокирована.
  */
 export const CalendarMonthTrigger = styled.button.withConfig({
-  shouldForwardProp: (prop) => !['$open', '$disabled'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $open?: boolean; $disabled?: boolean }>`
   display: inline-flex;
   align-items: center;
@@ -165,7 +166,7 @@ export const CalendarReadonlyMonth = styled.div`
 
 /** Поворот шеврона при открытом списке месяцев */
 export const CalendarChevronFlip = styled.span.withConfig({
-  shouldForwardProp: (prop) => prop !== '$open',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $open?: boolean }>`
   display: inline-flex;
   flex-shrink: 0;
@@ -185,7 +186,7 @@ export const CalendarNavGroup = styled.div`
  * @property $disabled - Неактивна.
  */
 export const CalendarNavButton = styled.button.withConfig({
-  shouldForwardProp: (prop) => prop !== '$disabled',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $disabled?: boolean }>`
   display: inline-flex;
   align-items: center;
@@ -217,7 +218,7 @@ export const CalendarNavButton = styled.button.withConfig({
  * @property $fullWidth - Равномерное растягивание семи колонок на всю ширину карточки.
  */
 export const CalendarWeekdays = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['$size', '$fullWidth'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $size?: Size; $fullWidth?: boolean }>`
   display: grid;
   width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'auto')};
@@ -241,7 +242,7 @@ export const CalendarWeekdayCell = styled.div`
  * @property $fullWidth - Растягивание сетки по ширине родителя.
  */
 export const CalendarGrid = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['$size', '$fullWidth'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $size?: Size; $fullWidth?: boolean }>`
   display: grid;
   width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'auto')};
@@ -274,18 +275,7 @@ export const CalendarFooter = styled.div`
  * @property $fullWidth - Кружок дня ограничен размером из темы и центрируется в растянутой ячейке сетки.
  */
 export const CalendarDayButton = styled.button.withConfig({
-  shouldForwardProp: (prop) =>
-    ![
-      '$size',
-      '$fullWidth',
-      '$inCurrentMonth',
-      '$selected',
-      '$today',
-      '$disabled',
-      '$inRange',
-      '$rangeStart',
-      '$rangeEnd',
-    ].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   $size?: Size;
   $fullWidth?: boolean;

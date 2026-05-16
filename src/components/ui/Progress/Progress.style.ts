@@ -512,7 +512,7 @@ export const StepperStepCircle = styled.div<{
   $active: boolean;
   $size?: Size;
 }>`
-  width: ${({ $size }) => {
+  width: ${({ $size }: { $size?: Size }) => {
     const sizeMap: Record<Size, string> = {
       [Size.XS]: '24px',
       [Size.SM]: '32px',
@@ -522,7 +522,7 @@ export const StepperStepCircle = styled.div<{
     };
     return $size ? sizeMap[$size] : sizeMap[Size.MD];
   }};
-  height: ${({ $size }) => {
+  height: ${({ $size }: { $size?: Size }) => {
     const sizeMap: Record<Size, string> = {
       [Size.XS]: '24px',
       [Size.SM]: '32px',
@@ -546,7 +546,7 @@ export const StepperStepCircle = styled.div<{
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: ${({ $size }) => {
+  font-size: ${({ $size }: { $size?: Size }) => {
     const sizeMap: Record<Size, string> = {
       [Size.XS]: '10px',
       [Size.SM]: '12px',

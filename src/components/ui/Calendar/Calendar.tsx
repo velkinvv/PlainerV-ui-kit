@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useMemo, useState, type ComponentProps } from 'react';
 import type { DropdownMenuItemProps, DropdownMenuItemValue } from '../../../types/ui';
 import { Size, IconSize } from '../../../types/sizes';
 import { Icon } from '../Icon/Icon';
@@ -273,17 +273,19 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
 
     const today = useMemo(() => new Date(), []);
 
+    const calendarRootProps: ComponentProps<typeof CalendarRoot> = {
+      ref,
+      ...rest,
+      className,
+      $size: size,
+      $embedded: embedded,
+      $fullWidth: fullWidth,
+      role: 'group',
+      'aria-label': 'Календарь',
+    };
+
     return (
-      <CalendarRoot
-        ref={ref}
-        {...rest}
-        className={className}
-        $size={size}
-        $embedded={embedded}
-        $fullWidth={fullWidth}
-        role="group"
-        aria-label="Календарь"
-      >
+      <CalendarRoot {...calendarRootProps}>
         {showTitle ? <CalendarTitle $size={size}>Календарь</CalendarTitle> : null}
         {showMonthPicker && monthYearLayout === 'split' ? (
           <CalendarMonthYearSplit

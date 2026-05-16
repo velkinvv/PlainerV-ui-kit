@@ -822,19 +822,19 @@ export function DataGrid<Row extends DataGridBaseRow>(
                           tabIndex={-1}
                           aria-label={`Изменить ширину колонки ${fieldStr}`}
                           data-datagrid-col-resize-handle="true"
-                          onPointerDown={(event) => {
-                            const headerCell = event.currentTarget.parentElement;
+                          onPointerDown={(pointerEvent: React.PointerEvent<HTMLButtonElement>) => {
+                            const headerCell = pointerEvent.currentTarget.parentElement;
                             if (!(headerCell instanceof HTMLElement)) {
                               return;
                             }
-                            handleColumnResizePointerDown(event, col, headerCell);
+                            handleColumnResizePointerDown(pointerEvent, col, headerCell);
                           }}
                           onPointerMove={handleColumnResizePointerMove}
-                          onPointerUp={(event) => {
-                            endColumnResizeGesture(event, true);
+                          onPointerUp={(pointerUpEvent: React.PointerEvent<HTMLButtonElement>) => {
+                            endColumnResizeGesture(pointerUpEvent, true);
                           }}
-                          onPointerCancel={(event) => {
-                            endColumnResizeGesture(event, false);
+                          onPointerCancel={(pointerCancelEvent: React.PointerEvent<HTMLButtonElement>) => {
+                            endColumnResizeGesture(pointerCancelEvent, false);
                           }}
                         />
                       ) : null}
@@ -887,10 +887,10 @@ export function DataGrid<Row extends DataGridBaseRow>(
                         <DataGridRowDragHandle
                           $disabled={disabled}
                           draggable={!disabled}
-                          onDragStart={(e) => {
-                            e.dataTransfer.effectAllowed = 'move';
-                            applyDataGridRowDragGhostPreview(e);
-                            const sourceRow = e.currentTarget.closest('tr');
+                          onDragStart={(dragEvent: React.DragEvent<HTMLButtonElement>) => {
+                            dragEvent.dataTransfer.effectAllowed = 'move';
+                            applyDataGridRowDragGhostPreview(dragEvent);
+                            const sourceRow = dragEvent.currentTarget.closest('tr');
                             const sourceHeight =
                               sourceRow instanceof HTMLElement ? sourceRow.offsetHeight : 0;
                             beginRowDrag(rowIndex, sourceHeight);

@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { createStyledShouldForwardProp } from '../../../../handlers/styledComponentHandlers';
 import { motion } from 'framer-motion';
 import type { InputVariant } from '../../../../types/ui';
 import {
@@ -16,7 +17,7 @@ import { Size } from '../../../../types/sizes';
 // ============================================================================
 
 export const InputContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['fullWidth'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(['fullWidth']),
 })<{ fullWidth?: boolean }>`
   display: flex;
   flex-direction: column;
@@ -25,7 +26,7 @@ export const InputContainer = styled.div.withConfig({
 `;
 
 export const InputContainerWithPadding = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['disabled', 'error'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(['disabled', 'error']),
 })<{ disabled?: boolean; error?: boolean }>`
   position: relative;
   width: 100%;
@@ -72,18 +73,19 @@ export const RightLabel = styled(AbsoluteLabel)`
 // ОБЕРТКИ ИНПУТОВ
 // ============================================================================
 
+const inputWrapperBlockedProps = [
+  'variant',
+  'size',
+  'error',
+  'success',
+  'fullWidth',
+  'focused',
+  'status',
+  'readOnly',
+] as const;
+
 export const InputWrapper = styled(motion.div).withConfig({
-  shouldForwardProp: (prop) =>
-    ![
-      'error',
-      'success',
-      'fullWidth',
-      'focused',
-      'status',
-      'readOnly',
-      '$fileSurface',
-      '$dragActive',
-    ].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp([...inputWrapperBlockedProps]),
 })<{
   variant?: InputVariant;
   size?: Size;
@@ -206,7 +208,7 @@ export const InputWrapper = styled(motion.div).withConfig({
 // ============================================================================
 
 export const StyledInput = styled.input.withConfig({
-  shouldForwardProp: (prop) => !['textAlign', 'readOnly'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   textAlign?: 'left' | 'center' | 'right';
   readOnly?: boolean;
@@ -279,7 +281,7 @@ export const SuccessText = styled(HelperText)`
  * @property size - Размер поля (`Size`).
  */
 export const IconContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['$position', 'size'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   $position?: 'left' | 'right';
   size?: Size;
@@ -402,7 +404,7 @@ export const LoadingSpinner = styled.div<{ size?: Size }>`
  * @param $layout — `field` (по умолчанию) или `compact` (короткая полоска под лейбл в skeleton-режиме)
  */
 export const SkeletonEffect = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['size', 'fullWidth', '$layout'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   size?: Size;
   fullWidth?: boolean;

@@ -1,10 +1,11 @@
 ﻿import styled from 'styled-components';
+import { createStyledShouldForwardProp } from '../../../../handlers/styledComponentHandlers';
 import { BorderRadiusHandler, TransitionHandler } from '../../../../handlers/uiHandlers';
 import { Size } from '../../../../types/sizes';
 
 /** Стилизованные части `DateInput` (вёрстка и тема), логика — в `DateInput.tsx`. */
 export const AbsoluteLabel = styled.label.withConfig({
-  shouldForwardProp: (prop) => !['focused', 'disabled', 'error', 'size'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   focused: boolean;
   disabled?: boolean;
@@ -118,7 +119,7 @@ export const IconButton = styled.button`
 
 /** Ширина как у `InputWrapper`, чтобы счётчик и подписи не растягивались на 100% ширины внешнего контейнера */
 export const DateInputFieldStack = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['fullWidth'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ fullWidth?: boolean }>`
   display: flex;
   flex-direction: column;
@@ -128,7 +129,7 @@ export const DateInputFieldStack = styled.div.withConfig({
 `;
 
 export const CalendarPopup = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['isOpen', 'size', '$calendarFullWidth'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ isOpen: boolean; size?: Size; $calendarFullWidth?: boolean }>`
   position: absolute;
   top: 100%;
@@ -152,7 +153,7 @@ export const CalendarPopup = styled.div.withConfig({
 
 // Стилизованные компоненты для сегментированного ввода даты
 export const DateSegmentsContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['size', 'textAlign'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   size?: Size;
   textAlign?: 'left' | 'center' | 'right';
@@ -174,7 +175,7 @@ export const DateSegmentsContainer = styled.div.withConfig({
 `;
 
 export const DateSegment = styled.span.withConfig({
-  shouldForwardProp: (prop) => !['isActive', 'size', 'disabled'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   isActive: boolean;
   size?: Size;

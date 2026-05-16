@@ -1,4 +1,5 @@
 ﻿import styled from 'styled-components';
+import { createStyledShouldForwardProp } from '../../../../handlers/styledComponentHandlers';
 import {
   BorderRadiusHandler,
   TransitionHandler,
@@ -10,7 +11,7 @@ import { Button } from '../../buttons/Button';
 
 /** Стилизованные части `TimeInput` (вёрстка и тема), логика — в `TimeInput.tsx`. */
 export const Container = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['error'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ disabled?: boolean; error?: boolean }>`
   position: relative;
   width: 100%;
@@ -56,7 +57,7 @@ export const LoadingSpinner = styled.div<{ size?: Size }>`
 `;
 
 export const InputWrapper = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['focused', 'error', 'status'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   focused: boolean;
   disabled?: boolean;
@@ -99,7 +100,7 @@ export const InputWrapper = styled.div.withConfig({
   }
 `;
 export const IconWrapper = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== '$marginLeftAuto',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ size?: Size; $marginLeftAuto?: boolean }>`
   display: flex;
   align-items: center;
@@ -118,7 +119,7 @@ export const IconWrapper = styled.div.withConfig({
   ${({ $marginLeftAuto }) => ($marginLeftAuto ? 'margin-left: auto;' : '')}
 `;
 export const AbsoluteLabel = styled.label.withConfig({
-  shouldForwardProp: (prop) => !['focused', 'error'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   focused: boolean;
   disabled?: boolean;
@@ -233,7 +234,7 @@ export const CharacterCounter = styled.div<{
 `;
 
 export const TimePickerPopup = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['isOpen', 'showSeconds'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   isOpen: boolean;
   size?: Size;
@@ -294,7 +295,7 @@ export const TimeColumnContent = styled.div`
 `;
 
 export const TimeOption = styled.button.withConfig({
-  shouldForwardProp: (prop) => !['isSelected', 'isCurrent', 'isDisabled'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   isSelected: boolean;
   isCurrent: boolean;
@@ -371,7 +372,7 @@ export const ActionButton = styled(Button)`
 
 // Стили для range режима
 export const RangeContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['showSeconds'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ showSeconds?: boolean }>`
   display: flex;
   flex-direction: column;
@@ -387,7 +388,7 @@ export const RangePickersWrapper = styled.div`
 `;
 
 export const RangePickerContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['isActive'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ isActive: boolean }>`
   display: flex;
   flex-direction: column;
@@ -432,7 +433,7 @@ export const RangeFooter = styled.div`
 
 // Компоненты для сегментированного отображения времени
 export const TimeSegmentsContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['textAlign'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   size?: Size;
   textAlign?: 'left' | 'center' | 'right';
@@ -469,7 +470,7 @@ export const TimeSegmentsContainer = styled.div.withConfig({
 `;
 
 export const TimeSegment = styled.span.withConfig({
-  shouldForwardProp: (prop) => !['isActive'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   isActive: boolean;
   size?: Size;
@@ -553,9 +554,9 @@ export const RangeTimeSeparator = styled.span`
 
 // Стилизованный input для обычного режима ввода времени
 export const RegularTimeInput = styled.input.withConfig({
-  shouldForwardProp: (prop) => !['textAlign', 'hasIcon', 'size'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(['hasIcon', 'textAlign']),
 })<{
-  size?: Size;
+  $inputSize?: Size;
   hasIcon?: boolean;
   textAlign?: 'left' | 'center' | 'right';
 }>`
@@ -564,8 +565,8 @@ export const RegularTimeInput = styled.input.withConfig({
   outline: none;
   background: transparent;
   color: ${({ theme }) => theme.colors.text};
-  font-size: ${({ size }) => {
-    switch (size) {
+  font-size: ${({ $inputSize }) => {
+    switch ($inputSize) {
       case Size.SM:
         return '12px';
       case Size.LG:

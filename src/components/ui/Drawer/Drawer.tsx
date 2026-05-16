@@ -166,7 +166,7 @@ export const Drawer = forwardRef<HTMLElement, DrawerProps>(
           animate={panelMotion.animate}
           exit={panelMotion.exit}
           transition={panelMotion.transition}
-          onClick={(event) => event.stopPropagation()}
+          onClick={(event: React.MouseEvent<HTMLDivElement>) => event.stopPropagation()}
         >
           {headerSlot ? (
             <DrawerHeader>{headerSlot}</DrawerHeader>

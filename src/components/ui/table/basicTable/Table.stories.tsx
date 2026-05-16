@@ -15,7 +15,7 @@ import {
   TableSortLabel,
 } from './index';
 import { clampTablePageZeroBased, getTableTotalPages, toggleTableSortDirection } from './handlers';
-import { TableStoriesDataGridDemo } from './TableStoriesDataGridDemo';
+import { TableStoriesDataGridDemo } from './TableStoriesDataGridDemo.story';
 import { TABLE_KIT_DOC } from '../storyDocs/documentation';
 import { TableCellHeadLineClamp } from './Table.style';
 import { TableWithTextFilterInHeader as tableColumnFilterTableStorySource } from './TableColumnFilters.stories';

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, type Ref } from 'react';
 import { clsx } from 'clsx';
 import {
   TabItemTrigger,
@@ -14,6 +14,7 @@ import {
   SkeletonVariant,
   TabItemTextOrientation,
   type TabItemTextPosition,
+  type TabItemTriggerHtmlProps,
   type TabsItemDefinition,
 } from '../../../types/ui';
 import { useTheme } from 'styled-components';
@@ -80,7 +81,7 @@ export interface TabItemProps {
   skeleton?: boolean;
   triggerClassName?: string;
   contentClassName?: string;
-  triggerProps?: Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'value' | 'children'>;
+  triggerProps?: TabItemTriggerHtmlProps;
   contentProps?: Omit<React.HTMLAttributes<HTMLDivElement>, 'value' | 'children'>;
 }
 
@@ -131,16 +132,17 @@ export const TabItem: React.FC<TabItemProps> & {
 
   const pillSegmentRegistration = usePillSegmentRegistration();
 
-  const mergedGroupTriggerReference = useMemo(() => {
+  const mergedGroupTriggerReference = useMemo((): Ref<HTMLElement> | undefined => {
+    const externalReferenceAsElement = externalTriggerReference as Ref<HTMLElement> | undefined;
     if (!groupContext) {
-      return externalTriggerReference;
+      return externalReferenceAsElement;
     }
     const registersAnimatedIndicator =
       groupContext.variant === TabsVariant.PILL || isTabsTextSegmentVariant(groupContext.variant);
     if (!registersAnimatedIndicator) {
-      return externalTriggerReference;
+      return externalReferenceAsElement;
     }
-    return mergeRefs(externalTriggerReference, (element) => {
+    return mergeRefs<HTMLElement>(externalReferenceAsElement, (element) => {
       pillSegmentRegistration.registerSegmentTriggerRef(value, element);
     });
   }, [groupContext, externalTriggerReference, pillSegmentRegistration, value]);
@@ -177,7 +179,7 @@ export const TabItem: React.FC<TabItemProps> & {
     if (skeleton) {
       return (
         <TabItemSkeletonRoot
-          ref={mergedGroupTriggerReference}
+          ref={mergedGroupTriggerReference as Ref<HTMLDivElement>}
           className={clsx('ui-tab-item-skeleton', triggerClassName)}
           $direction={direction}
           $variant={groupVariant}
@@ -226,7 +228,7 @@ export const TabItem: React.FC<TabItemProps> & {
         $flexDirection={flexDirection}
         $gap={gap}
         onClick={handleGroupClick}
-        ref={mergedGroupTriggerReference}
+        ref={mergedGroupTriggerReference as Ref<HTMLButtonElement>}
         aria-pressed={isActive}
         aria-busy={loading ? true : undefined}
         {...restTriggerPropsWithoutRef}
@@ -266,7 +268,7 @@ export const TabItem: React.FC<TabItemProps> & {
     return (
       <>
         <TabItemSkeletonRoot
-          ref={externalTriggerReference}
+          ref={externalTriggerReference as Ref<HTMLDivElement>}
           className={clsx('ui-tab-item-skeleton', triggerClassName)}
           $direction={direction}
           $variant={resolvedVariant}

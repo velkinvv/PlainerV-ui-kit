@@ -44,7 +44,15 @@ export default {
       tsconfig: './tsconfig.json',
       declaration: true,
       declarationDir: './dist',
-      exclude: ['**/*.test.ts', '**/*.test.tsx', '**/*.stories.tsx'],
+      exclude: [
+        '**/*.test.ts',
+        '**/*.test.tsx',
+        '**/*.stories.tsx',
+        '**/*.story.tsx',
+        '**/table/**/tableStoryDemoData.ts',
+        '**/table/**/dataGridStoryDemoData.ts',
+        '**/table/**/dataGridStoryDemoColumns.tsx',
+      ],
       rootDir: './src',
     }),
     postcss({

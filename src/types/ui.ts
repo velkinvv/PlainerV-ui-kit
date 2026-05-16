@@ -2,7 +2,7 @@ import type React from 'react';
 import type { Size, IconSize, ModalSize } from './sizes';
 import type { Target, Transition } from 'framer-motion';
 import type { IconName, icons } from '../icons';
-import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from 'react';
+import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode, Ref } from 'react';
 
 /**
  * Базовые типы для UI компонентов
@@ -1844,6 +1844,14 @@ export enum TabItemTextPosition {
  * @property triggerProps — Доп. атрибуты кнопки-триггера
  * @property contentProps — Доп. атрибуты панели контента
  */
+/** Доп. пропсы кнопки триггера вкладки (в React 19 **ref** не входит в **ButtonHTMLAttributes**) */
+export type TabItemTriggerHtmlProps = Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  'value' | 'children'
+> & {
+  ref?: Ref<HTMLButtonElement>;
+};
+
 export interface TabsItemDefinition {
   value: string;
   label?: React.ReactNode;
@@ -1858,7 +1866,7 @@ export interface TabsItemDefinition {
   skeleton?: boolean;
   triggerClassName?: string;
   contentClassName?: string;
-  triggerProps?: Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'value' | 'children'>;
+  triggerProps?: TabItemTriggerHtmlProps;
   contentProps?: Omit<HTMLAttributes<HTMLDivElement>, 'value' | 'children'>;
 }
 

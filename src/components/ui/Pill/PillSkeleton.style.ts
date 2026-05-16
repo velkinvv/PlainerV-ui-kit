@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { createStyledShouldForwardProp } from '../../../handlers/styledComponentHandlers';
 import { TransitionHandler } from '../../../handlers/uiHandlers';
 
 /** Шиммер скелетона Pill (как у Tag / слайдера) */
@@ -30,8 +31,7 @@ const pillSkeletonShimmer = css`
  * @property $widthPx — ширина полоски
  */
 export const PillSkeletonRoot = styled.span.withConfig({
-  shouldForwardProp: (prop) =>
-    !['$borderRadius', '$minHeightPx', '$widthPx'].includes(String(prop)),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $borderRadius: string; $minHeightPx: number; $widthPx: number }>`
   display: inline-block;
   vertical-align: middle;
