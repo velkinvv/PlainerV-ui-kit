@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components';
 import type { StepperAppearance } from '../../../types/ui';
 import { BorderRadiusHandler } from '../../../handlers/uiHandlers';
+import { createStyledShouldForwardProp } from '../../../handlers/styledComponentHandlers';
 import { neutral } from '../../../variables/colors/neutral';
 
 /**
@@ -9,7 +10,7 @@ import { neutral } from '../../../variables/colors/neutral';
  * @property $fullWidth - Растянуть на всю ширину контейнера.
  */
 export const StepperRoot = styled.nav.withConfig({
-  shouldForwardProp: (prop) => !['$appearance', '$fullWidth'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $appearance: StepperAppearance; $fullWidth?: boolean }>`
   display: flex;
   flex-direction: row;
@@ -39,7 +40,7 @@ export const StepperRoot = styled.nav.withConfig({
  * @property $appearance - Влияет на цвет иконки.
  */
 export const StepperBackButton = styled.button.withConfig({
-  shouldForwardProp: (prop) => prop !== '$appearance',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $appearance: StepperAppearance }>`
   display: inline-flex;
   align-items: center;
@@ -91,7 +92,7 @@ export const StepperCompactCounter = styled.span`
  * @property $appearance - Палитра текста.
  */
 export const StepperCompactTextCol = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== '$appearance',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $appearance: StepperAppearance }>`
   display: flex;
   flex-direction: column;
@@ -124,7 +125,7 @@ export const StepperCompactTitle = styled.span`
  * @property $appearance - Приглушённый цвет.
  */
 export const StepperCompactSubtitle = styled.span.withConfig({
-  shouldForwardProp: (prop) => prop !== '$appearance',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $appearance: StepperAppearance }>`
   font-size: 12px;
   font-weight: 400;
@@ -167,7 +168,7 @@ export const StepperLinearTextStack = styled.div`
  * @property $appearance - Тема панели.
  */
 export const StepperLinearStepHint = styled.span.withConfig({
-  shouldForwardProp: (prop) => prop !== '$appearance',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $appearance: StepperAppearance }>`
   font-size: 11px;
   line-height: 1.2;
@@ -181,7 +182,7 @@ export const StepperLinearStepHint = styled.span.withConfig({
  * @property $muted - Будущий шаг — чуть приглушённее.
  */
 export const StepperLinearStepTitle = styled.span.withConfig({
-  shouldForwardProp: (prop) => !['$appearance', '$muted'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $appearance: StepperAppearance; $muted?: boolean }>`
   font-size: 14px;
   font-weight: 600;
@@ -201,7 +202,7 @@ export const StepperLinearStepTitle = styled.span.withConfig({
  * @property $appearance - Светлая / тёмная панель.
  */
 export const StepperLinearCircle = styled.span.withConfig({
-  shouldForwardProp: (prop) => !['$visual', '$appearance'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   $visual: 'filled' | 'outline';
   $appearance: StepperAppearance;
@@ -238,7 +239,7 @@ export const StepperLinearCircle = styled.span.withConfig({
  * @property $appearance - Тема панели.
  */
 export const StepperLinearConnector = styled.span.withConfig({
-  shouldForwardProp: (prop) => !['$completed', '$appearance'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $completed: boolean; $appearance: StepperAppearance }>`
   flex: 1 1 12px;
   align-self: center;

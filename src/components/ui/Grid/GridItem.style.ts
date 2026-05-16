@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { createStyledShouldForwardProp } from '../../../handlers/styledComponentHandlers';
 import type { GridItemProps } from '../../../types/ui';
 
 // Утилиты для форматирования значений
@@ -19,24 +20,25 @@ const formatValue = (value: number | string | undefined): string | undefined => 
  * @param alignSelf - выравнивание по вертикали
  * @param placeSelf - выравнивание по обеим осям
  */
+const gridItemStyleOnlyProps = [
+  'column',
+  'row',
+  'columnSpan',
+  'rowSpan',
+  'area',
+  'justifySelf',
+  'alignSelf',
+  'placeSelf',
+  'width',
+  'height',
+  'minWidth',
+  'maxWidth',
+  'minHeight',
+  'maxHeight',
+] as const;
+
 export const GridItemWrapper = styled.div.withConfig({
-  shouldForwardProp: (prop) =>
-    ![
-      'column',
-      'row',
-      'columnSpan',
-      'rowSpan',
-      'area',
-      'justifySelf',
-      'alignSelf',
-      'placeSelf',
-      'width',
-      'height',
-      'minWidth',
-      'maxWidth',
-      'minHeight',
-      'maxHeight',
-    ].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp([...gridItemStyleOnlyProps]),
 })<GridItemProps>`
   /* Расположение в сетке */
   ${({ column }) =>

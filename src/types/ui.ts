@@ -2,7 +2,7 @@ import type React from 'react';
 import type { Size, IconSize, ModalSize } from './sizes';
 import type { Target, Transition } from 'framer-motion';
 import type { IconName, icons } from '../icons';
-import type { HTMLAttributes, ReactNode } from 'react';
+import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode, Ref } from 'react';
 
 /**
  * Базовые типы для UI компонентов
@@ -503,6 +503,116 @@ export interface InputProps extends BaseInputProps {
   rightIcon?: React.ReactNode;
   status?: 'error' | 'success' | 'warning'; // Статус компонента для изменения цвета бордера
 }
+
+/**
+ * Числовое поле: те же пропсы и внешний вид, что у `Input`, но ввод ограничен цифрами.
+ * Атрибуты `type` и `inputMode` задаёт реализация компонента.
+ * @property allowDecimal - Разрешить одну десятичную точку (по умолчанию `true`); `,` нормализуется в `.`.
+ * @property allowNegative - Разрешить ведущий минус (по умолчанию `false`).
+ * @property clampOnBlur - При потере фокуса ограничить значение по `min`/`max`, если заданы (по умолчанию `true`).
+ */
+export type NumberInputProps = Omit<InputProps, 'type' | 'inputMode'> & {
+  allowDecimal?: boolean;
+  allowNegative?: boolean;
+  clampOnBlur?: boolean;
+};
+
+/**
+ * Событие смены токенов в `MultiInput` (удобно для форм и состояний).
+ * @property target.values - Актуальный массив строк-токенов.
+ * @property target.name - Атрибут `name` поля (если передан в пропсах).
+ */
+export interface MultiInputChangeEvent {
+  target: {
+    values: string[];
+    name?: string;
+  };
+}
+
+/** Политика повторяющихся токенов в `MultiInput`. */
+export type MultiInputDuplicatePolicy = 'allow' | 'reject';
+
+/**
+ * Мультиввод: внешний вид и базовые пропсы как у `Input`, значение — массив строк (теги в поле).
+ * По образцу полей ввода с несколькими значениями (см. Admiral MultiInputField).
+ * @property value - Контролируемый массив токенов.
+ * @property defaultValue - Начальный массив в неконтролируемом режиме.
+ * @property onValuesChange - Колбэк при любом изменении списка токенов.
+ * @property onChange - Событие с `target.values` и `target.name`.
+ * @property commitWithComma - По клавише `,` фиксировать текущий черновик как токен (по умолчанию `true`).
+ * @property commitOnBlur - При потере фокуса добавить непустой черновик (по умолчанию `true`).
+ * @property maxItems - Ограничение числа токенов.
+ * @property duplicates - `reject` — не добавлять дубликаты (по умолчанию `reject`).
+ * @property validateToken - Вернуть `false`, чтобы отклонить токен.
+ * @property displayTokenRemove - Показывать крестик снятия на каждом токене (по умолчанию `true`, если поле не `readOnly` и не `disabled`).
+ * @property maxTokenLength - Ограничение длины одного токена (`maxLength` у внутреннего поля).
+ */
+export type MultiInputProps = Omit<
+  InputProps,
+  'value' | 'defaultValue' | 'onChange' | 'handleInput' | 'type' | 'inputMode'
+> & {
+  value?: string[];
+  defaultValue?: string[];
+  onValuesChange?: (values: string[]) => void;
+  onChange?: (event: MultiInputChangeEvent) => void;
+  commitWithComma?: boolean;
+  commitOnBlur?: boolean;
+  maxItems?: number;
+  duplicates?: MultiInputDuplicatePolicy;
+  validateToken?: (token: string) => boolean;
+  displayTokenRemove?: boolean;
+  maxTokenLength?: number;
+};
+
+/**
+ * Поле «слайдер + ввод числа»: оболочка как у `Input` (рамка, лейбл, статусы, иконки), значение — число.
+ * Поведение рядом с [Admiral SliderInputField](https://admiralds.github.io/react-ui/?path=/docs/admiral-2-1-form-field-sliderinputfield--docs).
+ * @property value - Контролируемое значение шкалы.
+ * @property defaultValue - Начальное значение.
+ * @property onChange - Новое значение после слайдера, ввода или сброса (как у `Slider`).
+ * @property min / max / step - Границы и шаг.
+ * @property showValueLabel - Подпись текущего значения под бегунком.
+ * @property showScaleLabels - Подписи min и max над треком.
+ * @property showNumberField - Поле числа справа от слайдера (по умолчанию `true`).
+ * @property numberFieldWidth - Ширина колонки числа (CSS).
+ * @property numberPlaceholder - Плейсхолдер внутреннего поля числа.
+ * @property formatValue / formatMinLabel / formatMaxLabel - Форматирование подписей (как у `Slider`).
+ * @property trackRailHeightPx / trackActiveHeightPx - Толщина линий трека.
+ * @property sliderSize - Размер бегунка/трека; по умолчанию — как `size` поля.
+ * @property name - Скрытый `input` для отправки формы.
+ */
+export type SliderInputProps = Omit<
+  InputProps,
+  | 'value'
+  | 'defaultValue'
+  | 'onChange'
+  | 'handleInput'
+  | 'type'
+  | 'inputMode'
+  | 'maxLength'
+  | 'placeholder'
+> & {
+  value?: number;
+  defaultValue?: number;
+  onChange?: (value: number) => void;
+  min?: number;
+  max?: number;
+  step?: number;
+  showValueLabel?: boolean;
+  showScaleLabels?: boolean;
+  showNumberField?: boolean;
+  numberFieldWidth?: string;
+  numberPlaceholder?: string;
+  formatValue?: (value: number) => string;
+  formatMinLabel?: (min: number) => string;
+  formatMaxLabel?: (max: number) => string;
+  trackRailHeightPx?: number;
+  trackActiveHeightPx?: number;
+  sliderSize?: Size;
+  name?: string;
+  /** Ограничение длины строки в поле числа и счётчик (как у `Input`). */
+  maxLength?: number;
+};
 
 /**
  * Пропсы текстовой области
@@ -1685,13 +1795,24 @@ export enum TabsVerticalPosition {
 }
 
 /**
- * Внешний вид табов (макет Figma: сегментированный «pill» или классическая линия)
+ * Внешний вид табов: pill-трек или текстовые сегменты (**minimal** / **line** / **underline**) со скользящей полоской **primary**.
  */
 export enum TabsVariant {
-  /** Нижняя/боковая линия-индикатор, фон панели */
-  LINE = 'line',
   /** Сегментированный контрол в скруглённом треке */
   PILL = 'pill',
+  /**
+   * Только подписи и полоска **primary** у активного пункта; без серой базовой линии и без заливки сегментов
+   * (если не включён **filledSegmentTriggers**).
+   */
+  MINIMAL = 'minimal',
+  /**
+   * Как **minimal**, плюс серая базовая линия **borderSecondary** на всю ширину / высоту трека.
+   */
+  LINE = 'line',
+  /**
+   * Как **minimal**, плюс серая базовая линия только под фактическим рядом триггеров (**fit-content**).
+   */
+  UNDERLINE = 'underline',
 }
 
 /**
@@ -1710,18 +1831,93 @@ export enum TabItemTextPosition {
   RIGHT = 'right',
 }
 
+/**
+ * Описание одной вкладки для пропа **items** у **Tabs** / **TabItem.Group**: те же поля, что у **TabItem** внутри группы.
+ * Поля **direction**, **variant**, **defaultActive**, **active**, **onChange** задаются на корне группы, не в элементе.
+ *
+ * @property value — Уникальный идентификатор вкладки
+ * @property label — Подпись триггера (**ReactNode**)
+ * @property children — Панель контента под вкладкой (опционально; для чистых сегментов можно не передавать)
+ * @property iconStart — Иконка в начале триггера
+ * @property iconEnd — Иконка в конце триггера
+ * @property badge — Содержимое счётчика; рендер через **Badge** (**BadgeVariant.DEFAULT**, **Size.SM**)
+ * @property textOrientation — Ориентация текста на триггере
+ * @property textPosition — Позиция текста при вертикальной ориентации
+ * @property disabled — Отключить переключение
+ * @property loading — Индикатор загрузки на триггере
+ * @property skeleton — Плейсхолдер без интерактива
+ * @property triggerClassName — Класс кнопки-триггера
+ * @property contentClassName — Класс панели контента
+ * @property triggerProps — Доп. атрибуты кнопки-триггера
+ * @property contentProps — Доп. атрибуты панели контента
+ */
+/** Доп. пропсы кнопки триггера вкладки (в React 19 **ref** не входит в **ButtonHTMLAttributes**) */
+export type TabItemTriggerHtmlProps = Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  'value' | 'children'
+> & {
+  ref?: Ref<HTMLButtonElement>;
+};
+
+export interface TabsItemDefinition {
+  value: string;
+  label?: React.ReactNode;
+  children?: React.ReactNode;
+  iconStart?: React.ReactNode;
+  iconEnd?: React.ReactNode;
+  badge?: React.ReactNode;
+  textOrientation?: TabItemTextOrientation;
+  textPosition?: TabItemTextPosition;
+  disabled?: boolean;
+  loading?: boolean;
+  skeleton?: boolean;
+  triggerClassName?: string;
+  contentClassName?: string;
+  triggerProps?: TabItemTriggerHtmlProps;
+  contentProps?: Omit<HTMLAttributes<HTMLDivElement>, 'value' | 'children'>;
+}
+
 export interface TabsProps extends BaseComponentProps {
+  /** Неконтролируемый начальный id активной вкладки */
   defaultActiveTab?: string;
+  /** Алиас для **defaultActiveTab** */
+  defaultValue?: string;
+  /** Контролируемый id активной вкладки */
+  value?: string;
   onChange?: (activeTab: string) => void;
   /** Направление отображения табов */
   direction?: TabsDirection;
   /** Позиция табов в вертикальном режиме (слева или справа от контента) */
   tabsPosition?: TabsVerticalPosition;
   /**
-   * Вариант оформления. Если не задан: горизонтально — pill (макет сегментов), вертикально — line.
+   * Вариант оформления. Если не задан: горизонтально — **pill**, вертикально — **minimal**.
    */
   variant?: TabsVariant;
+  /** Доступное имя группы (**role="group"**); для сегментов без панелей рекомендуется задать явно */
+  ariaLabel?: string;
+  /**
+   * Атрибуты трека сегментов (внутренний **TabItemGroupList**): **className**, **style**, **data-*** и т.д.
+   * К **className** добавляется **ui-tabs-list**.
+   */
+  segmentTrackProps?: Omit<React.HTMLAttributes<HTMLDivElement>, 'children'>;
+  /**
+   * Для **minimal**, **line**, **underline**: вид «классических» сегментов — заливка **primary** активного пункта,
+   * фон трека **backgroundSecondary**, полоска-индикатор толще (**2px** вместо **1px**).
+   */
+  filledSegmentTriggers?: boolean;
+  /**
+   * Вкладки из данных: при непустом массиве рендерятся как **Tabs.Item** с теми же полями; **children** у корня для списка вкладок не используется.
+   */
+  items?: TabsItemDefinition[];
 }
+
+/**
+ * Укороченная строка для сегментов без панели (подмножество **TabsItemDefinition**).
+ */
+export type TabsSegmentOption = Pick<
+  TabsItemDefinition,
+  'value' | 'label' | 'disabled' | 'loading' | 'skeleton' | 'iconStart' | 'iconEnd' | 'badge'
+>;
 
 /**
  * Способ раскрытия компактного меню навигации до полного (подписи + ширина)
@@ -3952,6 +4148,172 @@ export interface DataGridRenderCellParams<Row extends DataGridBaseRow = DataGrid
   rowIndex: number;
 }
 
+/**
+ * Контекст встроенных и кастомных форматтеров ячеек (`TableCellFormatted`, `DataGrid` при `columns[].format`).
+ * @property value — сырое значение поля (в гриде после `valueGetter`, если он задан).
+ * @property row — строка данных; в ручной разметке таблицы можно не передавать.
+ * @property field — ключ колонки (`field` из описания колонки).
+ * @property rowIndex — индекс строки в текущем фрагменте данных (страница клиента и т.п.).
+ */
+export interface TableCellFormatContext<Row = unknown> {
+  value: unknown;
+  row?: Row;
+  field: string;
+  rowIndex: number;
+}
+
+/** Локаль по умолчанию для пресетов `number` / `currency` / `percent` (можно переопределить в каждом формате). */
+export type TableCellFormatDefaultLocale = 'ru-RU';
+
+/**
+ * Декларативное форматирование содержимого ячейки: пресеты или кастомный рендер.
+ * Приоритет в `DataGrid`: `columns[].render` → `renderCell` → `columns[].format` → строка по умолчанию.
+ */
+export type TableCellFormat<Row = unknown> =
+  | {
+      type: 'text';
+      /** Преобразование регистра отображаемой строки */
+      transform?: 'uppercase' | 'lowercase' | 'capitalize';
+    }
+  | {
+      type: 'number';
+      /** Число знаков после запятой */
+      decimals?: number;
+      /** Локаль `Intl`; по умолчанию `ru-RU` */
+      locale?: string;
+      /** Текст при некорректном числе или пустом значении */
+      fallback?: string;
+    }
+  | {
+      type: 'currency';
+      /** Код валюты ISO 4217; по умолчанию `RUB` */
+      currency?: string;
+      locale?: string;
+      decimals?: number;
+      fallback?: string;
+    }
+  | {
+      type: 'percent';
+      locale?: string;
+      decimals?: number;
+      /**
+       * `true` (по умолчанию) — значение трактуется как доля (`0.25` → «25 %»).
+       * `false` — значение уже в процентах (`25` → «25 %»).
+       */
+      fromFraction?: boolean;
+      fallback?: string;
+    }
+  | {
+      type: 'date';
+      /** Шаблон dayjs; по умолчанию `DD.MM.YYYY` */
+      pattern?: string;
+      fallback?: string;
+    }
+  | {
+      type: 'datetime';
+      /** Шаблон dayjs; по умолчанию `DD.MM.YYYY HH:mm` */
+      pattern?: string;
+      fallback?: string;
+    }
+  | {
+      type: 'time';
+      /** Шаблон dayjs; по умолчанию `HH:mm` */
+      pattern?: string;
+      fallback?: string;
+    }
+  | {
+      type: 'mask';
+      /** Маска: `#` — цифра, `A` — буква (латиница/кириллица), `*` — любой символ по порядку из значения */
+      pattern: string;
+    }
+  | {
+      type: 'phone';
+      country?: 'RU' | 'INT';
+      /** Своя маска; иначе берётся пресет по `country` */
+      mask?: string;
+      fallback?: string;
+    }
+  | {
+      type: 'bankAccount';
+      fallback?: string;
+    }
+  | {
+      type: 'bankCard';
+      fallback?: string;
+    }
+  | {
+      type: 'inn';
+      fallback?: string;
+    }
+  | {
+      type: 'snils';
+      fallback?: string;
+    }
+  | {
+      type: 'email';
+      /** Тема письма (`mailto`) */
+      subject?: string | ((row: Row | undefined) => string | undefined);
+      /** Тело письма */
+      body?: string | ((row: Row | undefined) => string | undefined);
+      target?: React.HTMLAttributeAnchorTarget;
+      openInNewTab?: boolean;
+      textVariant?: 'default' | 'line' | 'muted';
+      /** Текст ссылки; по умолчанию — значение ячейки */
+      label?: ReactNode | ((params: TableCellFormatContext<Row>) => ReactNode);
+      fallback?: string;
+    }
+  | {
+      type: 'link';
+      /**
+       * URL или шаблон с плейсхолдерами `{поле}` / `{user.id}` по объекту строки.
+       * Функция — полный контроль (в т.ч. условный href).
+       */
+      href: string | ((params: TableCellFormatContext<Row>) => string | undefined | null | false);
+      target?: React.HTMLAttributeAnchorTarget;
+      rel?: string;
+      download?: string | boolean;
+      textVariant?: 'default' | 'line' | 'muted';
+      openInNewTab?: boolean;
+      label?: ReactNode | ((params: TableCellFormatContext<Row>) => ReactNode);
+      fallback?: string;
+    }
+  | {
+      type: 'boolean';
+      trueLabel?: ReactNode;
+      falseLabel?: ReactNode;
+      /** Неопределённое значение (`null` / `undefined` / пустая строка) */
+      indeterminateLabel?: ReactNode;
+    }
+  | {
+      type: 'enum';
+      options:
+        | Readonly<Record<string, ReactNode>>
+        | ReadonlyArray<{
+            readonly value: string | number | boolean;
+            readonly label: ReactNode;
+          }>;
+      fallback?: ReactNode;
+    }
+  | {
+      type: 'custom';
+      /** Полный контроль над содержимым ячейки */
+      renderCell: (params: TableCellFormatContext<Row>) => ReactNode;
+    };
+
+/** Пропсы ячейки с декларативным форматированием (надстройка над `TableCell`). */
+export interface TableCellFormattedProps<Row = unknown> extends Omit<TableCellProps, 'children'> {
+  /** Значение для форматирования */
+  value: unknown;
+  /** Строка данных — нужна для шаблонов ссылок и кастомных форматтеров */
+  row?: Row;
+  /** Имя поля (попадает в контекст форматирования) */
+  field?: string;
+  rowIndex?: number;
+  format?: TableCellFormat<Row>;
+  /** Если задано — выводится как есть, без `format` */
+  children?: ReactNode;
+}
+
 /** Параметры колбэка `onColumnResize`: какая колонка и новая ширина в пикселях (родитель обновляет `columns[].width`) */
 export interface DataGridColumnResizeParams {
   /** Идентификатор колонки (как у `field` в `DataGridColumn`) */
@@ -4029,6 +4391,11 @@ export interface DataGridColumn<Row extends DataGridBaseRow = DataGridBaseRow> {
   sortable?: boolean;
   /** Кастомное значение ячейки */
   valueGetter?: (row: Row) => unknown;
+  /**
+   * Декларативное форматирование отображения (ссылки, маски, числа, даты и т.д.);
+   * применяется, если не заданы `render` у колонки и глобальный `renderCell` у грида.
+   */
+  format?: TableCellFormat<Row>;
   /** Рендер ячейки; приоритетнее глобального `renderCell` у `DataGrid` */
   render?: (params: DataGridRenderCellParams<Row>) => ReactNode;
   /** Не участвует в перестановке колонок drag-and-drop */

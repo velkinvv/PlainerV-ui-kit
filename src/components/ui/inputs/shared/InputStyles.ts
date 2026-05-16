@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { createStyledShouldForwardProp } from '../../../../handlers/styledComponentHandlers';
 import { motion } from 'framer-motion';
 import type { InputVariant } from '../../../../types/ui';
 import {
@@ -8,6 +9,7 @@ import {
   GapHandler,
   TransitionHandler,
 } from '../../../../handlers/uiHandlers';
+import { getInputSideIconSlotSizePx } from '../../../../handlers/iconHandlers';
 import { Size } from '../../../../types/sizes';
 
 // ============================================================================
@@ -15,7 +17,7 @@ import { Size } from '../../../../types/sizes';
 // ============================================================================
 
 export const InputContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['fullWidth'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(['fullWidth']),
 })<{ fullWidth?: boolean }>`
   display: flex;
   flex-direction: column;
@@ -24,7 +26,7 @@ export const InputContainer = styled.div.withConfig({
 `;
 
 export const InputContainerWithPadding = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['disabled', 'error'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(['disabled', 'error']),
 })<{ disabled?: boolean; error?: boolean }>`
   position: relative;
   width: 100%;
@@ -71,18 +73,19 @@ export const RightLabel = styled(AbsoluteLabel)`
 // ОБЕРТКИ ИНПУТОВ
 // ============================================================================
 
+const inputWrapperBlockedProps = [
+  'variant',
+  'size',
+  'error',
+  'success',
+  'fullWidth',
+  'focused',
+  'status',
+  'readOnly',
+] as const;
+
 export const InputWrapper = styled(motion.div).withConfig({
-  shouldForwardProp: (prop) =>
-    ![
-      'error',
-      'success',
-      'fullWidth',
-      'focused',
-      'status',
-      'readOnly',
-      '$fileSurface',
-      '$dragActive',
-    ].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp([...inputWrapperBlockedProps]),
 })<{
   variant?: InputVariant;
   size?: Size;
@@ -205,7 +208,7 @@ export const InputWrapper = styled(motion.div).withConfig({
 // ============================================================================
 
 export const StyledInput = styled.input.withConfig({
-  shouldForwardProp: (prop) => !['textAlign', 'readOnly'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   textAlign?: 'left' | 'center' | 'right';
   readOnly?: boolean;
@@ -271,8 +274,14 @@ export const SuccessText = styled(HelperText)`
 // ИКОНКИ И КНОПКИ
 // ============================================================================
 
+/**
+ * Слот для `leftIcon` / `rightIcon`: фиксированный размер по `size` поля.
+ * Уменьшает переданный `IconButton`, чтобы не увеличивать высоту `InputWrapper`.
+ * @property $position - Слева или справа от поля.
+ * @property size - Размер поля (`Size`).
+ */
 export const IconContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['$position', 'size'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   $position?: 'left' | 'right';
   size?: Size;
@@ -280,9 +289,44 @@ export const IconContainer = styled.div.withConfig({
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   color: ${({ theme }) => theme.colors.textSecondary};
   margin: ${({ $position }) => ($position === 'left' ? '0 8px 0 0' : '0 0 0 8px')};
-  flex-shrink: 0;
+
+  ${({ size, theme }) => {
+    const slotPx = getInputSideIconSlotSizePx(size ?? theme.defaultInputSize);
+    return css`
+      width: ${slotPx}px;
+      height: ${slotPx}px;
+      min-width: ${slotPx}px;
+      min-height: ${slotPx}px;
+
+      & button,
+      & .ui-icon-button {
+        width: ${slotPx}px;
+        height: ${slotPx}px;
+        min-width: ${slotPx}px;
+        min-height: ${slotPx}px;
+        padding: 0;
+        box-sizing: border-box;
+        flex-shrink: 0;
+      }
+
+      & > div {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: ${slotPx}px;
+        height: ${slotPx}px;
+        flex-shrink: 0;
+      }
+
+      & svg {
+        max-width: ${slotPx}px;
+        max-height: ${slotPx}px;
+      }
+    `;
+  }}
 `;
 
 export const ClearButton = styled.button`
@@ -360,7 +404,7 @@ export const LoadingSpinner = styled.div<{ size?: Size }>`
  * @param $layout — `field` (по умолчанию) или `compact` (короткая полоска под лейбл в skeleton-режиме)
  */
 export const SkeletonEffect = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['size', 'fullWidth', '$layout'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   size?: Size;
   fullWidth?: boolean;

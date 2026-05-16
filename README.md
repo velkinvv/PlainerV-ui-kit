@@ -6,6 +6,8 @@
 
 Современная библиотека UI компонентов с поддержкой темизации и TypeScript.
 
+**Текущая версия:** `0.1.5` · ветка [`v_0.1.5`](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.1.5) · React 18+/19 · styled-components 6.x
+
 ## 🚀 Возможности
 
 - **🎨 Полная темизация** - Поддержка светлой и темной темы с автоматическим переключением
@@ -20,6 +22,8 @@
 
 ```bash
 npm i @velkinvv/plainerv
+# или конкретная версия:
+npm i @velkinvv/plainerv@0.1.5
 ```
 
 ## 📦 Импорт стилей и шрифтов
@@ -73,42 +77,64 @@ function MyComponent() {
 
 ## 🎯 Компоненты
 
-### Основные UI компоненты
+**Полный перечень публичных экспортов** — в [документации](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.1.5/documentation/content/docs/ru/web/v_0.1.5/components-catalog.mdx) (на сайте: **Web → v0.1.5 → Справочник компонентов**). Ниже — краткая группировка.
 
-- **Button** - Кнопки с различными вариантами и состояниями
-- **ButtonGroup** - Группа `Button` / `IconButton` (`orientation`, `attached`, `fullWidth`, `aria-label`)
-- **Link** - Ссылка `mode="text"` (стилизованный `<a>`) или `mode="button"` (тот же `Button` с `href`)
-- **Input** - Поля ввода с валидацией и различными типами
-- **TextArea** - Многострочное поле ввода (состояния, подсказки, счётчик при `maxLength`, `Form`)
-- **FileInput** - Выбор файла (скрытый `input[type=file]`, триггер, подпись, очистка, `Form`)
-- **Card** - Карточки для контента
-- **Modal** - Модальные окна
-- **Drawer** - Выдвижная панель (портал, оверлей как у `Modal`, `placement`, фокус-ловушка)
-- **Sheet** - Панель-лист как `Drawer`, по умолчанию снизу (`placement="bottom"`), `safe-area` для нижнего края
-- **Icon** - Иконки (Lucide React + Plainer иконки)
-- **ThemeToggle** - Переключатель темы
+### Кнопки и ссылки
 
-### Формы
+- **Button** — варианты, `Size`, иконки, `href` как ссылка.
+- **ButtonGroup** — группа `Button` / `IconButton` (`orientation`, `attached`, переключатель сегмента).
+- **IconButton** — только иконка.
+- **Link** — `mode="text"` или `mode="button"` с `href`.
 
-- **Form** - Обёртка `<form>` и контекст для `Input` / `TextArea` / `FileInput` / `Select` (атрибут `form` у полей)
-- **Checkbox** - Чекбоксы
-- **Switch** - Переключатель (трек + бегунок, подпись, ошибка)
-- **Radio** - Радио кнопки
-- **DateInput** - Поля ввода даты
-- **Calendar** — сетка месяца (локаль `locale`, `weekStartsOn`, `minDate` / `maxDate`, выпадающий месяц/год на `Dropdown`, режимы `headerMode`, контроль `value` / `visibleMonth`)
-- **TimeInput** - Поля ввода времени
-- **Select** — `mode="select"`: панель как у `Dropdown` (поиск, мультивыбор) + скрытый `select` для форм; `mode="native"` — нативный список
+### Ввод и формы
 
-### Навигация
+- **Input**, **TextArea**, **FileInput**, **Select**, **MultiInput**, **SliderInput** — поля (`Form`-совместимые).
+- **Form**, **HiddenUsernameField**.
+- **Checkbox**, **CheckboxGroup**, **Switch**, **RadioButton**, **RadioButtonGroup**.
+- **DateInput**, **TimeInput**.
 
-- **Sidemenu** - Боковое меню навигации
-- **Tabs** - Вкладки
-- **Breadcrumb** - «Хлебные крошки» (`nav` + `ol`, `aria-current`, разделитель, `Size`)
-- **Stepper** - Шаги навигации по макету: `variant="compact"` (кольцо «N/M», заголовок, подзаголовок, `onBack`) или `variant="linear"` (кружки, подписи «Шаг N», соединители); `appearance` / тема, `fullWidth`
-- **Pagination** - Номера страниц с разрывами «…», стрелки назад/вперёд, контролируемый и неконтролируемый режимы (`totalPages`, `page` / `defaultPage`, `onPageChange`, `siblingCount`, `showPrevNext`, `size`)
-- **Menu** — вертикальная навигация (`Menu` + `MenuItem`), бейдж, collapsed; для панели инструментов поверх холста — **FloatingMenu**
-- **FloatingMenu** — плавающая панель инструментов внизу/по краю экрана (`FloatingMenuPlacement`), перетаскивание (`draggable`, `dragSource`, `DragHandle`), группы `FloatingMenu.Group` (`variant: inset`), разделитель `Divider`, пункт `GroupItem` (иконка, `active`, `tooltip`, вложенное `Menu` через `dropdownContent`, открытие по `dropdownTrigger`: click | hover)
-- **Dropdown** - Выпадающие меню
+### Поверхности, сетка, выпадающие панели
+
+- **Card**, **Modal**, **Drawer**, **Sheet**.
+- **Grid**, **GridItem** (`GridMode`, breakpoints).
+- **Dropdown**, **Popover**.
+
+### Навигация и структура
+
+- **Sidemenu**, **NavigationMenu**, **NavigationMenuItem** (+ контекст/хелперы).
+- **Menu**, **MenuItem**.
+- **FloatingMenu** (+ `FloatingMenuGroup`, `GroupItem`, `Divider`, `DragHandle`).
+- **Tabs** (**Tabs.Item**, **TabItem**, внутренний трек сегментов; варианты **pill** / **minimal** / **line** / **underline**, проп **filledSegmentTriggers** для заливки текстовых сегментов), **Breadcrumb**, **Stepper**, **Pagination**, **Accordion**.
+
+### Отображение данных
+
+- **Badge**, **Tag**, **Pill**, **Avatar**, **AvatarGroup**, **Divider**, **Slider**, **RangeSlider**, **Calendar**, **DateRollerPicker**, **Progress**, **Spinner**, **Skeleton**, **Icon**, **ThemeToggle**.
+
+### Таблицы и DataGrid
+
+- **TableContainer**, **TableContainerScroll**, **Table**, **TableHead**, **TableBody**, **TableFooter**, **TableRow**, **TableCell**, **TableCellFormatted** (форматирование ячейки без DataGrid), **TablePagination**, **TableSortLabel**, **TableSortChevronIcon** и утилиты (`getTableTotalPages`, `clampTablePageZeroBased`, …).
+- **DataGrid** — расширенная таблица; у колонок можно задать **`format`** (`TableCellFormat`: ссылки, маски, числа, даты и т.д.) или **`render`**; хелпер **`formatTableCellValue`** и константы масок экспортируются из пакета вместе с handlers.
+- **ColumnFilterPanel** — панель фильтра колонки.
+
+```tsx
+import { DataGrid, type DataGridColumn } from '@velkinvv/plainerv';
+
+const columns: DataGridColumn<Row>[] = [
+  { field: 'phone', headerName: 'Телефон', format: { type: 'phone', country: 'RU' } },
+  {
+    field: 'id',
+    headerName: 'Открыть',
+    valueGetter: (row) => row.title,
+    format: { type: 'link', href: '/items/{id}' },
+  },
+];
+```
+
+### Обратная связь
+
+- **Tooltip**, **Hint**.
+- **Toast** + **ToastProvider** + **useToast**.
+- **Snackbar** + **SnackbarProvider** + **useSnackbar**.
 
 ```tsx
 import { ThemeProvider, Pagination } from '@velkinvv/plainerv';
@@ -125,27 +151,9 @@ import { ThemeProvider, Pagination } from '@velkinvv/plainerv';
 </ThemeProvider>
 ```
 
-### Отображение данных
-
-- **Badge** - Бейджи и метки
-- **Avatar** - Аватары пользователей
-- **Progress** - Индикаторы прогресса
-- **Spinner** - Спиннеры загрузки
-- **Skeleton** - Скелетоны загрузки
-
-### Обратная связь
-
-- **Tooltip** - Подсказки
-- **Hint** - Расширенные подсказки
-- **Toast** + **ToastProvider** / **useToast** - Стек уведомлений (портал в `body`, типы success/error/warning/info)
-- **Snackbar** + **SnackbarProvider** / **useSnackbar** - Компактные полосы внизу экрана, опциональное действие и таймер (портал в `body`)
-- **Modal** - Модальные окна
-- **Drawer** - Выдвижная панель (оверлей, Escape, стороны `left` | `right` | `top` | `bottom`)
-- **Sheet** - Те же пропсы, что у `Drawer`; дефолт — нижний лист и высота `min(50vh, 560px)`
-
 #### Toast и Snackbar в приложении
 
-Оба стека рендерятся в `document.body`. Нужны **`ThemeProvider`** (тема для styled-компонентов) и провайдер уведомлений. Их удобно вложить в корень; порядок вложенности произвольный, если оба провайдера оборачивают одно и то же дерево.
+Оба стека рендерятся в `document.body`. Нужны **`ThemeProvider`** и провайдеры уведомлений.
 
 ```tsx
 import { ThemeProvider, ToastProvider, SnackbarProvider } from '@velkinvv/plainerv';
@@ -163,8 +171,15 @@ function Root() {
 }
 ```
 
-**Storybook:** `Hooks/useToast`, `Hooks/useSnackbar`, `Components/Feedback/Toast`, `Components/Feedback/Snackbar`, `Components/Navigation/Pagination`, `Components/Navigation/FloatingMenu`, `Components/Buttons/ButtonGroup`.
-- **Accordion** - Аккордеоны
+### Хуки и обработчики
+
+Также экспортируются **хуки** (`useModal`, `useLocalStorage`, `useDebounce`, `useClickOutside`, `useKeyPress`, `useMediaQuery`, `useScrollPosition`, `useWindowSize`, `useIsDesktop`, `useNavigationMenuExpand`, `useUiMotionPresets`, …) и **handlers** из `src/handlers/index.ts`:
+
+- дата/время, ссылки, таблица, dropdown, motion, форматирование ячеек (`tableCellFormat`, `formatTableCellValue`);
+- **`createStyledShouldForwardProp`** — фильтр `shouldForwardProp` для styled-components (transient-пропы `$…` и кастомные поля);
+- **`omitMotionConflictingDomHandlers`** — убирает HTML drag-обработчики перед `motion.button` / `motion.a` (совместимость с Framer Motion).
+
+**Storybook:** `Hooks/*`, `Components/Buttons/*`, `Components/Inputs/*`, `Components/Navigation/*`, `Components/Data Display/Table`, `Components/Data Display/DataGrid`, `Components/Surfaces/*`, `Components/Feedback/*`, и др.
 
 ## 🎨 Иконки
 
@@ -263,11 +278,25 @@ npm run build
 npm run test
 ```
 
-### Линтинг
+### Линтинг и проверка типов
 
 ```bash
 npm run lint
+npm run type-check
+npm run quality:check   # type-check + lint + format
 ```
+
+Сборка (`npm run build`) проходит без предупреждений TypeScript от `@rollup/plugin-typescript`.
+
+### React Doctor
+
+Статический аудит React-проекта ([react.doctor](https://www.react.doctor)):
+
+```bash
+npm run react-doctor
+```
+
+Отчёт выводится в консоль; команда завершается успешно (**`exit 0`**) даже при замечаниях. Для проверки с **ненулевым кодом** при наличии проблем (например в CI): **`npm run react-doctor:strict`**.
 
 ## 📝 Примеры использования
 
@@ -327,7 +356,7 @@ function AppLayout() {
 
 ## 🌳 Tree-shaking
 
-Библиотека поддерживает tree-shaking благодаря настройке `sideEffects: false`. Это означает, что при импорте только необходимых компонентов, неиспользуемый код будет исключен из финального бандла.
+Библиотека поддерживает tree-shaking: в `package.json` указано `sideEffects: ["**/*.css"]`, поэтому JS-код неиспользуемых компонентов может быть удалён бандлером, а CSS нужно подключать явно (`import '@velkinvv/plainerv/styles'`).
 
 ```tsx
 // ✅ Хорошо - импортируется только Button
@@ -354,6 +383,15 @@ npm run analyze
 
 *Размеры будут обновлены после первой сборки*
 
+## 📋 Что нового в 0.1.5
+
+- Устранены все предупреждения TypeScript при production-сборке Rollup.
+- Хелперы styled-components: `createStyledShouldForwardProp`, `omitMotionConflictingDomHandlers`.
+- Совместимость с React 19 (`TabItem`, типизация обработчиков событий).
+- Исправлен регистр папки `src/components/ui/table` (Windows / TS1261).
+
+Подробности — в [CHANGELOG.md](CHANGELOG.md).
+
 ## 🤝 Contributing
 
 Мы приветствуем вклад в развитие библиотеки! Пожалуйста, ознакомьтесь с [руководством по контрибьютингу](CONTRIBUTING.md) перед отправкой PR.
@@ -371,6 +409,7 @@ MIT License - см. [LICENSE](LICENSE) для деталей.
 
 ## 🔗 Ссылки
 
-- [Документация](https://github.com/velkinvv/PlainerV-ui-kit#readme)
+- [Репозиторий](https://github.com/velkinvv/PlainerV-ui-kit)
+- [Ветка v0.1.5](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.1.5)
 - [Issues](https://github.com/velkinvv/PlainerV-ui-kit/issues)
-- [Changelog](CHANGELOG.md)
+- [Changelog](CHANGELOG.md) · [npm](https://www.npmjs.com/package/@velkinvv/plainerv)

@@ -1,7 +1,6 @@
 import { lightTheme } from './light';
 import { darkTheme } from './dark';
-import type { ColorTheme } from '../../types/theme';
-import { ThemeMode } from '../../types/theme';
+import { ThemeMode, type ColorTheme } from '../../types/theme';
 
 // Общие цветовые переменные для использования в компонентах
 export const themeColors: Record<ThemeMode, ColorTheme> = {

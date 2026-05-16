@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { createStyledShouldForwardProp } from '../../../handlers/styledComponentHandlers';
 import { Size } from '../../../types/sizes';
 import { TransitionHandler } from '../../../handlers/uiHandlers';
 
@@ -73,7 +74,7 @@ export const BreadcrumbCrumbRow = styled.span`
  * @property $muted - Приглушение (disabled)
  */
 export const BreadcrumbCrumbIcon = styled.span.withConfig({
-  shouldForwardProp: (p) => p !== '$muted',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $muted?: boolean }>`
   display: inline-flex;
   flex-shrink: 0;
@@ -149,7 +150,7 @@ const crumbInteractive = css`
 
 /** Ссылка в цепочке. */
 export const BreadcrumbCrumbLink = styled.a.withConfig({
-  shouldForwardProp: (p) => p !== '$pill' && p !== '$muted',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<CrumbShell>`
   ${crumbShell}
   ${crumbInteractive}
@@ -157,7 +158,7 @@ export const BreadcrumbCrumbLink = styled.a.withConfig({
 
 /** Кнопка-крошка (без `href`, с `onClick`). */
 export const BreadcrumbCrumbButton = styled.button.withConfig({
-  shouldForwardProp: (p) => p !== '$pill' && p !== '$muted',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<CrumbShell>`
   ${crumbShell}
   ${crumbInteractive}
@@ -165,7 +166,7 @@ export const BreadcrumbCrumbButton = styled.button.withConfig({
 
 /** Текущая страница или неактивный текст. */
 export const BreadcrumbCrumbText = styled.span.withConfig({
-  shouldForwardProp: (p) => p !== '$pill' && p !== '$muted',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<CrumbShell>`
   ${crumbShell}
 `;
@@ -175,7 +176,7 @@ export const BreadcrumbCrumbText = styled.span.withConfig({
  * @property $disabled - Блокировка
  */
 export const BreadcrumbEllipsisButton = styled.button.withConfig({
-  shouldForwardProp: (p) => p !== '$disabled',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $disabled?: boolean }>`
   display: inline-flex;
   align-items: center;

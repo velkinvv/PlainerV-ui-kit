@@ -7,7 +7,17 @@ export { IconButton } from './buttons';
 export type { IconButtonProps } from '@/types/ui';
 
 export { Input } from './inputs/Input';
-export type { InputProps } from '@/types/ui';
+export type {
+  InputProps,
+  NumberInputProps,
+  MultiInputProps,
+  MultiInputChangeEvent,
+  MultiInputDuplicatePolicy,
+  SliderInputProps,
+} from '@/types/ui';
+export { NumberInput } from './inputs/NumberInput/NumberInput';
+export { MultiInput } from './inputs/MultiInput/MultiInput';
+export { SliderInput } from './inputs/SliderInput/SliderInput';
 export { TextArea } from './inputs/TextArea';
 export type { TextAreaProps } from '@/types/ui';
 export { FileInput } from './inputs/FileInput';
@@ -67,7 +77,7 @@ export { Popover } from './Popover/Popover';
 export type { PopoverProps, PopoverVariant } from '@/types/ui';
 
 export { Tabs } from './Tabs';
-export type { TabsProps } from '@/types/ui';
+export type { TabsProps, TabsSegmentOption, TabsItemDefinition } from '@/types/ui';
 export { TabsVariant } from '@/types/ui';
 export { TabItem } from './Tabs';
 export type { TabItemProps } from './Tabs';
@@ -164,6 +174,7 @@ export {
   TableFooter,
   TableRow,
   TableCell,
+  TableCellFormatted,
   TablePagination,
   TableSortLabel,
   TableSortChevronIcon,
@@ -182,12 +193,15 @@ export type {
   TableFooterProps,
   TableRowProps,
   TableCellProps,
+  TableCellFormattedProps,
   TablePaginationProps,
   TablePaginationToolbarAlign,
   TableSortLabelProps,
   TableSize,
   TableCellVariant,
   TableSortDirection,
+  TableCellFormat,
+  TableCellFormatContext,
 } from '@/types/ui';
 export type { TableSortChevronTone, TableContainerScrollProps } from './table';
 

@@ -95,7 +95,17 @@ export const Overlay = styled(motion.div)<{
   align-items: center;
   justify-content: center;
 
-  ${({ theme, $mobile, $overlayCss, $overlayVariant = 'default' }) => {
+  ${({
+    theme,
+    $mobile,
+    $overlayCss,
+    $overlayVariant = 'default',
+  }: {
+    theme: DefaultTheme;
+    $mobile?: boolean;
+    $overlayCss?: OverlayCss;
+    $overlayVariant?: OverlayVariant;
+  }) => {
     const overlayStyles = getModalOverlayStyles(theme.modals);
     const overrides = getModalThemeOverrides(theme);
     const variantOverrides = getOverlayVariantFromTheme(theme, $overlayVariant);
@@ -182,7 +192,7 @@ export const ModalHeader = styled.div<{ $variant: ModalVariant }>`
   width: 100%;
   margin-bottom: 12px;
 
-  ${({ theme, $variant }) => {
+  ${({ theme, $variant }: { theme: DefaultTheme; $variant: ModalVariant }) => {
     const headerStyles = getModalComponentStyles(theme.modals).header;
     const variant = modalVariantStyles[$variant];
 
@@ -223,7 +233,7 @@ export const ModalTitle = styled.h2<{ $variant: ModalVariant }>`
   flex: 1;
   display: block;
 
-  ${({ theme, $variant }) => {
+  ${({ theme, $variant }: { theme: DefaultTheme; $variant: ModalVariant }) => {
     const titleStyles = getModalComponentStyles(theme.modals).title;
     const variant = modalVariantStyles[$variant];
 

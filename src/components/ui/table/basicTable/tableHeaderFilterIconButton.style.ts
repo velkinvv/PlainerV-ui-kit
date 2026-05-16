@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components';
 import { ButtonVariant } from '@/types/ui';
 import { getButtonVariant } from '@/handlers/buttonThemeHandlers';
+import { createStyledShouldForwardProp } from '@/handlers/styledComponentHandlers';
 import { tableBorderRadiusFromTheme } from './tableThemeRadiusHandlers';
 
 /**
@@ -8,7 +9,7 @@ import { tableBorderRadiusFromTheme } from './tableThemeRadiusHandlers';
  * При `$filterApplied` — заливка `theme.colors.info` и контрастный цвет иконки (как у текста primary-кнопки).
  */
 export const TableHeaderFilterIconButton = styled.button.withConfig({
-  shouldForwardProp: (prop) => prop !== '$filterApplied',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $filterApplied?: boolean }>`
   display: inline-flex;
   align-items: center;

@@ -1,6 +1,5 @@
 import type React from 'react';
-import type { HintPositioningMode } from '../../../types/ui';
-import { HintPosition, HintVisibilityTrigger } from '../../../types/ui';
+import { HintPosition, HintVisibilityTrigger, type HintPositioningMode } from '../../../types/ui';
 
 /**
  * Ограничивает значение между min и max

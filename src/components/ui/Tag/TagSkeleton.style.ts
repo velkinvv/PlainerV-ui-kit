@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { createStyledShouldForwardProp } from '../../../handlers/styledComponentHandlers';
 import { TransitionHandler } from '../../../handlers/uiHandlers';
 
 /** Шиммер для плейсхолдера тега (как у слайдера / инпутов) */
@@ -29,7 +30,7 @@ const tagSkeletonShimmer = css`
  * @property $widthPx — ширина полоски в px
  */
 export const TagSkeletonRoot = styled.span.withConfig({
-  shouldForwardProp: (prop) => !['$minHeight', '$widthPx'].includes(String(prop)),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $minHeight: string; $widthPx: number }>`
   display: inline-block;
   vertical-align: middle;

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Тексты для Storybook «Docs»: примитивы таблицы и DataGrid.
  * Дублируют назначение пропсов из `types/ui.ts`, но с акцентом на использование в коде.
  */
@@ -34,7 +34,7 @@ export const TABLE_KIT_DOC = `
 | Проп | Тип | Зачем |
 |------|-----|--------|
 | \`stickyHeader\` | \`boolean\` | Липкая шапка: \`thead th\` с \`position: sticky\`. Вертикальная прокрутка с фиксированной высотой: проп \`scrollAreaMaxHeight\` у \`TableContainerScroll\` (один scroll-контейнер вместе с таблицей) или внешний предок со скроллом **без** «двойного» трека \`overflow-x: auto\` + \`overflow-y: auto\` на той же ветке. |
-| \`size\` | \`'sm' \\| 'md'\` | Плотность отступов ячеек (\`md\` по умолчанию). |
+| \`size\` | \`'sm' | 'md'\` | Плотность отступов ячеек (\`md\` по умолчанию). |
 | \`striped\` | \`boolean\` | По умолчанию **\`false\`**: фон строк \`tbody\` как у карточки, без чередования. **\`true\`** — зебра (см. сторис **PlainBody** без пропа и **Basic** с \`striped\`). |
 | \`columnDividers\` | \`boolean\` | Тонкая вертикальная линия между колонками (\`border-inline-end\` у всех ячеек строки, кроме последней). По умолчанию \`true\`; \`false\` — без разделителей. |
 | \`aria-label\` | строка | Доступность: краткое название таблицы для скринридеров. |
@@ -59,10 +59,10 @@ export const TABLE_KIT_DOC = `
 
 | Проп | Тип | Зачем |
 |------|-----|--------|
-| \`variant\` | \`'head' \\| 'body' \\| 'footer'\` | Влияет на тег по умолчанию: шапка → \`th\`, иначе \`td\`. |
+| \`variant\` | \`'head' | 'body' | 'footer'\` | Влияет на тег по умолчанию: шапка → \`th\`, иначе \`td\`. |
 | \`component\` | React-компонент | Явный тег ячейки (\`th\` / \`td\`). |
-| \`align\` | \`'left' \\| 'right' \\| 'center' \\| …\` | Горизонтальное выравнивание. |
-| \`padding\` | \`'normal' \\| 'checkbox' \\| 'none'\` | Узкая колонка чекбокса, без отступов или обычная ячейка. |
+| \`align\` | \`'left' | 'right' | 'center' | …\` | Горизонтальное выравнивание. |
+| \`padding\` | \`'normal' | 'checkbox' | 'none'\` | Узкая колонка чекбокса, без отступов или обычная ячейка. |
 | \`activeColumn\` | \`boolean\` | Только в шапке: усиленная нижняя граница у активной сортируемой колонки (макет). |
 | \`headerMaxLines\` | \`number\` | Только шапка (\`th\`): не больше заданного числа строк текста; лишнее обрезается с «…» (\`-webkit-line-clamp\`). Без пропа — одна строка без переноса (\`white-space: nowrap\`), как раньше. Значения \`< 1\` игнорируются; сверху действует потолок (см. \`TABLE_HEADER_MAX_LINES_CAP\` в \`tableHeaderClampHandlers\`). |
 | \`colSpan\`, \`rowSpan\`, \`scope\` | — | Стандартные атрибуты таблицы. |
@@ -71,6 +71,10 @@ export const TABLE_KIT_DOC = `
 
 Для **несортируемого** длинного заголовка вручную можно обернуть текст в \`TableCellHeadLineClamp\` из \`Table.style\` (экспорт из \`basicTable\`) с пропом \`$maxLines\` — в \`DataGrid\` это делается автоматически при \`headerMaxLines\`.
 
+### TableCellFormatted
+
+Обёртка над \`TableCell\`: пропсы \`value\`, опционально \`row\`, \`field\`, \`rowIndex\` и объект \`format\` (\`TableCellFormat\`) — те же пресеты, что у **DataGrid** (\`columns[].format\`). Если переданы \`children\`, они отображаются вместо форматирования. Сторис **Table › TableCellFormatted**.
+
 ### TableSortLabel
 
 Кнопка-обёртка для заголовка с иконкой сортировки; контролируемая сортировка на стороне родителя.
@@ -78,7 +82,7 @@ export const TABLE_KIT_DOC = `
 | Проп | Зачем |
 |------|--------|
 | \`active\` | Колонка сейчас участвует в сортировке. |
-| \`direction\` | \`'asc' \\| 'desc'\` при активной колонке; \`false\` — нейтральное состояние иконки. |
+| \`direction\` | \`'asc' | 'desc'\` при активной колонке; \`false\` — нейтральное состояние иконки. |
 | \`hideSortIcon\` | Только текст заголовка без стрелки. |
 | \`disabled\` | Отключить клик по заголовку. |
 | \`onClick\` | Переключение модели сортировки в родителе. |
@@ -102,11 +106,11 @@ export const TABLE_KIT_DOC = `
 | \`onRowsPerPageChange\` | событие как у \`select\` | Смена размера страницы; \`event.target.value\` — строка с числом. |
 | \`rowsPerPageOptions\` | \`number[]\` | Допустимые размеры страницы; пусто — блок выбора не показывается. |
 | \`showRowsPerPageSelect\` | \`boolean\` | Принудительно скрыть селект (\`false\`), даже если опции заданы. |
-| \`rowsPerPageSelectVariant\` | \`'default' \\| 'compact'\` | Компактная подпись и селект. |
+| \`rowsPerPageSelectVariant\` | \`'default' | 'compact'\` | Компактная подпись и селект. |
 | \`labelRowsPerPage\` | \`ReactNode\` | Текст перед селектором размера страницы. |
-| \`paginationVariant\` | \`'default' \\| 'compact'\` | Плашка страниц: полная или только стрелки и текущая страница. |
+| \`paginationVariant\` | \`'default' | 'compact'\` | Плашка страниц: полная или только стрелки и текущая страница. |
 | \`siblingCount\` | \`number\` | Соседние номера вокруг текущей (у полной плашки). |
-| \`paginationToolbarAlign\` | \`'left' \\| 'center' \\| 'right'\` | Выравнивание строки футера. |
+| \`paginationToolbarAlign\` | \`'left' | 'center' | 'right'\` | Выравнивание строки футера. |
 | \`paginationToolbarReverse\` | \`boolean\` | Обратный порядок блоков в строке (\`row-reverse\`). |
 | \`showPageJump\` | \`boolean\` | Поле «перейти к странице»; при одной странице скрывается. |
 | \`labelPageJump\` | \`ReactNode\` | Подпись перед полем номера страницы. |
@@ -142,7 +146,7 @@ export const DATAGRID_DOC = `
 | Проп | Зачем |
 |------|--------|
 | \`tableId\` | Уникальный \`id\` у \`<table>\`; для группы радиокнопок при одиночном выборе (\`name\`). |
-| \`columns\` | Описание колонок (\`field\`, \`headerName\`, \`filterable\`, \`filterIconPosition\`, \`headerMaxLines\`, \`render\`, \`sortable\`, \`width\`, \`align\`, \`disableReorder\`, \`disableResize\`, …). |
+| \`columns\` | Описание колонок (\`field\`, \`headerName\`, \`filterable\`, \`filterIconPosition\`, \`headerMaxLines\`, \`render\`, \`format\`, \`sortable\`, \`width\`, \`align\`, \`disableReorder\`, \`disableResize\`, …). |
 | \`rows\` | Массив строк; каждая строка должна иметь поле \`id: string\` (см. \`DataGridBaseRow\`), если не переопределяете \`getRowId\`. |
 | \`totalRows\` | Число записей для пагинации и отображения (при серверной пагинации — всего на сервере; при клиентской — обычно \`rows.length\` после фильтрации). |
 
@@ -156,6 +160,7 @@ export const DATAGRID_DOC = `
 | \`align\` | \`left\` / \`center\` / \`right\`. |
 | \`sortable\` | Показывать сортируемый заголовок; фактическая сортировка — в родителе по \`sortModel\` / \`onSortChange\`. |
 | \`valueGetter\` | Кастомное значение для сортировки/отображения по умолчанию. |
+| \`format\` | Декларативное форматирование ячейки (\`TableCellFormat\`): маски, ссылки, числа, даты и др.; ниже по приоритету, чем \`render\` колонки и \`renderCell\` грида. |
 | \`render\` | Ячейка; имеет приоритет над глобальным \`renderCell\` грида. |
 | \`disableReorder\` | Не таскать колонку при \`enableColumnDrag\`. |
 | \`disableResize\` | Не показывать ручку ширины при \`enableColumnResize\` + \`onColumnResize\`. |
@@ -166,6 +171,30 @@ export const DATAGRID_DOC = `
 | \`filterIconProps\` | Частичные пропсы \`Icon\` (\`name\`, \`size\`, \`color\`, \`className\`) — мерж поверх \`IconExFilter\` + \`IconSize.XS\` + \`currentColor\`. |
 | \`filterIconPropsApplied\` | Доп. мерж поверх \`filterIconProps\`, только если \`filterApplied\` (например другой \`color\` на фоне \`info\`). |
 | \`filterIconPosition\` | \`leading\` — иконка у левого края ячейки перед заголовком; \`inlineTitle\` — сразу после заголовка без растягивания текста на всю ширину; \`trailing\` — заголовок на всю ширину, иконка у правого края (**по умолчанию**). |
+
+### Форматирование ячеек (\`columns[].format\`)
+
+Поле **\`format\`** задаёт декларативное отображение без собственного \`render\`. Хелпер **\`formatTableCellValue\`** и константы масок экспортируются из пакета (см. \`tableCellFormat\` в handlers). Для примитивной таблицы доступен компонент **\`TableCellFormatted\`** (сторис **Table › TableCellFormatted**).
+
+Приоритет: \`columns[].render\` → \`DataGridProps.renderCell\` → \`columns[].format\` → строковое значение поля.
+
+| Тип \`format.type\` | Назначение |
+|---------------------|------------|
+| \`text\` | Регистр строки (\`uppercase\`, \`lowercase\`, \`capitalize\`). |
+| \`number\` | Число через \`Intl\`; локаль по умолчанию \`ru-RU\`. |
+| \`currency\` | Валюта (\`currency\` по умолчанию \`RUB\`). |
+| \`percent\` | Проценты; \`fromFraction\` — доля \`0.25\` → «25 %». |
+| \`date\` / \`datetime\` / \`time\` | dayjs-шаблон (\`pattern\`). |
+| \`mask\` | Своя маска: \`#\` — цифра, \`A\` — буква, \`*\` — любой символ. |
+| \`phone\` | Пресеты \`RU\` / \`INT\` или своя \`mask\`. |
+| \`bankAccount\` / \`bankCard\` / \`inn\` / \`snils\` | Типовые маски РФ. |
+| \`email\` | Ссылка \`mailto:\` (\`subject\`, \`body\`). |
+| \`link\` | Компонент \`Link\`: \`href\` строкой с \`{поле}\` или функцией от контекста. |
+| \`boolean\` | Подписи для да/нет и неопределённого значения. |
+| \`enum\` | Сопоставление значения с \`ReactNode\`. |
+| \`custom\` | Полный контроль: \`renderCell(params)\`. |
+
+Сторис **DataGrid › Column formats › Встроенные форматы колонок**.
 
 ### Фильтры колонок (композиция и встроенная иконка)
 
@@ -223,7 +252,7 @@ export const DATAGRID_DOC = `
 | \`tableAriaLabel\` | \`aria-label\` таблицы. |
 | \`style\` | Инлайн-стиль корня грида. |
 | \`headerToolbar\` | Слот над строкой с названиями колонок: первая строка \`thead\`, одна ячейка на всю ширину (\`colSpan\`), удобно для **IconButton** (настройки, экспорт, **история**, **документация** и т.д.). |
-| \`headerToolbarAlign\` | Горизонтальное выравнивание содержимого \`headerToolbar\`: \`start\` \| \`end\` (**по умолчанию**) \| \`center\` \| \`space-between\`. |
+| \`headerToolbarAlign\` | Горизонтальное выравнивание содержимого \`headerToolbar\`: \`start\` | \`end\` (**по умолчанию**) | \`center\` | \`space-between\`. |
 | \`headerToolbarAriaLabel\` | Подпись для доступности (\`aria-label\` у контейнера с \`role="toolbar"\`); если не задана — нейтральная строка по умолчанию в компоненте. |
 
 ### События строк

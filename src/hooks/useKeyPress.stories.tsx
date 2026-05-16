@@ -75,7 +75,7 @@ const BasicKeyPressDemo = () => {
 
   useKeyPress({
     targetKey: 'Enter',
-    handler: (event) => {
+    handler: (_event) => {
       setLastKey('Enter');
       setKeyCount((prev) => prev + 1);
     },
@@ -83,7 +83,7 @@ const BasicKeyPressDemo = () => {
 
   useKeyPress({
     targetKey: 'Escape',
-    handler: (event) => {
+    handler: (_event) => {
       setLastKey('Escape');
       setKeyCount((prev) => prev + 1);
     },
@@ -91,7 +91,7 @@ const BasicKeyPressDemo = () => {
 
   useKeyPress({
     targetKey: ' ',
-    handler: (event) => {
+    handler: (_event) => {
       setLastKey('Space');
       setKeyCount((prev) => prev + 1);
     },
@@ -130,7 +130,7 @@ const ModifierKeysDemo = () => {
   useKeyPress({
     targetKey: 's',
     modifier: 'ctrl',
-    handler: (event) => {
+    handler: (_event) => {
       setLastCombination('Ctrl+S');
       setCombinationCount((prev) => prev + 1);
     },
@@ -139,7 +139,7 @@ const ModifierKeysDemo = () => {
   useKeyPress({
     targetKey: 'z',
     modifier: 'ctrl',
-    handler: (event) => {
+    handler: (_event) => {
       setLastCombination('Ctrl+Z');
       setCombinationCount((prev) => prev + 1);
     },
@@ -148,7 +148,7 @@ const ModifierKeysDemo = () => {
   useKeyPress({
     targetKey: 'a',
     modifier: 'ctrl',
-    handler: (event) => {
+    handler: (_event) => {
       setLastCombination('Ctrl+A');
       setCombinationCount((prev) => prev + 1);
     },
@@ -157,7 +157,7 @@ const ModifierKeysDemo = () => {
   useKeyPress({
     targetKey: 'c',
     modifier: 'ctrl',
-    handler: (event) => {
+    handler: (_event) => {
       setLastCombination('Ctrl+C');
       setCombinationCount((prev) => prev + 1);
     },
@@ -166,7 +166,7 @@ const ModifierKeysDemo = () => {
   useKeyPress({
     targetKey: 'v',
     modifier: 'ctrl',
-    handler: (event) => {
+    handler: (_event) => {
       setLastCombination('Ctrl+V');
       setCombinationCount((prev) => prev + 1);
     },
@@ -221,7 +221,7 @@ const MultipleKeysDemo = () => {
 
   useKeyPress({
     targetKey: ['1', '2', '3', '4', '5'],
-    handler: (event) => {
+    handler: (_event) => {
       setLastKey(event.key);
       setKeyCount((prev) => prev + 1);
     },
@@ -270,7 +270,7 @@ const EnabledDisabledDemo = () => {
 
   useKeyPress({
     targetKey: 'ArrowUp',
-    handler: (event) => {
+    handler: (_event) => {
       setLastKey('Arrow Up');
       setKeyCount((prev) => prev + 1);
     },
@@ -279,7 +279,7 @@ const EnabledDisabledDemo = () => {
 
   useKeyPress({
     targetKey: 'ArrowDown',
-    handler: (event) => {
+    handler: (_event) => {
       setLastKey('Arrow Down');
       setKeyCount((prev) => prev + 1);
     },
@@ -288,7 +288,7 @@ const EnabledDisabledDemo = () => {
 
   useKeyPress({
     targetKey: 'ArrowLeft',
-    handler: (event) => {
+    handler: (_event) => {
       setLastKey('Arrow Left');
       setKeyCount((prev) => prev + 1);
     },
@@ -297,7 +297,7 @@ const EnabledDisabledDemo = () => {
 
   useKeyPress({
     targetKey: 'ArrowRight',
-    handler: (event) => {
+    handler: (_event) => {
       setLastKey('Arrow Right');
       setKeyCount((prev) => prev + 1);
     },
@@ -413,7 +413,7 @@ const PreventDefaultDemo = () => {
 
   useKeyPress({
     targetKey: 'Tab',
-    handler: (event) => {
+    handler: (_event) => {
       setLastKey('Tab (prevented)');
       setKeyCount((prev) => prev + 1);
     },
@@ -422,7 +422,7 @@ const PreventDefaultDemo = () => {
 
   useKeyPress({
     targetKey: 'Tab',
-    handler: (event) => {
+    handler: (_event) => {
       setLastKey('Tab (normal)');
       setKeyCount((prev) => prev + 1);
     },

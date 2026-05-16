@@ -184,6 +184,13 @@ jest.mock('styled-components', () => ({
   useTheme: actualStyledComponents.useTheme,
 }));
 
+// jsdom не предоставляет ResizeObserver — нужен для табов (pill segment track) и др.
+global.ResizeObserver = class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};
+
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,

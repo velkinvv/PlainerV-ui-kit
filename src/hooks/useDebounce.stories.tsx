@@ -125,10 +125,10 @@ const BasicDebounceDemo = () => {
           <strong>Статус:</strong>
         </Typography>
         <Typography variant="body2" marginBottom="xs">
-          Исходное значение: "{inputValue}"
+          Исходное значение: &quot;{inputValue}&quot;
         </Typography>
         <Typography variant="body2" marginBottom="xs">
-          Отложенное значение: "{debouncedValue}"
+          Отложенное значение: &quot;{debouncedValue}&quot;
         </Typography>
         <Typography variant="body2">Задержка: {delay}мс</Typography>
       </StatusContainer>
@@ -196,7 +196,7 @@ const SearchDemo = () => {
             Исходный запрос:
           </Typography>
           <SourceQueryCard>
-            <Typography variant="body2">"{searchTerm}"</Typography>
+            <Typography variant="body2">&quot;{searchTerm}&quot;</Typography>
           </SourceQueryCard>
         </div>
 
@@ -205,7 +205,7 @@ const SearchDemo = () => {
             Отложенный запрос:
           </Typography>
           <DebouncedQueryCard>
-            <Typography variant="body2">"{debouncedSearchTerm}"</Typography>
+            <Typography variant="body2">&quot;{debouncedSearchTerm}&quot;</Typography>
           </DebouncedQueryCard>
         </div>
       </TwoColumnsGrid>
@@ -331,7 +331,7 @@ const DebounceCallbackDemo = () => {
           <strong>Информация:</strong>
         </Typography>
         <Typography variant="body2" marginBottom="xs">
-          Текущее значение: "{inputValue}"
+          Текущее значение: &quot;{inputValue}&quot;
         </Typography>
         <Typography variant="body2" marginBottom="xs">
           Задержка: {delay}мс
@@ -394,15 +394,15 @@ const DelayComparisonDemo = () => {
           <strong>Текущие значения:</strong>
         </Typography>
         <Typography variant="body2" marginBottom="xs">
-          Исходное: "{inputValue}"
+          Исходное: &quot;{inputValue}&quot;
         </Typography>
         <Typography variant="body2" marginBottom="xs">
-          Быстро: "{debouncedFast}"
+          Быстро: &quot;{debouncedFast}&quot;
         </Typography>
         <Typography variant="body2" marginBottom="xs">
-          Средне: "{debouncedMedium}"
+          Средне: &quot;{debouncedMedium}&quot;
         </Typography>
-        <Typography variant="body2">Медленно: "{debouncedSlow}"</Typography>
+        <Typography variant="body2">Медленно: &quot;{debouncedSlow}&quot;</Typography>
       </StatusContainer>
     </Card>
   );

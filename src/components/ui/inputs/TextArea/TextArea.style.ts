@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { createStyledShouldForwardProp } from '../../../../handlers/styledComponentHandlers';
 import { ClearButton, InputWrapper } from '../shared';
 import {
   BorderRadiusHandler,
@@ -12,8 +13,12 @@ export const TextAreaWrapper = styled(InputWrapper)`
 `;
 
 export const StyledTextArea = styled.textarea.withConfig({
-  shouldForwardProp: (prop) =>
-    !['textAlign', 'readOnly', 'resize', '$hasRightControls'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp([
+    'textAlign',
+    'readOnly',
+    'resize',
+    '$hasRightControls',
+  ]),
 })<{
   textAlign?: 'left' | 'center' | 'right';
   readOnly?: boolean;
@@ -66,7 +71,7 @@ export const TextAreaClearButton = styled(ClearButton)`
  * Скелетон textarea, повторяющий размеры реального поля и учитывающий `rows`.
  */
 export const TextAreaSkeleton = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['fullWidth', '$rows'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ fullWidth?: boolean; $rows?: number }>`
   position: relative;
   overflow: hidden;

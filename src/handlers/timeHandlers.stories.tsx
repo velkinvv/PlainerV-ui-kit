@@ -23,7 +23,7 @@ import {
   formatMinutes,
   formatSeconds,
   isValidTime,
-} from './timeHandlers';
+} from '../components/ui/inputs/TimeInput/handlers';
 import { inputFieldStoriesStyles } from '@/handlers/inputFieldStories.styles';
 import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
 import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
@@ -119,7 +119,7 @@ const TimeParserDemo = () => {
 
 // Компонент для демонстрации форматирования времени
 const TimeFormatterDemo = () => {
-  const [time, setTime] = useState(new Date());
+  const [time, _setTime] = useState(new Date());
   const [format, setFormat] = useState('HH:mm');
 
   const formats = ['HH:mm', 'HH:mm:ss', 'HH:mm:ss.SSS', 'hh:mm A', 'HH.mm', 'HH/mm'];

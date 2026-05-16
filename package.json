@@ -1,6 +1,6 @@
 {
   "name": "@velkinvv/plainerv",
-  "version": "0.1.3",
+  "version": "0.1.5",
   "description": "Современная библиотека UI компонентов с поддержкой темизации и TypeScript",
   "private": false,
   "publishConfig": {
@@ -29,8 +29,8 @@
   "scripts": {
     "clean": "npx --yes rimraf dist",
     "start": "PUBLIC_URL=/plainerv npm run dev",
-    "build": "npm run clean && cross-env NODE_ENV=production rollup -c rollup.config.mjs && node ./scripts/verify-package.mjs",
-    "build:dev": "npm run clean && cross-env NODE_ENV=development rollup -c rollup.config.mjs && node ./scripts/verify-package.mjs",
+    "build": "npm run clean && node ./scripts/ensure-ui-table-folder-casing.mjs && cross-env NODE_ENV=production rollup -c rollup.config.mjs && node ./scripts/verify-package.mjs",
+    "build:dev": "npm run clean && node ./scripts/ensure-ui-table-folder-casing.mjs && cross-env NODE_ENV=development rollup -c rollup.config.mjs && node ./scripts/verify-package.mjs",
     "dev": "rollup -c rollup.config.mjs --watch",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
@@ -50,6 +50,8 @@
     "test:coverage": "jest --coverage",
     "test:coverage:check": "jest --coverage --coverageThreshold='{\"global\":{\"branches\":27,\"functions\":28,\"lines\":40,\"statements\":40}}'",
     "analyze": "npm run build && echo Bundle analysis saved to dist/stats.html",
+    "react-doctor": "npx --yes react-doctor@latest . --verbose || exit 0",
+    "react-doctor:strict": "npx --yes react-doctor@latest . --verbose",
     "quality:check": "npm run type-check && npm run lint:check && npm run format:check",
     "quality:fix": "npm run fix-all && npm run type-check",
     "prepack": "npm run build",
@@ -111,7 +113,6 @@
     "@types/jest": "^30.0.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
-    "@types/styled-components": "^5.1.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
     "cross-env": "^7.0.3",

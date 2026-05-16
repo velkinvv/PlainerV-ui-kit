@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Единые тексты для вкладки Storybook Docs по компонентам UI Kit.
  * Сверено с `types/ui.ts`; таблицы и сценарии использования — для разработчиков.
  */
@@ -44,8 +44,8 @@ export const DOC_BUTTON_GROUP = `
 ### Пропсы
 | Проп | Зачем |
 |------|--------|
-| \`orientation\` | horizontal \| vertical. |
-| \`attached\`, \`attachedShape\`, \`size\` | Склейка границ; segment \| pill; размер для радиусов. |
+| \`orientation\` | horizontal | vertical. |
+| \`attached\`, \`attachedShape\`, \`size\` | Склейка границ; segment | pill; размер для радиусов. |
 | \`fullWidth\` | Растянуть группу. |
 | \`selectable\`, \`activeIndex\`, \`defaultActiveIndex\`, \`onActiveIndexChange\` | Контролируемое выделение вкладки-кнопки. |
 | \`activeButtonVariant\`, \`inactiveButtonVariant\` | Стили активной и остальных. |
@@ -66,7 +66,7 @@ export const DOC_LINK = `
 | \`href\` | URL (обязателен). |
 | \`target\`, \`rel\`, \`download\` | Навигация и скачивание; для \`target="_blank"\` безопасный \`rel\` подмешивается в компоненте. |
 
-Текстовый режим: \`textVariant\` — default \| line \| muted.
+Текстовый режим: \`textVariant\` — default | line | muted.
 `.trim();
 
 /** @see InputProps, BaseInputProps */
@@ -77,12 +77,12 @@ export const DOC_INPUT = `
 ### Важные пропсы
 | Проп | Зачем |
 |------|--------|
-| \`variant\` | default \| clear (не selector/date — они у Select/DateInput). |
+| \`variant\` | default | clear (не selector/date — они у Select/DateInput). |
 | \`size\` | Размер контрола (**Size**). |
 | \`label\`, \`error\`, \`success\`, \`helperText\`, \`required\` | Форма и валидация. |
 | \`leftIcon\`, \`rightIcon\` | Иконки. |
 | \`displayClearIcon\`, \`onClearIconClick\`, \`clearIconProps\` | Кнопка очистки. |
-| \`status\` | error \| success \| warning — цвет обводки. |
+| \`status\` | error | success | warning — цвет обводки. |
 | \`readOnly\`, \`fullWidth\`, \`textAlign\` | Поведение и вёрстка. |
 | \`isLoading\`, \`skeleton\` | Индикаторы. |
 | \`tooltip\`, \`tooltipType\`, \`tooltipPosition\` | Подсказка к полю. |
@@ -272,19 +272,113 @@ export const DOC_DROPDOWN_MENU_ITEM = `
 Атомарный пункт: **label**, **description**, **value**, **icon**, правый слот (**shortcut** и др.), **disabled**, **loading**, **tone** (\`danger\` для разрушительных действий).
 `.trim();
 
-/** @see TabsProps */
+/** @see TabsProps, TabItemProps */
 export const DOC_TABS = `
 ### Назначение
-Вкладки: **TabsVariant**, направление (**TabsDirection**), вертикальное положение контента (**TabsVerticalPosition**), активная вкладка (контролируемая или дефолтная), панели через **TabItem**.
+Единый компонент **Tabs**: вкладки с панелями (**TabItem** с **children**) и сегменты **без** панелей (**Tabs.Item** / **TabItem** без **children**). Список вкладок можно задать дочерними узлами или пропом **items** (непустой массив имеет приоритет). Дочерние сегменты автоматически попадают во внутренний трек (**TabItemGroupList**); отдельная обёртка списка не нужна. Атрибуты трека — проп **segmentTrackProps** на корне **Tabs**.
 
-Доступность: связка триггер ↔ панель (**aria-selected**, **aria-controls**).
+- **Варианты**: **TabsVariant.PILL** (скруглённый трек и «капля»); **TabsVariant.MINIMAL**, **TabsVariant.LINE**, **TabsVariant.UNDERLINE** — один тип текстового ряда со скользящей полоской **primary**, различие только в серой базовой линии **borderSecondary**: у **minimal** её нет, у **line** она на всю ширину/высоту трека, у **underline** — только под рядом триггеров (**fit-content**). Если **variant** не задан — **resolveTabsVariant** (горизонтально **pill**, вертикально **minimal**).
+- **filledSegmentTriggers** (на корне **Tabs** / **TabItem.Group**): для **minimal** / **line** / **underline** включает «залитые» сегменты (**primary** на активном), фон трека **backgroundSecondary** и полоску индикатора **2px** (без пропа — **1px** и без заливки у текстовых вариантов).
+- **Направление**: **TabsDirection**, вертикально — **TabsVerticalPosition**.
+
+В режиме **pill** скругление сегментов — **BorderRadiusHandler(theme.borderRadius)**; оболочка трека — \`calc(radius + inset)\`; **overflow: hidden**; под активным сегментом анимированная «капля» (**PillSegmentThumb**). В текстовых вариантах активная отметка — скользящая полоска (**LineUnderlineTrackIndicator**) по нижнему (горизонталь) или правому (вертикаль) краю ряда триггеров.
+
+### Миграция с прежнего API
+| Раньше | Сейчас |
+|--------|--------|
+| **TabsVariant.UNDERLINE**, только текст и **primary**, без серой линии | **TabsVariant.MINIMAL** |
+| Серая линия на весь трек (старое **underline** + базовая линия **FULL**) | **TabsVariant.LINE**, без **filledSegmentTriggers** |
+| Серая линия под вкладками (**ITEMS**) | **TabsVariant.UNDERLINE** |
+| Старый **TabsVariant.LINE** с заливкой сегментов и фоном трека | **TabsVariant.LINE** + **filledSegmentTriggers** |
+
+Удалены пропы **underlineBaseline**, **underlineBaselineWidth** и перечисление **TabsUnderlineBaselineWidth**.
+
+### Когда использовать
+| Сценарий | Как собрать |
+|----------|-------------|
+| Крупные блоки страницы с контентом под каждым заголовком | **Tabs** + **TabItem** с **children** |
+| Фильтр / режим без панели под пунктом | **Tabs** + **Tabs.Item** (или **TabItem** без **children**) |
+| Группа склеенных кнопок (**attached**) | **ButtonGroup** |
+
+### Пример: только сегменты
+\`\`\`tsx
+<Tabs defaultValue="details" onChange={setMode} ariaLabel="Раздел">
+  <Tabs.Item value="overview" label="Обзор" />
+  <Tabs.Item value="details" label="Детали" />
+  <Tabs.Item value="attachments" label="Вложения" />
+</Tabs>
+\`\`\`
+
+Из массива без ручного **map**: проп **items** (**TabsItemDefinition[]**) — при непустом массиве вкладки строятся внутри компонента (эквивалент **Tabs.Item** с теми же полями). Для только подписей без панелей достаточно **TabsSegmentOption** (подмножество полей).
+
+\`\`\`tsx
+const segmentItems: TabsItemDefinition[] = [
+  { value: 'overview', label: 'Обзор' },
+  { value: 'details', label: 'Детали' },
+  { value: 'attachments', label: 'Вложения' },
+];
+<Tabs defaultValue="details" items={segmentItems} ariaLabel="Раздел" />
+\`\`\`
+
+Классический вариант с **map**: \`items.map((row) => <Tabs.Item key={row.value} {...row} />)\` — тип строки для коротких сегментов **TabsSegmentOption**.
+
+### Пример: вкладки с панелями
+\`\`\`tsx
+<Tabs defaultActiveTab="a">
+  <TabItem value="a" label="Раздел A"><PanelA /></TabItem>
+  <TabItem value="b" label="Раздел B"><PanelB /></TabItem>
+</Tabs>
+\`\`\`
+
+### Пропсы корня **Tabs**
+| Проп | Описание |
+|------|----------|
+| \`children\` | **TabItem** / **Tabs.Item**, если **items** пуст или не задан. |
+| \`items\` | Непустой **TabsItemDefinition[]** — вкладки из данных (приоритет над **children** для списка). |
+| \`value\` | Контролируемый активный \`value\`. |
+| \`defaultValue\` | Неконтролируемое начальное \`value\`. |
+| \`defaultActiveTab\` | Алиас **defaultValue** (историческое имя). |
+| \`onChange(activeTab)\` | Смена активного сегмента. |
+| \`direction\` | **horizontal** | **vertical**. |
+| \`tabsPosition\` | При вертикали — табы слева/справа от контента. |
+| \`variant\` | **pill** | **minimal** | **line** | **underline**. |
+| \`filledSegmentTriggers\` | У **minimal** / **line** / **underline**: заливка сегментов и фон трека (**filled**). |
+| \`ariaLabel\` | **aria-label** группы (**role="group"** на корне). |
+| \`segmentTrackProps\` | **className**, **style**, **data-*** для трека; к **className** добавляется **ui-tabs-list**. |
+
+### **Tabs.Item** / **TabItem** (сегмент)
+| Проп | Описание |
+|------|----------|
+| \`value\` | Идентификатор; в \`onChange\`. |
+| \`label\` | Подпись (**ReactNode**). |
+| \`children\` | Опционально: панель контента под вкладкой. |
+| \`disabled\`, \`loading\`, \`skeleton\` | Неактивна; загрузка (**aria-busy**, спиннер); плейсхолдер без клика (**skeleton** имеет приоритет над отображением loading при одновременной передаче). |
+| \`iconStart\`, \`iconEnd\` | Иконки на триггере. |
+| \`badge\` | Счётчик/метка через компонент **Badge** (**DEFAULT**, **SM**). |
+
+### Низкоуровневый трек
+Для особых случаев можно вложить **TabItemGroupList** в **TabItem.Group** и задать свои стили; в типичном API **Tabs** трек создаётся сам.
+
+### Доступность
+- При \`ariaLabel\`: корень с \`role="group"\`.
+- Сегменты: кнопки с \`aria-pressed\`; при **loading** — \`aria-busy\`.
+
+### Контекст
+**TabItemGroupContext** / **useTabItemGroupContext** — для расширений внутри группы.
+
+### Storybook
+**UI Kit/Navigation/Tabs**: вкладки с панелями — **MinimalHorizontal**, **LineHorizontal** (**filledSegmentTriggers**), **TextVariantLineGrayFull**, **TextVariantUnderlineGrayItems**, **WithItemsProp**, **WithItemsPropMinimalAndLoading**, **WithLoadingSkeletonDisabled**.
+
+**UI Kit/Navigation/Tabs/Segments**: только переключатели — **SegmentHorizontalMinimal**, **SegmentHorizontalLine** (filled), **SegmentHorizontalUnderline**, **SegmentVerticalMinimal**, **SegmentVerticalLine** (filled), **SegmentVerticalUnderline**, **SegmentMatrixDirectionAndVariant** и др.
 `.trim();
 
 export const DOC_TAB_ITEM = `
 ### Назначение
-Элемент вкладки: объединяет триггер и панель (**value**, заголовок, **disabled**). Ориентация текста (**TabItemTextOrientation**, **TabItemTextPosition**).
+Элемент вкладки или сегмента: триггер и опциональная панель (**value**, заголовок). Состояния: **disabled**, **loading** (спиннер, блокировка выбора, **aria-busy**), **skeleton** (плейсхолдер без интерактива). Ориентация текста (**TabItemTextOrientation**, **TabItemTextPosition**).
 
-Используется внутри **Tabs**; для групп см. **TabItemGroupList** в модуле вкладок.
+Внутри **Tabs** или **TabItem.Group**: панель через **children** у **TabItem**; только переключатель — **Tabs.Item** без **children**. Альтернатива — проп **items** на **Tabs** / **TabItem.Group** (**TabsItemDefinition[]**, непустой массив заменяет дочерний список вкладок). Трек списка создаётся внутри корня; для атрибутов трека — **segmentTrackProps**; для заливки сегментов в текстовых вариантах — **filledSegmentTriggers** на корне группы.
+
+Вариант оформления (**TabsVariant**: **pill**, **minimal**, **line**, **underline**) и **filledSegmentTriggers** задаются на **Tabs** / **TabItem.Group** и попадают в контекст. У одиночного **TabItem** вне группы можно передать **variant** и **filledSegmentTriggers** для редких случаев (обычно используйте **Tabs**).
 `.trim();
 
 /** @see NavigationMenuProps */
@@ -353,7 +447,7 @@ export const DOC_STEPPER = `
 ### Назначение
 Пошаговый процесс: **variant** — **compact** (кольцо «текущий/всего», заголовок и подзаголовок) или **linear** (цепочка шагов с соединителями).
 
-**appearance** light \| dark; скругления завязаны на **theme.borderRadius**. Для прогресса внутри формы см. **Progress** (\`variant="stepper"\`).
+**appearance** light | dark; скругления завязаны на **theme.borderRadius**. Для прогресса внутри формы см. **Progress** (\`variant="stepper"\`).
 `.trim();
 
 /** @see CalendarProps */
@@ -375,7 +469,7 @@ export const DOC_SPINNER = `
 /** @see SkeletonProps */
 export const DOC_SKELETON = `
 ### Назначение
-Плейсхолдер загрузки: **SkeletonVariant** (text, avatar, button, custom), форма (**shape** rect \| circle), **count** и **gap** для списка, направление группы (**SkeletonGroupDirection**), скорость анимации, **aria-label**.
+Плейсхолдер загрузки: **SkeletonVariant** (text, avatar, button, custom), форма (**shape** rect | circle), **count** и **gap** для списка, направление группы (**SkeletonGroupDirection**), скорость анимации, **aria-label**.
 
 **borderRadius** и размеры задаются числом (px) или CSS-строкой.
 `.trim();
@@ -383,7 +477,7 @@ export const DOC_SKELETON = `
 /** @see DividerProps */
 export const DOC_DIVIDER = `
 ### Назначение
-Разделитель: **orientation** horizontal \| vertical, отступы, цвет из темы.
+Разделитель: **orientation** horizontal | vertical, отступы, цвет из темы.
 `.trim();
 
 /** @see CheckboxProps */
@@ -405,7 +499,7 @@ export const DOC_RADIO_BUTTON = `
 /** @see RadioButtonGroupProps */
 export const DOC_RADIO_BUTTON_GROUP = `
 ### Назначение
-Группа опций: массив значений (**RadioButtonGroupOption**), **orientation** horizontal \| vertical, **value** / **onChange**, **disabled**, **readOnly**, **size**, ошибка (**error**), те же визуальные варианты, что у одиночной **RadioButton**.
+Группа опций: массив значений (**RadioButtonGroupOption**), **orientation** horizontal | vertical, **value** / **onChange**, **disabled**, **readOnly**, **size**, ошибка (**error**), те же визуальные варианты, что у одиночной **RadioButton**.
 `.trim();
 
 /** @see SwitchProps */
@@ -430,7 +524,7 @@ export const DOC_SLIDER = `
 **\`label\`**, **\`additionalLabel\`**, **\`helperText\`**, **\`extraText\`**, **\`error\`**, **\`success\`**, **\`required\`** — как у **Input** / **TextArea**. Подсказка скрывается при error/success; **\`status\`** усиливает цвет helperText.
 
 ### Состояния (**\`status\`**)
-**error** \| **success** \| **warning** — цвет активной полосы и обводка трека. Приоритет: **error** → **success** → **status** (\`resolveSliderAccentKind\`). **disabled** — прежнее затемнение.
+**error** | **success** | **warning** — цвет активной полосы и обводка трека. Приоритет: **error** → **success** → **status** (\`resolveSliderAccentKind\`). **disabled** — прежнее затемнение.
 
 ### Скелетон
 **\`skeleton\`** — шиммер вместо трека; **aria-busy** на контейнере; у range поля «От/До» скрыты.
@@ -452,7 +546,7 @@ export const DOC_BREADCRUMB = `
 /** @see GridProps */
 export const DOC_GRID = `
 ### Назначение
-Адаптивный **CSS Grid**: **GridMode** (fullscreen \| container), колонки и строки по breakpoints (**GridBreakpoint**), зазоры, вложенность областей.
+Адаптивный **CSS Grid**: **GridMode** (fullscreen | container), колонки и строки по breakpoints (**GridBreakpoint**), зазоры, вложенность областей.
 `.trim();
 
 /** @see GridItemProps */

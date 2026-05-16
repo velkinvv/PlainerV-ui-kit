@@ -1,6 +1,11 @@
 import styled, { css } from 'styled-components';
-import type { HintVariant, HintCssMixin, HintAnimationPreset } from '../../../types/ui';
-import { HintPosition, HintAnimationPreset as AnimationPreset } from '../../../types/ui';
+import {
+  HintPosition,
+  HintAnimationPreset as AnimationPreset,
+  type HintVariant,
+  type HintCssMixin,
+  type HintAnimationPreset,
+} from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 import {
   buildHoverPressMotionCss,

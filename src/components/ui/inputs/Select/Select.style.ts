@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { createStyledShouldForwardProp } from '../../../../handlers/styledComponentHandlers';
 import { InputContainer } from '../shared/InputStyles';
 import { buildHoverPressMotionCss } from '../../../../handlers/uiMotionStyleHandlers';
 
@@ -7,7 +8,7 @@ import { buildHoverPressMotionCss } from '../../../../handlers/uiMotionStyleHand
  * @property textAlign - Выравнивание текста внутри поля.
  */
 export const StyledSelect = styled.select.withConfig({
-  shouldForwardProp: (prop) => !['textAlign'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   textAlign?: 'left' | 'center' | 'right';
 }>`
@@ -60,7 +61,7 @@ export const SelectMultiCountBadgeSlot = styled.span`
 `;
 
 export const SelectChevronFlip = styled.span.withConfig({
-  shouldForwardProp: (prop) => prop !== '$isOpen',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $isOpen?: boolean }>`
   display: inline-flex;
   align-items: center;
@@ -76,7 +77,7 @@ export const SelectChevronFlip = styled.span.withConfig({
  * @property $textAlign - Выравнивание ряда чипов / плейсхолдера.
  */
 export const SelectMultiTriggerRoot = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['$disabled', '$textAlign'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   $disabled?: boolean;
   $textAlign?: 'left' | 'center' | 'right';
@@ -109,7 +110,7 @@ export const SelectMultiTriggerRoot = styled.div.withConfig({
  * @property $isPlaceholder - Стиль вторичного текста.
  */
 export const SelectMultiPlaceholder = styled.span.withConfig({
-  shouldForwardProp: (prop) => prop !== '$isPlaceholder',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $isPlaceholder?: boolean }>`
   min-width: 0;
   line-height: 1.25;
@@ -198,7 +199,7 @@ export const SelectMultiChipRemove = styled.button`
  * Атрибут `disabled` — поле `disabled` / `readOnly` / загрузка.
  */
 export const SelectMultiClearAllBtn = styled.button.withConfig({
-  shouldForwardProp: (prop) => prop !== '$compact',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $compact?: boolean }>`
   display: inline-flex;
   align-items: center;
@@ -293,7 +294,7 @@ export const SelectMultiSelectAllFooterBtn = styled.button`
  * @property textAlign - Выравнивание подписи выбранного значения.
  */
 export const SelectTriggerButton = styled.button.withConfig({
-  shouldForwardProp: (prop) => !['textAlign', '$isPlaceholder'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   textAlign?: 'left' | 'center' | 'right';
   /** Пустое состояние с плейсхолдером — цвет текста как у подсказки в макете. */
@@ -330,7 +331,7 @@ export const SelectTriggerButton = styled.button.withConfig({
  * @property $isPlaceholder - Стиль плейсхолдера (пустое значение).
  */
 export const SelectTriggerInput = styled.input.withConfig({
-  shouldForwardProp: (prop) => !['textAlign', '$isPlaceholder'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   textAlign?: 'left' | 'center' | 'right';
   $isPlaceholder?: boolean;

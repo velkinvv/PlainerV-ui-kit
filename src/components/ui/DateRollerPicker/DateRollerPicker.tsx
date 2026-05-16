@@ -1,4 +1,4 @@
-import React, { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useLayoutEffect, useMemo, useRef, type ComponentProps } from 'react';
 import type { DateRollerPickerProps } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 import {
@@ -122,8 +122,12 @@ const RollerColumn = ({
     [disabled, isItemDisabled, items, onCommit, scrollToIndex],
   );
 
+  const dateRollerColumnProps: ComponentProps<typeof DateRollerColumn> = {
+    $size: size,
+  };
+
   return (
-    <DateRollerColumn $size={size}>
+    <DateRollerColumn {...dateRollerColumnProps}>
       <DateRollerLens aria-hidden />
       <DateRollerViewport
         ref={viewportRef}
@@ -223,13 +227,15 @@ export const DateRollerPicker: React.FC<DateRollerPickerProps> = ({
     [isDateDisabled, m, maxDate, minDate, y],
   );
 
+  const dateRollerRootProps: ComponentProps<typeof DateRollerRoot> = {
+    className,
+    $size: size,
+    role: 'group',
+    'aria-label': 'Выбор даты роллерами',
+  };
+
   return (
-    <DateRollerRoot
-      className={className}
-      $size={size}
-      role="group"
-      aria-label="Выбор даты роллерами"
-    >
+    <DateRollerRoot {...dateRollerRootProps}>
       <RollerColumn
         ariaLabel="День"
         items={dayItems}

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { type DefaultTheme } from 'styled-components';
 import type { ProgressProps } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 
@@ -54,7 +54,7 @@ const lightenColor = (color: string, amount: number): string => {
  * @param theme - тема приложения
  * @returns высота в пикселях
  */
-const getProgressHeight = (size: Size | undefined, theme: any): string => {
+const getProgressHeight = (size: Size | undefined, theme: DefaultTheme): string => {
   const sizeKey = size ?? Size.MD;
   return theme.progress.linearSizes[sizeKey].height;
 };
@@ -65,7 +65,7 @@ const getProgressHeight = (size: Size | undefined, theme: any): string => {
  * @param theme - тема приложения
  * @returns размер в пикселях
  */
-export const getCircleSize = (size: Size | undefined, theme: any): number => {
+export const getCircleSize = (size: Size | undefined, theme: DefaultTheme): number => {
   const sizeKey = size ?? Size.MD;
   return theme.progress.circularSizes[sizeKey].size;
 };
@@ -76,7 +76,7 @@ export const getCircleSize = (size: Size | undefined, theme: any): number => {
  * @param theme - тема приложения
  * @returns толщина в пикселях
  */
-export const getCircleThickness = (size: Size | undefined, theme: any): number => {
+export const getCircleThickness = (size: Size | undefined, theme: DefaultTheme): number => {
   const sizeKey = size ?? Size.MD;
   return theme.progress.circularSizes[sizeKey].thickness;
 };
@@ -512,7 +512,7 @@ export const StepperStepCircle = styled.div<{
   $active: boolean;
   $size?: Size;
 }>`
-  width: ${({ $size }) => {
+  width: ${({ $size }: { $size?: Size }) => {
     const sizeMap: Record<Size, string> = {
       [Size.XS]: '24px',
       [Size.SM]: '32px',
@@ -522,7 +522,7 @@ export const StepperStepCircle = styled.div<{
     };
     return $size ? sizeMap[$size] : sizeMap[Size.MD];
   }};
-  height: ${({ $size }) => {
+  height: ${({ $size }: { $size?: Size }) => {
     const sizeMap: Record<Size, string> = {
       [Size.XS]: '24px',
       [Size.SM]: '32px',
@@ -546,7 +546,7 @@ export const StepperStepCircle = styled.div<{
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: ${({ $size }) => {
+  font-size: ${({ $size }: { $size?: Size }) => {
     const sizeMap: Record<Size, string> = {
       [Size.XS]: '10px',
       [Size.SM]: '12px',

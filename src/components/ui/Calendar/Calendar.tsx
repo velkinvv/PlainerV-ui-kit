@@ -1,5 +1,16 @@
-import React, { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
-import type { DropdownMenuItemProps, DropdownMenuItemValue } from '../../../types/ui';
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type ComponentProps,
+} from 'react';
+import type {
+  CalendarProps,
+  DropdownMenuItemProps,
+  DropdownMenuItemValue,
+} from '../../../types/ui';
 import { Size, IconSize } from '../../../types/sizes';
 import { Icon } from '../Icon/Icon';
 import { Dropdown } from '../Dropdown/Dropdown';
@@ -33,7 +44,6 @@ import {
   parseMonthYearKey,
   startOfMonth,
 } from './handlers';
-import type { CalendarProps } from '../../../types/ui';
 import { DateRollerPicker } from '../DateRollerPicker/DateRollerPicker';
 import { CalendarMonthYearSplit } from './CalendarMonthYearSplit';
 
@@ -273,17 +283,19 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
 
     const today = useMemo(() => new Date(), []);
 
+    const calendarRootProps: ComponentProps<typeof CalendarRoot> = {
+      ref,
+      ...rest,
+      className,
+      $size: size,
+      $embedded: embedded,
+      $fullWidth: fullWidth,
+      role: 'group',
+      'aria-label': 'Календарь',
+    };
+
     return (
-      <CalendarRoot
-        ref={ref}
-        {...rest}
-        className={className}
-        $size={size}
-        $embedded={embedded}
-        $fullWidth={fullWidth}
-        role="group"
-        aria-label="Календарь"
-      >
+      <CalendarRoot {...calendarRootProps}>
         {showTitle ? <CalendarTitle $size={size}>Календарь</CalendarTitle> : null}
         {showMonthPicker && monthYearLayout === 'split' ? (
           <CalendarMonthYearSplit

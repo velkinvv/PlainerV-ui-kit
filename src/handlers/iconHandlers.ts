@@ -52,3 +52,32 @@ export const getClearIconSizeForInputField = (fieldSize: Size = Size.SM): IconSi
       return IconSize.MD;
   }
 };
+
+/**
+ * Размер глифа для `leftIcon` / `rightIcon` по размеру поля (совпадает с `sizeMap`).
+ * @param fieldSize — `Size` поля (`Input`, `MultiInput`, `SliderInput` и т.д.)
+ */
+export const getInputSideIconSizeForField = (fieldSize: Size | undefined): IconSize => {
+  switch (fieldSize) {
+    case Size.XS:
+      return IconSize.XS;
+    case Size.SM:
+      return IconSize.SM;
+    case Size.MD:
+      return IconSize.MD;
+    case Size.LG:
+      return IconSize.LG;
+    case Size.XL:
+      return IconSize.XL;
+    default:
+      return IconSize.SM;
+  }
+};
+
+/**
+ * Сторона слота иконки в px: фиксирует габарит, чтобы `IconButton` не раздувал высоту поля.
+ * @param fieldSize — `Size` поля
+ */
+export const getInputSideIconSlotSizePx = (fieldSize: Size = Size.SM): number => {
+  return sizeMap[getInputSideIconSizeForField(fieldSize)];
+};

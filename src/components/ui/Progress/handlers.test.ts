@@ -14,6 +14,7 @@ import {
   getStatusLabelText,
 } from './handlers';
 import type { ProgressStep } from '../../../types/ui';
+import type { DefaultTheme } from 'styled-components';
 
 // Мок темы для тестов (структура как у DefaultTheme: getStatusColor читает theme.progress.colors)
 const mockTheme = {
@@ -33,7 +34,7 @@ const mockTheme = {
       statusError: '#FF5252',
     },
   },
-} as any;
+} as unknown as DefaultTheme;
 
 describe('Progress handlers', () => {
   describe('clampProgress', () => {
@@ -154,7 +155,7 @@ describe('Progress handlers', () => {
     });
 
     it('должен возвращать стандартный цвет прогресса по умолчанию', () => {
-      expect(getStatusColor(undefined, 'loading' as any, mockTheme)).toBe('#68D5F8');
+      expect(getStatusColor(undefined, 'loading', mockTheme)).toBe('#68D5F8');
     });
   });
 

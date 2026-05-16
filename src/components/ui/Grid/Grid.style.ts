@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { createStyledShouldForwardProp } from '../../../handlers/styledComponentHandlers';
 import { type GridProps, GridMode } from '../../../types/ui';
 
 // Утилиты для форматирования значений
@@ -177,7 +178,7 @@ const GRID_STYLE_ONLY_PROPS = new Set([
  * Обертка для Grid компонента
  */
 export const GridWrapper = styled.div.withConfig({
-  shouldForwardProp: (prop) => !GRID_STYLE_ONLY_PROPS.has(prop),
+  shouldForwardProp: createStyledShouldForwardProp([...Array.from(GRID_STYLE_ONLY_PROPS)]),
 })<GridProps>`
   display: grid;
 

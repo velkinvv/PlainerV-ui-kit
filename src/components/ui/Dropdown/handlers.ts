@@ -2,13 +2,14 @@ import type { DropdownTheme } from '../../../types/theme';
 import type { Size } from '../../../types/sizes';
 import { getDropdownItemStyles } from '../../../handlers/dropdownThemeHandlers';
 import type React from 'react';
-import type {
-  DropdownMenuGroup,
-  DropdownMenuItemProps,
-  DropdownPositioningMode,
-  DropdownVirtualScrollConfig,
+import {
+  HintPosition,
+  TooltipPosition,
+  type DropdownMenuGroup,
+  type DropdownMenuItemProps,
+  type DropdownPositioningMode,
+  type DropdownVirtualScrollConfig,
 } from '../../../types/ui';
-import { HintPosition, TooltipPosition } from '../../../types/ui';
 
 /**
  * Вычисляет высоту элемента dropdown из темы
