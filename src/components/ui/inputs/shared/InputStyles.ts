@@ -8,6 +8,7 @@ import {
   GapHandler,
   TransitionHandler,
 } from '../../../../handlers/uiHandlers';
+import { getInputSideIconSlotSizePx } from '../../../../handlers/iconHandlers';
 import { Size } from '../../../../types/sizes';
 
 // ============================================================================
@@ -271,6 +272,12 @@ export const SuccessText = styled(HelperText)`
 // ИКОНКИ И КНОПКИ
 // ============================================================================
 
+/**
+ * Слот для `leftIcon` / `rightIcon`: фиксированный размер по `size` поля.
+ * Уменьшает переданный `IconButton`, чтобы не увеличивать высоту `InputWrapper`.
+ * @property $position - Слева или справа от поля.
+ * @property size - Размер поля (`Size`).
+ */
 export const IconContainer = styled.div.withConfig({
   shouldForwardProp: (prop) => !['$position', 'size'].includes(prop),
 })<{
@@ -280,9 +287,44 @@ export const IconContainer = styled.div.withConfig({
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   color: ${({ theme }) => theme.colors.textSecondary};
   margin: ${({ $position }) => ($position === 'left' ? '0 8px 0 0' : '0 0 0 8px')};
-  flex-shrink: 0;
+
+  ${({ size, theme }) => {
+    const slotPx = getInputSideIconSlotSizePx(size ?? theme.defaultInputSize);
+    return css`
+      width: ${slotPx}px;
+      height: ${slotPx}px;
+      min-width: ${slotPx}px;
+      min-height: ${slotPx}px;
+
+      & button,
+      & .ui-icon-button {
+        width: ${slotPx}px;
+        height: ${slotPx}px;
+        min-width: ${slotPx}px;
+        min-height: ${slotPx}px;
+        padding: 0;
+        box-sizing: border-box;
+        flex-shrink: 0;
+      }
+
+      & > div {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: ${slotPx}px;
+        height: ${slotPx}px;
+        flex-shrink: 0;
+      }
+
+      & svg {
+        max-width: ${slotPx}px;
+        max-height: ${slotPx}px;
+      }
+    `;
+  }}
 `;
 
 export const ClearButton = styled.button`

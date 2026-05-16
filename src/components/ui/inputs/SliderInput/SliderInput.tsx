@@ -13,6 +13,11 @@ import {
   resolveSliderInputSnappedValue,
   resolveSliderInputThumbKeyboardIntent,
   shouldShowSliderInputCharacterCounter,
+  getSliderInputTrackFooterHeightPx,
+  getSliderInputThumbBottomCss,
+  isSliderInputTrackFilledToEnd,
+  SLIDER_INPUT_TRACK_EDGE_INSET_PX,
+  sliderInputThumbLeftCalcCss,
 } from './handlers';
 import { Size } from '../../../../types/sizes';
 import { Icon } from '../../Icon/Icon';
@@ -22,13 +27,11 @@ import { useFormContext } from '../../../../contexts/FormContext';
 import {
   InputContainer,
   Label,
-  InputWrapper,
   StyledInput,
   HelperText,
   ErrorText,
   SuccessText,
   IconContainer,
-  ClearButton,
   LoadingSpinner,
   SkeletonEffect,
   AdditionalLabel,
@@ -37,30 +40,31 @@ import {
   RequiredIndicator,
   shouldShowInputClearButton,
 } from '../shared';
-import {
-  SliderRoot,
-  SliderScaleRow,
-  SliderScaleLabel,
-  SliderTrackWrap,
-  SliderTrackHit,
-  SliderTrackRail,
-  SliderTrackRingWrap,
-  SliderTrackActive,
-  SliderThumb,
-  SliderValuesRow,
-  SliderValueLabel,
-  SliderHiddenInput,
-} from '../../Slider/Slider.style';
+import { SliderScaleLabel, SliderHiddenInput } from '../../Slider/Slider.style';
 import {
   valueToPercent,
   clientXToSliderValue,
   getSliderThumbSizePx,
-  getSliderValueLabelRootPaddingHorizontalPx,
   resolveSliderTrackMetrics,
   resolveSliderAccentKind,
-  sliderThumbLeftCalcCss,
 } from '../../Slider/handlers';
-import { SliderInputNumberSlot, SliderInputRow, SliderInputTrackSlot } from './SliderInput.style';
+import {
+  SliderInputBody,
+  SliderInputClearButton,
+  SliderInputFieldShell,
+  SliderInputMain,
+  SliderInputNumberSlot,
+  SliderInputScaleRow,
+  SliderInputThumb,
+  SliderInputTrackActive,
+  SliderInputTrackFooter,
+  SliderInputTrackHit,
+  SliderInputTrackRail,
+  SliderInputTrackRingWrap,
+  SliderInputTrackStrip,
+  SliderInputTrackWrap,
+  SliderInputValueDisplay,
+} from './SliderInput.style';
 
 /**
  * Слайдер с числовым полем в оболочке `Input`: те же лейблы, рамка, `status`, иконки, тултип, что у текстового поля;
@@ -71,7 +75,7 @@ import { SliderInputNumberSlot, SliderInputRow, SliderInputTrackSlot } from './S
  * @param onChange - Как у `Slider`: новое число после слайдера, ввода или сброса.
  * @param min / max / step - Диапазон и шаг.
  * @param showValueLabel - Подпись под бегунком.
- * @param showScaleLabels - Подписи min / max над треком.
+ * @param showScaleLabels - Подписи min / max под рамкой поля.
  * @param showNumberField - Поле ввода справа.
  * @param numberFieldWidth - Ширина колонки числа.
  * @param numberPlaceholder - Плейсхолдер числового поля.
@@ -164,15 +168,18 @@ export const SliderInput = forwardRef<HTMLInputElement, SliderInputProps>(
     );
 
     const thumbPx = getSliderThumbSizePx(sliderSize);
-    const thumbInsetPx = thumbPx / 2;
+    const trackEdgeInsetPx = SLIDER_INPUT_TRACK_EDGE_INSET_PX;
     const track = useMemo(
       () => resolveSliderTrackMetrics(sliderSize, { trackRailHeightPx, trackActiveHeightPx }),
       [sliderSize, trackRailHeightPx, trackActiveHeightPx],
     );
-    const valueLabelRootPadPx = showValueLabel
-      ? getSliderValueLabelRootPaddingHorizontalPx(thumbPx)
-      : 0;
-
+    const trackLineHeightPx = Math.max(track.railHeightPx, track.activeHeightPx);
+    const trackFooterHeightPx = getSliderInputTrackFooterHeightPx(
+      thumbPx,
+      track.railHeightPx,
+      track.activeHeightPx,
+    );
+    const thumbBottomCss = getSliderInputThumbBottomCss(trackLineHeightPx);
     const setCommittedValue = useCallback(
       (nextRaw: number) => {
         const next = resolveSliderInputSnappedValue(nextRaw, min, max, step);
@@ -190,9 +197,9 @@ export const SliderInput = forwardRef<HTMLInputElement, SliderInputProps>(
         if (!rect?.width) {
           return;
         }
-        setCommittedValue(clientXToSliderValue(clientX, rect, min, max, step, thumbPx));
+        setCommittedValue(clientXToSliderValue(clientX, rect, min, max, step, 0));
       },
-      [max, min, setCommittedValue, step, thumbPx],
+      [max, min, setCommittedValue, step],
     );
 
     const onTrackPointerDown = useCallback(
@@ -393,123 +400,71 @@ export const SliderInput = forwardRef<HTMLInputElement, SliderInputProps>(
       );
     }
 
-    const sliderColumn = (
-      <SliderRoot $fullWidth $valueLabelPadPx={valueLabelRootPadPx}>
-        {name ? (
-          <SliderHiddenInput name={name} value={String(value)} readOnly aria-hidden tabIndex={-1} />
-        ) : null}
-        {showScaleLabels ? (
-          <SliderScaleRow>
-            <SliderScaleLabel>{formatMinLabel(min)}</SliderScaleLabel>
-            <SliderScaleLabel>{formatMaxLabel(max)}</SliderScaleLabel>
-          </SliderScaleRow>
-        ) : null}
-        <SliderTrackRingWrap $accent={accentKind}>
-          <SliderTrackWrap ref={trackRef} $trackWrapHeightPx={track.trackWrapHeightPx}>
-            <SliderTrackHit
-              $thumbInsetPx={thumbInsetPx}
-              $hitHeightPx={track.hitHeightPx}
-              onPointerDown={onTrackPointerDown}
-            />
-            <SliderTrackRail
-              $thumbInsetPx={thumbInsetPx}
+    const trackBlock = (
+      <SliderInputTrackRingWrap $accent={accentKind}>
+        <SliderInputTrackWrap ref={trackRef} $trackWrapHeightPx={trackFooterHeightPx}>
+          <SliderInputTrackHit
+            $thumbInsetPx={trackEdgeInsetPx}
+            $hitHeightPx={track.hitHeightPx}
+            onPointerDown={onTrackPointerDown}
+          />
+          <SliderInputTrackStrip $lineHeightPx={trackLineHeightPx}>
+            <SliderInputTrackRail
+              $thumbInsetPx={trackEdgeInsetPx}
               $railHeightPx={track.railHeightPx}
               aria-hidden
             />
-            <SliderTrackActive
+            <SliderInputTrackActive
               $leftPct={0}
               $widthPct={pct}
-              $thumbInsetPx={thumbInsetPx}
+              $thumbInsetPx={trackEdgeInsetPx}
               $thumbSizePx={thumbPx}
               $activeHeightPx={track.activeHeightPx}
               $accent={accentKind}
+              $fillToEnd={isSliderInputTrackFilledToEnd(pct)}
               aria-hidden
             />
-            <SliderThumb
-              type="button"
-              id={thumbId}
-              $thumbPx={thumbPx}
-              $accent={accentKind}
-              $disabled={disabled || readOnly}
-              disabled={disabled || readOnly}
-              style={{ left: sliderThumbLeftCalcCss(thumbPx, pct) }}
-              aria-valuemin={min}
-              aria-valuemax={max}
-              aria-valuenow={value}
-              aria-valuetext={formatValue(value)}
-              role="slider"
-              tabIndex={disabled || readOnly ? -1 : 0}
-              onPointerDown={onThumbPointerDown}
-              onPointerMove={onThumbPointerMove}
-              onPointerUp={onThumbPointerUp}
-              onPointerCancel={onThumbPointerUp}
-              onKeyDown={onThumbKeyDown}
-              onFocus={() => {
-                setThumbFocused(true);
-                setFieldFocused(true);
-              }}
-              onBlur={() => {
-                setThumbFocused(false);
-                setFieldFocused(false);
-              }}
-            />
-          </SliderTrackWrap>
-        </SliderTrackRingWrap>
-        {showValueLabel ? (
-          <SliderValuesRow aria-hidden={false}>
-            <SliderValueLabel
-              style={{ left: sliderThumbLeftCalcCss(thumbPx, pct) }}
-              $disabled={disabled}
-            >
-              {formatValue(value)}
-            </SliderValueLabel>
-          </SliderValuesRow>
-        ) : null}
-      </SliderRoot>
-    );
-
-    const controlsRow = (
-      <SliderInputRow
-        onFocus={() => setFieldFocused(true)}
-        onBlur={(blurEvent) => {
-          if (!blurEvent.currentTarget.contains(blurEvent.relatedTarget as Node)) {
-            setFieldFocused(false);
-          }
-        }}
-      >
-        <SliderInputTrackSlot>{sliderColumn}</SliderInputTrackSlot>
-        {showNumberField ? (
-          <SliderInputNumberSlot $width={numberFieldWidth}>
-            <StyledInput
-              ref={showNumberField ? ref : undefined}
-              id={numberInputId}
-              type="text"
-              inputMode={allowDecimal ? 'decimal' : 'numeric'}
-              value={numericDraft}
-              onChange={handleNumericChange}
-              onFocus={handleNumericFocus}
-              onBlur={handleNumericBlur}
-              placeholder={numberPlaceholder}
-              disabled={disabled}
-              readOnly={readOnly}
-              required={required}
-              textAlign={textAlign}
-              onCopy={handleNumericCopy}
-              onPaste={handleNumericPaste}
-              form={formContext?.formId}
-              autoComplete="off"
-              maxLength={maxLength}
-              {...rest}
-            />
-          </SliderInputNumberSlot>
-        ) : null}
-      </SliderInputRow>
+          </SliderInputTrackStrip>
+          <SliderInputThumb
+            type="button"
+            id={thumbId}
+            $thumbPx={thumbPx}
+            $accent={accentKind}
+            $disabled={disabled || readOnly}
+            disabled={disabled || readOnly}
+            style={{
+              left: sliderInputThumbLeftCalcCss(thumbPx, pct),
+              bottom: thumbBottomCss,
+            }}
+            aria-valuemin={min}
+            aria-valuemax={max}
+            aria-valuenow={value}
+            aria-valuetext={formatValue(value)}
+            role="slider"
+            tabIndex={disabled || readOnly ? -1 : 0}
+            onPointerDown={onThumbPointerDown}
+            onPointerMove={onThumbPointerMove}
+            onPointerUp={onThumbPointerUp}
+            onPointerCancel={onThumbPointerUp}
+            onKeyDown={onThumbKeyDown}
+            onFocus={() => {
+              setThumbFocused(true);
+              setFieldFocused(true);
+            }}
+            onBlur={() => {
+              setThumbFocused(false);
+              setFieldFocused(false);
+            }}
+          />
+        </SliderInputTrackWrap>
+      </SliderInputTrackRingWrap>
     );
 
     const inputSection = (
-      <InputWrapper
+      <SliderInputFieldShell
         variant={variant}
         size={size}
+        $fieldSize={size}
         error={error}
         success={success}
         status={currentStatus}
@@ -517,34 +472,98 @@ export const SliderInput = forwardRef<HTMLInputElement, SliderInputProps>(
         focused={focused}
         readOnly={readOnly}
         className={className}
+        onFocus={() => setFieldFocused(true)}
+        onBlur={(blurEvent) => {
+          if (!blurEvent.currentTarget.contains(blurEvent.relatedTarget as Node)) {
+            setFieldFocused(false);
+          }
+        }}
       >
-        {leftIcon && (
-          <IconContainer $position="left" size={size}>
-            {leftIcon}
-          </IconContainer>
-        )}
+        <SliderInputBody $fieldSize={size}>
+          {leftIcon ? (
+            <IconContainer $position="left" size={size}>
+              {leftIcon}
+            </IconContainer>
+          ) : null}
 
-        {controlsRow}
+          {!showNumberField && showValueLabel ? (
+            <SliderInputMain>
+              <SliderInputValueDisplay $fieldSize={size} $disabled={disabled}>
+                {formatValue(value)}
+              </SliderInputValueDisplay>
+            </SliderInputMain>
+          ) : null}
 
-        {rightIcon && (
-          <IconContainer $position="right" size={size}>
-            {rightIcon}
-          </IconContainer>
-        )}
+          {showNumberField ? (
+            <SliderInputNumberSlot
+              $width={numberFieldWidth}
+              $grow={fullWidth}
+              $reserveClearSpace={showClearButton}
+            >
+              <StyledInput
+                ref={ref}
+                id={numberInputId}
+                type="text"
+                inputMode={allowDecimal ? 'decimal' : 'numeric'}
+                value={numericDraft}
+                onChange={handleNumericChange}
+                onFocus={handleNumericFocus}
+                onBlur={handleNumericBlur}
+                placeholder={numberPlaceholder}
+                disabled={disabled}
+                readOnly={readOnly}
+                required={required}
+                textAlign={textAlign}
+                onCopy={handleNumericCopy}
+                onPaste={handleNumericPaste}
+                form={formContext?.formId}
+                autoComplete="off"
+                maxLength={maxLength}
+                {...rest}
+              />
+            </SliderInputNumberSlot>
+          ) : null}
 
-        {isLoading ? <LoadingSpinner size={size} /> : null}
+          {rightIcon ? (
+            <IconContainer $position="right" size={size}>
+              {rightIcon}
+            </IconContainer>
+          ) : null}
 
-        {showClearButton ? (
-          <ClearButton onClick={handleClear} type="button">
-            <Icon
-              name="IconExClose"
-              size={getClearIconSizeForInputField(size)}
-              {...clearIconProps}
+          {isLoading ? <LoadingSpinner size={size} /> : null}
+
+          {showClearButton ? (
+            <SliderInputClearButton onClick={handleClear} type="button">
+              <Icon
+                name="IconExClose"
+                size={getClearIconSizeForInputField(size)}
+                {...clearIconProps}
+              />
+            </SliderInputClearButton>
+          ) : null}
+        </SliderInputBody>
+
+        <SliderInputTrackFooter>
+          {name ? (
+            <SliderHiddenInput
+              name={name}
+              value={String(value)}
+              readOnly
+              aria-hidden
+              tabIndex={-1}
             />
-          </ClearButton>
-        ) : null}
-      </InputWrapper>
+          ) : null}
+          {trackBlock}
+        </SliderInputTrackFooter>
+      </SliderInputFieldShell>
     );
+
+    const scaleLabelsRow = showScaleLabels ? (
+      <SliderInputScaleRow>
+        <SliderScaleLabel>{formatMinLabel(min)}</SliderScaleLabel>
+        <SliderScaleLabel>{formatMaxLabel(max)}</SliderScaleLabel>
+      </SliderInputScaleRow>
+    ) : null;
 
     const withOptionalTooltip = tooltip ? (
       tooltipType === 'tooltip' ? (
@@ -576,6 +595,8 @@ export const SliderInput = forwardRef<HTMLInputElement, SliderInputProps>(
         {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
 
         {withOptionalTooltip}
+
+        {scaleLabelsRow}
 
         {error ? <ErrorText>{error}</ErrorText> : null}
         {success ? <SuccessText>Успешно</SuccessText> : null}

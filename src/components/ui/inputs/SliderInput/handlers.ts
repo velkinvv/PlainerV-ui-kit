@@ -1,9 +1,68 @@
+import { InputPaddingHandler } from '../../../../handlers/uiHandlers';
+import { Size } from '../../../../types/sizes';
 import {
   clampSliderValue,
   formatSliderNumberRu,
   snapSliderToStep,
 } from '../../Slider/handlers';
 import { normalizeMultiInputToken } from '../MultiInput/handlers';
+
+/**
+ * Горизонтальный отступ поля `SliderInput` (вторая часть `InputPaddingHandler`).
+ * @param fieldSize - Размер поля из пропсов `size`.
+ */
+export const getSliderInputHorizontalPadding = (fieldSize: Size = Size.MD): string => {
+  const padding = InputPaddingHandler(fieldSize);
+  const parts = padding.trim().split(/\s+/);
+  return parts.length > 1 ? parts[1]! : parts[0]!;
+};
+
+/**
+ * Высота нижней зоны: от низа до верхней точки бегунка при центре на линии трека.
+ * @param thumbPx - Диаметр бегунка.
+ * @param railHeightPx - Толщина серой линии трека.
+ * @param activeHeightPx - Толщина активной (синей) полосы.
+ */
+export const getSliderInputTrackFooterHeightPx = (
+  thumbPx: number,
+  railHeightPx: number,
+  activeHeightPx: number,
+): number => {
+  const lineHeight = Math.max(railHeightPx, activeHeightPx);
+  return Math.ceil(lineHeight / 2 + thumbPx / 2);
+};
+
+/** Трек `SliderInput` на всю ширину рамки (без inset под бегунок). */
+export const SLIDER_INPUT_TRACK_EDGE_INSET_PX = 0;
+
+/**
+ * `left` бегунка по всей ширине нижней грани поля.
+ * @param thumbPx - Диаметр бегунка.
+ * @param percentZeroToHundred - Позиция 0–100.
+ */
+export const sliderInputThumbLeftCalcCss = (
+  thumbPx: number,
+  percentZeroToHundred: number,
+): string => {
+  return `calc((100% - ${thumbPx}px) * ${percentZeroToHundred} / 100)`;
+};
+
+/**
+ * `bottom` бегунка: центр на середине линии трека (`translate(-50%, 50%)` в стилях).
+ * @param trackLineHeightPx - Толщина линии трека (max rail/active).
+ */
+export const getSliderInputThumbBottomCss = (trackLineHeightPx: number): string => {
+  const halfLine = Math.max(1, trackLineHeightPx) / 2;
+  return `${halfLine}px`;
+};
+
+/**
+ * Синяя полоска доходит до правого нижнего скругления рамки.
+ * @param widthPercent - Заполнение трека 0–100.
+ */
+export const isSliderInputTrackFilledToEnd = (widthPercent: number): boolean => {
+  return widthPercent >= 99.5;
+};
 
 /**
  * Нормализованная шкала `SliderInput`: целостный min/max/step.

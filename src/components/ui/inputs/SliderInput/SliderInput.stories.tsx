@@ -33,7 +33,7 @@ const meta: Meta<typeof SliderInput> = {
     },
     showNumberField: { description: 'Поле числа справа от трека' },
     showValueLabel: { description: 'Подпись значения под бегунком' },
-    showScaleLabels: { description: 'Подписи min / max над треком' },
+    showScaleLabels: { description: 'Подписи min / max под рамкой поля' },
   },
 };
 
