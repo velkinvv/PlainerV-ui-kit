@@ -6,7 +6,7 @@
 
 Современная библиотека UI компонентов с поддержкой темизации и TypeScript.
 
-**Текущая версия:** `0.1.7` · ветка [`v_0.1.6`](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.1.6) · React 18+/19 · styled-components 6.x
+**Текущая версия:** `0.1.7` · ветка [`v_0.1.7`](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.1.7) · React 18+/19 · styled-components 6.x
 
 ## 🚀 Возможности
 
@@ -26,7 +26,7 @@
 ```bash
 npm i @velkinvv/plainerv react react-dom styled-components framer-motion
 # или конкретная версия кита:
-npm i @velkinvv/plainerv@0.1.6 react react-dom styled-components framer-motion
+npm i @velkinvv/plainerv@0.1.7 react react-dom styled-components framer-motion
 ```
 
 | Пакет | Диапазон (peer) |
@@ -138,7 +138,7 @@ function MyComponent() {
 
 ## 🎯 Компоненты
 
-**Полный перечень публичных экспортов** — в [документации](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.1.6/documentation/content/docs/ru/web/v_0.1.6/components-catalog.mdx) (на сайте: **Web → v0.1.6 → Справочник компонентов**). Ниже — краткая группировка.
+**Полный перечень публичных экспортов** — в [документации](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.1.7/documentation/content/docs/ru/web/v_0.1.7/components-catalog.mdx) (на сайте: **Web → v0.1.7 → Справочник компонентов**). Ниже — краткая группировка.
 
 ### Кнопки и ссылки
 
@@ -444,6 +444,12 @@ npm run analyze
 
 *Размеры будут обновлены после первой сборки*
 
+## 📋 Что нового в 0.1.7
+
+- **npm:** README отображается на странице пакета (поле `"readme"`, правка `.npmignore`).
+
+Подробности — в [CHANGELOG.md](CHANGELOG.md).
+
 ## 📋 Что нового в 0.1.6
 
 - Устранены все предупреждения ESLint (`lint:fix-all`, 0 warnings).
@@ -452,9 +458,7 @@ npm run analyze
 - **Peer dependencies:** `styled-components`, `framer-motion` вынесены из `dependencies`; остаются только `clsx`, `dayjs`.
 - Подпуть **`@velkinvv/plainerv/vite`** — плагин **`plainervVite()`** (`dedupe`, `optimizeDeps.exclude` кита).
 - Документация по Vite: две копии `styled-components`, ошибка `o2 is not a function`, отличие от миграции **Tabs** `items`.
-- Сборка без предупреждений `@rollup/plugin-typescript` при `@types/react` 19.
-
-Подробности — в [CHANGELOG.md](CHANGELOG.md).
+- Сборка без предупреждений `@rollup/plugin-typescript` при `@types/react` 19`.
 
 ### Экспорты пакета
 
@@ -489,6 +493,6 @@ MIT License - см. [LICENSE](LICENSE) для деталей.
 ## 🔗 Ссылки
 
 - [Репозиторий](https://github.com/velkinvv/PlainerV-ui-kit)
-- [Ветка v0.1.6](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.1.6)
+- [Ветка v0.1.7](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.1.7)
 - [Issues](https://github.com/velkinvv/PlainerV-ui-kit/issues)
 - [Changelog](CHANGELOG.md) · [npm](https://www.npmjs.com/package/@velkinvv/plainerv)
