@@ -1,7 +1,8 @@
 {
   "name": "@velkinvv/plainerv",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Современная библиотека UI компонентов с поддержкой темизации и TypeScript",
+  "readme": "README.md",
   "private": false,
   "publishConfig": {
     "access": "public"

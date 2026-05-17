@@ -6,7 +6,7 @@
 
 Современная библиотека UI компонентов с поддержкой темизации и TypeScript.
 
-**Текущая версия:** `0.1.6` · ветка [`v_0.1.6`](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.1.6) · React 18+/19 · styled-components 6.x
+**Текущая версия:** `0.1.7` · ветка [`v_0.1.6`](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.1.6) · React 18+/19 · styled-components 6.x
 
 ## 🚀 Возможности
 

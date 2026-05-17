@@ -9,46 +9,34 @@
 
 ### Added
 
-- Подпуть **`@velkinvv/plainerv/vite`**: плагин **`plainervVite()`** (`resolve.dedupe`, `optimizeDeps.include` / `exclude`).
-- Тип **`NullableRefObject`** для ref в стиле React 19.
+- Компонент **Tabs**: объединены сценарии вкладок с панелями и сегментированного переключателя (бывший **Switcher**); тип **TabsSegmentOption**, истории **Tabs/Segments**, обновлены **DOC_TABS** и README.
+- Поле **`columns[].format`** у **DataGrid** и тип **`TableCellFormat`**: декларативное отображение ячеек (ссылки через **`Link`**, маски, число, валюта, дата/время, **`renderCell`**). Хелпер **`formatTableCellValue`**, **`TableCellFormatted`**. Скрипты **`npm run react-doctor`** / **`react-doctor:strict`**.
 
 ### Changed
 
-- **Breaking (установка):** `styled-components` и `framer-motion` перенесены в **peerDependencies**; в **dependencies** остались `clsx`, `dayjs`. Потребитель должен установить peer'ы явно.
-- Документация: Vite (две копии styled-components, `o2 is not a function`; перенос `shouldForwardProp` не лечит prebundle).
+- **Tabs** (**breaking**): варианты **pill**, **minimal**, **line**, **underline**; проп **filledSegmentTriggers**; убран **Tabs.List**.
+
+---
+
+## [0.1.7] - 2026-05-17
 
 ### Fixed
 
-- Предупреждения TypeScript при production-сборке Rollup с `@types/react` 19 (ref, Typography, ButtonGroup, TabItem, Modal/Hint/Dropdown).
+- **npm:** README попадает в tarball — убрано `*.md` из `.npmignore`, в `package.json` добавлено `"readme": "README.md"`.
 
 ### Added
 
-- Компонент **Tabs**: объединены сценарии вкладок с панелями и сегментированного переключателя (бывший **Switcher**); тип **TabsSegmentOption**, истории **Tabs/Segments**, обновлены **DOC_TABS** и README.
-- Поле **`columns[].format`** у **DataGrid** и тип **`TableCellFormat`**: декларативное отображение ячеек (ссылки через **`Link`**, маски телефона/счёта/карты/ИНН/СНИЛС, число, валюта, проценты, дата/время, почта `mailto:`, перечисление, булево значение, кастомный **`renderCell`**). Хелпер **`formatTableCellValue`**, константы масок (**`TABLE_CELL_MASK_*`**) и связанные утилиты — в модуле **`tableCellFormat`** (handlers); кэш **`Intl.NumberFormat`** через **`intlFormatCache`**. Компонент **`TableCellFormatted`** для примитивной **`Table`**. Сторис: **DataGrid › Column formats**, **Table › TableCellFormatted**; в корневом **DataGrid.stories** дополнены **`argTypes`** для **`columns`** и **`renderCell`**. Скрипты **`npm run react-doctor`** / **`react-doctor:strict`**; раздел в документации Storybook по **`format`**.
-- Начальная версия библиотеки UI компонентов
-- Компоненты: Button, ButtonGroup, Input, Modal, Dropdown, Card, Badge, Spinner, Skeleton, Divider, Checkbox, RadioButton, Switch, Progress, Avatar, Tooltip, Toast, Snackbar, Pagination, Tabs, Accordion, Menu, FloatingMenu
-- Поддержка темной и светлой темы
-- TypeScript типизация для всех компонентов
-- Хуки: useModal, useToast, useSnackbar, useDebounce, useLocalStorage, useClickOutside, useKeyPress, useMediaQuery, useScrollPosition, useWindowSize
-- Обработчики: dateHandlers, timeHandlers, buttonThemeHandlers
-- Настроена сборка через Rollup (ESM и CJS форматы)
-- Настроен PostCSS для обработки стилей
-- Настроено копирование шрифтов в dist
-- Добавлены базовые тесты для компонентов и хуков
-- Настроен coverage threshold (60%)
-- Поддержка tree-shaking через sideEffects: false
+- Подпуть **`@velkinvv/plainerv/vite`**: плагин **`plainervVite()`**.
+- Тип **`NullableRefObject`** (React 19).
 
 ### Changed
 
-- **Tabs** (**breaking**): варианты **TabsVariant** — **pill**, **minimal**, **line**, **underline** (серая базовая линия: нет / на весь трек / под триггерами). Заливка сегментов и фон трека — проп **filledSegmentTriggers**. Удалены **underlineBaseline**, **underlineBaselineWidth**, тип **TabsUnderlineBaselineWidth**. Без явного **variant** при вертикали по умолчанию **minimal** (не прежний визуал старого **line**). Таблица миграции — в **DOC_TABS** (Storybook «Tabs»).
-- **Tabs**: убран **Tabs.List** — сегменты передаются прямыми детьми **Tabs**, трек создаётся внутри; для стилей/атрибутов трека — **segmentTrackProps**.
-- Версия изменена с 1.0.0 на 0.1.0 (pre-release)
+- **Breaking (установка):** `styled-components` и `framer-motion` в **peerDependencies**; в **dependencies** — `clsx`, `dayjs`.
+- Документация Vite (prebundle, `o2 is not a function`).
 
 ### Fixed
-- Удалены дубликаты файлов (handlers/handlers, hooks/hooks, icons/icons)
-- Обновлены пути к шрифтам для работы в npm пакете
 
-### Security
+- Предупреждения TypeScript при сборке Rollup (`@types/react` 19).
 
 ---
 
@@ -68,7 +56,6 @@
 
 - Версия пакета: **0.1.6**.
 
-> Изменения peer dependencies, `@velkinvv/plainerv/vite` и чистая сборка TS 19 — в **[Unreleased]** до следующего тега npm.
 
 ---
 

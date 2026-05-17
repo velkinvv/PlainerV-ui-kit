@@ -22,10 +22,8 @@ storybook-static/
 __tests__/
 coverage/
 
-# Документация разработки
+# Документация разработки (README.md в корне — в package.json "files", не игнорируем *.md)
 docs/
-*.md
-!README.md
 
 # Временные файлы
 *.log

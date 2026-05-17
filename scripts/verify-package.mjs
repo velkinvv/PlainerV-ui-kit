@@ -104,7 +104,24 @@ async function verifyNoMissingRelativeImports() {
   );
 }
 
+/** README в корне пакета обязателен для npm (страница пакета и поле readme). */
+async function verifyPublishReadme() {
+  const readmePath = path.join(packageRootDirectoryPath, 'README.md');
+  const hasReadmeFile = await fileExists(readmePath);
+
+  if (!hasReadmeFile) {
+    throw new Error('Отсутствует README.md в корне пакета — npm покажет «This package does not have a README»');
+  }
+
+  const readmeContent = await readFile(readmePath, 'utf8');
+
+  if (readmeContent.trim().length < 80) {
+    throw new Error('README.md слишком короткий для публикации на npm');
+  }
+}
+
 async function runPackageVerification() {
+  await verifyPublishReadme();
   await verifyRequiredArtifacts();
   await verifyNoMissingRelativeImports();
   console.log('✅ Проверка package-артефактов пройдена');
