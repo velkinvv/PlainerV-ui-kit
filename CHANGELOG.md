@@ -18,6 +18,14 @@
 
 ---
 
+## [0.1.8] - 2026-05-17
+
+### Fixed
+
+- **`@velkinvv/plainerv/vite`:** в `dist/vite/index.js` реэкспорт с суффиксом `./plainervVite.js` для Node ESM (Windows, `vite.config.ts` — иначе `ERR_MODULE_NOT_FOUND`).
+
+---
+
 ## [0.1.7] - 2026-05-17
 
 ### Fixed

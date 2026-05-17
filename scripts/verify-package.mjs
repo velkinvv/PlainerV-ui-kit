@@ -105,6 +105,24 @@ async function verifyNoMissingRelativeImports() {
 }
 
 /** README в корне пакета обязателен для npm (страница пакета и поле readme). */
+/** Подпуть @velkinvv/plainerv/vite: re-export с расширением .js для Node ESM. */
+async function verifyVitePluginEsmImports() {
+  const viteIndexPath = path.join(distDirectoryPath, 'vite', 'index.js');
+  const hasViteIndexFile = await fileExists(viteIndexPath);
+
+  if (!hasViteIndexFile) {
+    throw new Error('Отсутствует dist/vite/index.js');
+  }
+
+  const viteIndexContent = await readFile(viteIndexPath, 'utf8');
+
+  if (!viteIndexContent.includes("from './plainervVite.js'")) {
+    throw new Error(
+      "dist/vite/index.js должен реэкспортировать из './plainervVite.js' (Node ESM без extensionless imports)",
+    );
+  }
+}
+
 async function verifyPublishReadme() {
   const readmePath = path.join(packageRootDirectoryPath, 'README.md');
   const hasReadmeFile = await fileExists(readmePath);
@@ -122,6 +140,7 @@ async function verifyPublishReadme() {
 
 async function runPackageVerification() {
   await verifyPublishReadme();
+  await verifyVitePluginEsmImports();
   await verifyRequiredArtifacts();
   await verifyNoMissingRelativeImports();
   console.log('✅ Проверка package-артефактов пройдена');
