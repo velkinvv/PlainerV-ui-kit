@@ -44,14 +44,19 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
           return childNode;
         }
 
-        const childProps = (childNode.props ?? {}) as {
+        type SelectableButtonChildProps = {
           onClick?: (event: React.MouseEvent<HTMLElement>) => void;
           variant?: ButtonVariant;
+          'data-active'?: string;
+          'aria-pressed'?: boolean;
         };
+
+        const buttonChild = childNode as React.ReactElement<SelectableButtonChildProps>;
+        const childProps = buttonChild.props ?? {};
         const isActiveButton = childIndex === resolvedActiveButtonIndex;
         const variantForChild = isActiveButton ? activeButtonVariant : inactiveButtonVariant;
 
-        return React.cloneElement(childNode, {
+        return React.cloneElement(buttonChild, {
           ...childProps,
           variant: variantForChild,
           'data-active': isActiveButton ? 'true' : 'false',

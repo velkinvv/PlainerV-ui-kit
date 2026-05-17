@@ -131,7 +131,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
       segment: 'hours' | 'minutes' | 'seconds',
       pickerType?: 'start' | 'end',
     ) => {
-      let ref: React.RefObject<HTMLSpanElement>;
+      let ref: React.RefObject<HTMLSpanElement | null>;
 
       if (range) {
         if (pickerType === 'start') {

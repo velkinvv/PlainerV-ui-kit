@@ -3,6 +3,7 @@ import type { Size, IconSize, ModalSize } from './sizes';
 import type { Target, Transition } from 'framer-motion';
 import type { IconName, icons } from '../icons';
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode, Ref } from 'react';
+import type { NullableRefObject } from './reactRefs';
 
 /**
  * Базовые типы для UI компонентов
@@ -1195,7 +1196,7 @@ export interface ModalProps extends BaseComponentProps {
   /**
    * Элемент, который должен получить фокус при открытии модального окна
    */
-  initialFocusRef?: React.RefObject<HTMLElement>;
+  initialFocusRef?: NullableRefObject;
   /**
    * Предустановленный пресет анимации
    */
@@ -1302,7 +1303,7 @@ export interface DrawerProps extends BaseComponentProps {
   closeOnEscape?: boolean;
   closeOnEscapeKeyDown?: boolean;
   closeOnOutsideClick?: boolean;
-  initialFocusRef?: React.RefObject<HTMLElement>;
+  initialFocusRef?: NullableRefObject;
   initialFocusSelector?: string;
   headerSlot?: React.ReactNode;
   /**

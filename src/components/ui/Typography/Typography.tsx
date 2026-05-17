@@ -5,6 +5,8 @@ import { StyledTypography } from './Typography.style';
  * Варианты типографики
  * Определяет доступные стили для компонента Typography
  */
+type TypographyTagName = keyof React.JSX.IntrinsicElements;
+
 export type TypographyVariant =
   | 'h1'
   | 'h2'
@@ -30,9 +32,9 @@ export interface TypographyProps {
   /** Вариант типографики */
   variant?: TypographyVariant;
   /** HTML тег для рендеринга */
-  as?: keyof JSX.IntrinsicElements;
+  as?: TypographyTagName;
   /** HTML тег для рендеринга (алиас для as) */
-  component?: keyof JSX.IntrinsicElements;
+  component?: TypographyTagName;
   /** Цвет текста */
   color?: string;
   /** Выравнивание текста */
@@ -109,7 +111,7 @@ export const Typography: React.FC<TypographyProps> = ({
   ...props
 }) => {
   // Определяем HTML тег на основе варианта
-  const getTag = (): keyof JSX.IntrinsicElements => {
+  const getTag = (): TypographyTagName => {
     if (as) return as;
     if (component) return component;
 

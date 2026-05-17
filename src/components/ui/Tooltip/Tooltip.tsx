@@ -39,7 +39,7 @@ export const Tooltip: React.FC<TooltipProps> = forwardRef<HTMLDivElement, Toolti
 
     const triggerRef = useRef<HTMLDivElement>(null);
     const tooltipRef = useRef<HTMLDivElement>(null);
-    const timeoutRef = useRef<NodeJS.Timeout>();
+    const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
     const viewportPadding = 8;
     const tooltipOffset = 8;

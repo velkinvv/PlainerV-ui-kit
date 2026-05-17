@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {},
+    "outDir": "./dist/vite",
+    "rootDir": "./src/vite",
+    "moduleResolution": "bundler",
+    "declaration": true,
+    "declarationMap": true
+  },
+  "include": ["src/vite/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

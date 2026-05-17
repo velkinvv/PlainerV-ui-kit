@@ -11,6 +11,8 @@ const requiredArtifactRelativePaths = [
   'styles.css',
   'styles/fonts.css',
   'styles/fonts/montserrat/Montserrat-Regular.ttf',
+  'vite/index.js',
+  'vite/index.d.ts',
 ];
 
 async function fileExists(targetFilePath) {

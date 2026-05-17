@@ -42,6 +42,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(functio
     loading,
     fullWidth,
     rounded,
+    icon,
     className: clsx('ui-icon-button', className),
     onClick,
     ...uiMotion.buttonPress(!(disabled || loading)),

@@ -17,14 +17,75 @@
 - **🎭 Анимации** - Плавные анимации с Framer Motion
 - **🔧 Кастомизация** - Гибкая настройка через пропсы и темы
 - **📚 Storybook** - Интерактивная документация и playground
+- **⚡ Vite** - Плагин `plainervVite()` из `@velkinvv/plainerv/vite` (dedupe, без prebundle кита)
 
 ## 📦 Установка
 
+Пакет объявляет **peer dependencies** — одна копия React, styled-components и Framer Motion в приложении (без дублей runtime).
+
 ```bash
-npm i @velkinvv/plainerv
-# или конкретная версия:
-npm i @velkinvv/plainerv@0.1.6
+npm i @velkinvv/plainerv react react-dom styled-components framer-motion
+# или конкретная версия кита:
+npm i @velkinvv/plainerv@0.1.6 react react-dom styled-components framer-motion
 ```
+
+| Пакет | Диапазон (peer) |
+| --- | --- |
+| `react`, `react-dom` | `^18.0.0 \|\| ^19.0.0` |
+| `styled-components` | `^6.1.0` |
+| `framer-motion` | `^11.0.0` |
+
+`clsx` и `dayjs` ставятся автоматически как зависимости кита — отдельно подключать не нужно.
+
+## ⚡ Vite
+
+### Две копии `styled-components` (типичная ошибка `o2 is not a function`)
+
+Если Vite **пребандлит** `@velkinvv/plainerv` в `optimizeDeps`, в рантайме одновременно живут:
+
+- ESM из `dist/index.esm.js` кита (импорты `styled-components` снаружи);
+- отдельный prebundle-чанк `styled-components` у dev-сервера.
+
+`shouldForwardProp` в минифицированном бандле (например `Le` в `dist`) вызывается с `defaultValidatorFn` из **другой** инстанции → `o2 is not a function`.
+
+Перенос `shouldForwardProp` / хелпера `createStyledShouldForwardProp` «куда‑то ещё» **проблему не снимает**: ломается связка «код из dist + отдельный чанк styled-components», а не сам фильтр пропов.
+
+**Исправление у потребителя:** не пребандлить кит (`optimizeDeps.exclude`) и/или `resolve.dedupe` для `react`, `react-dom`, `styled-components` — см. плагин ниже.
+
+> **Не путать:** проп `items` у **Tabs** (API 0.1.5) — отдельная история миграции, к этой ошибке styled-components не относится.
+
+**Рекомендуется** — плагин из подпути `@velkinvv/plainerv/vite`:
+
+```ts
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
+import { plainervVite } from '@velkinvv/plainerv/vite';
+
+export default defineConfig({
+  plugins: [react(), plainervVite()],
+});
+```
+
+Плагин выставляет `resolve.dedupe` для `react`, `react-dom`, `styled-components`, `optimizeDeps.include: ['styled-components']` и `optimizeDeps.exclude: ['@velkinvv/plainerv']`.
+
+<details>
+<summary>Ручная настройка (без плагина)</summary>
+
+```ts
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  resolve: {
+    dedupe: ['react', 'react-dom', 'styled-components'],
+  },
+  optimizeDeps: {
+    include: ['styled-components'],
+    exclude: ['@velkinvv/plainerv'],
+  },
+});
+```
+
+</details>
 
 ## 📦 Импорт стилей и шрифтов
 
@@ -176,7 +237,7 @@ function Root() {
 Также экспортируются **хуки** (`useModal`, `useLocalStorage`, `useDebounce`, `useClickOutside`, `useKeyPress`, `useMediaQuery`, `useScrollPosition`, `useWindowSize`, `useIsDesktop`, `useNavigationMenuExpand`, `useUiMotionPresets`, …) и **handlers** из `src/handlers/index.ts`:
 
 - дата/время, ссылки, таблица, dropdown, motion, форматирование ячеек (`tableCellFormat`, `formatTableCellValue`);
-- **`createStyledShouldForwardProp`** — фильтр `shouldForwardProp` для styled-components (transient-пропы `$…` и кастомные поля);
+- **`createStyledShouldForwardProp`** — фильтр `shouldForwardProp` для transient-пропов `$…` и кастомных полей (не замена `dedupe` / `optimizeDeps.exclude` при Vite);
 - **`omitMotionConflictingDomHandlers`** — убирает HTML drag-обработчики перед `motion.button` / `motion.a` (совместимость с Framer Motion).
 
 **Storybook:** `Hooks/*`, `Components/Buttons/*`, `Components/Inputs/*`, `Components/Navigation/*`, `Components/Data Display/Table`, `Components/Data Display/DataGrid`, `Components/Surfaces/*`, `Components/Feedback/*`, и др.
@@ -388,8 +449,20 @@ npm run analyze
 - Устранены все предупреждения ESLint (`lint:fix-all`, 0 warnings).
 - Хелпер **`noopHandler`** для stories и тестов.
 - Исправлены типы `DragEvent` в **DataGrid**; уточнена типизация **Hint** и **Progress**.
+- **Peer dependencies:** `styled-components`, `framer-motion` вынесены из `dependencies`; остаются только `clsx`, `dayjs`.
+- Подпуть **`@velkinvv/plainerv/vite`** — плагин **`plainervVite()`** (`dedupe`, `optimizeDeps.exclude` кита).
+- Документация по Vite: две копии `styled-components`, ошибка `o2 is not a function`, отличие от миграции **Tabs** `items`.
+- Сборка без предупреждений `@rollup/plugin-typescript` при `@types/react` 19.
 
 Подробности — в [CHANGELOG.md](CHANGELOG.md).
+
+### Экспорты пакета
+
+| Подпуть | Назначение |
+| --- | --- |
+| `@velkinvv/plainerv` | Компоненты, хуки, тема (ESM/CJS + типы) |
+| `@velkinvv/plainerv/styles` | CSS и шрифты |
+| `@velkinvv/plainerv/vite` | `plainervVite()` для Vite |
 
 ## 📋 Что нового в 0.1.5
 

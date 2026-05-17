@@ -16,7 +16,11 @@
       "require": "./dist/index.cjs.js"
     },
     "./styles": "./dist/styles.css",
-    "./fonts/*": "./dist/styles/fonts/*"
+    "./fonts/*": "./dist/styles/fonts/*",
+    "./vite": {
+      "types": "./dist/vite/index.d.ts",
+      "import": "./dist/vite/index.js"
+    }
   },
   "files": [
     "dist",
@@ -29,8 +33,8 @@
   "scripts": {
     "clean": "npx --yes rimraf dist",
     "start": "PUBLIC_URL=/plainerv npm run dev",
-    "build": "npm run clean && node ./scripts/ensure-ui-table-folder-casing.mjs && cross-env NODE_ENV=production rollup -c rollup.config.mjs && node ./scripts/verify-package.mjs",
-    "build:dev": "npm run clean && node ./scripts/ensure-ui-table-folder-casing.mjs && cross-env NODE_ENV=development rollup -c rollup.config.mjs && node ./scripts/verify-package.mjs",
+    "build": "npm run clean && node ./scripts/ensure-ui-table-folder-casing.mjs && cross-env NODE_ENV=production rollup -c rollup.config.mjs && tsc -p tsconfig.vite.json && node ./scripts/verify-package.mjs",
+    "build:dev": "npm run clean && node ./scripts/ensure-ui-table-folder-casing.mjs && cross-env NODE_ENV=development rollup -c rollup.config.mjs && tsc -p tsconfig.vite.json && node ./scripts/verify-package.mjs",
     "dev": "rollup -c rollup.config.mjs --watch",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
@@ -39,7 +43,7 @@
     "lint:fix-all": "eslint \"{src,apps,libs,test}/**/*.{ts,tsx}\" --fix --cache --max-warnings 0",
     "lint:staged": "lint-staged",
     "fix-all": "npm run format && npm run lint:fix-all",
-    "type-check": "tsc --noEmit",
+    "type-check": "tsc --noEmit && tsc -p tsconfig.vite.json --noEmit",
     "prepare": "husky install",
     "prestorybook": "npx --yes rimraf \"src/components/ui/table_pkg\"",
     "storybook": "storybook dev -p 6006",
@@ -89,10 +93,7 @@
   },
   "dependencies": {
     "clsx": "^2.0.0",
-    "dayjs": "^1.11.13",
-    "framer-motion": "^11.0.0",
-    "react-hook-form": "^7.48.0",
-    "styled-components": "^6.1.0"
+    "dayjs": "^1.11.13"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.0.0",
@@ -111,8 +112,12 @@
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.5.0",
     "@types/jest": "^30.0.0",
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "framer-motion": "^11.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "styled-components": "^6.1.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
     "cross-env": "^7.0.3",
@@ -142,7 +147,15 @@
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
-    "react-dom": "^18.0.0 || ^19.0.0"
+    "react-dom": "^18.0.0 || ^19.0.0",
+    "styled-components": "^6.1.0",
+    "framer-motion": "^11.0.0",
+    "vite": "^5.0.0 || ^6.0.0"
+  },
+  "peerDependenciesMeta": {
+    "vite": {
+      "optional": true
+    }
   },
   "lint-staged": {
     "*.{ts,tsx}": [

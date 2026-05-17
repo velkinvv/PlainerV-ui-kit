@@ -9,6 +9,20 @@
 
 ### Added
 
+- Подпуть **`@velkinvv/plainerv/vite`**: плагин **`plainervVite()`** (`resolve.dedupe`, `optimizeDeps.include` / `exclude`).
+- Тип **`NullableRefObject`** для ref в стиле React 19.
+
+### Changed
+
+- **Breaking (установка):** `styled-components` и `framer-motion` перенесены в **peerDependencies**; в **dependencies** остались `clsx`, `dayjs`. Потребитель должен установить peer'ы явно.
+- Документация: Vite (две копии styled-components, `o2 is not a function`; перенос `shouldForwardProp` не лечит prebundle).
+
+### Fixed
+
+- Предупреждения TypeScript при production-сборке Rollup с `@types/react` 19 (ref, Typography, ButtonGroup, TabItem, Modal/Hint/Dropdown).
+
+### Added
+
 - Компонент **Tabs**: объединены сценарии вкладок с панелями и сегментированного переключателя (бывший **Switcher**); тип **TabsSegmentOption**, истории **Tabs/Segments**, обновлены **DOC_TABS** и README.
 - Поле **`columns[].format`** у **DataGrid** и тип **`TableCellFormat`**: декларативное отображение ячеек (ссылки через **`Link`**, маски телефона/счёта/карты/ИНН/СНИЛС, число, валюта, проценты, дата/время, почта `mailto:`, перечисление, булево значение, кастомный **`renderCell`**). Хелпер **`formatTableCellValue`**, константы масок (**`TABLE_CELL_MASK_*`**) и связанные утилиты — в модуле **`tableCellFormat`** (handlers); кэш **`Intl.NumberFormat`** через **`intlFormatCache`**. Компонент **`TableCellFormatted`** для примитивной **`Table`**. Сторис: **DataGrid › Column formats**, **Table › TableCellFormatted**; в корневом **DataGrid.stories** дополнены **`argTypes`** для **`columns`** и **`renderCell`**. Скрипты **`npm run react-doctor`** / **`react-doctor:strict`**; раздел в документации Storybook по **`format`**.
 - Начальная версия библиотеки UI компонентов
@@ -53,6 +67,8 @@
 ### Changed
 
 - Версия пакета: **0.1.6**.
+
+> Изменения peer dependencies, `@velkinvv/plainerv/vite` и чистая сборка TS 19 — в **[Unreleased]** до следующего тега npm.
 
 ---
 

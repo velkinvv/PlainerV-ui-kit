@@ -2,9 +2,9 @@ import {
   useEffect,
   type Dispatch,
   type MutableRefObject,
-  type RefObject,
   type SetStateAction,
 } from 'react';
+import type { NullableRefObject } from '../../../types/reactRefs';
 import { HintVisibilityTrigger, type HintPosition } from '../../../types/ui';
 import {
   createClickOutsideHandler,
@@ -21,8 +21,8 @@ import {
 export interface UseHintClickOutsideOptions {
   isVisible: boolean;
   visibilityTrigger: HintVisibilityTrigger;
-  triggerRef: RefObject<HTMLDivElement>;
-  hintContentRef: RefObject<HTMLDivElement>;
+  triggerRef: NullableRefObject<HTMLDivElement>;
+  hintContentRef: NullableRefObject<HTMLDivElement>;
   hideHint: () => void;
   hintStateIsVisible: boolean;
 }
@@ -71,7 +71,7 @@ export const useHintClickOutside = ({
  */
 export interface UseHintScrollPositionOptions {
   isVisible: boolean;
-  triggerRef: RefObject<HTMLDivElement>;
+  triggerRef: NullableRefObject<HTMLDivElement>;
   calculatePosition: () => { x: number; y: number; placement: HintPosition };
   setHintState: Dispatch<SetStateAction<HintState>>;
   closeOnScroll: boolean;
@@ -142,7 +142,7 @@ export const useHintScrollPosition = ({
 export interface UseHintControlledStateOptions {
   isOpenValue: boolean | undefined;
   useControlledMode: boolean;
-  triggerRef: RefObject<HTMLDivElement>;
+  triggerRef: NullableRefObject<HTMLDivElement>;
   calculatePosition: () => { x: number; y: number; placement: HintPosition };
   setHintState: Dispatch<SetStateAction<HintState>>;
   isVisibleRef: MutableRefObject<boolean>;

@@ -761,7 +761,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
 
     // Функция для установки фокуса на сегмент
     const focusSegment = (segment: 'day' | 'month' | 'year', pickerType?: 'start' | 'end') => {
-      let ref: React.RefObject<HTMLSpanElement> | null = null;
+      let ref: React.RefObject<HTMLSpanElement | null> | null = null;
 
       if (range && pickerType) {
         if (pickerType === 'start') {

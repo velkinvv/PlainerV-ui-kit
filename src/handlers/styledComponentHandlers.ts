@@ -4,6 +4,10 @@
  * (например `variant`, `loading` на motion-кнопке).
  * Всегда делегирует в `defaultValidatorFn` (как в документации styled-components).
  *
+ * Не устраняет ошибку Vite `o2 is not a function`: при prebundle кита появляются две копии
+ * styled-components (dist + отдельный чанк). Нужны `optimizeDeps.exclude` для кита и/или `resolve.dedupe`
+ * у потребителя (`@velkinvv/plainerv/vite`).
+ *
  * @param customBlockedPropNames - имена пропов компонента, не являющихся атрибутами DOM
  */
 export function createStyledShouldForwardProp(

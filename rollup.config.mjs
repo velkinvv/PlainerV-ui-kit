@@ -9,7 +9,17 @@ import { visualizer } from 'rollup-plugin-visualizer';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-export default {
+const sharedTypeScriptExclude = [
+  '**/*.test.ts',
+  '**/*.test.tsx',
+  '**/*.stories.tsx',
+  '**/*.story.tsx',
+  '**/table/**/tableStoryDemoData.ts',
+  '**/table/**/dataGridStoryDemoData.ts',
+  '**/table/**/dataGridStoryDemoColumns.tsx',
+];
+
+const libraryBundleConfig = {
   input: 'src/index.ts',
   output: [
     {
@@ -25,14 +35,15 @@ export default {
       exports: 'named',
     },
   ],
+  // peer'ы и транзитивные runtime-зависимости не бандлим — в dist остаются import from "react" / "styled-components" и т.д.
   external: [
     'react',
     'react-dom',
+    'react/jsx-runtime',
     'styled-components',
     'framer-motion',
     'dayjs',
     'clsx',
-    'react-hook-form',
   ],
   plugins: [
     peerDepsExternal(),
@@ -44,15 +55,7 @@ export default {
       tsconfig: './tsconfig.json',
       declaration: true,
       declarationDir: './dist',
-      exclude: [
-        '**/*.test.ts',
-        '**/*.test.tsx',
-        '**/*.stories.tsx',
-        '**/*.story.tsx',
-        '**/table/**/tableStoryDemoData.ts',
-        '**/table/**/dataGridStoryDemoData.ts',
-        '**/table/**/dataGridStoryDemoColumns.tsx',
-      ],
+      exclude: [...sharedTypeScriptExclude, 'src/vite/**'],
       rootDir: './src',
     }),
     postcss({
@@ -89,3 +92,5 @@ export default {
     }),
   ].filter(Boolean),
 };
+
+export default libraryBundleConfig;

@@ -499,8 +499,11 @@ export const TabItemGroup: React.FC<TabItemGroupProps> = ({
             </TabItemContent>,
           );
         } else if (child.type === TabItemGroupList) {
+          const tabItemGroupList = child as React.ReactElement<
+            React.ComponentProps<typeof TabItemGroupList>
+          >;
           const listChildren: React.ReactNode[] = [];
-          React.Children.forEach(child.props.children, (listChild) => {
+          React.Children.forEach(tabItemGroupList.props.children, (listChild) => {
             if (React.isValidElement(listChild) && listChild.type === TabItem) {
               const tabItem = listChild as React.ReactElement<TabItemProps>;
               const tabValue = tabItem.props.value;
@@ -536,7 +539,7 @@ export const TabItemGroup: React.FC<TabItemGroupProps> = ({
             }
           });
           otherChildren.push(
-            React.cloneElement(child, {
+            React.cloneElement(tabItemGroupList, {
               key: 'tab-item-group-list',
               $direction: direction,
               $variant: resolvedVariant,
@@ -545,12 +548,15 @@ export const TabItemGroup: React.FC<TabItemGroupProps> = ({
               className: clsx(
                 'ui-tabs-list',
                 segmentTrackProps?.className,
-                (child.props as { className?: string }).className,
+                tabItemGroupList.props.className,
               ),
               children: listChildren,
             } as Partial<React.ComponentProps<typeof TabItemGroupList>>),
           );
-        } else if (child.props?.children) {
+        } else if (
+          React.isValidElement<{ children?: React.ReactNode }>(child) &&
+          child.props.children != null
+        ) {
           processChildren(child.props.children);
         } else {
           otherChildren.push(child);
