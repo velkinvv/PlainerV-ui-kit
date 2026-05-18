@@ -53,8 +53,9 @@ export function collectTabSegmentValues(node: React.ReactNode): string[] {
       return;
     }
 
-    if (childProps.children != null) {
-      values.push(...collectTabSegmentValues(childProps.children));
+    const nestedChildProps = child.props as TabItemLikeProps;
+    if (nestedChildProps.children != null) {
+      values.push(...collectTabSegmentValues(nestedChildProps.children));
     }
   });
 
