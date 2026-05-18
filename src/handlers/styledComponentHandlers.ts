@@ -1,8 +1,12 @@
+import isPropValid from '@emotion/is-prop-valid';
+
 /**
- * Фильтр `shouldForwardProp` для styled-components (React 19).
- * Всегда отфильтровывает transient-пропы (`$…`); дополнительно — перечисленные кастомные поля
+ * Фильтр `shouldForwardProp` для styled-components 6.x (React 19).
+ * Отфильтровывает transient-пропы (`$…`) и перечисленные кастомные поля
  * (например `variant`, `loading` на motion-кнопке).
- * Всегда делегирует в `defaultValidatorFn` (как в документации styled-components).
+ *
+ * В v6 второй аргумент — `target` (имя DOM-тега или компонент), не `defaultValidatorFn` как в v5.
+ * Для DOM используется `@emotion/is-prop-valid`; для компонентов — пропускаем остальные поля.
  *
  * Не устраняет ошибку Vite `o2 is not a function`: при prebundle кита появляются две копии
  * styled-components (dist + отдельный чанк). Нужны `optimizeDeps.exclude` для кита и/или `resolve.dedupe`
@@ -16,13 +20,23 @@ export function createStyledShouldForwardProp(
 ): any {
   const customBlocked = new Set(customBlockedPropNames);
 
-  return (prop: string | number, defaultValidatorFn: (prop: string | number) => boolean) => {
+  return (prop: string | number, targetOrDefaultValidator: unknown) => {
     const propName = String(prop);
     if (propName.startsWith('$') || customBlocked.has(propName)) {
       return false;
     }
 
-    return defaultValidatorFn(prop);
+    // styled-components v5: (prop, defaultValidatorFn)
+    if (typeof targetOrDefaultValidator === 'function') {
+      return targetOrDefaultValidator(prop);
+    }
+
+    // styled-components v6: (prop, target) — target это строка-тег или React-компонент
+    if (typeof targetOrDefaultValidator === 'string') {
+      return isPropValid(propName);
+    }
+
+    return true;
   };
 }
 

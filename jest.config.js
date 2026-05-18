@@ -10,6 +10,9 @@ module.exports = {
     '^react-dom$': '<rootDir>/node_modules/react-dom',
     '^react/jsx-runtime$': '<rootDir>/node_modules/react/jsx-runtime',
     '^react/jsx-dev-runtime$': '<rootDir>/node_modules/react/jsx-dev-runtime',
+    '^styled-components$': '<rootDir>/node_modules/styled-components',
+    '^styled-components/(.*)$': '<rootDir>/node_modules/styled-components/$1',
+    '^framer-motion$': '<rootDir>/node_modules/framer-motion',
   },
   transform: {
     '^.+\\.(ts|tsx)$': 'ts-jest',
