@@ -1,4 +1,6 @@
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import type { TabsDirection } from '@/types/ui';
+import { scrollSegmentTriggerIntoView } from '@/handlers/tabsScrollHandlers';
 import type { PillSegmentMetrics } from './pillSegmentMetricsTypes';
 
 interface UsePillSegmentMetricsParams {
@@ -6,6 +8,10 @@ interface UsePillSegmentMetricsParams {
   enabled: boolean;
   /** value активного сегмента */
   activeSegmentValue: string;
+  /** Прокрутка трека: пересчёт индикатора при scroll и подскролл к активному сегменту */
+  scrollable?: boolean;
+  /** Ось списка (для подскролла) */
+  direction?: TabsDirection;
 }
 
 interface UsePillSegmentMetricsResult {
@@ -24,7 +30,7 @@ interface UsePillSegmentMetricsResult {
 export function usePillSegmentMetrics(
   params: UsePillSegmentMetricsParams,
 ): UsePillSegmentMetricsResult {
-  const { enabled, activeSegmentValue } = params;
+  const { enabled, activeSegmentValue, scrollable = false, direction } = params;
   const trackRootRef = useRef<HTMLDivElement | null>(null);
   const segmentTriggersRef = useRef<Map<string, HTMLElement>>(new Map());
   const [metrics, setMetrics] = useState<PillSegmentMetrics | null>(null);
@@ -98,6 +104,35 @@ export function usePillSegmentMetrics(
       resizeObserver.disconnect();
     };
   }, [enabled, activeSegmentValue, measure]);
+
+  useLayoutEffect(() => {
+    if (!scrollable || !enabled) {
+      return undefined;
+    }
+    const trackRoot = trackRootRef.current;
+    if (!trackRoot) {
+      return undefined;
+    }
+    const handleScroll = () => {
+      measure();
+    };
+    trackRoot.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      trackRoot.removeEventListener('scroll', handleScroll);
+    };
+  }, [scrollable, enabled, measure]);
+
+  useLayoutEffect(() => {
+    if (!scrollable || !direction) {
+      return;
+    }
+    const trackRoot = trackRootRef.current;
+    const activeTrigger = segmentTriggersRef.current.get(activeSegmentValue);
+    if (!trackRoot || !activeTrigger) {
+      return;
+    }
+    scrollSegmentTriggerIntoView(trackRoot, activeTrigger, direction);
+  }, [scrollable, direction, activeSegmentValue]);
 
   return {
     metrics,

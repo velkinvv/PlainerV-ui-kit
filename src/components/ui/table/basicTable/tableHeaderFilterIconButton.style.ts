@@ -1,12 +1,10 @@
 import styled, { css } from 'styled-components';
-import { ButtonVariant } from '@/types/ui';
-import { getButtonVariant } from '@/handlers/buttonThemeHandlers';
 import { createStyledShouldForwardProp } from '@/handlers/styledComponentHandlers';
 import { tableBorderRadiusFromTheme } from './tableThemeRadiusHandlers';
 
 /**
  * Кнопка-иконка фильтра в заголовке таблицы / грида.
- * При `$filterApplied` — заливка `theme.colors.info` и контрастный цвет иконки (как у текста primary-кнопки).
+ * При `$filterApplied` — цвет иконки `theme.colors.info` (залитая воронка через `IconExFilterFilled`), без фона-кружка.
  */
 export const TableHeaderFilterIconButton = styled.button.withConfig({
   shouldForwardProp: createStyledShouldForwardProp(),
@@ -30,13 +28,10 @@ export const TableHeaderFilterIconButton = styled.button.withConfig({
   ${({ theme, $filterApplied }) =>
     $filterApplied &&
     css`
-      background: ${theme.colors.info};
-      color: ${getButtonVariant(theme.buttons, ButtonVariant.PRIMARY).color};
+      color: ${theme.colors.info};
 
       &:hover {
-        background: ${theme.colors.infoHover};
-        color: ${getButtonVariant(theme.buttons, ButtonVariant.PRIMARY).hover?.color ??
-        getButtonVariant(theme.buttons, ButtonVariant.PRIMARY).color};
+        color: ${theme.colors.infoHover};
       }
     `}
 

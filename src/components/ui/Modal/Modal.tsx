@@ -31,6 +31,8 @@ import {
 import { useOverlayVisibility } from '../../../hooks/useOverlayVisibility';
 import { useOverlayPortal } from '../../../hooks/useOverlayPortal';
 import { useOverlayPresentation } from '../../../hooks/useOverlayPresentation';
+import { ModalVariantStatusIcon } from './ModalVariantStatusIcon';
+import { isModalStatusVariant } from './modalStatusIconHandlers';
 
 export const Modal = forwardRef<HTMLDivElement, ModalProps>(
   (
@@ -178,6 +180,16 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
       return [...buttons].sort((a, b) => orderValue(a.placement) - orderValue(b.placement));
     }, [buttons]);
 
+    const resolvedHeaderIcon = useMemo(() => {
+      if (headerIcon) {
+        return headerIcon;
+      }
+      if (isModalStatusVariant(modalVariant)) {
+        return <ModalVariantStatusIcon variant={modalVariant} />;
+      }
+      return null;
+    }, [headerIcon, modalVariant]);
+
     // Обработка завершения анимаций для Storybook
     useEffect(() => {
       if (!isOpen || !modalContainerRef.current) return;
@@ -254,17 +266,15 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
           }}
         >
           {headerSlot ? (
-            <ModalHeader $variant={modalVariant}>{headerSlot}</ModalHeader>
+            <ModalHeader>{headerSlot}</ModalHeader>
           ) : (
-            (title || showCloseButton || headerIcon) && (
-              <ModalHeader $variant={modalVariant}>
+            (title || showCloseButton || resolvedHeaderIcon) && (
+              <ModalHeader>
                 <ModalHeaderTitleWrapper>
-                  {headerIcon && <ModalHeaderIcon>{headerIcon}</ModalHeaderIcon>}
-                  {title && (
-                    <ModalTitle $variant={modalVariant} id={titleId}>
-                      {title}
-                    </ModalTitle>
-                  )}
+                  {resolvedHeaderIcon ? (
+                    <ModalHeaderIcon>{resolvedHeaderIcon}</ModalHeaderIcon>
+                  ) : null}
+                  {title ? <ModalTitle id={titleId}>{title}</ModalTitle> : null}
                 </ModalHeaderTitleWrapper>
                 {showCloseButton && (
                   <CloseButton onClick={onClose} aria-label="Закрыть">

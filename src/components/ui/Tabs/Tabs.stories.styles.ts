@@ -34,4 +34,9 @@ export const tabsStoriesStyles = {
     border: `1px dashed ${lightTheme.colors.border}`,
     padding: '12px',
   } satisfies CSSProperties,
+  /** Узкий контейнер для демонстрации **scrollable** */
+  scrollableTrackHost: {
+    width: '280px',
+    maxWidth: '100%',
+  } satisfies CSSProperties,
 };

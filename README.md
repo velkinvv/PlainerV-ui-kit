@@ -6,7 +6,7 @@
 
 Современная библиотека UI компонентов с поддержкой темизации и TypeScript.
 
-**Текущая версия:** `0.1.8` · ветка [`v_0.1.8`](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.1.8) · React 18+/19 · styled-components 6.x
+**Текущая версия:** `0.1.9` · ветка [`v_0.1.9`](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.1.9) · React 18+/19 · styled-components 6.x
 
 ## 🚀 Возможности
 
@@ -26,7 +26,7 @@
 ```bash
 npm i @velkinvv/plainerv react react-dom styled-components framer-motion
 # или конкретная версия кита:
-npm i @velkinvv/plainerv@0.1.8 react react-dom styled-components framer-motion
+npm i @velkinvv/plainerv@0.1.9 react react-dom styled-components framer-motion
 ```
 
 | Пакет | Диапазон (peer) |
@@ -167,7 +167,7 @@ function MyComponent() {
 
 ## 🎯 Компоненты
 
-**Полный перечень публичных экспортов** — в [документации](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.1.8/documentation/content/docs/ru/web/v_0.1.8/components-catalog.mdx) (на сайте: **Web → v0.1.8 → Справочник компонентов**). Ниже — краткая группировка.
+**Полный перечень публичных экспортов** — в [документации](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.1.9/documentation/content/docs/ru/web/v_0.1.9/components-catalog.mdx) (на сайте: **Web → v0.1.9 → Справочник компонентов**). Ниже — краткая группировка.
 
 ### Кнопки и ссылки
 
@@ -203,7 +203,7 @@ function MyComponent() {
 ### Таблицы и DataGrid
 
 - **TableContainer**, **TableContainerScroll**, **Table**, **TableHead**, **TableBody**, **TableFooter**, **TableRow**, **TableCell**, **TableCellFormatted** (форматирование ячейки без DataGrid), **TablePagination**, **TableSortLabel**, **TableSortChevronIcon** и утилиты (`getTableTotalPages`, `clampTablePageZeroBased`, …).
-- **DataGrid** — расширенная таблица; у колонок можно задать **`format`** (`TableCellFormat`: ссылки, маски, числа, даты и т.д.) или **`render`**; хелпер **`formatTableCellValue`** и константы масок экспортируются из пакета вместе с handlers.
+- **DataGrid** — расширенная таблица; у колонок — **`format`** (`TableCellFormat`) или **`render`**; встроенные кнопки в **`headerToolbar`** (обновление, сброс фильтров, **выгрузка в Excel**); хелперы **`formatTableCellValue`**, **`formatTableCellExportCellValue`**, константы масок.
 - **ColumnFilterPanel** — панель фильтра колонки.
 
 ```tsx
@@ -217,8 +217,48 @@ const columns: DataGridColumn<Row>[] = [
     valueGetter: (row) => row.title,
     format: { type: 'link', href: '/items/{id}' },
   },
+  {
+    field: 'status',
+    headerName: 'Статус',
+    width: 140,
+    format: {
+      type: 'enum',
+      options: [
+        {
+          value: 'active',
+          label: 'Активен',
+          exportStyle: { textColor: '#1B5E20', backgroundColor: '#E8F5E9' },
+        },
+        {
+          value: 'error',
+          label: 'Ошибка',
+          exportStyle: { textColor: '#B71C1C', backgroundColor: '#FFEBEE' },
+        },
+      ],
+    },
+  },
 ];
+
+<DataGrid
+  tableId="orders"
+  columns={columns}
+  rows={pageRows}
+  totalRows={totalCount}
+  paginationModel={paginationModel}
+  onPaginationChange={setPaginationModel}
+  paginationMode="server"
+  excelExport={{
+    dataFetcher: async (skip, take, signal) => {
+      const response = await fetchOrders({ skip, take, signal });
+      return response.items;
+    },
+    fileName: 'Заказы.xls',
+    ignoreFields: ['actions'],
+  }}
+/>;
 ```
+
+**Выгрузка в Excel (`.xls`):** без внешних библиотек (SpreadsheetML). Проп **`excelExport`** с **`dataFetcher(skip, take)`** — кнопка в панели над шапкой, модалка выбора диапазона страниц. Ширины колонок — из **`columns[].width`**. Текст и цвета — из **`format`** (в т.ч. **`exportStyle`** у `enum`), **`exportValueGetter`**, **`exportCellStyle`**, или автоматически из **Tag** / **Pill** в `render`. Сторис **DataGrid › ExcelExport**.
 
 ### Обратная связь
 
@@ -265,7 +305,8 @@ function Root() {
 
 Также экспортируются **хуки** (`useModal`, `useLocalStorage`, `useDebounce`, `useClickOutside`, `useKeyPress`, `useMediaQuery`, `useScrollPosition`, `useWindowSize`, `useIsDesktop`, `useNavigationMenuExpand`, `useUiMotionPresets`, …) и **handlers** из `src/handlers/index.ts`:
 
-- дата/время, ссылки, таблица, dropdown, motion, форматирование ячеек (`tableCellFormat`, `formatTableCellValue`);
+- дата/время, ссылки, таблица, dropdown, motion, форматирование ячеек (`tableCellFormat`, `formatTableCellValue`, `formatTableCellExportCellValue`);
+- выгрузка DataGrid в Excel (`buildDataGridExcelExportSpreadsheet`, `resolveDataGridExportCellValue`, `downloadDataGridExcelSpreadsheetFile`, …);
 - **`createStyledShouldForwardProp`** — фильтр `shouldForwardProp` для transient-пропов `$…` и кастомных полей (не замена `dedupe` / `optimizeDeps.exclude` при Vite);
 - **`omitMotionConflictingDomHandlers`** — убирает HTML drag-обработчики перед `motion.button` / `motion.a` (совместимость с Framer Motion).
 
@@ -473,14 +514,20 @@ npm run analyze
 
 *Размеры будут обновлены после первой сборки*
 
+## 📋 Что нового в 0.1.9
+
+- **`createStyledShouldForwardProp`:** исправлена совместимость со **styled-components 6** (ошибка `defaultValidatorFn is not a function` в Pill, Tag, Breadcrumb и др.).
+- **Сборка / публикация на Windows:** Rollup без `cross-env` (`rollup-with-node-env.mjs`); husky в `prepare` через Node; проверка dev-зависимостей перед `publish:npm` (важно при `NODE_ENV=production` — используйте `npm ci --include=dev`).
+- **DataGrid — выгрузка в Excel:** проп `excelExport`, кнопка в `headerToolbar`, модалка диапазона страниц, SpreadsheetML `.xls` без exceljs; ширины колонок, русские подписи из `format`/`render`, цвета ячеек (`exportStyle`, `exportCellStyle`, Tag/Pill).
+
+Подробности — в [CHANGELOG.md](CHANGELOG.md).
+
 ## 📋 Что нового в 0.1.8
 
 - **`@velkinvv/plainerv/vite`:** ESM-реэкспорт с `./plainervVite.js`; `dedupe` + `optimizeDeps` для `framer-motion`; peer Vite 7.
 - **Стили:** экспорт `./dist/styles.css` как алиас; рекомендуемый импорт `@velkinvv/plainerv/styles`.
 - **Next.js:** директива `use client` в ESM entry; разделы Webpack и App Router в README.
 - **Проверки публикации:** ESM в `dist/vite`, `use client`, exports в `verify-package.mjs`.
-
-Подробности — в [CHANGELOG.md](CHANGELOG.md).
 
 ## 📋 Что нового в 0.1.7
 
@@ -529,6 +576,6 @@ MIT License - см. [LICENSE](LICENSE) для деталей.
 ## 🔗 Ссылки
 
 - [Репозиторий](https://github.com/velkinvv/PlainerV-ui-kit)
-- [Ветка v0.1.8](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.1.8)
+- [Ветка v0.1.9](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.1.9)
 - [Issues](https://github.com/velkinvv/PlainerV-ui-kit/issues)
 - [Changelog](CHANGELOG.md) · [npm](https://www.npmjs.com/package/@velkinvv/plainerv)

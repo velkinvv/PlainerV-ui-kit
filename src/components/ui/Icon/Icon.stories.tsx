@@ -552,6 +552,7 @@ export const PhosphorIcons: Story = {
       'PhosphorArrowDown',
       'PhosphorArrowCounterClockwise',
       'PhosphorArrowClockwise',
+      'PhosphorArrowsClockwise',
       'PhosphorArrowCircleUpRight',
       'PhosphorArrowCircleUpLeft',
       'PhosphorArrowCircleUp',

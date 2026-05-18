@@ -197,7 +197,7 @@ export const DOC_CARD = `
 /** @see ModalProps */
 export const DOC_MODAL = `
 ### Назначение
-Модальное окно (портал): **isOpen**, **onClose**, заголовок/описание/слоты, кнопки (**buttons**), размер, оверлей (**overlayVariant**, blur и т.д.), фокус-ловушка, анимации, вариант (**modalVariant** danger/success/info).
+Модальное окно (портал): **isOpen**, **onClose**, заголовок/описание/слоты, кнопки (**buttons**), размер, оверлей (**overlayVariant**, blur и т.д.), фокус-ловушка, анимации. **modalVariant** (\`danger\` / \`success\` / \`info\`) — цветная иконка статуса слева с подсветкой; заголовок нейтральный.
 
 Подробные флаги закрытия: **closeOnOverlayClick**, **closeOnEscape**, **closeOnOutsideClick**, **unmountOnClose**, **lazy**.
 

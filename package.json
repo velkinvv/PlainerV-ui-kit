@@ -1,6 +1,6 @@
 {
   "name": "@velkinvv/plainerv",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Современная библиотека UI компонентов с поддержкой темизации и TypeScript",
   "readme": "README.md",
   "private": false,
@@ -36,8 +36,8 @@
   "scripts": {
     "clean": "npx --yes rimraf dist",
     "start": "PUBLIC_URL=/plainerv npm run dev",
-    "build": "npm run clean && node ./scripts/ensure-ui-table-folder-casing.mjs && cross-env NODE_ENV=production rollup -c rollup.config.mjs && node ./scripts/prepend-esm-use-client.mjs && tsc -p tsconfig.vite.json && node ./scripts/verify-package.mjs",
-    "build:dev": "npm run clean && node ./scripts/ensure-ui-table-folder-casing.mjs && cross-env NODE_ENV=development rollup -c rollup.config.mjs && node ./scripts/prepend-esm-use-client.mjs && tsc -p tsconfig.vite.json && node ./scripts/verify-package.mjs",
+    "build": "npm run clean && node ./scripts/ensure-ui-table-folder-casing.mjs && node ./scripts/rollup-with-node-env.mjs production && node ./scripts/prepend-esm-use-client.mjs && tsc -p tsconfig.vite.json && node ./scripts/verify-package.mjs",
+    "build:dev": "npm run clean && node ./scripts/ensure-ui-table-folder-casing.mjs && node ./scripts/rollup-with-node-env.mjs development && node ./scripts/prepend-esm-use-client.mjs && tsc -p tsconfig.vite.json && node ./scripts/verify-package.mjs",
     "dev": "rollup -c rollup.config.mjs --watch",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
@@ -47,7 +47,7 @@
     "lint:staged": "lint-staged",
     "fix-all": "npm run format && npm run lint:fix-all",
     "type-check": "tsc --noEmit && tsc -p tsconfig.vite.json --noEmit",
-    "prepare": "husky install",
+    "prepare": "node ./scripts/install-husky.mjs",
     "prestorybook": "npx --yes rimraf \"src/components/ui/table_pkg\"",
     "storybook": "storybook dev -p 6006",
     "prebuild-storybook": "npx --yes rimraf \"src/components/ui/table_pkg\"",
@@ -63,7 +63,7 @@
     "quality:fix": "npm run fix-all && npm run type-check",
     "prepack": "npm run build",
     "prepublishOnly": "npm run build",
-    "publish:npm": "npm run build && npm publish"
+    "publish:npm": "node ./scripts/ensure-dev-dependencies.mjs && npm run build && npm publish"
   },
   "keywords": [
     "react",

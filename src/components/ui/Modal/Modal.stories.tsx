@@ -154,7 +154,8 @@ const meta: Meta<typeof Modal> = {
     modalVariant: {
       control: { type: 'select' },
       options: ['default', 'danger', 'success', 'info'],
-      description: 'Варианты оформления заголовка/иконок модального окна',
+      description:
+        'Статус: цветная иконка слева с подсветкой (danger / success / info); заголовок нейтральный',
       table: {
         type: { summary: 'default, danger, success, info' },
       },
@@ -867,11 +868,9 @@ export const ModalVariants: Story = {
         <Modal
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
-          title="Modal variant"
-          description="Заголовок и иконки подстраиваются под выбранный вариант."
+          title="Modal Window"
+          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
           modalVariant={variant}
-          headerIcon={<Icon name="IconPlainerCheck" size={IconSize.SM} />}
-          contentIcon={<Icon name="IconPlainerPlus" size={IconSize.MD} />}
           buttons={[
             {
               label: 'Close',
@@ -886,7 +885,8 @@ export const ModalVariants: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Пример использования `modalVariant`.',
+        story:
+          'Статус (`danger`, `success`, `info`) — цветная иконка слева с размытой подсветкой; заголовок и фон шапки остаются нейтральными. Своя иконка — через `headerIcon`.',
       },
     },
   },

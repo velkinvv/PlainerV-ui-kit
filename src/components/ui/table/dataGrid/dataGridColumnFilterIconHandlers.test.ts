@@ -18,6 +18,12 @@ describe('mergeDataGridColumnFilterIconProps', () => {
     expect(merged.color).toBe('#336699');
   });
 
+  it('при filterApplied без filterIconPropsApplied подставляет IconExFilterFilled', () => {
+    const merged = mergeDataGridColumnFilterIconProps({ filterApplied: true });
+    expect(merged.name).toBe('IconExFilterFilled');
+    expect(merged.color).toBe('currentColor');
+  });
+
   it('при filterApplied накладывает filterIconPropsApplied', () => {
     const merged = mergeDataGridColumnFilterIconProps({
       filterApplied: true,

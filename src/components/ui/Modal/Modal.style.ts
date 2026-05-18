@@ -12,7 +12,6 @@ import {
  * Оверлей модального окна
  */
 type OverlayCss = string;
-type ModalVariant = 'default' | 'danger' | 'success' | 'info';
 type OverlayVariant = 'default' | 'blur' | 'dark' | 'frosted';
 
 type OverlayVariantTokens = {
@@ -21,15 +20,9 @@ type OverlayVariantTokens = {
   extraCss?: string;
 };
 
-type ModalVariantOverride = {
-  headerBackground?: string;
-  titleColor?: string;
-};
-
 type ModalThemeOverrides = {
   overlayVariants?: Record<string, OverlayVariantTokens>;
   mobilePadding?: string;
-  variants?: Record<string, ModalVariantOverride>;
 };
 
 const getModalThemeOverrides = (theme: DefaultTheme): ModalThemeOverrides =>
@@ -49,34 +42,6 @@ const overlayVariantPresets: Record<OverlayVariant, OverlayVariantTokens> = {
     backdropFilter: 'blur(16px) saturate(160%)',
   },
 };
-
-const modalVariantStyles: Record<
-  ModalVariant,
-  {
-    headerBackground?: string;
-    titleColor?: string;
-  }
-> = {
-  default: {
-    headerBackground: 'transparent',
-    titleColor: '#1f2937',
-  },
-  danger: {
-    headerBackground: '#fef2f2',
-    titleColor: '#b91c1c',
-  },
-  success: {
-    headerBackground: '#ecfdf5',
-    titleColor: '#047857',
-  },
-  info: {
-    headerBackground: '#eff6ff',
-    titleColor: '#1d4ed8',
-  },
-};
-
-const getThemeVariantOverrides = (theme: DefaultTheme, variant: ModalVariant) =>
-  getModalThemeOverrides(theme).variants?.[variant];
 
 const getOverlayVariantFromTheme = (theme: DefaultTheme, variant: OverlayVariant) =>
   getModalThemeOverrides(theme).overlayVariants?.[variant];
@@ -183,36 +148,29 @@ export const ModalContainer = styled(motion.div)<{ size: ModalSize; $mobile?: bo
 /**
  * Заголовок модального окна
  */
-export const ModalHeader = styled.div<{ $variant: ModalVariant }>`
+export const ModalHeader = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 4px;
+  gap: 12px;
   width: 100%;
   margin-bottom: 12px;
+  background: transparent;
 
-  ${({ theme, $variant }: { theme: DefaultTheme; $variant: ModalVariant }) => {
+  ${({ theme }) => {
     const headerStyles = getModalComponentStyles(theme.modals).header;
-    const variant = modalVariantStyles[$variant];
-
-    const background =
-      getThemeVariantOverrides(theme, $variant)?.headerBackground ??
-      variant.headerBackground ??
-      'transparent';
-
     return `
       padding: ${headerStyles.padding};
       border-bottom: ${headerStyles.borderBottom};
-      background: ${background};
     `;
   }}
 `;
 
 export const ModalHeaderTitleWrapper = styled.div`
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: flex-start;
+  gap: 12px;
   flex: 1;
   min-width: 0;
 `;
@@ -221,29 +179,26 @@ export const ModalHeaderIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   font-size: 24px;
 `;
 
 /**
- * Заголовок модального окна
+ * Заголовок модального окна (нейтральный цвет из темы, без окраски по `modalVariant`).
  */
-export const ModalTitle = styled.h2<{ $variant: ModalVariant }>`
+export const ModalTitle = styled.h2`
   margin: 0;
   padding: 0;
   flex: 1;
   display: block;
 
-  ${({ theme, $variant }: { theme: DefaultTheme; $variant: ModalVariant }) => {
+  ${({ theme }) => {
     const titleStyles = getModalComponentStyles(theme.modals).title;
-    const variant = modalVariantStyles[$variant];
-
-    const themeOverrides = getThemeVariantOverrides(theme, $variant);
-    const titleColor = themeOverrides?.titleColor ?? variant.titleColor ?? titleStyles.color;
     return `
       font-size: ${titleStyles.fontSize};
       font-weight: ${titleStyles.fontWeight};
       line-height: ${titleStyles.lineHeight};
-      color: ${titleColor};
+      color: ${titleStyles.color};
     `;
   }}
 `;

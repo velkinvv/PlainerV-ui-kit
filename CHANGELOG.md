@@ -11,10 +11,26 @@
 
 - Компонент **Tabs**: объединены сценарии вкладок с панелями и сегментированного переключателя (бывший **Switcher**); тип **TabsSegmentOption**, истории **Tabs/Segments**, обновлены **DOC_TABS** и README.
 - Поле **`columns[].format`** у **DataGrid** и тип **`TableCellFormat`**: декларативное отображение ячеек (ссылки через **`Link`**, маски, число, валюта, дата/время, **`renderCell`**). Хелпер **`formatTableCellValue`**, **`TableCellFormatted`**. Скрипты **`npm run react-doctor`** / **`react-doctor:strict`**.
+- **DataGrid — выгрузка в Excel (`.xls`)**: проп **`excelExport`** (`dataFetcher`, модалка диапазона страниц, прогресс, отмена). Файл SpreadsheetML без внешних библиотек. Ширины колонок из **`columns[].width`**. Текст для Excel из **`format`** / **`render`** / **`exportValueGetter`**. Цвета ячеек: **`exportStyle`** у `enum`, **`exportCellStyle`**, **`exportValueGetter`**, пресеты для **Tag** / **Pill**. Экспорты: **`buildDataGridExcelExportSpreadsheet`**, **`resolveDataGridExportCellValue`**, **`formatTableCellExportCellValue`**, типы **`DataGridExcelExportConfig`**, **`DataGridExcelExportCellStyle`**, …
 
 ### Changed
 
 - **Tabs** (**breaking**): варианты **pill**, **minimal**, **line**, **underline**; проп **filledSegmentTriggers**; убран **Tabs.List**.
+
+---
+
+## [0.1.9] - 2026-05-18
+
+### Fixed
+
+- **`createStyledShouldForwardProp`:** совместимость со **styled-components 6** (второй аргумент — `target`, не `defaultValidatorFn`); устранены падения в **Pill**, **Tag**, **Breadcrumb** и др.
+- **Сборка на Windows / npm workspaces:** `cross-env` и `.bin` не в PATH — Rollup запускается через **`rollup-with-node-env.mjs`**.
+- **`prepare`:** husky через **`install-husky.mjs`** (вызов `node_modules/husky/bin.js`).
+- **`publish:npm`:** проверка dev-зависимостей при **`NODE_ENV=production`** (`ensure-dev-dependencies.mjs`).
+
+### Added
+
+- Документация **v0.1.9** на сайте; обновлены README и CHANGELOG.
 
 ---
 

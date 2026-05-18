@@ -26,7 +26,7 @@ import { TabItemGroupContext, useTabItemGroupContext } from './TabItemGroupConte
 import { TabItemGroupList } from './TabItemGroupList';
 import { usePillSegmentRegistration } from './pillSegmentTrack/PillSegmentRegistrationContext';
 import { mergeRefs } from '@/handlers/assignRefs';
-import { collectTabSegmentValues } from './collectTabSegmentValues';
+import { collectTabSegmentValues, isTabItemElement } from './collectTabSegmentValues';
 
 export { TabItemGroupContext, useTabItemGroupContext } from './TabItemGroupContext';
 export { TabItemGroupContainer } from './TabItem.style';
@@ -154,6 +154,7 @@ export const TabItem: React.FC<TabItemProps> & {
       direction,
       variant: groupVariant,
       filledSegmentTriggers,
+      scrollable: groupScrollable,
     } = groupContext;
     const isActive = activeTab === value;
 
@@ -184,6 +185,7 @@ export const TabItem: React.FC<TabItemProps> & {
           $direction={direction}
           $variant={groupVariant}
           $filledSegmentTriggers={filledSegmentTriggers}
+          $scrollable={groupScrollable}
           aria-hidden
         >
           <Skeleton
@@ -222,6 +224,7 @@ export const TabItem: React.FC<TabItemProps> & {
         $loading={loading}
         $slidingTrackIndicator={slidingTrackIndicator}
         $filledSegmentTriggers={filledSegmentTriggers}
+        $scrollable={groupScrollable}
         $textOrientation={textOrientation}
         $textPosition={finalTextPosition}
         $hasIcons={!!(iconStart || iconEnd)}
@@ -380,6 +383,8 @@ interface TabItemGroupProps extends Omit<React.HTMLAttributes<HTMLDivElement>, '
    * фон трека **backgroundSecondary**, индикатор **2px**.
    */
   filledSegmentTriggers?: boolean;
+  /** Прокрутка трека при переполнении */
+  scrollable?: boolean;
 }
 
 // Компонент группы TabItem
@@ -397,6 +402,7 @@ export const TabItemGroup: React.FC<TabItemGroupProps> = ({
   ariaLabel,
   segmentTrackProps,
   filledSegmentTriggers,
+  scrollable = false,
   ...props
 }) => {
   const resolvedVariant = resolveTabsVariant(direction, variantProp);
@@ -475,7 +481,12 @@ export const TabItemGroup: React.FC<TabItemGroupProps> = ({
   const processChildren = (node: React.ReactNode): void => {
     React.Children.forEach(node, (child) => {
       if (React.isValidElement(child)) {
-        if (child.type === TabItem) {
+        if (child.type === React.Fragment) {
+          processChildren((child.props as { children?: React.ReactNode }).children);
+          return;
+        }
+
+        if (isTabItemElement(child)) {
           const tabItem = child as React.ReactElement<TabItemProps>;
           const tabValue = tabItem.props.value;
           const isActive = activeTab === tabValue;
@@ -504,7 +515,7 @@ export const TabItemGroup: React.FC<TabItemGroupProps> = ({
           >;
           const listChildren: React.ReactNode[] = [];
           React.Children.forEach(tabItemGroupList.props.children, (listChild) => {
-            if (React.isValidElement(listChild) && listChild.type === TabItem) {
+            if (React.isValidElement(listChild) && isTabItemElement(listChild)) {
               const tabItem = listChild as React.ReactElement<TabItemProps>;
               const tabValue = tabItem.props.value;
               const isActive = activeTab === tabValue;
@@ -544,6 +555,7 @@ export const TabItemGroup: React.FC<TabItemGroupProps> = ({
               $direction: direction,
               $variant: resolvedVariant,
               $filledSegmentTriggers: resolvedFilledSegmentTriggers,
+              $scrollable: scrollable,
               ...segmentTrackProps,
               className: clsx(
                 'ui-tabs-list',
@@ -576,6 +588,7 @@ export const TabItemGroup: React.FC<TabItemGroupProps> = ({
         tabsPosition,
         variant: resolvedVariant,
         filledSegmentTriggers: resolvedFilledSegmentTriggers,
+        scrollable,
       }}
     >
       <TabItemGroupContainer
@@ -596,6 +609,7 @@ export const TabItemGroup: React.FC<TabItemGroupProps> = ({
               $direction={direction}
               $variant={resolvedVariant}
               $filledSegmentTriggers={resolvedFilledSegmentTriggers}
+              $scrollable={scrollable}
               {...segmentTrackProps}
               className={clsx('ui-tabs-list', segmentTrackProps?.className)}
             >

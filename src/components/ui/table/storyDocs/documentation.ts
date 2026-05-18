@@ -160,16 +160,18 @@ export const DATAGRID_DOC = `
 | \`align\` | \`left\` / \`center\` / \`right\`. |
 | \`sortable\` | Показывать сортируемый заголовок; фактическая сортировка — в родителе по \`sortModel\` / \`onSortChange\`. |
 | \`valueGetter\` | Кастомное значение для сортировки/отображения по умолчанию. |
-| \`format\` | Декларативное форматирование ячейки (\`TableCellFormat\`): маски, ссылки, числа, даты и др.; ниже по приоритету, чем \`render\` колонки и \`renderCell\` грида. |
-| \`render\` | Ячейка; имеет приоритет над глобальным \`renderCell\` грида. |
+| \`exportValueGetter\` | Значение для Excel: строка или \`{ text, style? }\` (приоритетнее \`format\` / \`render\`). |
+| \`exportCellStyle\` | \`(row) => { textColor?, backgroundColor?, bold? }\` — стили ячейки в выгрузке; мержится со стилем из \`format.enum.exportStyle\` и Tag/Pill. |
+| \`format\` | Декларативное форматирование ячейки (\`TableCellFormat\`): маски, ссылки, числа, даты и др.; ниже по приоритету, чем \`render\` колонки и \`renderCell\` грида. В Excel используется та же логика подписей (\`enum\`, даты и т.д.). |
+| \`render\` | Ячейка; имеет приоритет над глобальным \`renderCell\` грида. Текст для Excel извлекается из \`children\` / \`label\` узла; для Tag/Pill — пресеты цветов по \`colorVariant\` / \`data-status\`. |
 | \`disableReorder\` | Не таскать колонку при \`enableColumnDrag\`. |
 | \`disableResize\` | Не показывать ручку ширины при \`enableColumnResize\` + \`onColumnResize\`. |
 | \`headerMaxLines\` | Свой лимит строк заголовка; иначе берётся \`headerMaxLines\` у грида. |
 | \`filterable\` | Показать встроенную кнопку-иконку фильтра в заголовке; клик — в \`onColumnFilterClick\` у грида (откройте \`Dropdown\` / панель в родителе). |
-| \`filterApplied\` | При \`true\` у колонки с \`filterable\` иконка с заливкой \`theme.colors.info\` (фильтр уже применён). |
+| \`filterApplied\` | При \`true\` у колонки с \`filterable\` — залитая воронка цветом \`theme.colors.info\` (без фона-кружка). |
 | \`filterIcon\` | Свой \`ReactNode\` внутри кнопки фильтра вместо стандартной \`Icon\`; приоритет над \`filterIconProps\` / \`filterIconPropsApplied\`. |
 | \`filterIconProps\` | Частичные пропсы \`Icon\` (\`name\`, \`size\`, \`color\`, \`className\`) — мерж поверх \`IconExFilter\` + \`IconSize.XS\` + \`currentColor\`. |
-| \`filterIconPropsApplied\` | Доп. мерж поверх \`filterIconProps\`, только если \`filterApplied\` (например другой \`color\` на фоне \`info\`). |
+| \`filterIconPropsApplied\` | Доп. мерж поверх \`filterIconProps\`, только если \`filterApplied\` (по умолчанию — \`IconExFilterFilled\`). |
 | \`filterIconPosition\` | \`leading\` — иконка у левого края ячейки перед заголовком; \`inlineTitle\` — сразу после заголовка без растягивания текста на всю ширину; \`trailing\` — заголовок на всю ширину, иконка у правого края (**по умолчанию**). |
 
 ### Форматирование ячеек (\`columns[].format\`)
@@ -191,10 +193,44 @@ export const DATAGRID_DOC = `
 | \`email\` | Ссылка \`mailto:\` (\`subject\`, \`body\`). |
 | \`link\` | Компонент \`Link\`: \`href\` строкой с \`{поле}\` или функцией от контекста. |
 | \`boolean\` | Подписи для да/нет и неопределённого значения. |
-| \`enum\` | Сопоставление значения с \`ReactNode\`. |
+| \`enum\` | Сопоставление значения с \`ReactNode\`; в массиве \`options\` можно задать \`exportStyle\` (цвета ячейки в Excel). |
 | \`custom\` | Полный контроль: \`renderCell(params)\`. |
 
 Сторис **DataGrid › Column formats › Встроенные форматы колонок**.
+
+### Выгрузка в Excel (\`.xls\`)
+
+Встроенная кнопка в \`headerToolbar\` (без внешних библиотек: файл — **SpreadsheetML**). Включается пропом **\`excelExport\`** у грида; кнопка видна, если передан **\`dataFetcher\`** и \`disabled !== true\`.
+
+| Поле \`excelExport\` | Зачем |
+|----------------------|--------|
+| \`dataFetcher(skip, take, signal?)\` | Постраничная загрузка строк для выгрузки (\`skip\` — смещение, \`take\` — размер порции). |
+| \`fileName\` | Имя файла (по умолчанию \`Выгрузка_<timestamp>.xls\`). |
+| \`sheetName\` | Имя листа (по умолчанию \`Sheet1\`). |
+| \`pageSize\` | Строк на «страницу» при выгрузке; иначе \`paginationModel.pageSize\` или \`10\`. |
+| \`columns\` | Явный список колонок файла; иначе из \`columns\` грида. |
+| \`ignoreFields\` | Поля (\`field\`), не попадающие в автосборку колонок. |
+| \`mapRowData\` | Плоский объект строки для Excel (обходит автоформатирование колонок грида). |
+| \`texts\` | Подписи модалки и кнопки. |
+| \`onSuccess\` / \`onError\` | Колбэки после скачивания / при ошибке. |
+| \`disabled\` | Скрыть кнопку выгрузки. |
+
+**Модалка:** диапазон страниц (с 1), валидация границ, прогресс загрузки, отмена через \`AbortSignal\`.
+
+**Ширина колонок:** из \`columns[].width\` → \`widthPx\` в файле (\`<Column ss:Width="…"/>\`).
+
+**Текст ячеек** (приоритет): \`exportValueGetter\` → \`format\` (\`formatTableCellExportCellValue\`) → текст из \`render\` → сырое поле.
+
+**Цвета ячеек** (\`DataGridExcelExportCellStyle\`: \`textColor\`, \`backgroundColor\`, \`bold\`; цвета \`#RRGGBB\` или \`rgb()\`):
+
+1. \`exportValueGetter: () => ({ text: 'Активен', style: { textColor: '#1B5E20', backgroundColor: '#E8F5E9' } })\`
+2. \`exportCellStyle: (row) => ({ … })\`
+3. \`format: { type: 'enum', options: [{ value, label, exportStyle }] }\`
+4. Автоматически из **Tag** (\`colorVariant\`) и **Pill** (\`status\` / \`data-status\`) в \`render\`
+
+Экспорт из пакета: \`DataGridExcelExportButton\`, \`buildDataGridExcelExportSpreadsheet\`, \`downloadDataGridExcelSpreadsheetFile\`, \`resolveDataGridExportCellValue\`, \`formatTableCellExportCellValue\`, \`formatTableCellValueForExport\`, типы \`DataGridExcelExportConfig\`, \`DataGridExcelExportCellStyle\`, …
+
+Сторис **DataGrid › ExcelExport**.
 
 ### Фильтры колонок (композиция и встроенная иконка)
 
@@ -254,6 +290,15 @@ export const DATAGRID_DOC = `
 | \`headerToolbar\` | Слот над строкой с названиями колонок: первая строка \`thead\`, одна ячейка на всю ширину (\`colSpan\`), удобно для **IconButton** (настройки, экспорт, **история**, **документация** и т.д.). |
 | \`headerToolbarAlign\` | Горизонтальное выравнивание содержимого \`headerToolbar\`: \`start\` | \`end\` (**по умолчанию**) | \`center\` | \`space-between\`. |
 | \`headerToolbarAriaLabel\` | Подпись для доступности (\`aria-label\` у контейнера с \`role="toolbar"\`); если не задана — нейтральная строка по умолчанию в компоненте. |
+| \`refetch\` | Кнопка обновления данных в \`headerToolbar\` (показывается, если передана функция). |
+| \`isRefetching\` | \`loading\` у кнопки \`refetch\`. |
+| \`onResetFilters\` | Кнопка сброса всех фильтров в \`headerToolbar\` (показывается, если передан колбэк). Перед сбросом — модалка подтверждения. |
+| \`hasActiveFilters\` | Подсветка кнопки сброса фильтров (как \`filterApplied\` у колонки); кнопка неактивна, если \`false\`. |
+| \`resetFiltersConfirmTexts\` | Переопределение текстов модалки сброса (\`title\`, \`description\`, \`confirmLabel\`, \`cancelLabel\`). |
+| \`excelExport\` | Выгрузка в Excel: кнопка в \`headerToolbar\`, модалка диапазона страниц, \`dataFetcher\` (см. раздел **Выгрузка в Excel**). |
+| \`rows\` | Не передан или \`[]\` — в \`tbody\` пустое состояние с иконкой лупы; **\`thead\`** с заголовками остаётся. |
+| \`emptyStateTitle\` / \`emptyStateDescription\` | Тексты пустого состояния (по умолчанию «Ничего не найдено» / «По заданным критериям…»). |
+| \`renderEmptyState\` | Полностью свой блок вместо встроенного пустого состояния. |
 
 ### События строк
 
@@ -337,6 +382,8 @@ export const DATAGRID_DOC = `
 | **ColumnResize** | \`enableColumnResize\`, \`onColumnResize\`, \`onColumnResizeStart\`, \`onColumnResizeChange\`, \`onColumnResizeEnd\`, контролируемые \`columns[].width\`. |
 | **HeaderMaxLines** | \`headerMaxLines\` у грида и длинные \`headerName\` (в т.ч. несортируемая колонка). |
 | **HeaderToolbar** | \`headerToolbar\`: панель иконок над заголовками колонок; фон совпадает с шапкой (\`tableHeaderVariant\` / \`tableHeaderBackground\`). |
+| **Панель: обновление и сброс фильтров** (\`HeaderToolbarBuiltinActions\`) | \`refetch\`, \`onResetFilters\`, \`hasActiveFilters\` — встроенные кнопки без ручной сборки \`headerToolbar\`. |
+| **Пустое состояние** (\`EmptyState\`) | \`rows={[]}\` или без \`rows\`: шапка на месте, в теле — иконка лупы и текст. |
 | **Панель иконок: шапка как у карточки** (\`HeaderToolbarCardSurface\`) | \`tableHeaderVariant="card"\` — белый (shell) фон шапки и панели. |
 | **ColumnFilterInHeader** | \`headerName\` с фильтром (\`ColumnFilterPanel\`); дублирует **Table › Column filters › DataGridWithTextFilterInHeader**. |
 | **BuiltinColumnFilterIcon** | \`filterable\` у колонки + \`onColumnFilterClick\`; панель фильтра под таблицей. |
@@ -351,4 +398,5 @@ export const DATAGRID_DOC = `
 | **CustomRowIdentifier** | \`getRowId\` и согласованные \`selectedIds\`. |
 | **GlobalRenderCell** | Глобальный \`renderCell\` без \`render\` у колонки. |
 | **HideFooterFlatCard** | Без подвала пагинации; плоская карточка (\`elevated={false}\`), \`tableAriaLabel\`. |
+| **ExcelExport** | \`excelExport\`: кнопка выгрузки, модалка диапазона страниц, SpreadsheetML \`.xls\`, ширины колонок и цвета статусов. |
 `.trim();

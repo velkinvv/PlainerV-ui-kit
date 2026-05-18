@@ -223,6 +223,10 @@ const meta: Meta<typeof DataGrid> = {
       description:
         'Клик по встроенной иконке фильтра (`columns[].filterable`). Расположение иконки — `columns[].filterIconPosition`: `leading` | `inlineTitle` | `trailing` (по умолчанию).',
     },
+    excelExport: {
+      description:
+        'Выгрузка в Excel (`.xls`, SpreadsheetML): `dataFetcher(skip, take, signal?)`, модалка диапазона страниц, кнопка в `headerToolbar`. Опционально: `fileName`, `sheetName`, `columns`, `ignoreFields`, `pageSize`, `mapRowData`, `texts`, `onSuccess`, `onError`, `disabled`. Сторис **ExcelExport**.',
+    },
   },
   tags: ['autodocs'],
 };
@@ -991,7 +995,9 @@ export const HeaderToolbar: Story = {
                 aria-label="Обновить данные"
                 showTooltip
                 tooltipText="Обновить данные"
-                icon={<Icon name="IconExTimer" size={IconSize.SM} color="currentColor" />}
+                icon={
+                  <Icon name="PhosphorArrowsClockwise" size={IconSize.SM} color="currentColor" />
+                }
                 onClick={fn()}
               />
               <IconButton
@@ -1023,6 +1029,151 @@ export const HeaderToolbar: Story = {
               />
             </>
           }
+        />
+      </DataGridStoryBlock>
+    );
+  },
+};
+
+/**
+ * Встроенные кнопки панели: `refetch`, `onResetFilters` + `hasActiveFilters` (без ручного `headerToolbar`).
+ */
+export const HeaderToolbarBuiltinActions: Story = {
+  name: 'Панель: обновление и сброс фильтров',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Пропсы **`refetch`** (кнопка обновления), **`onResetFilters`** и **`hasActiveFilters`** (кнопка сброса с подсветкой при активных фильтрах; перед сбросом — модалка подтверждения). Слот **`headerToolbar`** можно комбинировать — встроенные кнопки рендерятся первыми.',
+      },
+    },
+  },
+  render: function HeaderToolbarBuiltinActionsStory() {
+    const [sortModel, setSortModel] = useState<DataGridSortModel | null>({
+      field: 'user',
+      direction: 'asc',
+    });
+    const [appliedUserSubstring, setAppliedUserSubstring] = useState('');
+    const [isRefetching, setIsRefetching] = useState(false);
+
+    const filteredRows = useMemo(
+      () =>
+        TABLE_STORY_DEMO_ROWS.filter((row) => {
+          if (!appliedUserSubstring.trim()) {
+            return true;
+          }
+          return row.user
+            .toLocaleLowerCase('ru-RU')
+            .includes(appliedUserSubstring.toLocaleLowerCase('ru-RU'));
+        }),
+      [appliedUserSubstring],
+    );
+
+    const columnsWithFilter = useMemo(
+      () =>
+        demoColumns.map((column) =>
+          column.field === 'user'
+            ? {
+                ...column,
+                filterable: true,
+                filterApplied: Boolean(appliedUserSubstring.trim()),
+              }
+            : column,
+        ),
+      [appliedUserSubstring],
+    );
+
+    const handleRefetch = useCallback(() => {
+      setIsRefetching(true);
+      window.setTimeout(() => {
+        setIsRefetching(false);
+      }, 800);
+    }, []);
+
+    const handleResetFilters = useCallback(() => {
+      setAppliedUserSubstring('');
+    }, []);
+
+    return (
+      <DataGridStoryBlock>
+        <DataGridStoryHint>
+          «Обновить» — `refetch` / `isRefetching`. «Сброс фильтров» — `onResetFilters` (сначала
+          модалка подтверждения); активна при `hasActiveFilters`. Фильтр по колонке «Пользователь» —
+          через `ColumnFilterPanel` ниже (в приложении — Dropdown у иконки в шапке).
+        </DataGridStoryHint>
+        <DataGrid<DataGridStoryDemoRow>
+          tableId="story-data-grid-header-toolbar-builtin"
+          columns={columnsWithFilter}
+          rows={filteredRows}
+          totalRows={filteredRows.length}
+          sortModel={sortModel}
+          onSortChange={setSortModel}
+          size={Size.MD}
+          refetch={handleRefetch}
+          isRefetching={isRefetching}
+          hasActiveFilters={Boolean(appliedUserSubstring.trim())}
+          onResetFilters={handleResetFilters}
+          onColumnFilterClick={({ field }) => {
+            if (field === 'user') {
+              const nextValue = window.prompt(
+                'Подстрока в имени пользователя',
+                appliedUserSubstring,
+              );
+              if (nextValue != null) {
+                setAppliedUserSubstring(nextValue);
+              }
+            }
+          }}
+          headerToolbar={
+            <IconButton
+              variant={ButtonVariant.GHOST}
+              size={Size.SM}
+              aria-label="Экспорт"
+              showTooltip
+              tooltipText="Экспорт"
+              icon={<Icon name="IconExDocument2" size={IconSize.SM} color="currentColor" />}
+              onClick={fn()}
+            />
+          }
+        />
+      </DataGridStoryBlock>
+    );
+  },
+};
+
+/** Пустой `rows` или отсутствие данных: шапка колонок на месте, в теле — иконка лупы и текст. */
+export const EmptyState: Story = {
+  name: 'Пустое состояние',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Если `rows` не передан или пустой массив, в `tbody` показывается встроенное пустое состояние (`IconExSearch`, тексты по умолчанию). Заголовки и `headerToolbar` остаются. При `isLoading` — оверлей загрузки поверх.',
+      },
+    },
+  },
+  render: () => {
+    const [sortModel, setSortModel] = useState<DataGridSortModel | null>({
+      field: 'user',
+      direction: 'asc',
+    });
+
+    return (
+      <DataGridStoryBlock>
+        <DataGridStoryHint>
+          Пример с фильтром без совпадений: колонки и сортировка работают, строк данных нет.
+        </DataGridStoryHint>
+        <DataGrid<DataGridStoryDemoRow>
+          tableId="story-data-grid-empty-state"
+          columns={demoColumns}
+          rows={[]}
+          totalRows={0}
+          sortModel={sortModel}
+          onSortChange={setSortModel}
+          size={Size.MD}
+          hasActiveFilters
+          onResetFilters={fn()}
+          refetch={fn()}
         />
       </DataGridStoryBlock>
     );
@@ -1117,7 +1268,7 @@ export const BuiltinColumnFilterIcon: Story = {
     docs: {
       description: {
         story:
-          'Колонка **Пользователь** с `filterable: true`. После «Применить» у колонки выставляется `filterApplied: true` — иконка с заливкой `theme.colors.info`. Клик по иконке вызывает `onColumnFilterClick({ field, nativeEvent })`; здесь под таблицей показывается `ColumnFilterPanel` (в приложении чаще — `Dropdown` с порталом у курсора).',
+          'Колонка **Пользователь** с `filterable: true`. После «Применить» у колонки выставляется `filterApplied: true` — залитая воронка `theme.colors.info`. Клик по иконке вызывает `onColumnFilterClick({ field, nativeEvent })`; здесь под таблицей показывается `ColumnFilterPanel` (в приложении чаще — `Dropdown` с порталом у курсора).',
       },
     },
   },
@@ -1288,7 +1439,7 @@ export const FilterIconCustomization: Story = {
     docs: {
       description: {
         story:
-          'Колонка **Пользователь** с `filterIconProps` (`IconExFilter2`, цвет по умолчанию `currentColor`) и `filterIconPropsApplied` (белый `color` на заливке `info` после «Применить»). Альтернатива: полностью свой узел в `filterIcon`.',
+          'Колонка **Пользователь** с `filterIconProps` (`IconExFilter2`, `currentColor`) и `filterIconPropsApplied` (цвет `info` после «Применить»). Альтернатива: полностью свой узел в `filterIcon`.',
       },
     },
   },
@@ -1321,7 +1472,7 @@ export const FilterIconCustomization: Story = {
                 filterable: true,
                 filterApplied: Boolean(appliedUserSubstring?.trim()),
                 filterIconProps: { name: 'IconExFilter2' as const },
-                filterIconPropsApplied: { color: lightTheme.colors.backgroundSecondary },
+                filterIconPropsApplied: { color: lightTheme.colors.info },
               }
             : column,
         ),
@@ -1331,7 +1482,7 @@ export const FilterIconCustomization: Story = {
     return (
       <DataGridStoryBlock>
         <DataGridStoryHint>
-          Иконка по умолчанию другая; после применения фильтра — белая на синей плашке. Можно задать{' '}
+          Иконка по умолчанию другая; после применения фильтра — синий цвет `info`. Можно задать{' '}
           <code>filterIcon</code> с любым <code>ReactNode</code> (например <code>Icon</code>{' '}
           вручную).
         </DataGridStoryHint>
@@ -1718,6 +1869,58 @@ export const GlobalRenderCell: Story = {
             return '—';
           }
           return String(renderParams.value);
+        }}
+        size={Size.MD}
+      />
+    );
+  },
+};
+
+/** Выгрузка в Excel (.xls) через `excelExport` — кнопка в `headerToolbar` и модалка диапазона страниц. */
+export const ExcelExport: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Передайте `excelExport.dataFetcher(skip, take)` для постраничной загрузки и скачивания SpreadsheetML без внешних библиотек. Колонки и ширины берутся из `columns[].width` (или `excelExport.columns` с `widthPx` / `ignoreFields`).',
+      },
+    },
+  },
+  render: () => {
+    const allRows = TABLE_STORY_DEMO_ROWS;
+    const [paginationModel, setPaginationModel] = useState<DataGridPaginationModel>({
+      page: 0,
+      pageSize: 5,
+    });
+
+    const exportDemoColumns: DataGridColumn<DataGridStoryDemoRow>[] = demoColumns
+      .slice(0, 4)
+      .map((column, index) => ({
+        ...column,
+        width: [120, 220, 96, 180][index] ?? column.width,
+      }));
+
+    return (
+      <DataGrid<DataGridStoryDemoRow>
+        tableId="story-data-grid-excel-export"
+        columns={exportDemoColumns}
+        rows={allRows.slice(
+          paginationModel.page * paginationModel.pageSize,
+          paginationModel.page * paginationModel.pageSize + paginationModel.pageSize,
+        )}
+        totalRows={allRows.length}
+        paginationModel={paginationModel}
+        onPaginationChange={setPaginationModel}
+        paginationMode="server"
+        excelExport={{
+          dataFetcher: async (skip, take) => {
+            await new Promise((resolve) => {
+              setTimeout(resolve, 200);
+            });
+            return allRows.slice(skip, skip + take);
+          },
+          fileName: 'demo-выгрузка.xls',
+          sheetName: 'Демо',
         }}
         size={Size.MD}
       />

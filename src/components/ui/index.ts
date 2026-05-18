@@ -242,9 +242,30 @@ export type {
   DataGridExpandedRowDataStatus,
   DataGridExpandedRowRenderContext,
   DataGridExpandedRowChangeParams,
+  DataGridExcelExportConfig,
+  DataGridExcelExportColumn,
+  DataGridExcelExportDataFetcher,
+  DataGridExcelExportMapRowData,
+  DataGridExcelExportProgress,
+  DataGridExcelExportTexts,
+  DataGridExcelExportCellStyle,
+  DataGridExcelExportCellValue,
+  DataGridExcelExportCellValueInput,
   ColumnFilterPanelProps,
   ColumnFilterPanelPresentation,
 } from '@/types/ui';
+export {
+  DataGridExcelExportButton,
+  convertDataGridColumnsToExportColumns,
+  buildDataGridExcelExportSpreadsheet,
+  downloadDataGridExcelSpreadsheetFile,
+  validateDataGridExcelExportPageRange,
+  resolveDataGridExportCellText,
+} from './table';
+export {
+  formatTableCellValueForExport,
+  reactNodeToExportPlainText,
+} from '@/handlers/tableCellFormat';
 
 export { ColumnFilterPanel } from './table';
 

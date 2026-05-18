@@ -49,16 +49,39 @@ export const TabUnderlineBaselineTrackInner = styled.div<{ $direction: TabsDirec
     $direction === TabsDirection.VERTICAL ? `1px solid ${theme.colors.borderSecondary}` : 'none'};
 `;
 
+/** Стили полосы прокрутки трека вкладок */
+const tabsTrackScrollbarCss = css`
+  scrollbar-width: thin;
+  scrollbar-color: ${({ theme }) =>
+    `${theme.colors.borderSecondary} ${theme.colors.backgroundTertiary}`};
+
+  &::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: ${({ theme }) => theme.colors.borderSecondary};
+    border-radius: 999px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+`;
+
 /**
  * Список триггеров вкладок
  * @property $direction — горизонтальный или вертикальный ряд сегментов
  * @property $variant — **pill** или текстовый (**minimal** / **line** / **underline**)
  * @property $filledSegmentTriggers — фон трека и «залитые» сегменты (**backgroundSecondary** + **primary** на активном)
+ * @property $scrollable — прокрутка трека при переполнении
  */
 export const TabItemGroupListRoot = styled.div<{
   $direction: TabsDirection;
   $variant: TabsVariant;
   $filledSegmentTriggers?: boolean;
+  $scrollable?: boolean;
 }>`
   display: flex;
   box-sizing: border-box;
@@ -74,7 +97,7 @@ export const TabItemGroupListRoot = styled.div<{
           align-items: stretch;
         `}
 
-  ${({ $variant, $direction, $filledSegmentTriggers, theme }) =>
+  ${({ $variant, $direction, $filledSegmentTriggers, $scrollable, theme }) =>
     $variant === TabsVariant.PILL
       ? css`
           position: relative;
@@ -82,7 +105,7 @@ export const TabItemGroupListRoot = styled.div<{
           box-sizing: border-box;
           gap: ${pillTrackInset};
           padding: ${pillTrackInset};
-          overflow: hidden;
+          overflow: ${$scrollable ? 'visible' : 'hidden'};
           border-radius: calc(${BorderRadiusHandler(theme.borderRadius)} + ${pillTrackInset});
           border: none;
           background: ${theme.mode === ThemeMode.DARK
@@ -128,6 +151,39 @@ export const TabItemGroupListRoot = styled.div<{
     $direction === TabsDirection.HORIZONTAL
       ? css`
           width: 100%;
+        `
+      : ''}
+
+  ${({ $scrollable, $direction, $variant }) =>
+    $scrollable
+      ? css`
+          flex-wrap: nowrap;
+          ${tabsTrackScrollbarCss}
+          ${$direction === TabsDirection.HORIZONTAL
+            ? css`
+                overflow-x: auto;
+                overflow-y: hidden;
+                max-width: 100%;
+              `
+            : css`
+                overflow-y: auto;
+                overflow-x: hidden;
+                max-height: min(320px, 40vh);
+                width: 100%;
+              `}
+          ${$variant === TabsVariant.PILL
+            ? css`
+                & > button,
+                & .ui-tab-item-skeleton {
+                  flex: 0 0 auto;
+                }
+              `
+            : css`
+                & > button,
+                & .ui-tab-item-skeleton {
+                  flex: 0 0 auto;
+                }
+              `}
         `
       : ''}
 `;
@@ -269,6 +325,7 @@ export const TabItemSkeletonRoot = styled.div<{
   $variant: TabsVariant;
   /** Компактные отступы (**minimal** / **line** / **underline** без заливки) vs широкие (заливка сегментов) */
   $filledSegmentTriggers?: boolean;
+  $scrollable?: boolean;
 }>`
   display: flex;
   align-items: center;
@@ -277,12 +334,12 @@ export const TabItemSkeletonRoot = styled.div<{
   pointer-events: none;
   user-select: none;
 
-  ${({ $variant, $direction, $filledSegmentTriggers }) =>
+  ${({ $variant, $direction, $filledSegmentTriggers, $scrollable }) =>
     $variant === TabsVariant.PILL
       ? css`
           padding: ${$direction === TabsDirection.VERTICAL ? '10px 12px' : '8px 16px'};
           min-height: ${$direction === TabsDirection.VERTICAL ? 'auto' : '40px'};
-          flex: ${$direction === TabsDirection.HORIZONTAL ? '1' : '0 0 auto'};
+          flex: ${$scrollable || $direction === TabsDirection.VERTICAL ? '0 0 auto' : '1'};
           width: ${$direction === TabsDirection.VERTICAL ? '100%' : 'auto'};
         `
       : $variant === TabsVariant.MINIMAL ||
@@ -340,11 +397,13 @@ export const TabItemBadgeWrap = styled.span`
  * @property $hasIcons — влияет на отступы (legacy)
  * @property $flexDirection — направление иконок и подписи
  * @property $gap — зазор между иконкой и текстом
+ * @property $scrollable — сегменты не сжимаются, трек прокручивается
  */
 export const TabItemTrigger = styled.button<{
   $isActive: boolean;
   $direction: TabsDirection;
   $variant: TabsVariant;
+  $scrollable?: boolean;
   $disabled?: boolean;
   $loading?: boolean;
   /** В группе с текстовым вариантом: полоска активного таба на треке (без границы на кнопке) */
@@ -381,6 +440,7 @@ export const TabItemTrigger = styled.button<{
     $direction,
     $isActive,
     $disabled,
+    $scrollable,
     $slidingTrackIndicator,
     $filledSegmentTriggers,
     theme,
@@ -393,7 +453,7 @@ export const TabItemTrigger = styled.button<{
           padding: ${$direction === TabsDirection.VERTICAL ? '10px 12px' : '8px 16px'};
           min-height: ${$direction === TabsDirection.VERTICAL ? 'auto' : '40px'};
           border-radius: ${BorderRadiusHandler(theme.borderRadius)};
-          flex: ${$direction === TabsDirection.HORIZONTAL ? '1' : '0 0 auto'};
+          flex: ${$scrollable || $direction === TabsDirection.VERTICAL ? '0 0 auto' : '1'};
           width: ${$direction === TabsDirection.VERTICAL ? '100%' : 'auto'};
           box-shadow: none;
           border-bottom: none;
