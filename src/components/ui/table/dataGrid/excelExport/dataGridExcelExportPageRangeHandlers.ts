@@ -103,10 +103,7 @@ export function calculateDataGridExcelExportRowCountInRange(
  * @param loaded — загружено строк
  * @param total — всего к загрузке
  */
-export function calculateDataGridExcelExportProgressPercent(
-  loaded: number,
-  total: number,
-): number {
+export function calculateDataGridExcelExportProgressPercent(loaded: number, total: number): number {
   const safeTotal = Math.max(1, total);
   const safeLoaded = Math.max(0, loaded);
   return Math.min(100, Math.round((safeLoaded / safeTotal) * 100));

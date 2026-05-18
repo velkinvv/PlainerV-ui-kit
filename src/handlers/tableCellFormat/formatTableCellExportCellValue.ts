@@ -4,8 +4,7 @@ import type {
   TableCellFormat,
   TableCellFormatContext,
 } from '@/types/ui';
-import { isEmptyTableCellValue } from './formatTableCellValue';
-import { formatTableCellValue } from './formatTableCellValue';
+import { formatTableCellValue, isEmptyTableCellValue } from './formatTableCellValue';
 import { reactNodeToExportPlainText } from './reactNodeToExportPlainText';
 
 function resolveEnumMappedExportStyle(

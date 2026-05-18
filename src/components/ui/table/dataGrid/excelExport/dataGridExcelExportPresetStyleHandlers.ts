@@ -1,8 +1,4 @@
-import type {
-  DataGridExcelExportCellStyle,
-  PillStatus,
-  TagColorVariant,
-} from '@/types/ui';
+import type { DataGridExcelExportCellStyle, PillStatus, TagColorVariant } from '@/types/ui';
 
 /** Пресет: зелёный статус (успех / активен) */
 const successStatusStyle: DataGridExcelExportCellStyle = {

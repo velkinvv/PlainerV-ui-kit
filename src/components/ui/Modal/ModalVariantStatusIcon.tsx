@@ -2,8 +2,7 @@ import React, { useMemo } from 'react';
 import { useTheme } from 'styled-components';
 import { Icon } from '../Icon/Icon';
 import { IconSize } from '@/types/sizes';
-import type { ModalStatusVariant } from './modalStatusIconHandlers';
-import { getModalStatusIconConfig } from './modalStatusIconHandlers';
+import { getModalStatusIconConfig, type ModalStatusVariant } from './modalStatusIconHandlers';
 import { ModalStatusIconGlow } from './ModalStatusIconGlow.style';
 
 /**
@@ -19,10 +18,7 @@ export function ModalVariantStatusIcon({
   variant,
 }: ModalVariantStatusIconProps): React.ReactElement {
   const theme = useTheme();
-  const statusConfig = useMemo(
-    () => getModalStatusIconConfig(variant, theme),
-    [variant, theme],
-  );
+  const statusConfig = useMemo(() => getModalStatusIconConfig(variant, theme), [variant, theme]);
 
   return (
     <ModalStatusIconGlow $accentColor={statusConfig.accentColor} aria-hidden>

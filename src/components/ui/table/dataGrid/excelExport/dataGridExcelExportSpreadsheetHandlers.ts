@@ -1,6 +1,9 @@
-import type { DataGridBaseRow, DataGridColumn, DataGridExcelExportColumn } from '@/types/ui';
-import type { DataGridExcelExportCellValue } from '@/types/ui';
-import { mapDataGridRowToExportRecord } from './dataGridExcelExportColumnHandlers';
+import type {
+  DataGridBaseRow,
+  DataGridColumn,
+  DataGridExcelExportCellValue,
+  DataGridExcelExportColumn,
+} from '@/types/ui';
 import {
   buildDataGridExcelExportRowCellValues,
   buildDataGridExportColumnsByFieldMap,
@@ -82,10 +85,7 @@ ${stylesBlock}
  * @param xmlContent — содержимое XML
  * @param fileName — имя файла (расширение `.xls` добавится при отсутствии)
  */
-export function downloadDataGridExcelSpreadsheetFile(
-  xmlContent: string,
-  fileName: string,
-): void {
+export function downloadDataGridExcelSpreadsheetFile(xmlContent: string, fileName: string): void {
   const blob = new Blob([xmlContent], {
     type: 'application/vnd.ms-excel;charset=utf-8',
   });
@@ -101,11 +101,7 @@ export function downloadDataGridExcelSpreadsheetFile(
 
 /** Параметры выгрузки таблицы в Excel */
 export type ExportDataGridToExcelParams<Row extends DataGridBaseRow> = {
-  dataFetcher: (
-    skip: number,
-    take: number,
-    signal?: AbortSignal,
-  ) => Promise<readonly Row[]>;
+  dataFetcher: (skip: number, take: number, signal?: AbortSignal) => Promise<readonly Row[]>;
   exportColumns: readonly DataGridExcelExportColumn[];
   gridColumns: readonly DataGridColumn<Row>[];
   totalCount: number;
@@ -183,12 +179,7 @@ export async function buildDataGridExcelExportSpreadsheet<Row extends DataGridBa
         rowRecord,
       );
     }
-    return buildDataGridExcelExportRowCellValues(
-      row,
-      exportColumns,
-      gridColumnsByField,
-      rowIndex,
-    );
+    return buildDataGridExcelExportRowCellValues(row, exportColumns, gridColumnsByField, rowIndex);
   });
 
   return buildDataGridExcelSpreadsheetXml(sheetName, exportColumns, dataMatrix);

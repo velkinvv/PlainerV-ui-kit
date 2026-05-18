@@ -262,7 +262,10 @@ export {
   validateDataGridExcelExportPageRange,
   resolveDataGridExportCellText,
 } from './table';
-export { formatTableCellValueForExport, reactNodeToExportPlainText } from '@/handlers/tableCellFormat';
+export {
+  formatTableCellValueForExport,
+  reactNodeToExportPlainText,
+} from '@/handlers/tableCellFormat';
 
 export { ColumnFilterPanel } from './table';
 

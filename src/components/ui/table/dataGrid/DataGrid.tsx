@@ -201,8 +201,10 @@ export function DataGrid<Row extends DataGridBaseRow>(
     if (!showEmptyState) {
       return null;
     }
-    return renderEmptyState?.() ?? (
-      <DataGridEmptyState title={emptyStateTitle} description={emptyStateDescription} />
+    return (
+      renderEmptyState?.() ?? (
+        <DataGridEmptyState title={emptyStateTitle} description={emptyStateDescription} />
+      )
     );
   }, [showEmptyState, renderEmptyState, emptyStateTitle, emptyStateDescription]);
 
@@ -666,9 +668,7 @@ export function DataGrid<Row extends DataGridBaseRow>(
   }, [headerToolbarAlign]);
 
   const showBuiltinHeaderToolbarActions = Boolean(refetch ?? onResetFilters);
-  const showExcelExportButton = Boolean(
-    excelExport?.dataFetcher && excelExport.disabled !== true,
-  );
+  const showExcelExportButton = Boolean(excelExport?.dataFetcher && excelExport.disabled !== true);
   const excelExportPageSize =
     excelExport?.pageSize ?? paginationModel?.pageSize ?? rowsPerPageOptions[0] ?? 10;
   const excelExportCurrentPage = paginationModel?.page ?? 0;
@@ -952,219 +952,219 @@ export function DataGrid<Row extends DataGridBaseRow>(
               ) : null}
               {!showEmptyState
                 ? visibleRows.map((row, rowIndex) => {
-                const rowId = getRowId(row);
-                const disabled = disabledSet.has(rowId);
-                const selected = selectedSet.has(rowId);
-                const bg = rowBackgroundColorByStatus?.(row);
-                const rowStyle: React.CSSProperties | undefined = bg
-                  ? { backgroundColor: bg }
-                  : undefined;
-                const expandable = getRowExpandable?.(row) ?? false;
-                const expanded = expandedSet.has(rowId);
-                const expandedDataStatus = resolveDataGridExpandedRowDataStatus(row, {
-                  getExpandedRowDataStatus,
-                  getExpandedRowLoading,
-                });
+                    const rowId = getRowId(row);
+                    const disabled = disabledSet.has(rowId);
+                    const selected = selectedSet.has(rowId);
+                    const bg = rowBackgroundColorByStatus?.(row);
+                    const rowStyle: React.CSSProperties | undefined = bg
+                      ? { backgroundColor: bg }
+                      : undefined;
+                    const expandable = getRowExpandable?.(row) ?? false;
+                    const expanded = expandedSet.has(rowId);
+                    const expandedDataStatus = resolveDataGridExpandedRowDataStatus(row, {
+                      getExpandedRowDataStatus,
+                      getExpandedRowLoading,
+                    });
 
-                const dragDisplacementPx =
-                  enableRowDrag && dragRowFrom !== null
-                    ? getDataGridRowDragDisplacementPx(
-                        rowIndex,
-                        dragRowFrom,
-                        dragRowOverIndex,
-                        dragRowHeightPx,
-                      )
-                    : 0;
-                const rowDragShiftStyle: React.CSSProperties | undefined =
-                  enableRowDrag && dragRowFrom !== null
-                    ? {
-                        ...(dragDisplacementPx !== 0
-                          ? { transform: `translateY(${dragDisplacementPx}px)` }
-                          : {}),
-                        transition: DATA_GRID_ROW_DRAG_SHIFT_TRANSITION,
-                      }
-                    : undefined;
-                const mergedRowStyle: React.CSSProperties | undefined =
-                  rowDragShiftStyle != null ? { ...rowStyle, ...rowDragShiftStyle } : rowStyle;
+                    const dragDisplacementPx =
+                      enableRowDrag && dragRowFrom !== null
+                        ? getDataGridRowDragDisplacementPx(
+                            rowIndex,
+                            dragRowFrom,
+                            dragRowOverIndex,
+                            dragRowHeightPx,
+                          )
+                        : 0;
+                    const rowDragShiftStyle: React.CSSProperties | undefined =
+                      enableRowDrag && dragRowFrom !== null
+                        ? {
+                            ...(dragDisplacementPx !== 0
+                              ? { transform: `translateY(${dragDisplacementPx}px)` }
+                              : {}),
+                            transition: DATA_GRID_ROW_DRAG_SHIFT_TRANSITION,
+                          }
+                        : undefined;
+                    const mergedRowStyle: React.CSSProperties | undefined =
+                      rowDragShiftStyle != null ? { ...rowStyle, ...rowDragShiftStyle } : rowStyle;
 
-                const cells = (
-                  <>
-                    {enableRowDrag ? (
-                      <TableCell padding="checkbox">
-                        <DataGridRowDragHandle
-                          $disabled={disabled}
-                          draggable={!disabled}
-                          onDragStart={(dragEvent: React.DragEvent<HTMLSpanElement>) => {
-                            dragEvent.dataTransfer.effectAllowed = 'move';
-                            applyDataGridRowDragGhostPreview(dragEvent);
-                            const sourceRow = dragEvent.currentTarget.closest('tr');
-                            const sourceHeight =
-                              sourceRow instanceof HTMLElement ? sourceRow.offsetHeight : 0;
-                            beginRowDrag(rowIndex, sourceHeight);
-                          }}
-                          aria-label="Перетащить строку"
-                        >
-                          {/* IconExDots — как в демо-колонке действий, без квадратной обводки у IconExMoreSquare */}
-                          <Icon name="IconExDots" size={IconSize.SM} color="currentColor" />
-                        </DataGridRowDragHandle>
-                      </TableCell>
-                    ) : null}
-                    {displayRowSelectionColumn ? (
-                      <TableCell padding="checkbox">
-                        {multiselect ? (
-                          <Checkbox
-                            size={size === Size.SM || size === Size.XS ? Size.SM : Size.MD}
-                            checked={selected}
-                            disabled={disabled}
-                            onChange={(e) => {
-                              toggleOne(rowId, e.target.checked);
-                            }}
-                            aria-label={`Выбрать строку ${rowId}`}
-                          />
-                        ) : (
-                          <RadioButton
-                            name={tableId}
-                            value={rowId}
-                            checked={selected}
-                            disabled={disabled}
-                            labelPosition={RadioButtonLabelPosition.NONE}
-                            size={size}
-                            onChange={() => {
-                              toggleOne(rowId, true);
-                            }}
-                            aria-label={`Выбрать строку ${rowId}`}
-                          />
-                        )}
-                      </TableCell>
-                    ) : null}
-                    {showExpandColumn ? (
-                      <TableCell padding="checkbox">
-                        {expandable ? (
-                          <DataGridExpandButton
-                            type="button"
-                            aria-expanded={expanded}
-                            aria-label={expanded ? 'Свернуть' : 'Развернуть'}
-                            onClick={() => {
-                              setRowExpanded(rowId, !expanded);
-                            }}
-                          >
-                            <DataGridChevronWrap $open={expanded} aria-hidden>
-                              <Icon
-                                name="IconPlainerChevronDown"
-                                size={IconSize.SM}
-                                color="currentColor"
-                              />
-                            </DataGridChevronWrap>
-                          </DataGridExpandButton>
+                    const cells = (
+                      <>
+                        {enableRowDrag ? (
+                          <TableCell padding="checkbox">
+                            <DataGridRowDragHandle
+                              $disabled={disabled}
+                              draggable={!disabled}
+                              onDragStart={(dragEvent: React.DragEvent<HTMLSpanElement>) => {
+                                dragEvent.dataTransfer.effectAllowed = 'move';
+                                applyDataGridRowDragGhostPreview(dragEvent);
+                                const sourceRow = dragEvent.currentTarget.closest('tr');
+                                const sourceHeight =
+                                  sourceRow instanceof HTMLElement ? sourceRow.offsetHeight : 0;
+                                beginRowDrag(rowIndex, sourceHeight);
+                              }}
+                              aria-label="Перетащить строку"
+                            >
+                              {/* IconExDots — как в демо-колонке действий, без квадратной обводки у IconExMoreSquare */}
+                              <Icon name="IconExDots" size={IconSize.SM} color="currentColor" />
+                            </DataGridRowDragHandle>
+                          </TableCell>
                         ) : null}
-                      </TableCell>
-                    ) : null}
-                    {columns.map((col, colIndex) => {
-                      const fieldStr = String(col.field);
-                      const widthForBodyCell =
-                        columnResizePreview?.field === fieldStr
-                          ? columnResizePreview.widthPx
-                          : col.width;
-                      const tdStyle: React.CSSProperties = {};
-                      if (widthForBodyCell != null) {
-                        tdStyle.width = widthForBodyCell;
-                      }
-                      if (col.minWidth != null) {
-                        tdStyle.minWidth = col.minWidth;
-                      }
-                      return (
-                        <TableCell
-                          key={fieldStr}
-                          align={
-                            col.align === 'right'
-                              ? 'right'
-                              : col.align === 'center'
-                                ? 'center'
-                                : 'left'
+                        {displayRowSelectionColumn ? (
+                          <TableCell padding="checkbox">
+                            {multiselect ? (
+                              <Checkbox
+                                size={size === Size.SM || size === Size.XS ? Size.SM : Size.MD}
+                                checked={selected}
+                                disabled={disabled}
+                                onChange={(e) => {
+                                  toggleOne(rowId, e.target.checked);
+                                }}
+                                aria-label={`Выбрать строку ${rowId}`}
+                              />
+                            ) : (
+                              <RadioButton
+                                name={tableId}
+                                value={rowId}
+                                checked={selected}
+                                disabled={disabled}
+                                labelPosition={RadioButtonLabelPosition.NONE}
+                                size={size}
+                                onChange={() => {
+                                  toggleOne(rowId, true);
+                                }}
+                                aria-label={`Выбрать строку ${rowId}`}
+                              />
+                            )}
+                          </TableCell>
+                        ) : null}
+                        {showExpandColumn ? (
+                          <TableCell padding="checkbox">
+                            {expandable ? (
+                              <DataGridExpandButton
+                                type="button"
+                                aria-expanded={expanded}
+                                aria-label={expanded ? 'Свернуть' : 'Развернуть'}
+                                onClick={() => {
+                                  setRowExpanded(rowId, !expanded);
+                                }}
+                              >
+                                <DataGridChevronWrap $open={expanded} aria-hidden>
+                                  <Icon
+                                    name="IconPlainerChevronDown"
+                                    size={IconSize.SM}
+                                    color="currentColor"
+                                  />
+                                </DataGridChevronWrap>
+                              </DataGridExpandButton>
+                            ) : null}
+                          </TableCell>
+                        ) : null}
+                        {columns.map((col, colIndex) => {
+                          const fieldStr = String(col.field);
+                          const widthForBodyCell =
+                            columnResizePreview?.field === fieldStr
+                              ? columnResizePreview.widthPx
+                              : col.width;
+                          const tdStyle: React.CSSProperties = {};
+                          if (widthForBodyCell != null) {
+                            tdStyle.width = widthForBodyCell;
                           }
-                          style={buildColumnDragCellStyle(colIndex, tdStyle)}
-                          onDragOver={(dragEvent: React.DragEvent<HTMLTableCellElement>) =>
-                            handleColDragOverTarget(colIndex, dragEvent)
+                          if (col.minWidth != null) {
+                            tdStyle.minWidth = col.minWidth;
                           }
-                          onDrop={() => {
-                            handleColDrop(colIndex);
-                          }}
-                        >
-                          {renderCellValue(row, col, rowIndex)}
-                        </TableCell>
-                      );
-                    })}
-                  </>
-                );
+                          return (
+                            <TableCell
+                              key={fieldStr}
+                              align={
+                                col.align === 'right'
+                                  ? 'right'
+                                  : col.align === 'center'
+                                    ? 'center'
+                                    : 'left'
+                              }
+                              style={buildColumnDragCellStyle(colIndex, tdStyle)}
+                              onDragOver={(dragEvent: React.DragEvent<HTMLTableCellElement>) =>
+                                handleColDragOverTarget(colIndex, dragEvent)
+                              }
+                              onDrop={() => {
+                                handleColDrop(colIndex);
+                              }}
+                            >
+                              {renderCellValue(row, col, rowIndex)}
+                            </TableCell>
+                          );
+                        })}
+                      </>
+                    );
 
-                const mainRow = (
-                  <TableRow
-                    key={rowId}
-                    selected={selected}
-                    disabled={disabled}
-                    dragging={Boolean(enableRowDrag && dragRowFrom === rowIndex)}
-                    style={mergedRowStyle}
-                    onClick={(e) => {
-                      onRowClick?.(row, e);
-                    }}
-                    onDoubleClick={(e) => {
-                      onRowDoubleClick?.(row, e);
-                    }}
-                    onDragOver={(dragEvent: React.DragEvent<HTMLTableRowElement>) =>
-                      handleBodyRowDragOver(rowIndex, dragEvent)
-                    }
-                    onDrop={() => {
-                      if (enableRowDrag) {
-                        handleRowDrop(rowIndex);
-                      }
-                    }}
-                  >
-                    {cells}
-                  </TableRow>
-                );
-
-                const wrappedMain =
-                  renderRowWrapper != null
-                    ? renderRowWrapper({ row, children: mainRow as React.ReactElement })
-                    : mainRow;
-
-                return (
-                  <React.Fragment key={rowId}>
-                    {wrappedMain}
-                    {expandable && renderExpandedRow ? (
+                    const mainRow = (
                       <TableRow
-                        data-datagrid-expanded-detail=""
-                        style={{
-                          ...(rowDragShiftStyle ?? {}),
-                          borderBottom: expanded ? undefined : 'none',
+                        key={rowId}
+                        selected={selected}
+                        disabled={disabled}
+                        dragging={Boolean(enableRowDrag && dragRowFrom === rowIndex)}
+                        style={mergedRowStyle}
+                        onClick={(e) => {
+                          onRowClick?.(row, e);
+                        }}
+                        onDoubleClick={(e) => {
+                          onRowDoubleClick?.(row, e);
                         }}
                         onDragOver={(dragEvent: React.DragEvent<HTMLTableRowElement>) =>
                           handleBodyRowDragOver(rowIndex, dragEvent)
                         }
+                        onDrop={() => {
+                          if (enableRowDrag) {
+                            handleRowDrop(rowIndex);
+                          }
+                        }}
                       >
-                        <TableCell
-                          colSpan={colCount}
-                          padding="none"
-                          style={{
-                            backgroundColor: bg,
-                            verticalAlign: 'top',
-                            padding: 0,
-                          }}
-                        >
-                          <DataGridExpandedSlot $open={expanded}>
-                            <DataGridExpandedInner
-                              $tableSize={tableSize}
-                              $open={expanded}
-                              aria-hidden={expanded ? undefined : true}
-                            >
-                              {renderExpandedRowContent(row, expandedDataStatus)}
-                            </DataGridExpandedInner>
-                          </DataGridExpandedSlot>
-                        </TableCell>
+                        {cells}
                       </TableRow>
-                    ) : null}
-                  </React.Fragment>
-                );
+                    );
+
+                    const wrappedMain =
+                      renderRowWrapper != null
+                        ? renderRowWrapper({ row, children: mainRow as React.ReactElement })
+                        : mainRow;
+
+                    return (
+                      <React.Fragment key={rowId}>
+                        {wrappedMain}
+                        {expandable && renderExpandedRow ? (
+                          <TableRow
+                            data-datagrid-expanded-detail=""
+                            style={{
+                              ...(rowDragShiftStyle ?? {}),
+                              borderBottom: expanded ? undefined : 'none',
+                            }}
+                            onDragOver={(dragEvent: React.DragEvent<HTMLTableRowElement>) =>
+                              handleBodyRowDragOver(rowIndex, dragEvent)
+                            }
+                          >
+                            <TableCell
+                              colSpan={colCount}
+                              padding="none"
+                              style={{
+                                backgroundColor: bg,
+                                verticalAlign: 'top',
+                                padding: 0,
+                              }}
+                            >
+                              <DataGridExpandedSlot $open={expanded}>
+                                <DataGridExpandedInner
+                                  $tableSize={tableSize}
+                                  $open={expanded}
+                                  aria-hidden={expanded ? undefined : true}
+                                >
+                                  {renderExpandedRowContent(row, expandedDataStatus)}
+                                </DataGridExpandedInner>
+                              </DataGridExpandedSlot>
+                            </TableCell>
+                          </TableRow>
+                        ) : null}
+                      </React.Fragment>
+                    );
                   })
                 : null}
             </TableBody>

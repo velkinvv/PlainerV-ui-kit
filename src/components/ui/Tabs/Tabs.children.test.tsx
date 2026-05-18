@@ -47,10 +47,7 @@ describe('Tabs (children TabItem)', () => {
 
   it('при непустом items использует items, children не строят список', () => {
     renderWithTheme(
-      <Tabs
-        defaultValue="from-items"
-        items={[{ value: 'from-items', label: 'Из items' }]}
-      >
+      <Tabs defaultValue="from-items" items={[{ value: 'from-items', label: 'Из items' }]}>
         <TabItem value="from-children" label="Из children">
           <p>Не должно</p>
         </TabItem>

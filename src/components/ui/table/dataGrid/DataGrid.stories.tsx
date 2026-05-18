@@ -995,7 +995,9 @@ export const HeaderToolbar: Story = {
                 aria-label="Обновить данные"
                 showTooltip
                 tooltipText="Обновить данные"
-                icon={<Icon name="PhosphorArrowsClockwise" size={IconSize.SM} color="currentColor" />}
+                icon={
+                  <Icon name="PhosphorArrowsClockwise" size={IconSize.SM} color="currentColor" />
+                }
                 onClick={fn()}
               />
               <IconButton
@@ -1095,10 +1097,9 @@ export const HeaderToolbarBuiltinActions: Story = {
     return (
       <DataGridStoryBlock>
         <DataGridStoryHint>
-          «Обновить» — `refetch` / `isRefetching`. «Сброс фильтров» — `onResetFilters` (сначала модалка
-          подтверждения); активна при `hasActiveFilters`. Фильтр по колонке «Пользователь» — через
-          `ColumnFilterPanel` ниже (в
-          приложении — Dropdown у иконки в шапке).
+          «Обновить» — `refetch` / `isRefetching`. «Сброс фильтров» — `onResetFilters` (сначала
+          модалка подтверждения); активна при `hasActiveFilters`. Фильтр по колонке «Пользователь» —
+          через `ColumnFilterPanel` ниже (в приложении — Dropdown у иконки в шапке).
         </DataGridStoryHint>
         <DataGrid<DataGridStoryDemoRow>
           tableId="story-data-grid-header-toolbar-builtin"
@@ -1114,7 +1115,10 @@ export const HeaderToolbarBuiltinActions: Story = {
           onResetFilters={handleResetFilters}
           onColumnFilterClick={({ field }) => {
             if (field === 'user') {
-              const nextValue = window.prompt('Подстрока в имени пользователя', appliedUserSubstring);
+              const nextValue = window.prompt(
+                'Подстрока в имени пользователя',
+                appliedUserSubstring,
+              );
               if (nextValue != null) {
                 setAppliedUserSubstring(nextValue);
               }

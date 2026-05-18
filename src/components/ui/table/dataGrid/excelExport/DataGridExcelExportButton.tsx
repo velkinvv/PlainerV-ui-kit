@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ButtonVariant } from '@/types/ui';
-import type {
-  DataGridBaseRow,
-  DataGridColumn,
-  DataGridExcelExportColumn,
-  DataGridExcelExportConfig,
-  DataGridExcelExportProgress,
+import {
+  ButtonVariant,
+  type DataGridBaseRow,
+  type DataGridColumn,
+  type DataGridExcelExportColumn,
+  type DataGridExcelExportConfig,
+  type DataGridExcelExportProgress,
 } from '@/types/ui';
 import { IconSize, Size } from '@/types/sizes';
 import { Icon } from '@/components/ui/Icon/Icon';

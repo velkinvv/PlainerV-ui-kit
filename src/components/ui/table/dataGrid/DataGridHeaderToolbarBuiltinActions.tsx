@@ -72,9 +72,7 @@ export function DataGridHeaderToolbarBuiltinActions({
             type="button"
             $filterApplied={Boolean(hasActiveFilters)}
             aria-label={
-              hasActiveFilters
-                ? 'Сбросить все фильтры, фильтры применены'
-                : 'Сбросить все фильтры'
+              hasActiveFilters ? 'Сбросить все фильтры, фильтры применены' : 'Сбросить все фильтры'
             }
             disabled={!hasActiveFilters}
             onClick={handleResetFiltersRequest}

@@ -1,9 +1,5 @@
 import type { ReactNode } from 'react';
-import type {
-  DataGridBaseRow,
-  DataGridColumn,
-  DataGridExcelExportColumn,
-} from '@/types/ui';
+import type { DataGridBaseRow, DataGridColumn, DataGridExcelExportColumn } from '@/types/ui';
 import { getDataGridCellValue } from '../dataGridHandlers';
 import { parseDataGridColumnWidthToPixels } from '../dataGridColumnResizeHandlers';
 import { DATA_GRID_EXCEL_EXPORT_DEFAULT_COLUMN_WIDTH_PX } from './dataGridExcelExportColumnWidthHandlers';
@@ -103,9 +99,10 @@ export function mapDataGridRowToExportRecord<Row extends DataGridBaseRow>(
   const record: Record<string, unknown> = {};
   for (const column of columns) {
     const fieldKey = String(column.field);
-    const rawValue = column.valueGetter ? column.valueGetter(row) : getDataGridCellValue(row, column.field);
+    const rawValue = column.valueGetter
+      ? column.valueGetter(row)
+      : getDataGridCellValue(row, column.field);
     record[fieldKey] = rawValue;
   }
   return record;
 }
-

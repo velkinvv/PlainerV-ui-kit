@@ -2,9 +2,8 @@ import React, { useCallback, useMemo } from 'react';
 import { Modal } from '@/components/ui/Modal';
 import { Input } from '@/components/ui/inputs/Input/Input';
 import { Progress } from '@/components/ui/Progress/Progress';
-import { ButtonVariant } from '@/types/ui';
+import { ButtonVariant, type DataGridExcelExportProgress } from '@/types/ui';
 import { ModalSize, Size } from '@/types/sizes';
-import type { DataGridExcelExportProgress } from '@/types/ui';
 import {
   calculateDataGridExcelExportProgressPercent,
   calculateDataGridExcelExportRowCountInRange,

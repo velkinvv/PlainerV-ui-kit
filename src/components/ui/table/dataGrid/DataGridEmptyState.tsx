@@ -10,8 +10,7 @@ import {
 
 /** Тексты пустого состояния по умолчанию */
 export const DATA_GRID_EMPTY_STATE_DEFAULT_TITLE = 'Ничего не найдено';
-export const DATA_GRID_EMPTY_STATE_DEFAULT_DESCRIPTION =
-  'По заданным критериям ничего не найдено';
+export const DATA_GRID_EMPTY_STATE_DEFAULT_DESCRIPTION = 'По заданным критериям ничего не найдено';
 
 /**
  * Пустое состояние тела **DataGrid** (заголовки таблицы остаются видимыми).

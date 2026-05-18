@@ -43,8 +43,6 @@ export function getModalStatusIconConfig(
 }
 
 /** Проверяет, нужна ли встроенная иконка статуса для варианта модалки. */
-export function isModalStatusVariant(
-  variant: string | undefined,
-): variant is ModalStatusVariant {
+export function isModalStatusVariant(variant: string | undefined): variant is ModalStatusVariant {
   return variant === 'danger' || variant === 'success' || variant === 'info';
 }

@@ -32,12 +32,7 @@ describe('resolveDataGridExportCellValue', () => {
   it('извлекает стиль из Tag (colorVariant)', () => {
     const column: DataGridColumn<DemoRow> = {
       field: 'status',
-      render: () =>
-        React.createElement(
-          'span',
-          { colorVariant: 'danger' },
-          'Ошибка',
-        ),
+      render: () => React.createElement('span', { colorVariant: 'danger' }, 'Ошибка'),
     };
     const cell = resolveDataGridExportCellValue(
       { id: '1', status: 'error', title: 'x' },

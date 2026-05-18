@@ -67,8 +67,7 @@ function buildSpreadsheetStyleDefinitionXml(
   if (textColor) {
     fontParts.push(` ss:Color="${textColor}"`);
   }
-  const fontXml =
-    fontParts.length > 0 ? `<Font${fontParts.join('')}/>` : '';
+  const fontXml = fontParts.length > 0 ? `<Font${fontParts.join('')}/>` : '';
   const interiorXml = backgroundColor
     ? `<Interior ss:Color="${backgroundColor}" ss:Pattern="Solid"/>`
     : '';
@@ -98,9 +97,7 @@ export class DataGridExcelExportSpreadsheetStyleRegistry {
     if (!style) {
       return undefined;
     }
-    const hasContent = Boolean(
-      style.textColor ?? style.backgroundColor ?? style.bold,
-    );
+    const hasContent = Boolean(style.textColor ?? style.backgroundColor ?? style.bold);
     if (!hasContent) {
       return undefined;
     }
@@ -151,7 +148,10 @@ export function mergeDataGridExcelExportCellStyles(
   baseStyle: DataGridExcelExportCellStyle | undefined,
   overrideStyle: DataGridExcelExportCellStyle | undefined,
 ): DataGridExcelExportCellStyle | undefined {
-  if (isEmptyDataGridExcelExportCellStyle(baseStyle) && isEmptyDataGridExcelExportCellStyle(overrideStyle)) {
+  if (
+    isEmptyDataGridExcelExportCellStyle(baseStyle) &&
+    isEmptyDataGridExcelExportCellStyle(overrideStyle)
+  ) {
     return undefined;
   }
   return {
@@ -164,9 +164,7 @@ export function mergeDataGridExcelExportCellStyles(
  * XML-атрибут `ss:StyleID` для ячейки.
  * @param styleIdentifier — идентификатор из реестра
  */
-export function buildSpreadsheetCellStyleAttribute(
-  styleIdentifier: string | undefined,
-): string {
+export function buildSpreadsheetCellStyleAttribute(styleIdentifier: string | undefined): string {
   return styleIdentifier ? ` ss:StyleID="${styleIdentifier}"` : '';
 }
 

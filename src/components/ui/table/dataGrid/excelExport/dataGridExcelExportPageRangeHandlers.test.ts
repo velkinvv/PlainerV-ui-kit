@@ -10,10 +10,7 @@ describe('dataGridExcelExportPageRangeHandlers', () => {
   });
 
   it('validateDataGridExcelExportPageRange проверяет границы', () => {
-    const errors = validateDataGridExcelExportPageRange(
-      { startPage: '0', endPage: '5' },
-      3,
-    );
+    const errors = validateDataGridExcelExportPageRange({ startPage: '0', endPage: '5' }, 3);
     expect(errors.startPage).toBeDefined();
     expect(errors.endPage).toBe('Не может быть больше количества страниц');
   });

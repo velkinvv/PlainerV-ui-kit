@@ -1,13 +1,11 @@
 import type {
   DataGridBaseRow,
   DataGridColumn,
-  DataGridExcelExportCellStyle,
   DataGridExcelExportCellValue,
   DataGridExcelExportCellValueInput,
   DataGridExcelExportColumn,
 } from '@/types/ui';
 import { formatTableCellExportCellValue } from '@/handlers/tableCellFormat/formatTableCellExportCellValue';
-import { formatTableCellValueForExport } from '@/handlers/tableCellFormat/formatTableCellValueForExport';
 import { reactNodeToExportPlainText } from '@/handlers/tableCellFormat/reactNodeToExportPlainText';
 import { getDataGridCellValue } from '../dataGridHandlers';
 import { formatDataGridExcelExportCellValue } from './dataGridExcelExportColumnHandlers';
@@ -87,7 +85,10 @@ export function resolveDataGridExportCellValue<Row extends DataGridBaseRow>(
     const textFromRender = reactNodeToExportPlainText(renderedNode, '');
     const styleFromRender = extractDataGridExcelExportStyleFromReactNode(renderedNode);
     resolved = {
-      text: textFromRender.trim() !== '' ? textFromRender.trim() : formatDataGridExcelExportCellValue(cellValue),
+      text:
+        textFromRender.trim() !== ''
+          ? textFromRender.trim()
+          : formatDataGridExcelExportCellValue(cellValue),
       style: styleFromRender,
     };
   } else {
