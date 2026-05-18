@@ -5,6 +5,7 @@
     "paths": {},
     "outDir": "./dist/vite",
     "rootDir": "./src/vite",
+    "module": "ESNext",
     "moduleResolution": "bundler",
     "declaration": true,
     "declarationMap": true

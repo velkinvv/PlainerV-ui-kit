@@ -23,6 +23,19 @@
 ### Fixed
 
 - **`@velkinvv/plainerv/vite`:** в `dist/vite/index.js` реэкспорт с суффиксом `./plainervVite.js` для Node ESM (Windows, `vite.config.ts` — иначе `ERR_MODULE_NOT_FOUND`).
+- **`plainervVite()`:** `resolve.dedupe` и `optimizeDeps.include` для **framer-motion** (дубликаты в monorepo).
+- **Стили:** в `exports` добавлен алиас `./dist/styles.css` — нет `ERR_PACKAGE_PATH_NOT_EXPORTED` при старом импорте.
+- **Next.js App Router:** директива `use client` в начале `dist/index.esm.js`.
+
+### Added
+
+- README: разделы **Webpack / CRA** и **Next.js (App Router)**; уточнён импорт стилей.
+- **`verify-package.mjs`:** проверка ESM-импортов в `dist/vite`, `use client`, полей `exports`.
+
+### Changed
+
+- Peer **vite:** `^5 || ^6 || ^7`.
+- Явные `.js` в исходниках `src/vite` для корректного ESM в Node.
 
 ---
 

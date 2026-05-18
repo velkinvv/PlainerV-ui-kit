@@ -34,6 +34,7 @@ npm i @velkinvv/plainerv@0.1.8 react react-dom styled-components framer-motion
 | `react`, `react-dom` | `^18.0.0 \|\| ^19.0.0` |
 | `styled-components` | `^6.1.0` |
 | `framer-motion` | `^11.0.0` |
+| `vite` (опционально, для `plainervVite`) | `^5.0.0 \|\| ^6.0.0 \|\| ^7.0.0` |
 
 `clsx` и `dayjs` ставятся автоматически как зависимости кита — отдельно подключать не нужно.
 
@@ -66,7 +67,9 @@ export default defineConfig({
 });
 ```
 
-Плагин выставляет `resolve.dedupe` для `react`, `react-dom`, `styled-components`, `optimizeDeps.include: ['styled-components']` и `optimizeDeps.exclude: ['@velkinvv/plainerv']`.
+Плагин выставляет `resolve.dedupe` для `react`, `react-dom`, `styled-components`, `framer-motion`, `optimizeDeps.include` для styled-components и framer-motion, `optimizeDeps.exclude: ['@velkinvv/plainerv']`.
+
+Используйте **`vite.config.ts`** (ESM). Подпуть `@velkinvv/plainerv/vite` не предназначен для `require()` в `vite.config.cjs`.
 
 <details>
 <summary>Ручная настройка (без плагина)</summary>
@@ -76,10 +79,10 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   resolve: {
-    dedupe: ['react', 'react-dom', 'styled-components'],
+    dedupe: ['react', 'react-dom', 'styled-components', 'framer-motion'],
   },
   optimizeDeps: {
-    include: ['styled-components'],
+    include: ['styled-components', 'framer-motion'],
     exclude: ['@velkinvv/plainerv'],
   },
 });
@@ -87,18 +90,44 @@ export default defineConfig({
 
 </details>
 
-## 📦 Импорт стилей и шрифтов
+## 📦 Webpack / CRA
 
-Для правильной работы библиотеки необходимо импортировать стили:
+У Vite-специфичного prebundle нет, но **две копии** `react` или `styled-components` в monorepo дают те же симптомы (`Invalid hook call`, ошибки styled-components).
 
-```tsx
-// Импорт стилей (включает шрифты)
-import '@velkinvv/plainerv/styles';
-// или
-import '@velkinvv/plainerv/dist/styles.css';
+```js
+// webpack.config.js (фрагмент)
+module.exports = {
+  resolve: {
+    alias: {
+      react: path.resolve('./node_modules/react'),
+      'react-dom': path.resolve('./node_modules/react-dom'),
+      'styled-components': path.resolve('./node_modules/styled-components'),
+      'framer-motion': path.resolve('./node_modules/framer-motion'),
+    },
+  },
+};
 ```
 
-Шрифты автоматически подключаются при импорте стилей.
+В `package.json` приложения зафиксируйте одну версию peer-зависимостей; при pnpm включите `shamefully-hoist` или `public-hoist-pattern` для `react` и `styled-components`, если кит резолвится в дубликат.
+
+## ▲ Next.js (App Router)
+
+- ESM-сборка кита помечена директивой **`use client`** — импортируйте компоненты из client-файлов (`'use client'` в layout/page-обёртке при необходимости).
+- В **`next.config`**: `transpilePackages: ['@velkinvv/plainerv']`.
+- Для SSR со **styled-components** используйте [официальный registry](https://nextjs.org/docs/app/building-your-application/styling/css-in-js) (один `ThemeProvider` + registry на сервере и клиенте).
+- Стили и провайдеры — как в разделе ниже (`ThemeProvider`, `ToastProvider`).
+
+## 📦 Импорт стилей и шрифтов
+
+Для правильной работы библиотеки необходимо импортировать стили **только через экспорт пакета** (не лезьте в произвольные пути внутри `node_modules`):
+
+```tsx
+import '@velkinvv/plainerv/styles';
+```
+
+Алиас (тот же файл): `import '@velkinvv/plainerv/dist/styles.css'`.
+
+Шрифты подключаются из CSS (`url(fonts/montserrat/...)`); Vite/Webpack обычно копируют `.ttf` автоматически.
 
 ## 🎨 Темизация
 
@@ -446,7 +475,10 @@ npm run analyze
 
 ## 📋 Что нового в 0.1.8
 
-- **`@velkinvv/plainerv/vite`:** исправлен ESM-реэкспорт (`./plainervVite.js`) — загрузка плагина в `vite.config.ts` на Windows.
+- **`@velkinvv/plainerv/vite`:** ESM-реэкспорт с `./plainervVite.js`; `dedupe` + `optimizeDeps` для `framer-motion`; peer Vite 7.
+- **Стили:** экспорт `./dist/styles.css` как алиас; рекомендуемый импорт `@velkinvv/plainerv/styles`.
+- **Next.js:** директива `use client` в ESM entry; разделы Webpack и App Router в README.
+- **Проверки публикации:** ESM в `dist/vite`, `use client`, exports в `verify-package.mjs`.
 
 Подробности — в [CHANGELOG.md](CHANGELOG.md).
 
