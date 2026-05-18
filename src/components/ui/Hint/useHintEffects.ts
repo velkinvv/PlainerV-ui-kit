@@ -1,9 +1,4 @@
-import {
-  useEffect,
-  type Dispatch,
-  type MutableRefObject,
-  type SetStateAction,
-} from 'react';
+import { useEffect, type Dispatch, type MutableRefObject, type SetStateAction } from 'react';
 import type { NullableRefObject } from '../../../types/reactRefs';
 import { HintVisibilityTrigger, type HintPosition } from '../../../types/ui';
 import {
