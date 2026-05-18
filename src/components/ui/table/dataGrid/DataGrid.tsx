@@ -71,16 +71,21 @@ import {
 } from './DataGrid.style';
 import { DataGridColumnHeaderContent } from './DataGridColumnHeaderContent';
 import { resolveDataGridTableHeaderBackground } from './dataGridTableHeaderSurfaceHandlers';
+import { DataGridHeaderToolbarBuiltinActions } from './DataGridHeaderToolbarBuiltinActions';
+import { DataGridEmptyState } from './DataGridEmptyState';
+import { convertDataGridColumnsToExportColumns } from './excelExport/dataGridExcelExportColumnHandlers';
+import { DataGridExcelExportButton } from './excelExport/DataGridExcelExportButton';
 
 /**
  * Готовая таблица с колонками и строками из пропсов (композиция `Table*` + выбор + пагинация + сортировка).
  * @param props — см. `DataGridProps` в `types/ui.ts`: раскрытие строк (`expandedRowIds`, `onExpandedRowChange` с объектом
  *   `{ rowId, expanded, expandedIds }`; не `onRowCollapseChange`), ресайз (`onColumnResize*`),
  *   DnD колонок/строк (`onColumnDrag*`, `onRowDrag*`), клик по фильтру (`onColumnFilterClick` + `filterable` у колонки),
- *   дополнительная строка над заголовками колонок (`headerToolbar`, `headerToolbarAlign`, `headerToolbarAriaLabel`),
+ *   дополнительная строка над заголовками колонок (`headerToolbar`, `refetch`, `onResetFilters`, `hasActiveFilters`, `excelExport`, …),
  *   высота области скролла (`scrollAreaMaxHeight` → `TableContainerScroll`) для липкой шапки,
  *   тон шапки (`tableHeaderVariant`, `tableHeaderBackground`) для согласования с панелью `headerToolbar`,
  *   декларативное отображение ячеек (`columns[].format` → `TableCellFormat`; приоритет ниже, чем у `columns[].render` и `renderCell`).
+ *   пустой `rows` / отсутствие строк — блок в `tbody` с иконкой лупы (`emptyStateTitle`, `emptyStateDescription`, `renderEmptyState`), шапка остаётся.
  */
 export function DataGrid<Row extends DataGridBaseRow>(
   props: DataGridProps<Row>,
@@ -88,7 +93,7 @@ export function DataGrid<Row extends DataGridBaseRow>(
   const {
     tableId,
     columns,
-    rows,
+    rows = [],
     totalRows,
     getRowId = (row: Row) => row.id,
     displayRowSelectionColumn = false,
@@ -150,6 +155,15 @@ export function DataGrid<Row extends DataGridBaseRow>(
     headerToolbar,
     headerToolbarAlign = 'end',
     headerToolbarAriaLabel,
+    refetch,
+    isRefetching = false,
+    onResetFilters,
+    hasActiveFilters = false,
+    resetFiltersConfirmTexts,
+    excelExport,
+    emptyStateTitle,
+    emptyStateDescription,
+    renderEmptyState,
     hideFooter = false,
     elevated = true,
     tableAriaLabel,
@@ -180,6 +194,17 @@ export function DataGrid<Row extends DataGridBaseRow>(
   }, [expandedRowIds, internalExpanded]);
 
   const showExpandColumn = Boolean(getRowExpandable && renderExpandedRow);
+
+  const showEmptyState = !isLoading && rows.length === 0;
+
+  const emptyStateContent = useMemo(() => {
+    if (!showEmptyState) {
+      return null;
+    }
+    return renderEmptyState?.() ?? (
+      <DataGridEmptyState title={emptyStateTitle} description={emptyStateDescription} />
+    );
+  }, [showEmptyState, renderEmptyState, emptyStateTitle, emptyStateDescription]);
 
   const visibleRows = useMemo(() => {
     if (paginationModel && paginationMode === 'client') {
@@ -640,7 +665,75 @@ export function DataGrid<Row extends DataGridBaseRow>(
     }
   }, [headerToolbarAlign]);
 
-  const showHeaderToolbar = headerToolbar != null;
+  const showBuiltinHeaderToolbarActions = Boolean(refetch ?? onResetFilters);
+  const showExcelExportButton = Boolean(
+    excelExport?.dataFetcher && excelExport.disabled !== true,
+  );
+  const excelExportPageSize =
+    excelExport?.pageSize ?? paginationModel?.pageSize ?? rowsPerPageOptions[0] ?? 10;
+  const excelExportCurrentPage = paginationModel?.page ?? 0;
+
+  const excelExportColumns = useMemo(() => {
+    if (!excelExport) {
+      return [];
+    }
+    return (
+      excelExport.columns ??
+      convertDataGridColumnsToExportColumns(columns, excelExport.ignoreFields)
+    );
+  }, [columns, excelExport]);
+
+  const showHeaderToolbar =
+    showBuiltinHeaderToolbarActions || showExcelExportButton || headerToolbar != null;
+
+  const headerToolbarContent = useMemo(() => {
+    if (!showHeaderToolbar) {
+      return null;
+    }
+    return (
+      <>
+        {showBuiltinHeaderToolbarActions ? (
+          <DataGridHeaderToolbarBuiltinActions
+            size={size}
+            refetch={refetch}
+            isRefetching={isRefetching}
+            onResetFilters={onResetFilters}
+            hasActiveFilters={hasActiveFilters}
+            resetFiltersConfirmTexts={resetFiltersConfirmTexts}
+          />
+        ) : null}
+        {showExcelExportButton && excelExport ? (
+          <DataGridExcelExportButton<Row>
+            size={size}
+            totalCount={totalRows}
+            pageSize={excelExportPageSize}
+            currentPage={excelExportCurrentPage}
+            gridColumns={columns}
+            exportColumns={excelExportColumns}
+            excelExport={excelExport}
+          />
+        ) : null}
+        {headerToolbar}
+      </>
+    );
+  }, [
+    showHeaderToolbar,
+    showBuiltinHeaderToolbarActions,
+    showExcelExportButton,
+    size,
+    refetch,
+    isRefetching,
+    onResetFilters,
+    hasActiveFilters,
+    resetFiltersConfirmTexts,
+    excelExport,
+    excelExportPageSize,
+    excelExportCurrentPage,
+    totalRows,
+    columns,
+    excelExportColumns,
+    headerToolbar,
+  ]);
 
   /** Второй ряд липкой шапки (заголовки колонок) смещается ниже строки `headerToolbar`. */
   const rootStyleWithStickyToolbar =
@@ -704,7 +797,7 @@ export function DataGrid<Row extends DataGridBaseRow>(
                       role="toolbar"
                       aria-label={headerToolbarAriaLabel ?? 'Дополнительные действия таблицы'}
                     >
-                      {headerToolbar}
+                      {headerToolbarContent}
                     </DataGridHeaderToolbarInner>
                   </TableCell>
                 </TableRow>
@@ -850,7 +943,15 @@ export function DataGrid<Row extends DataGridBaseRow>(
               </TableRow>
             </TableHead>
             <TableBody>
-              {visibleRows.map((row, rowIndex) => {
+              {showEmptyState ? (
+                <TableRow>
+                  <TableCell colSpan={colCount} padding="none" style={{ borderBottom: 'none' }}>
+                    {emptyStateContent}
+                  </TableCell>
+                </TableRow>
+              ) : null}
+              {!showEmptyState
+                ? visibleRows.map((row, rowIndex) => {
                 const rowId = getRowId(row);
                 const disabled = disabledSet.has(rowId);
                 const selected = selectedSet.has(rowId);
@@ -1064,7 +1165,8 @@ export function DataGrid<Row extends DataGridBaseRow>(
                     ) : null}
                   </React.Fragment>
                 );
-              })}
+                  })
+                : null}
             </TableBody>
           </Table>
         </TableContainerScroll>

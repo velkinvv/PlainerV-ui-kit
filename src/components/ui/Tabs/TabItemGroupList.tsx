@@ -20,10 +20,18 @@ type TabItemGroupListProps = React.ComponentProps<typeof TabItemGroupListRoot>;
  * @param props.$direction — горизонтальный или вертикальный ряд
  * @param props.$variant — **pill**, **minimal**, **line**, **underline**
  * @param props.$filledSegmentTriggers — у текстовых вариантов: заливка сегментов и **2px** полоска на треке
+ * @param props.$scrollable — прокрутка трека при переполнении
  */
 export const TabItemGroupList = forwardRef<HTMLDivElement, TabItemGroupListProps>(
   function TabItemGroupList(props, forwardedReference) {
-    const { children, $direction, $variant, $filledSegmentTriggers, ...restDomProps } = props;
+    const {
+      children,
+      $direction,
+      $variant,
+      $filledSegmentTriggers,
+      $scrollable,
+      ...restDomProps
+    } = props;
     const tabItemGroupContextValue = useContext(TabItemGroupContext);
 
     const activeSegmentValue = tabItemGroupContextValue?.activeTab ?? '';
@@ -35,6 +43,8 @@ export const TabItemGroupList = forwardRef<HTMLDivElement, TabItemGroupListProps
     const { metrics, setTrackRootElement, registerSegmentTriggerRef } = usePillSegmentMetrics({
       enabled: usesAnimatedSegmentIndicator,
       activeSegmentValue,
+      scrollable: Boolean($scrollable),
+      direction: $direction,
     });
 
     const pillRegistrationContextValue = useMemo(
@@ -74,6 +84,7 @@ export const TabItemGroupList = forwardRef<HTMLDivElement, TabItemGroupListProps
           $direction={$direction}
           $variant={$variant}
           $filledSegmentTriggers={$filledSegmentTriggers}
+          $scrollable={$scrollable}
           {...restDomProps}
         >
           {usesItemsWidthGrayBaseline ? (

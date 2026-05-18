@@ -20,3 +20,13 @@ export {
   normalizeDataGridSortModel,
   resolveNextDataGridSortModel,
 } from './dataGridSortModelHandlers';
+export {
+  DataGridExcelExportButton,
+  DataGridExcelExportModal,
+  convertDataGridColumnsToExportColumns,
+  buildDataGridExcelExportSpreadsheet,
+  downloadDataGridExcelSpreadsheetFile,
+  validateDataGridExcelExportPageRange,
+  resolveDataGridExportCellText,
+} from './excelExport';
+export type { DataGridExcelExportButtonProps } from './excelExport';

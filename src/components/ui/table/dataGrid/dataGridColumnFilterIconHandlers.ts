@@ -4,12 +4,15 @@ import { IconSize } from '@/types/sizes';
 /** Имя иконки фильтра по умолчанию в шапке колонки */
 const DEFAULT_DATA_GRID_FILTER_ICON_NAME: IconProps['name'] = 'IconExFilter';
 
+/** Иконка при активном фильтре — залитая воронка, цвет через `currentColor` у кнопки */
+const DEFAULT_DATA_GRID_FILTER_ICON_APPLIED_NAME: IconProps['name'] = 'IconExFilterFilled';
+
 export type DataGridColumnFilterIconMergeParams = {
   /** Фильтр уже применён — поверх результата накладывается `filterIconPropsApplied` */
   filterApplied: boolean;
   /** Частичные пропсы `Icon` поверх значений по умолчанию */
   filterIconProps?: DataGridColumnFilterIconProps;
-  /** Дополнительный мерж при `filterApplied === true` (например другой `color` на фоне `info`) */
+  /** Дополнительный мерж при `filterApplied === true` (иначе подставляется `IconExFilterFilled`) */
   filterIconPropsApplied?: DataGridColumnFilterIconProps;
 };
 
@@ -28,8 +31,12 @@ export function mergeDataGridColumnFilterIconProps(
     color: 'currentColor',
   };
   let merged: IconProps = { ...base, ...params.filterIconProps };
-  if (params.filterApplied && params.filterIconPropsApplied) {
-    merged = { ...merged, ...params.filterIconPropsApplied };
+  if (params.filterApplied) {
+    if (params.filterIconPropsApplied) {
+      merged = { ...merged, ...params.filterIconPropsApplied };
+    } else if (!params.filterIconProps?.name) {
+      merged = { ...merged, name: DEFAULT_DATA_GRID_FILTER_ICON_APPLIED_NAME };
+    }
   }
   if (!merged.name) {
     merged = { ...merged, name: DEFAULT_DATA_GRID_FILTER_ICON_NAME };

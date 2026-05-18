@@ -33,6 +33,7 @@ export { PhosphorArrowDownLeft } from './ArrowDownLeft';
 export { PhosphorArrowDown } from './ArrowDown';
 export { PhosphorArrowCounterClockwise } from './ArrowCounterClockwise';
 export { PhosphorArrowClockwise } from './ArrowClockwise';
+export { PhosphorArrowsClockwise } from './ArrowsClockwise';
 
 // ArrowCircle иконки
 export { PhosphorArrowCircleUpRight } from './ArrowCircleUpRight';

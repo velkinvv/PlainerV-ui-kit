@@ -13,6 +13,8 @@ export interface TabItemGroupContextType {
    * (**minimal** / **line** / **underline**), полоска индикатора **2px**.
    */
   filledSegmentTriggers: boolean;
+  /** Прокрутка трека при переполнении (см. **Tabs.scrollable**) */
+  scrollable: boolean;
 }
 
 export const TabItemGroupContext = createContext<TabItemGroupContextType | undefined>(undefined);

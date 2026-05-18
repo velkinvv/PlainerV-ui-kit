@@ -18,3 +18,6 @@ export {
   TABLE_CELL_MASK_SNILS,
 } from './presetMasks';
 export { formatTableCellValue, isEmptyTableCellValue } from './formatTableCellValue';
+export { formatTableCellValueForExport } from './formatTableCellValueForExport';
+export { formatTableCellExportCellValue } from './formatTableCellExportCellValue';
+export { reactNodeToExportPlainText } from './reactNodeToExportPlainText';

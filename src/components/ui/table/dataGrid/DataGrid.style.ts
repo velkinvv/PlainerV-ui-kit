@@ -36,6 +36,14 @@ export const DataGridHeaderToolbarInner = styled.div<{
   border-bottom: ${({ theme }) => theme.tables.cell.headBorderBottom};
 `;
 
+/** Группа встроенных кнопок (`refetch`, сброс фильтров) в `headerToolbar` */
+export const DataGridHeaderToolbarBuiltinActionsGroup = styled.div`
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+`;
+
 /** Полупрозрачный оверлей при `isLoading` */
 export const DataGridLoadingOverlay = styled.div`
   position: absolute;

@@ -13,6 +13,7 @@ export const TabsContainer = TabItemGroupContainer;
  * @param props.segmentTrackProps — **className**, **style** и др. для трека (добавляется **ui-tabs-list**)
  * @param props.items — при непустом массиве вкладки строятся из данных (приоритет над **children** для списка)
  * @param props.filledSegmentTriggers — у **minimal** / **line** / **underline**: заливка сегментов и фон трека (**filled**)
+ * @param props.scrollable — прокрутка трека, если сегменты не помещаются по ширине/высоте
  */
 export const Tabs: React.FC<TabsProps> & {
   Item: typeof TabItem;
@@ -30,6 +31,7 @@ export const Tabs: React.FC<TabsProps> & {
   segmentTrackProps,
   items,
   filledSegmentTriggers,
+  scrollable,
 }) => {
   return (
     <TabItemGroup
@@ -44,6 +46,7 @@ export const Tabs: React.FC<TabsProps> & {
       segmentTrackProps={segmentTrackProps}
       items={items}
       filledSegmentTriggers={filledSegmentTriggers}
+      scrollable={scrollable}
       className={clsx('ui-tabs', className)}
     >
       {children}

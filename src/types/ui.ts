@@ -1231,6 +1231,10 @@ export interface ModalProps extends BaseComponentProps {
   buttonsSlot?: React.ReactNode;
   portalTargetId?: string;
   portalZIndex?: number;
+  /**
+   * Статус модалки: при `danger` / `success` / `info` слева в шапке — цветная иконка с размытой подсветкой.
+   * Заголовок и фон шапки остаются нейтральными. Своя иконка — `headerIcon` (приоритет над встроенной).
+   */
   modalVariant?: 'default' | 'danger' | 'success' | 'info';
   initialFocusSelector?: string;
   size?: ModalSize;
@@ -1910,6 +1914,11 @@ export interface TabsProps extends BaseComponentProps {
    * Вкладки из данных: при непустом массиве рендерятся как **Tabs.Item** с теми же полями; **children** у корня для списка вкладок не используется.
    */
   items?: TabsItemDefinition[];
+  /**
+   * Прокрутка трека, если сегменты не помещаются: горизонтально — **overflow-x**, вертикально — **overflow-y**
+   * (для вертикали задайте **max-height** через **segmentTrackProps.style** или ограничьте высоту родителя).
+   */
+  scrollable?: boolean;
 }
 
 /**
@@ -4163,6 +4172,36 @@ export interface TableCellFormatContext<Row = unknown> {
   rowIndex: number;
 }
 
+/**
+ * Стили ячейки в Excel-выгрузке (SpreadsheetML).
+ * Цвета — `#RRGGBB` или `#AARRGGBB` (как в CSS).
+ */
+export interface DataGridExcelExportCellStyle {
+  /** Цвет текста */
+  textColor?: string;
+  /** Заливка фона ячейки */
+  backgroundColor?: string;
+  /** Жирный шрифт */
+  bold?: boolean;
+}
+
+/** Значение ячейки для выгрузки: текст и опциональные стили */
+export interface DataGridExcelExportCellValue {
+  text: string;
+  style?: DataGridExcelExportCellStyle;
+}
+
+/**
+ * Вход для `exportValueGetter`: строка или объект с текстом и стилями.
+ */
+export type DataGridExcelExportCellValueInput =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | DataGridExcelExportCellValue;
+
 /** Локаль по умолчанию для пресетов `number` / `currency` / `percent` (можно переопределить в каждом формате). */
 export type TableCellFormatDefaultLocale = 'ru-RU';
 
@@ -4292,6 +4331,8 @@ export type TableCellFormat<Row = unknown> =
         | ReadonlyArray<{
             readonly value: string | number | boolean;
             readonly label: ReactNode;
+            /** Стили ячейки в Excel-выгрузке для этого значения */
+            readonly exportStyle?: DataGridExcelExportCellStyle;
           }>;
       fallback?: ReactNode;
     }
@@ -4393,8 +4434,18 @@ export interface DataGridColumn<Row extends DataGridBaseRow = DataGridBaseRow> {
   /** Кастомное значение ячейки */
   valueGetter?: (row: Row) => unknown;
   /**
+   * Значение для Excel-выгрузки (приоритетнее `format` / `render`).
+   * Строка или `{ text, style? }` — подпись и опциональные цвета ячейки/текста.
+   */
+  exportValueGetter?: (row: Row) => DataGridExcelExportCellValueInput;
+  /**
+   * Стили ячейки в Excel (цвет текста, фон). Объединяется со стилем из `format.enum` / Tag / Pill.
+   */
+  exportCellStyle?: (row: Row) => DataGridExcelExportCellStyle | undefined;
+  /**
    * Декларативное форматирование отображения (ссылки, маски, числа, даты и т.д.);
    * применяется, если не заданы `render` у колонки и глобальный `renderCell` у грида.
+   * При выгрузке в Excel для `type: 'enum'` и др. используется та же логика, что и в таблице.
    */
   format?: TableCellFormat<Row>;
   /** Рендер ячейки; приоритетнее глобального `renderCell` у `DataGrid` */
@@ -4407,16 +4458,101 @@ export interface DataGridColumn<Row extends DataGridBaseRow = DataGridBaseRow> {
   headerMaxLines?: number;
   /** Показать кнопку-иконку фильтра в заголовке; клик уходит в `onColumnFilterClick` у `DataGrid` */
   filterable?: boolean;
-  /** У фильтруемой колонки: подсветка иконки (заливка `theme.colors.info`), если условие уже применено */
+  /** У фильтруемой колонки: иконка-воронка залита `theme.colors.info` (`IconExFilterFilled`), если условие уже применено */
   filterApplied?: boolean;
   /** Свой узел внутри кнопки фильтра вместо стандартной `Icon`; приоритет над `filterIconProps` и `filterIconPropsApplied` */
   filterIcon?: ReactNode;
   /** Кастомизация встроенной иконки: `name`, `size`, `color`, `className` (мерж поверх `IconExFilter` + `IconSize.XS` + `currentColor`) */
   filterIconProps?: DataGridColumnFilterIconProps;
-  /** Доп. мерж поверх `filterIconProps`, когда `filterApplied === true` (например другой `color` на фоне `info`) */
+  /** Доп. мерж поверх `filterIconProps`, когда `filterApplied === true` (например другой `color` или `name`) */
   filterIconPropsApplied?: DataGridColumnFilterIconProps;
   /** Расположение встроенной иконки фильтра; по умолчанию `trailing` */
   filterIconPosition?: DataGridColumnFilterIconPosition;
+}
+
+/** Колонка для выгрузки **DataGrid** в Excel (SpreadsheetML `.xls`) */
+export interface DataGridExcelExportColumn {
+  /** Ключ поля в строке данных */
+  key: string;
+  /** Заголовок колонки в файле */
+  header: string;
+  /**
+   * Ширина колонки в пикселях (как `columns[].width` в гриде).
+   * В файле задаётся через `<Column ss:Width="…"/>`; без значения — ~96px.
+   */
+  widthPx?: number;
+}
+
+/**
+ * Загрузка порции строк для выгрузки.
+ * @param skip — смещение от начала набора (0-based)
+ * @param take — максимальное число строк в порции
+ * @param signal — сигнал отмены выгрузки
+ */
+export type DataGridExcelExportDataFetcher<Row extends DataGridBaseRow = DataGridBaseRow> = (
+  skip: number,
+  take: number,
+  signal?: AbortSignal,
+) => Promise<readonly Row[]>;
+
+/** Преобразование строки таблицы в плоский объект для Excel (`ключ` → значение ячейки) */
+export type DataGridExcelExportMapRowData<Row extends DataGridBaseRow = DataGridBaseRow> = (
+  row: Row,
+) => Record<string, unknown>;
+
+/** Тексты модалки выбора диапазона страниц для Excel-выгрузки */
+export interface DataGridExcelExportTexts {
+  modalTitle?: string;
+  modalDescription?: string;
+  rangeHint?: string;
+  startPageLabel?: string;
+  endPageLabel?: string;
+  startPagePlaceholder?: string;
+  endPagePlaceholder?: string;
+  rowsSummary?: (params: { totalRows: number; totalPages: number }) => string;
+  cancelLabel?: string;
+  exportLabel?: string;
+  loadingLabel?: string;
+  tooltipText?: string;
+  exportButtonAriaLabel?: string;
+}
+
+/** Прогресс выгрузки Excel */
+export interface DataGridExcelExportProgress {
+  loaded: number;
+  total: number;
+}
+
+/**
+ * Настройка встроенной кнопки выгрузки в `headerToolbar` **DataGrid**.
+ * Кнопка показывается, если передан `dataFetcher` и `disabled !== true`.
+ */
+export interface DataGridExcelExportConfig<Row extends DataGridBaseRow = DataGridBaseRow> {
+  /** Постраничная загрузка данных для выгрузки (обязательна для отображения кнопки) */
+  dataFetcher: DataGridExcelExportDataFetcher<Row>;
+  /** Имя файла; по умолчанию `Выгрузка_<timestamp>.xls` */
+  fileName?: string;
+  /** Имя листа в книге; по умолчанию `Sheet1` */
+  sheetName?: string;
+  /**
+   * Явный список колонок выгрузки.
+   * Если не задан — строится из `columns` грида (без `ignoreFields`).
+   */
+  columns?: readonly DataGridExcelExportColumn[];
+  /** Поля (`field` колонок), исключаемые из автосборки колонок */
+  ignoreFields?: readonly string[];
+  /** Размер страницы при выгрузке; по умолчанию — `paginationModel.pageSize` или `10` */
+  pageSize?: number;
+  /** Преобразование строки; без него — значения по `field` / `valueGetter` колонок */
+  mapRowData?: DataGridExcelExportMapRowData<Row>;
+  /** Тексты UI */
+  texts?: DataGridExcelExportTexts;
+  /** Успешное завершение и скачивание файла */
+  onSuccess?: () => void;
+  /** Ошибка выгрузки (кроме отмены через `AbortSignal`) */
+  onError?: (error: unknown) => void;
+  /** Скрыть кнопку выгрузки */
+  disabled?: boolean;
 }
 
 /** Аргумент `renderRowWrapper`: обёртка над одной строкой `tr` */
@@ -4463,7 +4599,7 @@ export interface DataGridExpandedRowChangeParams {
  * Готовая таблица-грид: колонки, строки, выбор, пагинация, сортировка, загрузка, DnD (опционально).
  * @property tableId — `id` у `<table>` и `name` у группы радиокнопок при `multiselect={false}`
  * @property columns — Описание колонок
- * @property rows — Данные (при `paginationMode="client"` можно передать полный набор)
+ * @property rows — Данные (при `paginationMode="client"` можно передать полный набор); пустой массив или отсутствие — пустое состояние в `tbody`, шапка остаётся
  * @property totalRows — Всего записей (для футера и client-среза)
  * @property getRowId — По умолчанию `row => row.id`
  * @property displayRowSelectionColumn — Показать колонку выбора (чекбокс или радио)
@@ -4512,7 +4648,7 @@ export interface DataGridProps<
 > extends BaseComponentProps {
   tableId: string;
   columns: readonly DataGridColumn<Row>[];
-  rows: readonly Row[];
+  rows?: readonly Row[];
   totalRows: number;
   getRowId?: (row: Row) => DataGridRowId;
   displayRowSelectionColumn?: boolean;
@@ -4644,6 +4780,41 @@ export interface DataGridProps<
    * Если не задана, используется нейтральная подпись по умолчанию в компоненте.
    */
   headerToolbarAriaLabel?: string;
+  /**
+   * Обновление данных: при передаче в `headerToolbar` показывается кнопка с иконкой обновления.
+   */
+  refetch?: () => void | Promise<void>;
+  /** Состояние загрузки для кнопки `refetch` (`loading` у **IconButton**) */
+  isRefetching?: boolean;
+  /**
+   * Сброс всех фильтров: при передаче в `headerToolbar` показывается кнопка-фильтр.
+   * Подсветка «фильтры применены» — через `hasActiveFilters`.
+   * Перед вызовом колбэка показывается модалка подтверждения (**Modal**).
+   */
+  onResetFilters?: () => void;
+  /** Есть ли применённые фильтры (заливка кнопки сброса, как `filterApplied` у колонки) */
+  hasActiveFilters?: boolean;
+  /**
+   * Тексты модалки подтверждения сброса фильтров (`title`, `description`, `confirmLabel`, `cancelLabel`).
+   * Если не заданы — используются значения по умолчанию на русском языке.
+   */
+  resetFiltersConfirmTexts?: {
+    title?: string;
+    description?: string;
+    confirmLabel?: string;
+    cancelLabel?: string;
+  };
+  /**
+   * Выгрузка в Excel (`.xls`, SpreadsheetML без внешних библиотек).
+   * При передаче `dataFetcher` в `headerToolbar` показывается кнопка; по клику — модалка диапазона страниц.
+   */
+  excelExport?: DataGridExcelExportConfig<Row>;
+  /** Заголовок пустого состояния (`rows` пустой или не передан); по умолчанию «Ничего не найдено» */
+  emptyStateTitle?: React.ReactNode;
+  /** Пояснение пустого состояния; по умолчанию «По заданным критериям ничего не найдено» */
+  emptyStateDescription?: React.ReactNode;
+  /** Полностью свой блок пустого состояния вместо встроенного */
+  renderEmptyState?: () => React.ReactNode;
   hideFooter?: boolean;
   elevated?: boolean;
   tableAriaLabel?: string;

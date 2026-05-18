@@ -34,7 +34,7 @@ export type DataGridColumnHeaderContentProps = {
   headerAlign: 'left' | 'center' | 'right';
   /** Показать кнопку фильтра (и `onColumnFilterClick` задан у грида) */
   showFilterButton: boolean;
-  /** Подсветка иконки (`theme.colors.info`), если по колонке уже применён фильтр */
+  /** Залитая воронка (`theme.colors.info`), если по колонке уже применён фильтр */
   filterApplied: boolean;
   /** Свой узел внутри кнопки фильтра вместо стандартной `Icon` */
   filterIcon?: React.ReactNode;

@@ -52,6 +52,7 @@ export { IconExEdit2 } from './Edit2';
 export { IconExEye } from './Eye';
 export { IconExFigma } from './Figma';
 export { IconExFilter } from './Filter';
+export { IconExFilterFilled } from './FilterFilled';
 export { IconExFilter2 } from './Filter2';
 export { IconExFire } from './Fire';
 export { IconExFlag } from './Flag';

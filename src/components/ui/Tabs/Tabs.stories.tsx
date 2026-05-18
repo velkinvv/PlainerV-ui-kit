@@ -136,6 +136,15 @@ const meta: Meta<typeof Tabs> = {
       },
       control: false,
     },
+    scrollable: {
+      control: { type: 'boolean' },
+      description:
+        'Прокрутка трека, если сегменты не помещаются. Горизонтально — полоса прокрутки по ширине; вертикально — по высоте (ограничьте **segmentTrackProps.style.maxHeight** при необходимости).',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
   },
 };
 
@@ -172,6 +181,38 @@ export const PillSegmentedWithIconsAndBadge: Story = {
   },
   parameters: {
     layout: 'padded',
+  },
+};
+
+/** Много вкладок в узком контейнере: **scrollable** включает горизонтальную прокрутку трека. */
+export const ScrollableManyTabs: Story = {
+  args: {
+    scrollable: true,
+    defaultValue: 'tab-1',
+    ariaLabel: 'Прокручиваемые вкладки',
+    segmentTrackProps: { style: tabsStoriesStyles.scrollableTrackHost },
+    children: (
+      <>
+        {Array.from({ length: 12 }, (_, tabIndex) => {
+          const tabNumber = tabIndex + 1;
+          const tabValue = `tab-${tabNumber}`;
+          return (
+            <TabItem key={tabValue} value={tabValue} label={`Вкладка ${tabNumber}`}>
+              <div style={tabsStoriesStyles.contentPadding16}>Контент {tabNumber}</div>
+            </TabItem>
+          );
+        })}
+      </>
+    ),
+  },
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        story:
+          'Проп **scrollable**: сегменты не сжимаются (**flex: 0 0 auto**), трек прокручивается; активная вкладка подскролливается в видимую область.',
+      },
+    },
   },
 };
 
