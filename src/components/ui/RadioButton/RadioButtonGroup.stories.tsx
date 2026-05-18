@@ -1,5 +1,4 @@
 ﻿import type { Meta, StoryObj } from '@storybook/react';
-import type { RadioButtonGroupOption } from '../../../types/ui';
 import React, { useState } from 'react';
 import { RadioButtonGroup } from './RadioButtonGroup';
 import { Size, IconSize } from '../../../types/sizes';
@@ -8,6 +7,7 @@ import {
   RadioButtonVariant,
   RadioButtonLabelPosition,
   TooltipPosition,
+  type RadioButtonGroupOption,
 } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
 import { DOC_RADIO_BUTTON_GROUP } from '@/components/ui/storyDocs/uiKitDocs';

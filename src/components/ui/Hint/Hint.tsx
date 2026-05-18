@@ -110,8 +110,8 @@ export const Hint = forwardRef<HTMLDivElement, HintProps>(
 
     const triggerRef = useRef<HTMLDivElement>(null);
     const hintContentRef = useRef<HTMLDivElement>(null);
-    const timeoutRef = useRef<NodeJS.Timeout>();
-    const hideTimeoutRef = useRef<NodeJS.Timeout>();
+    const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+    const hideTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
     const isVisibleRef = useRef(false); // Для отслеживания реальной видимости
     const hintId = useId(); // Уникальный ID для hint (для aria-describedby)
 

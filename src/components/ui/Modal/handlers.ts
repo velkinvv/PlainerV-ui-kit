@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import type { NullableRefObject } from '../../../types/reactRefs';
 import type { Target, Transition } from 'framer-motion';
 import type { ModalButtonProps } from '../../../types/ui';
 
@@ -64,9 +65,9 @@ export const hasModalButtons = (buttons?: ModalButtonProps[]): buttons is ModalB
 
 interface UseModalFocusParams {
   isOpen: boolean;
-  initialFocusRef?: React.RefObject<HTMLElement>;
+  initialFocusRef?: NullableRefObject;
   initialFocusSelector?: string;
-  fallbackRef: React.RefObject<HTMLElement>;
+  fallbackRef: NullableRefObject;
 }
 
 export const useModalFocus = ({
@@ -95,7 +96,7 @@ export const useModalFocus = ({
 const FOCUSABLE_SELECTOR =
   'a[href], area[href], input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
 
-export const useFocusTrap = (isOpen: boolean, containerRef: React.RefObject<HTMLElement>) => {
+export const useFocusTrap = (isOpen: boolean, containerRef: NullableRefObject) => {
   useEffect(() => {
     if (!isOpen || !containerRef.current) {
       return;

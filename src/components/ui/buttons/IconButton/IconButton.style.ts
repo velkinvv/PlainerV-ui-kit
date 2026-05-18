@@ -1,9 +1,20 @@
 import styled, { css } from 'styled-components';
 import { motion } from 'framer-motion';
-import type { IconButtonProps } from '../../../../types/ui';
-import { ButtonVariant } from '../../../../types/ui';
+import { ButtonVariant, type IconButtonProps } from '../../../../types/ui';
 import { Size } from '../../../../types/sizes';
 import { getButtonSize } from '../../../../handlers/buttonThemeHandlers';
+import { createStyledShouldForwardProp } from '../../../../handlers/styledComponentHandlers';
+
+const iconButtonStyleConfig = {
+  shouldForwardProp: createStyledShouldForwardProp([
+    'variant',
+    'size',
+    'loading',
+    'fullWidth',
+    'rounded',
+    'icon',
+  ]),
+};
 
 /**
  * Стилизованная иконка-кнопка
@@ -14,10 +25,9 @@ import { getButtonSize } from '../../../../handlers/buttonThemeHandlers';
  * @param fullWidth - растянуть на всю ширину
  * @param rounded - скругленные углы
  */
-export const StyledIconButton = styled(motion.button).withConfig({
-  shouldForwardProp: (prop) =>
-    !['variant', 'size', 'loading', 'fullWidth', 'rounded'].includes(prop),
-})<IconButtonProps>`
+export const StyledIconButton = styled(motion.button).withConfig(
+  iconButtonStyleConfig,
+)<IconButtonProps>`
   box-sizing: border-box;
   display: inline-flex;
   align-items: center;

@@ -1,7 +1,6 @@
 import React, { forwardRef, useMemo, useState } from 'react';
 import { clsx } from 'clsx';
-import type { ButtonGroupProps } from '@/types/ui';
-import { ButtonVariant } from '@/types/ui';
+import { ButtonVariant, type ButtonGroupProps } from '@/types/ui';
 import { Size } from '@/types/sizes';
 import { ButtonGroupRoot } from './ButtonGroup.style';
 
@@ -45,14 +44,19 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
           return childNode;
         }
 
-        const childProps = (childNode.props ?? {}) as {
+        type SelectableButtonChildProps = {
           onClick?: (event: React.MouseEvent<HTMLElement>) => void;
           variant?: ButtonVariant;
+          'data-active'?: string;
+          'aria-pressed'?: boolean;
         };
+
+        const buttonChild = childNode as React.ReactElement<SelectableButtonChildProps>;
+        const childProps = buttonChild.props ?? {};
         const isActiveButton = childIndex === resolvedActiveButtonIndex;
         const variantForChild = isActiveButton ? activeButtonVariant : inactiveButtonVariant;
 
-        return React.cloneElement(childNode, {
+        return React.cloneElement(buttonChild, {
           ...childProps,
           variant: variantForChild,
           'data-active': isActiveButton ? 'true' : 'false',

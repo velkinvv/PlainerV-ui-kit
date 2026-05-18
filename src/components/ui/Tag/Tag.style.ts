@@ -1,14 +1,14 @@
 import styled, { css } from 'styled-components';
+import { createStyledShouldForwardProp } from '../../../handlers/styledComponentHandlers';
 import { TransitionHandler } from '../../../handlers/uiHandlers';
 import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
-import type { Colors } from '../../../types/theme';
+import { ThemeMode, type Colors } from '../../../types/theme';
 import type {
   TagAppearance,
   TagColorVariant,
   TagCustomColors,
   TagStatusDisplay,
 } from '../../../types/ui';
-import { ThemeMode } from '../../../types/theme';
 
 type TagRootProps = {
   $color: TagColorVariant;
@@ -228,22 +228,7 @@ const customSurfaceCss = (
  * @property $customSurface — переопределение фона (не сочетается с marker в типах; в стилях игнорируем marker если передан custom)
  */
 export const TagRoot = styled.span.withConfig({
-  shouldForwardProp: (prop) =>
-    ![
-      '$color',
-      '$appearance',
-      '$statusDisplay',
-      '$clickable',
-      '$disabled',
-      '$padding',
-      '$gap',
-      '$fontSize',
-      '$minHeight',
-      '$widthCss',
-      '$maxWidthCss',
-      '$hideBorder',
-      '$customSurface',
-    ].includes(String(prop)),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<TagRootProps>`
   display: inline-flex;
   flex-direction: row;
@@ -334,7 +319,7 @@ export const TagRoot = styled.span.withConfig({
 
 /** Цветная метка статуса слева (режим `statusDisplay="marker"`) */
 export const TagStatusMarker = styled.span.withConfig({
-  shouldForwardProp: (prop) => !['$markerColor', '$markerFill'].includes(String(prop)),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $markerColor: TagColorVariant; $markerFill?: string }>`
   flex-shrink: 0;
   width: 8px;

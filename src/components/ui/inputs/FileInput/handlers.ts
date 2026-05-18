@@ -1,4 +1,5 @@
 import type { FileInputProps } from '../../../../types/ui';
+import { IconSize, Size } from '../../../../types/sizes';
 
 /**
  * Вычисляет текущий статус поля на основе приоритетов.
@@ -56,4 +57,21 @@ export const getFileExtensionBadge = (fileName: string): string => {
   const parts = fileName.split('.');
   const ext = parts[parts.length - 1];
   return ext ? ext.toLowerCase() : '';
+};
+
+/**
+ * Размер иконки справа в поле выбора файла в зависимости от размера поля.
+ * @param fieldSize - Размер поля `FileInput` (`size` из пропсов).
+ */
+export const getFileInputTrailingIconSize = (fieldSize: Size): IconSize => {
+  switch (fieldSize) {
+    case Size.SM:
+    case Size.XS:
+      return IconSize.SM;
+    case Size.LG:
+    case Size.XL:
+      return IconSize.MD;
+    default:
+      return IconSize.SM;
+  }
 };

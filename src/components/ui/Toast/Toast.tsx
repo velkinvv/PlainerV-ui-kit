@@ -125,8 +125,8 @@ const ToastCardView: React.FC<{
         <ToastDismiss
           type="button"
           aria-label="Закрыть уведомление"
-          onClick={(event) => {
-            event.stopPropagation();
+          onClick={(clickEvent: React.MouseEvent<HTMLButtonElement>) => {
+            clickEvent.stopPropagation();
             onClose(toast.id);
           }}
         >
@@ -200,8 +200,8 @@ const ToastPillView: React.FC<{
             type="button"
             $bg={pill.actionBg}
             $fg={pill.actionText}
-            onClick={(event) => {
-              event.stopPropagation();
+            onClick={(clickEvent: React.MouseEvent<HTMLButtonElement>) => {
+              clickEvent.stopPropagation();
               handleAction();
             }}
           >
@@ -211,8 +211,8 @@ const ToastPillView: React.FC<{
         <ToastPillDismiss
           type="button"
           aria-label="Закрыть уведомление"
-          onClick={(event) => {
-            event.stopPropagation();
+          onClick={(clickEvent: React.MouseEvent<HTMLButtonElement>) => {
+            clickEvent.stopPropagation();
             onClose(toast.id);
           }}
         >

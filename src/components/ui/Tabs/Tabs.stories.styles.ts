@@ -29,4 +29,9 @@ export const tabsStoriesStyles = {
   controlledLabel: {
     marginBottom: '16px',
   } satisfies CSSProperties,
+  /** Широкая рамка для сторис **underline** с базовой линией FULL vs ITEMS */
+  wideDashedPanel: {
+    border: `1px dashed ${lightTheme.colors.border}`,
+    padding: '12px',
+  } satisfies CSSProperties,
 };

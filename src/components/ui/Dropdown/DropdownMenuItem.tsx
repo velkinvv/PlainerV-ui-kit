@@ -2,7 +2,6 @@ import React from 'react';
 import { clsx } from 'clsx';
 import { TooltipPosition, type DropdownMenuItemProps } from '../../../types/ui';
 import { Hint, HintVariant } from '../Hint/Hint';
-import { mapTooltipPositionToHintPlacement } from './handlers';
 import {
   DropdownItem,
   DropdownItemContent,
@@ -30,6 +29,7 @@ import {
   isSelectedInMultiSelection as checkIsSelectedInMultiSelection,
   calculateMenuItemState,
   getMenuItemKey,
+  mapTooltipPositionToHintPlacement,
 } from './handlers';
 import { useDropdownMenuContext } from './DropdownMenu';
 import { Tooltip } from '../Tooltip/Tooltip';
@@ -271,7 +271,7 @@ export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuIte
       if (showMultiCheckbox) {
         return (
           <DropdownItemIconSlot
-            onClick={(iconSlotClick) => {
+            onClick={(iconSlotClick: React.MouseEvent<HTMLSpanElement>) => {
               // Клик по чекбоксу не должен всплывать к строке меню: второй onItemSelect с «чистым» MouseEvent ломает каскад дерева.
               iconSlotClick.stopPropagation();
             }}
@@ -310,7 +310,7 @@ export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuIte
           aria-label={
             treeBranchExpanded ? 'Свернуть вложенный список' : 'Развернуть вложенный список'
           }
-          onClick={(expandEvent) => {
+          onClick={(expandEvent: React.MouseEvent<HTMLButtonElement>) => {
             if (branchKey) {
               toggleTreeBranch?.(branchKey, expandEvent);
             }

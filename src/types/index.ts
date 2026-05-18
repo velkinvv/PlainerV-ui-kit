@@ -4,6 +4,7 @@ export * from './sizes';
 export * from './ui';
 export * from './redux';
 export * from './icon';
+export * from './reactRefs';
 
 // Общие перечисления и сущности для форм/отображения (при необходимости в приложении)
 export enum UserRole {

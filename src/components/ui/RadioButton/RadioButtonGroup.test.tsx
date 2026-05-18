@@ -3,10 +3,13 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { RadioButtonGroup } from './RadioButtonGroup';
-import { RadioButtonGroupOrientation, RadioButtonVariant } from '../../../types/ui';
+import {
+  RadioButtonGroupOrientation,
+  RadioButtonVariant,
+  type RadioButtonGroupOption,
+} from '../../../types/ui';
 import { Size, IconSize } from '../../../types/sizes';
 import { Icon } from '../Icon/Icon';
-import type { RadioButtonGroupOption } from '../../../types/ui';
 
 const renderWithTheme = (component: React.ReactElement) => {
   return render(<ThemeProvider>{component}</ThemeProvider>);
@@ -25,7 +28,7 @@ describe('RadioButtonGroup', () => {
         <RadioButtonGroup
           options={basicOptions}
           value="option1"
-          onChange={() => {}}
+          onChange={jest.fn()}
           label="Выберите опцию"
         />,
       );
@@ -38,7 +41,7 @@ describe('RadioButtonGroup', () => {
 
     it('рендерит группу без лейбла', () => {
       renderWithTheme(
-        <RadioButtonGroup options={basicOptions} value="option1" onChange={() => {}} />,
+        <RadioButtonGroup options={basicOptions} value="option1" onChange={jest.fn()} />,
       );
 
       expect(screen.queryByText('Выберите опцию')).not.toBeInTheDocument();
@@ -47,7 +50,7 @@ describe('RadioButtonGroup', () => {
 
     it('выбирает правильную опцию по value', () => {
       renderWithTheme(
-        <RadioButtonGroup options={basicOptions} value="option2" onChange={() => {}} />,
+        <RadioButtonGroup options={basicOptions} value="option2" onChange={jest.fn()} />,
       );
 
       const radio1 = screen.getByRole('radio', { name: 'Опция 1' });
@@ -66,7 +69,7 @@ describe('RadioButtonGroup', () => {
         <RadioButtonGroup
           options={basicOptions}
           value=""
-          onChange={() => {}}
+          onChange={jest.fn()}
           label="Выберите опцию"
           error="Пожалуйста, выберите одну из опций"
         />,
@@ -80,7 +83,7 @@ describe('RadioButtonGroup', () => {
         <RadioButtonGroup
           options={basicOptions}
           value=""
-          onChange={() => {}}
+          onChange={jest.fn()}
           label="Выберите опцию"
           error={['Ошибка для опции 1', '', 'Ошибка для опции 3']}
         />,
@@ -95,7 +98,7 @@ describe('RadioButtonGroup', () => {
         <RadioButtonGroup
           options={basicOptions}
           value="option1"
-          onChange={() => {}}
+          onChange={jest.fn()}
           label="Выберите опцию"
           error="Ошибка"
           helperText="Вспомогательный текст"
@@ -113,7 +116,7 @@ describe('RadioButtonGroup', () => {
         <RadioButtonGroup
           options={basicOptions}
           value="option1"
-          onChange={() => {}}
+          onChange={jest.fn()}
           label="Выберите опцию"
           helperText="Вспомогательный текст для группы"
         />,
@@ -129,7 +132,7 @@ describe('RadioButtonGroup', () => {
         <RadioButtonGroup
           options={basicOptions}
           value="option1"
-          onChange={() => {}}
+          onChange={jest.fn()}
           label="Обязательная группа"
           required
         />,
@@ -144,7 +147,7 @@ describe('RadioButtonGroup', () => {
         <RadioButtonGroup
           options={basicOptions}
           value="option1"
-          onChange={() => {}}
+          onChange={jest.fn()}
           label="Группа"
           required
         />,
@@ -161,7 +164,7 @@ describe('RadioButtonGroup', () => {
         <RadioButtonGroup
           options={basicOptions}
           value="option1"
-          onChange={() => {}}
+          onChange={jest.fn()}
           orientation={RadioButtonGroupOrientation.HORIZONTAL}
         />,
       );
@@ -174,7 +177,7 @@ describe('RadioButtonGroup', () => {
         <RadioButtonGroup
           options={basicOptions}
           value="option1"
-          onChange={() => {}}
+          onChange={jest.fn()}
           orientation={RadioButtonGroupOrientation.VERTICAL}
         />,
       );
@@ -189,7 +192,7 @@ describe('RadioButtonGroup', () => {
         <RadioButtonGroup
           options={basicOptions}
           value="option1"
-          onChange={() => {}}
+          onChange={jest.fn()}
           disabled={true}
         />,
       );
@@ -223,7 +226,7 @@ describe('RadioButtonGroup', () => {
         <RadioButtonGroup
           options={basicOptions}
           value="option1"
-          onChange={() => {}}
+          onChange={jest.fn()}
           disabled={true}
         />,
       );
@@ -254,7 +257,7 @@ describe('RadioButtonGroup', () => {
         <RadioButtonGroup
           options={basicOptions}
           value="option1"
-          onChange={() => {}}
+          onChange={jest.fn()}
           onClick={handleClick}
         />,
       );
@@ -273,7 +276,7 @@ describe('RadioButtonGroup', () => {
         <RadioButtonGroup
           options={basicOptions}
           value="option1"
-          onChange={() => {}}
+          onChange={jest.fn()}
           size={Size.LG}
         />,
       );
@@ -286,7 +289,7 @@ describe('RadioButtonGroup', () => {
         <RadioButtonGroup
           options={basicOptions}
           value="option1"
-          onChange={() => {}}
+          onChange={jest.fn()}
           variant={RadioButtonVariant.OUTLINE}
         />,
       );
@@ -298,7 +301,7 @@ describe('RadioButtonGroup', () => {
   describe('FullWidth', () => {
     it('применяет fullWidth', () => {
       renderWithTheme(
-        <RadioButtonGroup options={basicOptions} value="option1" onChange={() => {}} fullWidth />,
+        <RadioButtonGroup options={basicOptions} value="option1" onChange={jest.fn()} fullWidth />,
       );
 
       expect(screen.getByText('Опция 1')).toBeInTheDocument();
@@ -311,7 +314,7 @@ describe('RadioButtonGroup', () => {
         <RadioButtonGroup
           options={basicOptions}
           value="option1"
-          onChange={() => {}}
+          onChange={jest.fn()}
           label="Группа"
         />,
       );
@@ -324,7 +327,7 @@ describe('RadioButtonGroup', () => {
         <RadioButtonGroup
           options={basicOptions}
           value="option1"
-          onChange={() => {}}
+          onChange={jest.fn()}
           label="Группа"
         />,
       );
@@ -339,7 +342,7 @@ describe('RadioButtonGroup', () => {
         <RadioButtonGroup
           options={basicOptions}
           value="option1"
-          onChange={() => {}}
+          onChange={jest.fn()}
           label="Группа"
           helperText="Вспомогательный текст"
         />,
@@ -359,7 +362,7 @@ describe('RadioButtonGroup', () => {
       ];
 
       renderWithTheme(
-        <RadioButtonGroup options={optionsWithExtraText} value="plan1" onChange={() => {}} />,
+        <RadioButtonGroup options={optionsWithExtraText} value="plan1" onChange={jest.fn()} />,
       );
 
       expect(screen.getByText('Базовый план')).toBeInTheDocument();
@@ -383,7 +386,7 @@ describe('RadioButtonGroup', () => {
       ];
 
       renderWithTheme(
-        <RadioButtonGroup options={optionsWithIcons} value="option1" onChange={() => {}} />,
+        <RadioButtonGroup options={optionsWithIcons} value="option1" onChange={jest.fn()} />,
       );
 
       expect(screen.getByText('Опция 1')).toBeInTheDocument();
@@ -397,7 +400,7 @@ describe('RadioButtonGroup', () => {
         <RadioButtonGroup
           options={basicOptions}
           value="option1"
-          onChange={() => {}}
+          onChange={jest.fn()}
           name="custom-name"
         />,
       );
@@ -410,7 +413,7 @@ describe('RadioButtonGroup', () => {
 
     it('генерирует уникальное имя, если не указано', () => {
       renderWithTheme(
-        <RadioButtonGroup options={basicOptions} value="option1" onChange={() => {}} />,
+        <RadioButtonGroup options={basicOptions} value="option1" onChange={jest.fn()} />,
       );
 
       const radios = screen.getAllByRole('radio');

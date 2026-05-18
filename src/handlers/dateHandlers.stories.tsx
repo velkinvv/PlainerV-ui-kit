@@ -107,7 +107,7 @@ const DateParserDemo = () => {
 
 // Компонент для демонстрации форматирования дат
 const DateFormatterDemo = () => {
-  const [date, setDate] = useState(new Date());
+  const [date, _setDate] = useState(new Date());
   const [format, setFormat] = useState('DD.MM.YYYY');
 
   const formats = ['DD.MM.YYYY', 'YYYY-MM-DD', 'MMMM YYYY г.', 'dddd, MMMM Do YYYY', 'MM/DD/YYYY'];

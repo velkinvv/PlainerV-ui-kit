@@ -1,6 +1,9 @@
 import React, { useMemo } from 'react';
-import type { SkeletonProps, SkeletonVariant } from '../../../types/ui';
-import { SkeletonGroupDirection } from '../../../types/ui';
+import {
+  SkeletonGroupDirection,
+  type SkeletonProps,
+  type SkeletonVariant,
+} from '../../../types/ui';
 import { SkeletonGroup, SkeletonWrapper } from './Skeleton.style';
 
 /**

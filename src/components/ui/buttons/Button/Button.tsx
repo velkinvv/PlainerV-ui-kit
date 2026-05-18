@@ -1,10 +1,11 @@
-import React, { forwardRef, useCallback } from 'react';
+import React, { forwardRef, useCallback, type ComponentProps } from 'react';
 import { clsx } from 'clsx';
 import { type ButtonProps, ButtonVariant } from '../../../../types/ui';
 import { Size } from '../../../../types/sizes';
 import { useUiMotionPresets } from '../../../../hooks/useUiMotion';
 import { StyledButton, StyledLinkButton, LoadingContainer, LoadingSpinner } from './Button.style';
 import { mergeAnchorRel } from '../../../../handlers/linkHandlers';
+import { omitMotionConflictingDomHandlers } from '../../../../handlers/styledComponentHandlers';
 import { Tooltip } from '../../Tooltip/Tooltip';
 
 export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
@@ -82,8 +83,8 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPr
 
     const mergedRel = isAnchor ? mergeAnchorRel(target, rel) : undefined;
 
-    const motionProps = {
-      ref: ref as React.Ref<HTMLButtonElement & HTMLAnchorElement>,
+    const motionProps: ComponentProps<typeof StyledButton> = {
+      ref: ref as React.Ref<HTMLButtonElement>,
       href: isAnchor ? href : undefined,
       target: isAnchor ? target : undefined,
       rel: mergedRel,
@@ -99,11 +100,13 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPr
       className: clsx('ui-button', isAnchor ? 'ui-button--link' : null, className),
       onClick: handleClick,
       ...uiMotion.buttonPress(!(disabled || loading)),
-      ...props,
+      ...omitMotionConflictingDomHandlers(props),
     };
 
     const buttonElement = isAnchor ? (
-      <StyledLinkButton {...motionProps}>{renderContent()}</StyledLinkButton>
+      <StyledLinkButton {...(motionProps as ComponentProps<typeof StyledLinkButton>)}>
+        {renderContent()}
+      </StyledLinkButton>
     ) : (
       <StyledButton {...motionProps}>{renderContent()}</StyledButton>
     );

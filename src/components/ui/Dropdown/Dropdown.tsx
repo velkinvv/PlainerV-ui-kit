@@ -779,7 +779,14 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
           },
         });
       });
-    }, [menuBodyFromItems, children, handleItemSelect, injectDropdownMenuShellProps]);
+    }, [
+      menuBodyFromItems,
+      children,
+      handleItemSelect,
+      injectDropdownMenuShellProps,
+      filteredDefinitions,
+      resolvedDefinitions,
+    ]);
 
     const isAsyncLoading = shouldUseAsyncItems && asyncStatus === 'loading';
     const isAsyncError = shouldUseAsyncItems && asyncStatus === 'error';
@@ -868,9 +875,9 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
               type="search"
               value={currentSearchValue}
               placeholder={searchPlaceholder}
-              onChange={(event) => {
-                handleSearchChange(event.target.value);
-                onSearchInputChange?.(event);
+              onChange={(changeEvent: React.ChangeEvent<HTMLInputElement>) => {
+                handleSearchChange(changeEvent.target.value);
+                onSearchInputChange?.(changeEvent);
               }}
             />
           </DropdownSearchContainer>

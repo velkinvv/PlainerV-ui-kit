@@ -4,8 +4,7 @@ import { clsx } from 'clsx';
 import { NavigationMenu } from '../NavigationMenu';
 import { Icon } from '../Icon/Icon';
 import { NavigationMenuActiveAppearance, NavigationMenuExpandInteraction } from '@/types/ui';
-import type { SidemenuProps, SidemenuItem } from '../../../types/ui';
-import { SidemenuVariant } from '../../../types/ui';
+import { SidemenuVariant, type SidemenuProps, type SidemenuItem } from '../../../types/ui';
 import { IconSize } from '../../../types/sizes';
 import { sidemenuOffScreenInnerPanelTransition } from '@/handlers/offScreenPanelMotionHandlers';
 import {

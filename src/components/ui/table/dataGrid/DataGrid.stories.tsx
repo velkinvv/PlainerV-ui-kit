@@ -54,7 +54,19 @@ const meta: Meta<typeof DataGrid> = {
     tableId: {
       description: 'Уникальный `id` у `<table>` и `name` у радиогруппы при `multiselect={false}`.',
     },
-    columns: { description: 'Описание колонок (`field`, `headerName`, `render`, …).' },
+    columns: {
+      description: [
+        'Массив **`DataGridColumn`**: `field`, `headerName`, `width`, `minWidth`, `align`, `sortable`, `valueGetter`, `render`, **`format`**, фильтры (`filterable`, …), `disableReorder`, `disableResize`, `headerMaxLines`.',
+        '',
+        '**Приоритет содержимого ячейки:** `columns[].render` → **`renderCell`** → **`columns[].format`** → строковое значение поля (`valueGetter` или значение по `field`).',
+        '',
+        '**`format` (`TableCellFormat`):** декларативное форматирование без своего `render`. Дискриминатор **`type`**: `text`, `number`, `currency`, `percent`, `date`, `datetime`, `time`, `mask`, `phone`, `bankAccount`, `bankCard`, `inn`, `snils`, `email`, `link`, `boolean`, `enum`, `custom` (поле **`renderCell`**). У типов `link` и `email` используется компонент **`Link`**.',
+        '',
+        'Локаль **`Intl`** по умолчанию **`ru-RU`**; для **`currency`** валюта по умолчанию **`RUB`**. Шаблон **`href`** у `link` поддерживает плейсхолдеры `{поле}` и `{вложенный.ключ}`.',
+        '',
+        'Хелпер **`formatTableCellValue`**, константы **`TABLE_CELL_MASK_*`** экспортируются из пакета (handlers). Пример таблицы: сторис **DataGrid › Column formats › Встроенные форматы колонок**; для **`Table`**: **Table › TableCellFormatted**.',
+      ].join('\n'),
+    },
     rows: {
       description:
         'Строки данных; у каждой должен быть стабильный идентификатор (или через `getRowId`).',
@@ -168,7 +180,10 @@ const meta: Meta<typeof DataGrid> = {
     },
     onExpandedRowOpen: { description: 'Вызов при развороте строки (ленивая загрузка).' },
     renderExpandedRow: { description: '(row, context) — контент под строкой.' },
-    renderCell: { description: 'Глобальный рендер ячейки, если у колонки нет `render`.' },
+    renderCell: {
+      description:
+        'Глобальный рендер ячейки. Приоритет: **`columns[].render`** выше, затем **`renderCell`**, затем **`columns[].format`**; если ни один не вернул узел для показа — строка из значения поля.',
+    },
     renderRowWrapper: { description: 'Обёртка над строкой `tr`.' },
     enableColumnDrag: { description: 'Перетаскивание заголовков колонок (HTML5 DnD).' },
     onColumnDragStart: { description: 'Старт DnD колонки: `{ fromIndex, field }`.' },

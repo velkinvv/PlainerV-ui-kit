@@ -6,6 +6,7 @@ import { Typography } from '../components/ui/Typography';
 import { SnackbarProvider } from '../components/ui/Snackbar';
 import { useSnackbar } from './useSnackbar';
 import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
+import { noopHandler } from '@/handlers';
 
 const withSnackbar: Decorator = (Story) => (
   <SnackbarProvider>
@@ -65,7 +66,7 @@ const BasicDemo = () => {
           onClick={() =>
             showSnackbar('Элемент удалён', {
               actionLabel: 'Отменить',
-              onAction: () => {},
+              onAction: noopHandler,
               duration: 6000,
             })
           }

@@ -34,7 +34,12 @@
   "exclude": [
     "node_modules",
     "dist",
+    "src/vite",
     "**/*.stories.tsx",
+    "**/*.story.tsx",
+    "**/table/**/tableStoryDemoData.ts",
+    "**/table/**/dataGridStoryDemoData.ts",
+    "**/table/**/dataGridStoryDemoColumns.tsx",
     "**/*.test.ts",
     "**/*.test.tsx"
   ]

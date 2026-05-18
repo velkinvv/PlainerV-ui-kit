@@ -13,9 +13,9 @@ import {
   formatHours,
   formatMinutes,
   formatSeconds,
-} from './timeHandlers';
+} from './handlers';
 
-describe('timeHandlers', () => {
+describe('TimeInput handlers (время)', () => {
   describe('parseTime', () => {
     it('parses HH:mm format correctly', () => {
       const result = parseTime('14:30');

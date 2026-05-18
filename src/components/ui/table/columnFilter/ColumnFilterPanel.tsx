@@ -1,8 +1,7 @@
 import React, { useCallback } from 'react';
 import { clsx } from 'clsx';
 import { Button } from '../../buttons/Button';
-import { ButtonVariant } from '@/types/ui';
-import type { ColumnFilterPanelProps } from '@/types/ui';
+import { ButtonVariant, type ColumnFilterPanelProps } from '@/types/ui';
 import { Size } from '@/types/sizes';
 import {
   ColumnFilterPanelBody,

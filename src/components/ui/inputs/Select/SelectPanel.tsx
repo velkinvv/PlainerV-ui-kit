@@ -561,7 +561,9 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
                 <SelectMultiSelectAllFooterBtn
                   type="button"
                   disabled={footerDisabled}
-                  onMouseDown={(e) => e.preventDefault()}
+                  onMouseDown={(mouseEvent: React.MouseEvent<HTMLButtonElement>) =>
+                    mouseEvent.preventDefault()
+                  }
                   onClick={handleMultiSelectAllClick}
                 >
                   Выбрать все
@@ -667,8 +669,8 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
             aria-invalid={error ? true : undefined}
             aria-required={required ? true : undefined}
             autoComplete="off"
-            onChange={(e) => {
-              const v = e.target.value;
+            onChange={(changeEvent: React.ChangeEvent<HTMLInputElement>) => {
+              const v = changeEvent.target.value;
               setEffectiveSearchQuery(v);
               if (!menuOpen) {
                 handleMenuOpenChange(true);
@@ -705,12 +707,12 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
               onBlur={() => {
                 setFocused(false);
               }}
-              onKeyDown={(e) => {
+              onKeyDown={(keyboardEvent: React.KeyboardEvent<HTMLDivElement>) => {
                 if (selectDisabled) {
                   return;
                 }
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
+                if (keyboardEvent.key === 'Enter' || keyboardEvent.key === ' ') {
+                  keyboardEvent.preventDefault();
                   toggleMenuOpen();
                 }
               }}
@@ -727,9 +729,9 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
                       type="button"
                       disabled={selectDisabled}
                       aria-label={`Удалить «${chip.label}»`}
-                      onMouseDown={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
+                      onMouseDown={(mouseEvent: React.MouseEvent<HTMLButtonElement>) => {
+                        mouseEvent.preventDefault();
+                        mouseEvent.stopPropagation();
                       }}
                       onClick={handleMultiChipRemoveClick(chip.value)}
                     >
@@ -780,9 +782,9 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
             $compact
             disabled={selectDisabled}
             aria-label="Очистить выбор"
-            onMouseDown={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            onMouseDown={(mouseEvent: React.MouseEvent<HTMLButtonElement>) => {
+              mouseEvent.preventDefault();
+              mouseEvent.stopPropagation();
             }}
             onClick={handleMultiClearClick}
           >
@@ -799,9 +801,9 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
             type="button"
             disabled={selectDisabled}
             aria-label="Очистить"
-            onMouseDown={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            onMouseDown={(mouseEvent: React.MouseEvent<HTMLButtonElement>) => {
+              mouseEvent.preventDefault();
+              mouseEvent.stopPropagation();
             }}
             onClick={handleDisplayClearClick}
           >
@@ -815,16 +817,16 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
         ) : null}
         <SelectChevronSlot
           aria-hidden
-          onMouseDown={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
+          onMouseDown={(mouseEvent: React.MouseEvent<HTMLSpanElement>) => {
+            mouseEvent.preventDefault();
+            mouseEvent.stopPropagation();
             if (!selectDisabled) {
               toggleMenuOpen();
             }
           }}
-          onClick={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
+          onClick={(clickEvent: React.MouseEvent<HTMLSpanElement>) => {
+            clickEvent.preventDefault();
+            clickEvent.stopPropagation();
           }}
         >
           <SelectChevronFlip $isOpen={menuOpen}>

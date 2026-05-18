@@ -2,13 +2,15 @@ import type { DropdownTheme } from '../../../types/theme';
 import type { Size } from '../../../types/sizes';
 import { getDropdownItemStyles } from '../../../handlers/dropdownThemeHandlers';
 import type React from 'react';
-import type {
-  DropdownMenuGroup,
-  DropdownMenuItemProps,
-  DropdownPositioningMode,
-  DropdownVirtualScrollConfig,
+import type { NullableRefObject } from '../../../types/reactRefs';
+import {
+  HintPosition,
+  TooltipPosition,
+  type DropdownMenuGroup,
+  type DropdownMenuItemProps,
+  type DropdownPositioningMode,
+  type DropdownVirtualScrollConfig,
 } from '../../../types/ui';
-import { HintPosition, TooltipPosition } from '../../../types/ui';
 
 /**
  * Вычисляет высоту элемента dropdown из темы
@@ -429,8 +431,8 @@ export const getMenuItemKey = (
  */
 export const isClickInsideDropdown = (
   event: MouseEvent,
-  triggerRef: React.RefObject<HTMLElement>,
-  menuRef: React.RefObject<HTMLElement>,
+  triggerRef: NullableRefObject,
+  menuRef: NullableRefObject,
 ): boolean => {
   const target = event.target as Node;
   const isClickInsideTrigger = triggerRef.current && triggerRef.current.contains(target);
@@ -449,8 +451,8 @@ export const isClickInsideDropdown = (
  */
 export const handleClickOutsideEvent = (
   event: MouseEvent,
-  triggerRef: React.RefObject<HTMLElement>,
-  menuRef: React.RefObject<HTMLElement>,
+  triggerRef: NullableRefObject,
+  menuRef: NullableRefObject,
   onClickOutside?: (event: Event) => void,
 ): boolean => {
   const isOutside = !isClickInsideDropdown(event, triggerRef, menuRef);

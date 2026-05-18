@@ -170,7 +170,7 @@ export const Sheet = forwardRef<HTMLElement, SheetProps>(
           animate={panelMotion.animate}
           exit={panelMotion.exit}
           transition={panelMotion.transition}
-          onClick={(event) => event.stopPropagation()}
+          onClick={(event: React.MouseEvent<HTMLDivElement>) => event.stopPropagation()}
         >
           {headerSlot ? (
             <SheetHeader>{headerSlot}</SheetHeader>

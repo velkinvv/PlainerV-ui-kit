@@ -1,4 +1,10 @@
-import { clampUploadProgress, formatFileListSummary, getFileExtensionBadge } from './handlers';
+import {
+  clampUploadProgress,
+  formatFileListSummary,
+  getFileExtensionBadge,
+  getFileInputTrailingIconSize,
+} from './handlers';
+import { IconSize, Size } from '../../../../types/sizes';
 
 describe('FileInput handlers', () => {
   it('clampUploadProgress', () => {
@@ -35,5 +41,10 @@ describe('FileInput handlers', () => {
       item: (i: number) => [f1, f2][i] ?? null,
     } as unknown as FileList;
     expect(formatFileListSummary(files, true)).toBe('Выбрано файлов: 2');
+  });
+
+  it('getFileInputTrailingIconSize', () => {
+    expect(getFileInputTrailingIconSize(Size.SM)).toBe(IconSize.SM);
+    expect(getFileInputTrailingIconSize(Size.LG)).toBe(IconSize.MD);
   });
 });

@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { createStyledShouldForwardProp } from '../../../../handlers/styledComponentHandlers';
 import { BorderRadiusHandler, TransitionHandler } from '../../../../handlers/uiHandlers';
 
 /** Скрытый нативный `input type="file"` (доступен с клавиатуры и для `label htmlFor`). */
@@ -19,7 +20,7 @@ export const VisuallyHiddenFileInput = styled.input.attrs({ type: 'file' })`
  * @property $isDropzoneFill — растянуть по высоте dropzone и центрировать содержимое (макет Figma).
  */
 export const FileInputRow = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== '$isDropzoneFill',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $isDropzoneFill?: boolean }>`
   display: flex;
   align-items: center;

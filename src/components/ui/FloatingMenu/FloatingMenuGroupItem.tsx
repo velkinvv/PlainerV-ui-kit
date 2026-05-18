@@ -81,8 +81,8 @@ export const FloatingMenuGroupItem: React.FC<FloatingMenuGroupItemProps> = ({
     setCoords(getDropdownPanelPosition(buttonRef.current));
   }, [isOpen]);
 
-  const hoverOpenTimer = useRef<ReturnType<typeof setTimeout> | undefined>();
-  const hoverCloseTimer = useRef<ReturnType<typeof setTimeout> | undefined>();
+  const hoverOpenTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const hoverCloseTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const clearHoverTimers = useCallback(() => {
     if (hoverOpenTimer.current) {

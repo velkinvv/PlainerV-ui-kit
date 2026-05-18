@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { createStyledShouldForwardProp } from '../../../handlers/styledComponentHandlers';
 import { Size } from '../../../types/sizes';
 
 /** Высота одной строки роллера в px */
@@ -23,7 +24,7 @@ const columnGap = (size: Size | undefined): string => {
  * @property $size — отступы между колонками.
  */
 export const DateRollerRoot = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== '$size',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $size?: Size }>`
   display: flex;
   flex-direction: row;
@@ -38,7 +39,7 @@ export const DateRollerRoot = styled.div.withConfig({
  * @property $size — не используется в v1, зарезервировано под размеры шрифта.
  */
 export const DateRollerColumn = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== '$size',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $size?: Size }>`
   position: relative;
   flex: 1;
@@ -72,7 +73,7 @@ export const DateRollerViewport = styled.div`
  * @property $disabled — опция недоступна.
  */
 export const DateRollerOption = styled.button.withConfig({
-  shouldForwardProp: (prop) => !['$active', '$disabled'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $active?: boolean; $disabled?: boolean }>`
   display: flex;
   align-items: center;

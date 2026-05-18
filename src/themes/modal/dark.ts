@@ -1,6 +1,5 @@
-import { ModalSize } from '../../types/sizes';
+import { ModalSize, Size } from '../../types/sizes';
 import type { ModalTheme } from '../../types/theme';
-import { Size } from '../../types/sizes';
 import { themeRadiusBySize } from '../radiusScale';
 import { fontFamily } from '../fonts';
 

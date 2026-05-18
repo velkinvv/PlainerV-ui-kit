@@ -7,8 +7,7 @@ import {
   SpinnerBars,
 } from './Spinner.style';
 import { clsx } from 'clsx';
-import type { SpinnerProps } from '../../../types/ui';
-import { SpinnerVariant } from '../../../types/ui';
+import { SpinnerVariant, type SpinnerProps } from '../../../types/ui';
 
 /** Нормализованные числовые параметры анимации спиннера */
 interface SpinnerMotionProps {

@@ -233,7 +233,7 @@ const isTodayDate = isToday(new Date());`,
     },
     {
       title: 'Time Handlers',
-      code: `import { parseTime, createTime, formatTimeForDisplay } from '@/handlers/timeHandlers';
+      code: `import { parseTime, createTime, formatTimeForDisplay } from '@/handlers';
 
 // Парсинг времени
 const timeResult = parseTime('14:30');

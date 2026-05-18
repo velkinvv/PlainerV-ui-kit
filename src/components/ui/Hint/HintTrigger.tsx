@@ -1,4 +1,5 @@
 import React from 'react';
+import type { NullableRefObject } from '../../../types/reactRefs';
 import { HintTrigger as StyledHintTrigger, HintTourHighlight } from './Hint.style';
 import { clsx } from 'clsx';
 import { HintVisibilityTrigger } from '../../../types/ui';
@@ -10,7 +11,7 @@ export { HintTourHighlight };
  * Пропсы для компонента HintTrigger
  */
 export interface HintTriggerProps {
-  triggerRef: React.RefObject<HTMLDivElement>;
+  triggerRef: NullableRefObject<HTMLDivElement>;
   tourStep?: number;
   children: React.ReactNode;
   className?: string;

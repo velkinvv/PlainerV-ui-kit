@@ -1,5 +1,4 @@
-import { useMemo } from 'react';
-import type { CSSProperties } from 'react';
+import { useMemo, type CSSProperties } from 'react';
 import { getModalMountNode } from '../components/ui/Modal/handlers';
 
 type UseOverlayPortalParameters = {

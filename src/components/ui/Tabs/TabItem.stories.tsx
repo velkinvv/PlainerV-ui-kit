@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Tabs } from './Tabs';
 import { TabItem, TabItemGroupList } from './TabItem';
@@ -93,18 +93,16 @@ export const Default: Story = {
 export const HorizontalText: Story = {
   render: () => (
     <Tabs>
-      <Tabs.List>
-        <TabItem
-          value="tab1"
-          label="Horizontal Text"
-          textOrientation={TabItemTextOrientation.HORIZONTAL}
-        >
-          <div style={tabItemStoriesStyles.contentPadding16}>
-            <h3>Horizontal Text Tab</h3>
-            <p>This tab has horizontal text orientation.</p>
-          </div>
-        </TabItem>
-      </Tabs.List>
+      <TabItem
+        value="tab1"
+        label="Horizontal Text"
+        textOrientation={TabItemTextOrientation.HORIZONTAL}
+      >
+        <div style={tabItemStoriesStyles.contentPadding16}>
+          <h3>Horizontal Text Tab</h3>
+          <p>This tab has horizontal text orientation.</p>
+        </div>
+      </TabItem>
     </Tabs>
   ),
   parameters: {
@@ -144,19 +142,17 @@ export const VerticalText: Story = {
 export const VerticalTextLeft: Story = {
   render: () => (
     <Tabs>
-      <Tabs.List>
-        <TabItem
-          value="tab1"
-          label="Left Aligned"
-          textOrientation={TabItemTextOrientation.VERTICAL}
-          textPosition={TabItemTextPosition.LEFT}
-        >
-          <div style={tabItemStoriesStyles.contentPadding16}>
-            <h3>Vertical Text Left</h3>
-            <p>This tab has vertical text orientation with left alignment.</p>
-          </div>
-        </TabItem>
-      </Tabs.List>
+      <TabItem
+        value="tab1"
+        label="Left Aligned"
+        textOrientation={TabItemTextOrientation.VERTICAL}
+        textPosition={TabItemTextPosition.LEFT}
+      >
+        <div style={tabItemStoriesStyles.contentPadding16}>
+          <h3>Vertical Text Left</h3>
+          <p>This tab has vertical text orientation with left alignment.</p>
+        </div>
+      </TabItem>
     </Tabs>
   ),
   parameters: {
@@ -197,17 +193,12 @@ export const VerticalTextRight: Story = {
 export const WithIcons: Story = {
   render: () => (
     <Tabs>
-      <Tabs.List>
-        <TabItem
-          value="home"
-          label={<span style={tabItemStoriesStyles.iconLabelRow}>🏠 Home</span>}
-        >
-          <div style={tabItemStoriesStyles.contentPadding16}>
-            <h3>Home</h3>
-            <p>Welcome to the home page using TabItem!</p>
-          </div>
-        </TabItem>
-      </Tabs.List>
+      <TabItem value="home" label={<span style={tabItemStoriesStyles.iconLabelRow}>🏠 Home</span>}>
+        <div style={tabItemStoriesStyles.contentPadding16}>
+          <h3>Home</h3>
+          <p>Welcome to the home page using TabItem!</p>
+        </div>
+      </TabItem>
     </Tabs>
   ),
   parameters: {
@@ -248,14 +239,12 @@ export const VerticalTextWithIcons: Story = {
 export const WithIconStart: Story = {
   render: () => (
     <Tabs>
-      <Tabs.List>
-        <TabItem value="home" label="Home" iconStart={<Icon name="IconExHome" size="md" />}>
-          <div style={tabItemStoriesStyles.contentPadding16}>
-            <h3>Home</h3>
-            <p>Tab with icon at the start (left for horizontal text, top for vertical text).</p>
-          </div>
-        </TabItem>
-      </Tabs.List>
+      <TabItem value="home" label="Home" iconStart={<Icon name="IconExHome" size="md" />}>
+        <div style={tabItemStoriesStyles.contentPadding16}>
+          <h3>Home</h3>
+          <p>Tab with icon at the start (left for horizontal text, top for vertical text).</p>
+        </div>
+      </TabItem>
     </Tabs>
   ),
   parameters: {

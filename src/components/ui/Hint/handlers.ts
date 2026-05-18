@@ -1,6 +1,6 @@
 import type React from 'react';
-import type { HintPositioningMode } from '../../../types/ui';
-import { HintPosition, HintVisibilityTrigger } from '../../../types/ui';
+import { HintPosition, HintVisibilityTrigger, type HintPositioningMode } from '../../../types/ui';
+import type { NullableRefObject } from '../../../types/reactRefs';
 
 /**
  * Ограничивает значение между min и max
@@ -446,8 +446,8 @@ export const createHintEventHandlers = ({
  * Опции для создания обработчика клика вне hint
  */
 export interface CreateClickOutsideHandlerOptions {
-  triggerRef: React.RefObject<HTMLDivElement>;
-  hintContentRef: React.RefObject<HTMLDivElement>;
+  triggerRef: NullableRefObject<HTMLDivElement>;
+  hintContentRef: NullableRefObject<HTMLDivElement>;
   hideHint: () => void;
 }
 
@@ -534,7 +534,7 @@ export interface HintState {
 export interface CreateShowHintOptions {
   useControlledMode: boolean;
   handleOpenChange: (newIsOpen: boolean) => void;
-  triggerRef: React.RefObject<HTMLDivElement>;
+  triggerRef: NullableRefObject<HTMLDivElement>;
   calculatePosition: () => { x: number; y: number; placement: HintPosition };
   setHintState: React.Dispatch<React.SetStateAction<HintState>>;
   timeoutRef: React.MutableRefObject<NodeJS.Timeout | undefined>;
@@ -701,7 +701,7 @@ export const closeOtherHintsInGroup = (hintGroup: string) => {
  * Опции для создания функции обновления позиции
  */
 export interface CreateUpdatePositionOptions {
-  triggerRef: React.RefObject<HTMLDivElement>;
+  triggerRef: NullableRefObject<HTMLDivElement>;
   calculatePosition: () => { x: number; y: number; placement: HintPosition };
   setHintState: React.Dispatch<React.SetStateAction<HintState>>;
 }
@@ -732,7 +732,7 @@ export const createUpdatePosition = ({
 export interface SyncControlledStateOptions {
   isOpenValue: boolean;
   useControlledMode: boolean;
-  triggerRef: React.RefObject<HTMLDivElement>;
+  triggerRef: NullableRefObject<HTMLDivElement>;
   calculatePosition: () => { x: number; y: number; placement: HintPosition };
   setHintState: React.Dispatch<React.SetStateAction<HintState>>;
   isVisibleRef: React.MutableRefObject<boolean>;

@@ -8,6 +8,7 @@ import { useToast } from './useToast';
 import { ToastAppearance, type ToastType } from '@/types/ui';
 import { storybookDemoStyles } from '@/handlers/storybookDemo.styles';
 import { StorybookStaggerStack } from '@/handlers/storybookMotionContainers';
+import { noopHandler } from '@/handlers';
 
 const withToast: Decorator = (Story) => (
   <ToastProvider>
@@ -250,7 +251,7 @@ const PillToastDemo = () => {
           onClick={() =>
             showToast('Notification', 'neutral', undefined, 6000, {
               actionLabel: 'Action',
-              onAction: () => {},
+              onAction: noopHandler,
             })
           }
         >
@@ -260,7 +261,7 @@ const PillToastDemo = () => {
           onClick={() =>
             showToast('Notification', 'info', undefined, 6000, {
               actionLabel: 'Action',
-              onAction: () => {},
+              onAction: noopHandler,
             })
           }
         >
@@ -270,7 +271,7 @@ const PillToastDemo = () => {
           onClick={() =>
             showToast('Сохранено', 'success', undefined, 5000, {
               actionLabel: 'Action',
-              onAction: () => {},
+              onAction: noopHandler,
             })
           }
         >
@@ -280,7 +281,7 @@ const PillToastDemo = () => {
           onClick={() =>
             showToast('Сбой операции', 'error', undefined, 5000, {
               actionLabel: 'Action',
-              onAction: () => {},
+              onAction: noopHandler,
             })
           }
         >
@@ -290,7 +291,7 @@ const PillToastDemo = () => {
           onClick={() =>
             showToast('Проверьте данные', 'warning', undefined, 5000, {
               actionLabel: 'Action',
-              onAction: () => {},
+              onAction: noopHandler,
             })
           }
         >

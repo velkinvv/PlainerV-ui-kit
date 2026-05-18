@@ -1,5 +1,4 @@
-import type { keyframes } from 'styled-components';
-import { css } from 'styled-components';
+import { css, type keyframes } from 'styled-components';
 
 /** Единый easing для мягкого появления surface-элементов (Tooltip/Hint/Popover). */
 export const uiMotionSurfaceEasing = 'cubic-bezier(0.2, 0, 0.2, 1)';

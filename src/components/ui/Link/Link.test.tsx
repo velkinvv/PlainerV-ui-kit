@@ -4,8 +4,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { ThemeProvider } from '../../../themes/ThemeProvider';
 import { Link } from './Link';
-import { LinkMode } from '../../../types/ui';
-import { ButtonVariant } from '../../../types/ui';
+import { LinkMode, ButtonVariant } from '../../../types/ui';
 
 /**
  * Рендер с темой.

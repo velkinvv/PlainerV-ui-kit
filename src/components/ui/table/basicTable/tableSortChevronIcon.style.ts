@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { createStyledShouldForwardProp } from '@/handlers/styledComponentHandlers';
 
 /** Номер приоритета при мульти-сортировке (рядом с шевронами). */
 export const TableSortLabelPriority = styled.span`
@@ -14,7 +15,7 @@ export const TableSortLabelPriority = styled.span`
 
 /** Шевроны + опциональный индекс сортировки в одну горизонтальную группу. */
 export const TableSortChevronMetaRow = styled.span.withConfig({
-  shouldForwardProp: (prop) => prop !== '$dockStart',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $dockStart?: boolean }>`
   display: inline-flex;
   flex-direction: row;

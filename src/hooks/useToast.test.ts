@@ -7,6 +7,7 @@ import { ThemeProvider } from '../themes/ThemeProvider';
 import { ToastProvider } from '../components/ui/Toast';
 import { useToast } from './useToast';
 import { ToastAppearance } from '@/types/ui';
+import { noopHandler } from '@/handlers';
 
 jest.useFakeTimers();
 
@@ -127,7 +128,7 @@ describe('useToast', () => {
       result.current.showToast('Текст', 'info', 'Заголовок', 0, {
         appearance: ToastAppearance.PILL,
         actionLabel: 'OK',
-        onAction: () => {},
+        onAction: noopHandler,
       });
     });
 

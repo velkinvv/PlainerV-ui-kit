@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { createStyledShouldForwardProp } from '../../../../handlers/styledComponentHandlers';
 import { motion } from 'framer-motion';
 import { type ButtonProps, ButtonVariant } from '../../../../types/ui';
 import { Size } from '../../../../types/sizes';
@@ -9,13 +10,21 @@ import {
   getButtonSettings,
 } from '../../../../handlers/buttonThemeHandlers';
 
+const motionButtonBlockedProps = [
+  'variant',
+  'size',
+  'loading',
+  'fullWidth',
+  'rounded',
+  'disabled',
+] as const;
+
 const buttonStyleConfig = {
-  shouldForwardProp: (prop: string) => !['loading', 'fullWidth', 'rounded'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp([...motionButtonBlockedProps]),
 };
 
 const linkButtonStyleConfig = {
-  shouldForwardProp: (prop: string) =>
-    !['loading', 'fullWidth', 'rounded', 'disabled'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp([...motionButtonBlockedProps]),
 };
 
 /** Общие стили кнопки (используются и для `<button>`, и для ссылки-кнопки `<a>`). */

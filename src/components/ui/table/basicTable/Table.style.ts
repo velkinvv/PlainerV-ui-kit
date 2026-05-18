@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { createStyledShouldForwardProp } from '@/handlers/styledComponentHandlers';
 import {
   PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR,
   tableBorderRadiusFromTheme,
@@ -63,7 +64,7 @@ export const TableContainerRoot = styled.div<{ $elevated: boolean }>`
  * тогда скругление только сверху; иначе — со всех сторон (таблица без встроенного футера).
  */
 export const TableContainerScrollClip = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== '$embeddedPaginationBelow',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $embeddedPaginationBelow?: boolean }>`
   box-sizing: border-box;
   width: 100%;
@@ -91,7 +92,7 @@ export const TableContainerScrollClip = styled.div.withConfig({
  * С `max-height` — единая область `overflow: auto` внутри трека, липкая шапка относительно неё.
  */
 export const TableContainerScrollTrack = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== '$scrollAreaMaxHeight',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   /**
    * Максимальная высота области с вертикальным скроллом (число — пиксели). Без пропа вертикальная
@@ -251,17 +252,7 @@ const cellPadding = (size: TableSize, padding: 'normal' | 'checkbox' | 'none') =
 };
 
 export const TableCellBase = styled('td').withConfig({
-  shouldForwardProp: (prop) =>
-    ![
-      '$align',
-      '$padding',
-      '$isHead',
-      '$isFooter',
-      '$size',
-      '$activeSortColumn',
-      '$headerMaxLines',
-      '$columnDividers',
-    ].includes(String(prop)),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   $align: 'inherit' | 'left' | 'center' | 'right' | 'justify';
   $padding: 'normal' | 'checkbox' | 'none';
@@ -324,7 +315,7 @@ export const TableCellBase = styled('td').withConfig({
 `;
 
 export const TableSortLabelButton = styled.button.withConfig({
-  shouldForwardProp: (prop) => !['$disabled', '$headerClampLayout'].includes(String(prop)),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $disabled?: boolean; $headerClampLayout?: boolean }>`
   display: ${({ $headerClampLayout }) => ($headerClampLayout ? 'flex' : 'inline-flex')};
   align-items: ${({ $headerClampLayout }) => ($headerClampLayout ? 'flex-start' : 'center')};

@@ -1,4 +1,5 @@
 import styled, { css, keyframes } from 'styled-components';
+import { createStyledShouldForwardProp } from '../../../handlers/styledComponentHandlers';
 import { Size } from '../../../types/sizes';
 import type { DropdownAlignSelf, DropdownCssMixin } from '../../../types/ui';
 import {
@@ -18,7 +19,7 @@ import { primary } from '../../../variables/colors/primary';
  * @property $fullWidth — блок на всю ширину родителя (иначе `inline-block` сжимает триггер, как у `Select fullWidth`)
  */
 export const DropdownContainer = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== '$alignSelf' && prop !== '$fullWidth',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $alignSelf?: DropdownAlignSelf; $fullWidth?: boolean }>`
   position: relative;
   ${({ $fullWidth }) =>
@@ -287,7 +288,7 @@ export const DropdownMenuTreeExpandButton = styled.button`
  */
 /** Обёртка списка пунктов; при `compact` без лишнего вертикального зазора между строками */
 export const DropdownMenuWrapper = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== '$density',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $density?: 'default' | 'compact' }>`
   display: flex;
   flex-direction: column;
@@ -307,7 +308,7 @@ const spin = keyframes`
  * @param state - состояние элемента
  */
 export const DropdownItem = styled.div.withConfig({
-  shouldForwardProp: (prop) => !['$density', '$size', '$state'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   $size?: Size;
   $state?: 'hover' | 'active' | 'disabled' | 'selected' | 'focus';

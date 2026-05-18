@@ -11,10 +11,8 @@ import {
   HintTourControls,
 } from './Hint.style';
 import { Button } from '../buttons/Button';
-import { ButtonVariant } from '../../../types/ui';
+import { ButtonVariant, HintVisibilityTrigger, type HintAction } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
-import { HintVisibilityTrigger } from '../../../types/ui';
-import type { HintAction } from '../../../types/ui';
 
 /**
  * Пропсы для компонента HintContent

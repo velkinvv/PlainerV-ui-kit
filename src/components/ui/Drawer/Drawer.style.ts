@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { createStyledShouldForwardProp } from '../../../handlers/styledComponentHandlers';
 import { motion } from 'framer-motion';
 import { Overlay } from '../Modal/Modal.style';
 import type { DrawerPlacement } from '../../../types/ui';
@@ -9,7 +10,7 @@ import { BorderRadiusHandler } from '../../../handlers/uiHandlers';
  * @property $drawerPlacement - Сторона выезда панели
  */
 export const DrawerOverlay = styled(Overlay).withConfig({
-  shouldForwardProp: (prop) => prop !== '$drawerPlacement',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $drawerPlacement: DrawerPlacement }>`
   padding: 0 !important;
   justify-content: ${({ $drawerPlacement }) =>
@@ -35,7 +36,7 @@ export const DrawerOverlay = styled(Overlay).withConfig({
  * @property $placement - Сторона (влияет на скругления углов)
  */
 export const DrawerPanel = styled(motion.aside).withConfig({
-  shouldForwardProp: (prop) => !['$widthCss', '$heightCss', '$placement'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   $widthCss: string;
   $heightCss: string;

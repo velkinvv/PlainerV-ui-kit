@@ -1,0 +1,181 @@
+﻿
+C:\project\plainerV\web\src\components\ui\Dropdown\Dropdown.stories.tsx
+  1483:28  warning  'size' is defined but never used. Allowed unused args must match /^_/u     @typescript-eslint/no-unused-vars
+  1483:28  warning  'size' is defined but never used. Allowed unused args must match /^_/u     unused-imports/no-unused-vars
+  1483:34  warning  'variant' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+  1483:34  warning  'variant' is defined but never used. Allowed unused args must match /^_/u  unused-imports/no-unused-vars
+  1489:31  warning  'size' is defined but never used. Allowed unused args must match /^_/u     @typescript-eslint/no-unused-vars
+  1489:31  warning  'size' is defined but never used. Allowed unused args must match /^_/u     unused-imports/no-unused-vars
+  1489:37  warning  'variant' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+  1489:37  warning  'variant' is defined but never used. Allowed unused args must match /^_/u  unused-imports/no-unused-vars
+  1900:69  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`            react/no-unescaped-entities
+  1900:74  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`            react/no-unescaped-entities
+
+C:\project\plainerV\web\src\components\ui\Dropdown\Dropdown.tsx
+  782:8  warning  React Hook React.useMemo has missing dependencies: 'filteredDefinitions' and 'resolvedDefinitions'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\project\plainerV\web\src\components\ui\Hint\useHintEffects.ts
+    2:1   warning  'react' import is duplicated                                                                                                                                                                                                                                                 no-duplicate-imports
+   70:63  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+   74:23  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+  141:63  warning  Unexpected any. Specify a different type                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+  191:33  warning  The ref value 'timeoutRef.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'timeoutRef.current' to a variable inside the effect, and use that variable in the cleanup function          react-hooks/exhaustive-deps
+  194:37  warning  The ref value 'hideTimeoutRef.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'hideTimeoutRef.current' to a variable inside the effect, and use that variable in the cleanup function  react-hooks/exhaustive-deps
+
+C:\project\plainerV\web\src\components\ui\Progress\Progress.style.ts
+  57:59  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  68:62  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  79:67  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\project\plainerV\web\src\components\ui\Progress\handlers.test.ts
+   36:6   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  157:53  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\project\plainerV\web\src\components\ui\RadioButton\RadioButtonGroup.test.tsx
+    9:1   warning  '../../../types/ui' import is duplicated  no-duplicate-imports
+   28:27  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
+   41:82  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
+   50:82  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
+   69:27  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
+   83:27  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
+   98:27  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
+  116:27  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
+  132:27  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
+  147:27  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
+  164:27  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
+  177:27  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
+  192:27  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
+  226:27  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
+  257:27  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
+  276:27  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
+  289:27  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
+  301:82  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
+  314:27  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
+  327:27  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
+  342:27  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
+  362:88  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
+  386:86  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
+  400:27  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
+  413:82  warning  Unexpected empty arrow function           @typescript-eslint/no-empty-function
+
+C:\project\plainerV\web\src\components\ui\Tabs\pillSegmentTrack\PillSegmentRegistrationContext.tsx
+  9:96  warning  Unexpected empty arrow function  @typescript-eslint/no-empty-function
+
+C:\project\plainerV\web\src\components\ui\inputs\MultiInput\MultiInput.tsx
+  126:11  warning  The 'items' conditional could make the dependencies of useCallback Hook (at line 163) change on every render. To fix this, wrap the initialization of 'items' in its own useMemo() Hook  react-hooks/exhaustive-deps
+  126:11  warning  The 'items' conditional could make the dependencies of useCallback Hook (at line 170) change on every render. To fix this, wrap the initialization of 'items' in its own useMemo() Hook  react-hooks/exhaustive-deps
+  126:11  warning  The 'items' conditional could make the dependencies of useCallback Hook (at line 213) change on every render. To fix this, wrap the initialization of 'items' in its own useMemo() Hook  react-hooks/exhaustive-deps
+  126:11  warning  The 'items' conditional could make the dependencies of useCallback Hook (at line 299) change on every render. To fix this, wrap the initialization of 'items' in its own useMemo() Hook  react-hooks/exhaustive-deps
+  126:11  warning  The 'items' conditional could make the dependencies of useMemo Hook (at line 324) change on every render. To fix this, wrap the initialization of 'items' in its own useMemo() Hook      react-hooks/exhaustive-deps
+
+C:\project\plainerV\web\src\components\ui\inputs\TimeInput\TimeInput.tsx
+  1319:42  warning  Unnecessary escape character: \/  no-useless-escape
+
+C:\project\plainerV\web\src\components\ui\storyDocs\uiKitDocs.ts
+   47:32  warning  Unnecessary escape character: \|  no-useless-escape
+   48:71  warning  Unnecessary escape character: \|  no-useless-escape
+   69:44  warning  Unnecessary escape character: \|  no-useless-escape
+   69:52  warning  Unnecessary escape character: \|  no-useless-escape
+   80:25  warning  Unnecessary escape character: \|  no-useless-escape
+   85:22  warning  Unnecessary escape character: \|  no-useless-escape
+   85:33  warning  Unnecessary escape character: \|  no-useless-escape
+  342:34  warning  Unnecessary escape character: \|  no-useless-escape
+  344:26  warning  Unnecessary escape character: \|  no-useless-escape
+  344:41  warning  Unnecessary escape character: \|  no-useless-escape
+  344:53  warning  Unnecessary escape character: \|  no-useless-escape
+  450:22  warning  Unnecessary escape character: \|  no-useless-escape
+  472:97  warning  Unnecessary escape character: \|  no-useless-escape
+  480:41  warning  Unnecessary escape character: \|  no-useless-escape
+  502:88  warning  Unnecessary escape character: \|  no-useless-escape
+  527:11  warning  Unnecessary escape character: \|  no-useless-escape
+  527:26  warning  Unnecessary escape character: \|  no-useless-escape
+  549:51  warning  Unnecessary escape character: \|  no-useless-escape
+
+C:\project\plainerV\web\src\components\ui\table\basicTable\Table.stories.tsx
+  382:84  warning  Unexpected empty arrow function  @typescript-eslint/no-empty-function
+
+C:\project\plainerV\web\src\components\ui\table\columnFilter\ColumnFilterPanel.stories.tsx
+  126:20  warning  Unexpected empty method 'onApply'  @typescript-eslint/no-empty-function
+  127:20  warning  Unexpected empty method 'onClear'  @typescript-eslint/no-empty-function
+
+C:\project\plainerV\web\src\components\ui\table\storyDocs\documentation.ts
+  255:97   warning  Unnecessary escape character: \|  no-useless-escape
+  255:127  warning  Unnecessary escape character: \|  no-useless-escape
+  255:141  warning  Unnecessary escape character: \|  no-useless-escape
+
+C:\project\plainerV\web\src\handlers\dateHandlers.stories.tsx
+  110:16  warning  'setDate' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  110:16  warning  'setDate' is assigned a value but never used. Allowed unused vars must match /^_/u  unused-imports/no-unused-vars
+
+C:\project\plainerV\web\src\handlers\timeHandlers.stories.tsx
+  122:16  warning  'setTime' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+  122:16  warning  'setTime' is assigned a value but never used. Allowed unused vars must match /^_/u  unused-imports/no-unused-vars
+
+C:\project\plainerV\web\src\hooks\useDebounce.stories.tsx
+  128:30  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  128:43  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  131:32  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  131:49  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  199:41  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  199:54  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  208:41  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  208:63  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  334:29  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  334:42  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  397:21  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  397:34  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  400:19  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  400:35  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  403:19  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  403:37  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  405:47  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  405:63  warning  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+C:\project\plainerV\web\src\hooks\useKeyPress.stories.tsx
+   78:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+   78:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  unused-imports/no-unused-vars
+   86:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+   86:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  unused-imports/no-unused-vars
+   94:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+   94:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  unused-imports/no-unused-vars
+  133:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+  133:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  unused-imports/no-unused-vars
+  142:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+  142:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  unused-imports/no-unused-vars
+  151:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+  151:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  unused-imports/no-unused-vars
+  160:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+  160:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  unused-imports/no-unused-vars
+  169:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+  169:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  unused-imports/no-unused-vars
+  273:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+  273:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  unused-imports/no-unused-vars
+  282:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+  282:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  unused-imports/no-unused-vars
+  291:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+  291:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  unused-imports/no-unused-vars
+  300:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+  300:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  unused-imports/no-unused-vars
+  416:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+  416:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  unused-imports/no-unused-vars
+  425:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+  425:15  warning  'event' is defined but never used. Allowed unused args must match /^_/u  unused-imports/no-unused-vars
+
+C:\project\plainerV\web\src\hooks\useSnackbar.stories.tsx
+  68:31  warning  Unexpected empty method 'onAction'  @typescript-eslint/no-empty-function
+
+C:\project\plainerV\web\src\hooks\useToast.stories.tsx
+  253:31  warning  Unexpected empty method 'onAction'  @typescript-eslint/no-empty-function
+  263:31  warning  Unexpected empty method 'onAction'  @typescript-eslint/no-empty-function
+  273:31  warning  Unexpected empty method 'onAction'  @typescript-eslint/no-empty-function
+  283:31  warning  Unexpected empty method 'onAction'  @typescript-eslint/no-empty-function
+  293:31  warning  Unexpected empty method 'onAction'  @typescript-eslint/no-empty-function
+
+C:\project\plainerV\web\src\hooks\useToast.test.ts
+  130:25  warning  Unexpected empty method 'onAction'  @typescript-eslint/no-empty-function
+
+C:\project\plainerV\web\src\variables\BlurEffects.tsx
+  295:7  warning  Unexpected console statement  no-console
+
+тЬЦ 136 problems (0 errors, 136 warnings)
+

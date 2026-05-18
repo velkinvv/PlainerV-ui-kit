@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback, forwardRef } from 'react';
 import { createPortal } from 'react-dom';
 import { clsx } from 'clsx';
-import type { TooltipProps } from '../../../types/ui';
-import { TooltipPosition } from '../../../types/ui';
+import { TooltipPosition, type TooltipProps } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 import { TooltipContent, TooltipTrigger } from './Tooltip.style';
 
@@ -40,7 +39,7 @@ export const Tooltip: React.FC<TooltipProps> = forwardRef<HTMLDivElement, Toolti
 
     const triggerRef = useRef<HTMLDivElement>(null);
     const tooltipRef = useRef<HTMLDivElement>(null);
-    const timeoutRef = useRef<NodeJS.Timeout>();
+    const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
     const viewportPadding = 8;
     const tooltipOffset = 8;

@@ -6,6 +6,8 @@
 
 Современная библиотека UI компонентов с поддержкой темизации и TypeScript.
 
+**Текущая версия:** `0.1.8` · ветка [`v_0.1.8`](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.1.8) · React 18+/19 · styled-components 6.x
+
 ## 🚀 Возможности
 
 - **🎨 Полная темизация** - Поддержка светлой и темной темы с автоматическим переключением
@@ -15,25 +17,117 @@
 - **🎭 Анимации** - Плавные анимации с Framer Motion
 - **🔧 Кастомизация** - Гибкая настройка через пропсы и темы
 - **📚 Storybook** - Интерактивная документация и playground
+- **⚡ Vite** - Плагин `plainervVite()` из `@velkinvv/plainerv/vite` (dedupe, без prebundle кита)
 
 ## 📦 Установка
 
+Пакет объявляет **peer dependencies** — одна копия React, styled-components и Framer Motion в приложении (без дублей runtime).
+
 ```bash
-npm i @velkinvv/plainerv
+npm i @velkinvv/plainerv react react-dom styled-components framer-motion
+# или конкретная версия кита:
+npm i @velkinvv/plainerv@0.1.8 react react-dom styled-components framer-motion
 ```
+
+| Пакет | Диапазон (peer) |
+| --- | --- |
+| `react`, `react-dom` | `^18.0.0 \|\| ^19.0.0` |
+| `styled-components` | `^6.1.0` |
+| `framer-motion` | `^11.0.0` |
+| `vite` (опционально, для `plainervVite`) | `^5.0.0 \|\| ^6.0.0 \|\| ^7.0.0` |
+
+`clsx` и `dayjs` ставятся автоматически как зависимости кита — отдельно подключать не нужно.
+
+## ⚡ Vite
+
+### Две копии `styled-components` (типичная ошибка `o2 is not a function`)
+
+Если Vite **пребандлит** `@velkinvv/plainerv` в `optimizeDeps`, в рантайме одновременно живут:
+
+- ESM из `dist/index.esm.js` кита (импорты `styled-components` снаружи);
+- отдельный prebundle-чанк `styled-components` у dev-сервера.
+
+`shouldForwardProp` в минифицированном бандле (например `Le` в `dist`) вызывается с `defaultValidatorFn` из **другой** инстанции → `o2 is not a function`.
+
+Перенос `shouldForwardProp` / хелпера `createStyledShouldForwardProp` «куда‑то ещё» **проблему не снимает**: ломается связка «код из dist + отдельный чанк styled-components», а не сам фильтр пропов.
+
+**Исправление у потребителя:** не пребандлить кит (`optimizeDeps.exclude`) и/или `resolve.dedupe` для `react`, `react-dom`, `styled-components` — см. плагин ниже.
+
+> **Не путать:** проп `items` у **Tabs** (API 0.1.5) — отдельная история миграции, к этой ошибке styled-components не относится.
+
+**Рекомендуется** — плагин из подпути `@velkinvv/plainerv/vite`:
+
+```ts
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
+import { plainervVite } from '@velkinvv/plainerv/vite';
+
+export default defineConfig({
+  plugins: [react(), plainervVite()],
+});
+```
+
+Плагин выставляет `resolve.dedupe` для `react`, `react-dom`, `styled-components`, `framer-motion`, `optimizeDeps.include` для styled-components и framer-motion, `optimizeDeps.exclude: ['@velkinvv/plainerv']`.
+
+Используйте **`vite.config.ts`** (ESM). Подпуть `@velkinvv/plainerv/vite` не предназначен для `require()` в `vite.config.cjs`.
+
+<details>
+<summary>Ручная настройка (без плагина)</summary>
+
+```ts
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  resolve: {
+    dedupe: ['react', 'react-dom', 'styled-components', 'framer-motion'],
+  },
+  optimizeDeps: {
+    include: ['styled-components', 'framer-motion'],
+    exclude: ['@velkinvv/plainerv'],
+  },
+});
+```
+
+</details>
+
+## 📦 Webpack / CRA
+
+У Vite-специфичного prebundle нет, но **две копии** `react` или `styled-components` в monorepo дают те же симптомы (`Invalid hook call`, ошибки styled-components).
+
+```js
+// webpack.config.js (фрагмент)
+module.exports = {
+  resolve: {
+    alias: {
+      react: path.resolve('./node_modules/react'),
+      'react-dom': path.resolve('./node_modules/react-dom'),
+      'styled-components': path.resolve('./node_modules/styled-components'),
+      'framer-motion': path.resolve('./node_modules/framer-motion'),
+    },
+  },
+};
+```
+
+В `package.json` приложения зафиксируйте одну версию peer-зависимостей; при pnpm включите `shamefully-hoist` или `public-hoist-pattern` для `react` и `styled-components`, если кит резолвится в дубликат.
+
+## ▲ Next.js (App Router)
+
+- ESM-сборка кита помечена директивой **`use client`** — импортируйте компоненты из client-файлов (`'use client'` в layout/page-обёртке при необходимости).
+- В **`next.config`**: `transpilePackages: ['@velkinvv/plainerv']`.
+- Для SSR со **styled-components** используйте [официальный registry](https://nextjs.org/docs/app/building-your-application/styling/css-in-js) (один `ThemeProvider` + registry на сервере и клиенте).
+- Стили и провайдеры — как в разделе ниже (`ThemeProvider`, `ToastProvider`).
 
 ## 📦 Импорт стилей и шрифтов
 
-Для правильной работы библиотеки необходимо импортировать стили:
+Для правильной работы библиотеки необходимо импортировать стили **только через экспорт пакета** (не лезьте в произвольные пути внутри `node_modules`):
 
 ```tsx
-// Импорт стилей (включает шрифты)
 import '@velkinvv/plainerv/styles';
-// или
-import '@velkinvv/plainerv/dist/styles.css';
 ```
 
-Шрифты автоматически подключаются при импорте стилей.
+Алиас (тот же файл): `import '@velkinvv/plainerv/dist/styles.css'`.
+
+Шрифты подключаются из CSS (`url(fonts/montserrat/...)`); Vite/Webpack обычно копируют `.ttf` автоматически.
 
 ## 🎨 Темизация
 
@@ -73,42 +167,64 @@ function MyComponent() {
 
 ## 🎯 Компоненты
 
-### Основные UI компоненты
+**Полный перечень публичных экспортов** — в [документации](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.1.8/documentation/content/docs/ru/web/v_0.1.8/components-catalog.mdx) (на сайте: **Web → v0.1.8 → Справочник компонентов**). Ниже — краткая группировка.
 
-- **Button** - Кнопки с различными вариантами и состояниями
-- **ButtonGroup** - Группа `Button` / `IconButton` (`orientation`, `attached`, `fullWidth`, `aria-label`)
-- **Link** - Ссылка `mode="text"` (стилизованный `<a>`) или `mode="button"` (тот же `Button` с `href`)
-- **Input** - Поля ввода с валидацией и различными типами
-- **TextArea** - Многострочное поле ввода (состояния, подсказки, счётчик при `maxLength`, `Form`)
-- **FileInput** - Выбор файла (скрытый `input[type=file]`, триггер, подпись, очистка, `Form`)
-- **Card** - Карточки для контента
-- **Modal** - Модальные окна
-- **Drawer** - Выдвижная панель (портал, оверлей как у `Modal`, `placement`, фокус-ловушка)
-- **Sheet** - Панель-лист как `Drawer`, по умолчанию снизу (`placement="bottom"`), `safe-area` для нижнего края
-- **Icon** - Иконки (Lucide React + Plainer иконки)
-- **ThemeToggle** - Переключатель темы
+### Кнопки и ссылки
 
-### Формы
+- **Button** — варианты, `Size`, иконки, `href` как ссылка.
+- **ButtonGroup** — группа `Button` / `IconButton` (`orientation`, `attached`, переключатель сегмента).
+- **IconButton** — только иконка.
+- **Link** — `mode="text"` или `mode="button"` с `href`.
 
-- **Form** - Обёртка `<form>` и контекст для `Input` / `TextArea` / `FileInput` / `Select` (атрибут `form` у полей)
-- **Checkbox** - Чекбоксы
-- **Switch** - Переключатель (трек + бегунок, подпись, ошибка)
-- **Radio** - Радио кнопки
-- **DateInput** - Поля ввода даты
-- **Calendar** — сетка месяца (локаль `locale`, `weekStartsOn`, `minDate` / `maxDate`, выпадающий месяц/год на `Dropdown`, режимы `headerMode`, контроль `value` / `visibleMonth`)
-- **TimeInput** - Поля ввода времени
-- **Select** — `mode="select"`: панель как у `Dropdown` (поиск, мультивыбор) + скрытый `select` для форм; `mode="native"` — нативный список
+### Ввод и формы
 
-### Навигация
+- **Input**, **TextArea**, **FileInput**, **Select**, **MultiInput**, **SliderInput** — поля (`Form`-совместимые).
+- **Form**, **HiddenUsernameField**.
+- **Checkbox**, **CheckboxGroup**, **Switch**, **RadioButton**, **RadioButtonGroup**.
+- **DateInput**, **TimeInput**.
 
-- **Sidemenu** - Боковое меню навигации
-- **Tabs** - Вкладки
-- **Breadcrumb** - «Хлебные крошки» (`nav` + `ol`, `aria-current`, разделитель, `Size`)
-- **Stepper** - Шаги навигации по макету: `variant="compact"` (кольцо «N/M», заголовок, подзаголовок, `onBack`) или `variant="linear"` (кружки, подписи «Шаг N», соединители); `appearance` / тема, `fullWidth`
-- **Pagination** - Номера страниц с разрывами «…», стрелки назад/вперёд, контролируемый и неконтролируемый режимы (`totalPages`, `page` / `defaultPage`, `onPageChange`, `siblingCount`, `showPrevNext`, `size`)
-- **Menu** — вертикальная навигация (`Menu` + `MenuItem`), бейдж, collapsed; для панели инструментов поверх холста — **FloatingMenu**
-- **FloatingMenu** — плавающая панель инструментов внизу/по краю экрана (`FloatingMenuPlacement`), перетаскивание (`draggable`, `dragSource`, `DragHandle`), группы `FloatingMenu.Group` (`variant: inset`), разделитель `Divider`, пункт `GroupItem` (иконка, `active`, `tooltip`, вложенное `Menu` через `dropdownContent`, открытие по `dropdownTrigger`: click | hover)
-- **Dropdown** - Выпадающие меню
+### Поверхности, сетка, выпадающие панели
+
+- **Card**, **Modal**, **Drawer**, **Sheet**.
+- **Grid**, **GridItem** (`GridMode`, breakpoints).
+- **Dropdown**, **Popover**.
+
+### Навигация и структура
+
+- **Sidemenu**, **NavigationMenu**, **NavigationMenuItem** (+ контекст/хелперы).
+- **Menu**, **MenuItem**.
+- **FloatingMenu** (+ `FloatingMenuGroup`, `GroupItem`, `Divider`, `DragHandle`).
+- **Tabs** (**Tabs.Item**, **TabItem**, внутренний трек сегментов; варианты **pill** / **minimal** / **line** / **underline**, проп **filledSegmentTriggers** для заливки текстовых сегментов), **Breadcrumb**, **Stepper**, **Pagination**, **Accordion**.
+
+### Отображение данных
+
+- **Badge**, **Tag**, **Pill**, **Avatar**, **AvatarGroup**, **Divider**, **Slider**, **RangeSlider**, **Calendar**, **DateRollerPicker**, **Progress**, **Spinner**, **Skeleton**, **Icon**, **ThemeToggle**.
+
+### Таблицы и DataGrid
+
+- **TableContainer**, **TableContainerScroll**, **Table**, **TableHead**, **TableBody**, **TableFooter**, **TableRow**, **TableCell**, **TableCellFormatted** (форматирование ячейки без DataGrid), **TablePagination**, **TableSortLabel**, **TableSortChevronIcon** и утилиты (`getTableTotalPages`, `clampTablePageZeroBased`, …).
+- **DataGrid** — расширенная таблица; у колонок можно задать **`format`** (`TableCellFormat`: ссылки, маски, числа, даты и т.д.) или **`render`**; хелпер **`formatTableCellValue`** и константы масок экспортируются из пакета вместе с handlers.
+- **ColumnFilterPanel** — панель фильтра колонки.
+
+```tsx
+import { DataGrid, type DataGridColumn } from '@velkinvv/plainerv';
+
+const columns: DataGridColumn<Row>[] = [
+  { field: 'phone', headerName: 'Телефон', format: { type: 'phone', country: 'RU' } },
+  {
+    field: 'id',
+    headerName: 'Открыть',
+    valueGetter: (row) => row.title,
+    format: { type: 'link', href: '/items/{id}' },
+  },
+];
+```
+
+### Обратная связь
+
+- **Tooltip**, **Hint**.
+- **Toast** + **ToastProvider** + **useToast**.
+- **Snackbar** + **SnackbarProvider** + **useSnackbar**.
 
 ```tsx
 import { ThemeProvider, Pagination } from '@velkinvv/plainerv';
@@ -125,27 +241,9 @@ import { ThemeProvider, Pagination } from '@velkinvv/plainerv';
 </ThemeProvider>
 ```
 
-### Отображение данных
-
-- **Badge** - Бейджи и метки
-- **Avatar** - Аватары пользователей
-- **Progress** - Индикаторы прогресса
-- **Spinner** - Спиннеры загрузки
-- **Skeleton** - Скелетоны загрузки
-
-### Обратная связь
-
-- **Tooltip** - Подсказки
-- **Hint** - Расширенные подсказки
-- **Toast** + **ToastProvider** / **useToast** - Стек уведомлений (портал в `body`, типы success/error/warning/info)
-- **Snackbar** + **SnackbarProvider** / **useSnackbar** - Компактные полосы внизу экрана, опциональное действие и таймер (портал в `body`)
-- **Modal** - Модальные окна
-- **Drawer** - Выдвижная панель (оверлей, Escape, стороны `left` | `right` | `top` | `bottom`)
-- **Sheet** - Те же пропсы, что у `Drawer`; дефолт — нижний лист и высота `min(50vh, 560px)`
-
 #### Toast и Snackbar в приложении
 
-Оба стека рендерятся в `document.body`. Нужны **`ThemeProvider`** (тема для styled-компонентов) и провайдер уведомлений. Их удобно вложить в корень; порядок вложенности произвольный, если оба провайдера оборачивают одно и то же дерево.
+Оба стека рендерятся в `document.body`. Нужны **`ThemeProvider`** и провайдеры уведомлений.
 
 ```tsx
 import { ThemeProvider, ToastProvider, SnackbarProvider } from '@velkinvv/plainerv';
@@ -163,8 +261,15 @@ function Root() {
 }
 ```
 
-**Storybook:** `Hooks/useToast`, `Hooks/useSnackbar`, `Components/Feedback/Toast`, `Components/Feedback/Snackbar`, `Components/Navigation/Pagination`, `Components/Navigation/FloatingMenu`, `Components/Buttons/ButtonGroup`.
-- **Accordion** - Аккордеоны
+### Хуки и обработчики
+
+Также экспортируются **хуки** (`useModal`, `useLocalStorage`, `useDebounce`, `useClickOutside`, `useKeyPress`, `useMediaQuery`, `useScrollPosition`, `useWindowSize`, `useIsDesktop`, `useNavigationMenuExpand`, `useUiMotionPresets`, …) и **handlers** из `src/handlers/index.ts`:
+
+- дата/время, ссылки, таблица, dropdown, motion, форматирование ячеек (`tableCellFormat`, `formatTableCellValue`);
+- **`createStyledShouldForwardProp`** — фильтр `shouldForwardProp` для transient-пропов `$…` и кастомных полей (не замена `dedupe` / `optimizeDeps.exclude` при Vite);
+- **`omitMotionConflictingDomHandlers`** — убирает HTML drag-обработчики перед `motion.button` / `motion.a` (совместимость с Framer Motion).
+
+**Storybook:** `Hooks/*`, `Components/Buttons/*`, `Components/Inputs/*`, `Components/Navigation/*`, `Components/Data Display/Table`, `Components/Data Display/DataGrid`, `Components/Surfaces/*`, `Components/Feedback/*`, и др.
 
 ## 🎨 Иконки
 
@@ -263,11 +368,25 @@ npm run build
 npm run test
 ```
 
-### Линтинг
+### Линтинг и проверка типов
 
 ```bash
 npm run lint
+npm run type-check
+npm run quality:check   # type-check + lint + format
 ```
+
+Сборка (`npm run build`) проходит без предупреждений TypeScript от `@rollup/plugin-typescript`.
+
+### React Doctor
+
+Статический аудит React-проекта ([react.doctor](https://www.react.doctor)):
+
+```bash
+npm run react-doctor
+```
+
+Отчёт выводится в консоль; команда завершается успешно (**`exit 0`**) даже при замечаниях. Для проверки с **ненулевым кодом** при наличии проблем (например в CI): **`npm run react-doctor:strict`**.
 
 ## 📝 Примеры использования
 
@@ -327,7 +446,7 @@ function AppLayout() {
 
 ## 🌳 Tree-shaking
 
-Библиотека поддерживает tree-shaking благодаря настройке `sideEffects: false`. Это означает, что при импорте только необходимых компонентов, неиспользуемый код будет исключен из финального бандла.
+Библиотека поддерживает tree-shaking: в `package.json` указано `sideEffects: ["**/*.css"]`, поэтому JS-код неиспользуемых компонентов может быть удалён бандлером, а CSS нужно подключать явно (`import '@velkinvv/plainerv/styles'`).
 
 ```tsx
 // ✅ Хорошо - импортируется только Button
@@ -354,6 +473,44 @@ npm run analyze
 
 *Размеры будут обновлены после первой сборки*
 
+## 📋 Что нового в 0.1.8
+
+- **`@velkinvv/plainerv/vite`:** ESM-реэкспорт с `./plainervVite.js`; `dedupe` + `optimizeDeps` для `framer-motion`; peer Vite 7.
+- **Стили:** экспорт `./dist/styles.css` как алиас; рекомендуемый импорт `@velkinvv/plainerv/styles`.
+- **Next.js:** директива `use client` в ESM entry; разделы Webpack и App Router в README.
+- **Проверки публикации:** ESM в `dist/vite`, `use client`, exports в `verify-package.mjs`.
+
+Подробности — в [CHANGELOG.md](CHANGELOG.md).
+
+## 📋 Что нового в 0.1.7
+
+- **npm:** README отображается на странице пакета (поле `"readme"`, правка `.npmignore`).
+
+## 📋 Что нового в 0.1.6
+
+- Устранены все предупреждения ESLint (`lint:fix-all`, 0 warnings).
+- Хелпер **`noopHandler`** для stories и тестов.
+- Исправлены типы `DragEvent` в **DataGrid**; уточнена типизация **Hint** и **Progress**.
+- **Peer dependencies:** `styled-components`, `framer-motion` вынесены из `dependencies`; остаются только `clsx`, `dayjs`.
+- Подпуть **`@velkinvv/plainerv/vite`** — плагин **`plainervVite()`** (`dedupe`, `optimizeDeps.exclude` кита).
+- Документация по Vite: две копии `styled-components`, ошибка `o2 is not a function`, отличие от миграции **Tabs** `items`.
+- Сборка без предупреждений `@rollup/plugin-typescript` при `@types/react` 19`.
+
+### Экспорты пакета
+
+| Подпуть | Назначение |
+| --- | --- |
+| `@velkinvv/plainerv` | Компоненты, хуки, тема (ESM/CJS + типы) |
+| `@velkinvv/plainerv/styles` | CSS и шрифты |
+| `@velkinvv/plainerv/vite` | `plainervVite()` для Vite |
+
+## 📋 Что нового в 0.1.5
+
+- Устранены все предупреждения TypeScript при production-сборке Rollup.
+- Хелперы styled-components: `createStyledShouldForwardProp`, `omitMotionConflictingDomHandlers`.
+- Совместимость с React 19 (`TabItem`, типизация обработчиков событий).
+- Исправлен регистр папки `src/components/ui/table` (Windows / TS1261).
+
 ## 🤝 Contributing
 
 Мы приветствуем вклад в развитие библиотеки! Пожалуйста, ознакомьтесь с [руководством по контрибьютингу](CONTRIBUTING.md) перед отправкой PR.
@@ -371,6 +528,7 @@ MIT License - см. [LICENSE](LICENSE) для деталей.
 
 ## 🔗 Ссылки
 
-- [Документация](https://github.com/velkinvv/PlainerV-ui-kit#readme)
+- [Репозиторий](https://github.com/velkinvv/PlainerV-ui-kit)
+- [Ветка v0.1.8](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.1.8)
 - [Issues](https://github.com/velkinvv/PlainerV-ui-kit/issues)
-- [Changelog](CHANGELOG.md)
+- [Changelog](CHANGELOG.md) · [npm](https://www.npmjs.com/package/@velkinvv/plainerv)

@@ -1,8 +1,11 @@
 import React, { useId, useMemo } from 'react';
 import styled from 'styled-components';
 import { clsx } from 'clsx';
-import type { RadioButtonGroupProps } from '../../../types/ui';
-import { RadioButtonGroupOrientation, TooltipPosition } from '../../../types/ui';
+import {
+  RadioButtonGroupOrientation,
+  TooltipPosition,
+  type RadioButtonGroupProps,
+} from '../../../types/ui';
 import { RadioButton } from './RadioButton';
 import { Tooltip } from '../Tooltip/Tooltip';
 import {

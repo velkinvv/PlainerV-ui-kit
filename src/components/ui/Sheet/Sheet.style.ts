@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { createStyledShouldForwardProp } from '../../../handlers/styledComponentHandlers';
 import { motion } from 'framer-motion';
 import { Overlay } from '../Modal/Modal.style';
 import type { SheetPlacement } from '../../../types/ui';
@@ -9,7 +10,7 @@ import { BorderRadiusHandler } from '../../../handlers/uiHandlers';
  * @property $sheetPlacement - Сторона выезда панели
  */
 export const SheetOverlay = styled(Overlay).withConfig({
-  shouldForwardProp: (prop) => prop !== '$sheetPlacement',
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $sheetPlacement: SheetPlacement }>`
   padding: 0 !important;
   justify-content: ${({ $sheetPlacement }) =>
@@ -35,7 +36,7 @@ export const SheetOverlay = styled(Overlay).withConfig({
  * @property $placement - Сторона (скругления у края экрана)
  */
 export const SheetPanel = styled(motion.aside).withConfig({
-  shouldForwardProp: (prop) => !['$widthCss', '$heightCss', '$placement'].includes(prop),
+  shouldForwardProp: createStyledShouldForwardProp(),
 })<{
   $widthCss: string;
   $heightCss: string;

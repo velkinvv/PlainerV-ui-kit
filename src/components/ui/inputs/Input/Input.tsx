@@ -1,6 +1,5 @@
 import React, { forwardRef, useCallback, useMemo } from 'react';
-import type { InputProps, TooltipPosition } from '../../../../types/ui';
-import { InputVariant } from '../../../../types/ui';
+import { InputVariant, type InputProps, type TooltipPosition } from '../../../../types/ui';
 import { getClearIconSizeForInputField } from '../../../../handlers/iconHandlers';
 import { Size } from '../../../../types/sizes';
 import { Icon } from '../../Icon/Icon';
@@ -26,6 +25,7 @@ import {
   getInputDisplayValue,
   shouldShowInputClearButton,
 } from '../shared';
+import { resolveInputAutocompleteAttribute } from './handlers';
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   (
@@ -83,54 +83,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const currentStatus = status || (error ? 'error' : success ? 'success' : undefined);
 
     // Автоматически определяем autocomplete для полей пароля
-    const getAutocompleteValue = useCallback(() => {
-      // Если autoComplete уже задан явно, используем его
-      if (props.autoComplete) {
-        return props.autoComplete;
-      }
-
-      // Для полей пароля автоматически определяем подходящий autocomplete
-      if (type === 'password') {
-        // Проверяем placeholder для определения типа поля
-        const placeholderText = (placeholder || '').toLowerCase();
-
-        if (
-          placeholderText.includes('повторите') ||
-          placeholderText.includes('подтвердите') ||
-          placeholderText.includes('confirm')
-        ) {
-          return 'new-password';
-        }
-
-        if (
-          placeholderText.includes('текущий') ||
-          placeholderText.includes('старый') ||
-          placeholderText.includes('current') ||
-          placeholderText.includes('old')
-        ) {
-          return 'current-password';
-        }
-
-        // По умолчанию для новых паролей
-        return 'new-password';
-      }
-
-      // Для email полей
-      if (type === 'email') {
-        return 'email';
-      }
-
-      // Для полей имени пользователя
-      if (
-        type === 'text' &&
-        (placeholder?.toLowerCase().includes('пользователь') ||
-          placeholder?.toLowerCase().includes('username'))
-      ) {
-        return 'username';
-      }
-
-      return undefined;
-    }, [type, placeholder, props.autoComplete]);
+    const getAutocompleteValue = useCallback(
+      () =>
+        resolveInputAutocompleteAttribute({
+          autoComplete: props.autoComplete,
+          inputType: type,
+          placeholder,
+        }),
+      [type, placeholder, props.autoComplete],
+    );
 
     // Обработчики событий с оптимизацией производительности
     const handleFocus = useCallback(
