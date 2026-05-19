@@ -31,8 +31,10 @@ export interface TableContainerScrollProps {
 }
 
 /**
- * Двухслойная обёртка вокруг таблицы: clip по радиусу темы.
- * При `scrollAreaMaxHeight` + липкой шапке скролл только у строк (split-layout в `Table`).
+ * Двухслойная обёртка вокруг таблицы: clip по радиусу темы (`--plainer-table-border-radius`).
+ * При `scrollAreaMaxHeight` и `stickyHeader` на `Table` / `DataGrid` — split-layout в `Table`:
+ * шапка и `headerToolbar` вне вертикального скролла, горизонтальный скролл только у `tbody`,
+ * синхронизация `scrollLeft` и ширин колонок между шапкой и телом.
  * Не кладите сюда `TablePagination` (тени футера).
  */
 export function TableContainerScroll({

@@ -530,6 +530,60 @@ export const DOC_SLIDER = `
 **\`skeleton\`** — шиммер вместо трека; **aria-busy** на контейнере; у range поля «От/До» скрыты.
 
 Акцент по умолчанию: **theme.colors.info** / **infoHover**.
+
+Для числового поля с той же шкалой в оболочке **Input** см. **SliderInput** (\`DOC_SLIDER_INPUT\`).
+`.trim();
+
+/** @see SliderInputProps, SliderInputSingleProps, SliderInputRangeProps */
+export const DOC_SLIDER_INPUT = `
+## SliderInput
+
+Числовое поле в оболочке **Input** со встроенным слайдером у нижней кромки рамки (один **Slider** или пара **RangeSlider**). Поведение и визуал согласованы с [Admiral SliderInputField](https://admiralds.github.io/react-ui/?path=/docs/admiral-2-1-form-field-sliderinputfield--docs).
+
+### Режим \`range\`
+| \`range\` | Значение | \`onChange\` | UI |
+|---------|----------|--------------|-----|
+| \`false\` (по умолчанию) | \`number\` | \`(value: number) => void\` | одно поле числа + один бегунок |
+| \`true\` | \`readonly [number, number]\` | \`(pair) => void\` | поля «От» / «До», два бегунка, разделитель «—» по центру |
+
+Переключение режима — только проп **\`range\`** (как у **DateInput** с диапазоном дат). Тип пропсов — дискриминированный union в \`types/ui.ts\`.
+
+### Шкала и слайдер
+| Проп | Зачем |
+|------|--------|
+| \`min\`, \`max\`, \`step\` | Границы и шаг (по умолчанию 0 / 100 / 1). |
+| \`showScaleLabels\` | Подписи min и max **под рамкой** поля (\`formatMinLabel\`, \`formatMaxLabel\`). |
+| \`showValueLabel\` | Подпись под бегунком, если **\`showNumberField={false}\`**. |
+| \`sliderSize\` | Размер трека и бегунка; по умолчанию совпадает с **\`size\`** поля. |
+| \`trackRailHeightPx\`, \`trackActiveHeightPx\` | Явная толщина серой и активной линии. |
+| \`formatValue\` | Формат числа в подписях и полях (как у **Slider**). |
+
+### Числовые поля
+| Проп | Зачем |
+|------|--------|
+| \`showNumberField\` | Показать поле(я) ввода (по умолчанию \`true\`). |
+| \`numberPlaceholder\` | Плейсхолдер одиночного поля. |
+| \`numberFromPlaceholder\`, \`numberToPlaceholder\` | Плейсхолдеры в range (по умолчанию «От …» / «До …»). |
+| \`rangeFromLabel\`, \`rangeToLabel\` | Подписи «От:» / «До:» перед полями в range. |
+| \`numberFieldWidth\` | Ширина колонки числа (одиночный) или минимальная ширина каждого поля в range. |
+| \`maxLength\` | Ограничение длины строки в поле числа + счётчик (как у **Input**). |
+
+### Формы
+- Одиночный режим: скрытый **\`name\`** с текущим значением.
+- Range: **\`nameFrom\`**, **\`nameTo\`** для отправки пары в форме.
+
+### Состояния (наследуются от Input)
+**\`label\`**, **\`helperText\`**, **\`extraText\`**, **\`additionalLabel\`**, **\`error\`**, **\`success\`**, **\`status\`** (\`error\` \| \`success\` \| \`warning\`), **\`disabled\`**, **\`readOnly\`**, **\`required\`**, **\`skeleton\`**, **\`isLoading\`**, **\`displayClearIcon\`**, иконки, тултип/hint, **\`variant\`** (\`default\` \| \`clear\`).
+
+Очистка (**\`displayClearIcon\`**) сбрасывает значение к **\`min\`** (одиночный) или к \`[min, min]\` (range).
+
+### Связанные компоненты
+- **Slider** / **RangeSlider** — слайдер без оболочки Input.
+- **DateInput** (\`range\`) — тот же паттерн «одно значение / пара», другой тип данных.
+
+### Документация
+- Сайт: \`documentation/content/docs/ru/web/v_0.2.0/components-slider-input.mdx\`
+- Storybook: **UI Kit → Inputs → SliderInput** (истории по режимам и состояниям)
 `.trim();
 
 /** @see BreadcrumbProps */

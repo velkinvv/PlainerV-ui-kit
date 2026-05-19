@@ -566,23 +566,32 @@ export type MultiInputProps = Omit<
 };
 
 /**
- * Поле «слайдер + ввод числа»: оболочка как у `Input` (рамка, лейбл, статусы, иконки), значение — число.
- * Поведение рядом с [Admiral SliderInputField](https://admiralds.github.io/react-ui/?path=/docs/admiral-2-1-form-field-sliderinputfield--docs).
- * @property value - Контролируемое значение шкалы.
- * @property defaultValue - Начальное значение.
- * @property onChange - Новое значение после слайдера, ввода или сброса (как у `Slider`).
- * @property min / max / step - Границы и шаг.
- * @property showValueLabel - Подпись текущего значения под бегунком.
- * @property showScaleLabels - Подписи min и max над треком.
- * @property showNumberField - Поле числа справа от слайдера (по умолчанию `true`).
- * @property numberFieldWidth - Ширина колонки числа (CSS).
- * @property numberPlaceholder - Плейсхолдер внутреннего поля числа.
- * @property formatValue / formatMinLabel / formatMaxLabel - Форматирование подписей (как у `Slider`).
- * @property trackRailHeightPx / trackActiveHeightPx - Толщина линий трека.
- * @property sliderSize - Размер бегунка/трека; по умолчанию — как `size` поля.
- * @property name - Скрытый `input` для отправки формы.
+ * Общие пропсы `SliderInput` (одиночное значение и диапазон).
+ * Наследует оболочку **Input** (лейблы, ошибки, иконки, `variant`, `skeleton`, …); значение задаётся в `SliderInputSingleProps` или `SliderInputRangeProps`.
+ *
+ * @property range - `false` (по умолчанию) — одно значение; `true` — пара «от / до» (как у `DateInput` с `range`). Переключает union-тип `value` / `onChange`.
+ * @property min - Нижняя граница шкалы (по умолчанию `0`).
+ * @property max - Верхняя граница шкалы (по умолчанию `100`).
+ * @property step - Шаг изменения (по умолчанию `1`); влияет на слайдер и нормализацию ввода в поле числа.
+ * @property showValueLabel - Подпись под бегунком, если `showNumberField={false}` (в range — под каждым бегунком).
+ * @property showScaleLabels - Подписи `min` и `max` под нижней границей рамки поля.
+ * @property showNumberField - Показывать поле(я) числа (по умолчанию `true`; в range — два поля в сетке «от / — / до»).
+ * @property numberFieldWidth - Ширина колонки числа (одиночный) или минимальная ширина каждого поля в range.
+ * @property numberPlaceholder - Плейсхолдер одиночного числового поля.
+ * @property numberFromPlaceholder - Плейсхолдер поля «от» в range.
+ * @property numberToPlaceholder - Плейсхолдер поля «до» в range.
+ * @property rangeFromLabel - Подпись перед полем «от» (по умолчанию «От:»).
+ * @property rangeToLabel - Подпись перед полем «до» (по умолчанию «До:»).
+ * @property formatValue - Формат числа в полях и подписях бегунков.
+ * @property formatMinLabel - Формат подписи минимума шкалы.
+ * @property formatMaxLabel - Формат подписи максимума шкалы.
+ * @property trackRailHeightPx - Толщина серой линии трека (px); иначе из `sliderSize` / `size`.
+ * @property trackActiveHeightPx - Толщина активного сегмента (px).
+ * @property sliderSize - Размер встроенного трека и бегунка; по умолчанию совпадает с `size` поля.
+ * @property maxLength - Ограничение длины строки в поле числа и счётчик (как у `Input`).
+ * @property displayClearIcon - Очистка: одиночный → `min`, range → `[min, min]`.
  */
-export type SliderInputProps = Omit<
+type SliderInputSharedProps = Omit<
   InputProps,
   | 'value'
   | 'defaultValue'
@@ -593,9 +602,7 @@ export type SliderInputProps = Omit<
   | 'maxLength'
   | 'placeholder'
 > & {
-  value?: number;
-  defaultValue?: number;
-  onChange?: (value: number) => void;
+  range?: boolean;
   min?: number;
   max?: number;
   step?: number;
@@ -604,16 +611,59 @@ export type SliderInputProps = Omit<
   showNumberField?: boolean;
   numberFieldWidth?: string;
   numberPlaceholder?: string;
+  numberFromPlaceholder?: string;
+  numberToPlaceholder?: string;
+  rangeFromLabel?: React.ReactNode;
+  rangeToLabel?: React.ReactNode;
   formatValue?: (value: number) => string;
   formatMinLabel?: (min: number) => string;
   formatMaxLabel?: (max: number) => string;
   trackRailHeightPx?: number;
   trackActiveHeightPx?: number;
   sliderSize?: Size;
-  name?: string;
   /** Ограничение длины строки в поле числа и счётчик (как у `Input`). */
   maxLength?: number;
 };
+
+/**
+ * Одиночное значение (`range` не задан или `false`).
+ * @property value - Контролируемое число на шкале `min`…`max`.
+ * @property defaultValue - Начальное число в неконтролируемом режиме.
+ * @property onChange - `(value: number) => void` после слайдера или коммита поля числа.
+ * @property name - Имя скрытого input для нативной отправки формы.
+ */
+export type SliderInputSingleProps = SliderInputSharedProps & {
+  range?: false;
+  value?: number;
+  defaultValue?: number;
+  onChange?: (value: number) => void;
+  name?: string;
+};
+
+/**
+ * Диапазон «от / до» (`range={true}`).
+ * @property value - Контролируемая упорядоченная пара `[от, до]` (от ≤ до после нормализации).
+ * @property defaultValue - Начальная пара в неконтролируемом режиме.
+ * @property onChange - `(value: readonly [number, number]) => void` при изменении любой границы.
+ * @property nameFrom - Имя скрытого поля для значения «от».
+ * @property nameTo - Имя скрытого поля для значения «до».
+ */
+export type SliderInputRangeProps = SliderInputSharedProps & {
+  range: true;
+  value?: readonly [number, number];
+  defaultValue?: readonly [number, number];
+  onChange?: (value: readonly [number, number]) => void;
+  nameFrom?: string;
+  nameTo?: string;
+};
+
+/**
+ * Поле «слайдер + ввод числа»: оболочка как у `Input`, встроенный **Slider** или **RangeSlider** у нижней кромки.
+ * Режим задаётся `range` (дискриминированный union). Документация: `documentation/.../components-slider-input.mdx`, Storybook **SliderInput**.
+ * @see SliderInputSingleProps
+ * @see SliderInputRangeProps
+ */
+export type SliderInputProps = SliderInputSingleProps | SliderInputRangeProps;
 
 /**
  * Пропсы текстовой области
@@ -970,6 +1020,17 @@ export interface SliderBaseProps extends BaseComponentProps {
   skeleton?: boolean;
   /** Акцент рамки и заливки трека / бегунков */
   status?: 'error' | 'success' | 'warning';
+  /**
+   * Вложение в `SliderInput`: трек у нижней кромки поля, без оболочки `SliderFieldShell`.
+   * Геометрия бегунков как у `Slider` / `RangeSlider` (`sliderThumbLeftCalcCss`).
+   */
+  embeddedInInput?: boolean;
+  /** Подписи min/max над треком; в `SliderInput` — снаружи рамки (`false`). */
+  showScaleRow?: boolean;
+  /** Фокус на бегунке (для рамки `SliderInput`). */
+  onSliderFocus?: () => void;
+  /** Потеря фокуса бегунка. */
+  onSliderBlur?: () => void;
 }
 
 /**
@@ -3955,7 +4016,7 @@ export interface TableContainerProps extends BaseComponentProps {
 
 /**
  * Нативная `<table>` + контекст размера и зебры для дочерних строк.
- * @property stickyHeader - Липкий заголовок (`thead th` с `position: sticky`)
+ * @property stickyHeader - Липкий заголовок: без `scrollAreaMaxHeight` — `position: sticky` у `th`; с `scrollAreaMaxHeight` на `TableContainerScroll` — split-layout (шапка вне скролла строк)
  * @property size - Вертикальные отступы ячеек (`sm` | `md`)
  * @property striped - Чередование фона строк в `tbody`; по умолчанию `false` — фон строк как у карточки
  * @property columnDividers - Тонкая вертикальная линия между колонками (`border-inline-end` у ячеек, кроме последней в строке); по умолчанию `true`
@@ -4672,7 +4733,9 @@ export interface DataGridExpandedRowChangeParams {
  * @property paginationMode — Как интерпретировать `rows` при пагинации
  * @property sortModel + onSortChange — Контролируемая сортировка (одно поле, массив критериев или `null`; данные сортирует родитель)
  * @property multiColumnSort — Режим нескольких полей: клик добавляет asc → desc → снять; порядок в массиве — приоритет
- * @property scrollAreaMaxHeight — Макс. высота зоны прокрутки сетки (пробрасывается в `TableContainerScroll`); для корректной липкой шапки вместо внешней обёртки с `overflow: auto`
+ * @property scrollAreaMaxHeight — Макс. высота зоны строк (пробрасывается в `TableContainerScroll`); со `stickyHeader` — split-layout: шапка и `headerToolbar` вне вертикального скролла `tbody`
+ * @property horizontalScroll — Горизонтальный скролл при широкой сетке (по умолчанию `true`); в split-layout полоса только у тела, шапка синхронизируется по `scrollLeft`
+ * @property stickyHeader — Липкая шапка (по умолчанию `true` у DataGrid); с `scrollAreaMaxHeight` — шапка вне скролла строк
  * @property tableHeaderVariant — Тон фона шапки и панели `headerToolbar`: `default` (серый из темы) или `card` (фон карточки)
  * @property tableHeaderBackground — Произвольный цвет фона шапки (приоритет над `tableHeaderVariant`)
  * @property rowBackgroundColorByStatus — Фон строки по данным строки
@@ -4736,16 +4799,20 @@ export interface DataGridProps<
   multiColumnSort?: boolean;
   /**
    * Липкая шапка при вертикальном скролле.
+   * Без `scrollAreaMaxHeight` — `position: sticky` у заголовков. С `scrollAreaMaxHeight` — split-layout:
+   * `thead` и `headerToolbar` вне скролла строк, синхронизация по горизонтали с телом.
    * @defaultValue true
    */
   stickyHeader?: boolean;
   /**
-   * Макс. высота прокручиваемой области **строк** (`tbody`), число — пиксели.
-   * При `stickyHeader` (по умолчанию у DataGrid) шапка и пагинация вне вертикального скролла.
+   * Макс. высота прокручиваемой области **строк** (`tbody`); число трактуется как пиксели.
+   * Пробрасывается в `TableContainerScroll`. Вместе со `stickyHeader` включает split-layout;
+   * пагинация остаётся под таблицей, вне вертикального скролла.
    */
   scrollAreaMaxHeight?: string | number;
   /**
-   * Горизонтальный скролл при широкой сетке.
+   * Горизонтальный скролл при широкой сетке (`table-layout: fixed` при ресайзе колонок).
+   * `false` — колонки по ширине карточки. В split-layout горизонтальная полоса только у тела.
    * @defaultValue true
    */
   horizontalScroll?: boolean;

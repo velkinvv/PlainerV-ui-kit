@@ -1,6 +1,13 @@
 import { InputPaddingHandler } from '../../../../handlers/uiHandlers';
 import { Size } from '../../../../types/sizes';
-import { clampSliderValue, formatSliderNumberRu, snapSliderToStep } from '../../Slider/handlers';
+import {
+  clampSliderValue,
+  formatSliderNumberRu,
+  mergeRangeAfterThumbMove,
+  snapSliderToStep,
+  sortAndClampRange,
+} from '../../Slider/handlers';
+import type { SliderRangeValue } from '../../../../types/ui';
 import { normalizeMultiInputToken } from '../MultiInput/handlers';
 
 /**
@@ -251,6 +258,151 @@ export const getSliderInputClearButtonPseudoValue = (
  * @param draftLength - Длина черновика числа.
  * @param visibilityThreshold - Порог из пропсов.
  */
+/**
+ * Нормализует пару range: snap, сортировка, границы.
+ * @param rawLow - Нижняя граница (сырая).
+ * @param rawHigh - Верхняя граница (сырая).
+ * @param min - Минимум шкалы.
+ * @param max - Максимум шкалы.
+ * @param step - Шаг.
+ */
+export const resolveSliderInputRangePair = (
+  rawLow: number,
+  rawHigh: number,
+  min: number,
+  max: number,
+  step: number,
+): SliderRangeValue => {
+  const low = resolveSliderInputSnappedValue(rawLow, min, max, step);
+  const high = resolveSliderInputSnappedValue(rawHigh, min, max, step);
+  return sortAndClampRange(low, high, min, max);
+};
+
+/**
+ * Дефолтная пара для range: [min, середина шкалы] после snap.
+ * @param defaultValue - Значение из пропсов.
+ * @param min - Минимум.
+ * @param max - Максимум.
+ * @param step - Шаг.
+ */
+export const getSliderInputRangeDefaultPair = (
+  defaultValue: SliderRangeValue | undefined,
+  min: number,
+  max: number,
+  step: number,
+): SliderRangeValue => {
+  const fallback: SliderRangeValue = [
+    min,
+    resolveSliderInputSnappedValue(min + (max - min) * 0.5, min, max, step),
+  ];
+  if (!defaultValue) {
+    return resolveSliderInputRangePair(fallback[0], fallback[1], min, max, step);
+  }
+  return resolveSliderInputRangePair(defaultValue[0], defaultValue[1], min, max, step);
+};
+
+/**
+ * Стартовые строки черновиков полей «от» / «до».
+ * @param valueProp - Контролируемая пара.
+ * @param defaultValue - Дефолт из пропсов.
+ * @param min - Минимум.
+ * @param max - Максимум.
+ * @param step - Шаг.
+ */
+export const getSliderInputRangeNumericDraftSeeds = ({
+  valueProp,
+  defaultValue,
+  min,
+  max,
+  step,
+}: {
+  valueProp?: SliderRangeValue;
+  defaultValue?: SliderRangeValue;
+  min: number;
+  max: number;
+  step: number;
+}): { fromDraft: string; toDraft: string } => {
+  const pair = getSliderInputRangeDefaultPair(
+    valueProp ?? defaultValue,
+    min,
+    max,
+    step,
+  );
+  return { fromDraft: String(pair[0]), toDraft: String(pair[1]) };
+};
+
+/**
+ * Псевдо-значение для кнопки очистки в range: не пусто, если пара отличается от дефолтной.
+ * @param low - Текущий «от».
+ * @param high - Текущий «до».
+ * @param defaultLow - Дефолт «от».
+ * @param defaultHigh - Дефолт «до».
+ */
+export const getSliderInputRangeClearButtonPseudoValue = (
+  low: number,
+  high: number,
+  defaultLow: number,
+  defaultHigh: number,
+): string => {
+  return low !== defaultLow || high !== defaultHigh ? '1' : '';
+};
+
+/**
+ * Клавиатура бегунка range: возвращает новую пару или `none`.
+ * @param key - `event.key`.
+ * @param thumbIndex - 0 — нижний бегунок, 1 — верхний.
+ * @param step - Шаг шкалы.
+ * @param low / high - Текущая пара.
+ * @param min / max - Границы шкалы.
+ */
+export const resolveSliderInputRangeThumbKeyboardPair = (
+  key: string,
+  thumbIndex: 0 | 1,
+  step: number,
+  low: number,
+  high: number,
+  min: number,
+  max: number,
+): { kind: 'none' } | { kind: 'pair'; next: SliderRangeValue } => {
+  if (key === 'Home') {
+    const next =
+      thumbIndex === 0
+        ? mergeRangeAfterThumbMove(0, min, low, high, min, max, step)
+        : mergeRangeAfterThumbMove(1, low, low, high, min, max, step);
+    return { kind: 'pair', next };
+  }
+  if (key === 'End') {
+    const next =
+      thumbIndex === 0
+        ? mergeRangeAfterThumbMove(0, high, low, high, min, max, step)
+        : mergeRangeAfterThumbMove(1, max, low, high, min, max, step);
+    return { kind: 'pair', next };
+  }
+  const intent = resolveSliderInputThumbKeyboardIntent(key, step);
+  if (intent.kind === 'none') {
+    return { kind: 'none' };
+  }
+  if (intent.kind === 'toMin') {
+    const raw = thumbIndex === 0 ? min : low;
+    return {
+      kind: 'pair',
+      next: mergeRangeAfterThumbMove(thumbIndex, raw, low, high, min, max, step),
+    };
+  }
+  if (intent.kind === 'toMax') {
+    const raw = thumbIndex === 1 ? max : high;
+    return {
+      kind: 'pair',
+      next: mergeRangeAfterThumbMove(thumbIndex, raw, low, high, min, max, step),
+    };
+  }
+  const base = thumbIndex === 0 ? low : high;
+  return {
+    kind: 'pair',
+    next: mergeRangeAfterThumbMove(thumbIndex, base + intent.delta, low, high, min, max, step),
+  };
+};
+
 export const shouldShowSliderInputCharacterCounter = ({
   displayCharacterCounter,
   maxLength,

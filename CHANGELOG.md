@@ -9,7 +9,7 @@
 
 ---
 
-## [0.2.0] - 2026-05-18
+## [0.2.0] - 2026-05-19
 
 ### Added
 
@@ -17,14 +17,24 @@
 - Поле **`columns[].format`** у **DataGrid** и тип **`TableCellFormat`**: декларативное отображение ячеек (ссылки через **`Link`**, маски, число, валюта, дата/время, **`renderCell`**). Хелпер **`formatTableCellValue`**, **`TableCellFormatted`**, **`formatTableCellExportCellValue`**. Скрипты **`npm run react-doctor`** / **`react-doctor:strict`**.
 - **DataGrid — выгрузка в Excel (`.xls`)**: проп **`excelExport`** (`dataFetcher`, модалка диапазона страниц, прогресс, отмена). Файл SpreadsheetML без внешних библиотек. Ширины колонок из **`columns[].width`**. Текст для Excel из **`format`** / **`render`** / **`exportValueGetter`**. Цвета ячеек: **`exportStyle`** у `enum`, **`exportCellStyle`**, пресеты для **Tag** / **Pill**. Пустое состояние, встроенные кнопки **refetch** / сброс фильтров в **`headerToolbar`**.
 - **Modal:** иконки статуса (**`danger`** / **`success`** / **`info`**) в шапке.
+- **SliderInput — режим `range`:** диапазон «от / до» по аналогии с **DateInput** (`range={true}`): `value` / `defaultValue` / `onChange` как `readonly [number, number]`; поля **`rangeFromLabel`**, **`rangeToLabel`**, плейсхолдеры **`numberFromPlaceholder`** / **`numberToPlaceholder`**; скрытые **`nameFrom`**, **`nameTo`**. Экспорт **`SliderInputSingleProps`**, **`SliderInputRangeProps`**. Реализация **SliderInputSingle** / **SliderInputRange**, хелперы в `SliderInput/handlers.ts`.
+- **Storybook:** полный набор историй **SliderInput**; **DOC_SLIDER_INPUT** в `storyDocs/uiKitDocs.ts`.
 
 ### Changed
 
 - **Tabs** (**breaking**): варианты **pill**, **minimal**, **line**, **underline**; проп **filledSegmentTriggers**; убран **Tabs.List**.
+- **DataGrid** / **Table**: при **`scrollAreaMaxHeight`** и липкой шапке — **split-layout** (шапка и `headerToolbar` вне вертикального скролла строк; горизонтальный скролл у `tbody`, синхронизация `scrollLeft` и ширин колонок). По умолчанию **`stickyHeader={true}`** и **`horizontalScroll={true}`** у **DataGrid**; у **TableContainerScroll** — **`horizontalScroll={true}`**.
+- Скругления блока таблицы из **`theme.tables.borderRadius`** (CSS-переменная **`--plainer-table-border-radius`** на **`TableContainer`**).
+- **Глобальные стили скроллбаров** в **`GlobalStyles`** (единый вид полос прокрутки в приложении).
+
+### Fixed
+
+- **SliderInput / Slider (embedded):** заливка встроенного трека у нижней кромки **Input** — без зазора слева у одиночного значения на `min`; корректный сегмент между бегунками в режиме **range**.
 
 ### Added (документация)
 
 - Документация **v0.2.0** на сайте; обновлены README и CHANGELOG.
+- Страница **SliderInput** (`components-slider-input.mdx`); справочник, **group-inputs**, JSDoc в `types/ui.ts`.
 
 ---
 

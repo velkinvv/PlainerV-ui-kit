@@ -26,7 +26,7 @@ const sliderInputBottomCornerRadius = (theme: { borderRadius: Size }) => {
   `;
 };
 
-/** Линия трека у нижней кромки, на всю ширину. */
+/** Линия трека на всю ширину полоски (полоска смещена на 1px от нижней рамки). */
 const sliderInputTrackLineAtBottom = css`
   top: auto;
   bottom: 0;
@@ -42,6 +42,7 @@ const sliderInputTrackLineAtBottom = css`
 export const SliderInputFieldShell = styled(InputWrapper)<{ $fieldSize: Size }>`
   flex-direction: column;
   align-items: stretch;
+  /* Нижняя грань — трек; бегунок может выступать вниз (translate -50%, 50%). */
   border-bottom: none;
   overflow: visible;
 
@@ -101,10 +102,12 @@ export const SliderInputValueDisplay = styled.span<{ $fieldSize: Size; $disabled
 `;
 
 /** Обёртка трека без внутренних отступов. */
+/** Без box-shadow статуса — рамку рисует `SliderInputFieldShell` (`InputWrapper`). */
 export const SliderInputTrackRingWrap = styled(SliderTrackRingWrap)`
   margin: 0;
   padding: 0;
   border-radius: 0;
+  box-shadow: none;
 `;
 
 /** Область бегунка и трека; бегунок не обрезается (`overflow: visible`). */
@@ -133,7 +136,14 @@ export const SliderInputTrackStrip = styled.div<{ $lineHeightPx: number }>`
   left: 0;
   right: 0;
   bottom: 0;
-  height: ${({ $lineHeightPx }) => $lineHeightPx}px;
+  ${({ theme, $lineHeightPx }) => {
+    const radiusPx =
+      Number.parseInt(BorderRadiusHandler(theme.borderRadius), 10) || 8;
+    const heightPx = Math.max($lineHeightPx, radiusPx);
+    return css`
+      height: ${heightPx}px;
+    `;
+  }}
   overflow: hidden;
   pointer-events: none;
   ${({ theme }) => sliderInputBottomCornerRadius(theme)}
@@ -198,6 +208,58 @@ export const SliderInputClearButton = styled(ClearButton)`
  * @property $grow - Растянуть на свободное место в строке (для `fullWidth`).
  * @property $reserveClearSpace - Отступ справа под кнопку очистки.
  */
+/**
+ * Две половины поля и тире по центру: `1fr | — | 1fr`.
+ */
+export const SliderInputRangeNumbersRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  column-gap: 4px;
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+`;
+
+/** Половина ширины тела поля; «От:» / «До:» по центру своей колонки. */
+export const SliderInputRangeNumberHalf = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  width: 100%;
+`;
+
+/** Группа «префикс + поле» без растягивания по ширине. */
+export const SliderInputRangeNumberGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 auto;
+`;
+
+/**
+ * Подпись «От:» / «До:» перед полем числа.
+ * @property $fieldSize - Размер поля.
+ */
+export const SliderInputRangeFieldLabel = styled.span<{ $fieldSize: Size }>`
+  flex-shrink: 0;
+  font-family: ${({ theme }) => theme.typography.body.fontFamily};
+  font-size: 12px;
+  line-height: 1.25;
+  color: ${({ theme }) => theme.colors.textSecondary};
+`;
+
+/** Тире между «от» и «до» по центру поля. */
+export const SliderInputRangeSeparator = styled.span`
+  flex-shrink: 0;
+  justify-self: center;
+  color: ${({ theme }) => theme.colors.textSecondary};
+  font-family: ${({ theme }) => theme.typography.body.fontFamily};
+  line-height: 1.25;
+  user-select: none;
+`;
+
 export const SliderInputNumberSlot = styled.div<{
   $width: string;
   $grow?: boolean;

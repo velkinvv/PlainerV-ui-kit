@@ -10,6 +10,9 @@ import {
   getSliderInputThumbBottomCss,
   isSliderInputTrackFilledToEnd,
   sliderInputThumbLeftCalcCss,
+  getSliderInputRangeDefaultPair,
+  resolveSliderInputRangeThumbKeyboardPair,
+  getSliderInputRangeClearButtonPseudoValue,
 } from './handlers';
 
 describe('SliderInput handlers', () => {
@@ -83,5 +86,27 @@ describe('SliderInput handlers', () => {
         visibilityThreshold: 0,
       }),
     ).toBe(true);
+  });
+
+  it('getSliderInputRangeDefaultPair упорядочивает и snap', () => {
+    expect(getSliderInputRangeDefaultPair([80, 20], 0, 100, 10)).toEqual([20, 80]);
+  });
+
+  it('resolveSliderInputRangeThumbKeyboardPair сдвигает нижний бегунок', () => {
+    const resolution = resolveSliderInputRangeThumbKeyboardPair(
+      'ArrowRight',
+      0,
+      10,
+      20,
+      80,
+      0,
+      100,
+    );
+    expect(resolution).toEqual({ kind: 'pair', next: [30, 80] });
+  });
+
+  it('getSliderInputRangeClearButtonPseudoValue', () => {
+    expect(getSliderInputRangeClearButtonPseudoValue(10, 50, 10, 50)).toBe('');
+    expect(getSliderInputRangeClearButtonPseudoValue(20, 50, 10, 50)).toBe('1');
   });
 });

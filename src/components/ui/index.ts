@@ -14,6 +14,8 @@ export type {
   MultiInputChangeEvent,
   MultiInputDuplicatePolicy,
   SliderInputProps,
+  SliderInputSingleProps,
+  SliderInputRangeProps,
 } from '@/types/ui';
 export { NumberInput } from './inputs/NumberInput/NumberInput';
 export { MultiInput } from './inputs/MultiInput/MultiInput';
