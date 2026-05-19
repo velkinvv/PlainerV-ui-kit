@@ -1,3 +1,5 @@
+import { BorderRadiusHandler } from '@/handlers/uiHandlers';
+import { Size } from '@/types/sizes';
 import type { ThemeType } from '@/types/theme';
 
 /**
@@ -6,20 +8,63 @@ import type { ThemeType } from '@/types/theme';
  */
 export const PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR = '--plainer-table-header-background';
 
-/** Запасной радиус, если в теме нет `tables` (например, устаревший мок). */
-const TABLE_THEME_FALLBACK_BORDER_RADIUS = '12px';
+/**
+ * Скругление оболочки таблицы. Задаётся на `TableContainerRoot`, наследуется clip / split-layout / `thead`.
+ */
+export const PLAINER_TABLE_BORDER_RADIUS_CSS_VAR = '--plainer-table-border-radius';
+
+/** Запасной радиус, если в теме нет токенов таблицы и карточки. */
+const TABLE_THEME_FALLBACK_BORDER_RADIUS = '16px';
 
 /**
- * Единое скругление примитива таблицы: карточка-оболочка, клип скролла, верх шапки, низ встроенной пагинации, фокус мелких контролов.
+ * Скругление из ступени **Card** (для `shellInset` и явного размера карточки).
+ * @param theme — активная тема styled-components
+ * @param cardSize — ступень `theme.cards.sizes`
+ */
+export function tableCardBorderRadiusFromTheme(
+  theme: ThemeType,
+  cardSize: Size = Size.MD,
+): string {
+  const fromCardTier = theme.cards?.sizes?.[cardSize]?.borderRadius?.trim();
+  if (fromCardTier) {
+    return fromCardTier;
+  }
+
+  return tableBorderRadiusFromTheme(theme);
+}
+
+/**
+ * Единое скругление примитива таблицы из `theme.tables.borderRadius`, затем Card MD, `theme.borderRadius`, fallback.
  * @param theme — активная тема styled-components
  */
 export function tableBorderRadiusFromTheme(theme: ThemeType): string {
-  return theme.tables?.borderRadius ?? TABLE_THEME_FALLBACK_BORDER_RADIUS;
+  const fromTableTheme = theme.tables?.borderRadius?.trim();
+  if (fromTableTheme) {
+    return fromTableTheme;
+  }
+
+  const fromCardMedium = theme.cards?.sizes?.[Size.MD]?.borderRadius?.trim();
+  if (fromCardMedium) {
+    return fromCardMedium;
+  }
+
+  if (theme.borderRadius != null) {
+    return BorderRadiusHandler(theme.borderRadius);
+  }
+
+  return TABLE_THEME_FALLBACK_BORDER_RADIUS;
+}
+
+/**
+ * Значение для `border-radius` у потомков `TableContainer`: CSS-переменная с fallback на тему.
+ * @param theme — активная тема styled-components
+ */
+export function tableBorderRadiusFromCssVar(theme: ThemeType): string {
+  return `var(${PLAINER_TABLE_BORDER_RADIUS_CSS_VAR}, ${tableBorderRadiusFromTheme(theme)})`;
 }
 
 /**
  * Скругление мелких интерактивных контролов в таблице (сортировка, фильтр в шапке, expand).
- * Совпадает с `tableBorderRadiusFromTheme`: значение задаётся в `theme.tables.borderRadius`.
  * @param theme — активная тема styled-components
  */
 export function tableInteractiveBorderRadiusFromTheme(theme: ThemeType): string {

@@ -8,6 +8,8 @@ import terser from '@rollup/plugin-terser';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 const isProduction = process.env.NODE_ENV === 'production';
+/** В npm уходит только dist/; sourcemap на ../src ломает Vite у потребителей — генерируем только в dev. */
+const emitSourceMaps = !isProduction;
 
 const sharedTypeScriptExclude = [
   '**/*.test.ts',
@@ -25,13 +27,13 @@ const libraryBundleConfig = {
     {
       file: 'dist/index.cjs.js',
       format: 'cjs',
-      sourcemap: true,
+      sourcemap: emitSourceMaps,
       exports: 'named',
     },
     {
       file: 'dist/index.esm.js',
       format: 'esm',
-      sourcemap: true,
+      sourcemap: emitSourceMaps,
       exports: 'named',
     },
   ],
@@ -57,11 +59,13 @@ const libraryBundleConfig = {
       declarationDir: './dist',
       exclude: [...sharedTypeScriptExclude, 'src/vite/**'],
       rootDir: './src',
+      sourceMap: emitSourceMaps,
+      declarationMap: emitSourceMaps,
     }),
     postcss({
       extract: 'styles.css',
       minimize: isProduction,
-      sourceMap: true,
+      sourceMap: emitSourceMaps,
     }),
     copy({
       targets: [

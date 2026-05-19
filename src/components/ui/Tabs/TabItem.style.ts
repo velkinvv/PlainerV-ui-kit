@@ -49,27 +49,6 @@ export const TabUnderlineBaselineTrackInner = styled.div<{ $direction: TabsDirec
     $direction === TabsDirection.VERTICAL ? `1px solid ${theme.colors.borderSecondary}` : 'none'};
 `;
 
-/** Стили полосы прокрутки трека вкладок */
-const tabsTrackScrollbarCss = css`
-  scrollbar-width: thin;
-  scrollbar-color: ${({ theme }) =>
-    `${theme.colors.borderSecondary} ${theme.colors.backgroundTertiary}`};
-
-  &::-webkit-scrollbar {
-    height: 6px;
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: ${({ theme }) => theme.colors.borderSecondary};
-    border-radius: 999px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-`;
-
 /**
  * Список триггеров вкладок
  * @property $direction — горизонтальный или вертикальный ряд сегментов
@@ -158,7 +137,6 @@ export const TabItemGroupListRoot = styled.div<{
     $scrollable
       ? css`
           flex-wrap: nowrap;
-          ${tabsTrackScrollbarCss}
           ${$direction === TabsDirection.HORIZONTAL
             ? css`
                 overflow-x: auto;

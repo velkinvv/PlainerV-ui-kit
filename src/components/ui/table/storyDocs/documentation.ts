@@ -11,7 +11,7 @@ export const TABLE_KIT_DOC = `
 
 ### TableContainer
 
-Обёртка карточки: скругление из темы (\`theme.cards.sizes[MD].borderRadius\`, как у **Card**; запасной вариант — \`BorderRadiusHandler(theme.borderRadius)\`), фон, обводка и опциональная тень. Горизонтальный скролл **не** встроен в корень — иначе у встроенной пагинации обрезаются тени у кнопок.
+Обёртка карточки: скругление из \`theme.tables.borderRadius\` (CSS-переменная \`--plainer-table-border-radius\` на \`TableContainer\`), затем Card MD и \`BorderRadiusHandler(theme.borderRadius)\`; фон, обводка и опциональная тень. Горизонтальный скролл **не** встроен в корень — иначе у встроенной пагинации обрезаются тени у кнопок.
 
 | Проп | Тип | Зачем |
 |------|-----|--------|
@@ -21,7 +21,7 @@ export const TABLE_KIT_DOC = `
 
 ### TableContainerScroll
 
-Обёртка из двух слоёв: внешний — скругления как у карточки и \`overflow: visible\` (чтобы \`position: sticky\` у шапки не ломался), внутренний — трек: \`overflow-x: auto\`, по вертикали по умолчанию \`overflow-y: clip\` (чтобы трек не становился вертикальным scroll-контейнером и не «крал» липкость у внешнего скролла). Для липкой шапки с ограниченной высотой передайте \`scrollAreaMaxHeight\` — вертикальный скролл будет внутри трека. \`<TablePagination />\` держите **снаружи** \`TableContainerScroll\` (но внутри \`TableContainer\`), чтобы не клипались тени кнопок страниц.
+Обёртка из двух слоёв: внешний — скругления как у карточки, внутренний — трек. По умолчанию \`horizontalScroll={true}\` — при широкой сетке горизонтальный скролл; \`horizontalScroll={false}\` — колонки по ширине контейнера. При \`scrollAreaMaxHeight\` и \`stickyHeader\` — split-layout: шапка фиксирована, вертикальный и горизонтальный скролл только у строк (полоса Y не перекрывает шапку). \`<TablePagination />\` держите **снаружи** \`TableContainerScroll\` (но внутри \`TableContainer\`).
 
 **Как использовать:** \`TableContainer\` → \`TableContainerScroll\` → \`Table\`; при встроенной пагинации — сестра \`TablePagination\` с \`embeddedInTableCard\` и проп \`embeddedPaginationBelow\` у \`TableContainerScroll\` (скругление только сверху у сетки). Без футера проп не передавайте — скругление углов со всех сторон, как у цельной карточки.
 
@@ -275,8 +275,9 @@ export const DATAGRID_DOC = `
 
 | Проп | Зачем |
 |------|--------|
-| \`stickyHeader\` | Липкая шапка. |
+| \`stickyHeader\` | Липкая шапка (по умолчанию **true**; \`stickyHeader={false}\` — отключить). |
 | \`scrollAreaMaxHeight\` | Макс. высота зоны с вертикальным скроллом (прокидывается в \`TableContainerScroll\`); удобно вместе со \`stickyHeader\`, см. примитив \`Table\`. |
+| \`horizontalScroll\` | Горизонтальный скролл при многих колонках (по умолчанию **true**); \`false\` — колонки ужимаются по ширине карточки. |
 | \`tableHeaderVariant\` | \`default\` — серый фон шапки из темы; \`card\` — фон карточки (обычно белый). Панель \`headerToolbar\` того же цвета. |
 | \`tableHeaderBackground\` | Кастомный цвет фона шапки и \`headerToolbar\` (приоритет над \`tableHeaderVariant\`). |
 | \`striped\` | Зебра в \`tbody\`. |
@@ -284,6 +285,10 @@ export const DATAGRID_DOC = `
 | \`headerMaxLines\` | Максимум строк текста в заголовках **данных** колонок (\`line-clamp\`); сортируемые колонки получают \`maxLines\` у \`TableSortLabel\`, несортируемые — обёртку \`TableCellHeadLineClamp\`. У колонки можно задать своё \`headerMaxLines\`. |
 | \`size\` | \`Size\` дизайн-системы: плотность строк и контролов. |
 | \`elevated\` | Тень у \`TableContainer\` (\`true\` по умолчанию). |
+| \`shellVariant\` | \`card\` (по умолчанию) — бордер и фон карточки таблицы; \`embedded\` — без бордера и фона оболочки (вложение в **Card**: отступы и рамка у родителя, у грида \`elevated={false}\`). |
+| \`surfaceBackgrounds\` | Прозрачные фоны по частям (\`shell\`, \`header\`, \`bodyRow\`, \`pagination\`, …) или shorthand \`'transparent'\` — таблица принимает фон родителя. |
+| \`shellInset\` | Внутренние отступы на белом фоне карточки (внешняя обводка карточки сохраняется); сетка без своей рамки, не вплотную к краю. |
+| \`shellInsetPadding\` | Отступ канавы (число — px); по умолчанию \`theme.tables.shell.insetPadding\` или padding **Card** MD. |
 | \`rowBackgroundColorByStatus\` | \`(row) => цвет\` — фон строки по данным (статусы). |
 | \`tableAriaLabel\` | \`aria-label\` таблицы. |
 | \`style\` | Инлайн-стиль корня грида. |
@@ -356,11 +361,20 @@ export const DATAGRID_DOC = `
 | \`renderCell\` | Общий рендер ячейки, если у колонки нет своего \`render\`. |
 | \`renderRowWrapper\` | Обёртка над \`<tr>\`; должна вернуть один корневой \`tr\` или фрагмент с одним \`tr\`. |
 
-### Загрузка
+### Статусы данных (загрузка, ошибка, сообщения)
 
 | Проп | Зачем |
 |------|--------|
-| \`isLoading\` | Глобальный оверлей поверх таблицы (не путать со спиннером только в раскрытой области). |
+| \`dataStatus\` | \`'loading' \| 'ready' \| 'error'\` — единый статус таблицы. |
+| \`isLoading\` | Устаревший флаг: то же, что \`dataStatus="loading"\`. |
+| \`loadingDisplay\` | \`'overlay'\` (спиннер поверх) или \`'skeleton'\` (строки-заглушки в \`tbody\`). При скелетоне и непустых \`rows\` автоматически оверлей. |
+| \`skeletonRowCount\` | Число строк-скелетонов; иначе \`paginationModel.pageSize\` или 8. |
+| \`error\`, \`errorStateTitle\`, \`errorStateDescription\` | Блок ошибки в \`tbody\` при \`dataStatus="error"\` (шапка остаётся). |
+| \`onRetry\`, \`errorStateRetryLabel\` | Кнопка повтора; если \`onRetry\` не задан, используется \`refetch\`. |
+| \`renderErrorState\` | Кастомный блок ошибки: \`(error, retry?) => ReactNode\`. |
+| \`renderLoadingOverlay\` | Кастомный оверлей при \`loadingDisplay="overlay"\`. |
+| \`statusMessage\`, \`statusMessageVariant\` | Информационная полоса над строками при \`dataStatus="ready"\` (\`info\` \| \`warning\` \| \`success\`). |
+| \`renderStatusMessage\` | Полностью свой блок сообщения вместо встроенной полосы. |
 
 ### Сторис (полный список)
 
@@ -368,8 +382,8 @@ export const DATAGRID_DOC = `
 |--------|----------------|
 | **ClientPagination** | \`paginationMode="client"\`, сортировка, мультивыбор, липкая шапка (зебра по умолчанию у грида). |
 | **Без зебры и липкая шапка** (\`ClientPaginationPlainBody\`) | \`striped={false}\` + \`stickyHeader\` + \`scrollAreaMaxHeight\`; все демо-строки на странице — прокрутка внутри трека и «липкая» шапка. |
-| **Без зебры (без липкой шапки)** (\`PlainBodyNoStickyHeader\`) | Только \`striped={false}\`; \`stickyHeader\` не включается; пагинация по 3 строки. |
-| **Липкая шапка (зебра, прокрутка)** (\`StickyHeaderWithScroll\`) | Зебра по умолчанию + \`stickyHeader\` + \`scrollAreaMaxHeight\`; полный список строк на странице. |
+| **Без зебры (без липкой шапки)** (\`PlainBodyNoStickyHeader\`) | \`striped={false}\` + \`stickyHeader={false}\`; пагинация по 3 строки. |
+| **Липкая шапка (зебра, прокрутка)** (\`StickyHeaderWithScroll\`) | \`scrollAreaMaxHeight\` (липкая шапка включена по умолчанию); полный список строк на странице. |
 | **MultiColumnSort** | \`multiColumnSort\` + массив в \`sortModel\`; приоритеты 1, 2 у шевронов. |
 | **CompactPaginationHideRowsSelect** | \`paginationVariant="compact"\`, \`showRowsPerPageSelect={false}\`. |
 | **PaginationToolbarCentered** | \`paginationToolbarAlign="center"\`. |
@@ -377,6 +391,13 @@ export const DATAGRID_DOC = `
 | **CompactRowsPerPageSelect** | Полная плашка страниц + \`rowsPerPageSelectVariant="compact"\`. |
 | **SingleSelect** | \`multiselect={false}\`, колонка радиокнопок. |
 | **ExpandAndLoading** | Раскрывающаяся строка, \`isLoading\` — глобальный оверлей. |
+| **DataStatuses** | \`dataStatus\`, скелетон, ошибка с повтором, \`statusMessage\`. |
+| **ShellInset** | \`shellInset\` — отступ сетки от рамки карточки, внутренний белый блок. |
+| **Без зебры и внутренние отступы** (\`ShellInsetPlainBody\`) | \`striped={false}\` + \`shellInset\`. |
+| **Встроенная оболочка** (\`EmbeddedShell\`) | **Card** + \`shellVariant="embedded"\`, \`elevated={false}\`. |
+| **Прозрачные фоны** (\`TransparentSurfaces\`) | \`surfaceBackgrounds="transparent"\` + \`shellVariant="embedded"\`. |
+| **Много колонок** (\`ManyColumnsHorizontalScroll\`) | \`horizontalScroll\` по умолчанию + \`scrollAreaMaxHeight\`. |
+| **Колонки по ширине** (\`FitColumnsNoHorizontalScroll\`) | \`horizontalScroll={false}\`. |
 | **ExpandLazyRowData** | \`onExpandedRowOpen\`, \`getExpandedRowDataStatus\`, спиннер только в подстроке. |
 | **ColumnReorder** | \`enableColumnDrag\`, \`onColumnDragEnd\`, плюс \`onColumnDragStart\`, \`onColumnOrderChange\`, \`onColumnDragCancel\` (см. сторис — лог в Actions). |
 | **ColumnResize** | \`enableColumnResize\`, \`onColumnResize\`, \`onColumnResizeStart\`, \`onColumnResizeChange\`, \`onColumnResizeEnd\`, контролируемые \`columns[].width\`. |

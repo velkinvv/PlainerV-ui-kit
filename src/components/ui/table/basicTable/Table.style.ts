@@ -1,11 +1,36 @@
 import styled, { css } from 'styled-components';
 import { createStyledShouldForwardProp } from '@/handlers/styledComponentHandlers';
 import {
+  PLAINER_TABLE_BORDER_RADIUS_CSS_VAR,
   PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR,
+  tableBorderRadiusFromCssVar,
   tableBorderRadiusFromTheme,
 } from './tableThemeRadiusHandlers';
+import {
+  resolveTableContainerScrollClipCornerMode,
+  tableScrollClipCornerRadiusCss,
+} from './tableScrollClipCornerRadiusHandlers';
+import {
+  resolveTableShellInsetFrameBackground,
+  resolveTableShellInsetSurfaceBackground,
+  resolveTableShellInsetSurfaceBorderRadius,
+} from './tableShellInsetHandlers';
+import {
+  normalizeTableSurfaceBackgrounds,
+  resolveTableHeaderSurfaceBackgroundColor,
+  resolveTableShellThemeBackgroundColor,
+  resolveTableSurfaceBackgroundColor,
+  type NormalizedTableSurfaceBackgrounds,
+} from './tableSurfaceBackgroundHandlers';
 import type { ThemeType } from '@/types/theme';
-import type { TablePaginationToolbarAlign, TableSize } from '@/types/ui';
+import {
+  formatTableBodyScrollMaxHeight,
+  PLAINER_TABLE_BODY_SCROLLBAR_GUTTER_CSS_VAR,
+  type TableBodyScrollHost,
+} from './tableBodyScrollHandlers';
+import type { TablePaginationToolbarAlign, TableShellVariant, TableSize } from '@/types/ui';
+
+const defaultTableSurfaceBackgrounds = normalizeTableSurfaceBackgrounds();
 
 /**
  * Вертикальные отступы ячейки по размеру таблицы.
@@ -36,23 +61,75 @@ function tableHeadFootCellMinHeight(size: TableSize): string {
  * вторая ось становится не `visible`, и обрезаются тени у футера/пагинации внутри карточки.
  * Горизонтальный скролл выносите в `TableContainerScroll` только вокруг `<Table>`.
  */
-export const TableContainerRoot = styled.div<{ $elevated: boolean }>`
+export const TableContainerRoot = styled.div<{
+  $elevated: boolean;
+  $shellInset?: boolean;
+  $shellVariant: TableShellVariant;
+  $surfaces?: NormalizedTableSurfaceBackgrounds;
+}>`
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
   display: flex;
   flex-direction: column;
   overflow: visible;
-  border-radius: ${({ theme }) => tableBorderRadiusFromTheme(theme)};
-  border: ${({ theme }) => theme.tables.shell.border};
-  background: ${({ theme }) => theme.tables.shell.background};
-  ${({ theme, $elevated }) =>
+  ${({ theme, $shellVariant }) =>
+    $shellVariant !== 'embedded' &&
+    css`
+      ${PLAINER_TABLE_BORDER_RADIUS_CSS_VAR}: ${tableBorderRadiusFromTheme(theme)};
+    `}
+  border-radius: ${({ theme, $shellVariant }) =>
+    $shellVariant === 'embedded' ? '0' : `var(${PLAINER_TABLE_BORDER_RADIUS_CSS_VAR})`};
+  border: ${({ theme, $shellVariant }) =>
+    $shellVariant === 'embedded' ? 'none' : theme.tables.shell.border};
+  background: ${({ theme, $shellInset, $shellVariant, $surfaces = defaultTableSurfaceBackgrounds }) =>
+    resolveTableSurfaceBackgroundColor(
+      $surfaces,
+      'shell',
+      resolveTableShellThemeBackgroundColor(theme, $shellVariant, Boolean($shellInset), 'shell'),
+    )};
+  ${({ theme, $elevated, $shellVariant }) =>
     $elevated &&
+    $shellVariant !== 'embedded' &&
     css`
       box-shadow: ${theme.boxShadow?.md ?? theme.colors.shadow};
       /* Вертикальный зазор: у родителей с overflow (Canvas Storybook) иначе обрезается тень сверху/снизу. */
       margin: 8px 0;
     `}
+
+`;
+
+/**
+ * Канава между рамкой карточки и белым блоком с сеткой (`shellInset`).
+ * @property $padding — CSS-отступ со всех сторон
+ */
+export const TableContainerInset = styled.div<{ $padding: string }>`
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: ${({ $padding }) => $padding};
+`;
+
+/**
+ * Внутренняя область с таблицей и пагинацией при `shellInset` (без обводки — рамка только у карточки).
+ */
+export const TableContainerInsetSurface = styled.div<{
+  $surfaces?: NormalizedTableSurfaceBackgrounds;
+}>`
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  background: ${({ theme, $surfaces = defaultTableSurfaceBackgrounds }) =>
+    resolveTableSurfaceBackgroundColor(
+      $surfaces,
+      'shell',
+      resolveTableShellInsetSurfaceBackground(theme),
+    )};
+  border: none;
+  border-radius: ${({ theme }) => resolveTableShellInsetSurfaceBorderRadius(theme)};
 `;
 
 /**
@@ -65,23 +142,25 @@ export const TableContainerRoot = styled.div<{ $elevated: boolean }>`
  */
 export const TableContainerScrollClip = styled.div.withConfig({
   shouldForwardProp: createStyledShouldForwardProp(),
-})<{ $embeddedPaginationBelow?: boolean }>`
+})<{
+  $embeddedPaginationBelow?: boolean;
+  $shellInset?: boolean;
+  $shellVariant?: TableShellVariant;
+}>`
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
   overflow: visible;
 
-  ${({ theme, $embeddedPaginationBelow }) =>
-    $embeddedPaginationBelow
-      ? css`
-          border-top-left-radius: ${tableBorderRadiusFromTheme(theme)};
-          border-top-right-radius: ${tableBorderRadiusFromTheme(theme)};
-          border-bottom-left-radius: 0;
-          border-bottom-right-radius: 0;
-        `
-      : css`
-          border-radius: ${tableBorderRadiusFromTheme(theme)};
-        `}
+  ${({ theme, $embeddedPaginationBelow = false, $shellInset = false, $shellVariant = 'card' }) =>
+    tableScrollClipCornerRadiusCss(
+      theme,
+      resolveTableContainerScrollClipCornerMode(
+        $shellVariant,
+        Boolean($shellInset),
+        Boolean($embeddedPaginationBelow),
+      ),
+    )}
 `;
 
 /**
@@ -89,39 +168,72 @@ export const TableContainerScrollClip = styled.div.withConfig({
  * Без `max-height`: `overflow-y: clip` вместе с `overflow-x: auto` — иначе по CSS вторая ось
  * превращается в `auto`, трек становится вертикальным scroll-контейнером, и `position: sticky` у
  * `th` цепляется к треку (высота ≈ таблицы), а внешний `overflow: auto` крутит всю разметку — шапка «уезжает».
- * С `max-height` — единая область `overflow: auto` внутри трека, липкая шапка относительно неё.
+ * При `scrollAreaMaxHeight` и липкой шапке скролл в split-layout (`TableBodyScrollSplitLayout`), трек без overflow.
  */
 export const TableContainerScrollTrack = styled.div.withConfig({
   shouldForwardProp: createStyledShouldForwardProp(),
 })<{
-  /**
-   * Максимальная высота области с вертикальным скроллом (число — пиксели). Без пропа вертикальная
-   * прокрутка ожидается у внешнего предка; трек не должен «красть» липкость у шапки.
-   */
   $scrollAreaMaxHeight?: string | number;
+  $bodyScrollHost?: TableBodyScrollHost;
+  /** Split-layout: шапка снаружи, скролл у блока строк */
+  $splitTablesScroll?: boolean;
+  /** Горизонтальный скролл при широкой сетке; `false` — колонки по ширине контейнера */
+  $horizontalScroll?: boolean;
 }>`
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
   border-radius: inherit;
 
-  ${({ $scrollAreaMaxHeight }) =>
-    $scrollAreaMaxHeight != null && $scrollAreaMaxHeight !== ''
+  ${({ $scrollAreaMaxHeight, $splitTablesScroll = false, $horizontalScroll = true }) => {
+    const horizontalOverflow = $horizontalScroll ? 'auto' : 'hidden';
+
+    if ($splitTablesScroll) {
+      return css`
+        overflow: visible;
+      `;
+    }
+
+    return $scrollAreaMaxHeight != null && $scrollAreaMaxHeight !== ''
       ? css`
-          max-height: ${typeof $scrollAreaMaxHeight === 'number'
-            ? `${$scrollAreaMaxHeight}px`
-            : $scrollAreaMaxHeight};
-          overflow: auto;
+          max-height: ${formatTableBodyScrollMaxHeight($scrollAreaMaxHeight)};
+          overflow-x: ${horizontalOverflow};
+          overflow-y: auto;
         `
       : css`
-          overflow-x: auto;
+          overflow-x: ${horizontalOverflow};
           overflow-y: clip;
-        `}
+        `;
+  }}
 `;
 
-export const StyledTable = styled.table<{ $stickyHeader: boolean; $striped: boolean }>`
-  width: 100%;
+export const StyledTable = styled.table<{
+  $stickyHeader: boolean;
+  $striped: boolean;
+  $surfaces?: NormalizedTableSurfaceBackgrounds;
+  /** Вертикальный скролл только у `tbody` (шапка и футер пагинации вне скролла) */
+  $bodyScrollMaxHeight?: string | number;
+  /** `false` — таблица на всю ширину без горизонтального скролла */
+  $horizontalScroll?: boolean;
+  /** Split-layout: ширина = сумма колонок, без растягивания под viewport */
+  $splitTablesScroll?: boolean;
+}>`
   border-spacing: 0;
+  ${({ $horizontalScroll = true, $splitTablesScroll = false }) =>
+    $splitTablesScroll
+      ? css`
+          width: max-content;
+          min-width: 100%;
+          table-layout: fixed;
+        `
+      : $horizontalScroll
+        ? css`
+            width: max-content;
+            min-width: 100%;
+          `
+        : css`
+            width: 100%;
+          `}
   font-family: ${({ theme }) => theme.fonts.primary};
   color: ${({ theme }) => theme.tables.cell.text};
 
@@ -135,8 +247,9 @@ export const StyledTable = styled.table<{ $stickyHeader: boolean; $striped: bool
           border-collapse: collapse;
         `}
 
-  ${({ $stickyHeader, theme }) =>
+  ${({ $stickyHeader, $bodyScrollMaxHeight, theme, $surfaces = defaultTableSurfaceBackgrounds }) =>
     $stickyHeader &&
+    $bodyScrollMaxHeight == null &&
     css`
       /*
        * Две строки в thead (например панель headerToolbar + заголовки колонок в DataGrid):
@@ -147,19 +260,56 @@ export const StyledTable = styled.table<{ $stickyHeader: boolean; $striped: bool
         position: sticky;
         top: 0;
         z-index: 3;
-        background: ${`var(${PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR}, ${theme.tables.header.background})`};
+        background: ${`var(${PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR}, ${resolveTableHeaderSurfaceBackgroundColor($surfaces, theme.tables.header.background)})`};
       }
 
       thead tr:nth-child(2) th {
         position: sticky;
         top: var(--plainer-sticky-thead-second-row-top, 0px);
         z-index: 2;
-        background: ${`var(${PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR}, ${theme.tables.header.background})`};
+        background: ${`var(${PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR}, ${resolveTableHeaderSurfaceBackgroundColor($surfaces, theme.tables.header.background)})`};
       }
     `}
 
-  ${({ theme, $striped }) =>
+  ${({ $bodyScrollMaxHeight, $horizontalScroll = true }) =>
+    $bodyScrollMaxHeight != null &&
+    $bodyScrollMaxHeight !== '' &&
+    css`
+      thead {
+        display: block;
+        box-sizing: border-box;
+        width: 100%;
+        padding-right: var(${PLAINER_TABLE_BODY_SCROLLBAR_GUTTER_CSS_VAR}, 0px);
+        overflow-x: hidden;
+      }
+
+      thead tr,
+      tbody tr {
+        display: table;
+        table-layout: fixed;
+        ${$horizontalScroll
+          ? css`
+              width: max-content;
+              min-width: 100%;
+            `
+          : css`
+              width: 100%;
+            `}
+      }
+
+      tbody {
+        display: block;
+        width: 100%;
+        max-height: ${formatTableBodyScrollMaxHeight($bodyScrollMaxHeight)};
+        overflow-x: ${$horizontalScroll ? 'auto' : 'hidden'};
+        overflow-y: auto;
+        scrollbar-gutter: stable;
+      }
+    `}
+
+  ${({ theme, $striped, $surfaces = defaultTableSurfaceBackgrounds }) =>
     $striped &&
+    !$surfaces.bodyRowZebra &&
     css`
       tbody tr:nth-child(odd) {
         background: ${theme.tables.zebra.oddRowBackground};
@@ -175,22 +325,36 @@ export const StyledTable = styled.table<{ $stickyHeader: boolean; $striped: bool
         }
       }
     `}
+
+  ${({ $surfaces = defaultTableSurfaceBackgrounds }) =>
+    $surfaces.bodyRow &&
+    css`
+      tbody tr {
+        background: transparent;
+      }
+    `}
 `;
 
 /** Шапка: фон и границы из `theme.tables` (фон можно переопределить через CSS-переменную на `<table>`). */
-export const StyledThead = styled.thead`
-  background: ${({ theme }) =>
-    `var(${PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR}, ${theme.tables.header.background})`};
+export const StyledThead = styled.thead<{
+  $surfaces?: NormalizedTableSurfaceBackgrounds;
+  $shellVariant?: TableShellVariant;
+}>`
+  background: ${({ theme, $surfaces = defaultTableSurfaceBackgrounds }) =>
+    `var(${PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR}, ${resolveTableHeaderSurfaceBackgroundColor($surfaces, theme.tables.header.background)})`};
   border-bottom: ${({ theme }) => theme.tables.header.borderBottom};
-  /* Скругление верхних углов совпадает с клипом и единым токеном theme.tables.borderRadius. */
-  border-top-left-radius: ${({ theme }) => tableBorderRadiusFromTheme(theme)};
-  border-top-right-radius: ${({ theme }) => tableBorderRadiusFromTheme(theme)};
+  /* Скругление верхних углов совпадает с клипом карточки; в embedded — без радиуса (скругляет родитель). */
+  border-top-left-radius: ${({ theme, $shellVariant }) =>
+    $shellVariant === 'embedded' ? '0' : tableBorderRadiusFromCssVar(theme)};
+  border-top-right-radius: ${({ theme, $shellVariant }) =>
+    $shellVariant === 'embedded' ? '0' : tableBorderRadiusFromCssVar(theme)};
 `;
 
 export const StyledTbody = styled.tbody``;
 
-export const StyledTfoot = styled.tfoot`
-  background: ${({ theme }) => theme.tables.footerSection.background};
+export const StyledTfoot = styled.tfoot<{ $surfaces?: NormalizedTableSurfaceBackgrounds }>`
+  background: ${({ theme, $surfaces = defaultTableSurfaceBackgrounds }) =>
+    resolveTableSurfaceBackgroundColor($surfaces, 'footer', theme.tables.footerSection.background)};
 `;
 
 export const StyledTr = styled.tr<{
@@ -199,15 +363,20 @@ export const StyledTr = styled.tr<{
   $disabled: boolean;
   $hoverable: boolean;
   $dragging: boolean;
+  $surfaces?: NormalizedTableSurfaceBackgrounds;
 }>`
-  ${({ $section, theme, $selected, $disabled, $hoverable, $dragging }) =>
+  ${({ $section, theme, $selected, $disabled, $hoverable, $dragging, $surfaces = defaultTableSurfaceBackgrounds }) =>
     $section === 'body' &&
     css`
       border-bottom: 1px solid ${theme.tables.body.rowBorder};
 
       ${$selected &&
       css`
-        background: ${theme.tables.row.selectedBackground};
+        background: ${resolveTableSurfaceBackgroundColor(
+          $surfaces,
+          'bodyRowSelected',
+          theme.tables.row.selectedBackground,
+        )};
       `}
 
       ${$disabled &&
@@ -225,13 +394,18 @@ export const StyledTr = styled.tr<{
         outline: 2px dashed ${theme.tables.row.draggingOutline};
         outline-offset: -2px;
         box-shadow: ${theme.tables.row.draggingBoxShadow};
-        background: ${theme.tables.row.draggingBackground};
+        background: ${resolveTableSurfaceBackgroundColor(
+          $surfaces,
+          'bodyRowDragging',
+          theme.tables.row.draggingBackground,
+        )};
       `}
 
       ${$hoverable &&
       !$disabled &&
       !$selected &&
       !$dragging &&
+      !$surfaces.bodyRowHover &&
       css`
         transition: background-color 0.15s ease;
         &:hover {
@@ -334,7 +508,7 @@ export const TableSortLabelButton = styled.button.withConfig({
   &:focus-visible {
     outline: 2px solid ${({ theme }) => theme.colors.primary};
     outline-offset: 2px;
-    border-radius: ${({ theme }) => tableBorderRadiusFromTheme(theme)};
+    border-radius: ${({ theme }) => tableBorderRadiusFromCssVar(theme)};
   }
 
   ${({ $disabled }) =>
@@ -377,7 +551,12 @@ export const TableCellHeadLineClamp = styled.div<{ $maxLines: number }>`
   width: 100%;
 `;
 
-export const TablePaginationRoot = styled.div<{ $embeddedInTableCard?: boolean }>`
+export const TablePaginationRoot = styled.div<{
+  $embeddedInTableCard?: boolean;
+  $shellInset?: boolean;
+  $shellVariant?: TableShellVariant;
+  $surfaces?: NormalizedTableSurfaceBackgrounds;
+}>`
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -387,16 +566,38 @@ export const TablePaginationRoot = styled.div<{ $embeddedInTableCard?: boolean }
   margin-top: 16px;
   font-family: ${({ theme }) => theme.fonts.primary};
 
-  ${({ $embeddedInTableCard, theme }) =>
+  ${({
+    $embeddedInTableCard,
+    $shellInset,
+    $shellVariant,
+    $surfaces = defaultTableSurfaceBackgrounds,
+    theme,
+  }) =>
     $embeddedInTableCard &&
     css`
       margin-top: 0;
       padding: 12px 16px;
       border-top: ${theme.tables.pagination.borderTop};
       box-sizing: border-box;
-      background: ${theme.tables.shell.background};
-      border-bottom-left-radius: ${tableBorderRadiusFromTheme(theme)};
-      border-bottom-right-radius: ${tableBorderRadiusFromTheme(theme)};
+      background: ${resolveTableSurfaceBackgroundColor(
+        $surfaces,
+        'pagination',
+        resolveTableShellThemeBackgroundColor(
+          theme,
+          $shellVariant ?? 'card',
+          Boolean($shellInset),
+          'pagination',
+        ),
+      )};
+      ${$shellInset || $shellVariant === 'embedded'
+        ? css`
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+          `
+        : css`
+            border-bottom-left-radius: ${tableBorderRadiusFromCssVar(theme)};
+            border-bottom-right-radius: ${tableBorderRadiusFromCssVar(theme)};
+          `}
     `}
 `;
 

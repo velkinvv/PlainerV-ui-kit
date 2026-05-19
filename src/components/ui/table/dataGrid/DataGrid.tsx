@@ -9,6 +9,7 @@ import {
   type DataGridColumn,
   type DataGridExpandedRowDataStatus,
   type DataGridExpandedRowRenderContext,
+  type DataGridLoadingDisplay,
   type DataGridProps,
   type DataGridRenderCellParams,
 } from '@/types/ui';
@@ -70,9 +71,23 @@ import {
   DATA_GRID_HEADER_TOOLBAR_STICKY_TOP_OFFSET,
 } from './DataGrid.style';
 import { DataGridColumnHeaderContent } from './DataGridColumnHeaderContent';
+import {
+  resolveTableHeaderSurfaceBackgroundColor,
+  resolveTableHeaderToolbarSurfaceBackgroundColor,
+} from '../basicTable/tableSurfaceBackgroundHandlers';
+import { normalizeTableSurfaceBackgrounds } from '../basicTable/tableSurfaceBackgroundHandlers';
+import { resolveDataGridTableLayout } from './dataGridTableLayoutHandlers';
 import { resolveDataGridTableHeaderBackground } from './dataGridTableHeaderSurfaceHandlers';
 import { DataGridHeaderToolbarBuiltinActions } from './DataGridHeaderToolbarBuiltinActions';
 import { DataGridEmptyState } from './DataGridEmptyState';
+import { DataGridErrorState } from './DataGridErrorState';
+import { DataGridSkeletonBody } from './DataGridSkeletonBody';
+import { DataGridStatusMessage } from './DataGridStatusMessage';
+import {
+  resolveDataGridDataStatus,
+  resolveDataGridLoadingDisplay,
+  resolveDataGridSkeletonRowCount,
+} from './dataGridDataStatusHandlers';
 import { convertDataGridColumnsToExportColumns } from './excelExport/dataGridExcelExportColumnHandlers';
 import { DataGridExcelExportButton } from './excelExport/DataGridExcelExportButton';
 
@@ -82,10 +97,13 @@ import { DataGridExcelExportButton } from './excelExport/DataGridExcelExportButt
  *   `{ rowId, expanded, expandedIds }`; не `onRowCollapseChange`), ресайз (`onColumnResize*`),
  *   DnD колонок/строк (`onColumnDrag*`, `onRowDrag*`), клик по фильтру (`onColumnFilterClick` + `filterable` у колонки),
  *   дополнительная строка над заголовками колонок (`headerToolbar`, `refetch`, `onResetFilters`, `hasActiveFilters`, `excelExport`, …),
- *   высота области скролла (`scrollAreaMaxHeight` → `TableContainerScroll`) для липкой шапки,
+ *   липкая шапка по умолчанию (`stickyHeader`, отключение — `stickyHeader={false}`),
+ *   горизонтальный скролл по умолчанию (`horizontalScroll`, отключение — `horizontalScroll={false}`),
+ *   высота области скролла (`scrollAreaMaxHeight` → `TableContainerScroll`) для вертикальной прокрутки с липкой шапкой,
  *   тон шапки (`tableHeaderVariant`, `tableHeaderBackground`) для согласования с панелью `headerToolbar`,
  *   декларативное отображение ячеек (`columns[].format` → `TableCellFormat`; приоритет ниже, чем у `columns[].render` и `renderCell`).
  *   пустой `rows` / отсутствие строк — блок в `tbody` с иконкой лупы (`emptyStateTitle`, `emptyStateDescription`, `renderEmptyState`), шапка остаётся.
+ *   статусы данных (`dataStatus`, `loadingDisplay`, `error`, `statusMessage`, `renderErrorState`, …) — загрузка, скелетон, ошибка и информационные сообщения.
  */
 export function DataGrid<Row extends DataGridBaseRow>(
   props: DataGridProps<Row>,
@@ -117,7 +135,8 @@ export function DataGrid<Row extends DataGridBaseRow>(
     sortModel,
     onSortChange,
     multiColumnSort = false,
-    stickyHeader = false,
+    stickyHeader = true,
+    horizontalScroll = true,
     scrollAreaMaxHeight,
     tableHeaderVariant = 'default',
     tableHeaderBackground,
@@ -125,7 +144,20 @@ export function DataGrid<Row extends DataGridBaseRow>(
     columnDividers = true,
     size = Size.MD,
     headerMaxLines,
+    dataStatus,
+    loadingDisplay = 'overlay',
+    skeletonRowCount,
     isLoading = false,
+    error,
+    errorStateTitle,
+    errorStateDescription,
+    onRetry,
+    errorStateRetryLabel,
+    renderErrorState,
+    renderLoadingOverlay,
+    statusMessage,
+    statusMessageVariant = 'info',
+    renderStatusMessage,
     rowBackgroundColorByStatus,
     expandedRowIds,
     getRowExpandable,
@@ -166,6 +198,10 @@ export function DataGrid<Row extends DataGridBaseRow>(
     renderEmptyState,
     hideFooter = false,
     elevated = true,
+    shellVariant = 'card',
+    shellInset = false,
+    shellInsetPadding,
+    surfaceBackgrounds,
     tableAriaLabel,
     className,
     style,
@@ -195,7 +231,84 @@ export function DataGrid<Row extends DataGridBaseRow>(
 
   const showExpandColumn = Boolean(getRowExpandable && renderExpandedRow);
 
-  const showEmptyState = !isLoading && rows.length === 0;
+  const resolvedDataStatus = useMemo(
+    () => resolveDataGridDataStatus({ dataStatus, isLoading }),
+    [dataStatus, isLoading],
+  );
+
+  const isTableLoading = resolvedDataStatus === 'loading';
+  const isTableError = resolvedDataStatus === 'error';
+  const isTableReady = resolvedDataStatus === 'ready';
+
+  const showEmptyState = isTableReady && rows.length === 0;
+  const showErrorState = isTableError;
+  const showStatusMessage = isTableReady && (statusMessage != null || renderStatusMessage != null);
+
+  const effectiveLoadingDisplay: DataGridLoadingDisplay = useMemo(
+    () =>
+      resolveDataGridLoadingDisplay(loadingDisplay, {
+        isTableLoading,
+        hasVisibleRows: rows.length > 0,
+      }),
+    [loadingDisplay, isTableLoading, rows.length],
+  );
+
+  const showSkeletonBody = isTableLoading && effectiveLoadingDisplay === 'skeleton';
+  const showLoadingOverlay = isTableLoading && effectiveLoadingDisplay === 'overlay';
+  const showDataRows = isTableReady && rows.length > 0;
+
+  const skeletonBodyRowCount = useMemo(
+    () =>
+      resolveDataGridSkeletonRowCount({
+        skeletonRowCount,
+        paginationPageSize: paginationModel?.pageSize,
+      }),
+    [skeletonRowCount, paginationModel?.pageSize],
+  );
+
+  const handleDataGridRetry = useMemo(() => {
+    const retryHandler = onRetry ?? refetch;
+    return retryHandler != null ? () => retryHandler() : undefined;
+  }, [onRetry, refetch]);
+
+  const errorStateContent = useMemo(() => {
+    if (!showErrorState) {
+      return null;
+    }
+    if (renderErrorState) {
+      return renderErrorState(error, handleDataGridRetry);
+    }
+    return (
+      <DataGridErrorState
+        title={errorStateTitle}
+        description={errorStateDescription}
+        error={error}
+        onRetry={handleDataGridRetry}
+        retryLabel={errorStateRetryLabel}
+      />
+    );
+  }, [
+    showErrorState,
+    renderErrorState,
+    error,
+    handleDataGridRetry,
+    errorStateTitle,
+    errorStateDescription,
+    errorStateRetryLabel,
+  ]);
+
+  const statusMessageContent = useMemo(() => {
+    if (!showStatusMessage) {
+      return null;
+    }
+    if (renderStatusMessage) {
+      return renderStatusMessage();
+    }
+    if (statusMessage != null) {
+      return <DataGridStatusMessage message={statusMessage} variant={statusMessageVariant} />;
+    }
+    return null;
+  }, [showStatusMessage, renderStatusMessage, statusMessage, statusMessageVariant]);
 
   const emptyStateContent = useMemo(() => {
     if (!showEmptyState) {
@@ -319,29 +432,55 @@ export function DataGrid<Row extends DataGridBaseRow>(
           </DataGridExpandedLoadingWrap>
         );
       }
+      if (dataStatus === 'error') {
+        const expandedErrorContent = renderExpandedRow?.(row, context);
+        if (expandedErrorContent != null) {
+          return expandedErrorContent;
+        }
+        return <DataGridErrorState compact error={error} />;
+      }
       return renderExpandedRow?.(row, context) ?? null;
     },
-    [renderExpandedRow],
+    [renderExpandedRow, error],
   );
 
   const theme = useTheme() as ThemeType;
+  const resolvedSurfaces = useMemo(
+    () => normalizeTableSurfaceBackgrounds(surfaceBackgrounds),
+    [surfaceBackgrounds],
+  );
 
   const columnResizeMaxPx = columnResizeMaxWidthPx ?? DATA_GRID_COLUMN_RESIZE_FALLBACK_MAX_PX;
   const showColumnResizeUi = Boolean(enableColumnResize && onColumnResize);
 
-  /** Единый фон шапки колонок и панели `headerToolbar` (серый / белый из темы или кастом). */
-  const resolvedTableHeaderBackground = useMemo(
-    () => resolveDataGridTableHeaderBackground(theme, tableHeaderVariant, tableHeaderBackground),
-    [theme, tableHeaderVariant, tableHeaderBackground],
+  /** Единый фон шапки колонок (серый / белый из темы или кастом; с учётом `surfaceBackgrounds`). */
+  const resolvedTableHeaderBackground = useMemo(() => {
+    const themeHeaderBackground = resolveDataGridTableHeaderBackground(
+      theme,
+      tableHeaderVariant,
+      tableHeaderBackground,
+    );
+    return resolveTableHeaderSurfaceBackgroundColor(resolvedSurfaces, themeHeaderBackground);
+  }, [theme, tableHeaderVariant, tableHeaderBackground, resolvedSurfaces]);
+
+  /** Фон панели `headerToolbar` — отдельный флаг `headerToolbar` в `surfaceBackgrounds`. */
+  const resolvedHeaderToolbarBackground = useMemo(
+    () =>
+      resolveTableHeaderToolbarSurfaceBackgroundColor(
+        resolvedSurfaces,
+        resolvedTableHeaderBackground,
+      ),
+    [resolvedSurfaces, resolvedTableHeaderBackground],
   );
 
-  /** При `auto`-layout браузер перераспределяет ширину между колонками; `fixed` оставляет остальные на заданных `width`. */
+  /** `table-layout: fixed` при горизонтальном скролле или ресайзе — ширины колонок не сжимаются. */
   const dataGridTableStyle = useMemo((): React.CSSProperties => {
+    const tableLayout = resolveDataGridTableLayout(horizontalScroll, showColumnResizeUi);
     return {
       [PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR]: resolvedTableHeaderBackground,
-      ...(showColumnResizeUi ? { tableLayout: 'fixed' as const } : {}),
+      ...(tableLayout ? { tableLayout } : {}),
     } as React.CSSProperties;
-  }, [showColumnResizeUi, resolvedTableHeaderBackground]);
+  }, [horizontalScroll, showColumnResizeUi, resolvedTableHeaderBackground]);
 
   const [columnResizePreview, setColumnResizePreview] = useState<{
     field: string;
@@ -769,10 +908,17 @@ export function DataGrid<Row extends DataGridBaseRow>(
         setDragRowHeightPx(0);
       }}
     >
-      <TableContainer elevated={elevated}>
+      <TableContainer
+        elevated={elevated}
+        shellVariant={shellVariant}
+        shellInset={shellInset}
+        shellInsetPadding={shellInsetPadding}
+        surfaceBackgrounds={surfaceBackgrounds}
+      >
         <TableContainerScroll
           embeddedPaginationBelow={showPagination}
           scrollAreaMaxHeight={scrollAreaMaxHeight}
+          horizontalScroll={horizontalScroll}
         >
           <Table
             id={tableId}
@@ -793,7 +939,7 @@ export function DataGrid<Row extends DataGridBaseRow>(
                   >
                     <DataGridHeaderToolbarInner
                       $align={headerToolbarFlexAlign}
-                      $background={resolvedTableHeaderBackground}
+                      $background={resolvedHeaderToolbarBackground}
                       role="toolbar"
                       aria-label={headerToolbarAriaLabel ?? 'Дополнительные действия таблицы'}
                     >
@@ -942,7 +1088,31 @@ export function DataGrid<Row extends DataGridBaseRow>(
                 })}
               </TableRow>
             </TableHead>
-            <TableBody>
+            <TableBody aria-busy={isTableLoading || undefined}>
+              {showStatusMessage ? (
+                <TableRow>
+                  <TableCell colSpan={colCount} padding="none" style={{ borderBottom: 'none' }}>
+                    {statusMessageContent}
+                  </TableCell>
+                </TableRow>
+              ) : null}
+              {showErrorState ? (
+                <TableRow>
+                  <TableCell colSpan={colCount} padding="none" style={{ borderBottom: 'none' }}>
+                    {errorStateContent}
+                  </TableCell>
+                </TableRow>
+              ) : null}
+              {showSkeletonBody ? (
+                <DataGridSkeletonBody
+                  rowCount={skeletonBodyRowCount}
+                  columnCount={columns.length}
+                  tableSize={tableSize}
+                  showSelectionColumn={displayRowSelectionColumn}
+                  showExpandColumn={showExpandColumn}
+                  showRowDragColumn={enableRowDrag}
+                />
+              ) : null}
               {showEmptyState ? (
                 <TableRow>
                   <TableCell colSpan={colCount} padding="none" style={{ borderBottom: 'none' }}>
@@ -950,7 +1120,7 @@ export function DataGrid<Row extends DataGridBaseRow>(
                   </TableCell>
                 </TableRow>
               ) : null}
-              {!showEmptyState
+              {showDataRows
                 ? visibleRows.map((row, rowIndex) => {
                     const rowId = getRowId(row);
                     const disabled = disabledSet.has(rowId);
@@ -1197,9 +1367,11 @@ export function DataGrid<Row extends DataGridBaseRow>(
         ) : null}
       </TableContainer>
 
-      {isLoading ? (
+      {showLoadingOverlay ? (
         <DataGridLoadingOverlay aria-busy="true" aria-live="polite">
-          <Spinner variant={SpinnerVariant.DOTS} ariaLabel="Загрузка таблицы" />
+          {renderLoadingOverlay?.() ?? (
+            <Spinner variant={SpinnerVariant.DOTS} ariaLabel="Загрузка таблицы" />
+          )}
         </DataGridLoadingOverlay>
       ) : null}
     </DataGridRoot>

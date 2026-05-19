@@ -6,7 +6,7 @@
 
 Современная библиотека UI компонентов с поддержкой темизации и TypeScript.
 
-**Текущая версия:** `0.1.9` · ветка [`v_0.1.9`](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.1.9) · React 18+/19 · styled-components 6.x
+**Текущая версия:** `0.2.0` · ветка [`v_0.2.0`](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.2.0) · React 18+/19 · styled-components 6.x
 
 ## 🚀 Возможности
 
@@ -26,7 +26,7 @@
 ```bash
 npm i @velkinvv/plainerv react react-dom styled-components framer-motion
 # или конкретная версия кита:
-npm i @velkinvv/plainerv@0.1.9 react react-dom styled-components framer-motion
+npm i @velkinvv/plainerv@0.2.0 react react-dom styled-components framer-motion
 ```
 
 | Пакет | Диапазон (peer) |
@@ -167,7 +167,7 @@ function MyComponent() {
 
 ## 🎯 Компоненты
 
-**Полный перечень публичных экспортов** — в [документации](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.1.9/documentation/content/docs/ru/web/v_0.1.9/components-catalog.mdx) (на сайте: **Web → v0.1.9 → Справочник компонентов**). Ниже — краткая группировка.
+**Полный перечень публичных экспортов** — в [документации](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.2.0/documentation/content/docs/ru/web/v_0.2.0/components-catalog.mdx) (на сайте: **Web → v0.2.0 → Справочник компонентов**). Ниже — краткая группировка.
 
 ### Кнопки и ссылки
 
@@ -514,13 +514,19 @@ npm run analyze
 
 *Размеры будут обновлены после первой сборки*
 
+## 📋 Что нового в 0.2.0
+
+- **DataGrid — выгрузка в Excel:** проп `excelExport`, кнопка в `headerToolbar`, модалка диапазона страниц, SpreadsheetML `.xls` без exceljs; ширины колонок, подписи и цвета из `format` / `render` / `exportValueGetter`.
+- **DataGrid:** декларативное **`columns[].format`** (`TableCellFormat`), пустое состояние, встроенные **refetch** и сброс фильтров.
+- **Tabs** (**breaking**): варианты **pill** / **minimal** / **line** / **underline**, **filledSegmentTriggers**; объединение с бывшим **Switcher**.
+- **Modal:** иконки статуса в шапке (`danger` / `success` / `info`).
+
+Подробности — в [CHANGELOG.md](CHANGELOG.md).
+
 ## 📋 Что нового в 0.1.9
 
 - **`createStyledShouldForwardProp`:** исправлена совместимость со **styled-components 6** (ошибка `defaultValidatorFn is not a function` в Pill, Tag, Breadcrumb и др.).
 - **Сборка / публикация на Windows:** Rollup без `cross-env` (`rollup-with-node-env.mjs`); husky в `prepare` через Node; проверка dev-зависимостей перед `publish:npm` (важно при `NODE_ENV=production` — используйте `npm ci --include=dev`).
-- **DataGrid — выгрузка в Excel:** проп `excelExport`, кнопка в `headerToolbar`, модалка диапазона страниц, SpreadsheetML `.xls` без exceljs; ширины колонок, русские подписи из `format`/`render`, цвета ячеек (`exportStyle`, `exportCellStyle`, Tag/Pill).
-
-Подробности — в [CHANGELOG.md](CHANGELOG.md).
 
 ## 📋 Что нового в 0.1.8
 
@@ -576,6 +582,7 @@ MIT License - см. [LICENSE](LICENSE) для деталей.
 ## 🔗 Ссылки
 
 - [Репозиторий](https://github.com/velkinvv/PlainerV-ui-kit)
+- [Ветка v0.2.0](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.2.0)
 - [Ветка v0.1.9](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.1.9)
 - [Issues](https://github.com/velkinvv/PlainerV-ui-kit/issues)
 - [Changelog](CHANGELOG.md) · [npm](https://www.npmjs.com/package/@velkinvv/plainerv)

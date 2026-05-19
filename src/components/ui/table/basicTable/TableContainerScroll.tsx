@@ -1,6 +1,11 @@
 import React from 'react';
 import { clsx } from 'clsx';
+import { TableBodyScrollProvider } from './TableBodyScrollContext';
+import { TableHorizontalScrollProvider } from './TableHorizontalScrollContext';
+import { resolveTableBodyScrollHost } from './tableBodyScrollHandlers';
 import { TableContainerScrollClip, TableContainerScrollTrack } from './Table.style';
+import { useTableContainerAppearance } from './TableContainerAppearanceContext';
+import { useTableShellInset } from './TableShellInsetContext';
 
 export interface TableContainerScrollProps {
   /** Обычно единственный потомок — `<Table>…</Table>`. */
@@ -14,15 +19,20 @@ export interface TableContainerScrollProps {
    */
   embeddedPaginationBelow?: boolean;
   /**
-   * Макс. высота зоны с вертикальным скроллом внутри трека (`TableContainerScrollTrack`).
-   * Нужно для липкой шапки: без этого внешний контейнер с `overflow: auto` и трек с `overflow-x: auto`
-   * дают неверный scroll-ancestor для `position: sticky`. Число трактуется как пиксели.
+   * Макс. высота зоны прокрутки **только строк** (`tbody`), если включён `stickyHeader`.
+   * Шапка и пагинация вне вертикального скролла. Число трактуется как пиксели.
    */
   scrollAreaMaxHeight?: string | number;
+  /**
+   * Горизонтальный скролл при широкой сетке (по умолчанию `true`).
+   * `false` — колонки ужимаются по ширине контейнера, без горизонтальной полосы прокрутки.
+   */
+  horizontalScroll?: boolean;
 }
 
 /**
- * Двухслойная обёртка вокруг таблицы: clip по радиусу темы, горизонтальный скролл — внутри.
+ * Двухслойная обёртка вокруг таблицы: clip по радиусу темы.
+ * При `scrollAreaMaxHeight` + липкой шапке скролл только у строк (split-layout в `Table`).
  * Не кладите сюда `TablePagination` (тени футера).
  */
 export function TableContainerScroll({
@@ -30,16 +40,37 @@ export function TableContainerScroll({
   className,
   embeddedPaginationBelow = false,
   scrollAreaMaxHeight,
+  horizontalScroll = true,
 }: TableContainerScrollProps): React.ReactElement {
+  const { shellInset } = useTableShellInset();
+  const { shellVariant } = useTableContainerAppearance();
+  const bodyScrollHost = resolveTableBodyScrollHost(scrollAreaMaxHeight);
+  const splitTablesScroll = bodyScrollHost === 'split-tables';
+
   return (
-    <TableContainerScrollClip
-      className={clsx(className)}
-      $embeddedPaginationBelow={embeddedPaginationBelow}
-    >
-      <TableContainerScrollTrack $scrollAreaMaxHeight={scrollAreaMaxHeight}>
-        {children}
-      </TableContainerScrollTrack>
-    </TableContainerScrollClip>
+    <TableHorizontalScrollProvider horizontalScroll={horizontalScroll}>
+      <TableBodyScrollProvider
+        bodyScrollMaxHeight={scrollAreaMaxHeight}
+        bodyScrollHost={bodyScrollHost}
+        embeddedPaginationBelow={embeddedPaginationBelow}
+      >
+        <TableContainerScrollClip
+          className={clsx(className)}
+          $embeddedPaginationBelow={embeddedPaginationBelow}
+          $shellInset={shellInset}
+          $shellVariant={shellVariant}
+        >
+          <TableContainerScrollTrack
+            $scrollAreaMaxHeight={scrollAreaMaxHeight}
+            $bodyScrollHost={bodyScrollHost}
+            $splitTablesScroll={splitTablesScroll}
+            $horizontalScroll={horizontalScroll}
+          >
+            {children}
+          </TableContainerScrollTrack>
+        </TableContainerScrollClip>
+      </TableBodyScrollProvider>
+    </TableHorizontalScrollProvider>
   );
 }
 

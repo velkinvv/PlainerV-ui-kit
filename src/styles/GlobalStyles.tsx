@@ -1,5 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 import './fonts.css';
+import { globalScrollbarStyles } from './globalScrollbarStyles';
 
 /**
  * Глобальные стили приложения
@@ -30,6 +31,8 @@ const GlobalStylesComponent = createGlobalStyle`
     background-color: ${({ theme }) => theme.colors.background};
     transition: color 0.3s ease, background-color 0.3s ease;
   }
+
+  ${({ theme }) => globalScrollbarStyles(theme)}
 
   /* Заголовки */
   h1, h2, h3, h4, h5, h6 {

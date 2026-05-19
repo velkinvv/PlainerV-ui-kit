@@ -44,5 +44,6 @@ node_modules/
 
 # Другие
 *.stories.tsx
-dist/**/*.js.map
-dist/**/*.d.ts.map
+# Sourcemap не публикуем: в .map остаются пути ../src, которых в пакете нет (Vite: points to missing source files)
+**/*.map
+dist/**/*.map

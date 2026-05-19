@@ -1,6 +1,6 @@
 {
   "name": "@velkinvv/plainerv",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "description": "Современная библиотека UI компонентов с поддержкой темизации и TypeScript",
   "readme": "README.md",
   "private": false,
@@ -36,7 +36,7 @@
   "scripts": {
     "clean": "npx --yes rimraf dist",
     "start": "PUBLIC_URL=/plainerv npm run dev",
-    "build": "npm run clean && node ./scripts/ensure-ui-table-folder-casing.mjs && node ./scripts/rollup-with-node-env.mjs production && node ./scripts/prepend-esm-use-client.mjs && tsc -p tsconfig.vite.json && node ./scripts/verify-package.mjs",
+    "build": "npm run clean && node ./scripts/ensure-ui-table-folder-casing.mjs && node ./scripts/rollup-with-node-env.mjs production && node ./scripts/prepend-esm-use-client.mjs && tsc -p tsconfig.vite.json --sourceMap false --declarationMap false && node ./scripts/strip-dist-sourcemaps.mjs && node ./scripts/verify-package.mjs",
     "build:dev": "npm run clean && node ./scripts/ensure-ui-table-folder-casing.mjs && node ./scripts/rollup-with-node-env.mjs development && node ./scripts/prepend-esm-use-client.mjs && tsc -p tsconfig.vite.json && node ./scripts/verify-package.mjs",
     "dev": "rollup -c rollup.config.mjs --watch",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
@@ -49,7 +49,7 @@
     "type-check": "tsc --noEmit && tsc -p tsconfig.vite.json --noEmit",
     "prepare": "node ./scripts/install-husky.mjs",
     "prestorybook": "npx --yes rimraf \"src/components/ui/table_pkg\"",
-    "storybook": "storybook dev -p 6006",
+    "storybook": "storybook dev -p 6400",
     "prebuild-storybook": "npx --yes rimraf \"src/components/ui/table_pkg\"",
     "build-storybook": "storybook build",
     "test": "jest",

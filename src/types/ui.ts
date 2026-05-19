@@ -3906,9 +3906,34 @@ export interface GridItemProps extends BaseComponentProps {
 export type TableSize = 'sm' | 'md';
 
 /**
+ * Оболочка таблицы: `card` — карточка с бордером (по умолчанию); `embedded` — без внешнего бордера и скругления.
+ */
+export type TableShellVariant = 'card' | 'embedded';
+
+/**
+ * Прозрачный фон поверхности: `true` — наследуется фон родителя. Shorthand `surfaceBackgrounds: 'transparent'` — все сразу.
+ */
+export interface TableSurfaceBackgrounds {
+  shell?: boolean;
+  header?: boolean;
+  headerToolbar?: boolean;
+  bodyRow?: boolean;
+  bodyRowZebra?: boolean;
+  bodyRowHover?: boolean;
+  bodyRowSelected?: boolean;
+  bodyRowDragging?: boolean;
+  footer?: boolean;
+  pagination?: boolean;
+}
+
+export type TableSurfaceBackgroundsInput = TableSurfaceBackgrounds | 'transparent';
+
+/**
  * Обёртка с горизонтальным скроллом и визуалом «карточки» (скругление, фон, тень).
  * @property component - Корневой элемент (по умолчанию `div`)
  * @property elevated - Показать тень как у карточки в макете
+ * @property shellInset - Внутренние отступы на белом фоне; внешний бордер карточки, без рамки у сетки
+ * @property shellInsetPadding - Внутренний отступ (число — px); по умолчанию из `theme.tables.shell.insetPadding` или padding **Card** MD
  * @property className - Доп. класс
  * @property children - Обычно `Table`
  * @property style - Инлайн-стили корня
@@ -3916,6 +3941,15 @@ export type TableSize = 'sm' | 'md';
 export interface TableContainerProps extends BaseComponentProps {
   component?: React.ElementType;
   elevated?: boolean;
+  /** `embedded` — без бордера и фона оболочки (для вложения в Card/Panel) */
+  shellVariant?: TableShellVariant;
+  /**
+   * Внутренние отступы: белая оболочка, бордер карточки снаружи, у блока сетки без своей рамки.
+   */
+  shellInset?: boolean;
+  /** Переопределение внутреннего отступа вокруг блока с таблицей */
+  shellInsetPadding?: string | number;
+  surfaceBackgrounds?: TableSurfaceBackgroundsInput;
   style?: React.CSSProperties;
 }
 
@@ -3925,6 +3959,7 @@ export interface TableContainerProps extends BaseComponentProps {
  * @property size - Вертикальные отступы ячеек (`sm` | `md`)
  * @property striped - Чередование фона строк в `tbody`; по умолчанию `false` — фон строк как у карточки
  * @property columnDividers - Тонкая вертикальная линия между колонками (`border-inline-end` у ячеек, кроме последней в строке); по умолчанию `true`
+ * @property surfaceBackgrounds - Переопределяет фоны из `TableContainer`; иначе из контекста оболочки
  * @property className - Доп. класс
  * @property children - `TableHead`, `TableBody`, …
  * @property style - Инлайн-стили таблицы
@@ -3938,6 +3973,7 @@ export interface TableProps
   striped?: boolean;
   /** Вертикальные разделители между колонками; по умолчанию включены */
   columnDividers?: boolean;
+  surfaceBackgrounds?: TableSurfaceBackgroundsInput;
   style?: React.CSSProperties;
 }
 
@@ -4563,6 +4599,24 @@ export interface DataGridRenderRowWrapperParams<Row extends DataGridBaseRow = Da
 }
 
 /**
+ * Статус данных всей таблицы **DataGrid** (первичная загрузка, ошибка API, готовые данные).
+ * - `loading` — загрузка (оверлей или скелетон — через `loadingDisplay`)
+ * - `ready` — данные отображаются; при пустом `rows` — пустое состояние
+ * - `error` — ошибка загрузки (блок в `tbody`, шапка остаётся)
+ */
+export type DataGridDataStatus = 'loading' | 'ready' | 'error';
+
+/**
+ * Как показывать загрузку при `dataStatus="loading"` или `isLoading={true}`.
+ * - `overlay` — полупрозрачный оверлей со спиннером (по умолчанию; удобно при обновлении с уже показанными строками)
+ * - `skeleton` — строки-скелетоны в `tbody` (если строки уже есть, автоматически переключается на `overlay`)
+ */
+export type DataGridLoadingDisplay = 'overlay' | 'skeleton';
+
+/** Тон информационной полосы `statusMessage` над строками таблицы */
+export type DataGridStatusMessageVariant = 'info' | 'warning' | 'success';
+
+/**
  * Статус данных внутри раскрывающейся подстроки (ленивая загрузка и ошибки).
  * - `idle` — данные ещё не запрашивались или сброшены
  * - `loading` — идёт загрузка только для этой подстроки
@@ -4680,13 +4734,21 @@ export interface DataGridProps<
   onSortChange?: (model: DataGridSortModel) => void;
   /** Сортировка по нескольким колонкам: модель — массив `DataGridSortCriterion` по приоритету (см. `sortModel`) */
   multiColumnSort?: boolean;
+  /**
+   * Липкая шапка при вертикальном скролле.
+   * @defaultValue true
+   */
   stickyHeader?: boolean;
   /**
-   * Максимальная высота области с вертикальным скроллом вокруг таблицы (число — пиксели).
-   * Пробрасывается в `TableContainerScroll` как `scrollAreaMaxHeight`: один scroll-контейнер с горизонтальным
-   * скроллом широкой сетки, без конфликта с `position: sticky` у шапки (см. примитив `Table`).
+   * Макс. высота прокручиваемой области **строк** (`tbody`), число — пиксели.
+   * При `stickyHeader` (по умолчанию у DataGrid) шапка и пагинация вне вертикального скролла.
    */
   scrollAreaMaxHeight?: string | number;
+  /**
+   * Горизонтальный скролл при широкой сетке.
+   * @defaultValue true
+   */
+  horizontalScroll?: boolean;
   /**
    * Тон фона шапки (`thead`) и панели `headerToolbar`: `default` — `theme.tables.header.background`;
    * `card` — `theme.tables.shell.background` (визуально как белая карточка).
@@ -4705,7 +4767,45 @@ export interface DataGridProps<
   size?: Size;
   /** Максимум строк текста в заголовке каждой колонки данных (сортировка — через `TableSortLabel.maxLines`) */
   headerMaxLines?: number;
+  /**
+   * Статус данных таблицы: `loading`, `ready`, `error`.
+   * Устаревший `isLoading={true}` эквивалентен `dataStatus="loading"`.
+   */
+  dataStatus?: DataGridDataStatus;
+  /**
+   * Вариант отображения загрузки: `overlay` (спиннер поверх таблицы) или `skeleton` (строки-заглушки в `tbody`).
+   * При `skeleton` и непустых `rows` автоматически используется `overlay`.
+   */
+  loadingDisplay?: DataGridLoadingDisplay;
+  /**
+   * Число строк-скелетонов при `loadingDisplay="skeleton"`; иначе — `paginationModel.pageSize` или 8.
+   */
+  skeletonRowCount?: number;
+  /** Устаревший флаг: то же, что `dataStatus="loading"`. Предпочтительно `dataStatus`. */
   isLoading?: boolean;
+  /** Ошибка загрузки (текст для блока ошибки и `renderErrorState`) */
+  error?: unknown;
+  /** Заголовок встроенного блока ошибки */
+  errorStateTitle?: React.ReactNode;
+  /** Пояснение блока ошибки; по умолчанию — сообщение из `error` */
+  errorStateDescription?: React.ReactNode;
+  /** Повтор запроса: кнопка в блоке ошибки; если не задан, но есть `refetch`, используется он */
+  onRetry?: () => void;
+  /** Подпись кнопки повтора в блоке ошибки */
+  errorStateRetryLabel?: React.ReactNode;
+  /** Кастомный блок ошибки вместо встроенного (`error`, `onRetry` / `refetch`) */
+  renderErrorState?: (error: unknown, retry?: () => void) => React.ReactNode;
+  /** Кастомный оверлей при `loadingDisplay="overlay"` */
+  renderLoadingOverlay?: () => React.ReactNode;
+  /**
+   * Информационное сообщение над строками (при `dataStatus="ready"`).
+   * Для полного контроля — `renderStatusMessage`.
+   */
+  statusMessage?: React.ReactNode;
+  /** Тон полосы `statusMessage`: `info`, `warning`, `success` */
+  statusMessageVariant?: DataGridStatusMessageVariant;
+  /** Свой рендер полосы сообщения над данными */
+  renderStatusMessage?: () => React.ReactNode;
   /** Цвет фона строки; например по статусу из `row` */
   rowBackgroundColorByStatus?: (row: Row) => string | undefined;
   expandedRowIds?: ReadonlySet<DataGridRowId> | readonly DataGridRowId[];
@@ -4817,6 +4917,23 @@ export interface DataGridProps<
   renderEmptyState?: () => React.ReactNode;
   hideFooter?: boolean;
   elevated?: boolean;
+  /**
+   * `embedded` — без бордера и фона оболочки (вложение в **Card** с `padding`; у грида `elevated={false}`).
+   * @defaultValue 'card'
+   */
+  shellVariant?: TableShellVariant;
+  /**
+   * Внутренние отступы оболочки на белом фоне (см. `TableContainer.shellInset`).
+   * Прокидывается в `TableContainer`.
+   */
+  shellInset?: boolean;
+  /** Внутренний отступ вокруг блока с сеткой (число — px) */
+  shellInsetPadding?: string | number;
+  /**
+   * Прозрачные фоны по частям таблицы или `'transparent'` для всех поверхностей.
+   * Удобно, когда таблица должна принять фон родительского контейнера.
+   */
+  surfaceBackgrounds?: TableSurfaceBackgroundsInput;
   tableAriaLabel?: string;
   style?: React.CSSProperties;
 }

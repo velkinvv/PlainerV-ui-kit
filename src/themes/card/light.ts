@@ -10,27 +10,27 @@ export const lightCardTheme: CardTheme = {
   // Размеры карточки
   sizes: {
     [Size.XS]: {
-      minHeight: '80px',
+      minHeight: '60px',
       padding: '12px',
       borderRadius: '8px',
     },
     [Size.SM]: {
-      minHeight: '120px',
+      minHeight: '60px',
       padding: '16px',
       borderRadius: '12px',
     },
     [Size.MD]: {
-      minHeight: '160px',
+      minHeight: '60px',
       padding: '20px',
       borderRadius: '16px',
     },
     [Size.LG]: {
-      minHeight: '200px',
+      minHeight: '60px',
       padding: '24px',
       borderRadius: '20px',
     },
     [Size.XL]: {
-      minHeight: '240px',
+      minHeight: '60px',
       padding: '32px',
       borderRadius: '24px',
     },
