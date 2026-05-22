@@ -7,6 +7,9 @@ export type TableBodyScrollHost = 'split-tables';
  */
 export const PLAINER_TABLE_BODY_SCROLLBAR_GUTTER_CSS_VAR = '--plainer-table-body-scrollbar-gutter';
 
+/** Строка `thead` с панелью действий (`headerToolbar` у DataGrid) — не участвует в горизонтальном скролле колонок. */
+export const PLAINER_TABLE_HEADER_TOOLBAR_ROW_ATTRIBUTE = 'data-plainer-table-header-toolbar-row';
+
 /**
  * Ширина полосы прокрутки у scroll-контейнера (0, если скроллбара нет).
  * @param scrollElement — обычно `tbody` с `overflow-y: auto`

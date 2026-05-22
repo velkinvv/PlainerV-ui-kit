@@ -133,39 +133,50 @@ export function useTableSplitColumnWidthSync(
 }
 
 /**
- * Горизонтальный скролл тела сдвигает шапку (без полосы прокрутки у шапки).
- * @param headerInnerRef — внутренняя обёртка шапки
+ * Горизонтальный скролл тела синхронизирует `scrollLeft` у обёртки заголовков колонок.
+ * @param headerColumnsScrollRef — скрытый горизонтальный скролл только для строк заголовков
  * @param bodyScrollTrackRef — трек строк (вертикальный и горизонтальный скролл)
  * @param enabled — включён горизонтальный скролл
  */
 export function useTableSplitHorizontalScrollSync(
-  headerInnerRef: RefObject<HTMLElement | null>,
+  headerColumnsScrollRef: RefObject<HTMLElement | null>,
   bodyScrollTrackRef: RefObject<HTMLElement | null>,
   enabled: boolean,
 ): void {
   useLayoutEffect(() => {
-    const headerInnerElement = headerInnerRef.current;
+    const headerColumnsScrollElement = headerColumnsScrollRef.current;
     const bodyScrollTrackElement = bodyScrollTrackRef.current;
-    if (!enabled || !headerInnerElement || !bodyScrollTrackElement) {
+    if (!enabled || !headerColumnsScrollElement || !bodyScrollTrackElement) {
       return undefined;
     }
 
-    const syncHeaderOffset = (): void => {
-      headerInnerElement.style.transform = `translate3d(-${bodyScrollTrackElement.scrollLeft}px, 0, 0)`;
+    let isSyncingScroll = false;
+
+    const syncHeaderScrollLeft = (): void => {
+      if (isSyncingScroll) {
+        return;
+      }
+
+      const nextScrollLeft = bodyScrollTrackElement.scrollLeft;
+      if (headerColumnsScrollElement.scrollLeft === nextScrollLeft) {
+        return;
+      }
+
+      isSyncingScroll = true;
+      headerColumnsScrollElement.scrollLeft = nextScrollLeft;
+      isSyncingScroll = false;
     };
 
-    syncHeaderOffset();
-    bodyScrollTrackElement.addEventListener('scroll', syncHeaderOffset, { passive: true });
+    syncHeaderScrollLeft();
+    bodyScrollTrackElement.addEventListener('scroll', syncHeaderScrollLeft, { passive: true });
 
-    const resizeObserver = new ResizeObserver(() => {
-      requestAnimationFrame(syncHeaderOffset);
-    });
+    const resizeObserver = new ResizeObserver(syncHeaderScrollLeft);
     resizeObserver.observe(bodyScrollTrackElement);
 
     return () => {
-      bodyScrollTrackElement.removeEventListener('scroll', syncHeaderOffset);
+      bodyScrollTrackElement.removeEventListener('scroll', syncHeaderScrollLeft);
       resizeObserver.disconnect();
-      headerInnerElement.style.removeProperty('transform');
+      headerColumnsScrollElement.scrollLeft = 0;
     };
-  }, [enabled, headerInnerRef, bodyScrollTrackRef]);
+  }, [enabled, headerColumnsScrollRef, bodyScrollTrackRef]);
 }

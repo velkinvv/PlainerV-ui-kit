@@ -7,6 +7,25 @@
 
 ## [Unreleased]
 
+### Added
+
+- **DataGrid — сторис:** «Много колонок + панель иконок», «Много колонок + внутренние отступы»; хелперы `getDataGridStoryWideColumns`, `DataGridStoryHeaderToolbar`.
+- **Input:** оболочка **`InputFieldShell`**, стили **`InputComposite`**, хелперы композитных полей; расширенные истории и **`inputStoriesDocs`**.
+- **Storybook:** хелперы **`storybookStoryDocs`**, **`storybookUsageExtract`** для описаний и примеров из исходников сторис.
+
+### Changed
+
+- **Input** и производные (**DateInput**, **TimeInput**, **TextArea**, **MultiInput**, **Select**, **SliderInput**): единая раскладка через **`InputFieldShell`** и **`inputFieldLayoutHandlers`**.
+- **DataGrid / Table (split-layout):** горизонтальная синхронизация шапки колонок с телом через **`scrollLeft`** вместо `transform`; панель **`headerToolbar`** вынесена из прокручиваемой шапки (`data-plainer-table-header-toolbar-row`, `partitionTableHeadForSplitScroll`).
+
+### Fixed
+
+- **DataGrid / Table:** устранены рывки заголовков при горизонтальном скролле; панель **`headerToolbar`** больше не растягивается и не скрывается за пределами видимой области.
+
+### Added (документация)
+
+- **DOC_TABLE** / **DOC_DATAGRID**: split-layout, поведение **`headerToolbar`** при горизонтальном скролле; JSDoc у **`DataGridProps`**.
+
 ---
 
 ## [0.2.0] - 2026-05-19

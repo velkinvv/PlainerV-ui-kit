@@ -32,6 +32,7 @@ import {
 } from '../basicTable';
 import { normalizeTableHeaderMaxLines } from '../basicTable/tableHeaderClampHandlers';
 import { PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR } from '../basicTable/tableThemeRadiusHandlers';
+import { PLAINER_TABLE_HEADER_TOOLBAR_ROW_ATTRIBUTE } from '../basicTable/tableBodyScrollHandlers';
 import {
   applyDataGridColDragGhostPreview,
   applyDataGridRowDragGhostPreview,
@@ -931,7 +932,7 @@ export function DataGrid<Row extends DataGridBaseRow>(
           >
             <TableHead>
               {showHeaderToolbar ? (
-                <TableRow>
+                <TableRow {...{ [PLAINER_TABLE_HEADER_TOOLBAR_ROW_ATTRIBUTE]: true }}>
                   <TableCell
                     colSpan={colCount}
                     padding="none"

@@ -186,7 +186,8 @@ export interface BaseButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEl
  * @property readOnly - Поле только для чтения (текст остается обычным цветом, но фон становится серым)
  * @property label - Метка поля (`ReactNode`)
  */
-export interface BaseInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
+export interface BaseInputProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'prefix' | 'suffix'> {
   label?: ReactNode;
   error?: string;
   success?: boolean;
@@ -495,6 +496,8 @@ export interface IconButtonProps extends BaseButtonProps {
  * @property size - Размер поля (в компоненте по умолчанию `Size.SM`, см. также `theme.defaultInputSize`)
  * @property leftIcon - Иконка слева
  * @property rightIcon - Иконка справа
+ * @property prefix - Addon слева от поля ввода в одной оболочке (InputEx, как у Admiral): текст, `Select` и др.
+ * @property suffix - Addon справа от поля ввода в той же оболочке; для `Select` автоматически включается `embeddedInCompositeField`.
  * Кнопка очистки: `displayClearIcon` + `onClearIconClick` из `BaseInputProps`.
  */
 export interface InputProps extends BaseInputProps {
@@ -502,6 +505,10 @@ export interface InputProps extends BaseInputProps {
   size?: Size;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  /** Слот слева от `<input>` внутри общей рамки (составное поле). */
+  prefix?: React.ReactNode;
+  /** Слот справа от `<input>` внутри общей рамки (составное поле). */
+  suffix?: React.ReactNode;
   status?: 'error' | 'success' | 'warning'; // Статус компонента для изменения цвета бордера
 }
 
@@ -691,10 +698,14 @@ export type SliderInputProps = SliderInputSingleProps | SliderInputRangeProps;
  * @property status - Статус компонента для изменения цвета бордера
  * @property resize - Режим изменения размеров textarea (CSS `resize`)
  * @property rows - Высота в строках (`HTMLTextAreaElement.rows`, по умолчанию в компоненте 4)
+ * @property leftIcon - Иконка слева внутри рамки (как у `Input`)
+ * @property rightIcon - Иконка справа внутри рамки (как у `Input`)
+ * @property prefix - Составное поле: addon слева от области ввода в одной рамке (`InputFieldShell` / InputEx)
+ * @property suffix - Составное поле: addon справа от области ввода в той же рамке
  */
 export interface TextAreaProps extends Omit<
   React.TextareaHTMLAttributes<HTMLTextAreaElement>,
-  'size'
+  'size' | 'prefix' | 'suffix'
 > {
   label?: ReactNode;
   error?: string;
@@ -719,6 +730,10 @@ export interface TextAreaProps extends Omit<
   additionalLabel?: string;
   status?: 'error' | 'success' | 'warning';
   resize?: 'none' | 'both' | 'horizontal' | 'vertical';
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  prefix?: React.ReactNode;
+  suffix?: React.ReactNode;
 }
 
 /**
@@ -2883,6 +2898,11 @@ export interface SelectProps
   helperText?: string;
   required?: boolean;
   fullWidth?: boolean;
+  /**
+   * Встроенный слот в составном `Input` (`prefix` / `suffix`): без label, helper и собственной рамки;
+   * рамка и статусы задаёт родительский Input.
+   */
+  embeddedInCompositeField?: boolean;
   readOnly?: boolean;
   skeleton?: boolean;
   size?: Size;
@@ -3532,6 +3552,7 @@ export interface DateTimeInputRangeProps extends BaseComponentProps {
 /**
  * Пропсы поля даты (`DateInput`).
  * Крестик очистки: `displayClearIcon`, `onClearIconClick`, `clearIconProps` из `BaseInputProps`.
+ * Составное поле (InputEx): `prefix`, `suffix` — те же слоты, что у `Input` (см. `InputFieldShell`).
  */
 export interface DatePickerProps extends Omit<BaseInputProps, 'value' | 'onChange' | 'size'> {
   value?: string | DateTimeRange;
@@ -3558,6 +3579,10 @@ export interface DatePickerProps extends Omit<BaseInputProps, 'value' | 'onChang
   calendarMonthYearLayout?: CalendarMonthYearLayout;
   /** Растянуть выпадающий календарь на ширину поля ввода */
   calendarFullWidth?: boolean;
+  /** Слот слева от поля даты в одной рамке (как `Input.prefix`). */
+  prefix?: React.ReactNode;
+  /** Слот справа от поля даты в одной рамке (как `Input.suffix`). */
+  suffix?: React.ReactNode;
 }
 
 /**
@@ -3589,6 +3614,7 @@ export interface TimeRange {
  * @property disabledMinutes - Массив дизейбленных минут (числа от 0 до 59)
  * @property disabledSeconds - Массив дизейбленных секунд (числа от 0 до 59)
  * @remarks Крестик очистки: `displayClearIcon`, `onClearIconClick` и `clearIconProps` из `BaseInputProps`.
+ * Составное поле: `prefix`, `suffix` — как у `Input` (`InputFieldShell`).
  */
 export interface TimeInputProps extends Omit<BaseInputProps, 'value' | 'onChange' | 'size'> {
   value?: string | TimeRange;
@@ -3611,6 +3637,10 @@ export interface TimeInputProps extends Omit<BaseInputProps, 'value' | 'onChange
   disabledSeconds?: number[]; // Массив дизейбленных секунд (например, [0, 30])
   segmented?: boolean; // Определяет режим ввода: false = обычный input, true = сегментированный ввод
   format?: string; // Формат отображения времени (например, 'HH:mm', 'HH:mm:ss', 'h:mm A')
+  /** Слот слева от поля времени в одной рамке (как `Input.prefix`). */
+  prefix?: React.ReactNode;
+  /** Слот справа от поля времени в одной рамке (как `Input.suffix`). */
+  suffix?: React.ReactNode;
 }
 
 /**
@@ -4800,7 +4830,7 @@ export interface DataGridProps<
   /**
    * Липкая шапка при вертикальном скролле.
    * Без `scrollAreaMaxHeight` — `position: sticky` у заголовков. С `scrollAreaMaxHeight` — split-layout:
-   * `thead` и `headerToolbar` вне скролла строк, синхронизация по горизонтали с телом.
+   * `headerToolbar` и заголовки колонок вне скролла строк; горизонтально прокручиваются только колонки (синхронизация `scrollLeft` с телом).
    * @defaultValue true
    */
   stickyHeader?: boolean;
@@ -4935,6 +4965,7 @@ export interface DataGridProps<
   /**
    * Слот «подшапки»: строка в `thead` **выше** строки с названиями колонок; одна ячейка на всю ширину (`colSpan`).
    * Передавайте ряд `IconButton`, группы действий и т.п. (настройки, экспорт, история изменений, документация).
+   * В split-layout (`scrollAreaMaxHeight`) панель фиксирована по ширине карточки и не участвует в горизонтальном скролле колонок.
    */
   headerToolbar?: ReactNode;
   /**

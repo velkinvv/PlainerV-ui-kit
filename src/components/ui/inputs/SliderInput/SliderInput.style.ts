@@ -55,10 +55,26 @@ export const SliderInputFieldShell = styled(InputWrapper)<{ $fieldSize: Size }>`
 `;
 
 /**
+ * Ряд prefix | сегмент с телом | suffix у `SliderInput` (общая рамка `SliderInputFieldShell`).
+ */
+export const SliderInputCompositeTopRow = styled.div`
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  flex: 1 1 auto;
+  box-sizing: border-box;
+`;
+
+/**
  * Верхняя зона: значение / число, иконки (с отступами как у `Input`).
  * @property $fieldSize - Размер поля.
+ * @property $omitOuterPadding - Без горизонтальных/верхних отступов: их даёт `InputCompositeFieldSegment` в составном режиме.
  */
-export const SliderInputBody = styled.div<{ $fieldSize: Size }>`
+export const SliderInputBody = styled.div<{
+  $fieldSize: Size;
+  $omitOuterPadding?: boolean;
+}>`
   position: relative;
   display: flex;
   flex-direction: row;
@@ -69,7 +85,13 @@ export const SliderInputBody = styled.div<{ $fieldSize: Size }>`
   gap: 8px;
   box-sizing: border-box;
 
-  ${({ $fieldSize, theme }) => {
+  ${({ $fieldSize, $omitOuterPadding, theme }) => {
+    if ($omitOuterPadding) {
+      return css`
+        padding: 0;
+        padding-bottom: 8px;
+      `;
+    }
     const padding = InputPaddingHandler($fieldSize ?? theme.defaultInputSize);
     return css`
       padding: ${padding};

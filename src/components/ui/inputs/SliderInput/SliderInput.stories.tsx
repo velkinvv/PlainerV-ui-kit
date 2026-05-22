@@ -8,6 +8,7 @@ import { Size, IconSize } from '../../../../types/sizes';
 import { InputVariant } from '../../../../types/ui';
 import { DOC_SLIDER_INPUT } from '@/components/ui/storyDocs/uiKitDocs';
 import { sliderInputStoriesStyles } from './SliderInput.stories.styles';
+import { describeStory } from '@/handlers/storybookStoryDocs';
 
 const formatRub = (value: number) =>
   `${new Intl.NumberFormat('ru-RU').format(value)} ₽`;
@@ -16,18 +17,6 @@ const formatPercent = (value: number) => `${value} %`;
 
 /** Все значения Size для демо трека и бегунка */
 const SLIDER_INPUT_SIZES = [Size.XS, Size.SM, Size.MD, Size.LG, Size.XL] as const;
-
-/**
- * Параметры Docs с текстом сценария для конкретной истории.
- * @param description - Подробное описание на русском: что показано и на что смотреть.
- */
-const describeStory = (description: string) => ({
-  parameters: {
-    docs: {
-      description: { story: description },
-    },
-  },
-});
 
 const meta: Meta<typeof SliderInput> = {
   title: 'UI Kit/Inputs/SliderInput',
@@ -38,6 +27,7 @@ const meta: Meta<typeof SliderInput> = {
       description: {
         component: DOC_SLIDER_INPUT,
       },
+      wrapUsageInForm: true,
     },
   },
   tags: ['autodocs'],
@@ -163,6 +153,18 @@ export const SingleControlled: Story = {
   name: 'Одиночный: контролируемый',
   ...describeStory(
     'Контролируемый режим: `value` и `onChange` с `useState`. Полезно для фильтров и форм, где значение синхронизируется с другими контролами. В helperText выводится текущее значение.',
+    `const [level, setLevel] = useState(35);
+
+<SliderInput
+  label="Уровень"
+  value={level}
+  onChange={setLevel}
+  min={0}
+  max={100}
+  step={5}
+  fullWidth
+  helperText={\`Текущее значение: \${level}\`}
+/>`,
   ),
   render: function SliderInputSingleControlledStory() {
     const [level, setLevel] = useState(35);
@@ -527,6 +529,19 @@ export const RangeControlled: Story = {
   name: 'Диапазон: контролируемый',
   ...describeStory(
     'Контролируемая пара `value={[number, number]}` и `onChange` с обновлением состояния. HelperText показывает текущие границы.',
+    `const [bounds, setBounds] = useState<readonly [number, number]>([20, 80]);
+
+<SliderInput
+  label="Уровень (диапазон)"
+  range
+  value={bounds}
+  onChange={setBounds}
+  min={0}
+  max={100}
+  step={5}
+  fullWidth
+  helperText={\`От \${bounds[0]} до \${bounds[1]}\`}
+/>`,
   ),
   render: function SliderInputRangeControlledStory() {
     const [bounds, setBounds] = useState<readonly [number, number]>([20, 80]);

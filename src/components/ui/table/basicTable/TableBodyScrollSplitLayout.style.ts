@@ -46,12 +46,32 @@ export const TableBodyScrollSplitHeader = styled.div.withConfig({
   ${({ theme, $cornerMode }) => tableScrollClipCornerRadiusCss(theme, $cornerMode)}
 `;
 
-/** Внутренняя обёртка шапки — сдвигается при горизонтальном скролле тела. */
+/**
+ * Панель иконок над колонками: ширина видимой области, без горизонтального скролла.
+ * @property $surfaces — фон шапки
+ */
+export const TableBodyScrollSplitHeaderToolbar = styled.div`
+  box-sizing: border-box;
+  flex-shrink: 0;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+`;
+
+/**
+ * Горизонтальный скролл заголовков колонок синхронизируется с телом через `scrollLeft` (без полосы).
+ */
 export const TableBodyScrollSplitHeaderInner = styled.div`
   box-sizing: border-box;
   width: 100%;
-  min-width: max-content;
-  will-change: transform;
+  min-width: 0;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 /**

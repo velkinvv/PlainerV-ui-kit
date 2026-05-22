@@ -33,6 +33,8 @@ import { Input } from '../../inputs/Input/Input';
 import { DATAGRID_DOC } from '../storyDocs/documentation';
 import { DataGridWithTextFilterInHeader as tableColumnFilterDataGridStorySource } from '../basicTable/TableColumnFilters.stories';
 import { lightTheme } from '@/themes/themes';
+import { getDataGridStoryWideColumns } from './dataGridStoryWideColumns';
+import { DataGridStoryHeaderToolbar } from './DataGridStoryHeaderToolbar';
 
 /** Колонки под демо-строки из `TABLE_STORY_DEMO_ROWS` (как в сторис примитива Table). */
 const demoColumns: DataGridColumn<DataGridStoryDemoRow>[] = getDataGridStoryDemoColumns();
@@ -710,18 +712,7 @@ export const ManyColumnsHorizontalScroll: Story = {
     },
   },
   render: () => {
-    const wideColumns = useMemo((): DataGridColumn<DataGridStoryDemoRow>[] => {
-      const baseColumns = getDataGridStoryDemoColumns();
-      const extraColumns = Array.from({ length: 10 }, (_, columnIndex) => ({
-        field: `extraField${columnIndex}`,
-        headerName: `Доп. поле ${columnIndex + 1}`,
-        width: 150,
-        minWidth: 120,
-        sortable: false,
-        valueGetter: (row: DataGridStoryDemoRow) => row.socialChannel ?? '—',
-      }));
-      return [...baseColumns, ...extraColumns];
-    }, []);
+    const wideColumns = useMemo(() => getDataGridStoryWideColumns(), []);
 
     const fullPageSize = TABLE_STORY_DEMO_ROWS.length;
     const [pagination, setPagination] = useState<DataGridPaginationModel>({
@@ -751,6 +742,91 @@ export const ManyColumnsHorizontalScroll: Story = {
   },
 };
 
+/** Много колонок с панелью иконок над шапкой (история, экспорт и др.) */
+export const ManyColumnsHorizontalScrollHeaderToolbar: Story = {
+  name: 'Много колонок + панель иконок',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Сочетание `ManyColumnsHorizontalScroll` и `headerToolbar`: панель иконок фиксирована по ширине карточки; при горизонтальной прокрутке синхронно сдвигаются только заголовки колонок (split-layout при `scrollAreaMaxHeight`).',
+      },
+    },
+  },
+  render: () => {
+    const wideColumns = useMemo(() => getDataGridStoryWideColumns(), []);
+    const fullPageSize = TABLE_STORY_DEMO_ROWS.length;
+    const [pagination, setPagination] = useState<DataGridPaginationModel>({
+      page: 0,
+      pageSize: fullPageSize,
+    });
+
+    return (
+      <DataGridStoryBlock>
+        <DataGridStoryHint>
+          Панель иконок (в т.ч. история) не уезжает при горизонтальной прокрутке; заголовки колонок
+          синхронны с телом таблицы.
+        </DataGridStoryHint>
+        <DataGrid<DataGridStoryDemoRow>
+          tableId="story-data-grid-many-columns-header-toolbar"
+          columns={wideColumns}
+          rows={TABLE_STORY_DEMO_ROWS}
+          totalRows={TABLE_STORY_DEMO_ROWS.length}
+          paginationModel={pagination}
+          onPaginationChange={setPagination}
+          paginationMode="client"
+          scrollAreaMaxHeight={320}
+          size={Size.MD}
+          headerToolbarAriaLabel="Панель действий над таблицей"
+          headerToolbar={<DataGridStoryHeaderToolbar />}
+        />
+      </DataGridStoryBlock>
+    );
+  },
+};
+
+/** Много колонок с внутренними отступами оболочки (`shellInset`) */
+export const ManyColumnsHorizontalScrollShellInset: Story = {
+  name: 'Много колонок + внутренние отступы',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Широкая сетка с `horizontalScroll` и `shellInset`: белый внутренний блок с отступом от рамки карточки; горизонтальная прокрутка внутри inset-области.',
+      },
+    },
+  },
+  render: () => {
+    const wideColumns = useMemo(() => getDataGridStoryWideColumns(), []);
+    const fullPageSize = TABLE_STORY_DEMO_ROWS.length;
+    const [pagination, setPagination] = useState<DataGridPaginationModel>({
+      page: 0,
+      pageSize: fullPageSize,
+    });
+
+    return (
+      <DataGridStoryBlock>
+        <DataGridStoryHint>
+          Те же дополнительные колонки и горизонтальный скролл, но сетка с отступом от внешней
+          рамки карточки (`shellInset`).
+        </DataGridStoryHint>
+        <DataGrid<DataGridStoryDemoRow>
+          tableId="story-data-grid-many-columns-shell-inset"
+          columns={wideColumns}
+          rows={TABLE_STORY_DEMO_ROWS}
+          totalRows={TABLE_STORY_DEMO_ROWS.length}
+          paginationModel={pagination}
+          onPaginationChange={setPagination}
+          paginationMode="client"
+          scrollAreaMaxHeight={320}
+          shellInset
+          size={Size.MD}
+        />
+      </DataGridStoryBlock>
+    );
+  },
+};
+
 /** Колонки по ширине карточки без горизонтального скролла */
 export const FitColumnsNoHorizontalScroll: Story = {
   name: 'Колонки по ширине (без гориз. скролла)',
@@ -762,16 +838,14 @@ export const FitColumnsNoHorizontalScroll: Story = {
     },
   },
   render: () => {
-    const wideColumns = useMemo((): DataGridColumn<DataGridStoryDemoRow>[] => {
-      const baseColumns = getDataGridStoryDemoColumns();
-      const extraColumns = Array.from({ length: 10 }, (_, columnIndex) => ({
-        field: `extraField${columnIndex}`,
-        headerName: `Доп. ${columnIndex + 1}`,
-        width: 150,
-        valueGetter: (row: DataGridStoryDemoRow) => row.dateLabel ?? '—',
-      }));
-      return [...baseColumns, ...extraColumns];
-    }, []);
+    const wideColumns = useMemo(
+      () =>
+        getDataGridStoryWideColumns(10, {
+          useShortHeaderNames: true,
+          extraColumnValueField: 'dateLabel',
+        }),
+      [],
+    );
 
     return (
       <DataGridStoryBlock>
@@ -1346,66 +1420,7 @@ export const HeaderToolbar: Story = {
           onSortChange={setSortModel}
           size={Size.MD}
           headerToolbarAriaLabel="Панель действий над таблицей"
-          headerToolbar={
-            <>
-              <IconButton
-                variant={ButtonVariant.GHOST}
-                size={Size.SM}
-                aria-label="Настройки таблицы"
-                showTooltip
-                tooltipText="Настройки таблицы"
-                icon={<Icon name="IconExSettings" size={IconSize.SM} color="currentColor" />}
-                onClick={fn()}
-              />
-              <IconButton
-                variant={ButtonVariant.GHOST}
-                size={Size.SM}
-                aria-label="Экспорт в файл"
-                showTooltip
-                tooltipText="Экспорт в файл"
-                icon={<Icon name="IconExDocument2" size={IconSize.SM} color="currentColor" />}
-                onClick={fn()}
-              />
-              <IconButton
-                variant={ButtonVariant.GHOST}
-                size={Size.SM}
-                aria-label="Обновить данные"
-                showTooltip
-                tooltipText="Обновить данные"
-                icon={
-                  <Icon name="PhosphorArrowsClockwise" size={IconSize.SM} color="currentColor" />
-                }
-                onClick={fn()}
-              />
-              <IconButton
-                variant={ButtonVariant.GHOST}
-                size={Size.SM}
-                aria-label="Закрыть или сбросить"
-                showTooltip
-                tooltipText="Закрыть"
-                icon={<Icon name="IconExClose" size={IconSize.SM} color="currentColor" />}
-                onClick={fn()}
-              />
-              <IconButton
-                variant={ButtonVariant.GHOST}
-                size={Size.SM}
-                aria-label="История изменений"
-                showTooltip
-                tooltipText="История изменений"
-                icon={<Icon name="IconExTimeCircle" size={IconSize.SM} color="currentColor" />}
-                onClick={fn()}
-              />
-              <IconButton
-                variant={ButtonVariant.GHOST}
-                size={Size.SM}
-                aria-label="Документация"
-                showTooltip
-                tooltipText="Документация"
-                icon={<Icon name="IconExBook" size={IconSize.SM} color="currentColor" />}
-                onClick={fn()}
-              />
-            </>
-          }
+          headerToolbar={<DataGridStoryHeaderToolbar />}
         />
       </DataGridStoryBlock>
     );

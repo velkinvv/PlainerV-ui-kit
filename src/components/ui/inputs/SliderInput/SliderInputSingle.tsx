@@ -39,12 +39,18 @@ import { SliderScaleLabel } from '../../Slider/Slider.style';
 import {
   SliderInputBody,
   SliderInputClearButton,
+  SliderInputCompositeTopRow,
   SliderInputFieldShell,
   SliderInputMain,
   SliderInputNumberSlot,
   SliderInputScaleRow,
   SliderInputValueDisplay,
 } from './SliderInput.style';
+import { InputCompositeAddon, InputCompositeFieldSegment } from '../Input/InputComposite.style';
+import {
+  hasInputCompositeAddons,
+  prepareInputCompositeAddon,
+} from '../Input/inputCompositeHandlers';
 
 /**
  * Слайдер с числовым полем в оболочке `Input`: те же лейблы, рамка, `status`, иконки, тултип, что у текстового поля;
@@ -113,6 +119,8 @@ export const SliderInputSingle = forwardRef<HTMLInputElement, SliderInputSingleP
       clearIconProps,
       leftIcon,
       rightIcon,
+      prefix,
+      suffix,
       className,
       id,
       name,
@@ -283,6 +291,98 @@ export const SliderInputSingle = forwardRef<HTMLInputElement, SliderInputSingleP
       );
     }
 
+    const hasSliderCompositeAddons = hasInputCompositeAddons(prefix, suffix);
+    const preparedSliderPrefix = hasSliderCompositeAddons
+      ? prepareInputCompositeAddon(prefix, { fieldSize: size, fieldDisabled: disabled })
+      : null;
+    const preparedSliderSuffix = hasSliderCompositeAddons
+      ? prepareInputCompositeAddon(suffix, { fieldSize: size, fieldDisabled: disabled })
+      : null;
+
+    const sliderInputBody = (
+      <SliderInputBody $fieldSize={size} $omitOuterPadding={hasSliderCompositeAddons}>
+        {leftIcon ? (
+          <IconContainer $position="left" size={size}>
+            {leftIcon}
+          </IconContainer>
+        ) : null}
+
+        {!showNumberField && showValueLabel ? (
+          <SliderInputMain>
+            <SliderInputValueDisplay $fieldSize={size} $disabled={disabled}>
+              {formatValue(value)}
+            </SliderInputValueDisplay>
+          </SliderInputMain>
+        ) : null}
+
+        {showNumberField ? (
+          <SliderInputNumberSlot
+            $width={numberFieldWidth}
+            $grow={fullWidth}
+            $reserveClearSpace={showClearButton}
+          >
+            <StyledInput
+              ref={ref}
+              id={numberInputId}
+              type="text"
+              inputMode={allowDecimal ? 'decimal' : 'numeric'}
+              value={numericDraft}
+              onChange={handleNumericChange}
+              onFocus={handleNumericFocus}
+              onBlur={handleNumericBlur}
+              placeholder={numberPlaceholder}
+              disabled={disabled}
+              readOnly={readOnly}
+              required={required}
+              textAlign={textAlign}
+              onCopy={handleNumericCopy}
+              onPaste={handleNumericPaste}
+              form={formContext?.formId}
+              autoComplete="off"
+              maxLength={maxLength}
+              {...rest}
+            />
+          </SliderInputNumberSlot>
+        ) : null}
+
+        {rightIcon ? (
+          <IconContainer $position="right" size={size}>
+            {rightIcon}
+          </IconContainer>
+        ) : null}
+
+        {isLoading ? <LoadingSpinner size={size} /> : null}
+
+        {showClearButton ? (
+          <SliderInputClearButton onClick={handleClear} type="button">
+            <Icon
+              name="IconExClose"
+              size={getClearIconSizeForInputField(size)}
+              {...clearIconProps}
+            />
+          </SliderInputClearButton>
+        ) : null}
+      </SliderInputBody>
+    );
+
+    const sliderTopRow = hasSliderCompositeAddons ? (
+      <SliderInputCompositeTopRow>
+        {preparedSliderPrefix ? (
+          <InputCompositeAddon $position="prefix" size={size}>
+            {preparedSliderPrefix}
+          </InputCompositeAddon>
+        ) : null}
+        <InputCompositeFieldSegment size={size}>{sliderInputBody}</InputCompositeFieldSegment>
+        {preparedSliderSuffix ? (
+          <InputCompositeAddon $position="suffix" size={size}>
+            {preparedSliderSuffix}
+          </InputCompositeAddon>
+        ) : null}
+      </SliderInputCompositeTopRow>
+    ) : (
+      sliderInputBody
+    );
+
     const inputSection = (
       <SliderInputFieldShell
         variant={variant}
@@ -302,70 +402,7 @@ export const SliderInputSingle = forwardRef<HTMLInputElement, SliderInputSingleP
           }
         }}
       >
-        <SliderInputBody $fieldSize={size}>
-          {leftIcon ? (
-            <IconContainer $position="left" size={size}>
-              {leftIcon}
-            </IconContainer>
-          ) : null}
-
-          {!showNumberField && showValueLabel ? (
-            <SliderInputMain>
-              <SliderInputValueDisplay $fieldSize={size} $disabled={disabled}>
-                {formatValue(value)}
-              </SliderInputValueDisplay>
-            </SliderInputMain>
-          ) : null}
-
-          {showNumberField ? (
-            <SliderInputNumberSlot
-              $width={numberFieldWidth}
-              $grow={fullWidth}
-              $reserveClearSpace={showClearButton}
-            >
-              <StyledInput
-                ref={ref}
-                id={numberInputId}
-                type="text"
-                inputMode={allowDecimal ? 'decimal' : 'numeric'}
-                value={numericDraft}
-                onChange={handleNumericChange}
-                onFocus={handleNumericFocus}
-                onBlur={handleNumericBlur}
-                placeholder={numberPlaceholder}
-                disabled={disabled}
-                readOnly={readOnly}
-                required={required}
-                textAlign={textAlign}
-                onCopy={handleNumericCopy}
-                onPaste={handleNumericPaste}
-                form={formContext?.formId}
-                autoComplete="off"
-                maxLength={maxLength}
-                {...rest}
-              />
-            </SliderInputNumberSlot>
-          ) : null}
-
-          {rightIcon ? (
-            <IconContainer $position="right" size={size}>
-              {rightIcon}
-            </IconContainer>
-          ) : null}
-
-          {isLoading ? <LoadingSpinner size={size} /> : null}
-
-          {showClearButton ? (
-            <SliderInputClearButton onClick={handleClear} type="button">
-              <Icon
-                name="IconExClose"
-                size={getClearIconSizeForInputField(size)}
-                {...clearIconProps}
-              />
-            </SliderInputClearButton>
-          ) : null}
-        </SliderInputBody>
-
+        {sliderTopRow}
         <Slider
           embeddedInInput
           showScaleRow={false}

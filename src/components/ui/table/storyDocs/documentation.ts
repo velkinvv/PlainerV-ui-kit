@@ -40,10 +40,11 @@ export const TABLE_KIT_DOC = `
 
 При \`scrollAreaMaxHeight\` и \`stickyHeader\` (у **DataGrid** липкая шапка включена по умолчанию) таблица рендерится в **две части**:
 
-1. **Шапка** (\`thead\`, панель \`headerToolbar\`) — вне вертикального скролла, с \`padding-right\` под ширину вертикального скроллбара тела (\`--plainer-table-body-scrollbar-gutter\`).
-2. **Строки** (\`tbody\`) — в отдельном треке с \`overflow-y: auto\` и \`overflow-x: scroll\`.
+1. **Панель \`headerToolbar\`** (если передан слот) — отдельный блок над шапкой колонок: ширина **видимой** области карточки, без горизонтального скролла (строка помечается \`data-plainer-table-header-toolbar-row\` в **DataGrid**).
+2. **Заголовки колонок** (\`thead\`) — вне вертикального скролла, с \`padding-right\` под ширину вертикального скроллбара тела (\`--plainer-table-body-scrollbar-gutter\`).
+3. **Строки** (\`tbody\`) — в отдельном треке с \`overflow-y: auto\` и \`overflow-x: scroll\`.
 
-Горизонтальный скролл **только у блока строк**; шапка сдвигается синхронно (\`translate3d\`), без своей полосы прокрутки. Ширины колонок в шапке и теле синхронизируются (\`colgroup\`, заявленные \`width\` колонок). Если сумма колонок уже области просмотра, таблица **растягивается на 100%** — без пустой полосы справа в узком контейнере.
+Горизонтальный скролл **только у блока строк**; заголовки колонок синхронизируются с телом по \`scrollLeft\` (без отдельной полосы у шапки). Ширины колонок в шапке и теле выравниваются (\`colgroup\`, заявленные \`width\` колонок). Если сумма колонок уже области просмотра, таблица **растягивается на 100%** — без пустой полосы справа в узком контейнере.
 
 Скругления верхних углов шапки и clip — из \`theme.tables.borderRadius\` (переменная \`--plainer-table-border-radius\` на \`TableContainer\`).
 
@@ -316,7 +317,7 @@ export const DATAGRID_DOC = `
 | \`rowBackgroundColorByStatus\` | \`(row) => цвет\` — фон строки по данным (статусы). |
 | \`tableAriaLabel\` | \`aria-label\` таблицы. |
 | \`style\` | Инлайн-стиль корня грида. |
-| \`headerToolbar\` | Слот над строкой с названиями колонок: первая строка \`thead\`, одна ячейка на всю ширину (\`colSpan\`), удобно для **IconButton** (настройки, экспорт, **история**, **документация** и т.д.). |
+| \`headerToolbar\` | Слот над строкой с названиями колонок: первая строка \`thead\`, одна ячейка на всю ширину (\`colSpan\`), удобно для **IconButton** (настройки, экспорт, **история**, **документация** и т.д.). В split-layout панель **не** прокручивается по горизонтали вместе с колонками — фиксирована по ширине карточки. |
 | \`headerToolbarAlign\` | Горизонтальное выравнивание содержимого \`headerToolbar\`: \`start\` | \`end\` (**по умолчанию**) | \`center\` | \`space-between\`. |
 | \`headerToolbarAriaLabel\` | Подпись для доступности (\`aria-label\` у контейнера с \`role="toolbar"\`); если не задана — нейтральная строка по умолчанию в компоненте. |
 | \`refetch\` | Кнопка обновления данных в \`headerToolbar\` (показывается, если передана функция). |
@@ -421,12 +422,14 @@ export const DATAGRID_DOC = `
 | **Встроенная оболочка** (\`EmbeddedShell\`) | **Card** + \`shellVariant="embedded"\`, \`elevated={false}\`. |
 | **Прозрачные фоны** (\`TransparentSurfaces\`) | \`surfaceBackgrounds="transparent"\` + \`shellVariant="embedded"\`. |
 | **Много колонок (горизонтальный скролл)** (\`ManyColumnsHorizontalScroll\`) | \`horizontalScroll\` по умолчанию + \`scrollAreaMaxHeight\`; шапка не уезжает при прокрутке по X. |
+| **Много колонок + панель иконок** (\`ManyColumnsHorizontalScrollHeaderToolbar\`) | Широкая сетка + \`headerToolbar\`: панель на ширину карточки, горизонтальный скролл только у заголовков колонок. |
+| **Много колонок + внутренние отступы** (\`ManyColumnsHorizontalScrollShellInset\`) | Широкая сетка + \`shellInset\` — отступ сетки от рамки карточки. |
 | **Колонки по ширине (без гориз. скролла)** (\`FitColumnsNoHorizontalScroll\`) | \`horizontalScroll={false}\` — сетка на всю ширину карточки. |
 | **ExpandLazyRowData** | \`onExpandedRowOpen\`, \`getExpandedRowDataStatus\`, спиннер только в подстроке. |
 | **ColumnReorder** | \`enableColumnDrag\`, \`onColumnDragEnd\`, плюс \`onColumnDragStart\`, \`onColumnOrderChange\`, \`onColumnDragCancel\` (см. сторис — лог в Actions). |
 | **ColumnResize** | \`enableColumnResize\`, \`onColumnResize\`, \`onColumnResizeStart\`, \`onColumnResizeChange\`, \`onColumnResizeEnd\`, контролируемые \`columns[].width\`. |
 | **HeaderMaxLines** | \`headerMaxLines\` у грида и длинные \`headerName\` (в т.ч. несортируемая колонка). |
-| **HeaderToolbar** | \`headerToolbar\`: панель иконок над заголовками колонок; фон совпадает с шапкой (\`tableHeaderVariant\` / \`tableHeaderBackground\`). |
+| **HeaderToolbar** | \`headerToolbar\`: панель иконок над заголовками колонок; фон совпадает с шапкой (\`tableHeaderVariant\` / \`tableHeaderBackground\`). В split-layout панель не уезжает при горизонтальной прокрутке. |
 | **Панель: обновление и сброс фильтров** (\`HeaderToolbarBuiltinActions\`) | \`refetch\`, \`onResetFilters\`, \`hasActiveFilters\` — встроенные кнопки без ручной сборки \`headerToolbar\`. |
 | **Пустое состояние** (\`EmptyState\`) | \`rows={[]}\` или без \`rows\`: шапка на месте, в теле — иконка лупы и текст. |
 | **Панель иконок: шапка как у карточки** (\`HeaderToolbarCardSurface\`) | \`tableHeaderVariant="card"\` — белый (shell) фон шапки и панели. |

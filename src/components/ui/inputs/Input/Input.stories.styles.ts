@@ -34,4 +34,10 @@ export const inputStoriesStyles = {
   autocompleteDemoHeading: {
     marginBottom: '8px',
   } satisfies CSSProperties,
+
+  /** Текст в prefix составного Input (сторис InputEx). */
+  compositePrefixText: {
+    color: lightTheme.colors.textSecondary,
+    whiteSpace: 'nowrap',
+  } satisfies CSSProperties,
 };

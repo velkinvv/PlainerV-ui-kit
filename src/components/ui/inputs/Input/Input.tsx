@@ -8,8 +8,8 @@ import { Hint, HintVariant, type HintPosition } from '../../Hint/Hint';
 import { useFormContext } from '../../../../contexts/FormContext';
 import {
   InputContainer,
+  InputControlStack,
   Label,
-  InputWrapper,
   StyledInput,
   HelperText,
   ErrorText,
@@ -26,6 +26,7 @@ import {
   shouldShowInputClearButton,
 } from '../shared';
 import { resolveInputAutocompleteAttribute } from './handlers';
+import { InputFieldShell } from './InputFieldShell';
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   (
@@ -65,6 +66,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       clearIconProps,
       leftIcon,
       rightIcon,
+      prefix,
+      suffix,
       className,
       id,
       ...props
@@ -76,13 +79,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const [focused, setFocused] = React.useState(false);
     const [internalValue, setInternalValue] = React.useState(value || '');
 
-    // Получаем контекст формы для группировки полей
     const formContext = useFormContext();
 
-    // Определяем статус на основе пропсов
     const currentStatus = status || (error ? 'error' : success ? 'success' : undefined);
 
-    // Автоматически определяем autocomplete для полей пароля
     const getAutocompleteValue = useCallback(
       () =>
         resolveInputAutocompleteAttribute({
@@ -93,30 +93,28 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       [type, placeholder, props.autoComplete],
     );
 
-    // Обработчики событий с оптимизацией производительности
     const handleFocus = useCallback(
-      (e: React.FocusEvent<HTMLInputElement>) => {
+      (event: React.FocusEvent<HTMLInputElement>) => {
         setFocused(true);
-        onFocus?.(e);
+        onFocus?.(event);
       },
       [onFocus],
     );
 
     const handleBlur = useCallback(
-      (e: React.FocusEvent<HTMLInputElement>) => {
+      (event: React.FocusEvent<HTMLInputElement>) => {
         setFocused(false);
-        onBlur?.(e);
+        onBlur?.(event);
       },
       [onBlur],
     );
 
     const handleChange = useCallback(
-      (e: React.ChangeEvent<HTMLInputElement>) => {
-        const target = e.target;
+      (event: React.ChangeEvent<HTMLInputElement>) => {
+        const target = event.target;
         let newValue = target.value;
         let cursorPosition = target.selectionStart ?? newValue.length;
 
-        // Маска / форматирование: внешний обработчик задаёт значение и позицию курсора
         if (handleInput) {
           const result = handleInput(newValue, cursorPosition);
           newValue = result.value;
@@ -124,7 +122,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
           setInternalValue(newValue);
 
-          // Позиция курсора после подстановки маски (после обновления значения в DOM)
           window.setTimeout(() => {
             if (target.setSelectionRange) {
               target.setSelectionRange(cursorPosition, cursorPosition);
@@ -132,9 +129,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           }, 0);
 
           const syntheticEvent = {
-            ...e,
+            ...event,
             target: { ...target, value: newValue },
-            currentTarget: { ...e.currentTarget, value: newValue },
+            currentTarget: { ...event.currentTarget, value: newValue },
           } as React.ChangeEvent<HTMLInputElement>;
 
           onChange?.(syntheticEvent);
@@ -142,37 +139,34 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         }
 
         setInternalValue(newValue);
-        onChange?.(e);
+        onChange?.(event);
       },
       [onChange, handleInput],
     );
 
-    /** Сброс значения и уведомление родителя (контролируемый режим — обновить `value` в `onClearIconClick`). */
     const handleClear = useCallback(() => {
       setInternalValue('');
       onClearIconClick?.();
     }, [onClearIconClick]);
 
-    // Обработчики для отключения копирования/вставки
     const handleCopy = useCallback(
-      (e: React.ClipboardEvent<HTMLInputElement>) => {
+      (event: React.ClipboardEvent<HTMLInputElement>) => {
         if (disableCopying) {
-          e.preventDefault();
+          event.preventDefault();
         }
       },
       [disableCopying],
     );
 
     const handlePaste = useCallback(
-      (e: React.ClipboardEvent<HTMLInputElement>) => {
+      (event: React.ClipboardEvent<HTMLInputElement>) => {
         if (disableCopying) {
-          e.preventDefault();
+          event.preventDefault();
         }
       },
       [disableCopying],
     );
 
-    // Подсчет символов с оптимизацией
     const currentLength = useMemo(
       () => (value || internalValue || '').toString().length,
       [value, internalValue],
@@ -188,7 +182,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       [displayCharacterCounter, maxLength, currentLength, characterCounterVisibilityThreshold],
     );
 
-    // Скелетон только у поля ввода; подпись и доп. лейбл остаются обычным текстом (`as="span"` — нет реального `<input>` для `htmlFor`)
     if (skeleton) {
       return (
         <InputContainer fullWidth={fullWidth} aria-busy="true">
@@ -204,7 +197,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       );
     }
 
-    // Определяем содержимое для отображения
     const displayValue = getInputDisplayValue(value, String(internalValue ?? ''));
     const showClearButton = shouldShowInputClearButton({
       displayClearIcon,
@@ -213,212 +205,114 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       readOnly,
     });
 
+    const shellProps = {
+      variant,
+      size,
+      error,
+      success,
+      status: currentStatus,
+      fullWidth,
+      focused,
+      readOnly,
+      className,
+      prefix,
+      suffix,
+      disabled,
+    };
+
+    const fieldInner = (
+      <>
+        {leftIcon && (
+          <IconContainer $position="left" size={size}>
+            {leftIcon}
+          </IconContainer>
+        )}
+
+        <StyledInput
+          ref={ref}
+          id={inputId}
+          type={type}
+          value={displayValue}
+          onChange={handleChange}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          placeholder={placeholder}
+          disabled={disabled}
+          readOnly={readOnly}
+          required={required}
+          textAlign={textAlign}
+          onCopy={handleCopy}
+          onPaste={handlePaste}
+          form={formContext?.formId}
+          autoComplete={getAutocompleteValue()}
+          {...props}
+        />
+
+        {rightIcon && (
+          <IconContainer $position="right" size={size}>
+            {rightIcon}
+          </IconContainer>
+        )}
+
+        {isLoading && <LoadingSpinner size={size} />}
+
+        {showClearButton && (
+          <ClearButton onClick={handleClear} type="button">
+            <Icon
+              name="IconExClose"
+              size={getClearIconSizeForInputField(size)}
+              {...clearIconProps}
+            />
+          </ClearButton>
+        )}
+      </>
+    );
+
+    const fieldShell = <InputFieldShell {...shellProps}>{fieldInner}</InputFieldShell>;
+
+    const fieldWithTooltip = tooltip ? (
+      tooltipType === 'tooltip' ? (
+        <Tooltip content={tooltip} position={tooltipPosition as TooltipPosition}>
+          {fieldShell}
+        </Tooltip>
+      ) : (
+        <Hint
+          content={tooltip}
+          placement={tooltipPosition as HintPosition}
+          variant={HintVariant.DEFAULT}
+        >
+          {fieldShell}
+        </Hint>
+      )
+    ) : (
+      fieldShell
+    );
+
     return (
       <InputContainer fullWidth={fullWidth}>
-        {/* Лейбл */}
-        {label && (
-          <Label htmlFor={inputId}>
-            {label}
-            {required && <RequiredIndicator>*</RequiredIndicator>}
-          </Label>
-        )}
+        <InputControlStack fullWidth={fullWidth}>
+          {label && (
+            <Label htmlFor={inputId}>
+              {label}
+              {required && <RequiredIndicator>*</RequiredIndicator>}
+            </Label>
+          )}
 
-        {/* Дополнительный лейбл */}
-        {additionalLabel && <AdditionalLabel>{additionalLabel}</AdditionalLabel>}
+          {additionalLabel && <AdditionalLabel>{additionalLabel}</AdditionalLabel>}
 
-        {/* Обертка инпута с подсказкой */}
-        {tooltip ? (
-          tooltipType === 'tooltip' ? (
-            <Tooltip content={tooltip} position={tooltipPosition as TooltipPosition}>
-              <InputWrapper
-                variant={variant}
-                size={size}
-                error={error}
-                success={success}
-                status={currentStatus}
-                fullWidth={fullWidth}
-                focused={focused}
-                readOnly={readOnly}
-                className={className}
-              >
-                {leftIcon && (
-                  <IconContainer $position="left" size={size}>
-                    {leftIcon}
-                  </IconContainer>
-                )}
+          {fieldWithTooltip}
 
-                <StyledInput
-                  ref={ref}
-                  id={inputId}
-                  type={type}
-                  value={displayValue}
-                  onChange={handleChange}
-                  onFocus={handleFocus}
-                  onBlur={handleBlur}
-                  placeholder={placeholder}
-                  disabled={disabled}
-                  readOnly={readOnly}
-                  required={required}
-                  textAlign={textAlign}
-                  onCopy={handleCopy}
-                  onPaste={handlePaste}
-                  form={formContext?.formId}
-                  autoComplete={getAutocompleteValue()}
-                  {...props}
-                />
+          {error && <ErrorText>{error}</ErrorText>}
+          {success && <SuccessText>Успешно</SuccessText>}
+          {helperText && !error && !success && <HelperText>{helperText}</HelperText>}
+          {extraText && <ExtraText>{extraText}</ExtraText>}
 
-                {rightIcon && (
-                  <IconContainer $position="right" size={size}>
-                    {rightIcon}
-                  </IconContainer>
-                )}
-
-                {isLoading && <LoadingSpinner size={size} />}
-
-                {showClearButton && (
-                  <ClearButton onClick={handleClear} type="button">
-                    <Icon
-                      name="IconExClose"
-                      size={getClearIconSizeForInputField(size)}
-                      {...clearIconProps}
-                    />
-                  </ClearButton>
-                )}
-              </InputWrapper>
-            </Tooltip>
-          ) : (
-            <Hint
-              content={tooltip}
-              placement={tooltipPosition as HintPosition}
-              variant={HintVariant.DEFAULT}
-            >
-              <InputWrapper
-                variant={variant}
-                size={size}
-                error={error}
-                success={success}
-                status={currentStatus}
-                fullWidth={fullWidth}
-                focused={focused}
-                readOnly={readOnly}
-                className={className}
-              >
-                {leftIcon && (
-                  <IconContainer $position="left" size={size}>
-                    {leftIcon}
-                  </IconContainer>
-                )}
-
-                <StyledInput
-                  ref={ref}
-                  id={inputId}
-                  type={type}
-                  value={displayValue}
-                  onChange={handleChange}
-                  onFocus={handleFocus}
-                  onBlur={handleBlur}
-                  placeholder={placeholder}
-                  disabled={disabled}
-                  readOnly={readOnly}
-                  required={required}
-                  textAlign={textAlign}
-                  onCopy={handleCopy}
-                  onPaste={handlePaste}
-                  form={formContext?.formId}
-                  autoComplete={getAutocompleteValue()}
-                  {...props}
-                />
-
-                {rightIcon && (
-                  <IconContainer $position="right" size={size}>
-                    {rightIcon}
-                  </IconContainer>
-                )}
-
-                {isLoading && <LoadingSpinner size={size} />}
-
-                {showClearButton && (
-                  <ClearButton onClick={handleClear} type="button">
-                    <Icon
-                      name="IconExClose"
-                      size={getClearIconSizeForInputField(size)}
-                      {...clearIconProps}
-                    />
-                  </ClearButton>
-                )}
-              </InputWrapper>
-            </Hint>
-          )
-        ) : (
-          <InputWrapper
-            variant={variant}
-            size={size}
-            error={error}
-            success={success}
-            status={currentStatus}
-            fullWidth={fullWidth}
-            focused={focused}
-            readOnly={readOnly}
-            className={className}
-          >
-            {leftIcon && (
-              <IconContainer $position="left" size={size}>
-                {leftIcon}
-              </IconContainer>
-            )}
-
-            <StyledInput
-              ref={ref}
-              id={inputId}
-              type={type}
-              value={displayValue}
-              onChange={handleChange}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-              placeholder={placeholder}
-              disabled={disabled}
-              readOnly={readOnly}
-              required={required}
-              textAlign={textAlign}
-              onCopy={handleCopy}
-              onPaste={handlePaste}
-              form={formContext?.formId}
-              autoComplete={getAutocompleteValue()}
-              {...props}
-            />
-
-            {rightIcon && (
-              <IconContainer $position="right" size={size}>
-                {rightIcon}
-              </IconContainer>
-            )}
-
-            {isLoading && <LoadingSpinner size={size} />}
-
-            {showClearButton && (
-              <ClearButton onClick={handleClear} type="button">
-                <Icon
-                  name="IconExClose"
-                  size={getClearIconSizeForInputField(size)}
-                  {...clearIconProps}
-                />
-              </ClearButton>
-            )}
-          </InputWrapper>
-        )}
-
-        {/* Вспомогательные тексты */}
-        {error && <ErrorText>{error}</ErrorText>}
-        {success && <SuccessText>Успешно</SuccessText>}
-        {helperText && !error && !success && <HelperText>{helperText}</HelperText>}
-        {extraText && <ExtraText>{extraText}</ExtraText>}
-
-        {/* Счетчик символов */}
-        {showCounter && (
-          <CharacterCounter $isOverLimit={currentLength > maxLength}>
-            {currentLength}/{maxLength}
-          </CharacterCounter>
-        )}
+          {showCounter && (
+            <CharacterCounter $isOverLimit={currentLength > maxLength}>
+              {currentLength}/{maxLength}
+            </CharacterCounter>
+          )}
+        </InputControlStack>
       </InputContainer>
     );
   },

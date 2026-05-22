@@ -2,6 +2,7 @@
 export {
   // Контейнеры
   InputContainer,
+  InputControlStack,
   InputContainerWithPadding,
 
   // Лейблы

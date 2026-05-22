@@ -81,6 +81,7 @@ export const DOC_INPUT = `
 | \`size\` | Размер контрола (**Size**). |
 | \`label\`, \`error\`, \`success\`, \`helperText\`, \`required\` | Форма и валидация. |
 | \`leftIcon\`, \`rightIcon\` | Иконки. |
+| \`prefix\`, \`suffix\` | Составное поле (InputEx): addon слева/справа в одной рамке; для \`Select\` / \`searchSelect\` в слоте включается \`embeddedInCompositeField\`. |
 | \`displayClearIcon\`, \`onClearIconClick\`, \`clearIconProps\` | Кнопка очистки. |
 | \`status\` | error | success | warning — цвет обводки. |
 | \`readOnly\`, \`fullWidth\`, \`textAlign\` | Поведение и вёрстка. |
@@ -95,6 +96,8 @@ export const DOC_INPUT = `
 export const DOC_TEXTAREA = `
 ### Назначение
 Многострочный ввод с теми же паттернами, что **Input**: лейбл, ошибки, очистка, подсказка (**Tooltip** или **Hint**), счётчик при **maxLength**, блокировка копирования/вставки, **resize**, **rows**.
+
+Слоты **\`leftIcon\`**, **\`rightIcon\`**, **\`prefix\`**, **\`suffix\`** — те же, что у **Input** (составное поле InputEx через **InputFieldShell**; средний сегмент выровнен по верху для многострочного ввода).
 
 Рекомендуется оборачивать в **Form** для связки с контекстом формы (как в сторис).
 `.trim();
@@ -134,6 +137,8 @@ export const DOC_DATE_INPUT = `
 ### Значение
 При \`range: false\` — строка даты в формате поля. При \`range: true\` — \`{ start: string; end: string }\`.
 
+Поддерживаются **\`prefix\`** и **\`suffix\`** (как у **Input**, общая рамка **InputFieldShell**).
+
 Полный список пропсов — **DateInput** / **DatePickerProps** в \`types/ui.ts\`.
 `.trim();
 
@@ -144,6 +149,8 @@ export const DOC_TIME_INPUT = `
 
 ### Значение
 При \`range: false\` — строка (\`14:30\` или с секундами). При \`range: true\` — \`{ start: string; end: string }\`.
+
+**\`prefix\`**, **\`suffix\`** — как у **Input** (\`InputFieldShell\`).
 
 См. **TimeInputProps** в \`types/ui.ts\`.
 `.trim();

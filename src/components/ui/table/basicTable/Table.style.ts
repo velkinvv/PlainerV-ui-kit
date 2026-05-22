@@ -217,15 +217,23 @@ export const StyledTable = styled.table<{
   $horizontalScroll?: boolean;
   /** Split-layout: ширина = сумма колонок, без растягивания под viewport */
   $splitTablesScroll?: boolean;
+  /** В split-layout: `toolbar` — панель на всю ширину; `columns` — ширина сетки колонок */
+  $splitHeaderRole?: 'toolbar' | 'columns';
 }>`
   border-spacing: 0;
-  ${({ $horizontalScroll = true, $splitTablesScroll = false }) =>
+  ${({ $horizontalScroll = true, $splitTablesScroll = false, $splitHeaderRole = 'columns' }) =>
     $splitTablesScroll
-      ? css`
-          width: max-content;
-          min-width: 100%;
-          table-layout: fixed;
-        `
+      ? $splitHeaderRole === 'toolbar'
+        ? css`
+            width: 100%;
+            min-width: 0;
+            table-layout: fixed;
+          `
+        : css`
+            width: max-content;
+            min-width: 100%;
+            table-layout: fixed;
+          `
       : $horizontalScroll
         ? css`
             width: max-content;

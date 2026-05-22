@@ -18,10 +18,10 @@ import {
   InputContainerWithPadding,
   LoadingSpinner,
   SkeletonEffect,
-  InputWrapper,
   StyledInput,
   IconWrapper,
 } from '../shared';
+import { InputFieldShell } from '../Input/InputFieldShell';
 import {
   CalendarPopup,
   CharacterCounter,
@@ -52,6 +52,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
       size = Size.SM,
       fullWidth = false,
       error,
+      success,
       className,
       range = false,
       minDate,
@@ -87,6 +88,8 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
       showDateRollers = false,
       calendarMonthYearLayout = 'combined',
       calendarFullWidth = false,
+      prefix,
+      suffix,
       ...props
     },
     ref,
@@ -956,12 +959,17 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
           {skeleton ? (
             <SkeletonEffect size={size} fullWidth />
           ) : (
-            <InputWrapper
+            <InputFieldShell
               focused={isOpen}
               error={error}
+              success={success}
               size={size}
               status={status}
               fullWidth={fullWidth}
+              readOnly={readOnly}
+              prefix={prefix}
+              suffix={suffix}
+              disabled={disabled}
             >
               {showIcon && (
                 <IconWrapper size={size}>
@@ -1047,7 +1055,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
                   </IconButton>
                 </IconWrapper>
               )}
-            </InputWrapper>
+            </InputFieldShell>
           )}
           {error && <ErrorMessage size={size}>{error}</ErrorMessage>}
           {extraText && <ExtraText size={size}>{extraText}</ExtraText>}

@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef } from 'react';
+import React, { forwardRef, useMemo, useRef } from 'react';
 import type { TableProps } from '@/types/ui';
 import { StyledTable } from './Table.style';
 import {
@@ -6,9 +6,11 @@ import {
   TableBodyScrollSplitBodyTrackVertical,
   TableBodyScrollSplitHeader,
   TableBodyScrollSplitHeaderInner,
+  TableBodyScrollSplitHeaderToolbar,
   TableBodyScrollSplitRoot,
 } from './TableBodyScrollSplitLayout.style';
 import type { PartitionedTableChildren } from './tablePartitionChildrenHandlers';
+import { partitionTableHeadForSplitScroll } from './tablePartitionHeadRowsHandlers';
 import {
   useTableSplitColumnWidthSync,
   useTableSplitHorizontalScrollSync,
@@ -56,9 +58,17 @@ export const TableBodyScrollSplitLayout = forwardRef<
 ) {
   const splitRootRef = useRef<HTMLDivElement | null>(null);
   const bodyScrollTrackRef = useRef<HTMLDivElement | null>(null);
-  const headerInnerRef = useRef<HTMLDivElement | null>(null);
+  const headerColumnsScrollRef = useRef<HTMLDivElement | null>(null);
   const headerTableRef = useRef<HTMLTableElement | null>(null);
   const bodyTableRef = useRef<HTMLTableElement | null>(null);
+
+  const partitionedHead = useMemo(
+    () =>
+      partitionedChildren.head != null
+        ? partitionTableHeadForSplitScroll(partitionedChildren.head)
+        : { toolbarHead: null, columnHeaderHead: null },
+    [partitionedChildren.head],
+  );
 
   const assignHeaderTableRef = (tableElement: HTMLTableElement | null): void => {
     headerTableRef.current = tableElement;
@@ -102,7 +112,7 @@ export const TableBodyScrollSplitLayout = forwardRef<
     true,
     measureNaturalColumnWidths,
   );
-  useTableSplitHorizontalScrollSync(headerInnerRef, bodyScrollTrackRef, horizontalScroll);
+  useTableSplitHorizontalScrollSync(headerColumnsScrollRef, bodyScrollTrackRef, horizontalScroll);
 
   const {
     className,
@@ -117,24 +127,46 @@ export const TableBodyScrollSplitLayout = forwardRef<
 
   return (
     <TableBodyScrollSplitRoot ref={splitRootRef} className={className} style={style}>
-      {partitionedChildren.head != null ? (
+      {partitionedHead.toolbarHead != null || partitionedHead.columnHeaderHead != null ? (
         <TableBodyScrollSplitHeader $surfaces={resolvedSurfaces} $cornerMode={headerCornerMode}>
-          <TableBodyScrollSplitHeaderInner ref={headerInnerRef}>
-            <StyledTable
-              ref={assignHeaderTableRef}
-              id={id}
-              aria-label={ariaLabel}
-              className={className}
-              style={style}
-              $stickyHeader={false}
-              $striped={$striped}
-              $surfaces={resolvedSurfaces}
-              $horizontalScroll={$horizontalScroll}
-              {...nativeTableProps}
-            >
-              {partitionedChildren.head}
-            </StyledTable>
-          </TableBodyScrollSplitHeaderInner>
+          {partitionedHead.toolbarHead != null ? (
+            <TableBodyScrollSplitHeaderToolbar $surfaces={resolvedSurfaces}>
+              <StyledTable
+                id={id != null ? `${id}-header-toolbar` : undefined}
+                className={className}
+                style={style}
+                $stickyHeader={false}
+                $striped={$striped}
+                $surfaces={resolvedSurfaces}
+                $horizontalScroll={false}
+                $splitTablesScroll
+                $splitHeaderRole="toolbar"
+                {...nativeTableProps}
+              >
+                {partitionedHead.toolbarHead}
+              </StyledTable>
+            </TableBodyScrollSplitHeaderToolbar>
+          ) : null}
+          {partitionedHead.columnHeaderHead != null ? (
+            <TableBodyScrollSplitHeaderInner ref={headerColumnsScrollRef}>
+              <StyledTable
+                ref={assignHeaderTableRef}
+                id={id}
+                aria-label={ariaLabel}
+                className={className}
+                style={style}
+                $stickyHeader={false}
+                $striped={$striped}
+                $surfaces={resolvedSurfaces}
+                $horizontalScroll={$horizontalScroll}
+                $splitTablesScroll
+                $splitHeaderRole="columns"
+                {...nativeTableProps}
+              >
+                {partitionedHead.columnHeaderHead}
+              </StyledTable>
+            </TableBodyScrollSplitHeaderInner>
+          ) : null}
         </TableBodyScrollSplitHeader>
       ) : null}
 

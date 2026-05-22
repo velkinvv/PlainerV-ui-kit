@@ -51,6 +51,7 @@ import {
   SelectMultiPlaceholder,
   SelectMultiSelectAllFooterBtn,
   SelectMultiTriggerRoot,
+  SelectCompositeTriggerShell,
   SelectPanelRoot,
   SelectTriggerButton,
   SelectTriggerInput,
@@ -100,6 +101,7 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
       helperText,
       required = false,
       fullWidth = false,
+      embeddedInCompositeField = false,
       readOnly = false,
       disabled = false,
       skeleton = false,
@@ -642,18 +644,8 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
       );
     }
 
-    const triggerControl = (
-      <InputWrapper
-        variant={InputVariant.SELECTOR}
-        size={size}
-        error={error}
-        success={success}
-        status={currentStatus}
-        fullWidth={fullWidth}
-        focused={focused || menuOpen}
-        readOnly={readOnly}
-        className={className}
-      >
+    const triggerInner = (
+      <>
         {isSearchSelectInputTrigger ? (
           <SelectTriggerInput
             type="text"
@@ -838,6 +830,30 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
             />
           </SelectChevronFlip>
         </SelectChevronSlot>
+      </>
+    );
+
+    const triggerControl = embeddedInCompositeField ? (
+      <SelectCompositeTriggerShell
+        $size={size}
+        $disabled={selectDisabled}
+        className={className}
+      >
+        {triggerInner}
+      </SelectCompositeTriggerShell>
+    ) : (
+      <InputWrapper
+        variant={InputVariant.SELECTOR}
+        size={size}
+        error={error}
+        success={success}
+        status={currentStatus}
+        fullWidth={fullWidth}
+        focused={focused || menuOpen}
+        readOnly={readOnly}
+        className={className}
+      >
+        {triggerInner}
       </InputWrapper>
     );
 
@@ -859,14 +875,23 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
         triggerControl
       );
 
+    const dropdownFullWidth = embeddedInCompositeField || fullWidth;
+
     const dropdownBlock = (
-      <SelectDropdownAnchor ref={containerRef} $fullWidth={fullWidth}>
+      <SelectDropdownAnchor
+        ref={containerRef}
+        $fullWidth={dropdownFullWidth}
+        data-embedded-composite-select={embeddedInCompositeField ? 'true' : undefined}
+        data-embedded-composite-select-mode={
+          embeddedInCompositeField ? mode : undefined
+        }
+      >
         <Dropdown
           trigger={triggerForDropdown}
           value={dropdownValue}
           onSelect={handleDropdownSelect}
           disabled={selectDisabled}
-          fullWidth={fullWidth}
+          fullWidth={dropdownFullWidth}
           openMenuIconProps={openMenuIconProps}
           size={size}
           variant={dropdownVariant}
@@ -938,6 +963,15 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
         ))}
       </VisuallyHiddenSelect>
     );
+
+    if (embeddedInCompositeField) {
+      return (
+        <>
+          {dropdownBlock}
+          {hiddenNative}
+        </>
+      );
+    }
 
     return (
       <SelectPanelRoot fullWidth={fullWidth}>
