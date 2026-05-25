@@ -1,7 +1,9 @@
 import React, { useCallback, useId, useMemo, useRef, useState } from 'react';
 import { clsx } from 'clsx';
+import { useTheme } from 'styled-components';
 import type { SliderProps } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
+import { BorderRadiusHandler } from '../../../handlers/uiHandlers';
 import {
   SliderRoot,
   SliderScaleRow,
@@ -27,7 +29,21 @@ import {
   resolveSliderTrackMetrics,
   resolveSliderAccentKind,
   sliderThumbLeftCalcCss,
+  getSliderEmbeddedFooterHeightPx,
+  getSliderEmbeddedThumbBottomCss,
+  isSliderEmbeddedTrackFilledToEnd,
+  parseThemeBorderRadiusPx,
 } from './handlers';
+import {
+  SliderEmbeddedFooter,
+  SliderEmbeddedRingWrap,
+  SliderEmbeddedTrackActive,
+  SliderEmbeddedTrackHit,
+  SliderEmbeddedTrackRail,
+  SliderEmbeddedTrackStrip,
+  SliderEmbeddedTrackWrap,
+  SliderEmbeddedThumb,
+} from './SliderEmbeddedInInput.style';
 import { SliderFieldShell } from './SliderFieldShell';
 import { SliderSkeletonSingle } from './SliderSkeleton';
 
@@ -74,6 +90,10 @@ export const Slider: React.FC<SliderProps> = ({
   status,
   className,
   name,
+  embeddedInInput = false,
+  showScaleRow = true,
+  onSliderFocus,
+  onSliderBlur,
 }) => {
   const min = minProp;
   const max = Math.max(min, maxProp);
@@ -202,15 +222,29 @@ export const Slider: React.FC<SliderProps> = ({
 
   const hasFieldChrome = useMemo(
     () =>
-      label != null ||
-      Boolean(additionalLabel) ||
-      Boolean(error) ||
-      success === true ||
-      Boolean(helperText) ||
-      Boolean(extraText) ||
-      required === true,
-    [additionalLabel, error, extraText, helperText, label, required, success],
+      !embeddedInInput &&
+      (label != null ||
+        Boolean(additionalLabel) ||
+        Boolean(error) ||
+        success === true ||
+        Boolean(helperText) ||
+        Boolean(extraText) ||
+        required === true),
+    [additionalLabel, embeddedInInput, error, extraText, helperText, label, required, success],
   );
+
+  const theme = useTheme();
+  const fieldBorderRadiusPx = parseThemeBorderRadiusPx(
+    BorderRadiusHandler(theme.borderRadius),
+  );
+  const trackLineHeightPx = Math.max(track.railHeightPx, track.activeHeightPx);
+  const embeddedFooterHeightPx = getSliderEmbeddedFooterHeightPx(
+    thumbPx,
+    track.railHeightPx,
+    track.activeHeightPx,
+    fieldBorderRadiusPx,
+  );
+  const embeddedThumbBottomCss = getSliderEmbeddedThumbBottomCss(trackLineHeightPx);
 
   const accentKind = useMemo(
     () => resolveSliderAccentKind(error, success, status),
@@ -248,7 +282,100 @@ export const Slider: React.FC<SliderProps> = ({
     );
   }
 
-  const sliderBody = (
+  const ThumbComponent = embeddedInInput ? SliderEmbeddedThumb : SliderThumb;
+
+  const thumbNode = (
+    <ThumbComponent
+      type="button"
+      id={thumbId}
+      $thumbPx={thumbPx}
+      $accent={accentKind}
+      $disabled={disabled}
+      disabled={disabled}
+      style={
+        embeddedInInput
+          ? { left: sliderThumbLeftCalcCss(thumbPx, pct), bottom: embeddedThumbBottomCss }
+          : { left: sliderThumbLeftCalcCss(thumbPx, pct) }
+      }
+      aria-valuemin={min}
+      aria-valuemax={max}
+      aria-valuenow={value}
+      aria-valuetext={formatValue(value)}
+      role="slider"
+      tabIndex={disabled ? -1 : 0}
+      onPointerDown={onThumbPointerDown}
+      onPointerMove={onThumbPointerMove}
+      onPointerUp={onThumbPointerUp}
+      onPointerCancel={onThumbPointerUp}
+      onKeyDown={onThumbKeyDown}
+      onFocus={onSliderFocus}
+      onBlur={onSliderBlur}
+    />
+  );
+
+  const trackNode = embeddedInInput ? (
+    <SliderEmbeddedFooter>
+      {name ? (
+        <SliderHiddenInput name={name} value={String(value)} readOnly aria-hidden tabIndex={-1} />
+      ) : null}
+      <SliderEmbeddedRingWrap $accent={accentKind}>
+        <SliderEmbeddedTrackWrap ref={trackRef} $trackWrapHeightPx={embeddedFooterHeightPx}>
+          <SliderEmbeddedTrackHit
+            $thumbInsetPx={thumbInsetPx}
+            $hitHeightPx={track.hitHeightPx}
+            onPointerDown={onTrackPointerDown}
+          />
+          <SliderEmbeddedTrackStrip $lineHeightPx={trackLineHeightPx}>
+            <SliderEmbeddedTrackRail
+              $thumbInsetPx={thumbInsetPx}
+              $railHeightPx={track.railHeightPx}
+              aria-hidden
+            />
+            <SliderEmbeddedTrackActive
+              $leftPct={0}
+              $widthPct={pct}
+              $thumbInsetPx={thumbInsetPx}
+              $thumbSizePx={thumbPx}
+              $activeHeightPx={track.activeHeightPx}
+              $accent={accentKind}
+              $fillToEnd={isSliderEmbeddedTrackFilledToEnd(pct)}
+              aria-hidden
+            />
+          </SliderEmbeddedTrackStrip>
+          {thumbNode}
+        </SliderEmbeddedTrackWrap>
+      </SliderEmbeddedRingWrap>
+    </SliderEmbeddedFooter>
+  ) : (
+    <SliderTrackRingWrap $accent={accentKind}>
+      <SliderTrackWrap ref={trackRef} $trackWrapHeightPx={track.trackWrapHeightPx}>
+        <SliderTrackHit
+          $thumbInsetPx={thumbInsetPx}
+          $hitHeightPx={track.hitHeightPx}
+          onPointerDown={onTrackPointerDown}
+        />
+        <SliderTrackRail
+          $thumbInsetPx={thumbInsetPx}
+          $railHeightPx={track.railHeightPx}
+          aria-hidden
+        />
+        <SliderTrackActive
+          $leftPct={0}
+          $widthPct={pct}
+          $thumbInsetPx={thumbInsetPx}
+          $thumbSizePx={thumbPx}
+          $activeHeightPx={track.activeHeightPx}
+          $accent={accentKind}
+          aria-hidden
+        />
+        {thumbNode}
+      </SliderTrackWrap>
+    </SliderTrackRingWrap>
+  );
+
+  const sliderBody = embeddedInInput ? (
+    trackNode
+  ) : (
     <SliderRoot
       className={clsx('ui-slider', !hasFieldChrome && className)}
       $fullWidth={fullWidth}
@@ -257,53 +384,13 @@ export const Slider: React.FC<SliderProps> = ({
       {name ? (
         <SliderHiddenInput name={name} value={String(value)} readOnly aria-hidden tabIndex={-1} />
       ) : null}
-      <SliderScaleRow>
-        <SliderScaleLabel>{formatMinLabel(min)}</SliderScaleLabel>
-        <SliderScaleLabel>{formatMaxLabel(max)}</SliderScaleLabel>
-      </SliderScaleRow>
-      <SliderTrackRingWrap $accent={accentKind}>
-        <SliderTrackWrap ref={trackRef} $trackWrapHeightPx={track.trackWrapHeightPx}>
-          <SliderTrackHit
-            $thumbInsetPx={thumbInsetPx}
-            $hitHeightPx={track.hitHeightPx}
-            onPointerDown={onTrackPointerDown}
-          />
-          <SliderTrackRail
-            $thumbInsetPx={thumbInsetPx}
-            $railHeightPx={track.railHeightPx}
-            aria-hidden
-          />
-          <SliderTrackActive
-            $leftPct={0}
-            $widthPct={pct}
-            $thumbInsetPx={thumbInsetPx}
-            $thumbSizePx={thumbPx}
-            $activeHeightPx={track.activeHeightPx}
-            $accent={accentKind}
-            aria-hidden
-          />
-          <SliderThumb
-            type="button"
-            id={thumbId}
-            $thumbPx={thumbPx}
-            $accent={accentKind}
-            $disabled={disabled}
-            disabled={disabled}
-            style={{ left: sliderThumbLeftCalcCss(thumbPx, pct) }}
-            aria-valuemin={min}
-            aria-valuemax={max}
-            aria-valuenow={value}
-            aria-valuetext={formatValue(value)}
-            role="slider"
-            tabIndex={disabled ? -1 : 0}
-            onPointerDown={onThumbPointerDown}
-            onPointerMove={onThumbPointerMove}
-            onPointerUp={onThumbPointerUp}
-            onPointerCancel={onThumbPointerUp}
-            onKeyDown={onThumbKeyDown}
-          />
-        </SliderTrackWrap>
-      </SliderTrackRingWrap>
+      {showScaleRow ? (
+        <SliderScaleRow>
+          <SliderScaleLabel>{formatMinLabel(min)}</SliderScaleLabel>
+          <SliderScaleLabel>{formatMaxLabel(max)}</SliderScaleLabel>
+        </SliderScaleRow>
+      ) : null}
+      {trackNode}
       {showValueLabel ? (
         <SliderValuesRow aria-hidden={false}>
           <SliderValueLabel
@@ -316,6 +403,10 @@ export const Slider: React.FC<SliderProps> = ({
       ) : null}
     </SliderRoot>
   );
+
+  if (embeddedInInput) {
+    return sliderBody;
+  }
 
   return (
     <SliderFieldShell

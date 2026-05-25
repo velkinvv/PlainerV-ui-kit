@@ -2,6 +2,7 @@
 import type { TableFooterProps } from '@/types/ui';
 import { StyledTfoot } from './Table.style';
 import { TableSectionProvider } from './TableContext';
+import { useResolvedTableSurfaceBackgrounds } from './tableSurfaceBackgroundHooks';
 
 /**
  * ╨б╨╡╨║╤Ж╨╕╤П ╨┐╨╛╨┤╨▓╨░╨╗╨░ (`tfoot`), ╨╜╨░╨┐╤А╨╕╨╝╨╡╤А ┬л╨Ч╨░╨│╤А╤Г╨╖╨╕╤В╤М ╨╡╤Й╤С┬╗.
@@ -9,9 +10,17 @@ import { TableSectionProvider } from './TableContext';
  */
 export const TableFooter = forwardRef<HTMLTableSectionElement, TableFooterProps>(
   ({ className, children, style, ...rest }, ref) => {
+    const resolvedSurfaces = useResolvedTableSurfaceBackgrounds();
+
     return (
       <TableSectionProvider section="footer">
-        <StyledTfoot ref={ref} className={className} style={style} {...rest}>
+        <StyledTfoot
+          ref={ref}
+          className={className}
+          style={style}
+          $surfaces={resolvedSurfaces}
+          {...rest}
+        >
           {children}
         </StyledTfoot>
       </TableSectionProvider>

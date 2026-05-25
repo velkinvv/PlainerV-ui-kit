@@ -10,6 +10,7 @@ import {
   TransitionHandler,
 } from '../../../../handlers/uiHandlers';
 import { getInputSideIconSlotSizePx } from '../../../../handlers/iconHandlers';
+import { getInputFieldWidthCss } from '../../../../handlers/inputFieldLayoutHandlers';
 import { Size } from '../../../../types/sizes';
 
 // ============================================================================
@@ -23,6 +24,22 @@ export const InputContainer = styled.div.withConfig({
   flex-direction: column;
   gap: 4px;
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
+  align-items: ${({ fullWidth }) => (fullWidth ? 'stretch' : 'flex-start')};
+`;
+
+/**
+ * Колонка «поле + подписи»: ширина совпадает с `InputWrapper`, чтобы helper и счётчик не уезжали в сторону.
+ * @property fullWidth - На всю ширину родителя или фиксированная ширина поля по умолчанию.
+ */
+export const InputControlStack = styled.div.withConfig({
+  shouldForwardProp: createStyledShouldForwardProp(['fullWidth']),
+})<{ fullWidth?: boolean }>`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: ${({ fullWidth }) => getInputFieldWidthCss(fullWidth)};
+  max-width: 100%;
+  box-sizing: border-box;
 `;
 
 export const InputContainerWithPadding = styled.div.withConfig({
@@ -82,6 +99,7 @@ const inputWrapperBlockedProps = [
   'focused',
   'status',
   'readOnly',
+  '$compositeMode',
 ] as const;
 
 export const InputWrapper = styled(motion.div).withConfig({
@@ -99,6 +117,8 @@ export const InputWrapper = styled(motion.div).withConfig({
   $fileSurface?: 'field' | 'dropzone' | 'file';
   /** Подсветка зоны при перетаскивании файла */
   $dragActive?: boolean;
+  /** Составное поле InputEx: общая рамка, padding у сегментов prefix/input/suffix */
+  $compositeMode?: boolean;
 }>`
   position: relative;
   display: flex;
@@ -121,14 +141,22 @@ export const InputWrapper = styled(motion.div).withConfig({
   border-radius: ${({ theme, $fileSurface }) =>
     $fileSurface ? '10px' : BorderRadiusHandler(theme.borderRadius)};
   transition: ${TransitionHandler()};
-  width: ${({ fullWidth }) => (fullWidth ? '100%' : '335px')};
+  width: ${({ fullWidth }) => getInputFieldWidthCss(fullWidth)};
   /* В узких контейнерах (Dropdown/Popover с menuWidth) не вылезать за padding — иначе обрезание при overflow:hidden */
   max-width: 100%;
   box-sizing: border-box;
 
-  ${({ size, theme, $fileSurface }) => css`
+  ${({ $compositeMode }) =>
+    $compositeMode &&
+    css`
+      padding: 0;
+      align-items: stretch;
+      overflow: visible;
+    `}
+
+  ${({ size, theme, $fileSurface, $compositeMode }) => css`
     min-height: ${InputSizeHandler(size ?? theme.defaultInputSize)};
-    padding: ${InputPaddingHandler(size ?? theme.defaultInputSize)};
+    padding: ${$compositeMode ? '0' : InputPaddingHandler(size ?? theme.defaultInputSize)};
     ${$fileSurface === 'dropzone' &&
     css`
       min-height: calc(${InputSizeHandler(size ?? theme.defaultInputSize)} * 2.35);
@@ -439,7 +467,7 @@ export const SkeletonEffect = styled.div.withConfig({
     }
     return css`
       box-sizing: border-box;
-      width: ${fullWidth ? '100%' : '335px'};
+      width: ${getInputFieldWidthCss(fullWidth)};
       max-width: 100%;
       min-height: ${InputSizeHandler(size ?? theme.defaultInputSize)};
       padding: ${InputPaddingHandler(size ?? theme.defaultInputSize)};

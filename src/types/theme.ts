@@ -1649,13 +1649,26 @@ export type CardTheme = {
  * Тема примитивов `Table` / `DataGrid`: скругления, оболочка-карточка, шапка, зебра, строки, пагинация, оверлей загрузки.
  */
 export type TableTheme = {
-  /** Единое скругление оболочки, клипа, верхних углов шапки, нижних углов встроенной пагинации и мелких контролов. */
+  /**
+   * Скругление оболочки таблицы (`tableBorderRadiusFromTheme`, CSS-переменная `--plainer-table-border-radius`).
+   * При отсутствии — fallback на Card MD и `theme.borderRadius`.
+   */
   borderRadius: string;
   shell: {
     /** Обводка внешней карточки таблицы */
     border: string;
     /** Фон карточки таблицы */
     background: string;
+    /** Отступ «канавы» при `shellInset` (по умолчанию как padding **Card** MD) */
+    insetPadding?: string;
+    /** Фон оболочки при `shellInset` (обычно совпадает с `shell.background`, без серой канавы) */
+    insetFrameBackground?: string;
+    /** Фон внутреннего блока с таблицей при `shellInset` */
+    insetSurfaceBackground?: string;
+    /** Обводка внутреннего блока при `shellInset` */
+    insetSurfaceBorder?: string;
+    /** Скругление внутреннего блока при `shellInset` */
+    insetSurfaceBorderRadius?: string;
   };
   header: {
     background: string;

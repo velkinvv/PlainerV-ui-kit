@@ -3,6 +3,7 @@ import { clsx } from 'clsx';
 import type { TableRowProps } from '@/types/ui';
 import { StyledTr } from './Table.style';
 import { useTableSection } from './TableContext';
+import { useResolvedTableSurfaceBackgrounds } from './tableSurfaceBackgroundHooks';
 
 /**
  * ╨б╤В╤А╨╛╨║╨░ ╤В╨░╨▒╨╗╨╕╤Ж╤Л (`tr`).
@@ -29,6 +30,7 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
     const section = useTableSection();
     const isBody = section === 'body';
     const hoverable = hover ?? isBody;
+    const resolvedSurfaces = useResolvedTableSurfaceBackgrounds();
 
     return (
       <StyledTr
@@ -40,6 +42,7 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
         $disabled={disabled}
         $dragging={dragging && isBody}
         $hoverable={hoverable && !disabled && !(dragging && isBody)}
+        $surfaces={resolvedSurfaces}
         data-selected={selected ? 'true' : undefined}
         data-disabled={disabled ? 'true' : undefined}
         data-dragging={dragging && isBody ? 'true' : undefined}

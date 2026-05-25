@@ -1,6 +1,6 @@
 ﻿import styled, { css } from 'styled-components';
 import type { DataGridColumnFilterIconPosition } from '@/types/ui';
-import { tableBorderRadiusFromTheme } from '../basicTable/tableThemeRadiusHandlers';
+import { tableBorderRadiusFromCssVar } from '../basicTable/tableThemeRadiusHandlers';
 import { buildReducedMotionTransitionDurationCss } from '../../../../handlers/uiMotionStyleHandlers';
 
 /**
@@ -195,7 +195,7 @@ export const DataGridExpandButton = styled.button`
   background: transparent;
   cursor: pointer;
   color: inherit;
-  border-radius: ${({ theme }) => tableBorderRadiusFromTheme(theme)};
+  border-radius: ${({ theme }) => tableBorderRadiusFromCssVar(theme)};
 
   &:focus-visible {
     outline: 2px solid ${({ theme }) => theme.colors.primary};

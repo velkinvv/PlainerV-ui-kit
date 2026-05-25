@@ -186,7 +186,8 @@ export interface BaseButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEl
  * @property readOnly - Поле только для чтения (текст остается обычным цветом, но фон становится серым)
  * @property label - Метка поля (`ReactNode`)
  */
-export interface BaseInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
+export interface BaseInputProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'prefix' | 'suffix'> {
   label?: ReactNode;
   error?: string;
   success?: boolean;
@@ -495,6 +496,8 @@ export interface IconButtonProps extends BaseButtonProps {
  * @property size - Размер поля (в компоненте по умолчанию `Size.SM`, см. также `theme.defaultInputSize`)
  * @property leftIcon - Иконка слева
  * @property rightIcon - Иконка справа
+ * @property prefix - Addon слева от поля ввода в одной оболочке (InputEx, как у Admiral): текст, `Select` и др.
+ * @property suffix - Addon справа от поля ввода в той же оболочке; для `Select` автоматически включается `embeddedInCompositeField`.
  * Кнопка очистки: `displayClearIcon` + `onClearIconClick` из `BaseInputProps`.
  */
 export interface InputProps extends BaseInputProps {
@@ -502,6 +505,10 @@ export interface InputProps extends BaseInputProps {
   size?: Size;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  /** Слот слева от `<input>` внутри общей рамки (составное поле). */
+  prefix?: React.ReactNode;
+  /** Слот справа от `<input>` внутри общей рамки (составное поле). */
+  suffix?: React.ReactNode;
   status?: 'error' | 'success' | 'warning'; // Статус компонента для изменения цвета бордера
 }
 
@@ -566,23 +573,32 @@ export type MultiInputProps = Omit<
 };
 
 /**
- * Поле «слайдер + ввод числа»: оболочка как у `Input` (рамка, лейбл, статусы, иконки), значение — число.
- * Поведение рядом с [Admiral SliderInputField](https://admiralds.github.io/react-ui/?path=/docs/admiral-2-1-form-field-sliderinputfield--docs).
- * @property value - Контролируемое значение шкалы.
- * @property defaultValue - Начальное значение.
- * @property onChange - Новое значение после слайдера, ввода или сброса (как у `Slider`).
- * @property min / max / step - Границы и шаг.
- * @property showValueLabel - Подпись текущего значения под бегунком.
- * @property showScaleLabels - Подписи min и max над треком.
- * @property showNumberField - Поле числа справа от слайдера (по умолчанию `true`).
- * @property numberFieldWidth - Ширина колонки числа (CSS).
- * @property numberPlaceholder - Плейсхолдер внутреннего поля числа.
- * @property formatValue / formatMinLabel / formatMaxLabel - Форматирование подписей (как у `Slider`).
- * @property trackRailHeightPx / trackActiveHeightPx - Толщина линий трека.
- * @property sliderSize - Размер бегунка/трека; по умолчанию — как `size` поля.
- * @property name - Скрытый `input` для отправки формы.
+ * Общие пропсы `SliderInput` (одиночное значение и диапазон).
+ * Наследует оболочку **Input** (лейблы, ошибки, иконки, `variant`, `skeleton`, …); значение задаётся в `SliderInputSingleProps` или `SliderInputRangeProps`.
+ *
+ * @property range - `false` (по умолчанию) — одно значение; `true` — пара «от / до» (как у `DateInput` с `range`). Переключает union-тип `value` / `onChange`.
+ * @property min - Нижняя граница шкалы (по умолчанию `0`).
+ * @property max - Верхняя граница шкалы (по умолчанию `100`).
+ * @property step - Шаг изменения (по умолчанию `1`); влияет на слайдер и нормализацию ввода в поле числа.
+ * @property showValueLabel - Подпись под бегунком, если `showNumberField={false}` (в range — под каждым бегунком).
+ * @property showScaleLabels - Подписи `min` и `max` под нижней границей рамки поля.
+ * @property showNumberField - Показывать поле(я) числа (по умолчанию `true`; в range — два поля в сетке «от / — / до»).
+ * @property numberFieldWidth - Ширина колонки числа (одиночный) или минимальная ширина каждого поля в range.
+ * @property numberPlaceholder - Плейсхолдер одиночного числового поля.
+ * @property numberFromPlaceholder - Плейсхолдер поля «от» в range.
+ * @property numberToPlaceholder - Плейсхолдер поля «до» в range.
+ * @property rangeFromLabel - Подпись перед полем «от» (по умолчанию «От:»).
+ * @property rangeToLabel - Подпись перед полем «до» (по умолчанию «До:»).
+ * @property formatValue - Формат числа в полях и подписях бегунков.
+ * @property formatMinLabel - Формат подписи минимума шкалы.
+ * @property formatMaxLabel - Формат подписи максимума шкалы.
+ * @property trackRailHeightPx - Толщина серой линии трека (px); иначе из `sliderSize` / `size`.
+ * @property trackActiveHeightPx - Толщина активного сегмента (px).
+ * @property sliderSize - Размер встроенного трека и бегунка; по умолчанию совпадает с `size` поля.
+ * @property maxLength - Ограничение длины строки в поле числа и счётчик (как у `Input`).
+ * @property displayClearIcon - Очистка: одиночный → `min`, range → `[min, min]`.
  */
-export type SliderInputProps = Omit<
+type SliderInputSharedProps = Omit<
   InputProps,
   | 'value'
   | 'defaultValue'
@@ -593,9 +609,7 @@ export type SliderInputProps = Omit<
   | 'maxLength'
   | 'placeholder'
 > & {
-  value?: number;
-  defaultValue?: number;
-  onChange?: (value: number) => void;
+  range?: boolean;
   min?: number;
   max?: number;
   step?: number;
@@ -604,16 +618,59 @@ export type SliderInputProps = Omit<
   showNumberField?: boolean;
   numberFieldWidth?: string;
   numberPlaceholder?: string;
+  numberFromPlaceholder?: string;
+  numberToPlaceholder?: string;
+  rangeFromLabel?: React.ReactNode;
+  rangeToLabel?: React.ReactNode;
   formatValue?: (value: number) => string;
   formatMinLabel?: (min: number) => string;
   formatMaxLabel?: (max: number) => string;
   trackRailHeightPx?: number;
   trackActiveHeightPx?: number;
   sliderSize?: Size;
-  name?: string;
   /** Ограничение длины строки в поле числа и счётчик (как у `Input`). */
   maxLength?: number;
 };
+
+/**
+ * Одиночное значение (`range` не задан или `false`).
+ * @property value - Контролируемое число на шкале `min`…`max`.
+ * @property defaultValue - Начальное число в неконтролируемом режиме.
+ * @property onChange - `(value: number) => void` после слайдера или коммита поля числа.
+ * @property name - Имя скрытого input для нативной отправки формы.
+ */
+export type SliderInputSingleProps = SliderInputSharedProps & {
+  range?: false;
+  value?: number;
+  defaultValue?: number;
+  onChange?: (value: number) => void;
+  name?: string;
+};
+
+/**
+ * Диапазон «от / до» (`range={true}`).
+ * @property value - Контролируемая упорядоченная пара `[от, до]` (от ≤ до после нормализации).
+ * @property defaultValue - Начальная пара в неконтролируемом режиме.
+ * @property onChange - `(value: readonly [number, number]) => void` при изменении любой границы.
+ * @property nameFrom - Имя скрытого поля для значения «от».
+ * @property nameTo - Имя скрытого поля для значения «до».
+ */
+export type SliderInputRangeProps = SliderInputSharedProps & {
+  range: true;
+  value?: readonly [number, number];
+  defaultValue?: readonly [number, number];
+  onChange?: (value: readonly [number, number]) => void;
+  nameFrom?: string;
+  nameTo?: string;
+};
+
+/**
+ * Поле «слайдер + ввод числа»: оболочка как у `Input`, встроенный **Slider** или **RangeSlider** у нижней кромки.
+ * Режим задаётся `range` (дискриминированный union). Документация: `documentation/.../components-slider-input.mdx`, Storybook **SliderInput**.
+ * @see SliderInputSingleProps
+ * @see SliderInputRangeProps
+ */
+export type SliderInputProps = SliderInputSingleProps | SliderInputRangeProps;
 
 /**
  * Пропсы текстовой области
@@ -641,10 +698,14 @@ export type SliderInputProps = Omit<
  * @property status - Статус компонента для изменения цвета бордера
  * @property resize - Режим изменения размеров textarea (CSS `resize`)
  * @property rows - Высота в строках (`HTMLTextAreaElement.rows`, по умолчанию в компоненте 4)
+ * @property leftIcon - Иконка слева внутри рамки (как у `Input`)
+ * @property rightIcon - Иконка справа внутри рамки (как у `Input`)
+ * @property prefix - Составное поле: addon слева от области ввода в одной рамке (`InputFieldShell` / InputEx)
+ * @property suffix - Составное поле: addon справа от области ввода в той же рамке
  */
 export interface TextAreaProps extends Omit<
   React.TextareaHTMLAttributes<HTMLTextAreaElement>,
-  'size'
+  'size' | 'prefix' | 'suffix'
 > {
   label?: ReactNode;
   error?: string;
@@ -669,6 +730,10 @@ export interface TextAreaProps extends Omit<
   additionalLabel?: string;
   status?: 'error' | 'success' | 'warning';
   resize?: 'none' | 'both' | 'horizontal' | 'vertical';
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  prefix?: React.ReactNode;
+  suffix?: React.ReactNode;
 }
 
 /**
@@ -970,6 +1035,17 @@ export interface SliderBaseProps extends BaseComponentProps {
   skeleton?: boolean;
   /** Акцент рамки и заливки трека / бегунков */
   status?: 'error' | 'success' | 'warning';
+  /**
+   * Вложение в `SliderInput`: трек у нижней кромки поля, без оболочки `SliderFieldShell`.
+   * Геометрия бегунков как у `Slider` / `RangeSlider` (`sliderThumbLeftCalcCss`).
+   */
+  embeddedInInput?: boolean;
+  /** Подписи min/max над треком; в `SliderInput` — снаружи рамки (`false`). */
+  showScaleRow?: boolean;
+  /** Фокус на бегунке (для рамки `SliderInput`). */
+  onSliderFocus?: () => void;
+  /** Потеря фокуса бегунка. */
+  onSliderBlur?: () => void;
 }
 
 /**
@@ -2822,6 +2898,11 @@ export interface SelectProps
   helperText?: string;
   required?: boolean;
   fullWidth?: boolean;
+  /**
+   * Встроенный слот в составном `Input` (`prefix` / `suffix`): без label, helper и собственной рамки;
+   * рамка и статусы задаёт родительский Input.
+   */
+  embeddedInCompositeField?: boolean;
   readOnly?: boolean;
   skeleton?: boolean;
   size?: Size;
@@ -3471,6 +3552,7 @@ export interface DateTimeInputRangeProps extends BaseComponentProps {
 /**
  * Пропсы поля даты (`DateInput`).
  * Крестик очистки: `displayClearIcon`, `onClearIconClick`, `clearIconProps` из `BaseInputProps`.
+ * Составное поле (InputEx): `prefix`, `suffix` — те же слоты, что у `Input` (см. `InputFieldShell`).
  */
 export interface DatePickerProps extends Omit<BaseInputProps, 'value' | 'onChange' | 'size'> {
   value?: string | DateTimeRange;
@@ -3497,6 +3579,10 @@ export interface DatePickerProps extends Omit<BaseInputProps, 'value' | 'onChang
   calendarMonthYearLayout?: CalendarMonthYearLayout;
   /** Растянуть выпадающий календарь на ширину поля ввода */
   calendarFullWidth?: boolean;
+  /** Слот слева от поля даты в одной рамке (как `Input.prefix`). */
+  prefix?: React.ReactNode;
+  /** Слот справа от поля даты в одной рамке (как `Input.suffix`). */
+  suffix?: React.ReactNode;
 }
 
 /**
@@ -3528,6 +3614,7 @@ export interface TimeRange {
  * @property disabledMinutes - Массив дизейбленных минут (числа от 0 до 59)
  * @property disabledSeconds - Массив дизейбленных секунд (числа от 0 до 59)
  * @remarks Крестик очистки: `displayClearIcon`, `onClearIconClick` и `clearIconProps` из `BaseInputProps`.
+ * Составное поле: `prefix`, `suffix` — как у `Input` (`InputFieldShell`).
  */
 export interface TimeInputProps extends Omit<BaseInputProps, 'value' | 'onChange' | 'size'> {
   value?: string | TimeRange;
@@ -3550,6 +3637,10 @@ export interface TimeInputProps extends Omit<BaseInputProps, 'value' | 'onChange
   disabledSeconds?: number[]; // Массив дизейбленных секунд (например, [0, 30])
   segmented?: boolean; // Определяет режим ввода: false = обычный input, true = сегментированный ввод
   format?: string; // Формат отображения времени (например, 'HH:mm', 'HH:mm:ss', 'h:mm A')
+  /** Слот слева от поля времени в одной рамке (как `Input.prefix`). */
+  prefix?: React.ReactNode;
+  /** Слот справа от поля времени в одной рамке (как `Input.suffix`). */
+  suffix?: React.ReactNode;
 }
 
 /**
@@ -3906,9 +3997,34 @@ export interface GridItemProps extends BaseComponentProps {
 export type TableSize = 'sm' | 'md';
 
 /**
+ * Оболочка таблицы: `card` — карточка с бордером (по умолчанию); `embedded` — без внешнего бордера и скругления.
+ */
+export type TableShellVariant = 'card' | 'embedded';
+
+/**
+ * Прозрачный фон поверхности: `true` — наследуется фон родителя. Shorthand `surfaceBackgrounds: 'transparent'` — все сразу.
+ */
+export interface TableSurfaceBackgrounds {
+  shell?: boolean;
+  header?: boolean;
+  headerToolbar?: boolean;
+  bodyRow?: boolean;
+  bodyRowZebra?: boolean;
+  bodyRowHover?: boolean;
+  bodyRowSelected?: boolean;
+  bodyRowDragging?: boolean;
+  footer?: boolean;
+  pagination?: boolean;
+}
+
+export type TableSurfaceBackgroundsInput = TableSurfaceBackgrounds | 'transparent';
+
+/**
  * Обёртка с горизонтальным скроллом и визуалом «карточки» (скругление, фон, тень).
  * @property component - Корневой элемент (по умолчанию `div`)
  * @property elevated - Показать тень как у карточки в макете
+ * @property shellInset - Внутренние отступы на белом фоне; внешний бордер карточки, без рамки у сетки
+ * @property shellInsetPadding - Внутренний отступ (число — px); по умолчанию из `theme.tables.shell.insetPadding` или padding **Card** MD
  * @property className - Доп. класс
  * @property children - Обычно `Table`
  * @property style - Инлайн-стили корня
@@ -3916,15 +4032,25 @@ export type TableSize = 'sm' | 'md';
 export interface TableContainerProps extends BaseComponentProps {
   component?: React.ElementType;
   elevated?: boolean;
+  /** `embedded` — без бордера и фона оболочки (для вложения в Card/Panel) */
+  shellVariant?: TableShellVariant;
+  /**
+   * Внутренние отступы: белая оболочка, бордер карточки снаружи, у блока сетки без своей рамки.
+   */
+  shellInset?: boolean;
+  /** Переопределение внутреннего отступа вокруг блока с таблицей */
+  shellInsetPadding?: string | number;
+  surfaceBackgrounds?: TableSurfaceBackgroundsInput;
   style?: React.CSSProperties;
 }
 
 /**
  * Нативная `<table>` + контекст размера и зебры для дочерних строк.
- * @property stickyHeader - Липкий заголовок (`thead th` с `position: sticky`)
+ * @property stickyHeader - Липкий заголовок: без `scrollAreaMaxHeight` — `position: sticky` у `th`; с `scrollAreaMaxHeight` на `TableContainerScroll` — split-layout (шапка вне скролла строк)
  * @property size - Вертикальные отступы ячеек (`sm` | `md`)
  * @property striped - Чередование фона строк в `tbody`; по умолчанию `false` — фон строк как у карточки
  * @property columnDividers - Тонкая вертикальная линия между колонками (`border-inline-end` у ячеек, кроме последней в строке); по умолчанию `true`
+ * @property surfaceBackgrounds - Переопределяет фоны из `TableContainer`; иначе из контекста оболочки
  * @property className - Доп. класс
  * @property children - `TableHead`, `TableBody`, …
  * @property style - Инлайн-стили таблицы
@@ -3938,6 +4064,7 @@ export interface TableProps
   striped?: boolean;
   /** Вертикальные разделители между колонками; по умолчанию включены */
   columnDividers?: boolean;
+  surfaceBackgrounds?: TableSurfaceBackgroundsInput;
   style?: React.CSSProperties;
 }
 
@@ -4563,6 +4690,24 @@ export interface DataGridRenderRowWrapperParams<Row extends DataGridBaseRow = Da
 }
 
 /**
+ * Статус данных всей таблицы **DataGrid** (первичная загрузка, ошибка API, готовые данные).
+ * - `loading` — загрузка (оверлей или скелетон — через `loadingDisplay`)
+ * - `ready` — данные отображаются; при пустом `rows` — пустое состояние
+ * - `error` — ошибка загрузки (блок в `tbody`, шапка остаётся)
+ */
+export type DataGridDataStatus = 'loading' | 'ready' | 'error';
+
+/**
+ * Как показывать загрузку при `dataStatus="loading"` или `isLoading={true}`.
+ * - `overlay` — полупрозрачный оверлей со спиннером (по умолчанию; удобно при обновлении с уже показанными строками)
+ * - `skeleton` — строки-скелетоны в `tbody` (если строки уже есть, автоматически переключается на `overlay`)
+ */
+export type DataGridLoadingDisplay = 'overlay' | 'skeleton';
+
+/** Тон информационной полосы `statusMessage` над строками таблицы */
+export type DataGridStatusMessageVariant = 'info' | 'warning' | 'success';
+
+/**
  * Статус данных внутри раскрывающейся подстроки (ленивая загрузка и ошибки).
  * - `idle` — данные ещё не запрашивались или сброшены
  * - `loading` — идёт загрузка только для этой подстроки
@@ -4618,7 +4763,9 @@ export interface DataGridExpandedRowChangeParams {
  * @property paginationMode — Как интерпретировать `rows` при пагинации
  * @property sortModel + onSortChange — Контролируемая сортировка (одно поле, массив критериев или `null`; данные сортирует родитель)
  * @property multiColumnSort — Режим нескольких полей: клик добавляет asc → desc → снять; порядок в массиве — приоритет
- * @property scrollAreaMaxHeight — Макс. высота зоны прокрутки сетки (пробрасывается в `TableContainerScroll`); для корректной липкой шапки вместо внешней обёртки с `overflow: auto`
+ * @property scrollAreaMaxHeight — Макс. высота зоны строк (пробрасывается в `TableContainerScroll`); со `stickyHeader` — split-layout: шапка и `headerToolbar` вне вертикального скролла `tbody`
+ * @property horizontalScroll — Горизонтальный скролл при широкой сетке (по умолчанию `true`); в split-layout полоса только у тела, шапка синхронизируется по `scrollLeft`
+ * @property stickyHeader — Липкая шапка (по умолчанию `true` у DataGrid); с `scrollAreaMaxHeight` — шапка вне скролла строк
  * @property tableHeaderVariant — Тон фона шапки и панели `headerToolbar`: `default` (серый из темы) или `card` (фон карточки)
  * @property tableHeaderBackground — Произвольный цвет фона шапки (приоритет над `tableHeaderVariant`)
  * @property rowBackgroundColorByStatus — Фон строки по данным строки
@@ -4680,13 +4827,25 @@ export interface DataGridProps<
   onSortChange?: (model: DataGridSortModel) => void;
   /** Сортировка по нескольким колонкам: модель — массив `DataGridSortCriterion` по приоритету (см. `sortModel`) */
   multiColumnSort?: boolean;
+  /**
+   * Липкая шапка при вертикальном скролле.
+   * Без `scrollAreaMaxHeight` — `position: sticky` у заголовков. С `scrollAreaMaxHeight` — split-layout:
+   * `headerToolbar` и заголовки колонок вне скролла строк; горизонтально прокручиваются только колонки (синхронизация `scrollLeft` с телом).
+   * @defaultValue true
+   */
   stickyHeader?: boolean;
   /**
-   * Максимальная высота области с вертикальным скроллом вокруг таблицы (число — пиксели).
-   * Пробрасывается в `TableContainerScroll` как `scrollAreaMaxHeight`: один scroll-контейнер с горизонтальным
-   * скроллом широкой сетки, без конфликта с `position: sticky` у шапки (см. примитив `Table`).
+   * Макс. высота прокручиваемой области **строк** (`tbody`); число трактуется как пиксели.
+   * Пробрасывается в `TableContainerScroll`. Вместе со `stickyHeader` включает split-layout;
+   * пагинация остаётся под таблицей, вне вертикального скролла.
    */
   scrollAreaMaxHeight?: string | number;
+  /**
+   * Горизонтальный скролл при широкой сетке (`table-layout: fixed` при ресайзе колонок).
+   * `false` — колонки по ширине карточки. В split-layout горизонтальная полоса только у тела.
+   * @defaultValue true
+   */
+  horizontalScroll?: boolean;
   /**
    * Тон фона шапки (`thead`) и панели `headerToolbar`: `default` — `theme.tables.header.background`;
    * `card` — `theme.tables.shell.background` (визуально как белая карточка).
@@ -4705,7 +4864,45 @@ export interface DataGridProps<
   size?: Size;
   /** Максимум строк текста в заголовке каждой колонки данных (сортировка — через `TableSortLabel.maxLines`) */
   headerMaxLines?: number;
+  /**
+   * Статус данных таблицы: `loading`, `ready`, `error`.
+   * Устаревший `isLoading={true}` эквивалентен `dataStatus="loading"`.
+   */
+  dataStatus?: DataGridDataStatus;
+  /**
+   * Вариант отображения загрузки: `overlay` (спиннер поверх таблицы) или `skeleton` (строки-заглушки в `tbody`).
+   * При `skeleton` и непустых `rows` автоматически используется `overlay`.
+   */
+  loadingDisplay?: DataGridLoadingDisplay;
+  /**
+   * Число строк-скелетонов при `loadingDisplay="skeleton"`; иначе — `paginationModel.pageSize` или 8.
+   */
+  skeletonRowCount?: number;
+  /** Устаревший флаг: то же, что `dataStatus="loading"`. Предпочтительно `dataStatus`. */
   isLoading?: boolean;
+  /** Ошибка загрузки (текст для блока ошибки и `renderErrorState`) */
+  error?: unknown;
+  /** Заголовок встроенного блока ошибки */
+  errorStateTitle?: React.ReactNode;
+  /** Пояснение блока ошибки; по умолчанию — сообщение из `error` */
+  errorStateDescription?: React.ReactNode;
+  /** Повтор запроса: кнопка в блоке ошибки; если не задан, но есть `refetch`, используется он */
+  onRetry?: () => void;
+  /** Подпись кнопки повтора в блоке ошибки */
+  errorStateRetryLabel?: React.ReactNode;
+  /** Кастомный блок ошибки вместо встроенного (`error`, `onRetry` / `refetch`) */
+  renderErrorState?: (error: unknown, retry?: () => void) => React.ReactNode;
+  /** Кастомный оверлей при `loadingDisplay="overlay"` */
+  renderLoadingOverlay?: () => React.ReactNode;
+  /**
+   * Информационное сообщение над строками (при `dataStatus="ready"`).
+   * Для полного контроля — `renderStatusMessage`.
+   */
+  statusMessage?: React.ReactNode;
+  /** Тон полосы `statusMessage`: `info`, `warning`, `success` */
+  statusMessageVariant?: DataGridStatusMessageVariant;
+  /** Свой рендер полосы сообщения над данными */
+  renderStatusMessage?: () => React.ReactNode;
   /** Цвет фона строки; например по статусу из `row` */
   rowBackgroundColorByStatus?: (row: Row) => string | undefined;
   expandedRowIds?: ReadonlySet<DataGridRowId> | readonly DataGridRowId[];
@@ -4768,6 +4965,7 @@ export interface DataGridProps<
   /**
    * Слот «подшапки»: строка в `thead` **выше** строки с названиями колонок; одна ячейка на всю ширину (`colSpan`).
    * Передавайте ряд `IconButton`, группы действий и т.п. (настройки, экспорт, история изменений, документация).
+   * В split-layout (`scrollAreaMaxHeight`) панель фиксирована по ширине карточки и не участвует в горизонтальном скролле колонок.
    */
   headerToolbar?: ReactNode;
   /**
@@ -4817,6 +5015,23 @@ export interface DataGridProps<
   renderEmptyState?: () => React.ReactNode;
   hideFooter?: boolean;
   elevated?: boolean;
+  /**
+   * `embedded` — без бордера и фона оболочки (вложение в **Card** с `padding`; у грида `elevated={false}`).
+   * @defaultValue 'card'
+   */
+  shellVariant?: TableShellVariant;
+  /**
+   * Внутренние отступы оболочки на белом фоне (см. `TableContainer.shellInset`).
+   * Прокидывается в `TableContainer`.
+   */
+  shellInset?: boolean;
+  /** Внутренний отступ вокруг блока с сеткой (число — px) */
+  shellInsetPadding?: string | number;
+  /**
+   * Прозрачные фоны по частям таблицы или `'transparent'` для всех поверхностей.
+   * Удобно, когда таблица должна принять фон родительского контейнера.
+   */
+  surfaceBackgrounds?: TableSurfaceBackgroundsInput;
   tableAriaLabel?: string;
   style?: React.CSSProperties;
 }

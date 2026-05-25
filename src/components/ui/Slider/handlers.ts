@@ -296,6 +296,69 @@ export const pickCloserThumbIndex = (
  * @param raw - Строка из инпута
  * @returns Число или `null`, если ввод пустой / невалидный
  */
+/**
+ * Высота нижнего блока трека в `SliderInput` (центр бегунка на линии).
+ * @param thumbPx - Диаметр бегунка.
+ * @param railHeightPx - Толщина серой линии.
+ * @param activeHeightPx - Толщина активной полосы.
+ */
+/**
+ * Скругление рамки поля в px (из `theme.borderRadius` / `BorderRadiusHandler`).
+ * @param borderRadiusToken - Строка вида `8px` из темы.
+ */
+export const parseThemeBorderRadiusPx = (borderRadiusToken: string): number => {
+  const parsed = Number.parseInt(String(borderRadiusToken), 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 8;
+};
+
+/**
+ * Высота нижней «шапки» со скруглением: не меньше радиуса угла и места под бегунок.
+ * @param thumbPx - Диаметр бегунка.
+ * @param railHeightPx - Толщина серой линии.
+ * @param activeHeightPx - Толщина активной полосы.
+ * @param fieldBorderRadiusPx - Скругление нижних углов рамки `Input`.
+ */
+export const getSliderEmbeddedTrackStripHeightPx = (
+  lineHeightPx: number,
+  fieldBorderRadiusPx: number,
+): number => Math.max(lineHeightPx, fieldBorderRadiusPx);
+
+/**
+ * Высота нижнего блока трека в `SliderInput` (центр бегунка на линии у нижней кромки).
+ * @param thumbPx - Диаметр бегунка.
+ * @param railHeightPx - Толщина серой линии.
+ * @param activeHeightPx - Толщина активной полосы.
+ * @param fieldBorderRadiusPx - Скругление нижних углов рамки `Input`.
+ */
+export const getSliderEmbeddedFooterHeightPx = (
+  thumbPx: number,
+  railHeightPx: number,
+  activeHeightPx: number,
+  fieldBorderRadiusPx: number,
+): number => {
+  const lineHeight = Math.max(railHeightPx, activeHeightPx);
+  const stripHeight = getSliderEmbeddedTrackStripHeightPx(lineHeight, fieldBorderRadiusPx);
+  const thumbStackHeight = Math.ceil(lineHeight / 2 + thumbPx / 2);
+  return Math.max(stripHeight, thumbStackHeight);
+};
+
+/**
+ * `bottom` бегунка в embedded-режиме: центр на середине линии трека (линия у `bottom: 0` поля).
+ * @param trackLineHeightPx - max(rail, active).
+ */
+export const getSliderEmbeddedThumbBottomCss = (trackLineHeightPx: number): string => {
+  const halfLine = Math.max(1, trackLineHeightPx) / 2;
+  return `${halfLine}px`;
+};
+
+/**
+ * Активная полоса доходит до правого нижнего скругления.
+ * @param widthPercent - Ширина сегмента 0–100.
+ */
+export const isSliderEmbeddedTrackFilledToEnd = (widthPercent: number): boolean => {
+  return widthPercent >= 99.5;
+};
+
 export const parseManualSliderNumber = (raw: string): number | null => {
   const cleaned = raw?.replace(/\s/g, '').replace(/[^\d-]/g, '') ?? '';
   if (cleaned === '' || cleaned === '-') {

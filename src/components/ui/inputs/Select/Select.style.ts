@@ -1,6 +1,8 @@
 import styled, { css } from 'styled-components';
 import { createStyledShouldForwardProp } from '../../../../handlers/styledComponentHandlers';
 import { InputContainer } from '../shared/InputStyles';
+import type { Size } from '../../../../types/sizes';
+import { InputPaddingHandler } from '../../../../handlers/uiHandlers';
 import { buildHoverPressMotionCss } from '../../../../handlers/uiMotionStyleHandlers';
 
 /**
@@ -311,18 +313,10 @@ export const SelectTriggerButton = styled.button.withConfig({
   cursor: pointer;
   text-align: ${({ textAlign = 'left' }) => textAlign};
   padding: 0;
-  transition: transform 0.12s ease;
 
   &:disabled {
     cursor: not-allowed;
   }
-
-  ${buildHoverPressMotionCss({
-    hoverSelector: '&:hover:not(:disabled)',
-    activeSelector: '&:active:not(:disabled)',
-    hoverTransform: 'translateY(-1px)',
-    activeTransform: 'scale(0.98)',
-  })}
 `;
 
 /**
@@ -374,6 +368,50 @@ export const VisuallyHiddenSelect = styled.select`
   pointer-events: none;
 `;
 
+/**
+ * Триггер Select внутри составного Input (`embeddedInCompositeField`): без рамки, на всю высоту слота addon.
+ * @property $size - Размер для min-width триггера.
+ * @property $disabled - Недоступное поле.
+ */
+export const SelectCompositeTriggerShell = styled.div.withConfig({
+  shouldForwardProp: createStyledShouldForwardProp(['$size', '$disabled']),
+})<{ $size?: Size; $disabled?: boolean }>`
+  position: relative;
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  min-height: 0;
+  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
+  opacity: ${({ $disabled }) => ($disabled ? 0.6 : 1)};
+
+  ${({ $size, theme }) => css`
+    padding: ${InputPaddingHandler($size ?? theme.defaultInputSize)};
+  `}
+
+  & > button,
+  & > input,
+  & > div[role='combobox'] {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  ${SelectChevronSlot} {
+    flex-shrink: 0;
+    margin-left: 4px;
+  }
+`;
+
 /** Корень панельного селекта: якорь для скрытого нативного `select` с `position: absolute`. */
 export const SelectPanelRoot = styled(InputContainer)`
   position: relative;
@@ -391,4 +429,34 @@ export const SelectDropdownAnchor = styled.div<{ $fullWidth?: boolean }>`
       width: 100%;
       align-self: stretch;
     `}
+
+  &[data-embedded-composite-select='true'] {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100%;
+    height: 100%;
+    align-self: stretch;
+
+  /* Обёртка клика Dropdown — flex, чтобы шеврон не наезжал на текст */
+    & .ui-dropdown {
+      display: flex;
+      flex: 1 1 auto;
+      min-width: 0;
+      width: 100%;
+      height: 100%;
+      align-self: stretch;
+    }
+
+    & .ui-dropdown > div {
+      display: flex;
+      flex: 1 1 auto;
+      min-width: 0;
+      width: 100%;
+      height: 100%;
+      align-items: stretch;
+      box-sizing: border-box;
+    }
+  }
 `;

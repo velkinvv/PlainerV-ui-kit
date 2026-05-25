@@ -6,7 +6,7 @@
 
 Современная библиотека UI компонентов с поддержкой темизации и TypeScript.
 
-**Текущая версия:** `0.1.9` · ветка [`v_0.1.9`](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.1.9) · React 18+/19 · styled-components 6.x
+**Текущая версия:** `0.2.0` · ветка [`v_0.2.0`](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.2.0) · React 18+/19 · styled-components 6.x
 
 ## 🚀 Возможности
 
@@ -26,7 +26,7 @@
 ```bash
 npm i @velkinvv/plainerv react react-dom styled-components framer-motion
 # или конкретная версия кита:
-npm i @velkinvv/plainerv@0.1.9 react react-dom styled-components framer-motion
+npm i @velkinvv/plainerv@0.2.0 react react-dom styled-components framer-motion
 ```
 
 | Пакет | Диапазон (peer) |
@@ -167,7 +167,7 @@ function MyComponent() {
 
 ## 🎯 Компоненты
 
-**Полный перечень публичных экспортов** — в [документации](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.1.9/documentation/content/docs/ru/web/v_0.1.9/components-catalog.mdx) (на сайте: **Web → v0.1.9 → Справочник компонентов**). Ниже — краткая группировка.
+**Полный перечень публичных экспортов** — в [документации](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.2.0/documentation/content/docs/ru/web/v_0.2.0/components-catalog.mdx) (на сайте: **Web → v0.2.0 → Справочник компонентов**). Ниже — краткая группировка.
 
 ### Кнопки и ссылки
 
@@ -178,7 +178,7 @@ function MyComponent() {
 
 ### Ввод и формы
 
-- **Input**, **TextArea**, **FileInput**, **Select**, **MultiInput**, **SliderInput** — поля (`Form`-совместимые).
+- **Input**, **TextArea**, **FileInput**, **Select**, **MultiInput**, **SliderInput** — поля (`Form`-совместимые). **SliderInput**: число + встроенный слайдер в рамке **Input**; проп **`range`** — диапазон «от / до» (пара чисел, два поля и два бегунка, как у **DateInput**). Типы **`SliderInputSingleProps`**, **`SliderInputRangeProps`**. Подробнее — [документация SliderInput](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.2.0/documentation/content/docs/ru/web/v_0.2.0/components-slider-input.mdx), Storybook **UI Kit → Inputs → SliderInput**.
 - **Form**, **HiddenUsernameField**.
 - **Checkbox**, **CheckboxGroup**, **Switch**, **RadioButton**, **RadioButtonGroup**.
 - **DateInput**, **TimeInput**.
@@ -203,7 +203,8 @@ function MyComponent() {
 ### Таблицы и DataGrid
 
 - **TableContainer**, **TableContainerScroll**, **Table**, **TableHead**, **TableBody**, **TableFooter**, **TableRow**, **TableCell**, **TableCellFormatted** (форматирование ячейки без DataGrid), **TablePagination**, **TableSortLabel**, **TableSortChevronIcon** и утилиты (`getTableTotalPages`, `clampTablePageZeroBased`, …).
-- **DataGrid** — расширенная таблица; у колонок — **`format`** (`TableCellFormat`) или **`render`**; встроенные кнопки в **`headerToolbar`** (обновление, сброс фильтров, **выгрузка в Excel**); хелперы **`formatTableCellValue`**, **`formatTableCellExportCellValue`**, константы масок.
+- **Скролл:** **`scrollAreaMaxHeight`** на **`TableContainerScroll`** (или у **DataGrid**) вместе с липкой шапкой — **split-layout**: шапка и панель **`headerToolbar`** фиксированы, вертикальный и горизонтальный скролл только у строк; шапка синхронизируется по горизонтали. **`horizontalScroll`** (по умолчанию `true`) — горизонтальная полоса при широкой сетке; `false` — колонки по ширине карточки. Скругления — **`theme.tables.borderRadius`** (`--plainer-table-border-radius`).
+- **DataGrid** — расширенная таблица; по умолчанию **`stickyHeader={true}`**; у колонок — **`format`** (`TableCellFormat`) или **`render`**; встроенные кнопки в **`headerToolbar`** (обновление, сброс фильтров, **выгрузка в Excel**); хелперы **`formatTableCellValue`**, **`formatTableCellExportCellValue`**, константы масок.
 - **ColumnFilterPanel** — панель фильтра колонки.
 
 ```tsx
@@ -514,13 +515,21 @@ npm run analyze
 
 *Размеры будут обновлены после первой сборки*
 
+## 📋 Что нового в 0.2.0
+
+- **SliderInput — режим `range`:** диапазон «от / до» (`readonly [number, number]`), поля с **`rangeFromLabel`** / **`rangeToLabel`**, типы **`SliderInputSingleProps`** / **`SliderInputRangeProps`**; исправлен embedded-трек. [Документация](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.2.0/documentation/content/docs/ru/web/v_0.2.0/components-slider-input.mdx) · Storybook **SliderInput**.
+- **DataGrid — выгрузка в Excel:** проп `excelExport`, кнопка в `headerToolbar`, модалка диапазона страниц, SpreadsheetML `.xls` без exceljs; ширины колонок, подписи и цвета из `format` / `render` / `exportValueGetter`.
+- **DataGrid:** декларативное **`columns[].format`** (`TableCellFormat`), пустое состояние, встроенные **refetch** и сброс фильтров.
+- **DataGrid / Table — скролл:** split-layout при **`scrollAreaMaxHeight`** + липкая шапка; **`horizontalScroll`** по умолчанию; скругления из **`theme.tables.borderRadius`**; глобальные стили скроллбаров.
+- **Tabs** (**breaking**): варианты **pill** / **minimal** / **line** / **underline**, **filledSegmentTriggers**; объединение с бывшим **Switcher**.
+- **Modal:** иконки статуса в шапке (`danger` / `success` / `info`).
+
+Подробности — в [CHANGELOG.md](CHANGELOG.md).
+
 ## 📋 Что нового в 0.1.9
 
 - **`createStyledShouldForwardProp`:** исправлена совместимость со **styled-components 6** (ошибка `defaultValidatorFn is not a function` в Pill, Tag, Breadcrumb и др.).
 - **Сборка / публикация на Windows:** Rollup без `cross-env` (`rollup-with-node-env.mjs`); husky в `prepare` через Node; проверка dev-зависимостей перед `publish:npm` (важно при `NODE_ENV=production` — используйте `npm ci --include=dev`).
-- **DataGrid — выгрузка в Excel:** проп `excelExport`, кнопка в `headerToolbar`, модалка диапазона страниц, SpreadsheetML `.xls` без exceljs; ширины колонок, русские подписи из `format`/`render`, цвета ячеек (`exportStyle`, `exportCellStyle`, Tag/Pill).
-
-Подробности — в [CHANGELOG.md](CHANGELOG.md).
 
 ## 📋 Что нового в 0.1.8
 
@@ -576,6 +585,7 @@ MIT License - см. [LICENSE](LICENSE) для деталей.
 ## 🔗 Ссылки
 
 - [Репозиторий](https://github.com/velkinvv/PlainerV-ui-kit)
+- [Ветка v0.2.0](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.2.0)
 - [Ветка v0.1.9](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.1.9)
 - [Issues](https://github.com/velkinvv/PlainerV-ui-kit/issues)
 - [Changelog](CHANGELOG.md) · [npm](https://www.npmjs.com/package/@velkinvv/plainerv)

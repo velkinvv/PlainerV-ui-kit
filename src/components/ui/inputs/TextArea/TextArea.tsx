@@ -8,6 +8,7 @@ import { Hint, HintVariant, type HintPosition } from '../../Hint/Hint';
 import { useFormContext } from '../../../../contexts/FormContext';
 import {
   InputContainer,
+  InputControlStack,
   Label,
   HelperText,
   ErrorText,
@@ -17,10 +18,12 @@ import {
   CharacterCounter,
   RequiredIndicator,
   LoadingSpinner,
+  IconContainer,
   getInputDisplayValue,
   shouldShowInputClearButton,
   hasInputRightControls,
 } from '../shared';
+import { InputFieldShell } from '../Input/InputFieldShell';
 import {
   StyledTextArea,
   TextAreaWrapper,
@@ -29,6 +32,12 @@ import {
 } from './TextArea.style';
 import { getTextAreaCurrentLength, getTextAreaStatus, shouldShowTextAreaCounter } from './handlers';
 
+/**
+ * Многострочное поле: те же слоты рамки, что у **Input** (`InputFieldShell`), через оболочку **TextAreaWrapper**.
+ *
+ * @param props - Пропсы **TextAreaProps** (лейблы, `prefix` / `suffix`, `leftIcon` / `rightIcon`, `maxLength`, …).
+ * @param ref - Ссылка на нативный **HTMLTextAreaElement**.
+ */
 export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
   (
     {
@@ -62,6 +71,10 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       clearIconProps,
       className,
       id,
+      leftIcon,
+      rightIcon,
+      prefix,
+      suffix,
       resize = 'vertical',
       rows = 4,
       ...props
@@ -137,10 +150,90 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       disabled,
       readOnly,
     });
-    const hasRightControls = hasInputRightControls({
-      isLoading,
-      showClearButton,
-    });
+    const hasRightControls =
+      hasInputRightControls({
+        isLoading,
+        showClearButton,
+      }) || Boolean(rightIcon);
+
+    const textAreaShellProps = {
+      size: Size.LG,
+      error,
+      success,
+      status: currentStatus,
+      fullWidth,
+      focused,
+      readOnly,
+      className,
+      prefix,
+      suffix,
+      disabled,
+      borderShell: TextAreaWrapper,
+      compositeMiddleAlign: 'flex-start' as const,
+    };
+
+    const textAreaField = (
+      <InputFieldShell {...textAreaShellProps}>
+        {leftIcon ? (
+          <IconContainer $position="left" size={Size.LG}>
+            {leftIcon}
+          </IconContainer>
+        ) : null}
+        <StyledTextArea
+          ref={ref}
+          id={textAreaId}
+          value={displayValue}
+          onChange={handleChange}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          placeholder={placeholder}
+          disabled={disabled}
+          readOnly={readOnly}
+          required={required}
+          textAlign={textAlign}
+          onCopy={handleCopy}
+          onPaste={handlePaste}
+          form={formContext?.formId}
+          resize={resize}
+          rows={rows}
+          $hasRightControls={hasRightControls}
+          {...props}
+        />
+        {isLoading ? <LoadingSpinner size={Size.LG} /> : null}
+        {showClearButton ? (
+          <TextAreaClearButton onClick={handleClear} type="button">
+            <Icon
+              name="IconExClose"
+              size={getClearIconSizeForInputField(Size.LG)}
+              {...clearIconProps}
+            />
+          </TextAreaClearButton>
+        ) : null}
+        {rightIcon ? (
+          <IconContainer $position="right" size={Size.LG}>
+            {rightIcon}
+          </IconContainer>
+        ) : null}
+      </InputFieldShell>
+    );
+
+    const textAreaWithOptionalTooltip = tooltip ? (
+      tooltipType === 'tooltip' ? (
+        <Tooltip content={tooltip} position={tooltipPosition as TooltipPosition}>
+          {textAreaField}
+        </Tooltip>
+      ) : (
+        <Hint
+          content={tooltip}
+          placement={tooltipPosition as HintPosition}
+          variant={HintVariant.DEFAULT}
+        >
+          {textAreaField}
+        </Hint>
+      )
+    ) : (
+      textAreaField
+    );
     const maxLength = useMemo(() => props.maxLength || 0, [props.maxLength]);
     const currentLength = useMemo(
       () => getTextAreaCurrentLength(value, internalValue),
@@ -161,177 +254,45 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     if (skeleton) {
       return (
         <InputContainer fullWidth={fullWidth} aria-busy="true">
-          {label ? (
-            <Label as="span">
-              {label}
-              {required ? <RequiredIndicator>*</RequiredIndicator> : null}
-            </Label>
-          ) : null}
-          {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
-          <TextAreaSkeleton fullWidth={fullWidth} $rows={rows} role="presentation" />
+          <InputControlStack fullWidth={fullWidth}>
+            {label ? (
+              <Label as="span">
+                {label}
+                {required ? <RequiredIndicator>*</RequiredIndicator> : null}
+              </Label>
+            ) : null}
+            {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
+            <TextAreaSkeleton fullWidth={fullWidth} $rows={rows} role="presentation" />
+          </InputControlStack>
         </InputContainer>
       );
     }
 
     return (
       <InputContainer fullWidth={fullWidth}>
-        {label && (
-          <Label>
-            {label}
-            {required && <RequiredIndicator>*</RequiredIndicator>}
-          </Label>
-        )}
+        <InputControlStack fullWidth={fullWidth}>
+          {label && (
+            <Label>
+              {label}
+              {required && <RequiredIndicator>*</RequiredIndicator>}
+            </Label>
+          )}
 
-        {additionalLabel && <AdditionalLabel>{additionalLabel}</AdditionalLabel>}
+          {additionalLabel && <AdditionalLabel>{additionalLabel}</AdditionalLabel>}
 
-        {tooltip ? (
-          tooltipType === 'tooltip' ? (
-            <Tooltip content={tooltip} position={tooltipPosition as TooltipPosition}>
-              <TextAreaWrapper
-                size={Size.LG}
-                error={error}
-                success={success}
-                status={currentStatus}
-                fullWidth={fullWidth}
-                focused={focused}
-                readOnly={readOnly}
-                className={className}
-              >
-                <StyledTextArea
-                  ref={ref}
-                  id={textAreaId}
-                  value={displayValue}
-                  onChange={handleChange}
-                  onFocus={handleFocus}
-                  onBlur={handleBlur}
-                  placeholder={placeholder}
-                  disabled={disabled}
-                  readOnly={readOnly}
-                  required={required}
-                  textAlign={textAlign}
-                  onCopy={handleCopy}
-                  onPaste={handlePaste}
-                  form={formContext?.formId}
-                  resize={resize}
-                  rows={rows}
-                  $hasRightControls={hasRightControls}
-                  {...props}
-                />
-                {isLoading && <LoadingSpinner size={Size.LG} />}
-                {showClearButton && (
-                  <TextAreaClearButton onClick={handleClear} type="button">
-                    <Icon
-                      name="IconExClose"
-                      size={getClearIconSizeForInputField(Size.SM)}
-                      {...clearIconProps}
-                    />
-                  </TextAreaClearButton>
-                )}
-              </TextAreaWrapper>
-            </Tooltip>
-          ) : (
-            <Hint
-              content={tooltip}
-              placement={tooltipPosition as HintPosition}
-              variant={HintVariant.DEFAULT}
-            >
-              <TextAreaWrapper
-                size={Size.LG}
-                error={error}
-                success={success}
-                status={currentStatus}
-                fullWidth={fullWidth}
-                focused={focused}
-                readOnly={readOnly}
-                className={className}
-              >
-                <StyledTextArea
-                  ref={ref}
-                  id={textAreaId}
-                  value={displayValue}
-                  onChange={handleChange}
-                  onFocus={handleFocus}
-                  onBlur={handleBlur}
-                  placeholder={placeholder}
-                  disabled={disabled}
-                  readOnly={readOnly}
-                  required={required}
-                  textAlign={textAlign}
-                  onCopy={handleCopy}
-                  onPaste={handlePaste}
-                  form={formContext?.formId}
-                  resize={resize}
-                  rows={rows}
-                  $hasRightControls={hasRightControls}
-                  {...props}
-                />
-                {isLoading && <LoadingSpinner size={Size.LG} />}
-                {showClearButton ? (
-                  <TextAreaClearButton onClick={handleClear} type="button">
-                    <Icon
-                      name="IconExClose"
-                      size={getClearIconSizeForInputField(Size.LG)}
-                      {...clearIconProps}
-                    />
-                  </TextAreaClearButton>
-                ) : null}
-              </TextAreaWrapper>
-            </Hint>
-          )
-        ) : (
-          <TextAreaWrapper
-            size={Size.LG}
-            error={error}
-            success={success}
-            status={currentStatus}
-            fullWidth={fullWidth}
-            focused={focused}
-            readOnly={readOnly}
-            className={className}
-          >
-            <StyledTextArea
-              ref={ref}
-              id={textAreaId}
-              value={displayValue}
-              onChange={handleChange}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-              placeholder={placeholder}
-              disabled={disabled}
-              readOnly={readOnly}
-              required={required}
-              textAlign={textAlign}
-              onCopy={handleCopy}
-              onPaste={handlePaste}
-              form={formContext?.formId}
-              resize={resize}
-              rows={rows}
-              $hasRightControls={hasRightControls}
-              {...props}
-            />
-            {isLoading && <LoadingSpinner size={Size.LG} />}
-            {showClearButton && (
-              <TextAreaClearButton onClick={handleClear} type="button">
-                <Icon
-                  name="IconExClose"
-                  size={getClearIconSizeForInputField(Size.SM)}
-                  {...clearIconProps}
-                />
-              </TextAreaClearButton>
-            )}
-          </TextAreaWrapper>
-        )}
+          {textAreaWithOptionalTooltip}
 
-        {error && <ErrorText>{error}</ErrorText>}
-        {success && <SuccessText>Успешно</SuccessText>}
-        {helperText && !error && !success && <HelperText>{helperText}</HelperText>}
-        {extraText && <ExtraText>{extraText}</ExtraText>}
+          {error && <ErrorText>{error}</ErrorText>}
+          {success && <SuccessText>Успешно</SuccessText>}
+          {helperText && !error && !success && <HelperText>{helperText}</HelperText>}
+          {extraText && <ExtraText>{extraText}</ExtraText>}
 
-        {showCounter && (
-          <CharacterCounter $isOverLimit={currentLength > maxLength}>
-            {currentLength}/{maxLength}
-          </CharacterCounter>
-        )}
+          {showCounter && (
+            <CharacterCounter $isOverLimit={currentLength > maxLength}>
+              {currentLength}/{maxLength}
+            </CharacterCounter>
+          )}
+        </InputControlStack>
       </InputContainer>
     );
   },

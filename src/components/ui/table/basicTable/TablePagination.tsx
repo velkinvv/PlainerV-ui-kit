@@ -6,6 +6,8 @@ import { Input } from '../../inputs/Input/Input';
 import { Select } from '../../inputs/Select/Select';
 import { Pagination } from '../../Pagination/Pagination';
 import { clampTablePageZeroBased, getTableTotalPages, parseTablePageJumpInput } from './handlers';
+import { useTableShellInset } from './TableShellInsetContext';
+import { useTableContainerAppearance } from './TableContainerAppearanceContext';
 import {
   TablePaginationRoot,
   TablePaginationRow,
@@ -57,6 +59,8 @@ export const TablePagination: React.FC<TablePaginationProps> = ({
   style,
   embeddedInTableCard = false,
 }) => {
+  const { shellInset } = useTableShellInset();
+  const { shellVariant, surfaceBackgrounds: resolvedSurfaces } = useTableContainerAppearance();
   const totalPages = useMemo(() => getTableTotalPages(count, rowsPerPage), [count, rowsPerPage]);
   const safePageZero = useMemo(() => clampTablePageZeroBased(page, totalPages), [page, totalPages]);
   const pageOneBased = safePageZero + 1;
@@ -143,6 +147,9 @@ export const TablePagination: React.FC<TablePaginationProps> = ({
   return (
     <TablePaginationRoot
       $embeddedInTableCard={embeddedInTableCard}
+      $shellInset={shellInset}
+      $shellVariant={shellVariant}
+      $surfaces={resolvedSurfaces}
       className={clsx(className)}
       style={style}
     >

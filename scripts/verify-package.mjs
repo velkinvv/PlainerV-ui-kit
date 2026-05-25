@@ -168,6 +168,40 @@ async function verifyEsmClientDirective() {
   }
 }
 
+/**
+ * В tarball npm не должно быть .map: иначе Vite ищет ../src из index.esm.js.map и ругается.
+ */
+async function verifyNoSourceMapFilesInDist() {
+  const sourceMapFilePaths = [];
+
+  async function walk(currentDirectoryPath) {
+    const directoryEntries = await readdir(currentDirectoryPath, { withFileTypes: true });
+
+    for (const directoryEntry of directoryEntries) {
+      const targetPath = path.join(currentDirectoryPath, directoryEntry.name);
+
+      if (directoryEntry.isDirectory()) {
+        await walk(targetPath);
+        continue;
+      }
+
+      if (directoryEntry.name.endsWith('.map')) {
+        sourceMapFilePaths.push(path.relative(distDirectoryPath, targetPath));
+      }
+    }
+  }
+
+  await walk(distDirectoryPath);
+
+  if (sourceMapFilePaths.length === 0) {
+    return;
+  }
+
+  throw new Error(
+    `В dist не должно быть sourcemap для npm: ${sourceMapFilePaths.join(', ')}. Запустите production-сборку или strip-dist-sourcemaps.`,
+  );
+}
+
 async function verifyPublishReadme() {
   const readmePath = path.join(packageRootDirectoryPath, 'README.md');
   const hasReadmeFile = await fileExists(readmePath);
@@ -212,6 +246,7 @@ async function runPackageVerification() {
   await verifyViteDistNodeEsmImports();
   await verifyNoMissingRelativeImports();
   await verifyEsmClientDirective();
+  await verifyNoSourceMapFilesInDist();
   console.log('✅ Проверка package-артефактов пройдена');
 }
 

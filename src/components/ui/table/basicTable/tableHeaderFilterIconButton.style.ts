@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import { createStyledShouldForwardProp } from '@/handlers/styledComponentHandlers';
-import { tableBorderRadiusFromTheme } from './tableThemeRadiusHandlers';
+import { tableBorderRadiusFromCssVar } from './tableThemeRadiusHandlers';
 
 /**
  * Кнопка-иконка фильтра в заголовке таблицы / грида.
@@ -19,7 +19,7 @@ export const TableHeaderFilterIconButton = styled.button.withConfig({
   min-width: 24px;
   min-height: 24px;
   border: 0;
-  border-radius: ${({ theme }) => tableBorderRadiusFromTheme(theme)};
+  border-radius: ${({ theme }) => tableBorderRadiusFromCssVar(theme)};
   box-sizing: border-box;
   background: transparent;
   cursor: pointer;

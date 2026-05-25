@@ -1,15 +1,27 @@
-﻿import React, { forwardRef, useMemo } from 'react';
+﻿import React, { forwardRef, useCallback, useMemo, useRef } from 'react';
 import type { TableProps } from '@/types/ui';
 import { StyledTable } from './Table.style';
+import { TableBodyScrollSplitLayout } from './TableBodyScrollSplitLayout';
+import { useTableBodyScroll } from './TableBodyScrollContext';
+import { useTableHorizontalScroll } from './TableHorizontalScrollContext';
 import { TableRootProvider } from './TableContext';
+import { partitionTableChildren } from './tablePartitionChildrenHandlers';
+import {
+  shouldUseTableBodyColumnWidthSync,
+  shouldUseTableBodyOnlyVerticalScroll,
+} from './tableBodyScrollHandlers';
+import { useTableBodyColumnWidthSync } from './tableBodyColumnWidthSyncHooks';
+import { useTableBodyScrollbarGutterSync } from './tableBodyScrollbarGutterHooks';
+import { useResolvedTableSurfaceBackgrounds } from './tableSurfaceBackgroundHooks';
 
 /**
- * ╨Ъ╨╛╤А╨╜╨╡╨▓╨░╤П `<table>` ╤Б ╨║╨╛╨╜╤В╨╡╨║╤Б╤В╨╛╨╝ ╤А╨░╨╖╨╝╨╡╤А╨░ ╨╕ ╨╖╨╡╨▒╤А╤Л ╨┤╨╗╤П ╤Б╤В╤А╨╛╨║.
- * @param props.stickyHeader - ╨д╨╕╨║╤Б╨╕╤А╨╛╨▓╨░╨╜╨╜╨░╤П ╤И╨░╨┐╨║╨░ ╨┐╤А╨╕ ╨▓╨╡╤А╤В╨╕╨║╨░╨╗╤М╨╜╨╛╨╝ ╤Б╨║╤А╨╛╨╗╨╗╨╡ ╤А╨╛╨┤╨╕╤В╨╡╨╗╤П
- * @param props.size - ╨Я╨╗╨╛╤В╨╜╨╛╤Б╤В╤М ╤П╤З╨╡╨╡╨║ (`sm` | `md`)
- * @param props.striped - ╨Ч╨╡╨▒╤А╨░ ╨┐╨╛ ╤Б╤В╤А╨╛╨║╨░╨╝ ╨▓ `tbody`
- * @param props.className - CSS-╨║╨╗╨░╤Б╤Б
- * @param props.children - ╨б╨╡╨║╤Ж╨╕╨╕ `TableHead`, `TableBody`, тАж
+ * Корневая `<table>` с контекстом размера и зебры для строк.
+ * @param props.stickyHeader — фиксированная шапка при `scrollAreaMaxHeight` (split-layout)
+ * @param props.size — плотность ячеек (`sm` | `md`)
+ * @param props.striped — зебра по строкам в `tbody`
+ * @param props.surfaceBackgrounds — прозрачные фоны (переопределяет `TableContainer`)
+ * @param props.className — CSS-класс
+ * @param props.children — секции `TableHead`, `TableBody`, …
  */
 export const Table = forwardRef<HTMLTableElement, TableProps>(
   (
@@ -18,6 +30,7 @@ export const Table = forwardRef<HTMLTableElement, TableProps>(
       size = 'md',
       striped = false,
       columnDividers = true,
+      surfaceBackgrounds,
       className,
       children,
       style,
@@ -25,21 +38,87 @@ export const Table = forwardRef<HTMLTableElement, TableProps>(
     },
     ref,
   ) => {
+    const resolvedSurfaces = useResolvedTableSurfaceBackgrounds(surfaceBackgrounds);
+    const tableBodyScroll = useTableBodyScroll();
+    const { horizontalScroll } = useTableHorizontalScroll();
+
+    const splitScrollEnabled =
+      shouldUseTableBodyOnlyVerticalScroll(stickyHeader, tableBodyScroll?.bodyScrollMaxHeight) &&
+      tableBodyScroll?.bodyScrollHost === 'split-tables';
+
+    const bodyScrollMaxHeight = splitScrollEnabled
+      ? tableBodyScroll?.bodyScrollMaxHeight
+      : undefined;
+
+    const partitionedChildren = useMemo(
+      () => (splitScrollEnabled ? partitionTableChildren(children) : null),
+      [children, splitScrollEnabled],
+    );
+
+    const tableElementRef = useRef<HTMLTableElement | null>(null);
+    const legacyBodyScrollOnTbody = bodyScrollMaxHeight != null && !splitScrollEnabled;
+
+    useTableBodyScrollbarGutterSync(tableElementRef, legacyBodyScrollOnTbody);
+    useTableBodyColumnWidthSync(
+      tableElementRef,
+      shouldUseTableBodyColumnWidthSync(legacyBodyScrollOnTbody),
+      horizontalScroll,
+    );
+
+    const assignTableRef = useCallback(
+      (tableElement: HTMLTableElement | null) => {
+        tableElementRef.current = tableElement;
+        if (typeof ref === 'function') {
+          ref(tableElement);
+          return;
+        }
+        if (ref) {
+          ref.current = tableElement;
+        }
+      },
+      [ref],
+    );
+
     const ctx = useMemo(
       () => ({ size, striped, stickyHeader, columnDividers }),
       [size, striped, stickyHeader, columnDividers],
     );
 
+    const styledTableProps = {
+      className,
+      style,
+      $stickyHeader: stickyHeader,
+      $striped: striped,
+      $surfaces: resolvedSurfaces,
+      /** Только для legacy tbody-scroll; в split-layout не передаём — иначе второй вертикальный скролл на `tbody`. */
+      $bodyScrollMaxHeight: splitScrollEnabled ? undefined : bodyScrollMaxHeight,
+      $horizontalScroll: horizontalScroll,
+      ...rest,
+    };
+
+    if (
+      splitScrollEnabled &&
+      partitionedChildren != null &&
+      bodyScrollMaxHeight != null &&
+      bodyScrollMaxHeight !== ''
+    ) {
+      return (
+        <TableRootProvider value={ctx}>
+          <TableBodyScrollSplitLayout
+            ref={ref}
+            partitionedChildren={partitionedChildren}
+            bodyScrollMaxHeight={bodyScrollMaxHeight}
+            horizontalScroll={horizontalScroll}
+            tableProps={styledTableProps}
+            resolvedSurfaces={resolvedSurfaces}
+          />
+        </TableRootProvider>
+      );
+    }
+
     return (
       <TableRootProvider value={ctx}>
-        <StyledTable
-          ref={ref}
-          className={className}
-          style={style}
-          $stickyHeader={stickyHeader}
-          $striped={striped}
-          {...rest}
-        >
+        <StyledTable ref={assignTableRef} {...styledTableProps}>
           {children}
         </StyledTable>
       </TableRootProvider>

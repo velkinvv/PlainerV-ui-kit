@@ -27,6 +27,7 @@ import { Icon } from '../../Icon/Icon';
 import { Tooltip } from '../../Tooltip/Tooltip';
 import { Hint, HintPosition, HintVariant } from '../../Hint/Hint';
 import { SkeletonEffect } from '../shared';
+import { InputFieldShell } from '../Input/InputFieldShell';
 import {
   ActionButton,
   CharacterCounter,
@@ -36,7 +37,6 @@ import {
   Footer,
   IconButton,
   IconWrapper,
-  InputWrapper,
   LeftLabel,
   LoadingSpinner,
   RangeContainer,
@@ -70,8 +70,10 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
       label,
       placeholder,
       disabled = false,
+      readOnly = false,
       size = Size.SM,
       error,
+      success,
       className,
       range = false,
       minTime,
@@ -106,6 +108,8 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
       textAlign = 'left',
       segmented = true, // По умолчанию используем сегментированный ввод
       format = 'HH:mm', // Формат отображения времени по умолчанию
+      prefix,
+      suffix,
       ...props
     },
     ref,
@@ -1215,12 +1219,17 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
         {skeleton ? (
           <SkeletonEffect size={size} fullWidth />
         ) : (
-          <InputWrapper
+          <InputFieldShell
             focused={isFocused}
-            disabled={disabled}
-            error={!!error}
+            error={error}
+            success={success}
             size={size}
             status={status}
+            fullWidth
+            readOnly={readOnly}
+            prefix={prefix}
+            suffix={suffix}
+            disabled={disabled}
           >
             {showIcon && (
               <IconWrapper size={size}>
@@ -1294,6 +1303,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                     : undefined
                 }
                 {...props}
+                readOnly={readOnly}
               />
             )}
             {displayClearIcon && inputValue && !disabled && (
@@ -1307,7 +1317,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                 </IconButton>
               </IconWrapper>
             )}
-          </InputWrapper>
+          </InputFieldShell>
         )}
         {error && <ErrorMessage size={size}>{error}</ErrorMessage>}
         {extraText && <ExtraText size={size}>{extraText}</ExtraText>}

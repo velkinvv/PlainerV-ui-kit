@@ -1,12 +1,35 @@
 ﻿import type { Meta, StoryObj } from '@storybook/react';
 import { Input } from './Input';
+import { Select } from '../Select/Select';
 import { Icon } from '../../Icon/Icon';
 import { Form, HiddenUsernameField } from '../../Form';
 import React from 'react';
 import { Size, IconSize } from '../../../../types/sizes';
-import { InputVariant } from '../../../../types/ui';
+import { InputVariant, type SelectOption } from '../../../../types/ui';
 import { DOC_INPUT } from '@/components/ui/storyDocs/uiKitDocs';
 import { inputStoriesStyles } from './Input.stories.styles';
+import { inputArgsStory, inputRenderStory } from './inputStoriesDocs';
+
+const currencySelectOptions: SelectOption[] = [
+  { value: 'rub', label: '₽ RUB' },
+  { value: 'usd', label: '$ USD' },
+  { value: 'eur', label: '€ EUR' },
+];
+
+const unitSelectOptions: SelectOption[] = [
+  { value: 'kg', label: 'кг' },
+  { value: 'g', label: 'г' },
+  { value: 't', label: 'т' },
+];
+
+const citySearchSelectOptions: SelectOption[] = [
+  { value: 'moscow', label: 'Москва' },
+  { value: 'spb', label: 'Санкт-Петербург' },
+  { value: 'ekb', label: 'Екатеринбург' },
+  { value: 'nsk', label: 'Новосибирск' },
+  { value: 'kzn', label: 'Казань' },
+  { value: 'nn', label: 'Нижний Новгород' },
+];
 
 const meta: Meta<typeof Input> = {
   title: 'UI Kit/Inputs/Input',
@@ -20,6 +43,7 @@ const meta: Meta<typeof Input> = {
       description: {
         component: DOC_INPUT,
       },
+      wrapUsageInForm: true,
     },
   },
   tags: ['autodocs'],
@@ -151,41 +175,64 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 // Основные варианты
+const defaultArgs = { placeholder: 'Введите текст...' };
+
 export const Default: Story = {
-  args: {
-    placeholder: 'Введите текст...',
-  },
+  ...inputArgsStory('Базовое поле с плейсхолдером.', defaultArgs),
+  args: defaultArgs,
+};
+
+const withLabelArgs = {
+  label: 'Email',
+  placeholder: 'Введите email...',
 };
 
 export const WithLabel: Story = {
-  args: {
-    label: 'Email',
-    placeholder: 'Введите email...',
-  },
+  ...inputArgsStory('Поле с подписью (`label`).', withLabelArgs),
+  args: withLabelArgs,
+};
+
+const withHelperTextArgs = {
+  label: 'Пароль',
+  type: 'password',
+  placeholder: 'Введите пароль...',
+  helperText: 'Минимум 8 символов',
 };
 
 export const WithHelperText: Story = {
-  render: () => (
-    <Form formId="helper-text-form">
-      <Input
-        label="Пароль"
-        type="password"
-        placeholder="Введите пароль..."
-        helperText="Минимум 8 символов"
-      />
-    </Form>
+  ...inputArgsStory(
+    'Поле с вспомогательным текстом под вводом (`helperText`).',
+    withHelperTextArgs,
   ),
+  args: withHelperTextArgs,
+};
+
+const withErrorArgs = {
+  label: 'Email',
+  placeholder: 'Введите email...',
+  error: 'Неверный формат email',
 };
 
 export const WithError: Story = {
-  args: {
-    label: 'Email',
-    placeholder: 'Введите email...',
-    error: 'Неверный формат email',
-  },
+  ...inputArgsStory('Состояние ошибки: `error` — красная обводка и текст под полем.', withErrorArgs),
+  args: withErrorArgs,
 };
 
+const withSuccessUsageCode = `const [email, setEmail] = React.useState('user@example.com');
+
+<Input
+  label="Email"
+  placeholder="Введите email..."
+  value={email}
+  onChange={(event) => setEmail(event.target.value)}
+  success
+/>`;
+
 export const WithSuccess: Story = {
+  ...inputRenderStory(
+    'Успешное состояние: контролируемый email и `success` (зелёная обводка и текст «Успешно» под полем).',
+    withSuccessUsageCode,
+  ),
   render: () => {
     const [email, setEmail] = React.useState('user@example.com');
     return (
@@ -193,7 +240,7 @@ export const WithSuccess: Story = {
         label="Email"
         placeholder="Введите email..."
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        onChange={(event) => setEmail(event.target.value)}
         success={true}
       />
     );
@@ -201,139 +248,195 @@ export const WithSuccess: Story = {
 };
 
 // Варианты
+const clearUsageCode = `const [query, setQuery] = React.useState('Поисковый запрос');
+
+<Input
+  label="Поиск"
+  variant="clear"
+  placeholder="Поиск..."
+  displayClearIcon
+  value={query}
+  onChange={(event) => setQuery(event.target.value)}
+  onClearIconClick={() => setQuery('')}
+/>`;
+
 export const Clear: Story = {
+  ...inputRenderStory(
+    'Вариант `clear`: акцент на очистку (`displayClearIcon`, `onClearIconClick`).',
+    clearUsageCode,
+  ),
   render: () => {
-    const [q, setQ] = React.useState('Поисковый запрос');
+    const [query, setQuery] = React.useState('Поисковый запрос');
     return (
       <Input
         label="Поиск"
         variant={InputVariant.CLEAR}
         placeholder="Поиск..."
         displayClearIcon
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-        onClearIconClick={() => setQ('')}
+        value={query}
+        onChange={(event) => setQuery(event.target.value)}
+        onClearIconClick={() => setQuery('')}
       />
     );
   },
 };
 
 // Размеры
+const smallArgs = {
+  label: 'Small Input',
+  size: Size.SM,
+  placeholder: 'Small...',
+};
+
 export const Small: Story = {
-  args: {
-    label: 'Small Input',
-    size: Size.SM,
-    placeholder: 'Small...',
-  },
+  ...inputArgsStory('Размер `SM`.', smallArgs),
+  args: smallArgs,
+};
+
+const mediumArgs = {
+  label: 'Medium Input',
+  size: Size.MD,
+  placeholder: 'Medium...',
 };
 
 export const Medium: Story = {
-  args: {
-    label: 'Medium Input',
-    size: Size.MD,
-    placeholder: 'Medium...',
-  },
+  ...inputArgsStory('Размер `MD` (по умолчанию).', mediumArgs),
+  args: mediumArgs,
+};
+
+const largeArgs = {
+  label: 'Large Input',
+  size: Size.LG,
+  placeholder: 'Large...',
 };
 
 export const Large: Story = {
-  args: {
-    label: 'Large Input',
-    size: Size.LG,
-    placeholder: 'Large...',
-  },
+  ...inputArgsStory('Размер `LG`.', largeArgs),
+  args: largeArgs,
+};
+
+const extraLargeArgs = {
+  label: 'Extra Large Input',
+  size: Size.XL,
+  placeholder: 'Extra Large...',
 };
 
 export const ExtraLarge: Story = {
-  args: {
-    label: 'Extra Large Input',
-    size: Size.XL,
-    placeholder: 'Extra Large...',
-  },
+  ...inputArgsStory('Размер `XL`.', extraLargeArgs),
+  args: extraLargeArgs,
 };
 
 // С иконками
+const withLeftIconArgs = {
+  label: 'Email',
+  placeholder: 'Введите email...',
+  leftIcon: <Icon name="IconExMail" size={IconSize.MD} />,
+};
+
 export const WithLeftIcon: Story = {
-  args: {
-    label: 'Email',
-    placeholder: 'Введите email...',
-    leftIcon: <Icon name="IconExMail" size={IconSize.MD} />,
-  },
+  ...inputArgsStory('Иконка слева (`leftIcon`).', withLeftIconArgs),
+  args: withLeftIconArgs,
+};
+
+const withRightIconArgs = {
+  label: 'Поиск',
+  placeholder: 'Поиск...',
+  rightIcon: <Icon name="IconExSearch" size={IconSize.MD} />,
 };
 
 export const WithRightIcon: Story = {
-  args: {
-    label: 'Поиск',
-    placeholder: 'Поиск...',
-    rightIcon: <Icon name="IconExSearch" size={IconSize.MD} />,
-  },
+  ...inputArgsStory('Иконка справа (`rightIcon`).', withRightIconArgs),
+  args: withRightIconArgs,
+};
+
+const withBothIconsArgs = {
+  label: 'Сумма',
+  placeholder: '0.00',
+  leftIcon: <Icon name="IconPlainerDollar" size={IconSize.MD} />,
+  rightIcon: <Icon name="IconPlainerPercent" size={IconSize.MD} />,
 };
 
 export const WithBothIcons: Story = {
-  args: {
-    label: 'Сумма',
-    placeholder: '0.00',
-    leftIcon: <Icon name="IconPlainerDollar" size={IconSize.MD} />,
-    rightIcon: <Icon name="IconPlainerPercent" size={IconSize.MD} />,
-  },
+  ...inputArgsStory('Иконки слева и справа.', withBothIconsArgs),
+  args: withBothIconsArgs,
 };
 
 // Состояния
+const disabledArgs = {
+  label: 'Disabled Input',
+  placeholder: 'Недоступно...',
+  disabled: true,
+};
+
 export const Disabled: Story = {
-  args: {
-    label: 'Disabled Input',
-    placeholder: 'Недоступно...',
-    disabled: true,
-  },
+  ...inputArgsStory('Отключённое поле (`disabled`).', disabledArgs),
+  args: disabledArgs,
+};
+
+const requiredArgs = {
+  label: 'Обязательное поле',
+  placeholder: 'Введите значение...',
+  required: true,
 };
 
 export const Required: Story = {
-  args: {
-    label: 'Обязательное поле',
-    placeholder: 'Введите значение...',
-    required: true,
-  },
+  ...inputArgsStory('Обязательное поле (`required`).', requiredArgs),
+  args: requiredArgs,
+};
+
+const fullWidthArgs = {
+  label: 'Full Width Input',
+  placeholder: 'Полная ширина...',
+  fullWidth: true,
 };
 
 export const FullWidth: Story = {
-  args: {
-    label: 'Full Width Input',
-    placeholder: 'Полная ширина...',
-    fullWidth: true,
-  },
+  ...inputArgsStory('Полная ширина (`fullWidth`).', fullWidthArgs),
+  args: fullWidthArgs,
   parameters: {
     layout: 'padded',
   },
 };
 
 // Выравнивание текста
+const textAlignLeftArgs = {
+  label: 'Выравнивание по левому краю',
+  placeholder: 'Текст слева...',
+  textAlign: 'left' as const,
+  defaultValue: 'Текст выровнен по левому краю',
+};
+
 export const TextAlignLeft: Story = {
-  args: {
-    label: 'Выравнивание по левому краю',
-    placeholder: 'Текст слева...',
-    textAlign: 'left',
-    defaultValue: 'Текст выровнен по левому краю',
-  },
+  ...inputArgsStory('Выравнивание текста по левому краю (`textAlign="left"`).', textAlignLeftArgs),
+  args: textAlignLeftArgs,
+};
+
+const textAlignCenterArgs = {
+  label: 'Выравнивание по центру',
+  placeholder: 'Текст по центру...',
+  textAlign: 'center' as const,
+  defaultValue: 'Текст по центру',
 };
 
 export const TextAlignCenter: Story = {
-  args: {
-    label: 'Выравнивание по центру',
-    placeholder: 'Текст по центру...',
-    textAlign: 'center',
-    defaultValue: 'Текст по центру',
-  },
+  ...inputArgsStory('Выравнивание по центру (`textAlign="center"`).', textAlignCenterArgs),
+  args: textAlignCenterArgs,
+};
+
+const textAlignRightArgs = {
+  label: 'Выравнивание по правому краю',
+  placeholder: 'Текст справа...',
+  textAlign: 'right' as const,
+  defaultValue: 'Текст справа',
 };
 
 export const TextAlignRight: Story = {
-  args: {
-    label: 'Выравнивание по правому краю',
-    placeholder: 'Текст справа...',
-    textAlign: 'right',
-    defaultValue: 'Текст справа',
-  },
+  ...inputArgsStory('Выравнивание по правому краю (`textAlign="right"`).', textAlignRightArgs),
+  args: textAlignRightArgs,
 };
 
 export const TextAlignComparison: Story = {
+  ...inputRenderStory('Сравнение `textAlign`: left, center, right.'),
   render: () => (
     <div style={inputStoriesStyles.columnGap16Width400}>
       <Input
@@ -365,6 +468,7 @@ export const TextAlignComparison: Story = {
 
 // Комплексные примеры
 export const AllVariants: Story = {
+  ...inputRenderStory('Набор типовых состояний: helper, error, success, clear, disabled.'),
   render: () => {
     const [okEmail, setOkEmail] = React.useState('user@example.com');
     const [search, setSearch] = React.useState('Поисковый запрос');
@@ -407,6 +511,7 @@ export const AllVariants: Story = {
 };
 
 export const FormExample: Story = {
+  ...inputRenderStory('Форма регистрации: несколько полей, проверка совпадения паролей, `HiddenUsernameField`.'),
   render: () => {
     const [name, setName] = React.useState('');
     const [email, setEmail] = React.useState('');
@@ -483,6 +588,7 @@ export const FormExample: Story = {
 };
 
 export const WithClearIcon: Story = {
+  ...inputRenderStory('Кнопка очистки: `displayClearIcon` + `onClearIconClick` сбрасывают значение у родителя.'),
   render: () => {
     const [text, setText] = React.useState('Пример текста');
     return (
@@ -496,17 +602,10 @@ export const WithClearIcon: Story = {
       />
     );
   },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Кнопка очистки: `displayClearIcon` + `onClearIconClick` сбрасывают значение у родителя.',
-      },
-    },
-  },
 };
 
 export const LoadingDemo: Story = {
+  ...inputRenderStory('Демонстрация состояния загрузки в Input. При `isLoading` отображается спиннер вместо `rightIcon`.'),
   render: () => {
     const [value1, setValue1] = React.useState('');
     const [value2, setValue2] = React.useState('');
@@ -564,16 +663,11 @@ export const LoadingDemo: Story = {
   },
   parameters: {
     layout: 'padded',
-    docs: {
-      description: {
-        story:
-          'Демонстрация состояния загрузки в Input. При isLoading=true отображается спиннер вместо rightIcon.',
-      },
-    },
   },
 };
 
 export const SkeletonDemo: Story = {
+  ...inputRenderStory('При `skeleton` анимированный плейсхолдер только на поле ввода; label и `additionalLabel` остаются видимым текстом.'),
   render: () => {
     const [value1, setValue1] = React.useState('');
     const [value2, setValue2] = React.useState('');
@@ -631,16 +725,11 @@ export const SkeletonDemo: Story = {
   },
   parameters: {
     layout: 'padded',
-    docs: {
-      description: {
-        story:
-          'При skeleton=true анимированный плейсхолдер показывается только на поле ввода; label и additionalLabel остаются видимым текстом.',
-      },
-    },
   },
 };
 
 export const TooltipDemo: Story = {
+  ...inputRenderStory('Демонстрация `tooltip` и `hint`: тип подсказки (`tooltipType`) и позиция (`tooltipPosition`).'),
   render: () => {
     const [value1, setValue1] = React.useState('Обычный инпут');
     const [value2, setValue2] = React.useState('Инпут с тултипом');
@@ -718,16 +807,11 @@ export const TooltipDemo: Story = {
   },
   parameters: {
     layout: 'padded',
-    docs: {
-      description: {
-        story:
-          'Демонстрация tooltip и hint для Input. Можно выбрать тип подсказки (tooltip/hint) и позицию (top/bottom/left/right).',
-      },
-    },
   },
 };
 
 export const CharacterCounterDemo: Story = {
+  ...inputRenderStory('Демонстрация `displayCharacterCounter` при `maxLength`: счётчик можно включить или отключить.'),
   render: () => {
     const [value1, setValue1] = React.useState('Обычный инпут');
     const [value2, setValue2] = React.useState('Инпут с счетчиком');
@@ -775,16 +859,11 @@ export const CharacterCounterDemo: Story = {
   },
   parameters: {
     layout: 'padded',
-    docs: {
-      description: {
-        story:
-          'Демонстрация displayCharacterCounter для Input. Позволяет отключать появление счетчика символов при задании maxLength.',
-      },
-    },
   },
 };
 
 export const ExtraTextDemo: Story = {
+  ...inputRenderStory('Демонстрация `extraText`: дополнительный текст отображается ниже компонента.'),
   render: () => {
     const [value1, setValue1] = React.useState('Обычный инпут');
     const [value2, setValue2] = React.useState('Инпут с дополнительным текстом');
@@ -821,16 +900,11 @@ export const ExtraTextDemo: Story = {
   },
   parameters: {
     layout: 'padded',
-    docs: {
-      description: {
-        story:
-          'Демонстрация extraText для Input. Дополнительный текст отображается ниже компонента.',
-      },
-    },
   },
 };
 
 export const DisableCopyingDemo: Story = {
+  ...inputRenderStory('Демонстрация `disableCopying`: отключает выделение и копирование значения поля.'),
   render: () => {
     const [value1, setValue1] = React.useState('Обычный инпут - можно копировать');
     const [value2, setValue2] = React.useState('Защищенный инпут - нельзя копировать');
@@ -858,16 +932,11 @@ export const DisableCopyingDemo: Story = {
   },
   parameters: {
     layout: 'padded',
-    docs: {
-      description: {
-        story:
-          'Демонстрация disableCopying для Input. Отключает возможность выделения и копирования значения поля.',
-      },
-    },
   },
 };
 
 export const HandleInputDemo: Story = {
+  ...inputRenderStory('Демонстрация `handleInput`: маски и форматирование применяются при вводе (телефон, карта и т.д.).'),
   render: () => {
     const [value1, setValue1] = React.useState('');
     const [value2, setValue2] = React.useState('');
@@ -1080,16 +1149,11 @@ export const HandleInputDemo: Story = {
   },
   parameters: {
     layout: 'padded',
-    docs: {
-      description: {
-        story:
-          'Демонстрация `handleInput` в `Input`: маски и форматирование применяются при вводе (цифры телефона, карты и т.д.).',
-      },
-    },
   },
 };
 
 export const IgnoreMaskCharactersDemo: Story = {
+  ...inputRenderStory('Демонстрация `ignoreMaskCharacters`: исключать символы маски (разделители) из подсчёта для `maxLength`.'),
   render: () => {
     const [value1, setValue1] = React.useState('10.12.1985');
     const [value2, setValue2] = React.useState('10.12.1985');
@@ -1135,16 +1199,11 @@ export const IgnoreMaskCharactersDemo: Story = {
   },
   parameters: {
     layout: 'padded',
-    docs: {
-      description: {
-        story:
-          'Демонстрация пропа ignoreMaskCharacters. Позволяет исключать символы маски (разделители) из подсчета символов для maxLength.',
-      },
-    },
   },
 };
 
 export const CharacterCounterThresholdDemo: Story = {
+  ...inputRenderStory('Демонстрация `characterCounterVisibilityThreshold`: видимость счётчика в зависимости от заполненности.'),
   render: () => {
     const [value1, setValue1] = React.useState('');
     const [value2, setValue2] = React.useState('');
@@ -1207,16 +1266,11 @@ export const CharacterCounterThresholdDemo: Story = {
   },
   parameters: {
     layout: 'padded',
-    docs: {
-      description: {
-        story:
-          'Демонстрация пропа characterCounterVisibilityThreshold. Позволяет управлять видимостью счетчика символов в зависимости от заполненности поля.',
-      },
-    },
   },
 };
 
 export const AdditionalLabelDemo: Story = {
+  ...inputRenderStory('Демонстрация `additionalLabel`: дополнительное описание справа от основного `label`.'),
   render: () => {
     const [value1, setValue1] = React.useState('');
     const [value2, setValue2] = React.useState('');
@@ -1269,51 +1323,39 @@ export const AdditionalLabelDemo: Story = {
   },
   parameters: {
     layout: 'padded',
-    docs: {
-      description: {
-        story:
-          'Демонстрация пропа additionalLabel. Позволяет добавить дополнительное описание поля формы под основным label.',
-      },
-    },
   },
+};
+
+const readOnlyArgs = {
+  label: 'Поле только для чтения',
+  value: 'Это значение нельзя изменить',
+  readOnly: true,
+  helperText: 'Текст остается обычным цветом, но фон становится серым',
 };
 
 export const ReadOnly: Story = {
-  args: {
-    label: 'Поле только для чтения',
-    value: 'Это значение нельзя изменить',
-    readOnly: true,
-    helperText: 'Текст остается обычным цветом, но фон становится серым',
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Поле в режиме только для чтения. Текст остается обычным цветом, но фон становится серым, чтобы показать, что поле недоступно для редактирования.',
-      },
-    },
-  },
+  ...inputArgsStory(
+    'Поле в режиме только для чтения: текст обычного цвета, серый фон.',
+    readOnlyArgs,
+  ),
+  args: readOnlyArgs,
+};
+
+const readOnlyWithIconArgs = {
+  label: 'Поле только для чтения с иконкой',
+  value: 'Значение с иконкой',
+  readOnly: true,
+  leftIcon: <Icon name="IconPlainerUser" size={IconSize.SM} />,
+  helperText: 'Иконки также работают в режиме readOnly',
 };
 
 export const ReadOnlyWithIcon: Story = {
-  args: {
-    label: 'Поле только для чтения с иконкой',
-    value: 'Значение с иконкой',
-    readOnly: true,
-    leftIcon: <Icon name="IconPlainerUser" size={IconSize.SM} />,
-    helperText: 'Иконки также работают в режиме readOnly',
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Поле в режиме только для чтения с иконкой. Иконки отображаются нормально, но поле остается недоступным для редактирования.',
-      },
-    },
-  },
+  ...inputArgsStory('ReadOnly с `leftIcon`.', readOnlyWithIconArgs),
+  args: readOnlyWithIconArgs,
 };
 
 export const ReadOnlyComparison: Story = {
+  ...inputRenderStory('Сравнение обычного поля, `readOnly` и `disabled`.'),
   render: () => {
     const [editable, setEditable] = React.useState('Можно редактировать');
     return (
@@ -1339,17 +1381,10 @@ export const ReadOnlyComparison: Story = {
       </div>
     );
   },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Сравнение обычного поля, поля только для чтения и отключенного поля. ReadOnly сохраняет читаемость текста, но показывает, что поле недоступно для редактирования.',
-      },
-    },
-  },
 };
 
 export const PasswordForm: Story = {
+  ...inputRenderStory('Пример `Form` для полей пароля — устраняет предупреждения браузера о паролях вне формы.'),
   render: () => {
     const [username, setUsername] = React.useState('');
     const [password, setPassword] = React.useState('');
@@ -1400,17 +1435,10 @@ export const PasswordForm: Story = {
       </Form>
     );
   },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Пример использования компонента Form для группировки полей пароля. Это устраняет предупреждения браузера о полях пароля вне формы.',
-      },
-    },
-  },
 };
 
 export const PasswordComparison: Story = {
+  ...inputRenderStory('Сравнение форм регистрации (`new-password`) и входа (`current-password`) с корректным `autoComplete`.'),
   render: () => {
     const [regUser, setRegUser] = React.useState('');
     const [regPass, setRegPass] = React.useState('');
@@ -1500,17 +1528,170 @@ export const PasswordComparison: Story = {
       </div>
     );
   },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Сравнение различных типов форм с полями пароля. Все поля правильно обернуты в Form компоненты с соответствующими атрибутами autocomplete.',
-      },
-    },
+};
+
+/** Составное поле: сумма + выбор валюты в suffix (аналог Admiral InputEx). */
+export const WithSuffixSelect: Story = {
+  ...inputRenderStory('Режим InputEx: `suffix` с `Select` — общая оболочка, разделитель между сегментами. Для Select автоматически включается `embeddedInCompositeField`.'),
+  render: function WithSuffixSelectStory() {
+    const [amount, setAmount] = React.useState('1000');
+    const [currency, setCurrency] = React.useState('rub');
+
+    return (
+      <Input
+        label="Сумма"
+        type="text"
+        inputMode="decimal"
+        placeholder="0"
+        fullWidth
+        value={amount}
+        onChange={(event) => setAmount(event.target.value)}
+        suffix={
+          <Select
+            options={currencySelectOptions}
+            value={currency}
+            onValueChange={setCurrency}
+            aria-label="Валюта"
+          />
+        }
+        helperText="Select в suffix — одна рамка с полем ввода"
+      />
+    );
+  },
+};
+
+/** Префикс с текстом и суффикс с единицей измерения. */
+export const WithPrefixTextAndSuffixSelect: Story = {
+  ...inputRenderStory('Комбинация текстового `prefix` и `Select` в `suffix`: префикс с отступами, селект без собственной рамки.'),
+  render: function WithPrefixTextAndSuffixSelectStory() {
+    const [weight, setWeight] = React.useState('42');
+    const [unit, setUnit] = React.useState('kg');
+
+    return (
+      <div style={inputStoriesStyles.columnGap16}>
+        <Input
+          label="Вес"
+          fullWidth
+          value={weight}
+          onChange={(event) => setWeight(event.target.value)}
+          prefix={<span style={inputStoriesStyles.compositePrefixText}>до</span>}
+          suffix={
+            <Select
+              options={unitSelectOptions}
+              value={unit}
+              onValueChange={setUnit}
+              aria-label="Единица измерения"
+            />
+          }
+        />
+      </div>
+    );
+  },
+};
+
+/** InputEx + `Select` с `mode="searchSelect"` в suffix: фильтр в слоте, список по фокусу. */
+export const WithSuffixSearchSelect: Story = {
+  ...inputRenderStory('Составное поле с `Select mode="searchSelect"` в `suffix`: фильтр и выбор города в одной оболочке с текстовым полем. `embeddedInCompositeField` включается автоматически.'),
+  render: function WithSuffixSearchSelectStory() {
+    const [query, setQuery] = React.useState('доставка');
+    const [city, setCity] = React.useState('moscow');
+
+    return (
+      <Input
+        label="Поиск по адресу"
+        placeholder="Улица, дом"
+        fullWidth
+        value={query}
+        onChange={(event) => setQuery(event.target.value)}
+        suffix={
+          <Select
+            mode="searchSelect"
+            options={citySearchSelectOptions}
+            value={city}
+            onValueChange={(nextValue) => setCity(String(nextValue))}
+            placeholder="Город"
+            searchPlaceholder="Начните вводить"
+            aria-label="Город"
+          />
+        }
+        helperText="searchSelect в suffix: поиск в поле селекта, общая рамка с Input"
+      />
+    );
+  },
+};
+
+/** InputEx + searchSelect в prefix (категория) и текстовый ввод справа. */
+export const WithPrefixSearchSelect: Story = {
+  ...inputRenderStory('Тот же InputEx, но `searchSelect` в `prefix` — слева фильтр по категории, справа основной ввод.'),
+  render: function WithPrefixSearchSelectStory() {
+    const [category, setCategory] = React.useState('');
+    const [title, setTitle] = React.useState('');
+
+    const categoryOptions: SelectOption[] = [
+      { value: 'goods', label: 'Товары' },
+      { value: 'services', label: 'Услуги' },
+      { value: 'rent', label: 'Аренда' },
+    ];
+
+    return (
+      <Input
+        label="Объявление"
+        placeholder="Заголовок"
+        fullWidth
+        value={title}
+        onChange={(event) => setTitle(event.target.value)}
+        prefix={
+          <Select
+            mode="searchSelect"
+            options={categoryOptions}
+            value={category}
+            onValueChange={(nextValue) => setCategory(String(nextValue))}
+            placeholder="Категория"
+            aria-label="Категория"
+          />
+        }
+        helperText="searchSelect в prefix: удобно для коротких справочников с поиском"
+      />
+    );
+  },
+};
+
+/** Select слева, ввод справа (например, код страны + телефон). */
+export const WithPrefixSelect: Story = {
+  ...inputRenderStory('Select в `prefix`: код страны и поле номера в одном контроле.'),
+  render: function WithPrefixSelectStory() {
+    const [country, setCountry] = React.useState('ru');
+    const [phone, setPhone] = React.useState('');
+
+    const countryOptions: SelectOption[] = [
+      { value: 'ru', label: '+7' },
+      { value: 'kz', label: '+7 KZ' },
+      { value: 'by', label: '+375' },
+    ];
+
+    return (
+      <Input
+        label="Телефон"
+        type="tel"
+        placeholder="999 000-00-00"
+        fullWidth
+        value={phone}
+        onChange={(event) => setPhone(event.target.value)}
+        prefix={
+          <Select
+            options={countryOptions}
+            value={country}
+            onValueChange={setCountry}
+            aria-label="Код страны"
+          />
+        }
+      />
+    );
   },
 };
 
 export const AutocompleteDemo: Story = {
+  ...inputRenderStory('Демонстрация атрибутов `autoComplete` для UX и безопасности (username, email, пароли, имя).'),
   render: () => {
     const [username, setUsername] = React.useState('');
     const [email, setEmail] = React.useState('');
@@ -1598,13 +1779,5 @@ export const AutocompleteDemo: Story = {
         </div>
       </Form>
     );
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Демонстрация различных типов атрибутов autocomplete для улучшения пользовательского опыта и безопасности.',
-      },
-    },
   },
 };

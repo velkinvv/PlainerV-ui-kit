@@ -7,6 +7,7 @@ import { withStorybookMotion } from './withStorybookMotion';
 import './preview-storybook-overlays.css';
 import './preview-storybook-docs-theme.css';
 import './preview-storybook-motion.css';
+import { getStoryDocsSourceCode } from '../src/handlers/storybookStoryDocs';
 
 const themeAddonAnnotations = addonThemes();
 
@@ -224,6 +225,17 @@ const preview: Preview = {
     docs: {
       story: {
         height: 'min(90vh, 800px)',
+      },
+      source: {
+        type: 'dynamic',
+        excludeDecorators: true,
+        /**
+         * В Docs показываем пример использования компонента, а не render-функцию сторис.
+         * Явный код: parameters.docs.source.code или describeStory(..., usageCode).
+         * Для сторис на args без render — сниппет из context.args.
+         */
+        transform: (generatedSource, context) =>
+          getStoryDocsSourceCode(generatedSource, context),
       },
     },
   },

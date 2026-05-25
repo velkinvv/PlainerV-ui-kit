@@ -4,6 +4,7 @@ import { fn } from '@storybook/test';
 import { IconSize, Size } from '@/types/sizes';
 import {
   ButtonVariant,
+  CardVariant,
   type DataGridColumn,
   type DataGridColumnFilterIconPosition,
   type DataGridExpandedRowChangeParams,
@@ -11,6 +12,8 @@ import {
   type DataGridPaginationModel,
   type DataGridSortModel,
 } from '@/types/ui';
+import { Card } from '../../Card/Card';
+import { Typography } from '../../Typography/Typography';
 import { normalizeDataGridSortModel } from './dataGridSortModelHandlers';
 import { DataGrid } from './DataGrid';
 import { TABLE_STORY_DEMO_ROWS, type DataGridStoryDemoRow } from './dataGridStoryDemoData';
@@ -30,6 +33,8 @@ import { Input } from '../../inputs/Input/Input';
 import { DATAGRID_DOC } from '../storyDocs/documentation';
 import { DataGridWithTextFilterInHeader as tableColumnFilterDataGridStorySource } from '../basicTable/TableColumnFilters.stories';
 import { lightTheme } from '@/themes/themes';
+import { getDataGridStoryWideColumns } from './dataGridStoryWideColumns';
+import { DataGridStoryHeaderToolbar } from './DataGridStoryHeaderToolbar';
 
 /** Колонки под демо-строки из `TABLE_STORY_DEMO_ROWS` (как в сторис примитива Table). */
 const demoColumns: DataGridColumn<DataGridStoryDemoRow>[] = getDataGridStoryDemoColumns();
@@ -123,11 +128,15 @@ const meta: Meta<typeof DataGrid> = {
     },
     stickyHeader: {
       description:
-        'Липкая шапка при вертикальном скролле (задайте `scrollAreaMaxHeight` или внешний предок со скроллом без конфликта с треком таблицы).',
+        'Липкая шапка при вертикальном скролле (**по умолчанию `true`**). Отключите `stickyHeader={false}`. Для прокрутки задайте `scrollAreaMaxHeight` или внешний предок со скроллом.',
     },
     scrollAreaMaxHeight: {
       description:
-        'Макс. высота зоны с вертикальным скроллом вокруг сетки (пробрасывается в `TableContainerScroll`); для `stickyHeader` удобнее, чем обёртка `div` с `overflow: auto`.',
+        'Макс. высота зоны с вертикальным скроллом только у строк (`tbody`); шапка и пагинация вне скролла.',
+    },
+    horizontalScroll: {
+      description:
+        'Горизонтальный скролл при широкой сетке (по умолчанию `true`). `horizontalScroll={false}` — колонки по ширине карточки.',
     },
     tableHeaderVariant: {
       control: 'select',
@@ -149,6 +158,23 @@ const meta: Meta<typeof DataGrid> = {
     },
     size: { description: 'Плотность (`Size` дизайн-системы).' },
     elevated: { description: 'Тень карточки (`TableContainer`).' },
+    shellVariant: {
+      control: 'select',
+      options: ['card', 'embedded'],
+      description:
+        '`embedded` — без внешнего бордера и скругления оболочки (вложение в Card, Panel и т.д.).',
+    },
+    surfaceBackgrounds: {
+      description:
+        'Прозрачные фоны по частям (`shell`, `header`, `bodyRow`, `pagination`, …) или shorthand `"transparent"`. См. сторис **EmbeddedShell** и **TransparentSurfaces**.',
+    },
+    shellInset: {
+      description:
+        'Внутренние отступы на белом фоне: внешний бордер карточки сохраняется, у блока сетки своей рамки нет.',
+    },
+    shellInsetPadding: {
+      description: 'Отступ канавы (число — px); по умолчанию из темы / padding **Card** MD.',
+    },
     hideFooter: { description: 'Скрыть блок пагинации под таблицей.' },
     tableAriaLabel: { description: '`aria-label` для `<table>`.' },
     headerToolbar: {
@@ -369,6 +395,264 @@ export const ClientPaginationPlainBody: Story = {
   },
 };
 
+/** Сравнение обычной карточки и режима `shellInset` */
+export const ShellInset: Story = {
+  name: 'Внутренние отступы (shellInset)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`shellInset` — белая оболочка с внешним бордером карточки, внутренний отступ, у блока сетки без своей рамки. Отступ — `shellInsetPadding` или `theme.tables.shell.insetPadding`.',
+      },
+    },
+  },
+  render: () => {
+    const [selectedIdsLeft, setSelectedIdsLeft] = useState<string[]>([]);
+    const [selectedIdsRight, setSelectedIdsRight] = useState<string[]>([]);
+    const [sortModelLeft, setSortModelLeft] = useState<DataGridSortModel | null>({
+      field: 'user',
+      direction: 'asc',
+    });
+    const [sortModelRight, setSortModelRight] = useState<DataGridSortModel | null>({
+      field: 'user',
+      direction: 'asc',
+    });
+    const [paginationLeft, setPaginationLeft] = useState<DataGridPaginationModel>({
+      page: 0,
+      pageSize: 5,
+    });
+    const [paginationRight, setPaginationRight] = useState<DataGridPaginationModel>({
+      page: 0,
+      pageSize: 5,
+    });
+
+    const sortedLeft = useMemo(() => sortRows(TABLE_STORY_DEMO_ROWS, sortModelLeft), [sortModelLeft]);
+    const sortedRight = useMemo(
+      () => sortRows(TABLE_STORY_DEMO_ROWS, sortModelRight),
+      [sortModelRight],
+    );
+
+    return (
+      <DataGridStoryBlock>
+        <DataGridStoryHint>
+          Слева — обычный грид; справа — с `shellInset`. Пагинация остаётся внутри белого блока.
+        </DataGridStoryHint>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gap: 16,
+            alignItems: 'start',
+          }}
+        >
+          <DataGrid<DataGridStoryDemoRow>
+            tableId="story-data-grid-shell-inset-off"
+            columns={demoColumns}
+            rows={sortedLeft}
+            totalRows={sortedLeft.length}
+            displayRowSelectionColumn
+            multiselect
+            selectedIds={selectedIdsLeft}
+            disabledIds={demoDisabledRowIds}
+            onRowSelectionChange={setSelectedIdsLeft}
+            sortModel={sortModelLeft}
+            onSortChange={setSortModelLeft}
+            paginationModel={paginationLeft}
+            onPaginationChange={setPaginationLeft}
+            paginationMode="client"
+            size={Size.MD}
+          />
+          <DataGrid<DataGridStoryDemoRow>
+            tableId="story-data-grid-shell-inset-on"
+            columns={demoColumns}
+            rows={sortedRight}
+            totalRows={sortedRight.length}
+            displayRowSelectionColumn
+            multiselect
+            selectedIds={selectedIdsRight}
+            disabledIds={demoDisabledRowIds}
+            onRowSelectionChange={setSelectedIdsRight}
+            sortModel={sortModelRight}
+            onSortChange={setSortModelRight}
+            paginationModel={paginationRight}
+            onPaginationChange={setPaginationRight}
+            paginationMode="client"
+            shellInset
+            size={Size.MD}
+          />
+        </div>
+      </DataGridStoryBlock>
+    );
+  },
+};
+
+/** Ровный фон строк и внутренние отступы оболочки */
+export const ShellInsetPlainBody: Story = {
+  name: 'Без зебры и внутренние отступы (shellInset)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`striped={false}` + `shellInset`: ровный белый фон строк, сетка с отступом от рамки карточки (внешний бордер карточки, без рамки у сетки).',
+      },
+    },
+  },
+  render: () => {
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
+    const [sortModel, setSortModel] = useState<DataGridSortModel | null>({
+      field: 'user',
+      direction: 'asc',
+    });
+    const fullPageSize = TABLE_STORY_DEMO_ROWS.length;
+    const [pagination, setPagination] = useState<DataGridPaginationModel>({
+      page: 0,
+      pageSize: fullPageSize,
+    });
+
+    const sorted = useMemo(() => sortRows(TABLE_STORY_DEMO_ROWS, sortModel), [sortModel]);
+
+    return (
+      <DataGridStoryBlock>
+        <DataGridStoryHint>
+          Как **Без зебры и липкая шапка**, но с `shellInset` — отступ сетки от края карточки.
+        </DataGridStoryHint>
+        <DataGrid<DataGridStoryDemoRow>
+          tableId="story-data-grid-shell-inset-plain-body"
+          columns={demoColumns}
+          rows={sorted}
+          totalRows={sorted.length}
+          displayRowSelectionColumn
+          multiselect
+          selectedIds={selectedIds}
+          disabledIds={demoDisabledRowIds}
+          onRowSelectionChange={(ids) => {
+            setSelectedIds(ids);
+          }}
+          sortModel={sortModel}
+          onSortChange={setSortModel}
+          paginationModel={pagination}
+          onPaginationChange={setPagination}
+          paginationMode="client"
+          scrollAreaMaxHeight={320}
+          striped={false}
+          shellInset
+          size={Size.MD}
+        />
+      </DataGridStoryBlock>
+    );
+  },
+};
+
+/** DataGrid внутри `Card`: без собственного бордера и фона оболочки */
+export const EmbeddedShell: Story = {
+  name: 'Встроенная оболочка (embedded)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Типичный сценарий: `Card` с отступами + `DataGrid` с `shellVariant="embedded"` и `elevated={false}`. У грида нет своей рамки и белой «второй карточки» — только сетка и пагинация внутри `Card`.',
+      },
+    },
+  },
+  render: () => {
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
+    const [sortModel, setSortModel] = useState<DataGridSortModel | null>(null);
+    const [pagination, setPagination] = useState<DataGridPaginationModel>({
+      page: 0,
+      pageSize: 5,
+    });
+
+    return (
+      <DataGridStoryBlock>
+        <DataGridStoryHint>
+          Отступы и обводка — у `Card`. У `DataGrid` только `shellVariant="embedded"` (без бордера и фона
+          оболочки).
+        </DataGridStoryHint>
+        <Card fullWidth variant={CardVariant.OUTLINED} padding={Size.MD}>
+          <Typography variant="h3" style={{ margin: '0 0 12px' }}>
+            Пользователи
+          </Typography>
+          <DataGrid<DataGridStoryDemoRow>
+            tableId="story-data-grid-embedded-shell"
+            columns={demoColumns}
+            rows={TABLE_STORY_DEMO_ROWS}
+            totalRows={TABLE_STORY_DEMO_ROWS.length}
+            displayRowSelectionColumn
+            multiselect
+            selectedIds={selectedIds}
+            onRowSelectionChange={setSelectedIds}
+            sortModel={sortModel}
+            onSortChange={setSortModel}
+            paginationModel={pagination}
+            onPaginationChange={setPagination}
+            paginationMode="client"
+            shellVariant="embedded"
+            elevated={false}
+            size={Size.MD}
+          />
+        </Card>
+      </DataGridStoryBlock>
+    );
+  },
+};
+
+/** Прозрачные фоны — таблица принимает фон родителя */
+export const TransparentSurfaces: Story = {
+  name: 'Прозрачные фоны (surfaceBackgrounds)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`surfaceBackgrounds="transparent"` или объект по ключам (`header`, `bodyRow`, `pagination`, …). Зебра и hover отключаются соответствующими флагами.',
+      },
+    },
+  },
+  render: () => {
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
+    const [sortModel, setSortModel] = useState<DataGridSortModel | null>(null);
+    const [pagination, setPagination] = useState<DataGridPaginationModel>({
+      page: 0,
+      pageSize: 5,
+    });
+
+    return (
+      <DataGridStoryBlock>
+        <DataGridStoryHint>
+          Градиентный фон родителя виден сквозь шапку, строки и пагинацию.
+        </DataGridStoryHint>
+        <div
+          style={{
+            borderRadius: 16,
+            background: 'linear-gradient(135deg, #e0f2fe 0%, #fce7f3 100%)',
+            overflow: 'hidden',
+          }}
+        >
+          <DataGrid<DataGridStoryDemoRow>
+            tableId="story-data-grid-transparent-surfaces"
+            columns={demoColumns}
+            rows={TABLE_STORY_DEMO_ROWS}
+            totalRows={TABLE_STORY_DEMO_ROWS.length}
+            displayRowSelectionColumn
+            multiselect
+            selectedIds={selectedIds}
+            onRowSelectionChange={setSelectedIds}
+            sortModel={sortModel}
+            onSortChange={setSortModel}
+            paginationModel={pagination}
+            onPaginationChange={setPagination}
+            paginationMode="client"
+            shellVariant="embedded"
+            elevated={false}
+            surfaceBackgrounds="transparent"
+            striped={false}
+            size={Size.MD}
+          />
+        </div>
+      </DataGridStoryBlock>
+    );
+  },
+};
+
 /** Только отключение зебры: `striped={false}`, липкая шапка выключена (как у `Table` по умолчанию). */
 export const PlainBodyNoStickyHeader: Story = {
   name: 'Без зебры (без липкой шапки)',
@@ -376,7 +660,7 @@ export const PlainBodyNoStickyHeader: Story = {
     docs: {
       description: {
         story:
-          '`striped={false}` — ровный фон строк; `stickyHeader` не передаётся (`false`). Пагинация по 3 строки, как в **ClientPagination**.',
+          '`striped={false}` + `stickyHeader={false}` — ровный фон строк без липкой шапки. Пагинация по 3 строки, как в **ClientPagination**.',
       },
     },
   },
@@ -409,8 +693,175 @@ export const PlainBodyNoStickyHeader: Story = {
         onPaginationChange={setPagination}
         paginationMode="client"
         striped={false}
+        stickyHeader={false}
         size={Size.MD}
       />
+    );
+  },
+};
+
+/** Много колонок: горизонтальный скролл включён по умолчанию */
+export const ManyColumnsHorizontalScroll: Story = {
+  name: 'Много колонок (горизонтальный скролл)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'По умолчанию `horizontalScroll={true}`: при суммарной ширине колонок больше карточки появляется горизонтальная полоса прокрутки. `scrollAreaMaxHeight` — только для строк.',
+      },
+    },
+  },
+  render: () => {
+    const wideColumns = useMemo(() => getDataGridStoryWideColumns(), []);
+
+    const fullPageSize = TABLE_STORY_DEMO_ROWS.length;
+    const [pagination, setPagination] = useState<DataGridPaginationModel>({
+      page: 0,
+      pageSize: fullPageSize,
+    });
+
+    return (
+      <DataGridStoryBlock>
+        <DataGridStoryHint>
+          Прокрутите по горизонтали — шапка следует за телом; вертикальная полоса всегда справа
+          карточки, не уезжает при горизонтальной прокрутке.
+        </DataGridStoryHint>
+        <DataGrid<DataGridStoryDemoRow>
+          tableId="story-data-grid-many-columns-scroll"
+          columns={wideColumns}
+          rows={TABLE_STORY_DEMO_ROWS}
+          totalRows={TABLE_STORY_DEMO_ROWS.length}
+          paginationModel={pagination}
+          onPaginationChange={setPagination}
+          paginationMode="client"
+          scrollAreaMaxHeight={320}
+          size={Size.MD}
+        />
+      </DataGridStoryBlock>
+    );
+  },
+};
+
+/** Много колонок с панелью иконок над шапкой (история, экспорт и др.) */
+export const ManyColumnsHorizontalScrollHeaderToolbar: Story = {
+  name: 'Много колонок + панель иконок',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Сочетание `ManyColumnsHorizontalScroll` и `headerToolbar`: панель иконок фиксирована по ширине карточки; при горизонтальной прокрутке синхронно сдвигаются только заголовки колонок (split-layout при `scrollAreaMaxHeight`).',
+      },
+    },
+  },
+  render: () => {
+    const wideColumns = useMemo(() => getDataGridStoryWideColumns(), []);
+    const fullPageSize = TABLE_STORY_DEMO_ROWS.length;
+    const [pagination, setPagination] = useState<DataGridPaginationModel>({
+      page: 0,
+      pageSize: fullPageSize,
+    });
+
+    return (
+      <DataGridStoryBlock>
+        <DataGridStoryHint>
+          Панель иконок (в т.ч. история) не уезжает при горизонтальной прокрутке; заголовки колонок
+          синхронны с телом таблицы.
+        </DataGridStoryHint>
+        <DataGrid<DataGridStoryDemoRow>
+          tableId="story-data-grid-many-columns-header-toolbar"
+          columns={wideColumns}
+          rows={TABLE_STORY_DEMO_ROWS}
+          totalRows={TABLE_STORY_DEMO_ROWS.length}
+          paginationModel={pagination}
+          onPaginationChange={setPagination}
+          paginationMode="client"
+          scrollAreaMaxHeight={320}
+          size={Size.MD}
+          headerToolbarAriaLabel="Панель действий над таблицей"
+          headerToolbar={<DataGridStoryHeaderToolbar />}
+        />
+      </DataGridStoryBlock>
+    );
+  },
+};
+
+/** Много колонок с внутренними отступами оболочки (`shellInset`) */
+export const ManyColumnsHorizontalScrollShellInset: Story = {
+  name: 'Много колонок + внутренние отступы',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Широкая сетка с `horizontalScroll` и `shellInset`: белый внутренний блок с отступом от рамки карточки; горизонтальная прокрутка внутри inset-области.',
+      },
+    },
+  },
+  render: () => {
+    const wideColumns = useMemo(() => getDataGridStoryWideColumns(), []);
+    const fullPageSize = TABLE_STORY_DEMO_ROWS.length;
+    const [pagination, setPagination] = useState<DataGridPaginationModel>({
+      page: 0,
+      pageSize: fullPageSize,
+    });
+
+    return (
+      <DataGridStoryBlock>
+        <DataGridStoryHint>
+          Те же дополнительные колонки и горизонтальный скролл, но сетка с отступом от внешней
+          рамки карточки (`shellInset`).
+        </DataGridStoryHint>
+        <DataGrid<DataGridStoryDemoRow>
+          tableId="story-data-grid-many-columns-shell-inset"
+          columns={wideColumns}
+          rows={TABLE_STORY_DEMO_ROWS}
+          totalRows={TABLE_STORY_DEMO_ROWS.length}
+          paginationModel={pagination}
+          onPaginationChange={setPagination}
+          paginationMode="client"
+          scrollAreaMaxHeight={320}
+          shellInset
+          size={Size.MD}
+        />
+      </DataGridStoryBlock>
+    );
+  },
+};
+
+/** Колонки по ширине карточки без горизонтального скролла */
+export const FitColumnsNoHorizontalScroll: Story = {
+  name: 'Колонки по ширине (без гориз. скролла)',
+  parameters: {
+    docs: {
+      description: {
+        story: '`horizontalScroll={false}` — прежнее поведение: колонки сжимаются, горизонтальной прокрутки нет.',
+      },
+    },
+  },
+  render: () => {
+    const wideColumns = useMemo(
+      () =>
+        getDataGridStoryWideColumns(10, {
+          useShortHeaderNames: true,
+          extraColumnValueField: 'dateLabel',
+        }),
+      [],
+    );
+
+    return (
+      <DataGridStoryBlock>
+        <DataGridStoryHint>
+          Те же колонки, но `horizontalScroll={false}` — всё влезает в ширину за счёт сжатия.
+        </DataGridStoryHint>
+        <DataGrid<DataGridStoryDemoRow>
+          tableId="story-data-grid-fit-columns"
+          columns={wideColumns}
+          rows={TABLE_STORY_DEMO_ROWS}
+          totalRows={TABLE_STORY_DEMO_ROWS.length}
+          horizontalScroll={false}
+          hideFooter
+          size={Size.MD}
+        />
+      </DataGridStoryBlock>
     );
   },
 };
@@ -422,7 +873,7 @@ export const StickyHeaderWithScroll: Story = {
     docs: {
       description: {
         story:
-          '`stickyHeader` + `scrollAreaMaxHeight={320}` при зебре по умолчанию (`striped` не задаётся). `pageSize` равен числу демо-строк — прокрутка по телу таблицы внутри трека, шапка остаётся видимой.',
+          '`scrollAreaMaxHeight={320}` при зебре и липкой шапке по умолчанию. `pageSize` равен числу демо-строк — прокрутка по телу таблицы внутри трека, шапка остаётся видимой.',
       },
     },
   },
@@ -969,66 +1420,7 @@ export const HeaderToolbar: Story = {
           onSortChange={setSortModel}
           size={Size.MD}
           headerToolbarAriaLabel="Панель действий над таблицей"
-          headerToolbar={
-            <>
-              <IconButton
-                variant={ButtonVariant.GHOST}
-                size={Size.SM}
-                aria-label="Настройки таблицы"
-                showTooltip
-                tooltipText="Настройки таблицы"
-                icon={<Icon name="IconExSettings" size={IconSize.SM} color="currentColor" />}
-                onClick={fn()}
-              />
-              <IconButton
-                variant={ButtonVariant.GHOST}
-                size={Size.SM}
-                aria-label="Экспорт в файл"
-                showTooltip
-                tooltipText="Экспорт в файл"
-                icon={<Icon name="IconExDocument2" size={IconSize.SM} color="currentColor" />}
-                onClick={fn()}
-              />
-              <IconButton
-                variant={ButtonVariant.GHOST}
-                size={Size.SM}
-                aria-label="Обновить данные"
-                showTooltip
-                tooltipText="Обновить данные"
-                icon={
-                  <Icon name="PhosphorArrowsClockwise" size={IconSize.SM} color="currentColor" />
-                }
-                onClick={fn()}
-              />
-              <IconButton
-                variant={ButtonVariant.GHOST}
-                size={Size.SM}
-                aria-label="Закрыть или сбросить"
-                showTooltip
-                tooltipText="Закрыть"
-                icon={<Icon name="IconExClose" size={IconSize.SM} color="currentColor" />}
-                onClick={fn()}
-              />
-              <IconButton
-                variant={ButtonVariant.GHOST}
-                size={Size.SM}
-                aria-label="История изменений"
-                showTooltip
-                tooltipText="История изменений"
-                icon={<Icon name="IconExTimeCircle" size={IconSize.SM} color="currentColor" />}
-                onClick={fn()}
-              />
-              <IconButton
-                variant={ButtonVariant.GHOST}
-                size={Size.SM}
-                aria-label="Документация"
-                showTooltip
-                tooltipText="Документация"
-                icon={<Icon name="IconExBook" size={IconSize.SM} color="currentColor" />}
-                onClick={fn()}
-              />
-            </>
-          }
+          headerToolbar={<DataGridStoryHeaderToolbar />}
         />
       </DataGridStoryBlock>
     );

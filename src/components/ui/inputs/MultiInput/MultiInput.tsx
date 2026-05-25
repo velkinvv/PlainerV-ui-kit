@@ -14,8 +14,8 @@ import { Hint, HintVariant, type HintPosition } from '../../Hint/Hint';
 import { useFormContext } from '../../../../contexts/FormContext';
 import {
   InputContainer,
+  InputControlStack,
   Label,
-  InputWrapper,
   HelperText,
   ErrorText,
   SuccessText,
@@ -29,6 +29,7 @@ import {
   RequiredIndicator,
   shouldShowInputClearButton,
 } from '../shared';
+import { InputFieldShell } from '../Input/InputFieldShell';
 import {
   SelectMultiChip,
   SelectMultiChipLabel,
@@ -102,6 +103,8 @@ export const MultiInput = forwardRef<HTMLInputElement, MultiInputProps>(
       clearIconProps,
       leftIcon,
       rightIcon,
+      prefix,
+      suffix,
       className,
       id,
       name,
@@ -345,35 +348,42 @@ export const MultiInput = forwardRef<HTMLInputElement, MultiInputProps>(
     if (skeleton) {
       return (
         <InputContainer fullWidth={fullWidth} aria-busy="true">
-          {label && (
-            <Label as="span">
-              {label}
-              {required && <RequiredIndicator>*</RequiredIndicator>}
-            </Label>
-          )}
-          {additionalLabel && <AdditionalLabel>{additionalLabel}</AdditionalLabel>}
-          <SkeletonEffect size={size} fullWidth={fullWidth} role="presentation" />
+          <InputControlStack fullWidth={fullWidth}>
+            {label && (
+              <Label as="span">
+                {label}
+                {required && <RequiredIndicator>*</RequiredIndicator>}
+              </Label>
+            )}
+            {additionalLabel && <AdditionalLabel>{additionalLabel}</AdditionalLabel>}
+            <SkeletonEffect size={size} fullWidth={fullWidth} role="presentation" />
+          </InputControlStack>
         </InputContainer>
       );
     }
 
+    const shellProps = {
+      variant,
+      size,
+      error,
+      success,
+      status: currentStatus,
+      fullWidth,
+      focused,
+      readOnly,
+      className,
+      prefix,
+      suffix,
+      disabled,
+    };
+
     const inputSection = (
-      <InputWrapper
-        variant={variant}
-        size={size}
-        error={error}
-        success={success}
-        status={currentStatus}
-        fullWidth={fullWidth}
-        focused={focused}
-        readOnly={readOnly}
-        className={className}
-      >
-        {leftIcon && (
+      <InputFieldShell {...shellProps}>
+        {leftIcon ? (
           <IconContainer $position="left" size={size}>
             {leftIcon}
           </IconContainer>
-        )}
+        ) : null}
 
         <MultiInputInner>
           {items.map((token, index) => (
@@ -426,11 +436,11 @@ export const MultiInput = forwardRef<HTMLInputElement, MultiInputProps>(
           />
         </MultiInputInner>
 
-        {rightIcon && (
+        {rightIcon ? (
           <IconContainer $position="right" size={size}>
             {rightIcon}
           </IconContainer>
-        )}
+        ) : null}
 
         {isLoading ? <LoadingSpinner size={size} /> : null}
 
@@ -443,7 +453,7 @@ export const MultiInput = forwardRef<HTMLInputElement, MultiInputProps>(
             />
           </ClearButton>
         ) : null}
-      </InputWrapper>
+      </InputFieldShell>
     );
 
     const withOptionalTooltip = tooltip ? (
@@ -478,27 +488,29 @@ export const MultiInput = forwardRef<HTMLInputElement, MultiInputProps>(
               />
             ))
           : null}
-        {label ? (
-          <Label htmlFor={inputId}>
-            {label}
-            {required ? <RequiredIndicator>*</RequiredIndicator> : null}
-          </Label>
-        ) : null}
+        <InputControlStack fullWidth={fullWidth}>
+          {label ? (
+            <Label htmlFor={inputId}>
+              {label}
+              {required ? <RequiredIndicator>*</RequiredIndicator> : null}
+            </Label>
+          ) : null}
 
-        {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
+          {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
 
-        {withOptionalTooltip}
+          {withOptionalTooltip}
 
-        {error ? <ErrorText>{error}</ErrorText> : null}
-        {success ? <SuccessText>Успешно</SuccessText> : null}
-        {helperText && !error && !success ? <HelperText>{helperText}</HelperText> : null}
-        {extraText ? <ExtraText>{extraText}</ExtraText> : null}
+          {error ? <ErrorText>{error}</ErrorText> : null}
+          {success ? <SuccessText>Успешно</SuccessText> : null}
+          {helperText && !error && !success ? <HelperText>{helperText}</HelperText> : null}
+          {extraText ? <ExtraText>{extraText}</ExtraText> : null}
 
-        {showCounter && effectiveMaxLength ? (
-          <CharacterCounter $isOverLimit={currentLength > effectiveMaxLength}>
-            {currentLength}/{effectiveMaxLength}
-          </CharacterCounter>
-        ) : null}
+          {showCounter && effectiveMaxLength ? (
+            <CharacterCounter $isOverLimit={currentLength > effectiveMaxLength}>
+              {currentLength}/{effectiveMaxLength}
+            </CharacterCounter>
+          ) : null}
+        </InputControlStack>
       </InputContainer>
     );
   },

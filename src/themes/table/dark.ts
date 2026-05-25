@@ -1,4 +1,6 @@
+import { Size } from '../../types/sizes';
 import type { TableTheme } from '../../types/theme';
+import { darkCardTheme } from '../card/dark';
 import { colors } from '../../variables/colors';
 import { darkShadows } from '../../variables/shadows';
 
@@ -6,10 +8,16 @@ import { darkShadows } from '../../variables/shadows';
  * Тёмная тема для таблицы (`Table`, `DataGrid`): скругления, фоны, зебра, состояния строк.
  */
 export const darkTableTheme: TableTheme = {
-  borderRadius: '12px',
+  /** Источник скругления таблицы (`tableBorderRadiusFromTheme`); по умолчанию как у Card MD. */
+  borderRadius: darkCardTheme.sizes[Size.MD].borderRadius,
   shell: {
     border: `1px solid ${colors.blue[600]}`,
     background: colors.blue['A700'],
+    insetPadding: darkCardTheme.sizes[Size.MD].padding,
+    insetFrameBackground: colors.blue['A700'],
+    insetSurfaceBackground: colors.blue['A700'],
+    insetSurfaceBorder: `1px solid ${colors.blue[600]}`,
+    insetSurfaceBorderRadius: darkCardTheme.sizes[Size.SM].borderRadius,
   },
   header: {
     background: colors.blue[800],
