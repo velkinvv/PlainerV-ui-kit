@@ -4,16 +4,33 @@ import { PLAINER_TABLE_HEADER_TOOLBAR_ROW_ATTRIBUTE } from './tableBodyScrollHan
 /** Результат разбиения `TableHead` для split-layout. */
 export type PartitionedTableHeadForSplitScroll = {
   /** `TableHead` только со строкой панели иконок (ширина viewport) */
-  toolbarHead: React.ReactElement | null;
+  toolbarHead: React.ReactElement<TableHeadSectionProps> | null;
   /** `TableHead` со строками заголовков колонок (горизонтальный скролл) */
-  columnHeaderHead: React.ReactElement | null;
+  columnHeaderHead: React.ReactElement<TableHeadSectionProps> | null;
+};
+
+/** Пропсы секции `TableHead` при разбиении для split-scroll. */
+export type TableHeadSectionProps = {
+  children?: React.ReactNode;
+};
+
+/** Пропсы строки панели `headerToolbar` в `thead`. */
+type TableHeaderToolbarRowProps = {
+  [PLAINER_TABLE_HEADER_TOOLBAR_ROW_ATTRIBUTE]?: boolean;
 };
 
 /**
- * @param rowElement — строка `TableRow` внутри `thead`
+ * @param child — потомок `TableHead`
  */
-function isTableHeaderToolbarRowElement(rowElement: React.ReactElement): boolean {
-  return rowElement.props[PLAINER_TABLE_HEADER_TOOLBAR_ROW_ATTRIBUTE] === true;
+function isTableHeaderToolbarRowChild(
+  child: React.ReactNode,
+): child is React.ReactElement<TableHeaderToolbarRowProps> {
+  if (!React.isValidElement(child)) {
+    return false;
+  }
+
+  const toolbarRow = child as React.ReactElement<TableHeaderToolbarRowProps>;
+  return toolbarRow.props[PLAINER_TABLE_HEADER_TOOLBAR_ROW_ATTRIBUTE] === true;
 }
 
 /**
@@ -22,13 +39,14 @@ function isTableHeaderToolbarRowElement(rowElement: React.ReactElement): boolean
  * @param headElement — секция `TableHead` из `partitionTableChildren`
  */
 export function partitionTableHeadForSplitScroll(
-  headElement: React.ReactElement,
+  headElement: React.ReactElement<TableHeadSectionProps>,
 ): PartitionedTableHeadForSplitScroll {
   const toolbarRows: React.ReactNode[] = [];
   const columnHeaderRows: React.ReactNode[] = [];
+  const headProps = headElement.props;
 
-  React.Children.forEach(headElement.props.children, (child) => {
-    if (React.isValidElement(child) && isTableHeaderToolbarRowElement(child)) {
+  React.Children.forEach(headProps.children, (child) => {
+    if (isTableHeaderToolbarRowChild(child)) {
       toolbarRows.push(child);
       return;
     }
@@ -53,7 +71,7 @@ export function partitionTableHeadForSplitScroll(
   }
 
   return {
-    toolbarHead: React.cloneElement(headElement, headElement.props, ...toolbarRows),
-    columnHeaderHead: React.cloneElement(headElement, headElement.props, ...columnHeaderRows),
+    toolbarHead: React.cloneElement(headElement, headProps, ...toolbarRows),
+    columnHeaderHead: React.cloneElement(headElement, headProps, ...columnHeaderRows),
   };
 }

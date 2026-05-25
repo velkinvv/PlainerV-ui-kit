@@ -46,10 +46,7 @@ export const TableBodyScrollSplitHeader = styled.div.withConfig({
   ${({ theme, $cornerMode }) => tableScrollClipCornerRadiusCss(theme, $cornerMode)}
 `;
 
-/**
- * Панель иконок над колонками: ширина видимой области, без горизонтального скролла.
- * @property $surfaces — фон шапки
- */
+/** Панель иконок над колонками: ширина видимой области, без горизонтального скролла. */
 export const TableBodyScrollSplitHeaderToolbar = styled.div`
   box-sizing: border-box;
   flex-shrink: 0;

@@ -10,7 +10,10 @@ import {
   TableBodyScrollSplitRoot,
 } from './TableBodyScrollSplitLayout.style';
 import type { PartitionedTableChildren } from './tablePartitionChildrenHandlers';
-import { partitionTableHeadForSplitScroll } from './tablePartitionHeadRowsHandlers';
+import {
+  partitionTableHeadForSplitScroll,
+  type TableHeadSectionProps,
+} from './tablePartitionHeadRowsHandlers';
 import {
   useTableSplitColumnWidthSync,
   useTableSplitHorizontalScrollSync,
@@ -65,7 +68,9 @@ export const TableBodyScrollSplitLayout = forwardRef<
   const partitionedHead = useMemo(
     () =>
       partitionedChildren.head != null
-        ? partitionTableHeadForSplitScroll(partitionedChildren.head)
+        ? partitionTableHeadForSplitScroll(
+            partitionedChildren.head as React.ReactElement<TableHeadSectionProps>,
+          )
         : { toolbarHead: null, columnHeaderHead: null },
     [partitionedChildren.head],
   );
@@ -122,6 +127,7 @@ export const TableBodyScrollSplitLayout = forwardRef<
     $striped,
     $horizontalScroll,
     $stickyHeader: _omittedStickyHeader,
+    $splitTablesScroll: _omittedSplitTablesScroll,
     ...nativeTableProps
   } = splitTableProps;
 
@@ -130,8 +136,9 @@ export const TableBodyScrollSplitLayout = forwardRef<
       {partitionedHead.toolbarHead != null || partitionedHead.columnHeaderHead != null ? (
         <TableBodyScrollSplitHeader $surfaces={resolvedSurfaces} $cornerMode={headerCornerMode}>
           {partitionedHead.toolbarHead != null ? (
-            <TableBodyScrollSplitHeaderToolbar $surfaces={resolvedSurfaces}>
+            <TableBodyScrollSplitHeaderToolbar>
               <StyledTable
+                {...nativeTableProps}
                 id={id != null ? `${id}-header-toolbar` : undefined}
                 className={className}
                 style={style}
@@ -141,7 +148,6 @@ export const TableBodyScrollSplitLayout = forwardRef<
                 $horizontalScroll={false}
                 $splitTablesScroll
                 $splitHeaderRole="toolbar"
-                {...nativeTableProps}
               >
                 {partitionedHead.toolbarHead}
               </StyledTable>
@@ -150,6 +156,7 @@ export const TableBodyScrollSplitLayout = forwardRef<
           {partitionedHead.columnHeaderHead != null ? (
             <TableBodyScrollSplitHeaderInner ref={headerColumnsScrollRef}>
               <StyledTable
+                {...nativeTableProps}
                 ref={assignHeaderTableRef}
                 id={id}
                 aria-label={ariaLabel}
@@ -161,7 +168,6 @@ export const TableBodyScrollSplitLayout = forwardRef<
                 $horizontalScroll={$horizontalScroll}
                 $splitTablesScroll
                 $splitHeaderRole="columns"
-                {...nativeTableProps}
               >
                 {partitionedHead.columnHeaderHead}
               </StyledTable>
@@ -179,6 +185,7 @@ export const TableBodyScrollSplitLayout = forwardRef<
         >
           <TableBodyScrollSplitBodyInner>
             <StyledTable
+              {...nativeTableProps}
               ref={bodyTableRef}
               className={className}
               style={style}
@@ -186,7 +193,7 @@ export const TableBodyScrollSplitLayout = forwardRef<
               $striped={$striped}
               $surfaces={resolvedSurfaces}
               $horizontalScroll={$horizontalScroll}
-              {...nativeTableProps}
+              $splitTablesScroll
             >
               {partitionedChildren.body}
             </StyledTable>

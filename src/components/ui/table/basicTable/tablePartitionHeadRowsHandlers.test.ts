@@ -1,14 +1,21 @@
 import React from 'react';
 import { describe, expect, it } from 'vitest';
 import { PLAINER_TABLE_HEADER_TOOLBAR_ROW_ATTRIBUTE } from './tableBodyScrollHandlers';
-import { partitionTableHeadForSplitScroll } from './tablePartitionHeadRowsHandlers';
+import {
+  partitionTableHeadForSplitScroll,
+  type TableHeadSectionProps,
+} from './tablePartitionHeadRowsHandlers';
 
 describe('partitionTableHeadForSplitScroll', () => {
   const tableHeadType = { displayName: 'TableHead' } as const;
 
   it('возвращает исходный head без строки панели', () => {
     const columnRow = React.createElement('tr', { key: 'columns' });
-    const headElement = React.createElement('thead', { children: columnRow }, columnRow);
+    const headElement = React.createElement(
+      'thead',
+      { children: columnRow },
+      columnRow,
+    ) as React.ReactElement<TableHeadSectionProps>;
     Object.assign(headElement.type, tableHeadType);
 
     const partitioned = partitionTableHeadForSplitScroll(headElement);
@@ -28,7 +35,7 @@ describe('partitionTableHeadForSplitScroll', () => {
       { children: [toolbarRow, columnRow] },
       toolbarRow,
       columnRow,
-    );
+    ) as React.ReactElement<TableHeadSectionProps>;
     Object.assign(headElement.type, tableHeadType);
 
     const partitioned = partitionTableHeadForSplitScroll(headElement);
