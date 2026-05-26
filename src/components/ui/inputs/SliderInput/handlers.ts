@@ -322,12 +322,7 @@ export const getSliderInputRangeNumericDraftSeeds = ({
   max: number;
   step: number;
 }): { fromDraft: string; toDraft: string } => {
-  const pair = getSliderInputRangeDefaultPair(
-    valueProp ?? defaultValue,
-    min,
-    max,
-    step,
-  );
+  const pair = getSliderInputRangeDefaultPair(valueProp ?? defaultValue, min, max, step);
   return { fromDraft: String(pair[0]), toDraft: String(pair[1]) };
 };
 

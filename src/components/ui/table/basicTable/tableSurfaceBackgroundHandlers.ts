@@ -1,5 +1,9 @@
 import type { ThemeType } from '@/types/theme';
-import type { TableShellVariant, TableSurfaceBackgrounds, TableSurfaceBackgroundsInput } from '@/types/ui';
+import type {
+  TableShellVariant,
+  TableSurfaceBackgrounds,
+  TableSurfaceBackgroundsInput,
+} from '@/types/ui';
 import {
   resolveTableShellInsetFrameBackground,
   resolveTableShellInsetSurfaceBackground,

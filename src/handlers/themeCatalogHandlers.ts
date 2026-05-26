@@ -1,7 +1,11 @@
-import { ThemeColorScheme, ThemeMode, type ThemeType } from '../types/theme';
-import type { BuiltinThemeMode } from '../types/theme';
+import {
+  ThemeColorScheme,
+  ThemeMode,
+  type BuiltinThemeMode,
+  type ThemeModeMap,
+  type ThemeType,
+} from '../types/theme';
 import type { CustomThemesByMode, ThemeOverridesByMode } from '../types/themeOverride';
-import type { ThemeModeMap } from '../types/theme';
 import type {
   DefinedThemeCatalog,
   ResolvedThemeCatalogItem,
@@ -221,10 +225,8 @@ export function buildThemeCatalogFromLegacyProps(
   const catalog = createBuiltinThemeCatalog();
 
   const applyLegacy = (themeMode: BuiltinThemeMode, baseMode: ThemeColorScheme) => {
-    const customTheme =
-      themeMode === ThemeMode.light ? customThemes?.light : customThemes?.dark;
-    const override =
-      themeMode === ThemeMode.light ? themeOverrides?.light : themeOverrides?.dark;
+    const customTheme = themeMode === ThemeMode.light ? customThemes?.light : customThemes?.dark;
+    const override = themeMode === ThemeMode.light ? themeOverrides?.light : themeOverrides?.dark;
 
     if (customTheme) {
       catalog[themeMode] = {

@@ -27,7 +27,8 @@ export const FloatingMenuBar = styled.div`
   background: ${({ theme }) =>
     theme.mode === ThemeColorScheme.DARK ? theme.colors.backgroundSecondary : '#ffffff'};
   border: 1px solid
-    ${({ theme }) => (theme.mode === ThemeColorScheme.DARK ? theme.colors.borderSecondary : '#e8e8e8')};
+    ${({ theme }) =>
+      theme.mode === ThemeColorScheme.DARK ? theme.colors.borderSecondary : '#e8e8e8'};
   box-shadow: ${({ theme }) => overlayPanelBoxShadowFromTheme(theme)};
 `;
 
@@ -43,7 +44,9 @@ export const FloatingMenuGroupInner = styled.div<{ $variant: FloatingMenuGroupVa
       ? css`
           padding: 4px;
           border-radius: ${BorderRadiusHandler(theme.borderRadius)};
-          background: ${theme.mode === ThemeColorScheme.DARK ? 'rgba(255, 255, 255, 0.06)' : '#f0f0f0'};
+          background: ${theme.mode === ThemeColorScheme.DARK
+            ? 'rgba(255, 255, 255, 0.06)'
+            : '#f0f0f0'};
         `
       : ''}
 `;

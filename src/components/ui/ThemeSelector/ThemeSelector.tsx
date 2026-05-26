@@ -1,11 +1,7 @@
 import React, { useId } from 'react';
 import { useTheme } from '@/themes/ThemeProvider';
 import type { ThemeSelectorProps } from '@/types/ui';
-import {
-  ThemeSelectorControl,
-  ThemeSelectorLabel,
-  ThemeSelectorRoot,
-} from './ThemeSelector.style';
+import { ThemeSelectorControl, ThemeSelectorLabel, ThemeSelectorRoot } from './ThemeSelector.style';
 
 /**
  * Переключатель тем из каталога {@link ThemeProvider}.

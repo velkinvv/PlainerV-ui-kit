@@ -11,7 +11,6 @@ import {
   tableScrollClipCornerRadiusCss,
 } from './tableScrollClipCornerRadiusHandlers';
 import {
-  resolveTableShellInsetFrameBackground,
   resolveTableShellInsetSurfaceBackground,
   resolveTableShellInsetSurfaceBorderRadius,
 } from './tableShellInsetHandlers';
@@ -78,11 +77,16 @@ export const TableContainerRoot = styled.div<{
     css`
       ${PLAINER_TABLE_BORDER_RADIUS_CSS_VAR}: ${tableBorderRadiusFromTheme(theme)};
     `}
-  border-radius: ${({ theme, $shellVariant }) =>
+  border-radius: ${({ $shellVariant }) =>
     $shellVariant === 'embedded' ? '0' : `var(${PLAINER_TABLE_BORDER_RADIUS_CSS_VAR})`};
   border: ${({ theme, $shellVariant }) =>
     $shellVariant === 'embedded' ? 'none' : theme.tables.shell.border};
-  background: ${({ theme, $shellInset, $shellVariant, $surfaces = defaultTableSurfaceBackgrounds }) =>
+  background: ${({
+    theme,
+    $shellInset,
+    $shellVariant,
+    $surfaces = defaultTableSurfaceBackgrounds,
+  }) =>
     resolveTableSurfaceBackgroundColor(
       $surfaces,
       'shell',
@@ -96,7 +100,6 @@ export const TableContainerRoot = styled.div<{
       /* Вертикальный зазор: у родителей с overflow (Canvas Storybook) иначе обрезается тень сверху/снизу. */
       margin: 8px 0;
     `}
-
 `;
 
 /**
@@ -373,7 +376,15 @@ export const StyledTr = styled.tr<{
   $dragging: boolean;
   $surfaces?: NormalizedTableSurfaceBackgrounds;
 }>`
-  ${({ $section, theme, $selected, $disabled, $hoverable, $dragging, $surfaces = defaultTableSurfaceBackgrounds }) =>
+  ${({
+    $section,
+    theme,
+    $selected,
+    $disabled,
+    $hoverable,
+    $dragging,
+    $surfaces = defaultTableSurfaceBackgrounds,
+  }) =>
     $section === 'body' &&
     css`
       border-bottom: 1px solid ${theme.tables.body.rowBorder};

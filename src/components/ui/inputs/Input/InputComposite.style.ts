@@ -5,7 +5,7 @@ import {
   COMPOSITE_INPUT_SELECT_SLOT_MIN_WIDTH_PX,
 } from '../../../../handlers/inputFieldLayoutHandlers';
 import { InputPaddingHandler } from '../../../../handlers/uiHandlers';
-import { Size } from '../../../../types/sizes';
+import type { Size } from '../../../../types/sizes';
 
 /**
  * Сегмент основного поля ввода внутри составного Input (prefix/suffix).

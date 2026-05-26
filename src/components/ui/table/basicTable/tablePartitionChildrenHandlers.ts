@@ -14,10 +14,7 @@ export type PartitionedTableChildren = {
  * @param child — элемент React
  * @param displayName — `displayName` компонента секции
  */
-function isTableSectionElement(
-  child: React.ReactElement,
-  displayName: string,
-): boolean {
+function isTableSectionElement(child: React.ReactElement, displayName: string): boolean {
   const childType = child.type as { displayName?: string };
   return childType?.displayName === displayName;
 }

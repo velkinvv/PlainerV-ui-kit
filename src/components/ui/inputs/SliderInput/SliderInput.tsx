@@ -1,5 +1,9 @@
 import { forwardRef } from 'react';
-import type { SliderInputProps, SliderInputRangeProps, SliderInputSingleProps } from '../../../../types/ui';
+import type {
+  SliderInputProps,
+  SliderInputRangeProps,
+  SliderInputSingleProps,
+} from '../../../../types/ui';
 import { SliderInputRange } from './SliderInputRange';
 import { SliderInputSingle } from './SliderInputSingle';
 

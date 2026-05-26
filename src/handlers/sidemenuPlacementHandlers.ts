@@ -1,7 +1,4 @@
-import {
-  SidemenuHorizontalPlacement,
-  SidemenuVerticalAlignment,
-} from '@/types/ui';
+import { SidemenuHorizontalPlacement, SidemenuVerticalAlignment } from '@/types/ui';
 
 /** Отступ плавающей панели от кромки экрана (px) */
 export const SIDEMENU_FLOATING_EDGE_INSET_PX = 16;

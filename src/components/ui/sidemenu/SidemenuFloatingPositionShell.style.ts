@@ -1,8 +1,5 @@
 import styled, { css } from 'styled-components';
-import {
-  SidemenuHorizontalPlacement,
-  SidemenuVerticalAlignment,
-} from '@/types/ui';
+import { SidemenuHorizontalPlacement, type SidemenuVerticalAlignment } from '@/types/ui';
 import {
   SIDEMENU_FLOATING_EDGE_INSET_PX,
   resolveSidemenuFixedHorizontalInset,
@@ -27,7 +24,7 @@ export const SidemenuFloatingPositionShellRoot = styled.div<{
 
   ${({ $horizontalPlacement }) => {
     const horizontal = resolveSidemenuFixedHorizontalInset($horizontalPlacement);
-  return css`
+    return css`
       left: ${horizontal.left ?? 'auto'};
       right: ${horizontal.right ?? 'auto'};
       padding-left: ${$horizontalPlacement === SidemenuHorizontalPlacement.LEFT

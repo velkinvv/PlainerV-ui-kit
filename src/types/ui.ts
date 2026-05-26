@@ -186,8 +186,10 @@ export interface BaseButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEl
  * @property readOnly - Поле только для чтения (текст остается обычным цветом, но фон становится серым)
  * @property label - Метка поля (`ReactNode`)
  */
-export interface BaseInputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'prefix' | 'suffix'> {
+export interface BaseInputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'size' | 'prefix' | 'suffix'
+> {
   label?: ReactNode;
   error?: string;
   success?: boolean;

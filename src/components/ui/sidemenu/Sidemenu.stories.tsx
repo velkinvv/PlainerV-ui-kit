@@ -397,7 +397,8 @@ export const EdgeAttachedLayout: Story = {
     const [activeId, setActiveId] = React.useState('home');
     const items = React.useMemo(() => applySidemenuActiveId(defaultItems, activeId), [activeId]);
     const sidemenuProps = pickSidemenuPropsFromStoryArgs(args);
-    const isRightPlacement = sidemenuProps.horizontalPlacement === SidemenuHorizontalPlacement.RIGHT;
+    const isRightPlacement =
+      sidemenuProps.horizontalPlacement === SidemenuHorizontalPlacement.RIGHT;
 
     const sidemenuNode = (
       <Sidemenu
@@ -427,7 +428,6 @@ export const EdgeAttachedLayout: Story = {
     );
   },
 };
-
 
 /** Плавающая «карточка»: позиция у края экрана */
 export const FloatingPlacement: Story = {

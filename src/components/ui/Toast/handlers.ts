@@ -50,10 +50,7 @@ export function createToastId(): string {
  * @param type - Категория (акцентная полоса слева)
  * @param mode - Режим темы из ThemeProvider
  */
-export function getToastSurfaceTokens(
-  type: ToastType,
-  mode: ThemeColorScheme,
-): ToastSurfaceTokens {
+export function getToastSurfaceTokens(type: ToastType, mode: ThemeColorScheme): ToastSurfaceTokens {
   const isDark = mode === ThemeColorScheme.DARK;
   const bodyColor = isDark ? neutral[300] : grey[600];
 

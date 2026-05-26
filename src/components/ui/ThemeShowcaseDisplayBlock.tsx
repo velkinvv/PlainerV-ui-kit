@@ -7,9 +7,8 @@ import { Skeleton } from './Skeleton';
 import { AvatarGroup } from './AvatarGroup';
 import { Icon } from './Icon';
 import { ThemeToggle } from './ThemeToggle';
-import { SkeletonVariant } from '../../types/ui';
+import { SkeletonVariant, type BreadcrumbItem } from '../../types/ui';
 import { Size, IconSize } from '../../types/sizes';
-import type { BreadcrumbItem } from '../../types/ui';
 import { themeShowcaseStoriesStyles } from './ThemeShowcase.stories.styles';
 
 const breadcrumbItems: BreadcrumbItem[] = [

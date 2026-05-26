@@ -1,9 +1,9 @@
 import styled, { css } from 'styled-components';
 import { TransitionHandler } from '../../../handlers/uiHandlers';
-import type { SliderAccentKind } from './handlers';
 import {
   resolveSliderTrackRailBackground,
   resolveSliderTrackRailBoxShadow,
+  type SliderAccentKind,
 } from './handlers';
 
 /**

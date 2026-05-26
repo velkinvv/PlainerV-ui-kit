@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import { BorderRadiusHandler } from '../../../handlers/uiHandlers';
-import { Size } from '../../../types/sizes';
+import type { Size } from '../../../types/sizes';
 import {
   SliderTrackActive,
   SliderTrackHit,
@@ -82,8 +82,7 @@ export const SliderEmbeddedTrackStrip = styled.div<{ $lineHeightPx: number }>`
   right: 0;
   bottom: 0;
   ${({ theme, $lineHeightPx }) => {
-    const radiusPx =
-      Number.parseInt(BorderRadiusHandler(theme.borderRadius), 10) || 8;
+    const radiusPx = Number.parseInt(BorderRadiusHandler(theme.borderRadius), 10) || 8;
     const heightPx = Math.max($lineHeightPx, radiusPx);
     return css`
       height: ${heightPx}px;
@@ -110,8 +109,8 @@ export const SliderEmbeddedTrackActive = styled(SliderTrackActive)<{ $fillToEnd?
       : `calc(${$thumbInsetPx}px + (100% - ${$thumbSizePx}px) * ${$leftPct} / 100)`};
   width: ${({ $leftPct, $widthPct, $thumbInsetPx, $thumbSizePx }) =>
     ($leftPct ?? 0) <= 0
-      ? `calc(${$thumbInsetPx}px + (100% - ${$thumbSizePx}px) * ${($widthPct ?? 0)} / 100)`
-      : `calc((100% - ${$thumbSizePx}px) * ${($widthPct ?? 0)} / 100)`};
+      ? `calc(${$thumbInsetPx}px + (100% - ${$thumbSizePx}px) * ${$widthPct ?? 0} / 100)`
+      : `calc((100% - ${$thumbSizePx}px) * ${$widthPct ?? 0} / 100)`};
   ${embeddedActiveLineAtBottom}
   ${({ theme, $fillToEnd }) => {
     const radius = BorderRadiusHandler(theme.borderRadius);

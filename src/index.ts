@@ -33,10 +33,7 @@ export type {
   ResolvedThemeCatalogItem,
   DefinedThemeCatalog,
 } from './types/themeCatalog';
-export {
-  BUILTIN_THEME_ID_LIGHT,
-  BUILTIN_THEME_ID_DARK,
-} from './types/themeCatalog';
+export { BUILTIN_THEME_ID_LIGHT, BUILTIN_THEME_ID_DARK } from './types/themeCatalog';
 export {
   createThemeCatalog,
   defineThemeCatalog,

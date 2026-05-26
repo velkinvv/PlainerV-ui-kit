@@ -1,6 +1,9 @@
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import type { TabsDirection } from '@/types/ui';
-import { scrollSegmentTriggerIntoView, measureSegmentTriggerRelativeToTrack } from '@/handlers/tabsScrollHandlers';
+import {
+  scrollSegmentTriggerIntoView,
+  measureSegmentTriggerRelativeToTrack,
+} from '@/handlers/tabsScrollHandlers';
 import type { PillSegmentMetrics } from './pillSegmentMetricsTypes';
 
 interface UsePillSegmentMetricsParams {

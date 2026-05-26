@@ -3,10 +3,7 @@ import styled, { css } from 'styled-components';
 import { motion } from 'framer-motion';
 
 import { offScreenPanelLayerTransition } from '@/handlers/offScreenPanelMotionHandlers';
-import {
-  SidemenuHorizontalPlacement,
-  SidemenuVerticalAlignment,
-} from '@/types/ui';
+import { SidemenuHorizontalPlacement, SidemenuVerticalAlignment } from '@/types/ui';
 import {
   resolveSidemenuFixedHorizontalInset,
   resolveSidemenuOffScreenHiddenOffsetX,
@@ -225,10 +222,7 @@ export const SidemenuOffScreenHoverShell: React.FC<SidemenuOffScreenHoverShellPr
 
   const totalInnerWidthPx = edgeWidthPx + panelWidthPx;
 
-  const hiddenOffsetX = resolveSidemenuOffScreenHiddenOffsetX(
-    horizontalPlacement,
-    panelWidthPx,
-  );
+  const hiddenOffsetX = resolveSidemenuOffScreenHiddenOffsetX(horizontalPlacement, panelWidthPx);
   const hiddenRotateY = resolveSidemenuOffScreenHiddenRotateY(horizontalPlacement);
 
   /** Скрыто: панель за краем + лёгкий fade/scale/наклон (spring в transition) */

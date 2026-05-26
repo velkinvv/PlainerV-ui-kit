@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import { describeStory, getStoryDocsSourceCode } from './storybookStoryDocs';
 import React from 'react';
 import {
@@ -22,7 +21,7 @@ describe('storybookStoryDocs', () => {
   });
 
   it('formatUsagePropsFromArgs сериализует leftIcon как Icon JSX', () => {
-    const IconStub = ({ name, size }: { name: string; size: string }) => null;
+    const IconStub = ({ name: _name, size: _size }: { name: string; size: string }) => null;
     IconStub.displayName = 'Icon';
 
     const props = formatUsagePropsFromArgs({
@@ -35,7 +34,7 @@ describe('storybookStoryDocs', () => {
   });
 
   it('WithLeftIcon: сниппет из args содержит leftIcon', () => {
-    const IconStub = ({ name, size }: { name: string; size: string }) => null;
+    const IconStub = ({ name: _name, size: _size }: { name: string; size: string }) => null;
     IconStub.displayName = 'Icon';
 
     const snippet = buildComponentUsageSnippetFromArgs('Input', {
@@ -54,9 +53,9 @@ describe('storybookStoryDocs', () => {
   });
 
   it('buildComponentUsageSnippetFromArgs собирает JSX', () => {
-    expect(
-      buildComponentUsageSnippetFromArgs('Input', { label: 'Email', type: 'email' }),
-    ).toBe('<Input label="Email" type="email" />');
+    expect(buildComponentUsageSnippetFromArgs('Input', { label: 'Email', type: 'email' })).toBe(
+      '<Input label="Email" type="email" />',
+    );
   });
 
   it('buildComponentUsageSnippetFromArgs выводит children между тегами', () => {
@@ -163,16 +162,14 @@ describe('storybookStoryDocs', () => {
   });
 
   it('extractReturnJsxFromStorySource находит return', () => {
-    const jsx = extractReturnJsxFromStorySource(
-      'render: () => { return (<Input label="A" />); }',
-    );
+    const jsx = extractReturnJsxFromStorySource('render: () => { return (<Input label="A" />); }');
     expect(jsx).toBe('<Input label="A" />');
   });
 
   it('normalizeStoryUsageJsx убирает style', () => {
-    expect(
-      normalizeStoryUsageJsx('<Input label="A" style={inputStoriesStyles.box} />'),
-    ).toBe('<Input label="A" />');
+    expect(normalizeStoryUsageJsx('<Input label="A" style={inputStoriesStyles.box} />')).toBe(
+      '<Input label="A" />',
+    );
   });
 
   it('extractStoryExportBlock вырезает один экспорт', () => {
@@ -319,7 +316,8 @@ export const B = { render: () => <Input label="B" /> };`;
   });
 
   it('WithSuccess: тело сторис без render (блочная стрелка)', () => {
-    const storyBodyOnly = `() => {
+    const storyBodyOnly = `export const WithSuccess: Story = {
+  render: () => {
   const [email, setEmail] = React.useState('user@example.com');
   return (
     <Input
@@ -329,7 +327,8 @@ export const B = { render: () => <Input label="B" /> };`;
       success={true}
     />
   );
-}`;
+  },
+};`;
 
     const result = getStoryDocsSourceCode(storyBodyOnly, {
       name: 'With Success',
@@ -346,11 +345,13 @@ export const B = { render: () => <Input label="B" /> };`;
   });
 
   it('getStoryDocsSourceCode не подменяет render-сторис на meta args', () => {
-    const storyFnOnly = `() => (
+    const storyFnOnly = `export const WithHelperText: Story = {
+  render: () => (
     <Form formId="helper-text-form">
       <Input label="Пароль" helperText="Минимум 8 символов" />
     </Form>
-  )`;
+  ),
+};`;
 
     const result = getStoryDocsSourceCode(storyFnOnly, {
       name: 'With Helper Text',
@@ -389,6 +390,7 @@ export const WithRender = {
 
     const result = getStoryDocsSourceCode(file, {
       name: 'ArgsOnly',
+      id: 'ui-kit-inputs-input--args-only',
       component: { displayName: 'Input' },
       args: { label: 'Только args' },
       parameters: {},

@@ -13,7 +13,10 @@ import { Divider } from './Divider';
 import { Grid } from './Grid/Grid';
 import { GridItem } from './Grid/GridItem';
 import { ThemeShowcaseBadgesAvatarsBlock } from './ThemeShowcaseBadgesAvatarsBlock';
-import { ThemeShowcaseTabsBlock, ThemeShowcaseAccordionBlock } from './ThemeShowcaseTabsAccordionBlock';
+import {
+  ThemeShowcaseTabsBlock,
+  ThemeShowcaseAccordionBlock,
+} from './ThemeShowcaseTabsAccordionBlock';
 import { ThemeShowcaseFormControlsBlock } from './ThemeShowcaseFormControlsBlock';
 import { ThemeShowcaseExtendedInputsBlock } from './ThemeShowcaseExtendedInputsBlock';
 import { ThemeShowcaseDisplayBlock } from './ThemeShowcaseDisplayBlock';

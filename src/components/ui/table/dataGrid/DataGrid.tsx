@@ -73,10 +73,10 @@ import {
 } from './DataGrid.style';
 import { DataGridColumnHeaderContent } from './DataGridColumnHeaderContent';
 import {
+  normalizeTableSurfaceBackgrounds,
   resolveTableHeaderSurfaceBackgroundColor,
   resolveTableHeaderToolbarSurfaceBackgroundColor,
 } from '../basicTable/tableSurfaceBackgroundHandlers';
-import { normalizeTableSurfaceBackgrounds } from '../basicTable/tableSurfaceBackgroundHandlers';
 import { resolveDataGridTableLayout } from './dataGridTableLayoutHandlers';
 import { resolveDataGridTableHeaderBackground } from './dataGridTableHeaderSurfaceHandlers';
 import { DataGridHeaderToolbarBuiltinActions } from './DataGridHeaderToolbarBuiltinActions';

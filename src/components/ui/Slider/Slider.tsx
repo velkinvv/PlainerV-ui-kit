@@ -237,9 +237,7 @@ export const Slider: React.FC<SliderProps> = ({
   const resolvedFullWidth = fullWidth || hasFieldChrome;
 
   const theme = useTheme();
-  const fieldBorderRadiusPx = parseThemeBorderRadiusPx(
-    BorderRadiusHandler(theme.borderRadius),
-  );
+  const fieldBorderRadiusPx = parseThemeBorderRadiusPx(BorderRadiusHandler(theme.borderRadius));
   const trackLineHeightPx = Math.max(track.railHeightPx, track.activeHeightPx);
   const embeddedFooterHeightPx = getSliderEmbeddedFooterHeightPx(
     thumbPx,
@@ -280,7 +278,11 @@ export const Slider: React.FC<SliderProps> = ({
         skeleton
         helperStatus={helperTextStatus}
       >
-        <SliderSkeletonSingle size={size} fullWidth={resolvedFullWidth} showValueLabel={showValueLabel} />
+        <SliderSkeletonSingle
+          size={size}
+          fullWidth={resolvedFullWidth}
+          showValueLabel={showValueLabel}
+        />
       </SliderFieldShell>
     );
   }

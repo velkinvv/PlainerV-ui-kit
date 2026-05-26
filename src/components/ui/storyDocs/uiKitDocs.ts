@@ -580,7 +580,7 @@ export const DOC_SLIDER_INPUT = `
 - Range: **\`nameFrom\`**, **\`nameTo\`** для отправки пары в форме.
 
 ### Состояния (наследуются от Input)
-**\`label\`**, **\`helperText\`**, **\`extraText\`**, **\`additionalLabel\`**, **\`error\`**, **\`success\`**, **\`status\`** (\`error\` \| \`success\` \| \`warning\`), **\`disabled\`**, **\`readOnly\`**, **\`required\`**, **\`skeleton\`**, **\`isLoading\`**, **\`displayClearIcon\`**, иконки, тултип/hint, **\`variant\`** (\`default\` \| \`clear\`).
+**\`label\`**, **\`helperText\`**, **\`extraText\`**, **\`additionalLabel\`**, **\`error\`**, **\`success\`**, **\`status\`** (\`error\` | \`success\` | \`warning\`), **\`disabled\`**, **\`readOnly\`**, **\`required\`**, **\`skeleton\`**, **\`isLoading\`**, **\`displayClearIcon\`**, иконки, тултип/hint, **\`variant\`** (\`default\` | \`clear\`).
 
 Очистка (**\`displayClearIcon\`**) сбрасывает значение к **\`min\`** (одиночный) или к \`[min, min]\` (range).
 

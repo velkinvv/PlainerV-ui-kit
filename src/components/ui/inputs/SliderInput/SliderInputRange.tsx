@@ -1,5 +1,10 @@
 import React, { forwardRef, useCallback, useEffect, useId, useMemo, useState } from 'react';
-import { InputVariant, type SliderInputRangeProps, type SliderRangeValue, type TooltipPosition } from '../../../../types/ui';
+import {
+  InputVariant,
+  type SliderInputRangeProps,
+  type SliderRangeValue,
+  type TooltipPosition,
+} from '../../../../types/ui';
 import { getClearIconSizeForInputField } from '../../../../handlers/iconHandlers';
 import { sanitizeNumericInput } from '../NumberInput/handlers';
 import {
@@ -229,7 +234,9 @@ export const SliderInputRange = forwardRef<HTMLInputElement, SliderInputRangePro
         setFromDraft(String(low));
         return;
       }
-      setCommittedPair(mergeRangeAfterThumbMove(0, resolution.nextValue, low, high, min, max, step));
+      setCommittedPair(
+        mergeRangeAfterThumbMove(0, resolution.nextValue, low, high, min, max, step),
+      );
     }, [fromDraft, high, low, max, min, setCommittedPair, step]);
 
     const commitToDraft = useCallback(() => {
@@ -238,7 +245,9 @@ export const SliderInputRange = forwardRef<HTMLInputElement, SliderInputRangePro
         setToDraft(String(high));
         return;
       }
-      setCommittedPair(mergeRangeAfterThumbMove(1, resolution.nextValue, low, high, min, max, step));
+      setCommittedPair(
+        mergeRangeAfterThumbMove(1, resolution.nextValue, low, high, min, max, step),
+      );
     }, [toDraft, high, low, max, min, setCommittedPair, step]);
 
     const handleNumericBlur = useCallback(
@@ -321,8 +330,7 @@ export const SliderInputRange = forwardRef<HTMLInputElement, SliderInputRangePro
 
     const formContext = useFormContext();
 
-    const placeholderFrom =
-      numberFromPlaceholder ?? `От ${formatSliderNumberRu(min)}`;
+    const placeholderFrom = numberFromPlaceholder ?? `От ${formatSliderNumberRu(min)}`;
     const placeholderTo = numberToPlaceholder ?? `До ${formatSliderNumberRu(max)}`;
 
     if (skeleton) {

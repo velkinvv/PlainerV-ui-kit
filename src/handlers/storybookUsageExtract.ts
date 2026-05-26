@@ -8,8 +8,7 @@
  */
 export const extractUseStateDeclarationsFromStorySource = (source: string): string[] => {
   const declarations: string[] = [];
-  const pattern =
-    /const\s*\[([^\]]+)\]\s*=\s*(?:React\.)?useState(?:<[^>]+>)?\([\s\S]*?\);/g;
+  const pattern = /const\s*\[([^\]]+)\]\s*=\s*(?:React\.)?useState(?:<[^>]+>)?\([\s\S]*?\);/g;
 
   let match = pattern.exec(source);
   while (match !== null) {
@@ -29,10 +28,7 @@ export const extractUseStateDeclarationsFromStorySource = (source: string): stri
  * @param source - Исходник сторис.
  * @param prefix - Начало совпадения, после которого идёт `(`.
  */
-const extractParenthesizedBlockAfter = (
-  source: string,
-  prefix: RegExp,
-): string | null => {
+const extractParenthesizedBlockAfter = (source: string, prefix: RegExp): string | null => {
   const match = source.match(prefix);
   if (!match || match.index === undefined) {
     return null;
@@ -112,10 +108,7 @@ export const extractReturnJsxFromStorySource = (source: string): string | null =
  * @param fullSource - Полный исходник файла сторис.
  * @param exportName - Имя экспорта (например `Default`, `SingleControlled`).
  */
-export const extractStoryExportBlock = (
-  fullSource: string,
-  exportName: string,
-): string | null => {
+export const extractStoryExportBlock = (fullSource: string, exportName: string): string | null => {
   const marker = `export const ${exportName}`;
   const startIndex = fullSource.indexOf(marker);
   if (startIndex === -1) {
@@ -160,23 +153,12 @@ export const extractRenderSectionFromExport = (
   fullSource: string,
   exportName: string,
 ): string | null => {
-  const marker = `export const ${exportName}`;
-  const exportStart = fullSource.indexOf(marker);
-  if (exportStart === -1) {
+  const exportBlock = extractStoryExportBlock(fullSource, exportName);
+  if (!exportBlock || !/render\s*:/.test(exportBlock)) {
     return null;
   }
 
-  const renderIndex = fullSource.indexOf('render:', exportStart);
-  if (renderIndex === -1) {
-    return null;
-  }
-
-  const afterRender = fullSource.slice(renderIndex + 1);
-  const nextExportOffset = afterRender.search(/\nexport const /);
-  const exportEnd =
-    nextExportOffset === -1 ? fullSource.length : renderIndex + 1 + nextExportOffset;
-
-  return fullSource.slice(exportStart, exportEnd).trim();
+  return exportBlock.trim();
 };
 
 /**
@@ -201,7 +183,10 @@ export const normalizeStoryUsageJsx = (jsx: string): string => {
   normalized = normalized.replace(/success=\{false\}/g, '');
 
   const divClosingTag = `</${'div'}>`;
-  const divWrapperPattern = new RegExp(`^<div>\\s*([\\s\\S]+?)\\s*${divClosingTag.replace('/', '\\/')}$`, 'm');
+  const divWrapperPattern = new RegExp(
+    `^<div>\\s*([\\s\\S]+?)\\s*${divClosingTag.replace('/', '\\/')}$`,
+    'm',
+  );
   const divWrapperMatch = normalized.match(divWrapperPattern);
   if (divWrapperMatch?.[1]) {
     normalized = divWrapperMatch[1].trim();

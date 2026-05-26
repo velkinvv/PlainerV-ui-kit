@@ -10,10 +10,7 @@ import { themeShowcaseStoriesStyles } from './ThemeShowcase.stories.styles';
  */
 export const ThemeShowcaseOverlaysBlock = () => (
   <div style={themeShowcaseStoriesStyles.horizontalGap16Center}>
-    <Popover
-      trigger={<Button variant={ButtonVariant.OUTLINE}>Popover</Button>}
-      contentWidth={240}
-    >
+    <Popover trigger={<Button variant={ButtonVariant.OUTLINE}>Popover</Button>} contentWidth={240}>
       <div style={themeShowcaseStoriesStyles.popoverPanel}>
         Всплывающая панель с произвольным содержимым.
       </div>

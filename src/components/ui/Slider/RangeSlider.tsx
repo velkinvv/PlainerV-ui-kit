@@ -316,9 +316,7 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
   );
 
   const theme = useTheme();
-  const fieldBorderRadiusPx = parseThemeBorderRadiusPx(
-    BorderRadiusHandler(theme.borderRadius),
-  );
+  const fieldBorderRadiusPx = parseThemeBorderRadiusPx(BorderRadiusHandler(theme.borderRadius));
   const trackLineHeightPx = Math.max(track.railHeightPx, track.activeHeightPx);
   const embeddedFooterHeightPx = getSliderEmbeddedFooterHeightPx(
     thumbPx,
@@ -365,7 +363,12 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
     );
   }
 
-  const makeRangeThumb = (thumbIndex: 0 | 1, thumbPercent: number, thumbValue: number, thumbDomId: string) => (
+  const makeRangeThumb = (
+    thumbIndex: 0 | 1,
+    thumbPercent: number,
+    thumbValue: number,
+    thumbDomId: string,
+  ) => (
     <ThumbComponent
       type="button"
       id={thumbDomId}
@@ -380,7 +383,10 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
               bottom: embeddedThumbBottomCss,
               zIndex: thumbIndex === 0 ? 2 : 3,
             }
-          : { left: sliderThumbLeftCalcCss(thumbPx, thumbPercent), zIndex: thumbIndex === 0 ? 2 : 3 }
+          : {
+              left: sliderThumbLeftCalcCss(thumbPx, thumbPercent),
+              zIndex: thumbIndex === 0 ? 2 : 3,
+            }
       }
       aria-valuemin={min}
       aria-valuemax={max}

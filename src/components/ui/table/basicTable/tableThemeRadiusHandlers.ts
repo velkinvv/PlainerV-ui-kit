@@ -21,10 +21,7 @@ const TABLE_THEME_FALLBACK_BORDER_RADIUS = '16px';
  * @param theme — активная тема styled-components
  * @param cardSize — ступень `theme.cards.sizes`
  */
-export function tableCardBorderRadiusFromTheme(
-  theme: ThemeType,
-  cardSize: Size = Size.MD,
-): string {
+export function tableCardBorderRadiusFromTheme(theme: ThemeType, cardSize: Size = Size.MD): string {
   const fromCardTier = theme.cards?.sizes?.[cardSize]?.borderRadius?.trim();
   if (fromCardTier) {
     return fromCardTier;

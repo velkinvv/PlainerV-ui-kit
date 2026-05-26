@@ -1,18 +1,50 @@
+const fs = require('fs');
+const path = require('path');
+
+const webNodeModulesDirectory = path.join(__dirname, 'node_modules');
+const workspaceRootNodeModulesDirectory = path.join(__dirname, '..', 'node_modules');
+
+/**
+ * npm workspaces поднимает часть зависимостей в корень монорепы — Jest должен видеть один путь.
+ *
+ * @param {string} packageName - имя пакета в node_modules
+ * @returns {string} абсолютный путь к каталогу пакета
+ */
+function resolveNodeModuleDirectory(packageName) {
+  const localPackageDirectory = path.join(webNodeModulesDirectory, packageName);
+  if (fs.existsSync(localPackageDirectory)) {
+    return localPackageDirectory;
+  }
+
+  const hoistedPackageDirectory = path.join(workspaceRootNodeModulesDirectory, packageName);
+  if (fs.existsSync(hoistedPackageDirectory)) {
+    return hoistedPackageDirectory;
+  }
+
+  throw new Error(
+    `Jest: пакет "${packageName}" не найден ни в ${webNodeModulesDirectory}, ни в ${workspaceRootNodeModulesDirectory}. Выполните npm install в корне монорепы.`,
+  );
+}
+
+const reactDirectory = resolveNodeModuleDirectory('react');
+const reactDomDirectory = resolveNodeModuleDirectory('react-dom');
+const styledComponentsDirectory = resolveNodeModuleDirectory('styled-components');
+const framerMotionDirectory = resolveNodeModuleDirectory('framer-motion');
+
 module.exports = {
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-    // Один экземпляр React для тестов: иначе ThemeProvider из styled-components и хуки приложения
-    // попадают на разные копии (например web@18 и корень монорепы@19) → useContext === null.
-    '^react$': '<rootDir>/node_modules/react',
-    '^react-dom$': '<rootDir>/node_modules/react-dom',
-    '^react/jsx-runtime$': '<rootDir>/node_modules/react/jsx-runtime',
-    '^react/jsx-dev-runtime$': '<rootDir>/node_modules/react/jsx-dev-runtime',
-    '^styled-components$': '<rootDir>/node_modules/styled-components',
-    '^styled-components/(.*)$': '<rootDir>/node_modules/styled-components/$1',
-    '^framer-motion$': '<rootDir>/node_modules/framer-motion',
+    // Один экземпляр React для тестов: иначе ThemeProvider и хуки попадают на разные копии.
+    '^react$': reactDirectory,
+    '^react-dom$': reactDomDirectory,
+    '^react/jsx-runtime$': path.join(reactDirectory, 'jsx-runtime'),
+    '^react/jsx-dev-runtime$': path.join(reactDirectory, 'jsx-dev-runtime'),
+    '^styled-components$': styledComponentsDirectory,
+    '^styled-components/(.*)$': path.join(styledComponentsDirectory, '$1'),
+    '^framer-motion$': framerMotionDirectory,
   },
   transform: {
     '^.+\\.(ts|tsx)$': 'ts-jest',

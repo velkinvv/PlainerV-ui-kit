@@ -1,10 +1,7 @@
 import styled, { css } from 'styled-components';
 import { motion } from 'framer-motion';
 import { Size } from '@/types/sizes';
-import {
-  SidemenuHorizontalPlacement,
-  SidemenuVerticalAlignment,
-} from '@/types/ui';
+import { SidemenuHorizontalPlacement } from '@/types/ui';
 import { BoxShadowHandler } from '@/handlers/uiHandlers';
 import { cardBorderRadiusFromTheme } from '@/handlers/cardThemeHandlers';
 
@@ -45,7 +42,10 @@ export const SidemenuPanelRoot = styled(motion.div)<{
           align-self: stretch;
         `
       : css`
-          border-radius: ${cardBorderRadiusFromTheme(theme, theme?.borderRadius ?? theme?.globalSize)};
+          border-radius: ${cardBorderRadiusFromTheme(
+            theme,
+            theme?.borderRadius ?? theme?.globalSize,
+          )};
           border: 1px solid ${theme?.colors?.border};
           padding: 0 0 30px 0;
           height: 741px;

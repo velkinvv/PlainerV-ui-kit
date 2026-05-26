@@ -42,10 +42,7 @@ function deepMergeRecord<Base extends Record<string, unknown>>(
     const baseValue = base[key];
 
     if (isMergeableObject(baseValue) && isMergeableObject(overrideValue)) {
-      merged[key as keyof Base] = deepMergeRecord(
-        baseValue,
-        overrideValue,
-      ) as Base[keyof Base];
+      merged[key as keyof Base] = deepMergeRecord(baseValue, overrideValue) as Base[keyof Base];
       continue;
     }
 

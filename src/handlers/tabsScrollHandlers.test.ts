@@ -1,5 +1,8 @@
 import { TabsDirection } from '@/types/ui';
-import { measureSegmentTriggerRelativeToTrack, scrollSegmentTriggerIntoView } from './tabsScrollHandlers';
+import {
+  measureSegmentTriggerRelativeToTrack,
+  scrollSegmentTriggerIntoView,
+} from './tabsScrollHandlers';
 
 describe('measureSegmentTriggerRelativeToTrack', () => {
   it('учитывает scrollLeft — offsetX не меняется при прокрутке трека', () => {
@@ -11,7 +14,14 @@ describe('measureSegmentTriggerRelativeToTrack', () => {
     } as HTMLElement;
 
     const triggerElement = {
-      getBoundingClientRect: () => ({ left: 120, right: 180, top: 4, bottom: 36 }),
+      getBoundingClientRect: () => ({
+        left: 120,
+        right: 180,
+        top: 4,
+        bottom: 36,
+        width: 60,
+        height: 32,
+      }),
     } as HTMLElement;
 
     const metrics = measureSegmentTriggerRelativeToTrack(trackElement, triggerElement);

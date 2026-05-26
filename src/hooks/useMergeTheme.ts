@@ -51,15 +51,8 @@ export function useMergeTheme(
         : undefined;
 
     const baseTheme =
-      catalogBaseTheme ??
-      (resolvedColorScheme === ThemeColorScheme.DARK ? darkTheme : lightTheme);
+      catalogBaseTheme ?? (resolvedColorScheme === ThemeColorScheme.DARK ? darkTheme : lightTheme);
 
     return mergeTheme(baseTheme, themeOverride);
-  }, [
-    themeOverride,
-    options?.baseTheme,
-    resolvedColorScheme,
-    resolvedThemeMode,
-    themeContext?.getThemeByMode,
-  ]);
+  }, [themeOverride, options?.baseTheme, resolvedColorScheme, resolvedThemeMode, themeContext]);
 }

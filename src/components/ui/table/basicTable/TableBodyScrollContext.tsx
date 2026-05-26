@@ -38,7 +38,9 @@ export function TableBodyScrollProvider({
     [bodyScrollMaxHeight, bodyScrollHost, embeddedPaginationBelow],
   );
 
-  return <TableBodyScrollContext.Provider value={value}>{children}</TableBodyScrollContext.Provider>;
+  return (
+    <TableBodyScrollContext.Provider value={value}>{children}</TableBodyScrollContext.Provider>
+  );
 }
 
 /** Читает настройки скролла таблицы из `TableContainerScroll`. */

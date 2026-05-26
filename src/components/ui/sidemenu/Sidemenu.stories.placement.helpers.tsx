@@ -98,16 +98,11 @@ export type SidemenuEdgeAttachedPlacementCellProps = {
 /**
  * Ячейка матрицы edgeAttached: колонна + блок контента в ограниченной высоте.
  */
-export const SidemenuEdgeAttachedPlacementCell: React.FC<SidemenuEdgeAttachedPlacementCellProps> = ({
-  combination,
-  items,
-  sidemenuProps,
-}) => {
+export const SidemenuEdgeAttachedPlacementCell: React.FC<
+  SidemenuEdgeAttachedPlacementCellProps
+> = ({ combination, items, sidemenuProps }) => {
   const [activeId, setActiveId] = useState(items[0]?.id ?? 'home');
-  const resolvedItems = useMemo(
-    () => applySidemenuActiveId(items, activeId),
-    [items, activeId],
-  );
+  const resolvedItems = useMemo(() => applySidemenuActiveId(items, activeId), [items, activeId]);
   const isRightPlacement = combination.horizontalPlacement === SidemenuHorizontalPlacement.RIGHT;
 
   const sidemenuNode = (
@@ -177,18 +172,11 @@ export type SidemenuFixedPlacementScrollSectionProps = {
 /**
  * Полноэкранная секция для fixed-режимов (плавающая панель или off-screen): одна комбинация на экран.
  */
-export const SidemenuFixedPlacementScrollSection: React.FC<SidemenuFixedPlacementScrollSectionProps> = ({
-  combination,
-  items,
-  title,
-  description,
-  sidemenuProps,
-}) => {
+export const SidemenuFixedPlacementScrollSection: React.FC<
+  SidemenuFixedPlacementScrollSectionProps
+> = ({ combination, items, title, description, sidemenuProps }) => {
   const [activeId, setActiveId] = useState(items[0]?.id ?? 'home');
-  const resolvedItems = useMemo(
-    () => applySidemenuActiveId(items, activeId),
-    [items, activeId],
-  );
+  const resolvedItems = useMemo(() => applySidemenuActiveId(items, activeId), [items, activeId]);
 
   return (
     <section

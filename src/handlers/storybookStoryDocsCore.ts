@@ -34,7 +34,9 @@ const ICON_SIZE_TOKENS = new Set(['XS', 'SM', 'MD', 'LG', 'XL']);
  * Проверяет, что значение похоже на React-элемент.
  * @param value - Значение пропса из args сторис.
  */
-const isReactElement = (value: unknown): value is { type: unknown; props: Record<string, unknown> } =>
+const isReactElement = (
+  value: unknown,
+): value is { type: unknown; props: Record<string, unknown> } =>
   typeof value === 'object' &&
   value !== null &&
   'type' in value &&
@@ -98,9 +100,10 @@ const formatIconSizeForUsage = (size: unknown): string => {
  * Собирает JSX `<Icon />` из React-элемента в args (как в Input.stories).
  * @param element - React-элемент из `leftIcon` / `rightIcon`.
  */
-export const formatIconElementForUsage = (
-  element: { type: unknown; props: Record<string, unknown> },
-): string | null => {
+export const formatIconElementForUsage = (element: {
+  type: unknown;
+  props: Record<string, unknown>;
+}): string | null => {
   if (resolveElementTypeName(element.type) !== 'Icon') {
     return null;
   }
@@ -234,7 +237,11 @@ const buildOmittedUsagePropComments = (args: Record<string, unknown>): string[] 
       continue;
     }
 
-    if (ICON_ELEMENT_PROP_KEYS.has(propKey) && isReactElement(propValue) && formatIconElementForUsage(propValue)) {
+    if (
+      ICON_ELEMENT_PROP_KEYS.has(propKey) &&
+      isReactElement(propValue) &&
+      formatIconElementForUsage(propValue)
+    ) {
       continue;
     }
 
@@ -279,17 +286,14 @@ export const buildComponentUsageSnippetFromArgs = (
   const propsFragment = formatUsagePropsFromArgs(argsForAttributes);
   const skippedComments = buildOmittedUsagePropComments(args);
 
-  const hasChildText =
-    typeof childContent === 'string' || typeof childContent === 'number';
+  const hasChildText = typeof childContent === 'string' || typeof childContent === 'number';
 
   const elementLine = hasChildText
     ? `<${componentName}${propsFragment}>${String(childContent)}</${componentName}>`
     : `<${componentName}${propsFragment} />`;
 
   const body =
-    skippedComments.length > 0
-      ? `${skippedComments.join('\n')}\n${elementLine}`
-      : elementLine;
+    skippedComments.length > 0 ? `${skippedComments.join('\n')}\n${elementLine}` : elementLine;
 
   if (options?.wrapInForm) {
     return `<Form formId="example-form">\n  ${body.split('\n').join('\n  ')}\n</Form>`;

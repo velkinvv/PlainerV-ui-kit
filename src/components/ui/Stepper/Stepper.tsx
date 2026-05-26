@@ -44,7 +44,10 @@ const compactRingCircumference = 2 * Math.PI * COMPACT_RING_R;
  */
 export const Stepper = forwardRef<HTMLElement, StepperProps>((props, ref) => {
   const theme = useTheme() as ThemeType;
-  const appearance = resolveStepperAppearance(props.appearance, theme.mode ?? ThemeColorScheme.LIGHT);
+  const appearance = resolveStepperAppearance(
+    props.appearance,
+    theme.mode ?? ThemeColorScheme.LIGHT,
+  );
 
   const backLabel = props.backButtonLabel ?? 'Назад';
 

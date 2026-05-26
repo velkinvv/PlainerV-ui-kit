@@ -1,10 +1,7 @@
 import styled, { css } from 'styled-components';
 import type { DataGridStatusMessageVariant } from '@/types/ui';
 
-const statusMessageVariantStyles: Record<
-  DataGridStatusMessageVariant,
-  ReturnType<typeof css>
-> = {
+const statusMessageVariantStyles: Record<DataGridStatusMessageVariant, ReturnType<typeof css>> = {
   info: css`
     background: ${({ theme }) => theme.colors.backgroundSecondary};
     color: ${({ theme }) => theme.colors.text};

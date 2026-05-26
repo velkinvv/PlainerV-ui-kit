@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
-import { ThemeColorScheme, ThemeMode, type ThemeType } from '../types/theme';
-import type { BuiltinThemeMode } from '../types/theme';
+import { ThemeColorScheme, ThemeMode, type BuiltinThemeMode, type ThemeType } from '../types/theme';
 import type { CustomThemesByMode, ThemeOverridesByMode } from '../types/themeOverride';
 import type { ThemeCatalog } from '../types/themeCatalog';
 import { GlobalStyles } from '../styles/GlobalStyles';
@@ -63,15 +62,15 @@ export function ThemeProvider<TThemeMode extends string = BuiltinThemeMode>({
     if (themesProp) {
       return themesProp;
     }
-    return buildThemeCatalogFromLegacyProps(themeOverrides, customThemes) as ThemeCatalog<TThemeMode>;
+    return buildThemeCatalogFromLegacyProps(
+      themeOverrides,
+      customThemes,
+    ) as ThemeCatalog<TThemeMode>;
   }, [themesProp, themeOverrides, customThemes]);
 
   const resolvedCatalog = useMemo(() => resolveThemeCatalog(catalog), [catalog]);
 
-  const themeModes = useMemo(
-    () => getThemeCatalogModes(catalog) as TThemeMode[],
-    [catalog],
-  );
+  const themeModes = useMemo(() => getThemeCatalogModes(catalog) as TThemeMode[], [catalog]);
 
   const themesMeta = useMemo(() => getThemeCatalogMeta(resolvedCatalog), [resolvedCatalog]);
 
@@ -90,8 +89,7 @@ export function ThemeProvider<TThemeMode extends string = BuiltinThemeMode>({
   );
 
   const resolveInitialThemeMode = (): TThemeMode => {
-    const explicitInitial =
-      initialThemeModeProp ?? initialThemeName ?? initialThemeId;
+    const explicitInitial = initialThemeModeProp ?? initialThemeName ?? initialThemeId;
     if (explicitInitial) {
       return ensureValidThemeMode(explicitInitial, themeModes, fallbackThemeMode);
     }
@@ -164,10 +162,7 @@ export function ThemeProvider<TThemeMode extends string = BuiltinThemeMode>({
     [themeByMode],
   );
 
-  const themeWithType = useMemo(
-    () => ({ ...activeTheme, type: activeTheme.mode }),
-    [activeTheme],
-  );
+  const themeWithType = useMemo(() => ({ ...activeTheme, type: activeTheme.mode }), [activeTheme]);
 
   useEffect(() => {
     writeStoredThemeMode(themeMode, colorScheme, storageKey);

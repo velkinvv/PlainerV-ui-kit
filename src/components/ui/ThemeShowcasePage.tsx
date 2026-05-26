@@ -22,10 +22,7 @@ export const ThemeShowcasePage = ({ pageTitle }: ThemeShowcasePageProps) => {
         color: theme.colors.text,
       }}
     >
-      <ThemeShowcaseContent
-        pageTitle={pageTitle}
-        pageTitleStyle={{ color: theme.colors.text }}
-      />
+      <ThemeShowcaseContent pageTitle={pageTitle} pageTitleStyle={{ color: theme.colors.text }} />
     </div>
   );
 };

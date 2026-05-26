@@ -4,14 +4,10 @@ import { useTheme as useStyledTheme } from 'styled-components';
 import { useTheme } from '@/themes/themeContext';
 import { Button } from '@/components/ui/buttons/Button';
 import { Typography } from '@/components/ui/Typography';
-import { ThemeColorScheme } from '@/types/theme';
 import { lightTheme } from '@/themes/themes';
 import { mergeTheme } from '@/themes/mergeTheme';
 import { useMergeTheme } from '@/hooks/useMergeTheme';
-import {
-  brandPlainervThemeParameters,
-  brandThemeOverrides,
-} from './CustomTheme.stories.helpers';
+import { brandPlainervThemeParameters, brandThemeOverrides } from './CustomTheme.stories.helpers';
 import { customThemeStoriesStyles } from './CustomTheme.stories.styles';
 
 /**

@@ -47,8 +47,7 @@ export function cardBorderRadiusFromTheme(
   theme: ThemeType,
   cardSize: CardProps['size'] | CardProps['padding'] | Size | undefined,
 ): string {
-  const resolvedSize =
-    cardSize ?? theme.borderRadius ?? theme.globalSize ?? Size.MD;
+  const resolvedSize = cardSize ?? theme.borderRadius ?? theme.globalSize ?? Size.MD;
   const fromCardTier = getCardSizeSettings(theme, resolvedSize).borderRadius?.trim();
 
   if (fromCardTier) {

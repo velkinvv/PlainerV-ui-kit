@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { ThemeColorScheme, type ThemeType } from '../types/theme';
+import type { ThemeColorScheme, ThemeType } from '../types/theme';
 import type { ThemeCatalogMeta } from '../types/themeCatalog';
 
 /**

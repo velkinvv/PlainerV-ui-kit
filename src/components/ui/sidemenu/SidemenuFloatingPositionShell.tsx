@@ -1,8 +1,5 @@
 import React from 'react';
-import {
-  SidemenuHorizontalPlacement,
-  SidemenuVerticalAlignment,
-} from '@/types/ui';
+import type { SidemenuHorizontalPlacement, SidemenuVerticalAlignment } from '@/types/ui';
 import { SidemenuFloatingPositionShellRoot } from './SidemenuFloatingPositionShell.style';
 
 export interface SidemenuFloatingPositionShellProps {

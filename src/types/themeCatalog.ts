@@ -21,7 +21,7 @@ export const BuiltinThemeName = {
 } as const;
 
 /** @deprecated Используйте {@link BuiltinThemeMode} */
-export type BuiltinThemeName = 'light' | 'dark';
+export type BuiltinThemeNameValue = (typeof BuiltinThemeName)[keyof typeof BuiltinThemeName];
 
 /**
  * @deprecated Используйте {@link ThemeModeMap}

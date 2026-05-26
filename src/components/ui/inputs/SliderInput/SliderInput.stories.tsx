@@ -10,8 +10,7 @@ import { DOC_SLIDER_INPUT } from '@/components/ui/storyDocs/uiKitDocs';
 import { sliderInputStoriesStyles } from './SliderInput.stories.styles';
 import { describeStory } from '@/handlers/storybookStoryDocs';
 
-const formatRub = (value: number) =>
-  `${new Intl.NumberFormat('ru-RU').format(value)} ₽`;
+const formatRub = (value: number) => `${new Intl.NumberFormat('ru-RU').format(value)} ₽`;
 
 const formatPercent = (value: number) => `${value} %`;
 
@@ -391,9 +390,7 @@ export const SingleWithError: Story = {
 
 export const SingleWithSuccess: Story = {
   name: 'Одиночный: успех',
-  ...describeStory(
-    '`success` без текста ошибки — зелёный акцент встроенного слайдера и обводки.',
-  ),
+  ...describeStory('`success` без текста ошибки — зелёный акцент встроенного слайдера и обводки.'),
   args: {
     label: 'Цель достигнута',
     defaultValue: 100,
@@ -417,9 +414,7 @@ export const SingleWithWarningStatus: Story = {
 
 export const SingleDisabled: Story = {
   name: 'Одиночный: disabled',
-  ...describeStory(
-    '`disabled` — нет взаимодействия со слайдером и полем, визуальное затемнение.',
-  ),
+  ...describeStory('`disabled` — нет взаимодействия со слайдером и полем, визуальное затемнение.'),
   args: {
     label: 'Недоступно',
     defaultValue: 50,
@@ -429,9 +424,7 @@ export const SingleDisabled: Story = {
 
 export const SingleReadOnly: Story = {
   name: 'Одиночный: readOnly',
-  ...describeStory(
-    '`readOnly` — значение видно, редактирование и перетаскивание отключены.',
-  ),
+  ...describeStory('`readOnly` — значение видно, редактирование и перетаскивание отключены.'),
   args: {
     label: 'Только просмотр',
     defaultValue: 33,
@@ -477,9 +470,7 @@ export const SingleLoading: Story = {
 
 export const SingleWithIcons: Story = {
   name: 'Одиночный: иконки',
-  ...describeStory(
-    'Слоты `leftIcon` и `rightIcon` в оболочке Input — как у обычного поля ввода.',
-  ),
+  ...describeStory('Слоты `leftIcon` и `rightIcon` в оболочке Input — как у обычного поля ввода.'),
   args: {
     label: 'Скидка',
     defaultValue: 15,
@@ -576,9 +567,7 @@ export const RangeAtMinimum: Story = {
 
 export const RangeAtMaximum: Story = {
   name: 'Диапазон: оба у максимума',
-  ...describeStory(
-    'Пара `[max, max]` — оба бегунка у правого края шкалы.',
-  ),
+  ...describeStory('Пара `[max, max]` — оба бегунка у правого края шкалы.'),
   args: {
     label: 'Оба у максимума',
     range: true,
@@ -652,9 +641,7 @@ export const RangeDecimalStep: Story = {
 
 export const RangeWithClearIcon: Story = {
   name: 'Диапазон: очистка',
-  ...describeStory(
-    'Очистка сбрасывает пару к `[min, min]` (оба бегунка к левому краю).',
-  ),
+  ...describeStory('Очистка сбрасывает пару к `[min, min]` (оба бегунка к левому краю).'),
   args: {
     label: 'Фильтр',
     range: true,
@@ -697,9 +684,7 @@ export const RangeWithError: Story = {
 
 export const RangeWithSuccess: Story = {
   name: 'Диапазон: успех',
-  ...describeStory(
-    'Успешное состояние для выбранного корректного интервала.',
-  ),
+  ...describeStory('Успешное состояние для выбранного корректного интервала.'),
   args: {
     label: 'Период',
     range: true,
@@ -711,9 +696,7 @@ export const RangeWithSuccess: Story = {
 
 export const RangeWithWarningStatus: Story = {
   name: 'Диапазон: status warning',
-  ...describeStory(
-    'Предупреждение через `status="warning"` без текста ошибки.',
-  ),
+  ...describeStory('Предупреждение через `status="warning"` без текста ошибки.'),
   args: {
     label: 'Широкий интервал',
     range: true,
@@ -725,9 +708,7 @@ export const RangeWithWarningStatus: Story = {
 
 export const RangeDisabled: Story = {
   name: 'Диапазон: disabled',
-  ...describeStory(
-    'Отключённый range: оба бегунка и поля недоступны.',
-  ),
+  ...describeStory('Отключённый range: оба бегунка и поля недоступны.'),
   args: {
     label: 'Фильтр недоступен',
     range: true,
@@ -738,9 +719,7 @@ export const RangeDisabled: Story = {
 
 export const RangeReadOnly: Story = {
   name: 'Диапазон: readOnly',
-  ...describeStory(
-    'Только просмотр выбранного интервала.',
-  ),
+  ...describeStory('Только просмотр выбранного интервала.'),
   args: {
     label: 'Зафиксированный период',
     range: true,
@@ -751,9 +730,7 @@ export const RangeReadOnly: Story = {
 
 export const RangeRequired: Story = {
   name: 'Диапазон: required',
-  ...describeStory(
-    'Обязательный выбор диапазона в форме.',
-  ),
+  ...describeStory('Обязательный выбор диапазона в форме.'),
   args: {
     label: 'Интервал дат (числа)',
     range: true,
@@ -766,9 +743,7 @@ export const RangeRequired: Story = {
 
 export const RangeSkeleton: Story = {
   name: 'Диапазон: skeleton',
-  ...describeStory(
-    'Скелетон в режиме range — шиммер вместо пары полей и трека.',
-  ),
+  ...describeStory('Скелетон в режиме range — шиммер вместо пары полей и трека.'),
   args: {
     label: 'Загрузка фильтра',
     range: true,
