@@ -589,7 +589,7 @@ export const DOC_SLIDER_INPUT = `
 - **DateInput** (\`range\`) — тот же паттерн «одно значение / пара», другой тип данных.
 
 ### Документация
-- Сайт: \`documentation/content/docs/ru/web/v_0.2.1/components-slider-input.mdx\`
+- Сайт: \`documentation/content/docs/ru/web/v_0.2.2/components-slider-input.mdx\`
 - Storybook: **UI Kit → Inputs → SliderInput** (истории по режимам и состояниям)
 `.trim();
 
@@ -649,7 +649,7 @@ export const DOC_THEME_SELECTOR = `
 
 Работает с любым числом тем. Переключение: \`setThemeMode(appThemes.themeMode.ocean)\` — type-safe id.
 
-См. сторис **UI Kit/Theming/ThemeSelector** и [Theming](/docs/web/v_0.2.1/theming).
+См. сторис **UI Kit/Theming/ThemeSelector** и [Theming](/docs/web/v_0.2.2/theming).
 `.trim();
 
 /** @see SidemenuProps */
