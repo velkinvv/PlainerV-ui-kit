@@ -1,6 +1,6 @@
 import React, { forwardRef, useMemo } from 'react';
 import { useTheme } from 'styled-components';
-import { ThemeMode, type ThemeType } from '../../../types/theme';
+import { ThemeColorScheme, type ThemeType } from '../../../types/theme';
 import type { StepperProps, StepperLinearStep } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
 import { IconSize } from '../../../types/sizes';
@@ -44,7 +44,7 @@ const compactRingCircumference = 2 * Math.PI * COMPACT_RING_R;
  */
 export const Stepper = forwardRef<HTMLElement, StepperProps>((props, ref) => {
   const theme = useTheme() as ThemeType;
-  const appearance = resolveStepperAppearance(props.appearance, theme.mode ?? ThemeMode.LIGHT);
+  const appearance = resolveStepperAppearance(props.appearance, theme.mode ?? ThemeColorScheme.LIGHT);
 
   const backLabel = props.backButtonLabel ?? 'Назад';
 

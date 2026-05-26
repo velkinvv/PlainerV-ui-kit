@@ -12,7 +12,9 @@ import {
   NavigationMenuActiveAppearance,
   NavigationMenuExpandInteraction,
   NavigationMenuItemStatus,
+  SidemenuHorizontalPlacement,
   SidemenuVariant,
+  SidemenuVerticalAlignment,
   TooltipPosition,
   type SidemenuItem,
 } from '../../../types/ui';
@@ -31,6 +33,13 @@ import {
 } from './Sidemenu.stories.slots.styles';
 import { lightTheme } from '@/themes/themes';
 import { createSidemenuStoryThemeStyles, sidemenuStoriesStyles } from './Sidemenu.stories.styles';
+import {
+  SIDEMENU_PLACEMENT_COMBINATIONS,
+  SidemenuEdgeAttachedPlacementCell,
+  SidemenuFixedPlacementScrollSection,
+  SidemenuPlacementMatrixPage,
+} from './Sidemenu.stories.placement.helpers';
+import { sidemenuPlacementStoriesStyles } from './Sidemenu.stories.placement.styles';
 
 const sidemenuStoryThemeStyles = createSidemenuStoryThemeStyles(lightTheme);
 const edgeAttachedPageRootStyle = {
@@ -122,11 +131,59 @@ const meta: Meta<typeof Sidemenu> = {
     },
     edgeAttached: {
       description:
-        'Панель как колонна у левого края: без скруглений и тени, min-height 100vh, граница только справа.',
+        'Панель как колонна у края: без скруглений и тени, min-height 100vh, граница только с одной стороны.',
       control: 'boolean',
       table: {
         type: { summary: 'boolean' },
       },
+    },
+    horizontalPlacement: {
+      control: { type: 'select' },
+      options: Object.values(SidemenuHorizontalPlacement),
+      description: 'Левый или правый край экрана',
+      table: {
+        type: { summary: 'SidemenuHorizontalPlacement' },
+      },
+    },
+    verticalAlignment: {
+      control: { type: 'select' },
+      options: Object.values(SidemenuVerticalAlignment),
+      description:
+        'Вертикаль: для плавающей панели — вся колонна; для edgeAttached — блок пунктов меню внутри колонны',
+      table: {
+        type: { summary: 'SidemenuVerticalAlignment' },
+      },
+    },
+    expandInteraction: {
+      control: { type: 'select' },
+      options: Object.values(NavigationMenuExpandInteraction),
+      description: 'Способ раскрытия панели (ширина + подписи)',
+      table: { type: { summary: 'NavigationMenuExpandInteraction' } },
+    },
+    offScreenHoverReveal: {
+      control: 'boolean',
+      description: 'Панель скрыта за краем; полоса по hover раскрывает меню',
+      table: { type: { summary: 'boolean' } },
+    },
+    expandCompactWidth: {
+      control: { type: 'number' },
+      description: 'Ширина компактной панели (px)',
+      table: { type: { summary: 'number' } },
+    },
+    expandExpandedWidth: {
+      control: { type: 'number' },
+      description: 'Ширина развёрнутой панели (px)',
+      table: { type: { summary: 'number' } },
+    },
+    offScreenEdgeWidth: {
+      control: { type: 'number' },
+      description: 'Ширина hover-полосы у края (px)',
+      table: { type: { summary: 'number' } },
+    },
+    offScreenHideDelayMs: {
+      control: { type: 'number' },
+      description: 'Задержка скрытия off-screen после mouseleave (мс)',
+      table: { type: { summary: 'number' } },
     },
   },
 };
@@ -267,6 +324,15 @@ const longLabelsItems: SidemenuItem[] = [
 
 // Основные варианты
 export const Expanded: Story = {
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        story:
+          'Развёрнутая плавающая панель (fixed у левого края, verticalAlignment=top по умолчанию). Скругление — из theme.cards, как у Card.',
+      },
+    },
+  },
   args: {
     logo: {
       icon: <Icon name="IconExStar" size={IconSize.MD} />,
@@ -283,6 +349,14 @@ export const Expanded: Story = {
 };
 
 export const Collapsed: Story = {
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        story: 'Компактная плавающая панель: только иконки, фиксирована у левого края экрана.',
+      },
+    },
+  },
   args: {
     logo: {
       icon: <Icon name="IconExStar" size={IconSize.MD} />,
@@ -298,20 +372,22 @@ export const Collapsed: Story = {
   ),
 };
 
-/** Колонна у левого края приложения: см. **edgeAttached**; рядом блок контента (как в реальном layout). */
+/** Колонна у края приложения: **edgeAttached** + **horizontalPlacement**; рядом блок контента. */
 export const EdgeAttachedLayout: Story = {
-  name: 'У левого края экрана (edgeAttached)',
+  name: 'У края экрана (edgeAttached)',
   parameters: {
     layout: 'fullscreen',
     docs: {
       description: {
         story:
-          'Родитель: `display: flex; min-height: 100vh`. **Sidemenu** с **edgeAttached** — без «карточки», разделитель с основой только цветом/линией справа.',
+          'Родитель: `display: flex; min-height: 100vh`. **edgeAttached** — колонна на всю высоту; **horizontalPlacement** задаёт сторону границы (left / right).',
       },
     },
   },
   args: {
     edgeAttached: true,
+    horizontalPlacement: SidemenuHorizontalPlacement.LEFT,
+    verticalAlignment: SidemenuVerticalAlignment.TOP,
     variant: SidemenuVariant.COLLAPSED,
     logo: {
       icon: <Icon name="IconExStar" size={IconSize.MD} />,
@@ -321,6 +397,18 @@ export const EdgeAttachedLayout: Story = {
     const [activeId, setActiveId] = React.useState('home');
     const items = React.useMemo(() => applySidemenuActiveId(defaultItems, activeId), [activeId]);
     const sidemenuProps = pickSidemenuPropsFromStoryArgs(args);
+    const isRightPlacement = sidemenuProps.horizontalPlacement === SidemenuHorizontalPlacement.RIGHT;
+
+    const sidemenuNode = (
+      <Sidemenu
+        {...sidemenuProps}
+        items={items}
+        onItemClick={(item) => {
+          setActiveId(item.id);
+          sidemenuProps.onItemClick?.(item);
+        }}
+      />
+    );
 
     return (
       <div style={edgeAttachedPageRootStyle}>
@@ -328,6 +416,86 @@ export const EdgeAttachedLayout: Story = {
           <span style={sidemenuStoriesStyles.edgeAttachedStatusMuted}>Активный пункт: </span>
           <strong>{activeId}</strong>
         </p>
+        <div style={sidemenuStoriesStyles.edgeAttachedContentRow}>
+          {!isRightPlacement ? sidemenuNode : null}
+          <main style={edgeAttachedMainStyle}>
+            Область контента приложения рядом с боковой колонной.
+          </main>
+          {isRightPlacement ? sidemenuNode : null}
+        </div>
+      </div>
+    );
+  },
+};
+
+
+/** Плавающая «карточка»: позиция у края экрана */
+export const FloatingPlacement: Story = {
+  name: 'Плавающая панель: позиционирование',
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        story:
+          'Без **edgeAttached** панель фиксируется у края экрана; **verticalAlignment** двигает всю колонну.',
+      },
+    },
+  },
+  args: {
+    horizontalPlacement: SidemenuHorizontalPlacement.LEFT,
+    verticalAlignment: SidemenuVerticalAlignment.CENTER,
+    variant: SidemenuVariant.EXPANDED,
+    logo: {
+      icon: <Icon name="IconExStar" size={IconSize.MD} />,
+    },
+  },
+  render: (args) => (
+    <div style={offScreenSurfaceStyle}>
+      <p style={sidemenuStoriesStyles.offScreenSummary}>
+        Переключите **horizontalPlacement** и **verticalAlignment** в Controls.
+      </p>
+      <SidemenuStoryWithActiveState
+        itemsTemplate={defaultItems}
+        initialActiveId="home"
+        {...pickSidemenuPropsFromStoryArgs(args)}
+      />
+    </div>
+  ),
+};
+
+/** Колонна у края: verticalAlignment выравнивает блок пунктов */
+export const EdgeAttachedMenuVerticalAlignment: Story = {
+  name: 'У края: выравнивание пунктов меню',
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        story:
+          'При **edgeAttached** **verticalAlignment** центрирует только блок навигации; шапка и **footer** на месте.',
+      },
+    },
+  },
+  args: {
+    edgeAttached: true,
+    horizontalPlacement: SidemenuHorizontalPlacement.LEFT,
+    verticalAlignment: SidemenuVerticalAlignment.CENTER,
+    variant: SidemenuVariant.EXPANDED,
+    logo: {
+      icon: <Icon name="IconExStar" size={IconSize.MD} />,
+    },
+    footer: (
+      <Button variant={ButtonVariant.SECONDARY} size={Size.SM}>
+        Выход
+      </Button>
+    ),
+  },
+  render: (args) => {
+    const [activeId, setActiveId] = React.useState('home');
+    const items = React.useMemo(() => applySidemenuActiveId(defaultItems, activeId), [activeId]);
+    const sidemenuProps = pickSidemenuPropsFromStoryArgs(args);
+
+    return (
+      <div style={edgeAttachedPageRootStyle}>
         <div style={sidemenuStoriesStyles.edgeAttachedContentRow}>
           <Sidemenu
             {...sidemenuProps}
@@ -338,7 +506,7 @@ export const EdgeAttachedLayout: Story = {
             }}
           />
           <main style={edgeAttachedMainStyle}>
-            Область контента приложения рядом с боковой колонной.
+            Пункты меню по центру колонны; логотип сверху, футер снизу.
           </main>
         </div>
       </div>
@@ -1202,4 +1370,125 @@ export const MenuSkeletonAndLoading: Story = {
       },
     },
   },
+};
+
+const sidemenuPlacementMatrixLogo = {
+  icon: <Icon name="IconExStar" size={IconSize.MD} />,
+  title: 'Plainer',
+};
+
+const sidemenuPlacementMatrixFooter = (
+  <Button variant={ButtonVariant.SECONDARY} size={Size.SM}>
+    Профиль
+  </Button>
+);
+
+const sidemenuPlacementMatrixCommonProps = {
+  logo: sidemenuPlacementMatrixLogo,
+  footer: sidemenuPlacementMatrixFooter,
+  variant: SidemenuVariant.EXPANDED,
+} as const;
+
+const placementMatrixFullscreenParameters: Story['parameters'] = {
+  layout: 'fullscreen',
+};
+
+/** Все 6 комбинаций horizontalPlacement × verticalAlignment для плавающей карточки */
+export const FloatingPlacementMatrix: Story = {
+  name: 'Матрица: плавающая панель (все варианты)',
+  parameters: {
+    ...placementMatrixFullscreenParameters,
+    docs: {
+      description: {
+        story:
+          'Прокрутите страницу: каждая секция — отдельная комбинация **left/right** × **top/center/bottom**. Панель фиксируется у края viewport; двигается **вся** колонна. Скругление — как у **Card** из темы.',
+      },
+    },
+  },
+  render: () => (
+    <SidemenuPlacementMatrixPage
+      title="Плавающая панель — все комбинации placement"
+      intro="Режим по умолчанию (без edgeAttached и offScreenHoverReveal). Каждая секция ниже — полноэкранный пример одной пары horizontalPlacement + verticalAlignment."
+      sectionHint="Наведите на полосу / кликните пункты. Для интерактивного переключения одной панели используйте сторис «Плавающая панель: позиционирование»."
+    >
+      {SIDEMENU_PLACEMENT_COMBINATIONS.map((combination) => (
+        <SidemenuFixedPlacementScrollSection
+          key={`floating-${combination.horizontalPlacement}-${combination.verticalAlignment}`}
+          combination={combination}
+          items={defaultItems}
+          title="Плавающая карточка"
+          description="verticalAlignment перемещает всю панель по вертикали экрана."
+          sidemenuProps={sidemenuPlacementMatrixCommonProps}
+        />
+      ))}
+    </SidemenuPlacementMatrixPage>
+  ),
+};
+
+/** Все 6 комбинаций для edgeAttached: выравнивание блока пунктов */
+export const EdgeAttachedPlacementMatrix: Story = {
+  name: 'Матрица: у края экрана (все варианты)',
+  parameters: {
+    ...placementMatrixFullscreenParameters,
+    docs: {
+      description: {
+        story:
+          'Сетка 2×3: **edgeAttached** + все комбинации placement. **verticalAlignment** центрирует или прижимает **блок пунктов**; шапка и **footer** остаются у верха/низа колонны.',
+      },
+    },
+  },
+  render: () => (
+    <SidemenuPlacementMatrixPage
+      title="edgeAttached — все комбинации placement"
+      intro="Колонна на всю высоту ячейки. horizontalPlacement задаёт сторону границы-разделителя (left → border-right, right → border-left)."
+      sectionHint="В приложении поместите Sidemenu в flex-ряд: для right — после main."
+    >
+      <div style={sidemenuPlacementStoriesStyles.matrixGrid}>
+        {SIDEMENU_PLACEMENT_COMBINATIONS.map((combination) => (
+          <SidemenuEdgeAttachedPlacementCell
+            key={`edge-${combination.horizontalPlacement}-${combination.verticalAlignment}`}
+            combination={combination}
+            items={defaultItems}
+            sidemenuProps={sidemenuPlacementMatrixCommonProps}
+          />
+        ))}
+      </div>
+    </SidemenuPlacementMatrixPage>
+  ),
+};
+
+/** Все 6 комбинаций для offScreenHoverReveal */
+export const OffScreenPlacementMatrix: Story = {
+  name: 'Матрица: off-screen (все варианты)',
+  parameters: {
+    ...placementMatrixFullscreenParameters,
+    docs: {
+      description: {
+        story:
+          'Прокрутите страницу: **offScreenHoverReveal** для каждой комбинации placement. Наведите на полосу у края — панель выезжает; для **right** направление скрытия зеркальное.',
+      },
+    },
+  },
+  render: () => (
+    <SidemenuPlacementMatrixPage
+      title="offScreenHoverReveal — все комбинации placement"
+      intro="Fixed-оболочка с hover-полосой у выбранного края. defaultOffScreenRevealed не задан — панель скрыта до наведения."
+      sectionHint="Колбэки onOffScreenShow / onOffScreenHide — в отдельных off-screen сторис с fn()."
+    >
+      {SIDEMENU_PLACEMENT_COMBINATIONS.map((combination) => (
+        <SidemenuFixedPlacementScrollSection
+          key={`offscreen-${combination.horizontalPlacement}-${combination.verticalAlignment}`}
+          combination={combination}
+          items={defaultItems}
+          title="Off-screen hover reveal"
+          description="Наведите на вертикальную полосу у края — панель выедет с выбранной стороны."
+          sidemenuProps={{
+            ...sidemenuPlacementMatrixCommonProps,
+            offScreenHoverReveal: true,
+            defaultOffScreenRevealed: false,
+          }}
+        />
+      ))}
+    </SidemenuPlacementMatrixPage>
+  ),
 };

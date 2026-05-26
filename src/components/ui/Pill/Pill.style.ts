@@ -4,7 +4,7 @@ import { TransitionHandler } from '../../../handlers/uiHandlers';
 import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
 import type { PillGeometry } from './handlers';
 import type { PillStatus } from '../../../types/ui';
-import { ThemeMode } from '../../../types/theme';
+import { ThemeColorScheme } from '../../../types/theme';
 
 /**
  * Акцентный цвет Pill по семантическому статусу (выбранное состояние, спиннер).
@@ -89,7 +89,7 @@ export const PillRoot = styled.button.withConfig({
     css`
       border-color: ${resolvePillAccent(theme, $status)};
       color: ${resolvePillAccent(theme, $status)};
-      background: ${theme.mode === ThemeMode.DARK
+      background: ${theme.mode === ThemeColorScheme.DARK
         ? `color-mix(in srgb, ${resolvePillAccent(theme, $status)} 22%, ${theme.colors.input})`
         : `color-mix(in srgb, ${resolvePillAccent(theme, $status)} 10%, ${theme.colors.input})`};
     `}

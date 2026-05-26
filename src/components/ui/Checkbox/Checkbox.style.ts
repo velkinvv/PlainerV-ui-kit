@@ -5,7 +5,7 @@ import {
   buildReducedMotionTransformCss,
 } from '../../../handlers/uiMotionStyleHandlers';
 import { Size } from '../../../types/sizes';
-import { ThemeMode } from '../../../types/theme';
+import { ThemeColorScheme } from '../../../types/theme';
 import { success } from '../../../variables/colors/success';
 import grey from '../../../variables/colors/grey';
 import { neutral } from '../../../variables/colors/neutral';
@@ -85,7 +85,7 @@ export const CheckboxBox = styled.div<{
     }
     if (disabled) {
       // Disabled border: Gray_02 / 4O (#E0E0E0) для светлой, Gray/500 (#9E9E9E) для темной
-      return `1px solid ${theme.mode === ThemeMode.DARK ? grey[500] : grey[300]}`;
+      return `1px solid ${theme.mode === ThemeColorScheme.DARK ? grey[500] : grey[300]}`;
     }
     // Inactive border: Gray/300 (#C5C5C5)
     return `1px solid ${grey[300]}`;
@@ -102,14 +102,14 @@ export const CheckboxBox = styled.div<{
   background: ${({ theme, checked, indeterminate, disabled }) => {
     if (disabled) {
       // Disabled background: Gray_02 / 2O (#F5F5F5) для светлой, Gray_02/7O (#757575) для темной
-      return theme.mode === ThemeMode.DARK ? grey[600] : grey[100];
+      return theme.mode === ThemeColorScheme.DARK ? grey[600] : grey[100];
     }
     if (checked || indeterminate) {
       // Active background: Success/600 main (#7FCD43)
       return success[600];
     }
     // Inactive background: Gray_02/1O (#FFFFFF) для светлой, Gray_02/9O (#424242) для темной
-    return theme.mode === ThemeMode.DARK ? neutral[800] : neutral[10];
+    return theme.mode === ThemeColorScheme.DARK ? neutral[800] : neutral[10];
   }};
 
   transition: ${TransitionHandler()};
@@ -126,7 +126,7 @@ export const CheckboxBox = styled.div<{
         border-color: ${checked || indeterminate ? success[600] : grey[300]};
         background: ${checked || indeterminate
           ? success[500]
-          : theme.mode === ThemeMode.DARK
+          : theme.mode === ThemeColorScheme.DARK
             ? neutral[800]
             : neutral[10]};
       `}
@@ -211,7 +211,7 @@ export const CheckboxLabel = styled.span<{ disabled?: boolean }>`
       return neutral[400];
     }
     // Label color: Gray_02 / 9O (#424242) для светлой, Gray_02/1O (#FFFFFF) для темной
-    return theme.mode === ThemeMode.DARK ? neutral[10] : neutral[800];
+    return theme.mode === ThemeColorScheme.DARK ? neutral[10] : neutral[800];
   }};
   font-family: ${({ theme }) => theme.fonts.primary}; /* Montserrat */
   font-size: 14px; /* Согласно макету */

@@ -589,7 +589,7 @@ export const DOC_SLIDER_INPUT = `
 - **DateInput** (\`range\`) — тот же паттерн «одно значение / пара», другой тип данных.
 
 ### Документация
-- Сайт: \`documentation/content/docs/ru/web/v_0.2.0/components-slider-input.mdx\`
+- Сайт: \`documentation/content/docs/ru/web/v_0.2.1/components-slider-input.mdx\`
 - Storybook: **UI Kit → Inputs → SliderInput** (истории по режимам и состояниям)
 `.trim();
 
@@ -637,31 +637,122 @@ export const DOC_ICON_CATEGORIES = `
 /** ThemeToggle — ThemeToggleProps */
 export const DOC_THEME_TOGGLE = `
 ### Назначение
-Переключатель светлой/тёмной темы (интеграция с **ThemeProvider**).
+Переключатель **ThemeMode.light** ↔ **ThemeMode.dark**, если обе темы есть в каталоге **ThemeProvider**.
+
+Для трёх и более тем используйте **ThemeSelector** или \`setThemeMode\` из **useTheme** (см. **UI Kit → Theming**).
+`.trim();
+
+/** ThemeSelector — ThemeSelectorProps */
+export const DOC_THEME_SELECTOR = `
+### Назначение
+Выпадающий список тем из каталога **ThemeProvider** (\`defineThemeCatalog\`).
+
+Работает с любым числом тем. Переключение: \`setThemeMode(appThemes.themeMode.ocean)\` — type-safe id.
+
+См. сторис **UI Kit/Theming/ThemeSelector** и [Theming](/docs/web/v_0.2.1/theming).
 `.trim();
 
 /** @see SidemenuProps */
 export const DOC_SIDEMENU = `
 ### Назначение
-Боковое меню навигации: состав пунктов, свёрнутое состояние, ширина, интеграция с лейаутом приложения.
+**Sidemenu** — боковая панель навигации на базе **NavigationMenu**: пункты, шапка (лого / **logoSlot**), нижний слот **footer**, компактный и развёрнутый режимы, интеграция в layout приложения.
 
-Проп **expandInteraction**: \`click\` / \`hover\` — раскрытие по области; \`toggleButton\` — только кнопка в шапке (**expandToggleRender** или встроенная); **onExpand**, **onCollapse**, **onExpandedChange**; ширины **expandCompactWidth** / **expandExpandedWidth**. Колбэк **onExpandToggleClick** при клике по встроенной кнопке или при вызове **toggleExpanded** из кастомного render.
+Скругление плавающей «карточки» берётся из **theme.cards.sizes** (как у **Card** MD), тень — **BoxShadowHandler**.
 
-**offScreenHoverReveal**: панель у кромки; при наведении на полосу **offScreenEdgeWidth** панель **выезжает**; при уходе курсора **уезжает влево за край экрана** (не схлопывание ширины до нуля). Задержка скрытия после mouseleave — **offScreenHideDelayMs** (по умолчанию 1500 мс). **offScreenZIndex**. Видимость: **offScreenRevealed** / **defaultOffScreenRevealed**, **onOffScreenRevealedChange**, **onOffScreenShow**, **onOffScreenHide**.
+---
 
-У **SidemenuItem** те же вложенность и оверлеи, что у **NavigationMenu.Item** (**items**, **tooltip**, **hint**, **popover** и т.д.) — см. сторис **«Меню: вложенность»**, **«Меню: tooltip, hint, popover»**, **«Меню: статусы пунктов»**, **«Меню: skeleton и loading»**.
+### Режимы раскладки
 
-Проп **logoSlot**: произвольный контент слева в шапке вместо связки логотипа (**logo.icon** + **logo.title**). Область шапки с лого помечена **data-prevent-navigation-expand-toggle**, чтобы клик по ней не переключал раскрытие панели в режиме клика по оболочке.
+| Режим | Проп | Поведение |
+|------|------|-----------|
+| Плавающая карточка | по умолчанию | \`position: fixed\` у края экрана; **verticalAlignment** двигает **всю** колонну |
+| У края экрана | **edgeAttached** | Колонна **100vh**, без скругления и тени; граница с одной стороны; **verticalAlignment** выравнивает **блок пунктов** между шапкой и **footer** |
+| За краем (hover) | **offScreenHoverReveal** | Полоса у края; панель выезжает / уезжает за экран; **horizontalPlacement** / **verticalAlignment** как у fixed-режима |
 
-Проп **footer**: произвольный контент внизу панели (второе меню, кнопки, профиль). Перед футером рисуется тот же горизонтальный **разделитель**, что под шапкой, чтобы отделить средний блок от нижнего слота. Область футера (**SidemenuFooterRegion**) помечена **data-prevent-navigation-expand-toggle**.
+---
 
-Проп **slotStyles**: инлайн-стили зон **header** (шапка + линия под ней), **body** (колонка основного меню), **footer** (обёртка содержимого нижнего слота) — **minHeight**, **height**, **maxHeight**, **overflow**, **flex** и т.д.
+### Позиционирование
 
-Проп **edgeAttached**: панель без скруглений и тени у левого края экрана (**min-height: 100vh**), граница только справа. Поддерживает те же интеракции, что обычный вариант (**expandInteraction**, **offScreenHoverReveal**) — сторис **«У левого края экрана (edgeAttached)»** и **«У края + скрытие/показ и раскрытие»**.
+| Проп | Значения | По умолчанию |
+|------|----------|--------------|
+| **horizontalPlacement** | \`left\` / \`right\` | \`left\` |
+| **verticalAlignment** | \`top\` / \`center\` / \`bottom\` | \`top\` |
 
-Примеры верхнего и нижнего слотов с разной вёрсткой — сторис **«Слоты: шапка (бренд) и футер (меню)»**, **«Слоты: шапка и футер (кнопки)»**; пример высот — **«Слоты: настройка высот (slotStyles)»**.
+**6 комбинаций** (left/right × top/center/bottom):
 
-В большинстве сторис активный пункт переключается по клику (обёртка со строкой **«Активный пункт»**); вложенные списки по-прежнему раскрываются кликом по ветке внутри **NavigationMenu**.
+- **Без edgeAttached** — позиция всей панели у соответствующего края и вертикали viewport.
+- **С edgeAttached** — колонна на всю высоту; **verticalAlignment** задаёт **justify-content** для среднего блока навигации (шапка и **footer** фиксированы у верха/низа колонны).
+- **С offScreenHoverReveal** — полоса и выезд панели у выбранного края; направление скрытия зеркалится для \`right\`.
+
+Сторис-матрицы: **«Матрица: плавающая панель (все варианты)»**, **«Матрица: у края экрана (все варианты)»**, **«Матрица: off-screen (все варианты)»**.
+
+---
+
+### Раскрытие панели (ширина и подписи)
+
+| Проп | Описание |
+|------|----------|
+| **variant** | \`expanded\` / \`collapsed\` — статический вид, если **expandInteraction** = \`none\` |
+| **expandInteraction** | \`click\` / \`hover\` — по области; \`toggleButton\` — только кнопка в шапке |
+| **expanded** / **defaultExpanded** | Контролируемый / начальный режим |
+| **expandCompactWidth** / **expandExpandedWidth** | Ширина свёрнутой / развёрнутой панели (px), по умолчанию 100 / 310 |
+| **expandToggleRender** | Кастомная кнопка: \`isExpanded\`, \`toggleExpanded\` |
+| **showExpandToggleButton** | Встроенная кнопка дополнительно к click/hover |
+| **onExpand** / **onCollapse** / **onExpandedChange** | Колбэки смены состояния |
+| **onExpandToggleClick** | До смены; \`preventDefault()\` отменяет переключение |
+
+---
+
+### Off-screen (скрытие за краем)
+
+| Проп | Описание |
+|------|----------|
+| **offScreenHoverReveal** | Включить режим |
+| **offScreenEdgeWidth** | Ширина hover-полосы у края (px) |
+| **offScreenRevealed** / **defaultOffScreenRevealed** | Контролируемая / начальная видимость |
+| **onOffScreenRevealedChange** | Запрос смены видимости |
+| **onOffScreenShow** / **onOffScreenHide** | После появления / скрытия |
+| **offScreenZIndex** | z-index слоя (по умолчанию 1030) |
+| **offScreenHideDelayMs** | Задержка скрытия после mouseleave (мс, по умолчанию 1500) |
+
+---
+
+### Слоты и пункты
+
+| Проп | Описание |
+|------|----------|
+| **items** | \`SidemenuItem[]\` — те же вложенность, tooltip, hint, popover, что у **NavigationMenu.Item** |
+| **logo** | \`{ icon?, title? }\` в шапке |
+| **logoSlot** | Произвольный ReactNode вместо **logo** (приоритет) |
+| **footer** | Нижний слот; перед ним разделитель; **data-prevent-navigation-expand-toggle** |
+| **slotStyles** | \`header\` / \`body\` / \`footer\` — height, flex, overflow и т.д. |
+| **onItemClick** | Колбэк клика по пункту (до \`item.onClick\`) |
+
+---
+
+### Layout приложения с edgeAttached
+
+\`\`\`tsx
+<div style={{ display: 'flex', minHeight: '100vh' }}>
+  <Sidemenu edgeAttached items={items} horizontalPlacement="left" />
+  <main>...</main>
+</div>
+\`\`\`
+
+Для **horizontalPlacement="right"** разместите **Sidemenu** после **main** в flex-ряду.
+
+---
+
+### Карта сторис
+
+| Группа | Сторис |
+|--------|--------|
+| Базовые | Expanded, Collapsed, WithNotifications, WithoutLogo |
+| Позиционирование | Плавающая панель: позиционирование; У края экрана; У края: выравнивание пунктов; **3 матрицы «все варианты»** |
+| Раскрытие | Expand on hover/click, Toggle button, Custom toggle |
+| Off-screen | OffScreenHoverReveal (+ collapsed, + expand) |
+| Меню | Вложенность, tooltip/hint/popover, статусы, skeleton |
+| Слоты | logoSlot, footer, header+footer, slotStyles |
 `.trim();
 
 export const DOC_TOAST = `

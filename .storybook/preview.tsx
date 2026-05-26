@@ -87,6 +87,7 @@ const preview: Preview = {
           Layout: 6,
           Utils: 7,
           Hooks: 8,
+          Theming: 9,
         };
 
         /**
@@ -168,6 +169,7 @@ const preview: Preview = {
             'useToast',
             'useWindowSize',
           ],
+          Theming: ['Custom theme', 'ThemeSelector'],
         };
 
         /**

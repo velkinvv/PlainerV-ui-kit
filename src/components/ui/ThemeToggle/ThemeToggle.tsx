@@ -4,7 +4,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { useTheme } from '../../../themes/ThemeProvider';
 import { Icon } from '../Icon';
 import type { ThemeToggleProps } from '../../../types/ui';
-import { ThemeMode } from '../../../types/theme';
+import { ThemeColorScheme, ThemeMode } from '../../../types/theme';
 import { SunIcon, MoonIcon } from './ThemeToggle.style';
 import { IconSize } from '../../../types/sizes';
 import { BorderRadiusHandler, TransitionHandler } from '../../../handlers/uiHandlers';
@@ -40,13 +40,25 @@ const ToggleHandle = styled(motion.div)`
 `;
 
 export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className }) => {
-  const { mode, toggle } = useTheme();
-  const isDark = mode === ThemeMode.DARK;
+  const { colorScheme, themeModes, themeMode, setThemeMode, toggle } = useTheme();
+  const isDark = colorScheme === ThemeColorScheme.DARK;
+
+  const handleToggle = () => {
+    const hasBuiltinPair =
+      themeModes.includes(ThemeMode.light) && themeModes.includes(ThemeMode.dark);
+
+    if (hasBuiltinPair) {
+      setThemeMode(themeMode === ThemeMode.light ? ThemeMode.dark : ThemeMode.light);
+      return;
+    }
+
+    toggle();
+  };
   const prefersReducedMotion = useReducedMotion();
 
   return (
     <ToggleContainer
-      onClick={toggle}
+      onClick={handleToggle}
       className={className}
       {...(!prefersReducedMotion ? { whileTap: { scale: 0.95 } } : {})}
     >

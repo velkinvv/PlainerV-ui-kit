@@ -1,4 +1,4 @@
-import { ThemeMode } from '@/types/theme';
+import { ThemeColorScheme } from '@/types/theme';
 import { neutral } from '@/variables/colors/neutral';
 import { primary } from '@/variables/colors/primary';
 
@@ -25,8 +25,8 @@ export function createSnackbarId(): string {
  * Палитра компактной полосы по теме (контрастная плашка внизу экрана).
  * @param mode - Режим темы из ThemeProvider
  */
-export function getSnackbarSurfaceTokens(mode: ThemeMode): SnackbarSurfaceTokens {
-  if (mode === ThemeMode.DARK) {
+export function getSnackbarSurfaceTokens(mode: ThemeColorScheme): SnackbarSurfaceTokens {
+  if (mode === ThemeColorScheme.DARK) {
     return {
       surface: neutral[800],
       messageColor: neutral[10],

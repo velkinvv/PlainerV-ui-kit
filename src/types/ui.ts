@@ -3703,6 +3703,25 @@ export enum SidemenuVariant {
   COLLAPSED = 'collapsed', // Свернутая панель
 }
 
+/** Горизонтальное положение боковой панели относительно экрана */
+export enum SidemenuHorizontalPlacement {
+  /** У левого края вьюпорта */
+  LEFT = 'left',
+  /** У правого края вьюпорта */
+  RIGHT = 'right',
+}
+
+/**
+ * Вертикальное выравнивание.
+ * Плавающая панель (**edgeAttached** = false): двигается вся колонна.
+ * У края (**edgeAttached** = true): колонна на всю высоту, выравнивается блок пунктов меню внутри.
+ */
+export enum SidemenuVerticalAlignment {
+  TOP = 'top',
+  CENTER = 'center',
+  BOTTOM = 'bottom',
+}
+
 /**
  * Элемент бокового меню
  * @property id - Уникальный идентификатор
@@ -3806,6 +3825,17 @@ export interface SidemenuProps extends BaseComponentProps {
    * Полностью совместима с **expandInteraction**, **offScreenHoverReveal** и связанными колбэками показа/скрытия.
    */
   edgeAttached?: boolean;
+  /**
+   * Горизонталь: левый или правый край экрана (плавающая панель, **offScreenHoverReveal**, **edgeAttached** — граница с нужной стороны).
+   * @default SidemenuHorizontalPlacement.LEFT
+   */
+  horizontalPlacement?: SidemenuHorizontalPlacement;
+  /**
+   * Вертикаль: верх / центр / низ.
+   * Без **edgeAttached** — позиция всей панели; с **edgeAttached** — выравнивание блока пунктов меню внутри колонны (**header** / **footer** остаются у краёв панели).
+   * @default SidemenuVerticalAlignment.TOP
+   */
+  verticalAlignment?: SidemenuVerticalAlignment;
   variant?: SidemenuVariant;
   onItemClick?: (item: SidemenuItem) => void;
   expandInteraction?: NavigationMenuExpandInteraction;
@@ -3853,6 +3883,18 @@ export type SidemenuExpandToggleRenderContext = {
  * Простой компонент для переключения между светлой и темной темами
  */
 export type ThemeToggleProps = BaseComponentProps;
+
+/**
+ * Пропсы переключателя каталога тем (N тем).
+ * @property showLabel - Показывать текстовую подпись над select
+ * @property label - Текст подписи
+ */
+export type ThemeSelectorProps = BaseComponentProps & {
+  showLabel?: boolean;
+  label?: string;
+  /** Подпись для скринридеров (атрибут `aria-label` у select) */
+  ariaLabel?: string;
+};
 
 /**
  * Пропсы иконки

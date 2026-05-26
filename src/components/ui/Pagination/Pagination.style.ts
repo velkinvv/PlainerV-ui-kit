@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { ThemeMode } from '@/types/theme';
+import { ThemeColorScheme } from '@/types/theme';
 import { ButtonVariant } from '@/types/ui';
 import { getButtonVariant } from '@/handlers/buttonThemeHandlers';
 import grey from '@/variables/colors/grey';
@@ -29,7 +29,7 @@ export const PaginationBar = styled.div`
   gap: 2px;
   border-radius: 9999px;
   background: ${({ theme }) =>
-    theme.mode === ThemeMode.DARK ? grey[800] : theme.colors.backgroundSecondary};
+    theme.mode === ThemeColorScheme.DARK ? grey[800] : theme.colors.backgroundSecondary};
 `;
 
 /**
@@ -79,7 +79,7 @@ export const PaginationArrowButton = styled.button<{
 
   &:hover:enabled {
     background: ${({ theme }) =>
-      theme.mode === ThemeMode.DARK ? 'rgba(255, 255, 255, 0.08)' : '#f5f5f5'};
+      theme.mode === ThemeColorScheme.DARK ? 'rgba(255, 255, 255, 0.08)' : '#f5f5f5'};
   }
 
   &:disabled {
@@ -129,7 +129,7 @@ export const PageButton = styled.button<{
     opacity 0.15s ease;
 
   ${({ theme, $active, $disabled }) => {
-    const dark = theme.mode === ThemeMode.DARK;
+    const dark = theme.mode === ThemeColorScheme.DARK;
     const labelColor = theme.colors.text;
     const accentFill = theme.colors.info;
     const accentFillHover = theme.colors.infoHover;

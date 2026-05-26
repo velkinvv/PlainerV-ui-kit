@@ -1,4 +1,4 @@
-import { ThemeMode, type ThemeType } from '../types/theme';
+import { ThemeColorScheme, type ThemeType } from '../types/theme';
 import { lightBoxShadow, lightBlur, lightColors } from './colors/light';
 import { darkBoxShadow, darkBlur, darkColors } from './colors/dark';
 import { fontFamily, fontWeights, fontSizes, lineHeights, typography } from './fonts';
@@ -43,7 +43,7 @@ export const lightTheme: ThemeType = {
     modal: 2000,
   },
   globalSize: Size.MD,
-  mode: ThemeMode.LIGHT,
+  mode: ThemeColorScheme.LIGHT,
   defaultInputSize: Size.SM,
   defaultButtonSize: Size.MD,
   boxShadow: lightBoxShadow,
@@ -96,7 +96,7 @@ export const darkTheme: ThemeType = {
     modal: 2000,
   },
   globalSize: Size.MD,
-  mode: ThemeMode.DARK,
+  mode: ThemeColorScheme.DARK,
   defaultInputSize: Size.SM,
   defaultButtonSize: Size.MD,
   boxShadow: darkBoxShadow,

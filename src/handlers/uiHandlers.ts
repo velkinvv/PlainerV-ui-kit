@@ -1,7 +1,7 @@
 import { getColor } from '../themes/colors/colorTheme';
 import { themeRadiusBySize } from '../themes/radiusScale';
 import { Size, IconSize } from '../types/sizes';
-import type { ColorTheme, ThemeMode } from '../types/theme';
+import type { ColorTheme, ThemeColorScheme } from '../types/theme';
 // import { getColor } from '../themes/theme';
 
 // Хендлеры для размеров кнопок согласно Figma макету
@@ -190,48 +190,48 @@ export const ColorHandler = (color?: string, fallback?: string): string => {
 
 // Хендлеры для цветов из темы
 export const ThemeColorHandler = (
-  mode: ThemeMode,
+  colorScheme: ThemeColorScheme,
   colorKey: keyof ColorTheme,
   fallback?: string,
 ): string | undefined => {
-  return getColor(mode, colorKey, fallback);
+  return getColor(colorScheme, colorKey, fallback);
 };
 
 // Хендлеры для получения цветов из темы
-export const getBackgroundColor = (mode: ThemeMode): string => {
-  return getColor(mode, 'background');
+export const getBackgroundColor = (colorScheme: ThemeColorScheme): string => {
+  return getColor(colorScheme, 'background');
 };
 
-export const getTextColor = (mode: ThemeMode): string => {
-  return getColor(mode, 'text');
+export const getTextColor = (colorScheme: ThemeColorScheme): string => {
+  return getColor(colorScheme, 'text');
 };
 
-export const getBorderColor = (mode: ThemeMode): string => {
-  return getColor(mode, 'border');
+export const getBorderColor = (colorScheme: ThemeColorScheme): string => {
+  return getColor(colorScheme, 'border');
 };
 
-export const getPrimaryColor = (mode: ThemeMode): string => {
-  return getColor(mode, 'primary');
+export const getPrimaryColor = (colorScheme: ThemeColorScheme): string => {
+  return getColor(colorScheme, 'primary');
 };
 
-export const getSecondaryColor = (mode: ThemeMode): string => {
-  return getColor(mode, 'secondary');
+export const getSecondaryColor = (colorScheme: ThemeColorScheme): string => {
+  return getColor(colorScheme, 'secondary');
 };
 
-export const getSuccessColor = (mode: ThemeMode): string => {
-  return getColor(mode, 'success');
+export const getSuccessColor = (colorScheme: ThemeColorScheme): string => {
+  return getColor(colorScheme, 'success');
 };
 
-export const getDangerColor = (mode: ThemeMode): string => {
-  return getColor(mode, 'danger');
+export const getDangerColor = (colorScheme: ThemeColorScheme): string => {
+  return getColor(colorScheme, 'danger');
 };
 
-export const getWarningColor = (mode: ThemeMode): string => {
-  return getColor(mode, 'warning');
+export const getWarningColor = (colorScheme: ThemeColorScheme): string => {
+  return getColor(colorScheme, 'warning');
 };
 
-export const getInfoColor = (mode: ThemeMode): string => {
-  return getColor(mode, 'info');
+export const getInfoColor = (colorScheme: ThemeColorScheme): string => {
+  return getColor(colorScheme, 'info');
 };
 
 /**

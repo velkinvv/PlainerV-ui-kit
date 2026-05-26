@@ -6,7 +6,7 @@
 
 Современная библиотека UI компонентов с поддержкой темизации и TypeScript.
 
-**Текущая версия:** `0.2.0` · ветка [`v_0.2.0`](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.2.0) · React 18+/19 · styled-components 6.x
+**Текущая версия:** `0.2.1` · ветка [`v_0.2.1`](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.2.1) · React 18+/19 · styled-components 6.x
 
 ## 🚀 Возможности
 
@@ -26,7 +26,7 @@
 ```bash
 npm i @velkinvv/plainerv react react-dom styled-components framer-motion
 # или конкретная версия кита:
-npm i @velkinvv/plainerv@0.2.0 react react-dom styled-components framer-motion
+npm i @velkinvv/plainerv@0.2.1 react react-dom styled-components framer-motion
 ```
 
 | Пакет | Диапазон (peer) |
@@ -131,43 +131,82 @@ import '@velkinvv/plainerv/styles';
 
 ## 🎨 Темизация
 
-Библиотека поддерживает полную темизацию с автоматическим переключением между светлой и темной темой:
+Поддерживаются встроенные темы **light** / **dark**, **любое число** кастомных тем и type-safe переключение.
+
+- **ThemeMode** — id темы (`ThemeMode.light`, `appThemes.themeMode.ocean`);
+- **ThemeColorScheme** — палитра токенов (`LIGHT` / `DARK`), поле `theme.mode` в styled-components.
+
+Подробнее: [документация Theming](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.2.1/documentation/content/docs/ru/web/v_0.2.1/theming.mdx) (на сайте: **Web → v0.2.1 → Theming**).
+
+### Базовое подключение
 
 ```tsx
-import { ThemeProvider, useTheme, ThemeToggle } from '@velkinvv/plainerv';
+import { ThemeProvider, ThemeToggle, ThemeMode, useTheme } from '@velkinvv/plainerv';
 
 function App() {
   return (
     <ThemeProvider>
-      <div>
-        <ThemeToggle />
-        <YourApp />
-      </div>
+      <ThemeToggle />
+      <YourApp />
     </ThemeProvider>
   );
 }
 ```
 
-### Использование темы в компонентах
-
 ```tsx
-import { useTheme } from '@velkinvv/plainerv';
-
-function MyComponent() {
-  const { mode, toggle } = useTheme();
+function ThemeStatus() {
+  const { themeMode, colorScheme, setThemeMode } = useTheme();
 
   return (
-    <div>
-      <p>Текущая тема: {mode}</p>
-      <button onClick={toggle}>Переключить тему</button>
-    </div>
+    <p>
+      Тема: {themeMode}, палитра: {colorScheme}
+      <button type="button" onClick={() => setThemeMode(ThemeMode.dark)}>
+        Тёмная
+      </button>
+    </p>
   );
 }
 ```
 
+### Каталог из нескольких тем
+
+```tsx
+import {
+  ThemeProvider,
+  ThemeSelector,
+  defineThemeCatalog,
+  ThemeColorScheme,
+} from '@velkinvv/plainerv';
+
+const appThemes = defineThemeCatalog([
+  { id: 'light', baseMode: ThemeColorScheme.LIGHT },
+  { id: 'ocean', baseMode: ThemeColorScheme.LIGHT, override: { colors: { primary: '#0284C7' } } },
+  { id: 'dark', baseMode: ThemeColorScheme.DARK },
+] as const);
+
+type AppThemeMode = (typeof appThemes.themeModes)[number];
+
+<ThemeProvider<AppThemeMode> themes={appThemes.catalog}>
+  <ThemeSelector />
+  <App />
+</ThemeProvider>;
+
+// setThemeMode(appThemes.themeMode.ocean) — только существующие id
+```
+
+### Слияние токенов
+
+```tsx
+import { mergeTheme, lightTheme, useMergeTheme } from '@velkinvv/plainerv';
+
+const brandLight = mergeTheme(lightTheme, { colors: { primary: '#0D9488' } });
+```
+
+Переопределения только для light/dark без каталога: проп `themeOverrides` у `ThemeProvider`.
+
 ## 🎯 Компоненты
 
-**Полный перечень публичных экспортов** — в [документации](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.2.0/documentation/content/docs/ru/web/v_0.2.0/components-catalog.mdx) (на сайте: **Web → v0.2.0 → Справочник компонентов**). Ниже — краткая группировка.
+**Полный перечень публичных экспортов** — в [документации](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.2.1/documentation/content/docs/ru/web/v_0.2.1/components-catalog.mdx) (на сайте: **Web → v0.2.1 → Справочник компонентов**). Ниже — краткая группировка.
 
 ### Кнопки и ссылки
 
@@ -178,7 +217,7 @@ function MyComponent() {
 
 ### Ввод и формы
 
-- **Input**, **TextArea**, **FileInput**, **Select**, **MultiInput**, **SliderInput** — поля (`Form`-совместимые). **SliderInput**: число + встроенный слайдер в рамке **Input**; проп **`range`** — диапазон «от / до» (пара чисел, два поля и два бегунка, как у **DateInput**). Типы **`SliderInputSingleProps`**, **`SliderInputRangeProps`**. Подробнее — [документация SliderInput](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.2.0/documentation/content/docs/ru/web/v_0.2.0/components-slider-input.mdx), Storybook **UI Kit → Inputs → SliderInput**.
+- **Input**, **TextArea**, **FileInput**, **Select**, **MultiInput**, **SliderInput** — поля (`Form`-совместимые). **SliderInput**: число + встроенный слайдер в рамке **Input**; проп **`range`** — диапазон «от / до» (пара чисел, два поля и два бегунка, как у **DateInput**). Типы **`SliderInputSingleProps`**, **`SliderInputRangeProps`**. Подробнее — [документация SliderInput](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.2.1/documentation/content/docs/ru/web/v_0.2.1/components-slider-input.mdx), Storybook **UI Kit → Inputs → SliderInput**.
 - **Form**, **HiddenUsernameField**.
 - **Checkbox**, **CheckboxGroup**, **Switch**, **RadioButton**, **RadioButtonGroup**.
 - **DateInput**, **TimeInput**.
@@ -198,7 +237,7 @@ function MyComponent() {
 
 ### Отображение данных
 
-- **Badge**, **Tag**, **Pill**, **Avatar**, **AvatarGroup**, **Divider**, **Slider**, **RangeSlider**, **Calendar**, **DateRollerPicker**, **Progress**, **Spinner**, **Skeleton**, **Icon**, **ThemeToggle**.
+- **Badge**, **Tag**, **Pill**, **Avatar**, **AvatarGroup**, **Divider**, **Slider**, **RangeSlider**, **Calendar**, **DateRollerPicker**, **Progress**, **Spinner**, **Skeleton**, **Icon**, **ThemeToggle**, **ThemeSelector**.
 
 ### Таблицы и DataGrid
 
@@ -515,6 +554,13 @@ npm run analyze
 
 *Размеры будут обновлены после первой сборки*
 
+## 📋 Что нового в 0.2.1
+
+- **Темизация:** каталог N тем (`defineThemeCatalog`, `themeMode`, `ThemeSelector`), `ThemeColorScheme` / `ThemeMode`, `mergeTheme`, `useMergeTheme`; [Theming](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.2.1/documentation/content/docs/ru/web/v_0.2.1/theming.mdx).
+- **Input:** единая раскладка через `InputFieldShell`; **DataGrid / Table:** синхронизация шапки через `scrollLeft`, исправления `headerToolbar` при горизонтальном скролле.
+
+Подробности — в [CHANGELOG.md](CHANGELOG.md).
+
 ## 📋 Что нового в 0.2.0
 
 - **SliderInput — режим `range`:** диапазон «от / до» (`readonly [number, number]`), поля с **`rangeFromLabel`** / **`rangeToLabel`**, типы **`SliderInputSingleProps`** / **`SliderInputRangeProps`**; исправлен embedded-трек. [Документация](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.2.0/documentation/content/docs/ru/web/v_0.2.0/components-slider-input.mdx) · Storybook **SliderInput**.
@@ -585,6 +631,7 @@ MIT License - см. [LICENSE](LICENSE) для деталей.
 ## 🔗 Ссылки
 
 - [Репозиторий](https://github.com/velkinvv/PlainerV-ui-kit)
+- [Ветка v0.2.1](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.2.1)
 - [Ветка v0.2.0](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.2.0)
 - [Ветка v0.1.9](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.1.9)
 - [Issues](https://github.com/velkinvv/PlainerV-ui-kit/issues)

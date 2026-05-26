@@ -1,5 +1,35 @@
 import { TabsDirection } from '@/types/ui';
 
+/** Геометрия триггера относительно прокручиваемого трека (для pill-thumb и полоски активного сегмента) */
+export interface SegmentTriggerMetrics {
+  offsetX: number;
+  offsetY: number;
+  width: number;
+  height: number;
+}
+
+/**
+ * Считает положение и размер триггера относительно контента трека с учётом прокрутки.
+ * Без `scrollLeft` / `scrollTop` подсветка смещается при горизонтальном/вертикальном скролле.
+ *
+ * @param trackElement — прокручиваемый контейнер (**TabItemGroupListRoot**)
+ * @param triggerElement — кнопка активного сегмента
+ */
+export function measureSegmentTriggerRelativeToTrack(
+  trackElement: HTMLElement,
+  triggerElement: HTMLElement,
+): SegmentTriggerMetrics {
+  const trackRectangle = trackElement.getBoundingClientRect();
+  const triggerRectangle = triggerElement.getBoundingClientRect();
+
+  return {
+    offsetX: triggerRectangle.left - trackRectangle.left + trackElement.scrollLeft,
+    offsetY: triggerRectangle.top - trackRectangle.top + trackElement.scrollTop,
+    width: triggerRectangle.width,
+    height: triggerRectangle.height,
+  };
+}
+
 /**
  * Прокручивает трек так, чтобы активный триггер был виден (горизонталь или вертикаль).
  *

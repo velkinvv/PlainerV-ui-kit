@@ -7,6 +7,7 @@ import {
   getDropdownAnimations,
   getDropdownContainerStyles,
 } from '../../../handlers/dropdownThemeHandlers';
+import { overlayPanelBoxShadowFromTheme } from '../../../handlers/overlayPanelShadowHandlers';
 import {
   buildSurfaceRevealAnimationCss,
   buildSurfaceTransitionCss,
@@ -78,7 +79,7 @@ export const PopoverSurface = styled.div<PopoverSurfaceStyledProps>`
       color: ${styles.color};
       border: ${styles.border};
       border-radius: ${styles.borderRadius};
-      box-shadow: ${theme.boxShadow?.dropdown || '0px 8px 16px 0px rgba(0, 0, 0, 0.08)'};
+      box-shadow: ${overlayPanelBoxShadowFromTheme(theme)};
       z-index: ${styles.zIndex};
       font-family: ${styles.fontFamily};
       font-weight: ${styles.fontWeight};

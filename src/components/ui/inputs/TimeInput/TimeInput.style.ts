@@ -1,5 +1,6 @@
 ﻿import styled from 'styled-components';
 import { createStyledShouldForwardProp } from '../../../../handlers/styledComponentHandlers';
+import { overlayPanelBoxShadowFromTheme } from '../../../../handlers/overlayPanelShadowHandlers';
 import {
   BorderRadiusHandler,
   TransitionHandler,
@@ -248,7 +249,7 @@ export const TimePickerPopup = styled.div.withConfig({
   background: ${({ theme }) => theme.colors.backgroundSecondary};
   border: 2px solid ${({ theme }) => theme.colors.borderSecondary};
   border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: ${({ theme }) => overlayPanelBoxShadowFromTheme(theme)};
   z-index: 1000;
   opacity: ${({ isOpen }) => (isOpen ? 1 : 0)};
   visibility: ${({ isOpen }) => (isOpen ? 'visible' : 'hidden')};

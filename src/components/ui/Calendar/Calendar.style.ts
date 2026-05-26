@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { overlayPanelBoxShadowFromTheme } from '../../../handlers/overlayPanelShadowHandlers';
 import { BorderRadiusHandler } from '../../../handlers/uiHandlers';
 import { createStyledShouldForwardProp } from '../../../handlers/styledComponentHandlers';
 import { Size } from '../../../types/sizes';
@@ -48,7 +49,8 @@ export const CalendarRoot = styled.div.withConfig({
   border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
   background: ${({ theme }) => theme.colors.backgroundSecondary};
   border: ${({ $embedded, theme }) => ($embedded ? 'none' : `1px solid ${theme.colors.border}`)};
-  box-shadow: ${({ $embedded, theme }) => ($embedded ? 'none' : theme.boxShadow.md)};
+  box-shadow: ${({ $embedded, theme }) =>
+    $embedded ? 'none' : overlayPanelBoxShadowFromTheme(theme)};
   width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'auto')};
   max-width: 100%;
   ${({ $fullWidth }) =>

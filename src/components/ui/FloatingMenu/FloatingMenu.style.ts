@@ -1,10 +1,11 @@
 import styled, { css } from 'styled-components';
-import { ThemeMode } from '@/types/theme';
+import { ThemeColorScheme } from '@/types/theme';
 import { Size } from '@/types/sizes';
 import { ButtonVariant, FloatingMenuGroupVariant } from '@/types/ui';
 import { BorderRadiusHandler } from '../../../handlers/uiHandlers';
 import { getButtonVariant } from '../../../handlers/buttonThemeHandlers';
 import { getDropdownContainerStyles } from '../../../handlers/dropdownThemeHandlers';
+import { overlayPanelBoxShadowFromTheme } from '../../../handlers/overlayPanelShadowHandlers';
 
 /** Корневая фиксированная панель */
 export const FloatingMenuRoot = styled.div<{ $isDragging?: boolean }>`
@@ -24,12 +25,10 @@ export const FloatingMenuBar = styled.div`
   padding: 6px 10px;
   border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
   background: ${({ theme }) =>
-    theme.mode === ThemeMode.DARK ? theme.colors.backgroundSecondary : '#ffffff'};
+    theme.mode === ThemeColorScheme.DARK ? theme.colors.backgroundSecondary : '#ffffff'};
   border: 1px solid
-    ${({ theme }) => (theme.mode === ThemeMode.DARK ? theme.colors.borderSecondary : '#e8e8e8')};
-  box-shadow:
-    0 4px 24px rgba(0, 0, 0, 0.08),
-    0 1px 3px rgba(0, 0, 0, 0.06);
+    ${({ theme }) => (theme.mode === ThemeColorScheme.DARK ? theme.colors.borderSecondary : '#e8e8e8')};
+  box-shadow: ${({ theme }) => overlayPanelBoxShadowFromTheme(theme)};
 `;
 
 /** Ряд группы кнопок */
@@ -44,7 +43,7 @@ export const FloatingMenuGroupInner = styled.div<{ $variant: FloatingMenuGroupVa
       ? css`
           padding: 4px;
           border-radius: ${BorderRadiusHandler(theme.borderRadius)};
-          background: ${theme.mode === ThemeMode.DARK ? 'rgba(255, 255, 255, 0.06)' : '#f0f0f0'};
+          background: ${theme.mode === ThemeColorScheme.DARK ? 'rgba(255, 255, 255, 0.06)' : '#f0f0f0'};
         `
       : ''}
 `;
@@ -84,7 +83,7 @@ export const FloatingMenuItemButton = styled.button<{
     background: ${({ theme, $disabled }) =>
       $disabled
         ? 'transparent'
-        : theme.mode === ThemeMode.DARK
+        : theme.mode === ThemeColorScheme.DARK
           ? 'rgba(255,255,255,0.08)'
           : '#f5f5f5'};
   }
@@ -110,16 +109,16 @@ export const FloatingMenuItemButton = styled.button<{
   ${({ $active, $insetGroup, theme }) =>
     $active && $insetGroup
       ? css`
-          background: ${theme.mode === ThemeMode.DARK
+          background: ${theme.mode === ThemeColorScheme.DARK
             ? theme.colors.backgroundSecondary
             : '#ffffff'};
           /* Акцент иконки — тот же яркий info, что и у залитого активного пункта */
           color: ${theme.colors.info};
           box-shadow: 0 0 0 1px
-            ${theme.mode === ThemeMode.DARK ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.06)'};
+            ${theme.mode === ThemeColorScheme.DARK ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.06)'};
 
           &:hover {
-            background: ${theme.mode === ThemeMode.DARK
+            background: ${theme.mode === ThemeColorScheme.DARK
               ? theme.colors.backgroundSecondary
               : '#ffffff'};
             color: ${theme.colors.infoHover};
@@ -176,9 +175,7 @@ export const FloatingMenuDropdownPanel = styled.div<{ $zIndex: number }>`
       .borderRadius};
   background: ${({ theme }) => theme.colors.backgroundSecondary};
   border: 1px solid ${({ theme }) => theme.colors.borderSecondary};
-  box-shadow:
-    0 8px 28px rgba(0, 0, 0, 0.12),
-    0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: ${({ theme }) => overlayPanelBoxShadowFromTheme(theme)};
 `;
 
 /** Узел-заглушка «грип» по умолчанию */
@@ -201,7 +198,7 @@ export const FloatingMenuDragHandleRoot = styled.div`
 
   &:hover {
     background: ${({ theme }) =>
-      theme.mode === ThemeMode.DARK ? 'rgba(255,255,255,0.08)' : '#f0f0f0'};
+      theme.mode === ThemeColorScheme.DARK ? 'rgba(255,255,255,0.08)' : '#f0f0f0'};
   }
 
   &:active {

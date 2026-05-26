@@ -7,6 +7,7 @@ import {
   getDropdownItemStyles,
   getDropdownAnimations,
 } from '../../../handlers/dropdownThemeHandlers';
+import { overlayPanelBoxShadowFromTheme } from '../../../handlers/overlayPanelShadowHandlers';
 import {
   buildHoverPressMotionCss,
   buildSurfaceTransitionCss,
@@ -74,7 +75,7 @@ export const DropdownContent = styled.div<{
 
   ${({ theme, $size = Size.MD, $variant = 'default' }) => {
     const styles = getDropdownContainerStyles(theme.dropdowns, $size, $variant);
-    return `
+    return css`
       min-width: ${styles.minWidth};
       max-width: ${styles.maxWidth};
       padding: ${styles.padding};
@@ -82,7 +83,7 @@ export const DropdownContent = styled.div<{
       color: ${styles.color};
       border: ${styles.border};
       border-radius: ${styles.borderRadius};
-      box-shadow: ${({ theme }: { theme: { boxShadow?: { dropdown?: string } } }) => theme.boxShadow?.dropdown || '0px 8px 16px 0px rgba(0, 0, 0, 0.08)'};
+      box-shadow: ${overlayPanelBoxShadowFromTheme(theme)};
       z-index: ${styles.zIndex};
       font-family: ${styles.fontFamily};
       font-weight: ${styles.fontWeight};

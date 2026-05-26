@@ -1,6 +1,6 @@
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import type { TabsDirection } from '@/types/ui';
-import { scrollSegmentTriggerIntoView } from '@/handlers/tabsScrollHandlers';
+import { scrollSegmentTriggerIntoView, measureSegmentTriggerRelativeToTrack } from '@/handlers/tabsScrollHandlers';
 import type { PillSegmentMetrics } from './pillSegmentMetricsTypes';
 
 interface UsePillSegmentMetricsParams {
@@ -45,14 +45,7 @@ export function usePillSegmentMetrics(
       setMetrics(null);
       return;
     }
-    const trackRect = trackRoot.getBoundingClientRect();
-    const triggerRect = activeTrigger.getBoundingClientRect();
-    setMetrics({
-      offsetX: triggerRect.left - trackRect.left,
-      offsetY: triggerRect.top - trackRect.top,
-      width: triggerRect.width,
-      height: triggerRect.height,
-    });
+    setMetrics(measureSegmentTriggerRelativeToTrack(trackRoot, activeTrigger));
   }, [enabled, activeSegmentValue]);
 
   const registerSegmentTriggerRef = useCallback(

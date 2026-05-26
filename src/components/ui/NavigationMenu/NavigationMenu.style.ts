@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import { motion } from 'framer-motion';
-import { ThemeMode, type ThemeType } from '@/types/theme';
+import { ThemeColorScheme, type ThemeType } from '@/types/theme';
 import { NavigationMenuActiveAppearance, type NavigationMenuItemStatus } from '@/types/ui';
 import { getNavigationMenuItemStatusBackgroundTint } from '@/handlers/navigationMenuItemStatusHandlers';
 
@@ -100,7 +100,7 @@ const navigationMenuItemSurface = (p: {
 }) => {
   const { theme, $collapsed, $active, $disabled, $appearance, $status } = p;
   const primary = theme.colors.primary;
-  const isDark = theme.mode === ThemeMode.DARK;
+  const isDark = theme.mode === ThemeColorScheme.DARK;
 
   const defaultBg = isDark ? '#1f1f1f' : theme.colors.backgroundSecondary;
   const hoverBg = isDark ? '#2a2a2a' : '#f5f5f5';
@@ -115,7 +115,7 @@ const navigationMenuItemSurface = (p: {
 
   const activeBarText = primary;
   const activeHighlightBg =
-    theme.mode === ThemeMode.DARK
+    theme.mode === ThemeColorScheme.DARK
       ? `color-mix(in srgb, ${primary} 18%, ${defaultBg})`
       : `color-mix(in srgb, ${primary} 12%, ${theme.colors.backgroundSecondary})`;
 

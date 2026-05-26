@@ -1,6 +1,6 @@
 import type { IconName } from '@/icons';
 import type { ToastType } from '@/types/ui';
-import { ThemeMode } from '@/types/theme';
+import { ThemeColorScheme } from '@/types/theme';
 import { success } from '@/variables/colors/success';
 import { danger } from '@/variables/colors/danger';
 import { warning } from '@/variables/colors/warning';
@@ -50,8 +50,11 @@ export function createToastId(): string {
  * @param type - Категория (акцентная полоса слева)
  * @param mode - Режим темы из ThemeProvider
  */
-export function getToastSurfaceTokens(type: ToastType, mode: ThemeMode): ToastSurfaceTokens {
-  const isDark = mode === ThemeMode.DARK;
+export function getToastSurfaceTokens(
+  type: ToastType,
+  mode: ThemeColorScheme,
+): ToastSurfaceTokens {
+  const isDark = mode === ThemeColorScheme.DARK;
   const bodyColor = isDark ? neutral[300] : grey[600];
 
   switch (type) {
@@ -120,8 +123,11 @@ export function getToastPillIconName(type: ToastType): IconName {
  * @param type - Категория уведомления
  * @param mode - Режим темы
  */
-export function getToastPillVisualTokens(type: ToastType, mode: ThemeMode): ToastPillVisualTokens {
-  const isDark = mode === ThemeMode.DARK;
+export function getToastPillVisualTokens(
+  type: ToastType,
+  mode: ThemeColorScheme,
+): ToastPillVisualTokens {
+  const isDark = mode === ThemeColorScheme.DARK;
   const white = '#ffffff';
   const cardTokens = getToastSurfaceTokens(type, mode);
   const dismissIcon = isDark ? neutral[400] : grey[500];

@@ -1,6 +1,6 @@
 import type { Decorator } from '@storybook/react';
 import { ThemeProvider } from '../src/themes/ThemeProvider';
-import { ThemeMode } from '../src/types/theme';
+import { ThemeColorScheme } from '../src/types/theme';
 
 /**
  * Стартовое значение глобала `theme` (тулбар аддона тем) — как у {@link ThemeProvider} / `localStorage`.
@@ -24,7 +24,7 @@ export const withStorybookUiKitTheme: Decorator = (Story, context) => {
   const rawTheme = context.globals?.theme;
   const resolvedTheme: 'light' | 'dark' =
     rawTheme === 'dark' || rawTheme === 'light' ? rawTheme : getInitialStorybookThemeGlobal();
-  const initialMode = resolvedTheme === 'dark' ? ThemeMode.DARK : ThemeMode.LIGHT;
+  const initialMode = resolvedTheme === 'dark' ? ThemeColorScheme.DARK : ThemeColorScheme.LIGHT;
 
   return (
     <ThemeProvider initialMode={initialMode} key={`storybook-ui-kit-theme-${resolvedTheme}`}>
