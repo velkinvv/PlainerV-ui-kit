@@ -6,7 +6,7 @@ const skeletonShimmer = css`
   background: linear-gradient(
     90deg,
     ${({ theme }) => theme.colors.backgroundTertiary} 25%,
-    ${({ theme }) => theme.colors.borderSecondary} 50%,
+    ${({ theme }) => theme.colors.progressTrack} 50%,
     ${({ theme }) => theme.colors.backgroundTertiary} 75%
   );
   background-size: 200% 100%;

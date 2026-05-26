@@ -1,5 +1,6 @@
 import styled, { type DefaultTheme } from 'styled-components';
 import { motion } from 'framer-motion';
+import { ThemeColorScheme } from '../../../types/theme';
 import { ModalSize } from '../../../types/sizes';
 import {
   getModalContainerStyles,
@@ -107,8 +108,12 @@ export const Overlay = styled(motion.div)<{
  * @param size - размер модального окна
  */
 export const ModalContainer = styled(motion.div)<{ size: ModalSize; $mobile?: boolean }>`
-  background: #ffffff;
-  box-shadow: 0px 16px 32px 0px rgba(0, 0, 0, 0.08);
+  background-color: ${({ theme }) => theme.colors.card};
+  color: ${({ theme }) => theme.colors.text};
+  box-shadow: ${({ theme }) =>
+    theme.mode === ThemeColorScheme.DARK
+      ? '0 16px 48px rgba(0, 0, 0, 0.5)'
+      : '0 16px 32px rgba(0, 0, 0, 0.08)'};
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -273,7 +278,7 @@ export const ModalContent = styled.div`
       font-size: 16px;
       font-weight: 400;
       line-height: 1.5em;
-      color: #757575;
+      color: ${theme.colors.textSecondary};
     `;
   }}
 
@@ -282,7 +287,7 @@ export const ModalContent = styled.div`
     font-size: 16px;
     font-weight: 400;
     line-height: 1.5em;
-    color: #757575;
+    color: ${({ theme }) => theme.colors.textSecondary};
   }
 `;
 

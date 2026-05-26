@@ -81,7 +81,7 @@ export const InputWrapper = styled.div.withConfig({
     }};
   border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
   background: ${({ theme, disabled }) =>
-    disabled ? theme.colors.backgroundTertiary : theme.colors.backgroundSecondary};
+    disabled ? theme.colors.backgroundTertiary : theme.colors.input};
   transition: ${TransitionHandler()};
   width: 100%;
   box-sizing: border-box;

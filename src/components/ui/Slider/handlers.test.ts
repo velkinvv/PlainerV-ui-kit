@@ -1,3 +1,4 @@
+import { ThemeColorScheme } from '../../../types/theme';
 import { Size } from '../../../types/sizes';
 import {
   clampSliderValue,
@@ -9,6 +10,7 @@ import {
   getSliderTrackMetrics,
   resolveSliderTrackMetrics,
   resolveSliderAccentKind,
+  resolveSliderTrackRailBackground,
   clientXToSliderValue,
   sliderThumbLeftCalcCss,
   getSliderValueLabelRootPaddingHorizontalPx,
@@ -98,5 +100,21 @@ describe('Slider handlers', () => {
     expect(resolveSliderAccentKind(undefined, true, undefined)).toBe('success');
     expect(resolveSliderAccentKind(undefined, false, 'warning')).toBe('warning');
     expect(resolveSliderAccentKind('', false, undefined)).toBe('default');
+  });
+
+  it('resolveSliderTrackRailBackground: в тёмной теме — светлая полупрозрачная линия', () => {
+    expect(
+      resolveSliderTrackRailBackground({
+        mode: ThemeColorScheme.DARK,
+        colors: { progressTrack: '#757575' },
+      } as Parameters<typeof resolveSliderTrackRailBackground>[0]),
+    ).toBe('rgba(255, 255, 255, 0.32)');
+
+    expect(
+      resolveSliderTrackRailBackground({
+        mode: ThemeColorScheme.LIGHT,
+        colors: { progressTrack: '#eeeeee' },
+      } as Parameters<typeof resolveSliderTrackRailBackground>[0]),
+    ).toBe('#eeeeee');
   });
 });

@@ -78,12 +78,12 @@ export const darkThemeCSSVariables = {
   '--color-primary-hover': '#84e1ff',
   '--color-primary-active': '#68d5f8',
 
-  // Фоновые цвета
-  '--color-background': '#06090E',
-  '--color-background-secondary': '#101C26',
-  '--color-background-tertiary': '#162431',
-  '--color-background-quaternary': '#1C3140',
-  '--color-background-quinary': '#2D3748',
+  // Фоновые цвета (угольные поверхности, см. themes/colors/dark.ts)
+  '--color-background': '#212121',
+  '--color-background-secondary': '#424242',
+  '--color-background-tertiary': '#616161',
+  '--color-background-quaternary': '#757575',
+  '--color-background-quinary': '#424242',
 
   // Текстовые цвета
   '--color-text': '#FFFFFF',
@@ -93,10 +93,10 @@ export const darkThemeCSSVariables = {
   '--color-text-disabled': 'rgba(255, 255, 255, 0.4)',
 
   // Граничные цвета
-  '--color-border': '#1C3140',
-  '--color-border-secondary': '#2D3748',
-  '--color-border-tertiary': '#4a5568',
-  '--color-border-hover': 'rgba(255, 255, 255, 0.1)',
+  '--color-border': '#757575',
+  '--color-border-secondary': '#616161',
+  '--color-border-tertiary': '#757575',
+  '--color-border-hover': '#9E9E9E',
   '--color-border-focus': 'rgba(255, 255, 255, 0.2)',
 
   // Состояния

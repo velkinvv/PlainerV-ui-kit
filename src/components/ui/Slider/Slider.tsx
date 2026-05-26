@@ -233,6 +233,9 @@ export const Slider: React.FC<SliderProps> = ({
     [additionalLabel, embeddedInInput, error, extraText, helperText, label, required, success],
   );
 
+  /** С лейблом/подписями трек на всю ширину колонки поля (Theme Showcase, формы). */
+  const resolvedFullWidth = fullWidth || hasFieldChrome;
+
   const theme = useTheme();
   const fieldBorderRadiusPx = parseThemeBorderRadiusPx(
     BorderRadiusHandler(theme.borderRadius),
@@ -273,11 +276,11 @@ export const Slider: React.FC<SliderProps> = ({
         helperText={helperText}
         extraText={extraText}
         required={required}
-        fullWidth={fullWidth}
+        fullWidth={resolvedFullWidth}
         skeleton
         helperStatus={helperTextStatus}
       >
-        <SliderSkeletonSingle size={size} fullWidth={fullWidth} showValueLabel={showValueLabel} />
+        <SliderSkeletonSingle size={size} fullWidth={resolvedFullWidth} showValueLabel={showValueLabel} />
       </SliderFieldShell>
     );
   }
@@ -378,7 +381,7 @@ export const Slider: React.FC<SliderProps> = ({
   ) : (
     <SliderRoot
       className={clsx('ui-slider', !hasFieldChrome && className)}
-      $fullWidth={fullWidth}
+      $fullWidth={resolvedFullWidth}
       $valueLabelPadPx={valueLabelRootPadPx}
     >
       {name ? (
@@ -419,7 +422,7 @@ export const Slider: React.FC<SliderProps> = ({
       helperText={helperText}
       extraText={extraText}
       required={required}
-      fullWidth={fullWidth}
+      fullWidth={resolvedFullWidth}
       helperStatus={helperTextStatus}
     >
       {sliderBody}

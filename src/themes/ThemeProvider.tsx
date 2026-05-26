@@ -1,9 +1,9 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import { ThemeColorScheme, ThemeMode, type ThemeType } from '../types/theme';
 import type { BuiltinThemeMode } from '../types/theme';
 import type { CustomThemesByMode, ThemeOverridesByMode } from '../types/themeOverride';
-import type { ThemeCatalog, ThemeCatalogMeta } from '../types/themeCatalog';
+import type { ThemeCatalog } from '../types/themeCatalog';
 import { GlobalStyles } from '../styles/GlobalStyles';
 import {
   buildThemeCatalogFromLegacyProps,
@@ -18,42 +18,10 @@ import {
   resolveThemeCatalog,
   writeStoredThemeMode,
 } from '../handlers/themeCatalogHandlers';
+import { ThemeContext, type ThemeContextProps } from './themeContext';
 
-export interface ThemeContextProps<TThemeMode extends string = string> {
-  /** Id активной темы (`ThemeMode.light`, `appThemes.themeMode.ocean`, …). */
-  themeMode: TThemeMode;
-  setThemeMode: (nextThemeMode: TThemeMode) => void;
-  themeModes: readonly TThemeMode[];
-  themes: readonly ThemeCatalogMeta<TThemeMode>[];
-  cycleTheme: () => void;
-  /** Палитра активной темы — только для стилей, не для переключения. */
-  colorScheme: ThemeColorScheme;
-  isDarkColorScheme: boolean;
-  getThemeByMode: (themeMode: TThemeMode) => ThemeType | undefined;
-
-  /** @deprecated {@link themeMode} */
-  themeName: TThemeMode;
-  /** @deprecated {@link setThemeMode} */
-  setThemeName: (nextThemeMode: TThemeMode) => void;
-  /** @deprecated {@link themeModes} */
-  themeNames: readonly TThemeMode[];
-  /** @deprecated {@link themeMode} */
-  themeId: TThemeMode;
-  /** @deprecated {@link setThemeMode} */
-  setThemeId: (nextThemeMode: TThemeMode) => void;
-  /** @deprecated {@link themeModes} */
-  themeIds: readonly TThemeMode[];
-  /** @deprecated {@link colorScheme} */
-  mode: ThemeColorScheme;
-  /** @deprecated {@link setThemeMode} */
-  setMode: (colorScheme: ThemeColorScheme) => void;
-  /** @deprecated */
-  toggle: () => void;
-  /** @deprecated {@link getThemeByMode} */
-  getThemeByName: (themeMode: TThemeMode) => ThemeType | undefined;
-  /** @deprecated {@link getThemeByMode} */
-  getThemeById: (themeMode: TThemeMode) => ThemeType | undefined;
-}
+export type { ThemeContextProps } from './themeContext';
+export { ThemeContext, useTheme } from './themeContext';
 
 export interface ThemeProviderProps<TThemeMode extends string = BuiltinThemeMode> {
   children: React.ReactNode;
@@ -74,14 +42,6 @@ export interface ThemeProviderProps<TThemeMode extends string = BuiltinThemeMode
   initialMode?: ThemeColorScheme;
   themeOverrides?: ThemeOverridesByMode;
   customThemes?: CustomThemesByMode;
-}
-
-export const ThemeContext = createContext<ThemeContextProps<string> | undefined>(undefined);
-
-export function useTheme<TThemeMode extends string = string>(): ThemeContextProps<TThemeMode> {
-  const context = useContext(ThemeContext);
-  if (!context) throw new Error('useTheme must be used within ThemeProvider');
-  return context as unknown as ThemeContextProps<TThemeMode>;
 }
 
 export function ThemeProvider<TThemeMode extends string = BuiltinThemeMode>({

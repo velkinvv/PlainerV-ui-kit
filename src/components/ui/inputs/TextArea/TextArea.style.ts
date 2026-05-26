@@ -80,7 +80,7 @@ export const TextAreaSkeleton = styled.div.withConfig({
   padding: ${InputPaddingHandler(Size.LG)};
   border: 1px solid ${({ theme }) => theme.colors.borderSecondary};
   border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
-  background: ${({ theme }) => theme.colors.backgroundSecondary};
+  background: ${({ theme }) => theme.colors.input};
   box-sizing: border-box;
 
   &::before {

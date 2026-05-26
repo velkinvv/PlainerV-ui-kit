@@ -1,60 +1,38 @@
-import type { Decorator, Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
 import React, { useMemo } from 'react';
 import { useTheme as useStyledTheme } from 'styled-components';
-import { useTheme } from '@/themes/ThemeProvider';
+import { useTheme } from '@/themes/themeContext';
 import { Button } from '@/components/ui/buttons/Button';
 import { Typography } from '@/components/ui/Typography';
 import { ThemeColorScheme } from '@/types/theme';
-import type { ThemeOverridesByMode } from '@/types/themeOverride';
 import { lightTheme } from '@/themes/themes';
 import { mergeTheme } from '@/themes/mergeTheme';
-import { ThemeProvider } from '@/themes/ThemeProvider';
 import { useMergeTheme } from '@/hooks/useMergeTheme';
+import {
+  brandPlainervThemeParameters,
+  brandThemeOverrides,
+} from './CustomTheme.stories.helpers';
 import { customThemeStoriesStyles } from './CustomTheme.stories.styles';
 
-/** Брендовые переопределения для демо в Storybook. */
-const brandThemeOverrides: ThemeOverridesByMode = {
-  light: {
-    colors: {
-      primary: '#7C3AED',
-      primaryHover: '#6D28D9',
-      primaryActive: '#5B21B6',
-    },
-  },
-  dark: {
-    colors: {
-      primary: '#A78BFA',
-      primaryHover: '#8B5CF6',
-      primaryActive: '#7C3AED',
-    },
-  },
-};
-
 /**
- * Внутренний провайдер с `themeOverrides` и синхронизацией режима с тулбаром Storybook.
- * Оборачивает сторис поверх глобального декоратора — ближайший `ThemeProvider` задаёт токены.
+ * Базовый превью для autodocs и сторис кастомной темы.
  */
-const withBrandThemeOverrides: Decorator = (Story, context) => {
-  const resolvedTheme: 'light' | 'dark' =
-    context.globals?.theme === 'dark' || context.globals?.theme === 'light'
-      ? context.globals.theme
-      : 'light';
-  const initialMode = resolvedTheme === 'dark' ? ThemeColorScheme.DARK : ThemeColorScheme.LIGHT;
+const CustomThemePreview = () => {
+  const theme = useStyledTheme();
 
   return (
-    <ThemeProvider
-      key={`brand-theme-${resolvedTheme}`}
-      initialMode={initialMode}
-      themeOverrides={brandThemeOverrides}
-      applyGlobalStyles={false}
-    >
-      <Story />
-    </ThemeProvider>
+    <div style={customThemeStoriesStyles.row}>
+      <div style={customThemeStoriesStyles.colorSwatch(theme.colors?.primary ?? '')} />
+      <Typography variant="body2">
+        theme.colors.primary: <strong>{theme.colors?.primary}</strong>
+      </Typography>
+    </div>
   );
 };
 
-const meta: Meta = {
+const meta: Meta<typeof CustomThemePreview> = {
   title: 'UI Kit/Theming/Custom theme',
+  component: CustomThemePreview,
   parameters: {
     layout: 'padded',
     docs: {
@@ -77,23 +55,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * Показывает текущий \`theme.colors.primary\` из styled-components (активная тема).
- */
-const ThemePrimaryPreview = () => {
-  const theme = useStyledTheme();
-
-  return (
-    <div style={customThemeStoriesStyles.row}>
-      <div style={customThemeStoriesStyles.colorSwatch(theme.colors?.primary ?? '')} />
-      <Typography variant="body2">
-        theme.colors.primary: <strong>{theme.colors?.primary}</strong>
-      </Typography>
-    </div>
-  );
-};
-
-/**
- * Демо хука useMergeTheme вне отдельного провайдера (режим из контекста или LIGHT).
+ * Демо хука useMergeTheme (режим из контекста глобального ThemeProvider).
  */
 const MergeThemeHookPreview = () => {
   const mergedTheme = useMergeTheme({
@@ -112,8 +74,8 @@ const MergeThemeHookPreview = () => {
 
 export const BrandThemeOverrides: Story = {
   name: 'ThemeProvider + themeOverrides',
-  decorators: [withBrandThemeOverrides],
   parameters: {
+    ...brandPlainervThemeParameters,
     docs: {
       description: {
         story:
@@ -147,7 +109,7 @@ const brandThemeOverrides = {
   },
   render: () => (
     <div style={customThemeStoriesStyles.stack}>
-      <ThemePrimaryPreview />
+      <CustomThemePreview />
       <div style={customThemeStoriesStyles.row}>
         <Button variant="primary">Primary</Button>
         <Button variant="secondary">Secondary</Button>
@@ -229,7 +191,7 @@ const brandLight = useMergeTheme(
 
 export const ProgrammaticThemeSwitch: Story = {
   name: 'Переключение themeMode в коде',
-  decorators: [withBrandThemeOverrides],
+  parameters: brandPlainervThemeParameters,
   render: () => {
     const { themeMode, setThemeMode, themeModes, cycleTheme, themes } = useTheme();
 
@@ -253,7 +215,7 @@ export const ProgrammaticThemeSwitch: Story = {
             cycleTheme()
           </Button>
         </div>
-        <ThemePrimaryPreview />
+        <CustomThemePreview />
       </div>
     );
   },
@@ -261,7 +223,7 @@ export const ProgrammaticThemeSwitch: Story = {
 
 export const CompareDefaultAndBrand: Story = {
   name: 'Сравнение: стандарт и бренд',
-  decorators: [withBrandThemeOverrides],
+  parameters: brandPlainervThemeParameters,
   render: () => {
     const { colorScheme } = useTheme();
 
@@ -271,9 +233,12 @@ export const CompareDefaultAndBrand: Story = {
         <Typography variant="body2" color="secondary">
           Переключите тему в тулбаре Storybook — брендовые токены меняются для light/dark.
         </Typography>
-        <ThemePrimaryPreview />
+        <CustomThemePreview />
         <Button variant="primary">Брендовая primary</Button>
       </div>
     );
   },
 };
+
+/** Экспорт для подсказок в docs (не используется в рантайме сторис). */
+export { brandThemeOverrides };

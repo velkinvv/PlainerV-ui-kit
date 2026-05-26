@@ -3,7 +3,7 @@ import { ThemeColorScheme, type ThemeType } from '../types/theme';
 import type { ThemeOverride } from '../types/themeOverride';
 import { darkTheme, lightTheme } from '../themes/themes';
 import { mergeTheme } from '../themes/mergeTheme';
-import { ThemeContext } from '../themes/ThemeProvider';
+import { ThemeContext } from '../themes/themeContext';
 
 /**
  * Параметры хука {@link useMergeTheme}.

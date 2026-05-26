@@ -57,7 +57,7 @@ export const darkProgressTheme: ProgressTheme = {
 
   // Цвета прогресса для темной темы
   colors: {
-    track: colors.grey[600], // Цвет трека прогресса
+    track: colors.grey[500], // Цвет трека прогресса (контраст на карточке #424242)
     fill: colors.success[500], // Заполнение прогресс-баров (по умолчанию)
     value: 'rgba(255, 255, 255, 0.8)', // Цвет значения прогресса (текст)
     statusAwait: colors.grey[500], // Цвет прогресса в статусе ожидания
