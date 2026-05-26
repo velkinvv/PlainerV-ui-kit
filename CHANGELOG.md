@@ -7,8 +7,13 @@
 
 ## [Unreleased]
 
+---
+
+## [0.2.1] - 2026-05-26
+
 ### Added
 
+- **Темизация:** `defineThemeCatalog`, type-safe `ThemeMode` / `themeMode`, `ThemeColorScheme`; **ThemeSelector**, `mergeTheme`, `useMergeTheme`; Storybook **Theming**; обновлены README и docs.
 - **DataGrid — сторис:** «Много колонок + панель иконок», «Много колонок + внутренние отступы»; хелперы `getDataGridStoryWideColumns`, `DataGridStoryHeaderToolbar`.
 - **Input:** оболочка **`InputFieldShell`**, стили **`InputComposite`**, хелперы композитных полей; расширенные истории и **`inputStoriesDocs`**.
 - **Storybook:** хелперы **`storybookStoryDocs`**, **`storybookUsageExtract`** для описаний и примеров из исходников сторис.
@@ -25,6 +30,7 @@
 ### Added (документация)
 
 - **DOC_TABLE** / **DOC_DATAGRID**: split-layout, поведение **`headerToolbar`** при горизонтальном скролле; JSDoc у **`DataGridProps`**.
+- Документация **v0.2.1** на сайте; обновлены README, CHANGELOG, **theming.mdx**, справочник.
 
 ---
 

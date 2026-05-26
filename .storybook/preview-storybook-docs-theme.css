@@ -1,83 +1,215 @@
 /**
- * Страница «Docs» рендерится в том же iframe превью, что и Canvas.
- * `@storybook/addon-themes` выставляет на `<html>` атрибут `data-theme="light" | "dark"`.
- * Блоки автодоков (Propstable, описание, заголовки) по умолчанию светлые — без этих правил
- * при тёмном shell остаётся «белое» тело документации.
+ * Docs в iframe превью. Цвета — CSS-переменные из {@link applyPlainervStorybookDocsCssVariables}
+ * (источник: `darkColors` / `lightColors`). Fallback совпадает с `themes/colors/dark.ts`.
  *
- * Цвета приближены к `darkColors` UI-kit (фон страницы `colors.dark[700]`).
+ * Иерархия тёмной темы:
+ * - `--plainerv-sb-docs-bg` — страница (#212121)
+ * - `--plainerv-sb-docs-surface` — превью / «карточка» (#424242)
+ * - `--plainerv-sb-docs-surface-muted` — таблицы, тулбар (#616161)
  */
 
 html[data-theme='dark'] {
   color-scheme: dark;
+  --plainerv-sb-docs-bg: #212121;
+  --plainerv-sb-docs-surface: #424242;
+  --plainerv-sb-docs-surface-muted: #616161;
+  --plainerv-sb-docs-border: #757575;
+  --plainerv-sb-docs-border-faint: #616161;
+  --plainerv-sb-docs-text: #ffffff;
+  --plainerv-sb-docs-text-muted: #e0e0e0;
+  --plainerv-sb-docs-link: #68d5f8;
+  --plainerv-sb-docs-link-hover: #84e1ff;
+}
+
+html[data-theme='light'] {
+  --plainerv-sb-docs-bg: #fafafa;
+  --plainerv-sb-docs-surface: #ffffff;
+  --plainerv-sb-docs-surface-muted: #f5f5f5;
+  --plainerv-sb-docs-border: #eeeeee;
+  --plainerv-sb-docs-border-faint: #e0e0e0;
+  --plainerv-sb-docs-text: #212121;
+  --plainerv-sb-docs-text-muted: #757575;
+  --plainerv-sb-docs-link: #2196f3;
+  --plainerv-sb-docs-link-hover: #1976d2;
 }
 
 html[data-theme='dark'] body,
 html[data-theme='dark'] #root {
-  background-color: #06090e !important;
-  color: rgba(255, 255, 255, 0.92) !important;
+  background-color: var(--plainerv-sb-docs-bg) !important;
+  color: var(--plainerv-sb-docs-text) !important;
 }
 
 html[data-theme='dark'] #root {
   min-height: 100%;
 }
 
-/* Обёртки MDX / Docs (классы Storybook 8+) */
 html[data-theme='dark'] .sbdocs,
 html[data-theme='dark'] .sbdocs-wrapper,
 html[data-theme='dark'] .sbdocs-content {
-  background-color: #06090e !important;
-  color: rgba(255, 255, 255, 0.92) !important;
+  background-color: var(--plainerv-sb-docs-bg) !important;
+  color: var(--plainerv-sb-docs-text) !important;
 }
 
 html[data-theme='dark'] .sbdocs h1,
 html[data-theme='dark'] .sbdocs h2,
 html[data-theme='dark'] .sbdocs h3,
 html[data-theme='dark'] .sbdocs h4 {
-  color: rgba(255, 255, 255, 0.96) !important;
+  color: var(--plainerv-sb-docs-text) !important;
+}
+
+html[data-theme='dark'] .sbdocs h2 {
+  border-bottom: 1px solid var(--plainerv-sb-docs-border) !important;
+}
+
+html[data-theme='dark'] .sbdocs hr {
+  border: 0 !important;
+  border-top: 1px solid var(--plainerv-sb-docs-border) !important;
+  background: transparent !important;
+  height: 0 !important;
+  margin: 24px 0 !important;
 }
 
 html[data-theme='dark'] .sbdocs p,
 html[data-theme='dark'] .sbdocs li {
-  color: rgba(255, 255, 255, 0.88) !important;
+  color: var(--plainerv-sb-docs-text-muted) !important;
 }
 
-/* Таблица свойств (ArgTypes) */
-html[data-theme='dark'] .docblock-argstable,
-html[data-theme='dark'] table.docblock-argstable {
-  background-color: #0e1012 !important;
-  color: rgba(255, 255, 255, 0.9) !important;
+html[data-theme='dark'] table.docblock-argstable,
+html[data-theme='dark'] .docblock-argstable {
+  background-color: var(--plainerv-sb-docs-bg) !important;
+  color: var(--plainerv-sb-docs-text) !important;
 }
 
-html[data-theme='dark'] .docblock-argstable th,
-html[data-theme='dark'] .docblock-argstable td,
-html[data-theme='dark'] table.docblock-argstable th,
-html[data-theme='dark'] table.docblock-argstable td {
-  border-color: rgba(255, 255, 255, 0.14) !important;
-  color: inherit !important;
+html[data-theme='dark'] table.docblock-argstable thead th,
+html[data-theme='dark'] table.docblock-argstable tbody > tr > th,
+html[data-theme='dark'] table.docblock-argstable tbody > tr > td,
+html[data-theme='dark'] .docblock-argstable thead th,
+html[data-theme='dark'] .docblock-argstable tbody > tr > th,
+html[data-theme='dark'] .docblock-argstable tbody > tr > td {
+  background-color: var(--plainerv-sb-docs-surface-muted) !important;
+  border-color: var(--plainerv-sb-docs-border) !important;
+  color: var(--plainerv-sb-docs-text) !important;
+}
+
+html[data-theme='dark'] table.docblock-argstable tbody > tr:hover > td,
+html[data-theme='dark'] .docblock-argstable tbody > tr:hover > td {
+  background-color: var(--plainerv-sb-docs-surface) !important;
 }
 
 html[data-theme='dark'] .docblock-argstable svg {
   opacity: 0.9;
 }
 
-/* Встроенный блок со сторис на странице Docs */
-html[data-theme='dark'] .docs-story {
-  background-color: #06090e !important;
+html[data-theme='dark'] .sbdocs table:not(.docblock-argstable),
+html[data-theme='dark'] .sbdocs-content table:not(.docblock-argstable) {
+  background-color: var(--plainerv-sb-docs-bg) !important;
+  border-collapse: collapse;
+  border: 1px solid var(--plainerv-sb-docs-border) !important;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-/* Подсветка кода в документации */
+html[data-theme='dark'] .sbdocs table:not(.docblock-argstable) tr,
+html[data-theme='dark'] .sbdocs-content table:not(.docblock-argstable) tr {
+  background-color: var(--plainerv-sb-docs-surface-muted) !important;
+  border-top: none !important;
+}
+
+html[data-theme='dark'] .sbdocs table:not(.docblock-argstable) tr:nth-of-type(2n),
+html[data-theme='dark'] .sbdocs-content table:not(.docblock-argstable) tr:nth-of-type(2n) {
+  background-color: var(--plainerv-sb-docs-surface) !important;
+}
+
+html[data-theme='dark'] .sbdocs table:not(.docblock-argstable) th,
+html[data-theme='dark'] .sbdocs table:not(.docblock-argstable) td,
+html[data-theme='dark'] .sbdocs-content table:not(.docblock-argstable) th,
+html[data-theme='dark'] .sbdocs-content table:not(.docblock-argstable) td {
+  background-color: inherit !important;
+  color: var(--plainerv-sb-docs-text) !important;
+  border: none !important;
+  border-bottom: 1px solid var(--plainerv-sb-docs-border-faint) !important;
+}
+
+html[data-theme='dark'] .sbdocs table:not(.docblock-argstable) tr:last-child td,
+html[data-theme='dark'] .sbdocs-content table:not(.docblock-argstable) tr:last-child td {
+  border-bottom: none !important;
+}
+
+html[data-theme='dark'] .sbdocs table:not(.docblock-argstable) tr:first-of-type th,
+html[data-theme='dark'] .sbdocs-content table:not(.docblock-argstable) tr:first-of-type th {
+  background-color: var(--plainerv-sb-docs-surface) !important;
+  font-weight: 600;
+}
+
+/* Превью сторис на Docs — «карточка» (`backgroundSecondary`) */
+html[data-theme='dark'] .docs-story,
+html[data-theme='dark'] .sbdocs-preview,
+html[data-theme='dark'] .sbdocs.sbdocs-preview,
+html[data-theme='dark'] .sb-unstyled,
+html[data-theme='dark'] #storybook-root,
+html[data-theme='dark'] .sb-show-main,
+html[data-theme='dark'] .sb-show-main.sb-main-padded,
+html[data-theme='dark'] .sb-show-main.sb-main-centered,
+html[data-theme='dark'] .sb-story {
+  background-color: var(--plainerv-sb-docs-surface) !important;
+  color: var(--plainerv-sb-docs-text);
+}
+
+html[data-theme='dark'] .sbdocs-preview,
+html[data-theme='dark'] .sbdocs.sbdocs-preview {
+  border: 1px solid var(--plainerv-sb-docs-border) !important;
+  border-radius: 8px;
+  box-shadow: none !important;
+  overflow: hidden;
+}
+
+html[data-theme='dark'] .sbdocs-preview > div,
+html[data-theme='dark'] .sbdocs-preview [class*='Toolbar'],
+html[data-theme='dark'] .sbdocs-preview [class*='ActionBar'],
+html[data-theme='dark'] .docblock-code-toggle {
+  background-color: var(--plainerv-sb-docs-surface-muted) !important;
+  border-color: var(--plainerv-sb-docs-border) !important;
+  box-shadow: none !important;
+  color: var(--plainerv-sb-docs-text-muted) !important;
+}
+
+/* Внутренняя область превью — тот же `backgroundSecondary`, что у карточек (декоратор canvas) */
+html[data-theme='dark'] .sbdocs-preview .plainerv-story-canvas-room,
+html[data-theme='light'] .sbdocs-preview .plainerv-story-canvas-room {
+  background-color: var(--plainerv-sb-docs-surface) !important;
+  color: var(--plainerv-sb-docs-text) !important;
+}
+
+html[data-theme='light'] .docs-story,
+html[data-theme='light'] .sbdocs-preview,
+html[data-theme='light'] .sbdocs.sbdocs-preview,
+html[data-theme='light'] .sb-unstyled,
+html[data-theme='light'] #storybook-root,
+html[data-theme='light'] .sb-show-main,
+html[data-theme='light'] .sb-show-main.sb-main-padded,
+html[data-theme='light'] .sb-show-main.sb-main-centered,
+html[data-theme='light'] .sb-story {
+  background-color: var(--plainerv-sb-docs-surface) !important;
+  color: var(--plainerv-sb-docs-text);
+}
+
+html[data-theme='light'] table.docblock-argstable tbody > tr > th,
+html[data-theme='light'] table.docblock-argstable tbody > tr > td {
+  background-color: var(--plainerv-sb-docs-surface) !important;
+  color: var(--plainerv-sb-docs-text) !important;
+}
+
 html[data-theme='dark'] .prismjs,
 html[data-theme='dark'] pre.prismjs,
 html[data-theme='dark'] .docblock-source pre {
-  background: #121417 !important;
-  color: rgba(255, 255, 255, 0.92) !important;
+  background: var(--plainerv-sb-docs-surface-muted) !important;
+  color: var(--plainerv-sb-docs-text) !important;
 }
 
-/* Ссылки в тексте Docs */
 html[data-theme='dark'] .sbdocs a {
-  color: #8ba8d6;
+  color: var(--plainerv-sb-docs-link);
 }
 
 html[data-theme='dark'] .sbdocs a:hover {
-  color: #b6c9e5;
+  color: var(--plainerv-sb-docs-link-hover);
 }

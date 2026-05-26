@@ -21,9 +21,7 @@ export function getDataGridStoryWideColumns(
 
   const extraColumns = Array.from({ length: extraColumnCount }, (_, columnIndex) => ({
     field: `extraField${columnIndex}`,
-    headerName: useShortHeaderNames
-      ? `Доп. ${columnIndex + 1}`
-      : `Доп. поле ${columnIndex + 1}`,
+    headerName: useShortHeaderNames ? `Доп. ${columnIndex + 1}` : `Доп. поле ${columnIndex + 1}`,
     width: 150,
     minWidth: extraColumnValueField === 'dateLabel' ? undefined : 120,
     sortable: false,

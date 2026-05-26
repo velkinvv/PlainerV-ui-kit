@@ -2,11 +2,7 @@
 import { useTheme } from 'styled-components';
 import type { ThemeType } from '@/types/theme';
 import type { TableContainerProps } from '@/types/ui';
-import {
-  TableContainerInset,
-  TableContainerInsetSurface,
-  TableContainerRoot,
-} from './Table.style';
+import { TableContainerInset, TableContainerInsetSurface, TableContainerRoot } from './Table.style';
 import { TableContainerAppearanceProvider } from './TableContainerAppearanceContext';
 import { TableShellInsetProvider } from './TableShellInsetContext';
 import { resolveTableShellInsetPadding } from './tableShellInsetHandlers';

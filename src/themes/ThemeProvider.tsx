@@ -1,83 +1,216 @@
-import React, { createContext, useContext, useMemo, useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
-import { lightTheme, darkTheme } from './themes';
-import { ThemeMode } from '../types/theme';
+import { ThemeColorScheme, ThemeMode, type BuiltinThemeMode, type ThemeType } from '../types/theme';
+import type { CustomThemesByMode, ThemeOverridesByMode } from '../types/themeOverride';
+import type { ThemeCatalog } from '../types/themeCatalog';
 import { GlobalStyles } from '../styles/GlobalStyles';
+import {
+  buildThemeCatalogFromLegacyProps,
+  createBuiltinThemeCatalog,
+  DEFAULT_THEME_STORAGE_KEY,
+  ensureValidThemeMode,
+  findThemeModeByColorScheme,
+  getNextThemeMode,
+  getThemeCatalogMeta,
+  getThemeCatalogModes,
+  readStoredThemeMode,
+  resolveThemeCatalog,
+  writeStoredThemeMode,
+} from '../handlers/themeCatalogHandlers';
+import { ThemeContext, type ThemeContextProps } from './themeContext';
 
-interface ThemeContextProps {
-  mode: ThemeMode;
-  setMode: (mode: ThemeMode) => void;
-  toggle: () => void;
-}
+export type { ThemeContextProps } from './themeContext';
+export { ThemeContext, useTheme } from './themeContext';
 
-interface ThemeProviderProps {
+export interface ThemeProviderProps<TThemeMode extends string = BuiltinThemeMode> {
   children: React.ReactNode;
-  /**
-   * Применять ли глобальные стили библиотеки (`GlobalStyles`).
-   * Для внешних приложений, где уже есть собственные глобальные стили (например docs),
-   * лучше отключать, чтобы избежать перезаписи базовой типографики и layout.
-   */
   applyGlobalStyles?: boolean;
-  /**
-   * Начальный режим темы с сервера (SSR), например из cookie — совпадает с `data-theme` на `<html>`
-   * и устраняет рассинхрон гидрации с первым чтением `localStorage` на клиенте.
-   * Если не передан — используется ключ `storybook-theme` в `localStorage`, затем светлая тема.
-   */
-  initialMode?: ThemeMode;
+  themes?: ThemeCatalog<TThemeMode>;
+  defaultThemeMode?: TThemeMode;
+  initialThemeMode?: TThemeMode;
+  storageKey?: string;
+  /** @deprecated {@link initialThemeMode} */
+  initialThemeName?: TThemeMode;
+  /** @deprecated {@link defaultThemeMode} */
+  defaultThemeName?: TThemeMode;
+  /** @deprecated {@link initialThemeMode} */
+  initialThemeId?: TThemeMode;
+  /** @deprecated {@link defaultThemeMode} */
+  defaultThemeId?: TThemeMode;
+  /** @deprecated Используйте `initialThemeMode` */
+  initialMode?: ThemeColorScheme;
+  themeOverrides?: ThemeOverridesByMode;
+  customThemes?: CustomThemesByMode;
 }
 
-const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
-
-export const useTheme = () => {
-  const ctx = useContext(ThemeContext);
-  if (!ctx) throw new Error('useTheme must be used within ThemeProvider');
-  return ctx;
-};
-
-export const ThemeProvider: React.FC<ThemeProviderProps> = ({
+export function ThemeProvider<TThemeMode extends string = BuiltinThemeMode>({
   children,
   applyGlobalStyles = true,
+  themes: themesProp,
+  defaultThemeMode: defaultThemeModeProp,
+  initialThemeMode: initialThemeModeProp,
+  initialThemeName,
+  defaultThemeName,
+  initialThemeId,
+  defaultThemeId,
+  storageKey = DEFAULT_THEME_STORAGE_KEY,
   initialMode,
-}) => {
-  // Инициализируем тему из localStorage или по умолчанию
-  const getInitialTheme = (): ThemeMode => {
-    if (typeof window !== 'undefined') {
-      const savedTheme = localStorage.getItem('storybook-theme');
-      if (savedTheme === 'dark') return ThemeMode.DARK;
-      if (savedTheme === 'light') return ThemeMode.LIGHT;
+  themeOverrides,
+  customThemes,
+}: ThemeProviderProps<TThemeMode>) {
+  const catalog = useMemo(() => {
+    if (themesProp) {
+      return themesProp;
     }
-    return ThemeMode.LIGHT;
+    return buildThemeCatalogFromLegacyProps(
+      themeOverrides,
+      customThemes,
+    ) as ThemeCatalog<TThemeMode>;
+  }, [themesProp, themeOverrides, customThemes]);
+
+  const resolvedCatalog = useMemo(() => resolveThemeCatalog(catalog), [catalog]);
+
+  const themeModes = useMemo(() => getThemeCatalogModes(catalog) as TThemeMode[], [catalog]);
+
+  const themesMeta = useMemo(() => getThemeCatalogMeta(resolvedCatalog), [resolvedCatalog]);
+
+  const themeByMode = useMemo(() => {
+    const map = new Map<TThemeMode, ThemeType>();
+    resolvedCatalog.forEach((item) => {
+      map.set(item.name, item.theme);
+    });
+    return map;
+  }, [resolvedCatalog]);
+
+  const fallbackThemeMode = ensureValidThemeMode(
+    defaultThemeModeProp ?? defaultThemeName ?? defaultThemeId ?? ThemeMode.light,
+    themeModes,
+    (themeModes[0] ?? ThemeMode.light) as TThemeMode,
+  );
+
+  const resolveInitialThemeMode = (): TThemeMode => {
+    const explicitInitial = initialThemeModeProp ?? initialThemeName ?? initialThemeId;
+    if (explicitInitial) {
+      return ensureValidThemeMode(explicitInitial, themeModes, fallbackThemeMode);
+    }
+
+    if (initialMode !== undefined) {
+      const fromScheme = findThemeModeByColorScheme(resolvedCatalog, initialMode);
+      if (fromScheme) {
+        return fromScheme;
+      }
+    }
+
+    const stored = readStoredThemeMode<TThemeMode>(themeModes, storageKey);
+    if (stored) {
+      return stored;
+    }
+
+    return fallbackThemeMode;
   };
 
-  const [mode, setMode] = useState<ThemeMode>(() => {
-    if (initialMode !== undefined) {
-      return initialMode;
-    }
-    return getInitialTheme();
-  });
+  const [themeMode, setThemeModeState] = useState<TThemeMode>(resolveInitialThemeMode);
 
-  const theme = useMemo(() => (mode === ThemeMode.LIGHT ? lightTheme : darkTheme), [mode]);
-
-  const toggle = () => setMode((m) => (m === ThemeMode.LIGHT ? ThemeMode.DARK : ThemeMode.LIGHT));
-
-  const themeWithType = useMemo(() => ({ ...theme, type: theme.mode }), [theme]);
-
-  // Синхронизация с тулбаром тем Storybook: см. `.storybook/withStorybookUiKitTheme.tsx` (глобал `theme` в декораторе).
-
-  // Обновляем localStorage при изменении темы
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const themeValue = mode === ThemeMode.DARK ? 'dark' : 'light';
-      localStorage.setItem('storybook-theme', themeValue);
+    if (!themeModes.includes(themeMode)) {
+      setThemeModeState(fallbackThemeMode);
     }
-  }, [mode]);
+  }, [themeModes, themeMode, fallbackThemeMode]);
+
+  const activeTheme = themeByMode.get(themeMode) ?? themeByMode.get(fallbackThemeMode);
+
+  if (!activeTheme) {
+    throw new Error(
+      `ThemeProvider: тема "${themeMode}" не найдена. Доступные ThemeMode: ${themeModes.join(', ')}`,
+    );
+  }
+
+  const colorScheme = activeTheme.mode;
+
+  const setThemeMode = useCallback(
+    (nextThemeMode: TThemeMode) => {
+      setThemeModeState(ensureValidThemeMode(nextThemeMode, themeModes, fallbackThemeMode));
+    },
+    [themeModes, fallbackThemeMode],
+  );
+
+  const setMode = useCallback(
+    (nextColorScheme: ThemeColorScheme) => {
+      const target = findThemeModeByColorScheme(resolvedCatalog, nextColorScheme);
+      if (target) {
+        setThemeMode(target);
+      }
+    },
+    [resolvedCatalog, setThemeMode],
+  );
+
+  const cycleTheme = useCallback(() => {
+    setThemeMode(getNextThemeMode(themeModes, themeMode));
+  }, [themeModes, themeMode, setThemeMode]);
+
+  const toggle = useCallback(() => {
+    if (themeModes.length === 2) {
+      const other = themeModes.find((name) => name !== themeMode) ?? themeModes[0];
+      setThemeMode(other);
+      return;
+    }
+    cycleTheme();
+  }, [themeModes, themeMode, setThemeMode, cycleTheme]);
+
+  const getThemeByMode = useCallback(
+    (requested: TThemeMode) => themeByMode.get(requested),
+    [themeByMode],
+  );
+
+  const themeWithType = useMemo(() => ({ ...activeTheme, type: activeTheme.mode }), [activeTheme]);
+
+  useEffect(() => {
+    writeStoredThemeMode(themeMode, colorScheme, storageKey);
+  }, [themeMode, colorScheme, storageKey]);
+
+  const contextValue = useMemo<ThemeContextProps<TThemeMode>>(
+    () => ({
+      themeMode,
+      setThemeMode,
+      themeModes,
+      themes: themesMeta,
+      cycleTheme,
+      colorScheme,
+      isDarkColorScheme: colorScheme === ThemeColorScheme.DARK,
+      getThemeByMode,
+      themeName: themeMode,
+      setThemeName: setThemeMode,
+      themeNames: themeModes,
+      themeId: themeMode,
+      setThemeId: setThemeMode,
+      themeIds: themeModes,
+      mode: colorScheme,
+      setMode,
+      toggle,
+      getThemeByName: getThemeByMode,
+      getThemeById: getThemeByMode,
+    }),
+    [
+      themeMode,
+      setThemeMode,
+      themeModes,
+      themesMeta,
+      cycleTheme,
+      colorScheme,
+      getThemeByMode,
+      setMode,
+      toggle,
+    ],
+  );
 
   return (
-    <ThemeContext.Provider value={{ mode, setMode, toggle }}>
+    <ThemeContext.Provider value={contextValue as unknown as ThemeContextProps<string>}>
       <StyledThemeProvider theme={themeWithType}>
         {applyGlobalStyles ? <GlobalStyles /> : null}
         {children}
       </StyledThemeProvider>
     </ThemeContext.Provider>
   );
-};
+}
+
+export const builtinThemeCatalog = createBuiltinThemeCatalog();

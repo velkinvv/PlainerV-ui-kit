@@ -5,13 +5,15 @@ import {
   PLAINER_TABLE_BODY_SCROLLBAR_GUTTER_CSS_VAR,
 } from './tableBodyScrollHandlers';
 import { PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR } from './tableThemeRadiusHandlers';
-import type { NormalizedTableSurfaceBackgrounds } from './tableSurfaceBackgroundHandlers';
 import {
   normalizeTableSurfaceBackgrounds,
   resolveTableHeaderSurfaceBackgroundColor,
+  type NormalizedTableSurfaceBackgrounds,
 } from './tableSurfaceBackgroundHandlers';
-import type { TableScrollClipCornerMode } from './tableScrollClipCornerRadiusHandlers';
-import { tableScrollClipCornerRadiusCss } from './tableScrollClipCornerRadiusHandlers';
+import {
+  tableScrollClipCornerRadiusCss,
+  type TableScrollClipCornerMode,
+} from './tableScrollClipCornerRadiusHandlers';
 
 const defaultTableSurfaceBackgrounds = normalizeTableSurfaceBackgrounds();
 

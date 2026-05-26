@@ -4,9 +4,16 @@ import { clsx } from 'clsx';
 import { NavigationMenu } from '../NavigationMenu';
 import { Icon } from '../Icon/Icon';
 import { NavigationMenuActiveAppearance, NavigationMenuExpandInteraction } from '@/types/ui';
-import { SidemenuVariant, type SidemenuProps, type SidemenuItem } from '../../../types/ui';
+import {
+  SidemenuVariant,
+  SidemenuHorizontalPlacement,
+  SidemenuVerticalAlignment,
+  type SidemenuProps,
+  type SidemenuItem,
+} from '../../../types/ui';
 import { IconSize } from '../../../types/sizes';
 import { sidemenuOffScreenInnerPanelTransition } from '@/handlers/offScreenPanelMotionHandlers';
+import { resolveSidemenuEdgeMenuJustifyContent } from '@/handlers/sidemenuPlacementHandlers';
 import {
   mapSidemenuItemToNavigationProps,
   resolveSidemenuActiveId,
@@ -25,10 +32,12 @@ import {
   SidemenuLogoRowStart,
   SidemenuLogoTitleText,
   SidemenuMenuItemsContainer,
+  SidemenuNavigationBodyZone,
   SidemenuPanelRoot,
   SidemenuSectionDivider,
 } from './Sidemenu.style';
 import { SidemenuOffScreenHoverShell } from './SidemenuOffScreenHoverShell';
+import { SidemenuFloatingPositionShell } from './SidemenuFloatingPositionShell';
 
 const DEFAULT_SIDEMENU_COMPACT = 100;
 const DEFAULT_SIDEMENU_EXPANDED = 310;
@@ -73,7 +82,9 @@ const sidemenuPanelMotionTransition = {
  * @param showExpandToggleButton — встроенная кнопка при режимах CLICK / HOVER
  * @param footer — нижний слот: произвольный ReactNode (второе меню, кнопки и т.д.); клик по обёртке не переключает раскрытие панели
  * @param slotStyles — инлайн-стили зон **header** / **body** / **footer** (высота, flex, overflow)
- * @param edgeAttached — панель без скругления и тени у левого края экрана (**min-height: 100vh**)
+ * @param edgeAttached — панель без скругления и тени у края экрана (**min-height: 100vh**)
+ * @param horizontalPlacement — левый или правый край экрана
+ * @param verticalAlignment — верх / центр / низ (вся панель или только блок пунктов при **edgeAttached**)
  */
 export const Sidemenu: React.FC<SidemenuProps> = ({
   items,
@@ -82,6 +93,8 @@ export const Sidemenu: React.FC<SidemenuProps> = ({
   footer,
   slotStyles,
   edgeAttached = false,
+  horizontalPlacement = SidemenuHorizontalPlacement.LEFT,
+  verticalAlignment = SidemenuVerticalAlignment.TOP,
   variant = SidemenuVariant.EXPANDED,
   className,
   onItemClick,
@@ -210,6 +223,11 @@ export const Sidemenu: React.FC<SidemenuProps> = ({
   const offScreenEdgeWidthPx = offScreenEdgeWidth ?? DEFAULT_OFF_SCREEN_EDGE_WIDTH_PX;
   const offScreenLayerZIndex = offScreenZIndex ?? DEFAULT_OFF_SCREEN_Z_INDEX;
 
+  const shouldFillMenuBodyZone =
+    !edgeAttached || verticalAlignment === SidemenuVerticalAlignment.TOP;
+  const edgeMenuJustifyContent = resolveSidemenuEdgeMenuJustifyContent(verticalAlignment);
+  const shouldUseFloatingPositionShell = !edgeAttached && !offScreenHoverReveal;
+
   /** У режима «за краем» входная анимация только обрезкой снаружи, без сдвига x с экрана */
   const panelMotionInitial = offScreenHoverReveal
     ? false
@@ -224,7 +242,14 @@ export const Sidemenu: React.FC<SidemenuProps> = ({
   const sidemenuPanel = (
     <SidemenuPanelRoot
       $edgeAttached={edgeAttached}
-      className={clsx('ui-sidemenu', edgeAttached && 'ui-sidemenu--edge-attached', className)}
+      $horizontalPlacement={horizontalPlacement}
+      className={clsx(
+        'ui-sidemenu',
+        edgeAttached && 'ui-sidemenu--edge-attached',
+        `ui-sidemenu--placement-${horizontalPlacement}`,
+        `ui-sidemenu--align-${verticalAlignment}`,
+        className,
+      )}
       {...expand.expandRootProps}
       initial={panelMotionInitial}
       animate={panelMotionAnimate}
@@ -265,26 +290,32 @@ export const Sidemenu: React.FC<SidemenuProps> = ({
         </SidemenuHeaderSection>
       ) : null}
 
-      <SidemenuMenuItemsContainer
-        $leadPaddingTopPx={shouldRenderHeaderRow ? 0 : 24}
-        style={slotStyles?.body}
+      <SidemenuNavigationBodyZone
+        $edgeAttached={edgeAttached}
+        $menuJustifyContent={edgeMenuJustifyContent}
       >
-        <NavigationMenu
-          collapsed={!isFullLayout}
-          activeId={resolvedActiveId}
-          onActiveChange={handleNavigationActiveChange}
-          activeAppearance={NavigationMenuActiveAppearance.HIGHLIGHTED}
-          aria-label="Основная навигация приложения"
-          className="ui-sidemenu__navigation"
+        <SidemenuMenuItemsContainer
+          $leadPaddingTopPx={shouldRenderHeaderRow ? 0 : 24}
+          $fillBodyZone={shouldFillMenuBodyZone}
+          style={slotStyles?.body}
         >
-          {items.map((menuEntry) => (
-            <NavigationMenu.Item
-              key={menuEntry.id}
-              {...mapSidemenuItemToNavigationProps(menuEntry)}
-            />
-          ))}
-        </NavigationMenu>
-      </SidemenuMenuItemsContainer>
+          <NavigationMenu
+            collapsed={!isFullLayout}
+            activeId={resolvedActiveId}
+            onActiveChange={handleNavigationActiveChange}
+            activeAppearance={NavigationMenuActiveAppearance.HIGHLIGHTED}
+            aria-label="Основная навигация приложения"
+            className="ui-sidemenu__navigation"
+          >
+            {items.map((menuEntry) => (
+              <NavigationMenu.Item
+                key={menuEntry.id}
+                {...mapSidemenuItemToNavigationProps(menuEntry)}
+              />
+            ))}
+          </NavigationMenu>
+        </SidemenuMenuItemsContainer>
+      </SidemenuNavigationBodyZone>
 
       {footer != null ? (
         <SidemenuFooterRegion data-prevent-navigation-expand-toggle>
@@ -302,6 +333,8 @@ export const Sidemenu: React.FC<SidemenuProps> = ({
   if (offScreenHoverReveal) {
     return (
       <SidemenuOffScreenHoverShell
+        horizontalPlacement={horizontalPlacement}
+        verticalAlignment={verticalAlignment}
         edgeWidthPx={offScreenEdgeWidthPx}
         panelWidthPx={targetPanelWidth}
         revealed={offScreenRevealed}
@@ -314,6 +347,18 @@ export const Sidemenu: React.FC<SidemenuProps> = ({
       >
         {sidemenuPanel}
       </SidemenuOffScreenHoverShell>
+    );
+  }
+
+  if (shouldUseFloatingPositionShell) {
+    return (
+      <SidemenuFloatingPositionShell
+        horizontalPlacement={horizontalPlacement}
+        verticalAlignment={verticalAlignment}
+        zIndex={offScreenLayerZIndex}
+      >
+        {sidemenuPanel}
+      </SidemenuFloatingPositionShell>
     );
   }
 

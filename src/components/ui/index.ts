@@ -280,6 +280,9 @@ export type { IconProps } from '@/types/ui';
 export { ThemeToggle } from './ThemeToggle';
 export type { ThemeToggleProps } from '@/types/ui';
 
+export { ThemeSelector } from './ThemeSelector';
+export type { ThemeSelectorProps } from '@/types/ui';
+
 export { Sidemenu } from './sidemenu';
 export type { SidemenuProps } from '@/types/ui';
 

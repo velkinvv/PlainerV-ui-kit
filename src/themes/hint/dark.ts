@@ -50,9 +50,9 @@ export const darkHintTheme: HintTheme = {
   // Варианты hint
   variants: {
     default: {
-      background: colors.dark[600], // Фон для обычных подсказок в темной теме
-      color: colors.neutral[10], // Текст для обычных подсказок в темной теме
-      border: `1px solid ${colors.dark[500]}`, // Граница для обычных подсказок в темной теме
+      background: colors.grey[700],
+      color: colors.neutral[10],
+      border: `1px solid ${colors.grey[600]}`,
       boxShadow: darkShadows.tooltip, // Тень для обычных подсказок из основной темы
     },
     info: {

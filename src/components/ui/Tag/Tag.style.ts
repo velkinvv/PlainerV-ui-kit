@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 import { createStyledShouldForwardProp } from '../../../handlers/styledComponentHandlers';
 import { TransitionHandler } from '../../../handlers/uiHandlers';
 import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
-import { ThemeMode, type Colors } from '../../../types/theme';
+import { ThemeColorScheme, type Colors } from '../../../types/theme';
 import type {
   TagAppearance,
   TagColorVariant,
@@ -29,7 +29,7 @@ type TagRootProps = {
 
 /** Сплошная заливка кружка статуса (режим `marker`) */
 export const markerDotFill = (
-  theme: { colors: Colors; mode?: ThemeMode },
+  theme: { colors: Colors; mode?: ThemeColorScheme },
   color: TagColorVariant,
 ): string => {
   switch (color) {
@@ -72,7 +72,7 @@ type TagTone = {
 };
 
 const getTagTone = (
-  theme: { colors: Colors; mode?: ThemeMode },
+  theme: { colors: Colors; mode?: ThemeColorScheme },
   color: TagColorVariant,
   isDark: boolean,
 ): TagTone => {
@@ -178,11 +178,11 @@ const getTagTone = (
 };
 
 const palette = (
-  theme: { colors: Colors; mode?: ThemeMode },
+  theme: { colors: Colors; mode?: ThemeColorScheme },
   color: TagColorVariant,
   appearance: TagAppearance,
 ) => {
-  const isDark = theme.mode === ThemeMode.DARK;
+  const isDark = theme.mode === ThemeColorScheme.DARK;
   const filled = appearance === 'filled';
 
   const tone = getTagTone(theme, color, isDark);

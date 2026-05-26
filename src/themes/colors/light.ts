@@ -16,18 +16,22 @@ const accentUiBase = colors.primary[500];
 const accentUiHover = colors.primary[600];
 const accentUiActive = colors.primary[700];
 
+/** Карточки, вторичный фон и поля ввода. */
+const surfaceElevated = colors.neutral[10];
+
 // Цвета для светлой темы
 export const lightColors: Colors = {
   // Основные фоновые цвета
   background: colors.grey[50], // Основной фон страницы
-  backgroundSecondary: colors.neutral[10], // Белый фон для карточек
+  backgroundSecondary: surfaceElevated, // Белый фон для карточек
   backgroundTertiary: colors.grey[100], // Фон для элементов интерфейса
   backgroundQuaternary: colors.grey[200], // Фон для неактивных элементов
   backgroundQuinary: colors.grey[50], // Дополнительный фоновый цвет
 
   // Специальные фоновые цвета
-  card: colors.neutral[10], // Фон карточек
-  input: colors.neutral[10], // Фон полей ввода
+  card: surfaceElevated, // Фон карточек
+  /** По умолчанию совпадает с `backgroundSecondary`; в кастомной теме можно задать отдельно. */
+  input: surfaceElevated, // Фон полей ввода
   avatarBackground: colors.grey[100], // Фон для аватаров
   progressBackground: colors.grey[200], // Фон для прогресс-баров
   progressTrack: colors.grey[200], // Цвет трека прогресса

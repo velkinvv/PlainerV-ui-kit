@@ -2,6 +2,7 @@ import type { Preview } from '@storybook/react';
 import addonThemes from '@storybook/addon-themes';
 import { withThemeByDataAttribute } from '@storybook/addon-themes';
 import { withStorybookUiKitTheme } from './withStorybookUiKitTheme';
+import { withStorybookDocsChromeTheme } from './withStorybookDocsChromeTheme';
 import { withStoryCanvasRoom } from './withStoryCanvasRoom';
 import { withStorybookMotion } from './withStorybookMotion';
 import './preview-storybook-overlays.css';
@@ -25,15 +26,15 @@ function getInitialStorybookThemeGlobal(): 'light' | 'dark' {
  * Глобальные параметры превью.
  * Декоратор {@link withStorybookUiKitTheme} подключает `ThemeProvider` для styled-components: без `theme` в
  * контексте падает доступ к `theme.sizes` / `theme.buttons` и т.д.
- * **Не оборачивайте** сторис в ещё один `ThemeProvider`: внутренний перекрывает внешний и ломает синхрон
- * с тулбаром тем (инверсия светлой/тёмной).
+ * **Не оборачивайте** сторис в ещё один `ThemeProvider`: используйте `parameters.plainervTheme`
+ * (`themeOverrides`, `themes`, `applyGlobalStyles`) — см. {@link withStorybookUiKitTheme}.
  *
  * `@storybook/addon-themes`: `withThemeByDataAttribute` выставляет `data-theme` на `<html>` (CSS / селекторы).
  * {@link withStorybookUiKitTheme} читает `context.globals.theme` и передаёт тему в {@link ThemeProvider} в iframe превью.
  * Оформление shell (сайдбар, хедер) — в `.storybook/manager.ts` через палитру UI-kit.
  *
- * `withStoryCanvasRoom` — см. файл декоратора: место под абсолютные попапы на Canvas и в Docs.
- * `preview-storybook-docs-theme.css` — тёмная подложка и текст для страницы **Docs** (автодоки не наследуют фон от UI-kit).
+ * `withStoryCanvasRoom` — внутри `ThemeProvider` (в массиве — перед `withStorybookUiKitTheme`), в Docs фон `backgroundSecondary`.
+ * {@link withStorybookDocsChromeTheme} + `preview-storybook-docs-theme.css` — тёмные Docs (таблица, превью, тулбар).
  *
  * Выпадающие меню / Hint / Tooltip рендерятся через `createPortal` в `document.body` текущего документа
  * и `position: fixed`. Портал в `window.top.document` не используется: стили styled-components
@@ -48,13 +49,14 @@ const preview: Preview = {
   },
   decorators: [
     /**
-     * @param Story — компонент сторис из CSF (`Story` из `@storybook/react`)
-     * Порядок декораторов Storybook: первый в массиве — внутренний (ближе к сторис), следующие — снаружи.
-     * Итог: снаружи — `data-theme` на документе и запас по высоте (`withStoryCanvasRoom`), внутри — тема и сторис.
+     * Storybook 9: **первый** декоратор — ближе к сторис, **последний** — снаружи.
+     * `withStoryCanvasRoom` должен быть **внутри** `withStorybookUiKitTheme` → в массиве canvas **раньше**, uiKit **позже**.
+     * Снаружи → внутрь: data-theme → ThemeProvider → canvas → Docs chrome → motion → сторис.
      */
     withStorybookMotion,
-    withStorybookUiKitTheme,
+    withStorybookDocsChromeTheme,
     withStoryCanvasRoom,
+    withStorybookUiKitTheme,
     withThemeByDataAttribute({
       themes: { light: 'light', dark: 'dark' },
       defaultTheme: getInitialStorybookThemeGlobal(),
@@ -87,6 +89,7 @@ const preview: Preview = {
           Layout: 6,
           Utils: 7,
           Hooks: 8,
+          Theming: 9,
         };
 
         /**
@@ -168,6 +171,7 @@ const preview: Preview = {
             'useToast',
             'useWindowSize',
           ],
+          Theming: ['Custom theme', 'ThemeSelector'],
         };
 
         /**

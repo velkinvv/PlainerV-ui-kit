@@ -83,8 +83,8 @@ export const SliderFieldShell: React.FC<SliderFieldShellProps> = ({
         aria-labelledby={label ? labelId : undefined}
         style={{
           minWidth: 0,
-          alignSelf: fullWidth ? 'stretch' : 'flex-start',
-          width: fullWidth ? '100%' : 'auto',
+          alignSelf: 'stretch',
+          width: '100%',
         }}
       >
         {children}

@@ -3,10 +3,7 @@ import type { InputVariant } from '../../../../types/ui';
 import { Size } from '../../../../types/sizes';
 import { InputWrapper } from '../shared';
 import { InputCompositeAddon, InputCompositeFieldSegment } from './InputComposite.style';
-import {
-  hasInputCompositeAddons,
-  prepareInputCompositeAddon,
-} from './inputCompositeHandlers';
+import { hasInputCompositeAddons, prepareInputCompositeAddon } from './inputCompositeHandlers';
 
 type InputWrapperPublicProps = ComponentProps<typeof InputWrapper>;
 

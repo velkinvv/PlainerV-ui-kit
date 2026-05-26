@@ -27,7 +27,9 @@ export function TableShellInsetProvider({
   children: React.ReactNode;
 }): React.ReactElement {
   const value = useMemo((): TableShellInsetContextValue => ({ shellInset }), [shellInset]);
-  return <TableShellInsetContext.Provider value={value}>{children}</TableShellInsetContext.Provider>;
+  return (
+    <TableShellInsetContext.Provider value={value}>{children}</TableShellInsetContext.Provider>
+  );
 }
 
 /**

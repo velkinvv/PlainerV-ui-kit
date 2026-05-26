@@ -1,13 +1,19 @@
 import styled, { css } from 'styled-components';
 import { motion } from 'framer-motion';
 import { Size } from '@/types/sizes';
-import { BorderRadiusHandler, BoxShadowHandler } from '@/handlers/uiHandlers';
+import { SidemenuHorizontalPlacement } from '@/types/ui';
+import { BoxShadowHandler } from '@/handlers/uiHandlers';
+import { cardBorderRadiusFromTheme } from '@/handlers/cardThemeHandlers';
 
 /**
- * Корневая панель {@link Sidemenu}: карточка или колонна у левого края экрана.
- * @property $edgeAttached — без радиуса/тени, на всю высоту вьюпорта, граница только справа
+ * Корневая панель {@link Sidemenu}: карточка или колонна у края экрана.
+ * @property $edgeAttached — без радиуса/тени, на всю высоту вьюпорта
+ * @property $horizontalPlacement — граница-разделитель слева или справа у **edgeAttached**
  */
-export const SidemenuPanelRoot = styled(motion.div)<{ $edgeAttached: boolean }>`
+export const SidemenuPanelRoot = styled(motion.div)<{
+  $edgeAttached: boolean;
+  $horizontalPlacement: SidemenuHorizontalPlacement;
+}>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -17,20 +23,29 @@ export const SidemenuPanelRoot = styled(motion.div)<{ $edgeAttached: boolean }>`
   box-sizing: border-box;
   flex-shrink: 0;
 
-  ${({ $edgeAttached, theme }) =>
+  ${({ $edgeAttached, $horizontalPlacement, theme }) =>
     $edgeAttached
       ? css`
           border-radius: 0;
           box-shadow: none;
           border: none;
-          border-right: 1px solid ${theme?.colors?.border};
+          ${$horizontalPlacement === SidemenuHorizontalPlacement.RIGHT
+            ? css`
+                border-left: 1px solid ${theme?.colors?.border};
+              `
+            : css`
+                border-right: 1px solid ${theme?.colors?.border};
+              `}
           padding: 0 0 30px 0;
           min-height: 100vh;
           height: 100%;
           align-self: stretch;
         `
       : css`
-          border-radius: ${BorderRadiusHandler(theme?.borderRadius ?? theme?.globalSize)};
+          border-radius: ${cardBorderRadiusFromTheme(
+            theme,
+            theme?.borderRadius ?? theme?.globalSize,
+          )};
           border: 1px solid ${theme?.colors?.border};
           padding: 0 0 30px 0;
           height: 741px;
@@ -38,11 +53,40 @@ export const SidemenuPanelRoot = styled(motion.div)<{ $edgeAttached: boolean }>`
         `}
 `;
 
-/** Средняя колонка основного меню; верхний отступ, если шапка не рендерится */
-export const SidemenuMenuItemsContainer = styled.div<{ $leadPaddingTopPx: number }>`
+/**
+ * Средняя зона между шапкой и футером; при **edgeAttached** задаёт вертикальное выравнивание пунктов меню.
+ * @property $edgeAttached — включить flex-раскладку для **verticalAlignment**
+ * @property $menuJustifyContent — justify-content для колонки навигации
+ */
+export const SidemenuNavigationBodyZone = styled.div<{
+  $edgeAttached: boolean;
+  $menuJustifyContent: 'flex-start' | 'center' | 'flex-end';
+}>`
   display: flex;
   flex-direction: column;
-  flex: 1;
+  width: 100%;
+  min-height: 0;
+  flex: 1 1 auto;
+
+  ${({ $edgeAttached, $menuJustifyContent }) =>
+    $edgeAttached
+      ? css`
+          justify-content: ${$menuJustifyContent};
+        `
+      : ''}
+`;
+
+/**
+ * Средняя колонка основного меню; верхний отступ, если шапка не рендерится.
+ * @property $fillBodyZone — растягивать зону (по умолчанию true); false при **edgeAttached** + center/bottom для выравнивания блока пунктов
+ */
+export const SidemenuMenuItemsContainer = styled.div<{
+  $leadPaddingTopPx: number;
+  $fillBodyZone: boolean;
+}>`
+  display: flex;
+  flex-direction: column;
+  flex: ${({ $fillBodyZone }) => ($fillBodyZone ? '1' : '0 1 auto')};
   width: 100%;
   padding: ${({ $leadPaddingTopPx }) => `${$leadPaddingTopPx}px 10px 0`};
   min-height: 0;

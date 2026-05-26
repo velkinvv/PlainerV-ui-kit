@@ -1,4 +1,4 @@
-// Цветовая палитра для тёмной темы (обновлена в соответствии с макетом Figma)
+// Цветовая палитра для тёмной темы (поднятые «угольные» поверхности вместо near-black)
 
 import type { BoxShadowType, BlurType, Colors } from '../../types/theme';
 import { colors } from '../../variables/colors';
@@ -16,54 +16,65 @@ const accentUiBase = colors.primary[400];
 const accentUiHover = colors.primary[300];
 const accentUiActive = colors.primary[200];
 
+/** Фон страницы — тёмно-серый, не почти чёрный. */
+const surfacePage = colors.grey[900];
+
+/** Карточки, панели, вторичные поверхности и поля ввода (как на макете ~#424242). */
+const surfaceElevated = colors.neutral[800];
+
+/** Третичные блоки, неактивные зоны. */
+const surfaceMuted = colors.grey[700];
+
 // Цвета для тёмной темы
 export const darkColors: Colors = {
   // Основные фоновые цвета
-  background: colors.dark[700], // Основной фон страницы (из макета)
-  backgroundSecondary: colors.blue['A700'], // Фон для карточек (из макета)
-  backgroundTertiary: colors.blue[700], // Фон для элементов интерфейса (из макета)
-  backgroundQuaternary: colors.blue[600], // Фон для неактивных элементов
-  backgroundQuinary: colors.blue[800], // Дополнительный фоновый цвет
+  background: surfacePage,
+  backgroundSecondary: surfaceElevated,
+  backgroundTertiary: surfaceMuted,
+  backgroundQuaternary: colors.grey[600],
+  backgroundQuinary: colors.grey[800],
 
   // Специальные фоновые цвета
-  card: colors.blue['A700'], // Фон карточек
-  input: colors.blue[700], // Фон полей ввода
-  avatarBackground: colors.dark[800], // Фон для аватаров
-  progressBackground: colors.dark[800], // Фон для прогресс-баров
-  progressTrack: colors.grey[600], // Цвет трека прогресса
-  progressFill: colors.success[500], // Заполнение прогресс-баров
-  progressValue: 'rgba(255, 255, 255, 0.8)', // Цвет значения прогресса (текст)
-  progressStatusAwait: colors.grey[500], // Цвет прогресса в статусе ожидания
-  progressStatusLoading: colors.success[400], // Цвет прогресса в статусе загрузки
-  progressStatusSuccess: colors.success[500], // Цвет прогресса в статусе успеха
-  progressStatusError: colors.red[400], // Цвет прогресса в статусе ошибки
-  imageBackground: colors.dark[900], // Фон для изображений
+  card: surfaceElevated,
+  /** По умолчанию совпадает с `backgroundSecondary`; в кастомной теме можно задать отдельно. */
+  input: surfaceElevated,
+  avatarBackground: colors.grey[800],
+  progressBackground: colors.grey[700],
+  /** Трек Progress / Slider: светлее, чтобы читался на `backgroundSecondary` (#424242). */
+  progressTrack: colors.grey[500],
+  progressFill: colors.success[500],
+  progressValue: 'rgba(255, 255, 255, 0.8)',
+  progressStatusAwait: colors.grey[500],
+  progressStatusLoading: colors.success[400],
+  progressStatusSuccess: colors.success[500],
+  progressStatusError: colors.red[400],
+  imageBackground: colors.grey[900],
 
   // Текстовые цвета
-  text: colors.neutral[10], // Основной текст (белый)
-  textSecondary: colors.grey[300], // Вторичный текст
-  textTertiary: colors.grey[500], // Третичный текст
-  textDisabled: colors.grey[600], // Текст отключённых элементов
+  text: colors.neutral[10],
+  textSecondary: colors.grey[300],
+  textTertiary: colors.grey[500],
+  textDisabled: colors.grey[600],
 
   // Основные цвета (совпадают с info — палитра primary)
   primary: accentUiBase,
   primaryHover: accentUiHover,
   primaryActive: accentUiActive,
-  secondary: colors.grey[400], // Вторичный цвет
-  secondaryHover: colors.grey[300], // Вторичный цвет при наведении
+  secondary: colors.grey[400],
+  secondaryHover: colors.grey[300],
 
-  // Граничные цвета
-  border: colors.blue[600], // Основная граница
-  borderSecondary: colors.blue[500], // Вторичная граница
-  borderTertiary: colors.blue[400], // Третичная граница
-  borderHover: colors.blue[400], // Граница при наведении
+  // Граничные цвета — нейтральные, читаемые на угольных поверхностях
+  border: colors.grey[600],
+  borderSecondary: colors.grey[700],
+  borderTertiary: colors.grey[600],
+  borderHover: colors.grey[500],
 
   // Состояния
-  success: colors.green[400], // Успех
-  successHover: colors.green[300], // Успех при наведении
-  warning: colors.orange[400], // Предупреждение
-  danger: colors.red[400], // Опасность
-  dangerHover: colors.red[300], // Опасность при наведении
+  success: colors.green[400],
+  successHover: colors.green[300],
+  warning: colors.orange[400],
+  danger: colors.red[400],
+  dangerHover: colors.red[300],
   info: accentUiBase,
   infoHover: accentUiHover,
   /** Тег Tag `primary`: чуть глубже `info` в тёмной теме */
@@ -74,9 +85,9 @@ export const darkColors: Colors = {
   tagAccentPink: colors.pink[400],
 
   // Специальные цвета
-  overlay: 'rgba(0, 0, 0, 0.7)', // Наложение
-  shadow: 'rgba(0, 0, 0, 0.3)', // Тень
-  transparent: 'transparent', // Прозрачный
+  overlay: 'rgba(0, 0, 0, 0.55)',
+  shadow: 'rgba(0, 0, 0, 0.25)',
+  transparent: 'transparent',
 };
 
 // Экспорт для обратной совместимости

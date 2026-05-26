@@ -1,4 +1,4 @@
-import { ThemeMode } from '../../../types/theme';
+import { ThemeColorScheme } from '../../../types/theme';
 import {
   clampStepperActiveIndex,
   formatStepperCounterLabel,
@@ -12,13 +12,13 @@ import {
 describe('Stepper handlers', () => {
   describe('resolveStepperAppearance', () => {
     it('возвращает явный appearance', () => {
-      expect(resolveStepperAppearance('dark', ThemeMode.LIGHT)).toBe('dark');
-      expect(resolveStepperAppearance('light', ThemeMode.DARK)).toBe('light');
+      expect(resolveStepperAppearance('dark', ThemeColorScheme.LIGHT)).toBe('dark');
+      expect(resolveStepperAppearance('light', ThemeColorScheme.DARK)).toBe('light');
     });
 
     it('берёт из темы при undefined', () => {
-      expect(resolveStepperAppearance(undefined, ThemeMode.LIGHT)).toBe('light');
-      expect(resolveStepperAppearance(undefined, ThemeMode.DARK)).toBe('dark');
+      expect(resolveStepperAppearance(undefined, ThemeColorScheme.LIGHT)).toBe('light');
+      expect(resolveStepperAppearance(undefined, ThemeColorScheme.DARK)).toBe('dark');
     });
   });
 

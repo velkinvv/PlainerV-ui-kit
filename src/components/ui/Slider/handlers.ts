@@ -1,7 +1,38 @@
+import type { DefaultTheme } from 'styled-components';
+import { ThemeColorScheme } from '../../../types/theme';
 import { Size } from '../../../types/sizes';
 
 /** Акцент трека и бегунка (согласован с `status` / `error` / `success` у полей) */
 export type SliderAccentKind = 'default' | 'error' | 'success' | 'warning';
+
+/**
+ * Фон неактивной «рельсы» слайдера.
+ * В тёмной теме — светлая полупрозрачная линия: `progressTrack` (#757575) сливается с карточкой `#424242`.
+ *
+ * @param theme - Активная тема UI-kit (`ThemeProvider` / styled-components)
+ */
+export const resolveSliderTrackRailBackground = (theme: DefaultTheme): string => {
+  const tokenTrack = theme.colors?.progressTrack ?? theme.progress?.colors?.track;
+
+  if (theme.mode === ThemeColorScheme.DARK) {
+    return 'rgba(255, 255, 255, 0.32)';
+  }
+
+  return tokenTrack ?? '#e0e0e0';
+};
+
+/**
+ * Тень рельсы (как у `Progress` в тёмной теме) — помогает отделить линию от фона карточки.
+ *
+ * @param theme - Активная тема UI-kit
+ */
+export const resolveSliderTrackRailBoxShadow = (theme: DefaultTheme): string | undefined => {
+  if (theme.mode === ThemeColorScheme.DARK) {
+    return theme.progress?.settings?.trackShadow?.dark ?? 'inset 0 1px 2px rgba(0, 0, 0, 0.35)';
+  }
+
+  return theme.progress?.settings?.trackShadow?.light;
+};
 
 /**
  * Итоговый визуальный акцент: сначала текст ошибки и `success`, затем явный `status`.

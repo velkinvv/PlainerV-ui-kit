@@ -114,10 +114,7 @@ export function useTableSplitColumnWidthSync(
     }
 
     const bodySection = bodyTableElement.tBodies[0];
-    const mutationObserver =
-      bodySection != null
-        ? new MutationObserver(scheduleSync)
-        : null;
+    const mutationObserver = bodySection != null ? new MutationObserver(scheduleSync) : null;
     mutationObserver?.observe(bodySection, { childList: true });
 
     return () => {

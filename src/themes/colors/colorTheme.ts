@@ -1,24 +1,24 @@
 import { lightTheme } from './light';
 import { darkTheme } from './dark';
-import { ThemeMode, type ColorTheme } from '../../types/theme';
+import { ThemeColorScheme, type ColorTheme } from '../../types/theme';
 
-// Общие цветовые переменные для использования в компонентах
-export const themeColors: Record<ThemeMode, ColorTheme> = {
-  [ThemeMode.LIGHT]: lightTheme,
-  [ThemeMode.DARK]: darkTheme,
+export const themeColors: Record<ThemeColorScheme, ColorTheme> = {
+  [ThemeColorScheme.LIGHT]: lightTheme,
+  [ThemeColorScheme.DARK]: darkTheme,
 };
 
-// Функция для получения цвета из темы
-export const getThemeColor = (mode: ThemeMode, colorKey: keyof ColorTheme): string | undefined => {
-  return themeColors[mode][colorKey];
+export const getThemeColor = (
+  colorScheme: ThemeColorScheme,
+  colorKey: keyof ColorTheme,
+): string | undefined => {
+  return themeColors[colorScheme][colorKey];
 };
 
-// Функция для получения цвета с fallback
 export const getColor = (
-  mode: ThemeMode,
+  colorScheme: ThemeColorScheme,
   colorKey: keyof ColorTheme,
   fallback?: string,
 ): string => {
-  const color = getThemeColor(mode, colorKey);
+  const color = getThemeColor(colorScheme, colorKey);
   return color || fallback || '#68d5f8';
 };

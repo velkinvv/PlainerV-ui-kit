@@ -426,7 +426,10 @@ export const ShellInset: Story = {
       pageSize: 5,
     });
 
-    const sortedLeft = useMemo(() => sortRows(TABLE_STORY_DEMO_ROWS, sortModelLeft), [sortModelLeft]);
+    const sortedLeft = useMemo(
+      () => sortRows(TABLE_STORY_DEMO_ROWS, sortModelLeft),
+      [sortModelLeft],
+    );
     const sortedRight = useMemo(
       () => sortRows(TABLE_STORY_DEMO_ROWS, sortModelRight),
       [sortModelRight],
@@ -565,8 +568,8 @@ export const EmbeddedShell: Story = {
     return (
       <DataGridStoryBlock>
         <DataGridStoryHint>
-          Отступы и обводка — у `Card`. У `DataGrid` только `shellVariant="embedded"` (без бордера и фона
-          оболочки).
+          Отступы и обводка — у `Card`. У `DataGrid` только `shellVariant=&apos;embedded&apos;` (без
+          бордера и фона оболочки).
         </DataGridStoryHint>
         <Card fullWidth variant={CardVariant.OUTLINED} padding={Size.MD}>
           <Typography variant="h3" style={{ margin: '0 0 12px' }}>
@@ -807,8 +810,8 @@ export const ManyColumnsHorizontalScrollShellInset: Story = {
     return (
       <DataGridStoryBlock>
         <DataGridStoryHint>
-          Те же дополнительные колонки и горизонтальный скролл, но сетка с отступом от внешней
-          рамки карточки (`shellInset`).
+          Те же дополнительные колонки и горизонтальный скролл, но сетка с отступом от внешней рамки
+          карточки (`shellInset`).
         </DataGridStoryHint>
         <DataGrid<DataGridStoryDemoRow>
           tableId="story-data-grid-many-columns-shell-inset"
@@ -833,7 +836,8 @@ export const FitColumnsNoHorizontalScroll: Story = {
   parameters: {
     docs: {
       description: {
-        story: '`horizontalScroll={false}` — прежнее поведение: колонки сжимаются, горизонтальной прокрутки нет.',
+        story:
+          '`horizontalScroll={false}` — прежнее поведение: колонки сжимаются, горизонтальной прокрутки нет.',
       },
     },
   },

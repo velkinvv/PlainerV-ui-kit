@@ -439,7 +439,7 @@ export const SelectDropdownAnchor = styled.div<{ $fullWidth?: boolean }>`
     height: 100%;
     align-self: stretch;
 
-  /* Обёртка клика Dropdown — flex, чтобы шеврон не наезжал на текст */
+    /* Обёртка клика Dropdown — flex, чтобы шеврон не наезжал на текст */
     & .ui-dropdown {
       display: flex;
       flex: 1 1 auto;

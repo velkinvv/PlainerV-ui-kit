@@ -2,6 +2,7 @@ import styled, { css } from 'styled-components';
 import type { ColumnFilterPanelPresentation } from '@/types/ui';
 import { Size } from '../../../../types/sizes';
 import type { ThemeType } from '../../../../types/theme';
+import { overlayPanelBoxShadowFromTheme } from '../../../../handlers/overlayPanelShadowHandlers';
 
 /**
  * Отступы и скругление панели из токенов карточки без принудительной min-height.
@@ -55,7 +56,7 @@ export const ColumnFilterPanelRoot = styled.section<{
       : css`
           background: ${theme.cards.variants.elevated.background};
           color: ${theme.cards.variants.elevated.color};
-          box-shadow: ${theme.boxShadow?.dropdown ?? theme.boxShadow.md};
+          box-shadow: ${overlayPanelBoxShadowFromTheme(theme)};
           ${columnFilterElevatedPaddingAndRadius(theme, $panelSize)}
         `}
 `;

@@ -30,3 +30,5 @@ export type {
   UseNavigationMenuExpandResult,
 } from './useNavigationMenuExpand';
 export { useUiMotionPresets } from './useUiMotion';
+export { useMergeTheme } from './useMergeTheme';
+export type { UseMergeThemeOptions } from './useMergeTheme';

@@ -7,7 +7,6 @@ import {
 } from './storybookUsageExtract';
 import {
   buildComponentUsageSnippetFromArgs,
-  formatUsagePropsFromArgs,
   resolveStoryComponentName,
 } from './storybookStoryDocsCore';
 
@@ -34,9 +33,7 @@ export const describeStoryWithArgs = (
   componentName: string,
   args: Record<string, unknown>,
   options?: { wrapInForm?: boolean },
-) =>
-  describeStory(description, buildComponentUsageSnippetFromArgs(componentName, args, options));
-
+) => describeStory(description, buildComponentUsageSnippetFromArgs(componentName, args, options));
 
 export const describeStory = (description: string, usageCode?: string) => ({
   parameters: {
@@ -117,14 +114,10 @@ const resolveStoryExportName = (
  * @param generatedSource - Исходник сторис из Storybook.
  * @param context - Контекст сторис.
  */
-export const getStoryDocsSourceCode = (
-  generatedSource: string,
-  context: StoryContext,
-): string => {
+export const getStoryDocsSourceCode = (generatedSource: string, context: StoryContext): string => {
   const storyTitle = String(context.title ?? '');
   const wrapInForm =
-    Boolean(context.parameters?.docs?.wrapUsageInForm) ||
-    storyTitle.startsWith('UI Kit/Inputs/');
+    Boolean(context.parameters?.docs?.wrapUsageInForm) || storyTitle.startsWith('UI Kit/Inputs/');
 
   const componentName = resolveStoryComponentName(context);
   const storyArgs = context.args as Record<string, unknown> | undefined;
@@ -156,10 +149,7 @@ export const getStoryDocsSourceCode = (
     return fromRender;
   }
   const hasStorySpecificArgs =
-    componentName &&
-    storyArgs &&
-    Object.keys(storyArgs).length > 0 &&
-    !storyBlockHasRender;
+    componentName && storyArgs && Object.keys(storyArgs).length > 0 && !storyBlockHasRender;
 
   if (hasStorySpecificArgs) {
     return buildComponentUsageSnippetFromArgs(componentName, storyArgs, { wrapInForm });

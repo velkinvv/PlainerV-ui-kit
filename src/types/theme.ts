@@ -2233,7 +2233,7 @@ export type ThemeType = {
   durations: DurationsType; // Длительности анимаций
   zIndex: ZIndexType; // Z-index значения
   globalSize: Size; // Глобальный размер
-  mode: ThemeMode; // Режим темы (светлая/темная)
+  mode: ThemeColorScheme; // Палитра токенов (светлая / тёмная основа)
   defaultInputSize: Size; // Размер полей ввода по умолчанию (`Size.SM` в темах)
   defaultButtonSize: Size; // Размер кнопок по умолчанию
   boxShadow: BoxShadowType; // Тени
@@ -2260,10 +2260,38 @@ export type ThemeType = {
 };
 
 /**
- * Режимы темы
- * Определяет доступные варианты темы
+ * Палитра оформления (светлая / тёмная основа).
+ * Поле `ThemeType.mode`, проверки в styled-components (`theme.mode === ThemeColorScheme.DARK`).
+ * Для **выбора темы** из каталога используйте {@link ThemeMode} и `setThemeMode`.
  */
-export enum ThemeMode {
-  LIGHT = 'light', // Светлая тема
-  DARK = 'dark', // Темная тема
+export enum ThemeColorScheme {
+  LIGHT = 'light',
+  DARK = 'dark',
 }
+
+/**
+ * Встроенные id тем (`light`, `dark`).
+ * Расширяется через {@link defineThemeCatalog}: `appThemes.themeMode.ocean`.
+ *
+ * @example
+ * setThemeMode(ThemeMode.light);
+ * setThemeMode(appThemes.themeMode.ocean);
+ */
+export const ThemeMode = {
+  light: ThemeColorScheme.LIGHT,
+  dark: ThemeColorScheme.DARK,
+} as const;
+
+/** Union встроенных id тем. */
+export type BuiltinThemeMode = (typeof ThemeMode)[keyof typeof ThemeMode];
+
+/**
+ * Карта расширенных id тем (результат {@link defineThemeCatalog}).
+ */
+export type ThemeModeMap<TThemeMode extends string> = {
+  readonly [Key in TThemeMode]: Key;
+};
+
+/** Union id из карты {@link ThemeModeMap}. */
+export type ThemeModeFromMap<TThemeModeMap extends Record<string, string>> =
+  TThemeModeMap[keyof TThemeModeMap];

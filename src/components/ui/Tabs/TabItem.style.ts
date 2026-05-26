@@ -6,7 +6,7 @@ import {
   TabItemTextPosition,
   TabsVerticalPosition,
 } from '../../../types/ui';
-import { ThemeMode } from '../../../types/theme';
+import { ThemeColorScheme } from '../../../types/theme';
 import { BorderRadiusHandler } from '../../../handlers/uiHandlers';
 import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
 import type { PillSegmentMetrics } from './pillSegmentTrack/pillSegmentMetricsTypes';
@@ -87,7 +87,7 @@ export const TabItemGroupListRoot = styled.div<{
           overflow: ${$scrollable ? 'visible' : 'hidden'};
           border-radius: calc(${BorderRadiusHandler(theme.borderRadius)} + ${pillTrackInset});
           border: none;
-          background: ${theme.mode === ThemeMode.DARK
+          background: ${theme.mode === ThemeColorScheme.DARK
             ? '#1c1c1c'
             : theme.colors.backgroundTertiary};
         `
@@ -191,7 +191,7 @@ export const PillSegmentThumb = styled.div<{ $metrics: PillSegmentMetrics | null
     opacity 0.16s ease;
 
   ${({ theme }) =>
-    theme.mode === ThemeMode.DARK
+    theme.mode === ThemeColorScheme.DARK
       ? css`
           border-radius: ${BorderRadiusHandler(theme.borderRadius)};
           background: #444444;

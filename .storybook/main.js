@@ -27,6 +27,7 @@ module.exports = {
     const forcedStoryPaths = [
       'src/components/ui/Dropdown/DropdownTagTrigger.stories.tsx',
       'src/components/ui/sidemenu/Sidemenu.stories.tsx',
+      'src/themes/CustomTheme.stories.tsx',
     ];
     const mergedRelative = [...new Set([...withoutTablePkg, ...forcedStoryPaths])];
     return mergedRelative.map(relativePath => path.join('..', relativePath).replace(/\\/g, '/'));

@@ -214,7 +214,10 @@ const withErrorArgs = {
 };
 
 export const WithError: Story = {
-  ...inputArgsStory('Состояние ошибки: `error` — красная обводка и текст под полем.', withErrorArgs),
+  ...inputArgsStory(
+    'Состояние ошибки: `error` — красная обводка и текст под полем.',
+    withErrorArgs,
+  ),
   args: withErrorArgs,
 };
 
@@ -511,7 +514,9 @@ export const AllVariants: Story = {
 };
 
 export const FormExample: Story = {
-  ...inputRenderStory('Форма регистрации: несколько полей, проверка совпадения паролей, `HiddenUsernameField`.'),
+  ...inputRenderStory(
+    'Форма регистрации: несколько полей, проверка совпадения паролей, `HiddenUsernameField`.',
+  ),
   render: () => {
     const [name, setName] = React.useState('');
     const [email, setEmail] = React.useState('');
@@ -588,7 +593,9 @@ export const FormExample: Story = {
 };
 
 export const WithClearIcon: Story = {
-  ...inputRenderStory('Кнопка очистки: `displayClearIcon` + `onClearIconClick` сбрасывают значение у родителя.'),
+  ...inputRenderStory(
+    'Кнопка очистки: `displayClearIcon` + `onClearIconClick` сбрасывают значение у родителя.',
+  ),
   render: () => {
     const [text, setText] = React.useState('Пример текста');
     return (
@@ -605,7 +612,9 @@ export const WithClearIcon: Story = {
 };
 
 export const LoadingDemo: Story = {
-  ...inputRenderStory('Демонстрация состояния загрузки в Input. При `isLoading` отображается спиннер вместо `rightIcon`.'),
+  ...inputRenderStory(
+    'Демонстрация состояния загрузки в Input. При `isLoading` отображается спиннер вместо `rightIcon`.',
+  ),
   render: () => {
     const [value1, setValue1] = React.useState('');
     const [value2, setValue2] = React.useState('');
@@ -667,7 +676,9 @@ export const LoadingDemo: Story = {
 };
 
 export const SkeletonDemo: Story = {
-  ...inputRenderStory('При `skeleton` анимированный плейсхолдер только на поле ввода; label и `additionalLabel` остаются видимым текстом.'),
+  ...inputRenderStory(
+    'При `skeleton` анимированный плейсхолдер только на поле ввода; label и `additionalLabel` остаются видимым текстом.',
+  ),
   render: () => {
     const [value1, setValue1] = React.useState('');
     const [value2, setValue2] = React.useState('');
@@ -729,7 +740,9 @@ export const SkeletonDemo: Story = {
 };
 
 export const TooltipDemo: Story = {
-  ...inputRenderStory('Демонстрация `tooltip` и `hint`: тип подсказки (`tooltipType`) и позиция (`tooltipPosition`).'),
+  ...inputRenderStory(
+    'Демонстрация `tooltip` и `hint`: тип подсказки (`tooltipType`) и позиция (`tooltipPosition`).',
+  ),
   render: () => {
     const [value1, setValue1] = React.useState('Обычный инпут');
     const [value2, setValue2] = React.useState('Инпут с тултипом');
@@ -811,7 +824,9 @@ export const TooltipDemo: Story = {
 };
 
 export const CharacterCounterDemo: Story = {
-  ...inputRenderStory('Демонстрация `displayCharacterCounter` при `maxLength`: счётчик можно включить или отключить.'),
+  ...inputRenderStory(
+    'Демонстрация `displayCharacterCounter` при `maxLength`: счётчик можно включить или отключить.',
+  ),
   render: () => {
     const [value1, setValue1] = React.useState('Обычный инпут');
     const [value2, setValue2] = React.useState('Инпут с счетчиком');
@@ -863,7 +878,9 @@ export const CharacterCounterDemo: Story = {
 };
 
 export const ExtraTextDemo: Story = {
-  ...inputRenderStory('Демонстрация `extraText`: дополнительный текст отображается ниже компонента.'),
+  ...inputRenderStory(
+    'Демонстрация `extraText`: дополнительный текст отображается ниже компонента.',
+  ),
   render: () => {
     const [value1, setValue1] = React.useState('Обычный инпут');
     const [value2, setValue2] = React.useState('Инпут с дополнительным текстом');
@@ -904,7 +921,9 @@ export const ExtraTextDemo: Story = {
 };
 
 export const DisableCopyingDemo: Story = {
-  ...inputRenderStory('Демонстрация `disableCopying`: отключает выделение и копирование значения поля.'),
+  ...inputRenderStory(
+    'Демонстрация `disableCopying`: отключает выделение и копирование значения поля.',
+  ),
   render: () => {
     const [value1, setValue1] = React.useState('Обычный инпут - можно копировать');
     const [value2, setValue2] = React.useState('Защищенный инпут - нельзя копировать');
@@ -936,7 +955,9 @@ export const DisableCopyingDemo: Story = {
 };
 
 export const HandleInputDemo: Story = {
-  ...inputRenderStory('Демонстрация `handleInput`: маски и форматирование применяются при вводе (телефон, карта и т.д.).'),
+  ...inputRenderStory(
+    'Демонстрация `handleInput`: маски и форматирование применяются при вводе (телефон, карта и т.д.).',
+  ),
   render: () => {
     const [value1, setValue1] = React.useState('');
     const [value2, setValue2] = React.useState('');
@@ -1153,7 +1174,9 @@ export const HandleInputDemo: Story = {
 };
 
 export const IgnoreMaskCharactersDemo: Story = {
-  ...inputRenderStory('Демонстрация `ignoreMaskCharacters`: исключать символы маски (разделители) из подсчёта для `maxLength`.'),
+  ...inputRenderStory(
+    'Демонстрация `ignoreMaskCharacters`: исключать символы маски (разделители) из подсчёта для `maxLength`.',
+  ),
   render: () => {
     const [value1, setValue1] = React.useState('10.12.1985');
     const [value2, setValue2] = React.useState('10.12.1985');
@@ -1203,7 +1226,9 @@ export const IgnoreMaskCharactersDemo: Story = {
 };
 
 export const CharacterCounterThresholdDemo: Story = {
-  ...inputRenderStory('Демонстрация `characterCounterVisibilityThreshold`: видимость счётчика в зависимости от заполненности.'),
+  ...inputRenderStory(
+    'Демонстрация `characterCounterVisibilityThreshold`: видимость счётчика в зависимости от заполненности.',
+  ),
   render: () => {
     const [value1, setValue1] = React.useState('');
     const [value2, setValue2] = React.useState('');
@@ -1270,7 +1295,9 @@ export const CharacterCounterThresholdDemo: Story = {
 };
 
 export const AdditionalLabelDemo: Story = {
-  ...inputRenderStory('Демонстрация `additionalLabel`: дополнительное описание справа от основного `label`.'),
+  ...inputRenderStory(
+    'Демонстрация `additionalLabel`: дополнительное описание справа от основного `label`.',
+  ),
   render: () => {
     const [value1, setValue1] = React.useState('');
     const [value2, setValue2] = React.useState('');
@@ -1384,7 +1411,9 @@ export const ReadOnlyComparison: Story = {
 };
 
 export const PasswordForm: Story = {
-  ...inputRenderStory('Пример `Form` для полей пароля — устраняет предупреждения браузера о паролях вне формы.'),
+  ...inputRenderStory(
+    'Пример `Form` для полей пароля — устраняет предупреждения браузера о паролях вне формы.',
+  ),
   render: () => {
     const [username, setUsername] = React.useState('');
     const [password, setPassword] = React.useState('');
@@ -1438,7 +1467,9 @@ export const PasswordForm: Story = {
 };
 
 export const PasswordComparison: Story = {
-  ...inputRenderStory('Сравнение форм регистрации (`new-password`) и входа (`current-password`) с корректным `autoComplete`.'),
+  ...inputRenderStory(
+    'Сравнение форм регистрации (`new-password`) и входа (`current-password`) с корректным `autoComplete`.',
+  ),
   render: () => {
     const [regUser, setRegUser] = React.useState('');
     const [regPass, setRegPass] = React.useState('');
@@ -1532,7 +1563,9 @@ export const PasswordComparison: Story = {
 
 /** Составное поле: сумма + выбор валюты в suffix (аналог Admiral InputEx). */
 export const WithSuffixSelect: Story = {
-  ...inputRenderStory('Режим InputEx: `suffix` с `Select` — общая оболочка, разделитель между сегментами. Для Select автоматически включается `embeddedInCompositeField`.'),
+  ...inputRenderStory(
+    'Режим InputEx: `suffix` с `Select` — общая оболочка, разделитель между сегментами. Для Select автоматически включается `embeddedInCompositeField`.',
+  ),
   render: function WithSuffixSelectStory() {
     const [amount, setAmount] = React.useState('1000');
     const [currency, setCurrency] = React.useState('rub');
@@ -1562,7 +1595,9 @@ export const WithSuffixSelect: Story = {
 
 /** Префикс с текстом и суффикс с единицей измерения. */
 export const WithPrefixTextAndSuffixSelect: Story = {
-  ...inputRenderStory('Комбинация текстового `prefix` и `Select` в `suffix`: префикс с отступами, селект без собственной рамки.'),
+  ...inputRenderStory(
+    'Комбинация текстового `prefix` и `Select` в `suffix`: префикс с отступами, селект без собственной рамки.',
+  ),
   render: function WithPrefixTextAndSuffixSelectStory() {
     const [weight, setWeight] = React.useState('42');
     const [unit, setUnit] = React.useState('kg');
@@ -1591,7 +1626,9 @@ export const WithPrefixTextAndSuffixSelect: Story = {
 
 /** InputEx + `Select` с `mode="searchSelect"` в suffix: фильтр в слоте, список по фокусу. */
 export const WithSuffixSearchSelect: Story = {
-  ...inputRenderStory('Составное поле с `Select mode="searchSelect"` в `suffix`: фильтр и выбор города в одной оболочке с текстовым полем. `embeddedInCompositeField` включается автоматически.'),
+  ...inputRenderStory(
+    'Составное поле с `Select mode="searchSelect"` в `suffix`: фильтр и выбор города в одной оболочке с текстовым полем. `embeddedInCompositeField` включается автоматически.',
+  ),
   render: function WithSuffixSearchSelectStory() {
     const [query, setQuery] = React.useState('доставка');
     const [city, setCity] = React.useState('moscow');
@@ -1622,7 +1659,9 @@ export const WithSuffixSearchSelect: Story = {
 
 /** InputEx + searchSelect в prefix (категория) и текстовый ввод справа. */
 export const WithPrefixSearchSelect: Story = {
-  ...inputRenderStory('Тот же InputEx, но `searchSelect` в `prefix` — слева фильтр по категории, справа основной ввод.'),
+  ...inputRenderStory(
+    'Тот же InputEx, но `searchSelect` в `prefix` — слева фильтр по категории, справа основной ввод.',
+  ),
   render: function WithPrefixSearchSelectStory() {
     const [category, setCategory] = React.useState('');
     const [title, setTitle] = React.useState('');
@@ -1691,7 +1730,9 @@ export const WithPrefixSelect: Story = {
 };
 
 export const AutocompleteDemo: Story = {
-  ...inputRenderStory('Демонстрация атрибутов `autoComplete` для UX и безопасности (username, email, пароли, имя).'),
+  ...inputRenderStory(
+    'Демонстрация атрибутов `autoComplete` для UX и безопасности (username, email, пароли, имя).',
+  ),
   render: () => {
     const [username, setUsername] = React.useState('');
     const [email, setEmail] = React.useState('');

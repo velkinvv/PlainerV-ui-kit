@@ -1,6 +1,10 @@
 import styled, { css } from 'styled-components';
 import { TransitionHandler } from '../../../handlers/uiHandlers';
-import type { SliderAccentKind } from './handlers';
+import {
+  resolveSliderTrackRailBackground,
+  resolveSliderTrackRailBoxShadow,
+  type SliderAccentKind,
+} from './handlers';
 
 /**
  * Корневая колонка слайдера.
@@ -43,6 +47,8 @@ export const SliderScaleLabel = styled.span`
  */
 export const SliderTrackRingWrap = styled.div<{ $accent: SliderAccentKind }>`
   position: relative;
+  width: 100%;
+  box-sizing: border-box;
   border-radius: 10px;
   padding: 1px;
   margin: -1px;
@@ -70,6 +76,8 @@ export const SliderTrackWrap = styled.div<{ $trackWrapHeightPx: number }>`
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
+  box-sizing: border-box;
   height: ${({ $trackWrapHeightPx }) => $trackWrapHeightPx}px;
   touch-action: none;
 `;
@@ -102,8 +110,10 @@ export const SliderTrackRail = styled.div<{ $thumbInsetPx: number; $railHeightPx
   transform: translateY(-50%);
   height: ${({ $railHeightPx }) => $railHeightPx}px;
   border-radius: ${({ $railHeightPx }) => Math.max(1, Math.round($railHeightPx / 2))}px;
-  background: ${({ theme }) => theme.colors.borderSecondary};
+  background-color: ${({ theme }) => resolveSliderTrackRailBackground(theme)};
+  box-shadow: ${({ theme }) => resolveSliderTrackRailBoxShadow(theme) ?? 'none'};
   z-index: 0;
+  pointer-events: none;
 `;
 
 /**

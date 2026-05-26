@@ -159,8 +159,7 @@ export const SliderInputTrackStrip = styled.div<{ $lineHeightPx: number }>`
   right: 0;
   bottom: 0;
   ${({ theme, $lineHeightPx }) => {
-    const radiusPx =
-      Number.parseInt(BorderRadiusHandler(theme.borderRadius), 10) || 8;
+    const radiusPx = Number.parseInt(BorderRadiusHandler(theme.borderRadius), 10) || 8;
     const heightPx = Math.max($lineHeightPx, radiusPx);
     return css`
       height: ${heightPx}px;

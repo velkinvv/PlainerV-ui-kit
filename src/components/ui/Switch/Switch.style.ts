@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 import { TransitionHandler } from '../../../handlers/uiHandlers';
 import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
-import { ThemeMode } from '../../../types/theme';
+import { ThemeColorScheme } from '../../../types/theme';
 import grey from '../../../variables/colors/grey';
 import { neutral } from '../../../variables/colors/neutral';
 import { success } from '../../../variables/colors/success';
@@ -62,7 +62,7 @@ export const SwitchLabelText = styled.span<{ $disabled?: boolean }>`
     if ($disabled) {
       return neutral[400];
     }
-    return theme.mode === ThemeMode.DARK ? neutral[10] : neutral[800];
+    return theme.mode === ThemeColorScheme.DARK ? neutral[10] : neutral[800];
   }};
 `;
 
@@ -86,12 +86,12 @@ export const SwitchTrack = styled.span<{
   will-change: transform, background-color;
   background: ${({ theme, $checked, $disabled }) => {
     if ($disabled) {
-      return theme.mode === ThemeMode.DARK ? grey[700] : grey[200];
+      return theme.mode === ThemeColorScheme.DARK ? grey[700] : grey[200];
     }
     if ($checked) {
       return success[600];
     }
-    return theme.mode === ThemeMode.DARK ? grey[600] : grey[300];
+    return theme.mode === ThemeColorScheme.DARK ? grey[600] : grey[300];
   }};
 
   ${({ $disabled, $checked, theme }) =>
@@ -100,7 +100,7 @@ export const SwitchTrack = styled.span<{
       &:hover {
         background: ${$checked
           ? success[500]
-          : theme.mode === ThemeMode.DARK
+          : theme.mode === ThemeColorScheme.DARK
             ? grey[500]
             : grey[200]};
       }
@@ -134,7 +134,7 @@ export const SwitchThumb = styled.span<{
   height: ${({ $geometry }) => $geometry.thumbSize}px;
   border-radius: 50%;
   background: ${({ $disabled, theme }) =>
-    $disabled ? (theme.mode === ThemeMode.DARK ? grey[400] : grey[100]) : neutral[10]};
+    $disabled ? (theme.mode === ThemeColorScheme.DARK ? grey[400] : grey[100]) : neutral[10]};
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
   transition: ${TransitionHandler()};
   will-change: transform;

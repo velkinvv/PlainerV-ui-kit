@@ -123,8 +123,7 @@ export const InputWrapper = styled(motion.div).withConfig({
   position: relative;
   display: flex;
   align-items: center;
-  background: ${({ theme, $fileSurface }) =>
-    $fileSurface ? theme.colors.input : theme.colors.backgroundSecondary};
+  background: ${({ theme }) => theme.colors.input};
   border: 1px solid
     ${({ theme, status, error, $dragActive }) => {
       if ($dragActive) {

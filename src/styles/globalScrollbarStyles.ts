@@ -23,7 +23,7 @@ export function globalScrollbarStyles(theme: ThemeType) {
       ${PLAINER_SCROLLBAR_SIZE_HOVER_CSS_VAR}: 11px;
     }
 
-  /* Firefox */
+    /* Firefox */
     * {
       scrollbar-width: thin;
       scrollbar-color: ${thumbColor} ${trackColor};

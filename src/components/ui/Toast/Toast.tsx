@@ -5,7 +5,7 @@ import { Icon } from '../Icon/Icon';
 import { IconSize } from '@/types/sizes';
 import grey from '@/variables/colors/grey';
 import { neutral } from '@/variables/colors/neutral';
-import { ThemeMode } from '@/types/theme';
+import { ThemeColorScheme } from '@/types/theme';
 import {
   ToastCard,
   ToastDismiss,
@@ -89,7 +89,7 @@ export const Toast: React.FC<ToastProps> = ({
 const ToastCardView: React.FC<{
   toast: ToastItem;
   onClose: (id: string) => void;
-  mode: ThemeMode;
+  mode: ThemeColorScheme;
   onPauseTimer: (id: string) => void;
   onResumeTimer: (id: string) => void;
   timing?: {
@@ -98,7 +98,7 @@ const ToastCardView: React.FC<{
   };
 }> = ({ toast, onClose, mode, onPauseTimer, onResumeTimer, timing }) => {
   const tokens = getToastSurfaceTokens(toast.type, mode);
-  const iconColor = mode === ThemeMode.DARK ? neutral[400] : grey[500];
+  const iconColor = mode === ThemeColorScheme.DARK ? neutral[400] : grey[500];
   const progressPercent =
     timing && timing.duration > 0
       ? Math.max(0, Math.min(100, (timing.remaining / timing.duration) * 100))
@@ -151,7 +151,7 @@ const ToastCardView: React.FC<{
 const ToastPillView: React.FC<{
   toast: ToastItem;
   onClose: (id: string) => void;
-  mode: ThemeMode;
+  mode: ThemeColorScheme;
   onPauseTimer: (id: string) => void;
   onResumeTimer: (id: string) => void;
   timing?: {

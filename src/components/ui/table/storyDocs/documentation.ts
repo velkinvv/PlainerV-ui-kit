@@ -390,7 +390,7 @@ export const DATAGRID_DOC = `
 
 | Проп | Зачем |
 |------|--------|
-| \`dataStatus\` | \`'loading' \| 'ready' \| 'error'\` — единый статус таблицы. |
+| \`dataStatus\` | \`'loading' | 'ready' | 'error'\` — единый статус таблицы. |
 | \`isLoading\` | Устаревший флаг: то же, что \`dataStatus="loading"\`. |
 | \`loadingDisplay\` | \`'overlay'\` (спиннер поверх) или \`'skeleton'\` (строки-заглушки в \`tbody\`). При скелетоне и непустых \`rows\` автоматически оверлей. |
 | \`skeletonRowCount\` | Число строк-скелетонов; иначе \`paginationModel.pageSize\` или 8. |
@@ -398,7 +398,7 @@ export const DATAGRID_DOC = `
 | \`onRetry\`, \`errorStateRetryLabel\` | Кнопка повтора; если \`onRetry\` не задан, используется \`refetch\`. |
 | \`renderErrorState\` | Кастомный блок ошибки: \`(error, retry?) => ReactNode\`. |
 | \`renderLoadingOverlay\` | Кастомный оверлей при \`loadingDisplay="overlay"\`. |
-| \`statusMessage\`, \`statusMessageVariant\` | Информационная полоса над строками при \`dataStatus="ready"\` (\`info\` \| \`warning\` \| \`success\`). |
+| \`statusMessage\`, \`statusMessageVariant\` | Информационная полоса над строками при \`dataStatus="ready"\` (\`info\` | \`warning\` | \`success\`). |
 | \`renderStatusMessage\` | Полностью свой блок сообщения вместо встроенной полосы. |
 
 ### Сторис (полный список)

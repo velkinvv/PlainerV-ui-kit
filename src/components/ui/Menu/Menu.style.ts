@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components';
-import { ThemeMode, type ThemeType } from '@/types/theme';
+import { ThemeColorScheme, type ThemeType } from '@/types/theme';
+import { overlayPanelBoxShadowFromTheme } from '../../../handlers/overlayPanelShadowHandlers';
 import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
 
 /** Внешняя «бумага» списка меню (тень и граница как у выпадающих панелей) */
@@ -7,7 +8,7 @@ export const MenuSurface = styled.div`
   border-radius: 8px;
   border: 1px solid ${({ theme }) => theme.colors.border};
   background: ${({ theme }) => theme.colors.background};
-  box-shadow: ${({ theme }) => theme.boxShadow.dropdown};
+  box-shadow: ${({ theme }) => overlayPanelBoxShadowFromTheme(theme)};
   padding: 4px 0;
   min-width: 180px;
 `;
@@ -39,10 +40,10 @@ const menuItemButtonStyles = (props: {
   $destructive: boolean;
 }) => {
   const { theme, $dense, $selected, $destructive } = props;
-  const isDark = theme.mode === ThemeMode.DARK;
+  const isDark = theme.mode === ThemeColorScheme.DARK;
   const hoverBg = isDark ? '#2a2a2a' : '#f5f5f5';
   const selectedBg =
-    theme.mode === ThemeMode.DARK
+    theme.mode === ThemeColorScheme.DARK
       ? `color-mix(in srgb, ${theme.colors.primary} 22%, ${theme.colors.background})`
       : `color-mix(in srgb, ${theme.colors.primary} 10%, ${theme.colors.background})`;
 

@@ -834,11 +834,7 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
     );
 
     const triggerControl = embeddedInCompositeField ? (
-      <SelectCompositeTriggerShell
-        $size={size}
-        $disabled={selectDisabled}
-        className={className}
-      >
+      <SelectCompositeTriggerShell $size={size} $disabled={selectDisabled} className={className}>
         {triggerInner}
       </SelectCompositeTriggerShell>
     ) : (
@@ -882,9 +878,7 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
         ref={containerRef}
         $fullWidth={dropdownFullWidth}
         data-embedded-composite-select={embeddedInCompositeField ? 'true' : undefined}
-        data-embedded-composite-select-mode={
-          embeddedInCompositeField ? mode : undefined
-        }
+        data-embedded-composite-select-mode={embeddedInCompositeField ? mode : undefined}
       >
         <Dropdown
           trigger={triggerForDropdown}

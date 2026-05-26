@@ -2,34 +2,7 @@ import styled, { css } from 'styled-components';
 import { motion } from 'framer-motion';
 import { CardVariant, type CardProps } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
-import type { ThemeType } from '../../../types/theme';
-
-/**
- * Нормализует входной размер карточки к ключам темы (`XS | SM | MD | LG | XL`).
- * Поддерживает как enum-значения, так и строковые варианты в нижнем регистре из сторис.
- * @param rawSize - входящее значение `size`/`padding` из пропсов карточки
- */
-const resolveCardSizeKey = (rawSize: CardProps['size'] | CardProps['padding']): Size => {
-  if (typeof rawSize !== 'string' || rawSize.length === 0) {
-    return Size.MD;
-  }
-
-  const normalizedSize = rawSize.toUpperCase() as keyof typeof Size;
-  return Size[normalizedSize] ?? Size.MD;
-};
-
-/**
- * Возвращает настройки размера карточки с безопасным fallback на `MD`.
- * @param theme - активная тема styled-components
- * @param rawSize - входящее значение `size`/`padding` из пропсов карточки
- */
-const getCardSizeSettings = (
-  theme: ThemeType,
-  rawSize: CardProps['size'] | CardProps['padding'],
-): ThemeType['cards']['sizes'][Size] => {
-  const resolvedSize = resolveCardSizeKey(rawSize);
-  return theme.cards?.sizes?.[resolvedSize] ?? theme.cards.sizes[Size.MD];
-};
+import { getCardSizeSettings } from '@/handlers/cardThemeHandlers';
 
 /**
  * Стилизованная карточка

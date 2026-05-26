@@ -5,7 +5,7 @@ import { Icon } from '../Icon/Icon';
 import { IconSize } from '@/types/sizes';
 import grey from '@/variables/colors/grey';
 import { neutral } from '@/variables/colors/neutral';
-import { ThemeMode } from '@/types/theme';
+import { ThemeColorScheme } from '@/types/theme';
 import { SnackbarAction, SnackbarBar, SnackbarDismiss, SnackbarMessage } from './Snackbar.style';
 import { getSnackbarSurfaceTokens } from './handlers';
 
@@ -27,7 +27,7 @@ export interface SnackbarProps {
 export const Snackbar: React.FC<SnackbarProps> = ({ snackbar, onClose, onActionClick }) => {
   const { mode } = useTheme();
   const tokens = getSnackbarSurfaceTokens(mode);
-  const dismissIconColor = mode === ThemeMode.DARK ? neutral[300] : grey[400];
+  const dismissIconColor = mode === ThemeColorScheme.DARK ? neutral[300] : grey[400];
 
   return (
     <SnackbarBar $tokens={tokens} role="status" aria-live="polite">

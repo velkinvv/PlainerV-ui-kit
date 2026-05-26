@@ -1,5 +1,4 @@
 import React from 'react';
-import { describe, expect, it } from 'vitest';
 import { PLAINER_TABLE_HEADER_TOOLBAR_ROW_ATTRIBUTE } from './tableBodyScrollHandlers';
 import {
   partitionTableHeadForSplitScroll,
@@ -13,7 +12,7 @@ describe('partitionTableHeadForSplitScroll', () => {
     const columnRow = React.createElement('tr', { key: 'columns' });
     const headElement = React.createElement(
       'thead',
-      { children: columnRow },
+      null,
       columnRow,
     ) as React.ReactElement<TableHeadSectionProps>;
     Object.assign(headElement.type, tableHeadType);
@@ -32,7 +31,7 @@ describe('partitionTableHeadForSplitScroll', () => {
     const columnRow = React.createElement('tr', { key: 'columns' });
     const headElement = React.createElement(
       'thead',
-      { children: [toolbarRow, columnRow] },
+      null,
       toolbarRow,
       columnRow,
     ) as React.ReactElement<TableHeadSectionProps>;
@@ -40,7 +39,17 @@ describe('partitionTableHeadForSplitScroll', () => {
 
     const partitioned = partitionTableHeadForSplitScroll(headElement);
 
-    expect(partitioned.toolbarHead?.props.children).toEqual([toolbarRow]);
-    expect(partitioned.columnHeaderHead?.props.children).toEqual([columnRow]);
+    const toolbarChildren = React.Children.toArray(
+      partitioned.toolbarHead?.props.children,
+    ) as React.ReactElement[];
+    const columnChildren = React.Children.toArray(
+      partitioned.columnHeaderHead?.props.children,
+    ) as React.ReactElement[];
+
+    expect(toolbarChildren).toHaveLength(1);
+    expect(toolbarChildren[0]?.props[PLAINER_TABLE_HEADER_TOOLBAR_ROW_ATTRIBUTE]).toBe(true);
+    expect(columnChildren).toHaveLength(1);
+    expect(columnChildren[0]?.type).toBe('tr');
+    expect(columnChildren[0]?.props).not.toHaveProperty(PLAINER_TABLE_HEADER_TOOLBAR_ROW_ATTRIBUTE);
   });
 });

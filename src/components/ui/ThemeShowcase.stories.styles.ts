@@ -1,21 +1,14 @@
 import type { CSSProperties } from 'react';
-import { darkTheme, lightTheme } from '@/themes/themes';
 
 /**
  * Внешние отступы и сетки для полноэкранного обзора темы в Storybook.
- * Фоны страниц — токены темы вместо хексов в JSX.
+ * Фон страницы задаётся в {@link ThemeShowcasePage} через `useTheme()`.
  */
 export const themeShowcaseStoriesStyles = {
-  lightPageShell: {
+  pageShell: {
     padding: '40px',
-    background: lightTheme.colors.backgroundTertiary,
     minHeight: '100vh',
-  } satisfies CSSProperties,
-
-  darkPageShell: {
-    padding: '40px',
-    background: darkTheme.colors.background,
-    minHeight: '100vh',
+    boxSizing: 'border-box',
   } satisfies CSSProperties,
 
   contentShell: {
@@ -26,12 +19,6 @@ export const themeShowcaseStoriesStyles = {
   pageHeading: {
     marginBottom: '40px',
     textAlign: 'center',
-  } satisfies CSSProperties,
-
-  pageHeadingOnDark: {
-    marginBottom: '40px',
-    textAlign: 'center',
-    color: darkTheme.colors.text,
   } satisfies CSSProperties,
 
   buttonRow: {
@@ -46,11 +33,34 @@ export const themeShowcaseStoriesStyles = {
     gap: '16px',
   } satisfies CSSProperties,
 
+  /** Вертикальные группы: Tag, Badge, Avatar */
+  badgeAvatarSection: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '20px',
+    width: '100%',
+  } satisfies CSSProperties,
+
+  badgeAvatarGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '10px',
+    width: '100%',
+  } satisfies CSSProperties,
+
+  badgeAvatarGroupLabel: {
+    fontSize: '12px',
+    lineHeight: 1.4,
+    opacity: 0.72,
+    fontWeight: 500,
+  } satisfies CSSProperties,
+
   badgeAvatarRow: {
     display: 'flex',
     alignItems: 'center',
-    gap: '16px',
+    gap: '12px',
     flexWrap: 'wrap',
+    width: '100%',
   } satisfies CSSProperties,
 
   horizontalGap16Center: {
@@ -69,5 +79,39 @@ export const themeShowcaseStoriesStyles = {
   modalOpenSection: {
     marginTop: '40px',
     textAlign: 'center',
+  } satisfies CSSProperties,
+
+  /** Панель контента вкладки в Theme Showcase */
+  showcasePanelContent: {
+    padding: '12px 4px 4px',
+    fontSize: '14px',
+    lineHeight: 1.5,
+  } satisfies CSSProperties,
+
+  /** Абзац внутри Accordion.Content */
+  showcaseAccordionParagraph: {
+    margin: 0,
+    fontSize: '14px',
+    lineHeight: 1.5,
+  } satisfies CSSProperties,
+
+  calendarWrap: {
+    display: 'flex',
+    justifyContent: 'center',
+    width: '100%',
+  } satisfies CSSProperties,
+
+  popoverPanel: {
+    padding: '12px',
+    fontSize: '14px',
+    lineHeight: 1.5,
+  } satisfies CSSProperties,
+
+  overlayActionsSection: {
+    marginTop: '40px',
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '12px',
+    justifyContent: 'center',
   } satisfies CSSProperties,
 };

@@ -1,5 +1,9 @@
 import React, { forwardRef, useCallback, useEffect, useId, useMemo, useState } from 'react';
-import { InputVariant, type SliderInputSingleProps, type TooltipPosition } from '../../../../types/ui';
+import {
+  InputVariant,
+  type SliderInputSingleProps,
+  type TooltipPosition,
+} from '../../../../types/ui';
 import { getClearIconSizeForInputField } from '../../../../handlers/iconHandlers';
 import { sanitizeNumericInput } from '../NumberInput/handlers';
 import {
@@ -461,7 +465,10 @@ export const SliderInputSingle = forwardRef<HTMLInputElement, SliderInputSingleP
     return (
       <InputContainer fullWidth={fullWidth}>
         {label ? (
-          <Label htmlFor={showNumberField ? numberInputId : undefined} as={showNumberField ? 'label' : 'span'}>
+          <Label
+            htmlFor={showNumberField ? numberInputId : undefined}
+            as={showNumberField ? 'label' : 'span'}
+          >
             {label}
             {required ? <RequiredIndicator>*</RequiredIndicator> : null}
           </Label>

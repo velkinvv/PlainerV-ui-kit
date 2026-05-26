@@ -1,6 +1,6 @@
 import React from 'react';
 import type { SelectProps } from '../../../../types/ui';
-import { Size } from '../../../../types/sizes';
+import type { Size } from '../../../../types/sizes';
 import { Select } from '../Select/Select';
 
 /**

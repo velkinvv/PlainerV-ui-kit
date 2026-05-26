@@ -203,9 +203,8 @@ const TABLE_BODY_COLUMN_WIDTH_EQUALITY_TOLERANCE_PX = 1;
  */
 export function isSplitTableColumnSyncApplied(tableElement: HTMLTableElement): boolean {
   return (
-    tableElement.querySelector(
-      `:scope > colgroup[${PLAINER_SPLIT_TABLE_COLUMN_SYNC_ATTRIBUTE}]`,
-    ) != null
+    tableElement.querySelector(`:scope > colgroup[${PLAINER_SPLIT_TABLE_COLUMN_SYNC_ATTRIBUTE}]`) !=
+    null
   );
 }
 
@@ -239,7 +238,9 @@ export function readTableColgroupColumnWidthsPx(tableElement: HTMLTableElement):
   }
 
   return Array.from(colElements).map((colElement) => {
-    const widthPixels = parseTableCellDeclaredWidthPx(colElement as unknown as HTMLTableCellElement);
+    const widthPixels = parseTableCellDeclaredWidthPx(
+      colElement as unknown as HTMLTableCellElement,
+    );
     return widthPixels ?? 0;
   });
 }
@@ -323,8 +324,8 @@ export function measureSplitTableColumnWidthsPx(
     const bodyCell = bodyRow?.cells[columnIndex];
 
     const declaredWidthPx = Math.max(
-      headerCell != null ? parseTableCellDeclaredWidthPx(headerCell) ?? 0 : 0,
-      bodyCell != null ? parseTableCellDeclaredWidthPx(bodyCell) ?? 0 : 0,
+      headerCell != null ? (parseTableCellDeclaredWidthPx(headerCell) ?? 0) : 0,
+      bodyCell != null ? (parseTableCellDeclaredWidthPx(bodyCell) ?? 0) : 0,
     );
 
     if (useNaturalColumnWidths && declaredWidthPx > 0) {

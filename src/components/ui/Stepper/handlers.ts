@@ -1,20 +1,20 @@
 import type { StepperAppearance } from '../../../types/ui';
-import { ThemeMode } from '../../../types/theme';
+import { ThemeColorScheme } from '../../../types/theme';
 
 /**
  * Итоговый вид панели: из пропа или из режима темы приложения.
  * @param appearance - Явный `light` / `dark` или `undefined`.
- * @param themeMode - `ThemeMode` из `ThemeProvider`.
+ * @param colorScheme - Палитра из `ThemeProvider.colorScheme`.
  * @returns Нормализованный `light` | `dark`.
  */
 export const resolveStepperAppearance = (
   appearance: StepperAppearance | undefined,
-  themeMode: ThemeMode,
+  colorScheme: ThemeColorScheme,
 ): StepperAppearance => {
   if (appearance === 'light' || appearance === 'dark') {
     return appearance;
   }
-  return themeMode === ThemeMode.DARK ? 'dark' : 'light';
+  return colorScheme === ThemeColorScheme.DARK ? 'dark' : 'light';
 };
 
 /**
