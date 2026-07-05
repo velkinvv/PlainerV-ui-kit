@@ -8,6 +8,7 @@ import {
   getModalComponentStyles,
   getModalSize,
 } from '../../../handlers/modalThemeHandlers';
+import { glassSurfaceMaterialCss } from '../../../handlers/glassSurfaceHandlers';
 
 /**
  * Оверлей модального окна
@@ -113,10 +114,13 @@ export const ModalContainer = styled(motion.div)<{ size: ModalSize; $mobile?: bo
   box-shadow: ${({ theme }) =>
     theme.mode === ThemeColorScheme.DARK
       ? '0 16px 48px rgba(0, 0, 0, 0.5)'
-      : '0 16px 32px rgba(0, 0, 0, 0.08)'};
+      : theme.surfaceMaterial
+        ? theme.boxShadow.modal
+        : '0 16px 32px rgba(0, 0, 0, 0.08)'};
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  ${({ theme }) => glassSurfaceMaterialCss(theme)}
 
   ${({ theme, size = ModalSize.MD, $mobile }) => {
     const containerStyles = getModalContainerStyles(theme.modals, size);

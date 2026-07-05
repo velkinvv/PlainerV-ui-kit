@@ -22,6 +22,7 @@ import {
   type NormalizedTableSurfaceBackgrounds,
 } from './tableSurfaceBackgroundHandlers';
 import type { ThemeType } from '@/types/theme';
+import { glassSurfaceMaterialCss } from '@/handlers/glassSurfaceHandlers';
 import {
   formatTableBodyScrollMaxHeight,
   PLAINER_TABLE_BODY_SCROLLBAR_GUTTER_CSS_VAR,
@@ -81,6 +82,7 @@ export const TableContainerRoot = styled.div<{
     $shellVariant === 'embedded' ? '0' : `var(${PLAINER_TABLE_BORDER_RADIUS_CSS_VAR})`};
   border: ${({ theme, $shellVariant }) =>
     $shellVariant === 'embedded' ? 'none' : theme.tables.shell.border};
+  ${({ theme }) => glassSurfaceMaterialCss(theme)}
   background: ${({
     theme,
     $shellInset,

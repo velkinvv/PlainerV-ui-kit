@@ -15,6 +15,8 @@ import { lightModalTheme, darkModalTheme } from './modal';
 import { lightProgressTheme, darkProgressTheme } from './progress';
 import { lightRadioButtonTheme, darkRadioButtonTheme } from './radioButton';
 import { Size } from '../types/sizes';
+import { mergeTheme } from './mergeTheme';
+import { createGlassThemeOverride } from './glass/createGlassTheme';
 
 /**
  * Светлая тема
@@ -121,3 +123,12 @@ export const darkTheme: ThemeType = {
   lineHeights,
   typography,
 };
+
+/** Glass на светлой палитре — vibrancy поверх mesh-gradient */
+export const glassLightTheme = mergeTheme(lightTheme, createGlassThemeOverride('light'));
+
+/** Glass на тёмной палитре — vibrancy поверх тёмного mesh-gradient */
+export const glassDarkTheme = mergeTheme(darkTheme, createGlassThemeOverride('dark'));
+
+/** @deprecated Используйте {@link glassLightTheme} */
+export const glassTheme = glassLightTheme;

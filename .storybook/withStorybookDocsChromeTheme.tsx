@@ -4,6 +4,7 @@ import { ThemeProvider } from 'storybook/theming';
 import { createPlainerVStorybookChromeTheme } from './storybookManagerTheme';
 import {
   applyPlainervStorybookDocsCssVariables,
+  resolvePlainervStorybookDocsThemeMode,
   type PlainervStorybookDocsThemeMode,
 } from './plainervStorybookDocsTokens';
 
@@ -22,7 +23,9 @@ const DocsChromeThemeWrapper = ({ children, resolvedTheme }: DocsChromeThemeWrap
   }, [resolvedTheme]);
 
   const docsChromeTheme =
-    resolvedTheme === 'dark' ? darkDocsChromeTheme : lightDocsChromeTheme;
+    resolvedTheme === 'dark' || resolvedTheme === 'glassDark'
+      ? darkDocsChromeTheme
+      : lightDocsChromeTheme;
 
   return <ThemeProvider theme={docsChromeTheme}>{children}</ThemeProvider>;
 };
@@ -31,9 +34,7 @@ const DocsChromeThemeWrapper = ({ children, resolvedTheme }: DocsChromeThemeWrap
  * Синхронизирует `storybook/theming` и CSS-переменные Docs с глобалом `theme` (addon-themes).
  */
 export const withStorybookDocsChromeTheme: Decorator = (Story, context) => {
-  const rawTheme = context.globals?.theme;
-  const resolvedTheme: PlainervStorybookDocsThemeMode =
-    rawTheme === 'dark' || rawTheme === 'light' ? rawTheme : 'light';
+  const resolvedTheme = resolvePlainervStorybookDocsThemeMode(context.globals?.theme);
 
   applyPlainervStorybookDocsCssVariables(resolvedTheme);
 

@@ -30,9 +30,25 @@ describe('themeCatalogHandlers', () => {
     expect(themeMode.b).toBe('b');
   });
 
-  it('ThemeMode.light совпадает с id светлой темы', () => {
+  it('ThemeMode содержит light, dark и glass-варианты', () => {
     expect(ThemeMode.light).toBe('light');
     expect(ThemeMode.dark).toBe('dark');
+    expect(ThemeMode.glassLight).toBe('glassLight');
+    expect(ThemeMode.glassDark).toBe('glassDark');
+    expect(ThemeMode.glass).toBe('glassLight');
+  });
+
+  it('createBuiltinThemeCatalog включает glassLight и glassDark', () => {
+    const { createBuiltinThemeCatalog, resolveThemeCatalog } = require('./themeCatalogHandlers');
+    const catalog = createBuiltinThemeCatalog();
+    const resolved = resolveThemeCatalog(catalog);
+    const glassLightItem = resolved.find((item) => item.name === ThemeMode.glassLight);
+    const glassDarkItem = resolved.find((item) => item.name === ThemeMode.glassDark);
+
+    expect(glassLightItem?.theme.mode).toBe(ThemeColorScheme.LIGHT);
+    expect(glassLightItem?.theme.surfaceMaterial?.backdropFilter).toContain('blur');
+    expect(glassDarkItem?.theme.mode).toBe(ThemeColorScheme.DARK);
+    expect(glassDarkItem?.theme.surfaceMaterial?.backdropFilter).toContain('blur');
   });
 
   it('getNextThemeMode циклически перебирает имена', () => {

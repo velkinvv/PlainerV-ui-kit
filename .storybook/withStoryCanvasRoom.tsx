@@ -1,5 +1,6 @@
 import type { Decorator } from '@storybook/react';
 import { useTheme } from 'styled-components';
+import { resolveStorybookCanvasRoomStyle } from '../src/handlers/storybookCanvasRoomHandlers';
 
 /**
  * Параметры декоратора canvas в `parameters.plainervStoryCanvas`.
@@ -23,7 +24,7 @@ const PLAINERV_STORY_CANVAS_ROOM_CLASS = 'plainerv-story-canvas-room';
  *
  * Задаёт минимальную высоту области сторис, фон из активной темы UI-kit и `overflow: visible`,
  * чтобы вложенные элементы с `position: absolute` (календарь DateInput и т.п.) не обрезались.
- * В `preview.tsx` в массиве декораторов идёт **перед** {@link withStorybookUiKitTheme} (в SB 9 первый = ближе к сторис).
+ * Для glass-тем рисует mesh-gradient, чтобы backdrop-filter компонентов был виден.
  */
 export const withStoryCanvasRoom: Decorator = (Story, context) => {
   const theme = useTheme();
@@ -36,26 +37,17 @@ export const withStoryCanvasRoom: Decorator = (Story, context) => {
     canvasParameters?.surface === 'secondary' ||
     (canvasParameters?.surface !== 'page' && isDocsView);
 
-  const resolveBackgroundColor = (): string | undefined => {
-    if (canvasParameters?.disableBackground) {
-      return 'transparent';
-    }
-    if (useSecondarySurface) {
-      return theme.colors?.backgroundSecondary;
-    }
-    return theme.colors?.background;
-  };
+  const roomStyle = resolveStorybookCanvasRoomStyle(theme, {
+    disableBackground: canvasParameters?.disableBackground,
+    useSecondarySurface: theme.surfaceMaterial ? false : useSecondarySurface,
+  });
 
   return (
     <div
       className={PLAINERV_STORY_CANVAS_ROOM_CLASS}
       style={{
-        minHeight: 'min(90vh, 800px)',
-        boxSizing: 'border-box',
+        ...roomStyle,
         padding: canvasParameters?.disablePadding ? 0 : 16,
-        overflow: 'visible',
-        backgroundColor: resolveBackgroundColor(),
-        color: theme.colors?.text,
       }}
     >
       <Story />

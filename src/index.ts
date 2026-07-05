@@ -16,7 +16,7 @@ export * from './handlers';
 // Themes
 export { ThemeProvider, useTheme } from './themes/ThemeProvider';
 export type { ThemeProviderProps, ThemeContextProps } from './themes/ThemeProvider';
-export { lightTheme, darkTheme } from './themes/themes';
+export { lightTheme, darkTheme, glassLightTheme, glassDarkTheme, glassTheme } from './themes/themes';
 export { mergeTheme } from './themes/mergeTheme';
 export { useMergeTheme } from './hooks/useMergeTheme';
 export type { UseMergeThemeOptions } from './hooks/useMergeTheme';

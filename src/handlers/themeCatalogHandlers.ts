@@ -14,11 +14,28 @@ import type {
   ThemeCatalogItemWithId,
   ThemeCatalogMeta,
 } from '../types/themeCatalog';
-import { darkTheme, lightTheme } from '../themes/themes';
+import { darkTheme, glassDarkTheme, glassLightTheme, lightTheme } from '../themes/themes';
 import { mergeTheme } from '../themes/mergeTheme';
 
 export const DEFAULT_THEME_STORAGE_KEY = 'plainerv-theme-id';
 export const LEGACY_STORYBOOK_THEME_STORAGE_KEY = 'storybook-theme';
+
+/**
+ * Базовая тема для элемента каталога по id и палитре.
+ * @param themeMode — id темы из каталога
+ * @param baseMode — палитра LIGHT / DARK
+ */
+function resolveCatalogBaseTheme(themeMode: string, baseMode: ThemeColorScheme): ThemeType {
+  if (themeMode === ThemeMode.glassLight || themeMode === ThemeMode.glass) {
+    return glassLightTheme;
+  }
+
+  if (themeMode === ThemeMode.glassDark) {
+    return glassDarkTheme;
+  }
+
+  return baseMode === ThemeColorScheme.DARK ? darkTheme : lightTheme;
+}
 
 export function createBuiltinThemeCatalog(): ThemeCatalog<BuiltinThemeMode> {
   return {
@@ -29,6 +46,16 @@ export function createBuiltinThemeCatalog(): ThemeCatalog<BuiltinThemeMode> {
     [ThemeMode.dark]: {
       label: 'Dark',
       baseMode: ThemeColorScheme.DARK,
+    },
+    [ThemeMode.glassLight]: {
+      label: 'Glass Light',
+      baseMode: ThemeColorScheme.LIGHT,
+      theme: glassLightTheme,
+    },
+    [ThemeMode.glassDark]: {
+      label: 'Glass Dark',
+      baseMode: ThemeColorScheme.DARK,
+      theme: glassDarkTheme,
     },
   };
 }
@@ -96,9 +123,11 @@ export function resolveThemeCatalogItem<TThemeMode extends string>(
   const baseMode =
     definition.baseMode ??
     definition.theme?.mode ??
-    (themeMode === ThemeMode.dark ? ThemeColorScheme.DARK : ThemeColorScheme.LIGHT);
+    (themeMode === ThemeMode.dark || themeMode === ThemeMode.glassDark
+      ? ThemeColorScheme.DARK
+      : ThemeColorScheme.LIGHT);
 
-  const baseTheme = baseMode === ThemeColorScheme.DARK ? darkTheme : lightTheme;
+  const baseTheme = resolveCatalogBaseTheme(themeMode, baseMode);
 
   let theme: ThemeType;
 
@@ -187,6 +216,15 @@ export function readStoredThemeMode<TThemeMode extends string>(
   if (legacyMode === ThemeMode.dark && themeModes.includes(ThemeMode.dark as TThemeMode)) {
     return ThemeMode.dark as TThemeMode;
   }
+  if (legacyMode === ThemeMode.glassLight && themeModes.includes(ThemeMode.glassLight as TThemeMode)) {
+    return ThemeMode.glassLight as TThemeMode;
+  }
+  if (legacyMode === ThemeMode.glassDark && themeModes.includes(ThemeMode.glassDark as TThemeMode)) {
+    return ThemeMode.glassDark as TThemeMode;
+  }
+  if (legacyMode === 'glass' && themeModes.includes(ThemeMode.glassLight as TThemeMode)) {
+    return ThemeMode.glassLight as TThemeMode;
+  }
   if (legacyMode === ThemeMode.light && themeModes.includes(ThemeMode.light as TThemeMode)) {
     return ThemeMode.light as TThemeMode;
   }
@@ -210,7 +248,13 @@ export function writeStoredThemeMode<TThemeMode extends string>(
   window.localStorage.setItem(storageKey, themeMode);
   window.localStorage.setItem(
     LEGACY_STORYBOOK_THEME_STORAGE_KEY,
-    colorScheme === ThemeColorScheme.DARK ? ThemeMode.dark : ThemeMode.light,
+    themeMode === ThemeMode.glassLight || themeMode === ThemeMode.glass
+      ? ThemeMode.glassLight
+      : themeMode === ThemeMode.glassDark
+        ? ThemeMode.glassDark
+        : colorScheme === ThemeColorScheme.DARK
+          ? ThemeMode.dark
+          : ThemeMode.light,
   );
 }
 

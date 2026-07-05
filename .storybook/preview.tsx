@@ -9,17 +9,15 @@ import './preview-storybook-overlays.css';
 import './preview-storybook-docs-theme.css';
 import './preview-storybook-motion.css';
 import { getStoryDocsSourceCode } from '../src/handlers/storybookStoryDocs';
+import { readStorybookThemeGlobal } from '../src/handlers/storybookThemeHandlers';
 
 const themeAddonAnnotations = addonThemes();
 
 /**
- * Стартовое значение глобала `theme` (тулбар аддона тем) — как у {@link ThemeProvider} / `localStorage`.
+ * Стартовое значение глобала `theme` (тулбар аддона тем).
  */
-function getInitialStorybookThemeGlobal(): 'light' | 'dark' {
-  if (typeof window === 'undefined') {
-    return 'light';
-  }
-  return window.localStorage.getItem('storybook-theme') === 'dark' ? 'dark' : 'light';
+function getInitialStorybookThemeGlobal() {
+  return readStorybookThemeGlobal();
 }
 
 /**
@@ -58,7 +56,12 @@ const preview: Preview = {
     withStoryCanvasRoom,
     withStorybookUiKitTheme,
     withThemeByDataAttribute({
-      themes: { light: 'light', dark: 'dark' },
+      themes: {
+        light: 'light',
+        dark: 'dark',
+        glassLight: 'glassLight',
+        glassDark: 'glassDark',
+      },
       defaultTheme: getInitialStorybookThemeGlobal(),
     }),
   ],

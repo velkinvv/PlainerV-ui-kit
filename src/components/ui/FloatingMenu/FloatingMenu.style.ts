@@ -6,6 +6,7 @@ import { BorderRadiusHandler } from '../../../handlers/uiHandlers';
 import { getButtonVariant } from '../../../handlers/buttonThemeHandlers';
 import { getDropdownContainerStyles } from '../../../handlers/dropdownThemeHandlers';
 import { overlayPanelBoxShadowFromTheme } from '../../../handlers/overlayPanelShadowHandlers';
+import { glassSurfaceMaterialCss } from '../../../handlers/glassSurfaceHandlers';
 
 /** Корневая фиксированная панель */
 export const FloatingMenuRoot = styled.div<{ $isDragging?: boolean }>`
@@ -24,12 +25,10 @@ export const FloatingMenuBar = styled.div`
   box-sizing: border-box;
   padding: 6px 10px;
   border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
-  background: ${({ theme }) =>
-    theme.mode === ThemeColorScheme.DARK ? theme.colors.backgroundSecondary : '#ffffff'};
-  border: 1px solid
-    ${({ theme }) =>
-      theme.mode === ThemeColorScheme.DARK ? theme.colors.borderSecondary : '#e8e8e8'};
+  background: ${({ theme }) => theme.colors.backgroundSecondary};
+  border: 1px solid ${({ theme }) => theme.colors.borderSecondary};
   box-shadow: ${({ theme }) => overlayPanelBoxShadowFromTheme(theme)};
+  ${({ theme }) => glassSurfaceMaterialCss(theme)}
 `;
 
 /** Ряд группы кнопок */

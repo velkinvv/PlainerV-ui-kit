@@ -2222,12 +2222,27 @@ export type RadioButtonTheme = {
 };
 
 /**
+ * Материал поверхности для glass-темы (iOS / macOS vibrancy).
+ * Когда задан — компоненты применяют backdrop-filter к карточкам, полям ввода и панелям.
+ */
+export type SurfaceMaterial = {
+  /** CSS-значение `backdrop-filter` для полупрозрачных поверхностей */
+  backdropFilter: string;
+  /** CSS-значение `-webkit-backdrop-filter` (Safari); по умолчанию совпадает с `backdropFilter` */
+  webkitBackdropFilter?: string;
+  /** Фон страницы / canvas (градиент или mesh), видимый сквозь стекло */
+  pageBackground?: string;
+};
+
+/**
  * Полный тип темы
  * Объединяет все аспекты темы в единую структуру
  */
 export type ThemeType = {
   borderRadius: Size; // Радиус скругления углов
   colors: Colors; // Фоновые цвета темы
+  /** Glass / vibrancy: размытие и фон canvas; задаётся в glassLight / glassDark темах */
+  surfaceMaterial?: SurfaceMaterial;
   media: MediaType; // Медиа-запросы
   sizes: SizesType; // Размеры элементов
   durations: DurationsType; // Длительности анимаций
@@ -2280,6 +2295,12 @@ export enum ThemeColorScheme {
 export const ThemeMode = {
   light: ThemeColorScheme.LIGHT,
   dark: ThemeColorScheme.DARK,
+  /** Glass на светлой палитре (vibrancy + {@link ThemeColorScheme.LIGHT}) */
+  glassLight: 'glassLight',
+  /** Glass на тёмной палитре (vibrancy + {@link ThemeColorScheme.DARK}) */
+  glassDark: 'glassDark',
+  /** @deprecated Используйте {@link ThemeMode.glassLight} */
+  glass: 'glassLight',
 } as const;
 
 /** Union встроенных id тем. */

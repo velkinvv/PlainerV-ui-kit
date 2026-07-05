@@ -90,6 +90,8 @@ export const DropdownContent = styled.div<{
       line-height: ${styles.lineHeight};
       text-align: ${styles.textAlign};
       user-select: ${styles.userSelect};
+      backdrop-filter: ${styles.backdropFilter};
+      -webkit-backdrop-filter: ${styles.backdropFilter};
     `;
   }}
 

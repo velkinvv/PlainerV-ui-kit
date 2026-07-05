@@ -62,10 +62,13 @@ export function ThemeProvider<TThemeMode extends string = BuiltinThemeMode>({
     if (themesProp) {
       return themesProp;
     }
-    return buildThemeCatalogFromLegacyProps(
-      themeOverrides,
-      customThemes,
-    ) as ThemeCatalog<TThemeMode>;
+    if (themeOverrides || customThemes) {
+      return buildThemeCatalogFromLegacyProps(
+        themeOverrides,
+        customThemes,
+      ) as ThemeCatalog<TThemeMode>;
+    }
+    return createBuiltinThemeCatalog() as ThemeCatalog<TThemeMode>;
   }, [themesProp, themeOverrides, customThemes]);
 
   const resolvedCatalog = useMemo(() => resolveThemeCatalog(catalog), [catalog]);
@@ -110,6 +113,18 @@ export function ThemeProvider<TThemeMode extends string = BuiltinThemeMode>({
   };
 
   const [themeMode, setThemeModeState] = useState<TThemeMode>(resolveInitialThemeMode);
+
+  useEffect(() => {
+    const explicitInitial = initialThemeModeProp ?? initialThemeName ?? initialThemeId;
+    if (!explicitInitial) {
+      return;
+    }
+
+    const nextThemeMode = ensureValidThemeMode(explicitInitial, themeModes, fallbackThemeMode);
+    setThemeModeState((currentThemeMode) =>
+      currentThemeMode === nextThemeMode ? currentThemeMode : nextThemeMode,
+    );
+  }, [initialThemeModeProp, initialThemeName, initialThemeId, themeModes, fallbackThemeMode]);
 
   useEffect(() => {
     if (!themeModes.includes(themeMode)) {
