@@ -9,6 +9,27 @@
 
 ---
 
+## [0.2.4] - 2026-07-07
+
+### Added
+
+- **Carousel:** компонент карусели с autoplay, parallax, overlay/overlayPanel, fullscreen, thumbnails, drag/swipe и эффектами слайдов.
+- **DateTimeInput:** поле даты и времени с picker-колонками; расширены **DateInput**, **TimeInput**, **Calendar**.
+- **ActionBar:** панель действий с overflow-меню.
+- **Glass-темизация:** Accordion, Avatar, Badge, Hint, Modal, Pagination, Pill, Snackbar, Stepper, Tabs, Tag, Toast, Tooltip и overlay-панели.
+- **Table / DataGrid:** цвета строк, доработки сторис и документации.
+- **Floating overlays:** `FloatingOverlayLayerContext`, `useFloatingOverlayPosition`, общие хендлеры позиционирования.
+
+### Fixed
+
+- **Carousel / сборка:** исправил путь импорта типов, типизацию `children` overlay/caption, циклическую зависимость overlay-хендлеров.
+
+### Added (документация)
+
+- Документация **v0.2.4**; обновлены README, CHANGELOG, ссылки в Storybook docs.
+
+---
+
 ## [0.2.3] - 2026-07-05
 
 ### Added
