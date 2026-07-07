@@ -2,10 +2,9 @@ import styled, { css, type DefaultTheme } from 'styled-components';
 import { createStyledShouldForwardProp } from '../../../handlers/styledComponentHandlers';
 import { TransitionHandler } from '../../../handlers/uiHandlers';
 import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
+import { getPillSurfacePalette } from '../../../handlers/pillGlassHandlers';
 import type { PillGeometry } from './handlers';
 import type { PillStatus } from '../../../types/ui';
-import { ThemeColorScheme } from '../../../types/theme';
-
 /**
  * Акцентный цвет Pill по семантическому статусу (выбранное состояние, спиннер).
  *
@@ -45,37 +44,54 @@ export const PillRoot = styled.button.withConfig({
   padding: ${({ $g }) => $g.padding};
   gap: ${({ $g }) => $g.gap};
   border-radius: ${({ $g }) => $g.borderRadius};
-  border: 1px solid ${({ theme }) => theme.colors.borderSecondary};
+  border: 1px solid ${({ theme }) => getPillSurfacePalette(theme).border};
   font-family: ${({ theme }) => theme.typography.body.fontFamily};
   font-size: ${({ $g }) => $g.fontSize};
   font-weight: ${({ $g }) => $g.fontWeight};
   line-height: ${({ $g }) => $g.lineHeight};
-  background: ${({ theme }) => theme.colors.input};
+  background: ${({ theme }) => getPillSurfacePalette(theme).background};
   color: ${({ theme }) => theme.colors.text};
   cursor: pointer;
   user-select: none;
   transition: ${TransitionHandler()};
 
+  ${({ theme }) => {
+    const backdropFilter = theme.pills?.settings?.backdropFilter;
+
+    return backdropFilter
+      ? css`
+          backdrop-filter: ${backdropFilter};
+          -webkit-backdrop-filter: ${backdropFilter};
+        `
+      : '';
+  }}
+
   &:hover:not(:disabled) {
-    ${({ $selected, theme }) =>
-      $selected
+    ${({ $selected, theme }) => {
+      const surfaces = getPillSurfacePalette(theme);
+
+      return $selected
         ? css`
             filter: brightness(0.97);
           `
         : css`
-            background: ${theme.colors.backgroundTertiary};
-          `}
+            background: ${surfaces.hoverBackground};
+          `;
+    }}
   }
 
   &:active:not(:disabled) {
-    ${({ $selected, theme }) =>
-      $selected
+    ${({ $selected, theme }) => {
+      const surfaces = getPillSurfacePalette(theme);
+
+      return $selected
         ? css`
             filter: brightness(0.93);
           `
         : css`
-            background: ${theme.colors.backgroundQuaternary};
-          `}
+            background: ${surfaces.activeBackground};
+          `;
+    }}
   }
   ${buildHoverPressMotionCss({
     hoverSelector: '&:hover:not(:disabled)',
@@ -84,20 +100,25 @@ export const PillRoot = styled.button.withConfig({
     activeTransform: 'scale(0.98)',
   })}
 
-  ${({ $selected, theme, $status }) =>
-    $selected &&
-    css`
-      border-color: ${resolvePillAccent(theme, $status)};
-      color: ${resolvePillAccent(theme, $status)};
-      background: ${theme.mode === ThemeColorScheme.DARK
-        ? `color-mix(in srgb, ${resolvePillAccent(theme, $status)} 22%, ${theme.colors.input})`
-        : `color-mix(in srgb, ${resolvePillAccent(theme, $status)} 10%, ${theme.colors.input})`};
-    `}
+  ${({ $selected, theme, $status }) => {
+    if (!$selected) {
+      return '';
+    }
+
+    const surfaces = getPillSurfacePalette(theme);
+    const accentColor = resolvePillAccent(theme, $status);
+
+    return css`
+      border-color: ${surfaces.selectedBorder(accentColor)};
+      color: ${accentColor};
+      background: ${surfaces.selectedBackground(accentColor)};
+    `;
+  }}
 
   &:disabled {
     cursor: not-allowed;
-    border-color: ${({ theme }) => theme.colors.borderSecondary};
-    background: ${({ theme }) => theme.colors.input};
+    border-color: ${({ theme }) => getPillSurfacePalette(theme).border};
+    background: ${({ theme }) => getPillSurfacePalette(theme).disabledBackground};
     color: ${({ theme }) => theme.colors.textDisabled};
     opacity: 0.92;
   }

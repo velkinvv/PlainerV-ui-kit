@@ -5,9 +5,12 @@ import {
   DATA_GRID_COL_DRAG_FALLBACK_WIDTH_PX,
   getDataGridCellValue,
   getDataGridColDragDisplacementPx,
+  getDataGridDisplayColumns,
   getDataGridRowDragDisplacementPx,
   reorderByIndex,
   resolveDataGridExpandedRowDataStatus,
+  resolveDataGridColumnBackgroundColor,
+  resolveDataGridRowBackgroundColor,
   sliceRowsForPagination,
 } from './dataGridHandlers';
 import type { DataGridBaseRow } from '@/types/ui';
@@ -32,6 +35,80 @@ describe('dataGridHandlers', () => {
     const row: R = { id: '1', user: { name: 'Ann' }, age: 20 };
     expect(getDataGridCellValue(row, 'user.name')).toBe('Ann');
     expect(getDataGridCellValue(row, 'age')).toBe(20);
+  });
+
+  it('resolveDataGridRowBackgroundColor читает rowColorMap и колбэк', () => {
+    const colors = {
+      danger: '#f00',
+      success: '#0f0',
+      backgroundSecondary: '#fff',
+    } as import('@/types/theme').Colors;
+
+    const rowColorMap = {
+      danger: (palette: typeof colors) =>
+        `color-mix(in srgb, ${palette.danger} 14%, ${palette.backgroundSecondary})`,
+      success: '#00ff00',
+    };
+
+    const row = {
+      id: '1',
+      rowColor: 'danger',
+    };
+
+    expect(
+      resolveDataGridRowBackgroundColor(row, colors, {
+        rowBackgroundColorByStatus: () => ' #callback ',
+      }),
+    ).toBe('#callback');
+
+    expect(
+      resolveDataGridRowBackgroundColor(row, colors, {
+        rowColorMap,
+      }),
+    ).toBe('color-mix(in srgb, #f00 14%, #fff)');
+
+    expect(
+      resolveDataGridRowBackgroundColor(
+        { id: '2', rowColor: 'success' },
+        colors,
+        { rowColorMap },
+      ),
+    ).toBe('#00ff00');
+
+    expect(
+      resolveDataGridRowBackgroundColor(
+        { id: '3', rowColor: 'unknown' },
+        colors,
+        { rowColorMap },
+      ),
+    ).toBeUndefined();
+  });
+
+  it('resolveDataGridColumnBackgroundColor читает columnColorMap', () => {
+    const colors = {
+      info: '#00f',
+      backgroundSecondary: '#fff',
+    } as import('@/types/theme').Colors;
+
+    const columnColorMap = {
+      info: (palette: typeof colors) => palette.info,
+    };
+
+    expect(
+      resolveDataGridColumnBackgroundColor(
+        'info',
+        colors,
+        columnColorMap,
+      ),
+    ).toBe('#00f');
+  });
+
+  it('getDataGridDisplayColumns скрывает hide-колонки', () => {
+    const columns = [
+      { field: 'name', headerName: 'Имя' },
+      { field: 'rowColor', headerName: 'Цвет', hide: true },
+    ];
+    expect(getDataGridDisplayColumns(columns).map((column) => column.field)).toEqual(['name']);
   });
 
   it('reorderByIndex ╨┐╨╡╤А╨╡╤Б╤В╨░╨▓╨╗╤П╨╡╤В ╤Н╨╗╨╡╨╝╨╡╨╜╤В', () => {

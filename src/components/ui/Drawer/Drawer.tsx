@@ -24,6 +24,8 @@ import { getDrawerOverlayMotion, getDrawerPanelMotion, drawerSizeToCss } from '.
 import { useOverlayVisibility } from '../../../hooks/useOverlayVisibility';
 import { useOverlayPortal } from '../../../hooks/useOverlayPortal';
 import { useOverlayPresentation } from '../../../hooks/useOverlayPresentation';
+import { FloatingOverlayLayerProvider } from '../../../contexts/FloatingOverlayLayerContext';
+import { ZIndexHandler } from '../../../handlers/uiHandlers';
 
 const DEFAULT_PLACEMENT = 'right' as const;
 
@@ -95,6 +97,19 @@ export const Drawer = forwardRef<HTMLElement, DrawerProps>(
       overlayStyle,
       portalZIndex,
     });
+    const drawerOverlayZIndex = useMemo(() => {
+      if (portalZIndex !== undefined) {
+        return portalZIndex;
+      }
+
+      if (overlayInlineStyle?.zIndex !== undefined) {
+        return Number(overlayInlineStyle.zIndex);
+      }
+
+      return ZIndexHandler('modal');
+    }, [portalZIndex, overlayInlineStyle?.zIndex]);
+    const floatingPortalRoot =
+      typeof document !== 'undefined' ? document.body : null;
 
     const panelMotion = useMemo(
       () => getDrawerPanelMotion(placement, Boolean(prefersReducedMotion)),
@@ -152,7 +167,11 @@ export const Drawer = forwardRef<HTMLElement, DrawerProps>(
         data-drawer-overlay
         aria-hidden={ariaHidden}
       >
-        <DrawerPanel
+        <FloatingOverlayLayerProvider
+          baseZIndex={drawerOverlayZIndex}
+          portalRoot={floatingPortalRoot}
+        >
+          <DrawerPanel
           ref={setPanelRef}
           $widthCss={widthCss}
           $heightCss={heightCss}
@@ -187,6 +206,7 @@ export const Drawer = forwardRef<HTMLElement, DrawerProps>(
             {children}
           </DrawerBody>
         </DrawerPanel>
+        </FloatingOverlayLayerProvider>
       </DrawerOverlay>
     );
 

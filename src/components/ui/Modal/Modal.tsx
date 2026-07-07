@@ -2,6 +2,7 @@ import React, { forwardRef, useCallback, useId, useMemo, useRef, useState, useEf
 import { createPortal } from 'react-dom';
 import { AnimatePresence, useReducedMotion } from 'framer-motion';
 import { clsx } from 'clsx';
+import { useTheme } from 'styled-components';
 import { Icon } from '../Icon/Icon';
 import { Button } from '../buttons/Button/Button';
 import type { ModalButtonProps, ModalProps } from '../../../types/ui';
@@ -33,6 +34,9 @@ import { useOverlayPortal } from '../../../hooks/useOverlayPortal';
 import { useOverlayPresentation } from '../../../hooks/useOverlayPresentation';
 import { ModalVariantStatusIcon } from './ModalVariantStatusIcon';
 import { isModalStatusVariant } from './modalStatusIconHandlers';
+import { FloatingOverlayLayerProvider } from '../../../contexts/FloatingOverlayLayerContext';
+import { getModalOverlayStyles } from '../../../handlers/modalThemeHandlers';
+import { ZIndexHandler } from '../../../handlers/uiHandlers';
 
 export const Modal = forwardRef<HTMLDivElement, ModalProps>(
   (
@@ -108,6 +112,21 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
       overlayStyle,
       portalZIndex,
     });
+    const theme = useTheme();
+    const modalOverlayZIndex = useMemo(() => {
+      if (portalZIndex !== undefined) {
+        return portalZIndex;
+      }
+
+      if (overlayInlineStyle?.zIndex !== undefined) {
+        return Number(overlayInlineStyle.zIndex);
+      }
+
+      const themeOverlayZIndex = getModalOverlayStyles(theme.modals).zIndex;
+      return Number(themeOverlayZIndex) || ZIndexHandler('modal');
+    }, [portalZIndex, overlayInlineStyle?.zIndex, theme.modals]);
+    const floatingPortalRoot =
+      typeof document !== 'undefined' ? document.body : null;
     const presetAnimations = getAnimationPreset(animationPreset);
     const animations = useMemo(() => {
       if (!animationConfig) {
@@ -244,7 +263,11 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
         data-modal-overlay
         aria-hidden={ariaHidden}
       >
-        <ModalContainer
+        <FloatingOverlayLayerProvider
+          baseZIndex={modalOverlayZIndex}
+          portalRoot={floatingPortalRoot}
+        >
+          <ModalContainer
           ref={setModalRef}
           size={size}
           $mobile={mobile}
@@ -312,6 +335,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
             </ModalButtonContainer>
           )}
         </ModalContainer>
+        </FloatingOverlayLayerProvider>
       </Overlay>
     );
 

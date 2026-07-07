@@ -135,7 +135,45 @@ export const DOC_DATE_INPUT = `
 Выбор даты: поле + календарь, опционально **диапазон** (\`range: true\`).
 
 ### Значение
-При \`range: false\` — строка даты в формате поля. При \`range: true\` — \`{ start: string; end: string }\`.
+При \`range: false\` — строка даты в формате поля (\`format\`, по умолчанию \`DD.MM.YYYY\`). При \`range: true\` — \`{ start: string; end: string }\`.
+
+Строки в \`value\` / \`onChange\` — в формате **YYYY-MM-DD** (ISO-дата без времени).
+
+### Черновик пикера (до применения в поле)
+
+Позволяет реагировать на выбор в календаре **до** записи в \`onChange\` — например, автоматически задать конец диапазона от начала.
+
+| Проп | Описание |
+|------|----------|
+| **\`onPickerChange\`** | Колбэк при каждом изменении черновика в попапе. Аргументы: \`(draft, context)\`. |
+| **\`modifyPickerValue\`** | Модификатор черновика. Верните новое значение или \`undefined\`, чтобы оставить как есть. |
+| **\`deferPickerCommit\`** | Не обновлять текст поля и не вызывать \`onChange\` до «Применить» / «OK». По умолчанию \`true\`, если задан \`onPickerChange\` или \`modifyPickerValue\`. |
+
+**\`context\`** (\`DatePickerDraftContext\`): \`{ phase, range, format }\`, где **\`phase\`** — \`'pick' | 'apply' | 'clear'\`.
+
+**Поведение:**
+- В **диапазоне** выбор всегда коммитится кнопкой «Применить»; черновик обновляется при каждом клике по дню / роллерам.
+- В **одиночном** режиме без колбэков — выбор сразу применяется и попап закрывается.
+- С \`onPickerChange\` / \`modifyPickerValue\` в одиночном режиме появляется кнопка **OK**; поле не меняется, пока попап открыт и \`deferPickerCommit !== false\`.
+- \`modifyPickerValue\` вызывается **до** \`onPickerChange\`; в \`onPickerChange\` приходит уже модифицированный черновик.
+
+**Пример — конец = начало + 7 дней:**
+
+\`\`\`tsx
+<DateInput
+  range
+  value={appliedRange}
+  onChange={setAppliedRange}
+  onPickerChange={(draft) => setPickerDraft(draft as DateTimeRange)}
+  modifyPickerValue={(draft) => {
+    if (typeof draft !== 'object' || !draft.start) return undefined;
+    const start = new Date(draft.start);
+    const end = new Date(start);
+    end.setDate(end.getDate() + 7);
+    return { start: draft.start, end: toISODateString(end) };
+  }}
+/>
+\`\`\`
 
 Поддерживаются **\`prefix\`** и **\`suffix\`** (как у **Input**, общая рамка **InputFieldShell**).
 
@@ -150,9 +188,50 @@ export const DOC_TIME_INPUT = `
 ### Значение
 При \`range: false\` — строка (\`14:30\` или с секундами). При \`range: true\` — \`{ start: string; end: string }\`.
 
+### Черновик пикера (до применения в поле)
+
+| Проп | Описание |
+|------|----------|
+| **\`onPickerChange\`** | Колбэк при каждом изменении черновика в попапе. |
+| **\`modifyPickerValue\`** | Модификатор черновика (верните новое значение или \`undefined\`). |
+| **\`deferPickerCommit\`** | Не обновлять поле и не вызывать \`onChange\` до «Применить» / «OK». По умолчанию \`true\`, если заданы колбэки выше. |
+
+**\`context\`** (\`TimePickerDraftContext\`): \`{ phase, range, format }\`, **\`phase\`** — \`'pick' | 'apply' | 'clear'\`.
+
+**Поведение:** как у **DateInput** — в диапазоне коммит через «Применить»; с колбэками в одиночном режиме — кнопка **OK**; \`modifyPickerValue\` вызывается до \`onPickerChange\`.
+
 **\`prefix\`**, **\`suffix\`** — как у **Input** (\`InputFieldShell\`).
 
 См. **TimeInputProps** в \`types/ui.ts\`.
+`.trim();
+
+/** @see DateTimeInputProps */
+export const DOC_DATE_TIME_INPUT = `
+### Назначение
+Выбор даты и времени в одном поле: календарь + колонки часов/минут в одном попапе. Построен на базе **DateInput** и **TimeInput**.
+
+### Значение
+При \`range: false\` — строка в формате поля (по умолчанию \`DD.MM.YYYY HH:mm\`). При \`range: true\` — \`{ start: string; end: string }\`.
+
+### Черновик пикера (до применения в поле)
+
+| Проп | Описание |
+|------|----------|
+| **\`onPickerChange\`** | Колбэк при каждом изменении даты/времени в попапе. |
+| **\`modifyPickerValue\`** | Модификатор черновика (верните новое значение или \`undefined\`). |
+| **\`deferPickerCommit\`** | Не обновлять поле до «Применить» / «OK». По умолчанию \`true\`, если заданы колбэки выше. |
+
+**\`context\`** (\`DateTimePickerDraftContext\`): \`{ phase, range, format }\`.
+
+**Поведение:** выбор в попапе коммитится кнопкой «Применить» / «OK»; с колбэками текст поля не меняется, пока попап открыт и \`deferPickerCommit !== false\`.
+
+### Отличия от DateInput / TimeInput
+- **DateInput** — только дата; **TimeInput** — только время.
+- **DateTimeInput** — дата и время вместе; для диапазона — календарь диапазона + два блока выбора времени.
+
+**\`prefix\`**, **\`suffix\`**, очистка, подсказки — как у других полей через **InputFieldShell**.
+
+Полный список пропсов — **DateTimeInputProps** в \`types/ui.ts\`. Для диапазона можно использовать **DateTimeInputRange** (алиас с \`range: true\`).
 `.trim();
 
 /** @see BadgeProps */
@@ -422,6 +501,368 @@ export const DOC_FLOATING_MENU = `
 Вложенный **NavigationMenu**, подсказки у пунктов. Режим закрепления по краю экрана или **draggable**.
 `.trim();
 
+/** @see ActionBarProps и связанные */
+export const DOC_ACTION_BAR = `
+### Назначение
+Горизонтальная **панель действий** с иконками: логические группы разделяются **ActionBar.Divider**, при нехватке ширины лишние кнопки автоматически уходят в **overflow-меню**.
+
+Отличается от **FloatingMenu** (плавающая панель у края экрана / draggable) — **ActionBar** встраивается в layout (шапка таблицы, тулбар карточки, строка над контентом) и занимает **100% ширины** родителя.
+
+Составной API: **ActionBar**, **ActionBar.Item**, **ActionBar.ItemWithTooltip**, **ActionBar.Divider**, **ActionBar.DropMenuItem**.
+
+### Размеры (\`size\` / \`barSize\`)
+| size | Высота кнопки |
+|------|----------------|
+| XL | 56px |
+| LG | 48px |
+| MD | 40px |
+| SM | 32px |
+
+Размер overflow-меню: **MD** для XL/LG, **SM** для MD/SM.
+
+### ActionBar (корень)
+| Проп | Зачем |
+|------|--------|
+| \`items\` | Порядок действий: \`{ itemId, withDivider? }[]\`. |
+| \`renderActionBarItem\` | Рендер видимой кнопки по \`itemId\` (обычно **ActionBar.ItemWithTooltip**). |
+| \`renderDropMenuItem\` | Рендер строки overflow-меню; опционально \`options.closeMenu\` — закрыть меню после действия. |
+| \`itemIsDisabled\` | \`(itemId) => boolean\` — disabled для пунктов overflow-меню. |
+| \`size\` | Размер кнопок панели (**ActionBarSize**, по умолчанию XL). |
+| \`overflowMenuAriaLabel\` | Подпись кнопки «ещё» и меню (по умолчанию «Дополнительные действия»). |
+| \`aria-label\` | **Обязательна** — подпись для \`role="toolbar"\`. |
+| \`className\` | CSS-класс на корне. |
+
+### ActionBar.Item / ActionBar.ItemWithTooltip
+| Проп | Зачем |
+|------|--------|
+| \`barSize\` | Согласовать габариты с \`ActionBar.size\`. |
+| \`icon\` | Иконка действия (**обязательна**). |
+| \`aria-label\` | Доступное имя кнопки. |
+| \`tooltipText\` | Текст подсказки (**ItemWithTooltip**, обязателен). |
+| \`showTooltip\` | Показывать Tooltip (**ItemWithTooltip**, по умолчанию \`true\`). |
+| \`variant\` | Вариант **IconButton** (по умолчанию **ghost**). |
+| \`disabled\` / \`loading\` | Состояния кнопки. |
+| \`onClick\` | Обработчик клика. |
+
+### ActionBar.Divider
+| Проп | Зачем |
+|------|--------|
+| \`barSize\` | Высота вертикальной линии (как у панели). |
+
+Разделитель также добавляется автоматически, если у элемента \`items\` задан \`withDivider: true\`.
+
+### ActionBar.DropMenuItem
+| Проп | Зачем |
+|------|--------|
+| \`barSize\` | Размер иконки в строке меню. |
+| \`children\` | Иконка + текст действия. |
+
+### Overflow-поведение
+- Ширина контейнера отслеживается через **ResizeObserver**.
+- Если суммарная ширина кнопок больше доступной — резервируется место под кнопку overflow, лишние \`itemId\` переносятся в меню **в том же порядке**.
+- Последняя видимая кнопка на панели остаётся последней и внутри меню.
+
+### Пример
+\`\`\`tsx
+const items = [
+  { itemId: 'search', withDivider: false },
+  { itemId: 'edit', withDivider: false },
+  { itemId: 'archive', withDivider: true },
+  { itemId: 'delete', withDivider: false },
+];
+
+<ActionBar
+  size={ActionBarSize.XL}
+  aria-label="Действия над документом"
+  items={items}
+  renderActionBarItem={(itemId) => (
+    <ActionBar.ItemWithTooltip
+      barSize={ActionBarSize.XL}
+      tooltipText={labels[itemId]}
+      aria-label={labels[itemId]}
+      icon={<Icon name={icons[itemId]} size={IconSize.SM} />}
+      onClick={() => handleAction(itemId)}
+    />
+  )}
+  renderDropMenuItem={(itemId, options) => (
+    <ActionBar.DropMenuItem barSize={ActionBarSize.XL}>
+      <Icon name={icons[itemId]} size={IconSize.SM} />
+      {labels[itemId]}
+    </ActionBar.DropMenuItem>
+  )}
+  itemIsDisabled={(itemId) => disabledIds.has(itemId)}
+/>
+\`\`\`
+`.trim();
+
+/** @see CarouselProps и связанные */
+export const DOC_CAROUSEL = `
+### Назначение
+**Карусель** для показа слайдов с изображениями и подписями. Составной API: **Carousel**, **Carousel.Slide**, **Carousel.Image**, **Carousel.Caption**, **Carousel.Overlay**, **Carousel.OverlayPanel**, **Carousel.ParallaxLayer**.
+
+Поддерживает три типа анимации (**slide**, **fade**, **scale**), стрелки, точки-индикаторы, **полосу миниатюр**, свайп, автопрокрутку с паузой, **glass-тему** и учёт **prefers-reduced-motion**.
+
+### Carousel (корень)
+| Проп | Зачем |
+|------|--------|
+| \`activeIndex\` | Активный слайд (контролируемый режим, с 0). |
+| \`defaultActiveIndex\` | Начальный слайд без \`activeIndex\` (по умолчанию 0). |
+| \`onActiveIndexChange\` | \`(activeIndex) => void\` — колбэк смены слайда (только индекс). |
+| \`activeSlideId\` | Активный слайд по \`slideId\` (controlled, приоритет над \`activeIndex\`). |
+| \`defaultSlideId\` | Начальный \`slideId\` без controlled-режима. |
+| \`onActiveSlideIdChange\` | \`(activeSlideId) => void\` — колбэк смены \`slideId\`. |
+| \`onSlideChange\` | \`(event: CarouselSlideChangeEvent) => void\` — current / previous / next с \`slideId\`, индексом, медиа. |
+| \`onSlideClick\` | \`(event: CarouselSlideClickEvent) => void\` — клик по области слайда (не срабатывает после свайпа). |
+| \`onThumbnailClick\` | \`(event: CarouselSlideClickEvent) => void\` — клик по миниатюре (превью); слайд также переключается. |
+| \`onTitleClick\` | \`(event: CarouselSlideClickEvent) => void\` — клик по заголовку \`Carousel.Caption\`. |
+| \`random\` | Случайный порядок отображения слайдов при монтировании (по умолчанию \`false\`). |
+| \`randomSeed\` | Seed для детерминированного shuffle при \`random={true}\`. |
+| \`loop\` | После последнего слайда — первый (и наоборот). |
+| \`animation\` | **CarouselAnimation**: \`slide\`, \`fade\`, \`scale\`, \`coverflow\`, \`flip\`, \`stack\`, \`parallax\`. |
+| \`parallax\` | Parallax-слои: фон медленнее, оверлеи быстрее (можно вместе с \`animation="slide"\`). |
+| \`parallaxBackgroundRatio\` | Коэффициент фона по умолчанию (\`0.35\` — медленнее слайда). |
+| \`parallaxForegroundRatio\` | Кoэффициент переднего плана (\`1.12\` — быстрее слайда). |
+| \`animationDuration\` | Длительность перехода в мс (при reduced motion — 0). |
+| \`navigation\` | **CarouselNavigation**: \`arrows\`, \`dots\`, \`both\`, \`thumbnails\`, \`none\`. |
+| \`dotsPosition\` | **inner** — точки поверх слайда; **outer** — под областью. |
+| \`thumbnails\` | Полоса миниатюр под основной областью (можно вместе со стрелками / точками). |
+| \`thumbnailHeight\` | Высота миниатюры в px (по умолчанию 72). |
+| \`showCaption\` | Показывать подписи \`Carousel.Caption\` (по умолчанию \`true\`). |
+| \`fullscreen\` | Кнопка полноэкранного просмотра активного слайда (по умолчанию \`false\`). |
+| \`fullscreenOpenAriaLabel\` | Подпись кнопки открытия (по умолчанию «Открыть слайд на весь экран»). |
+| \`fullscreenCloseAriaLabel\` | Подпись кнопки закрытия (по умолчанию «Закрыть полноэкранный режим»). |
+| \`onFullscreenChange\` | \`(isFullscreenOpen) => void\` — колбэк смены режима. |
+| \`autoplay\` | Автоматическая смена слайдов. |
+| \`autoplayInterval\` | Интервал в мс (по умолчанию 5000). |
+| \`pauseOnHover\` | Пауза автопрокрутки при наведении. |
+| \`pauseOnFocus\` | Пауза при фокусе внутри карусели. |
+| \`swipeEnabled\` | Свайп / pointer drag для переключения (follow-позиция, snap, флик по скорости). |
+| \`visibleSlidesRange\` | Радиус lazy-render вокруг активного слайда (по умолчанию \`1\`; \`undefined\` — все слайды). |
+| \`preloadAdjacentSlides\` | Предзагрузка изображений соседних слайдов (по умолчанию \`true\`). |
+| \`keyboardEnabled\` | Навигация ArrowLeft/Right, Home/End на корне (по умолчанию \`true\`). |
+| \`previousSlideAriaLabel\` / \`nextSlideAriaLabel\` | Локализация aria-label стрелок. |
+| \`dotsListAriaLabel\` / \`slideDotAriaLabel\` | Локализация точек-индикаторов. |
+| \`autoplayPauseAriaLabel\` / \`autoplayPlayAriaLabel\` | Локализация кнопки автопрокрутки. |
+| \`fullscreenOverlayAriaLabel\` / \`fullscreenCounterAriaLabel\` | Локализация полноэкранного режима. |
+| \`orientation\` | **CarouselOrientation**: \`horizontal\` (по умолчанию) или \`vertical\`. |
+| \`showProgressBar\` | Сегментированная полоска прогресса слайдов (по умолчанию \`false\`). |
+| \`progressBarPosition\` | **CarouselProgressBarPosition**: \`inner\` — поверх слайдов; \`outer\` — под областью. |
+| \`progressBarAriaLabel\` | aria-label полоски прогресса. |
+| \`showAutoplayProgress\` | Линейный прогресс до следующего слайда при \`autoplay\` (по умолчанию \`false\`). |
+| \`showAutoplayCountdown\` | Обратный отсчёт «N с» рядом с прогрессом autoplay (по умолчанию \`true\`). |
+| \`autoplayProgressAriaLabel\` | aria-label линейного прогресса autoplay. |
+| \`aspectRatio\` | CSS aspect-ratio (по умолчанию \`16 / 9\`; для vertical — \`9 / 16\`, если не задано иное). |
+| \`height\` | Фиксированная высота вместо aspect-ratio. |
+| \`size\` | Размер стрелок, точек и скругления (**Size**). |
+| \`items\` | **CarouselItemDefinition[]** — слайды из данных; при непустом массиве **children** для списка слайдов не используется. |
+| \`aria-label\` | **Обязательна** — подпись \`section\` / carousel region. |
+| \`className\` | CSS-класс на корне. |
+
+### CarouselItemDefinition (проп \`items\`)
+| Поле | Зачем |
+|------|--------|
+| \`slideId\` | Id для \`onSlideChange\`, \`activeSlideId\`, колбэков клика. |
+| \`slideLabel\` | Часть \`aria-label\` слайда. |
+| \`thumbnailSrc\` | URL миниатюры для полосы навигации. |
+| \`imageSrc\` / \`imageAlt\` | Автоматический **Carousel.Image** (если нет \`children\`). |
+| \`objectFit\`, \`loading\`, \`imageThumbnailSrc\`, \`parallax\` | Пропсы автоматического изображения. |
+| \`caption\` | Текст **Carousel.Caption** под изображением. |
+| \`children\` | Произвольный контент слайда (приоритет над \`imageSrc\` / \`caption\`). |
+| \`className\` | CSS-класс **Carousel.Slide**. |
+
+### Carousel.Slide
+| Проп | Зачем |
+|------|--------|
+| \`slideId\` | Пользовательский id слайда для \`onSlideChange\` / \`onSlideClick\`. |
+| \`slideLabel\` | Пользовательская часть \`aria-label\` («Слайд N из M» добавляется автоматически). |
+| \`thumbnailSrc\` | URL миниатюры (перекрывает \`thumbnailSrc\` / \`src\` из **Carousel.Image**). |
+| \`children\` | **Carousel.Image**, **Carousel.Caption**, **Carousel.Overlay**, **Carousel.OverlayPanel** или произвольный контент. |
+
+### Carousel.Overlay
+| Проп | Зачем |
+|------|--------|
+| \`placement\` | **CarouselSlideOverlayPlacement**: \`top\`, \`bottom\` — горизонтальная полоса; \`left\`, \`right\` — вертикальная. |
+| \`align\` | **CarouselSlideOverlayAlign**: \`start\`, \`center\`, \`end\` — выравнивание внутри зоны. |
+| \`children\` | React-узел или \`(slide: CarouselSlideInfo) => ReactNode\` — получает id, индекс, caption и др. |
+
+- Несколько оверлеев с одинаковыми \`placement\` + \`align\` группируются в одной зоне.
+- Оверлеи не блокируют клик по слайду (кроме интерактивных элементов внутри).
+- z-index выше контентной панели — кнопки в углах остаются поверх текста.
+- \`parallax\` — \`true\`, \`false\` или коэффициент \`0…2\` для отдельного слоя.
+
+### Carousel.OverlayPanel
+Контентная панель поверх изображения: заголовок, описание, кнопки и любые React-элементы.
+
+| Проп | Зачем |
+|------|--------|
+| \`placement\` | **CarouselSlideOverlayPanelPlacement**: \`top\`, \`center\`, \`bottom\` (по умолчанию), \`stretch\` — на весь слайд. |
+| \`align\` | **CarouselSlideOverlayAlign**: \`start\`, \`center\`, \`end\`. |
+| \`gradient\` | **CarouselSlideOverlayPanelGradient**: \`none\`, \`top\`, \`bottom\` (дефолт для bottom/center), \`full\`. |
+| \`parallax\` | Parallax переднего плана: \`true\`, \`false\` или коэффициент. |
+| \`children\` | React-узел или render prop \`(slide: CarouselSlideInfo) => ReactNode\`. |
+
+- **Carousel.OverlayPanel.Title** — заголовок панели.
+- **Carousel.OverlayPanel.Text** — текст абзаца с ограничением ширины для читаемости.
+- Панель рендерится под зонами **Carousel.Overlay** — удобно совмещать текст снизу и кнопку в углу.
+
+### Carousel.ParallaxLayer
+Универсальная parallax-обёртка для произвольного содержимого слайда.
+
+| Проп | Зачем |
+|------|--------|
+| \`layer\` | Пресет: \`background\`, \`content\`, \`overlayPanel\`, \`overlay\`. |
+| \`parallax\` | \`true\`, \`false\` или коэффициент \`0…2\`. |
+
+### Carousel.Image
+| Проп | Зачем |
+|------|--------|
+| \`src\` | URL изображения (**обязателен**). |
+| \`alt\` | Текстовая альтернатива (**обязательна** для a11y). |
+| \`objectFit\` | \`cover\` (по умолчанию), \`contain\`, \`fill\`, \`none\`. |
+| \`loading\` | \`lazy\` / \`eager\`. |
+| \`thumbnailSrc\` | Отдельный URL для полосы миниатюр (если отличается от \`src\`). |
+| \`parallax\` | Parallax фона: \`true\`, \`false\` или коэффициент. |
+
+### Carousel.Caption
+Подпись под изображением внутри слайда (\`children\` — текст).
+
+### Миниатюры
+- Включите \`thumbnails={true}\` или \`navigation={CarouselNavigation.THUMBNAILS}\`.
+- Источник: \`slide.thumbnailSrc\` → \`image.thumbnailSrc\` → \`image.src\`.
+- Активная миниатюра подсвечивается рамкой **primary** и прокручивается в центр полосы.
+- Можно сочетать с \`navigation="both"\` — стрелки, точки и миниатюры одновременно.
+
+### Glass-тема (glassLight / glassDark)
+В glass-палитре стрелки, точки, подпись и полоса миниатюр получают лёгкую полупрозрачность и **backdrop-filter** (как pagination / accordion): фон контролов \`rgba(255,255,255,0.38)\` на светлой теме, \`0.10\` на тёмной; оболочка — **borderTertiary**. Переключите тему Storybook на **glassLight** / **glassDark**.
+
+### Доступность
+- Корень: \`section\`, \`aria-roledescription="carousel"\`, обязательный \`aria-label\`, \`tabIndex={0}\`, клавиатура ArrowLeft/Right (horizontal) или ArrowUp/Down (vertical), Home/End.
+- Слайды: семантика \`figure\` + \`figcaption\` для подписи; обёртка \`role="group"\`, \`aria-roledescription="slide"\`, \`aria-hidden\` на неактивных.
+- Стрелки и точки с настраиваемыми \`aria-label\` (пропсы локализации).
+- Миниатюры: \`nav\` с подписью, кнопки с \`aria-current\` на активном слайде.
+- Полноэкранный режим: портал в \`window.top.document.body\` (в Storybook Docs — на весь экран браузера), \`StyleSheetManager\` для styled-components, оверлей из \`theme.modals.overlay\`, плавное появление/закрытие, \`role="dialog"\`, focus trap, начальный фокус на кнопке закрытия, Escape, стрелки клавиатуры, блокировка прокрутки страницы; поддержка произвольного контента слайда без изображения.
+- При автопрокрутке: \`aria-live="polite"\`; кнопка паузы/воспроизведения с иконками; опциональная полоска прогресса с анимацией текущего сегмента.
+- **prefers-reduced-motion**: анимации отключаются или сокращаются.
+
+### Свайп и drag (Swiper-like)
+- Для анимации **slide** лента следует за пальцем/мышью в реальном времени.
+- При отпускании: snap к ближайшему слайду при смещении **≥ 20%** viewport или быстром флике.
+- Без **loop** на краях — резиновое сопротивление (rubber band).
+- Во время drag: \`touch-action: none\`, курсор \`grab\` / \`grabbing\`.
+- Fade / scale: улучшенное определение жеста по скорости и порогу без follow-анимации ленты.
+
+### Вертикальная карусель
+- \`orientation={CarouselOrientation.VERTICAL}\` — лента с \`translateY\`, свайп по вертикали, стрелки вверх/вниз.
+- По умолчанию aspect-ratio \`9 / 16\`, если не задан \`height\` и не переопределён \`aspectRatio\`.
+- Fade / scale работают так же, как в горизонтальном режиме.
+
+### Полоска прогресса
+- \`showProgressBar={true}\` — сегменты по числу слайдов; пройденные заполнены, текущий анимируется при autoplay.
+- \`progressBarPosition="inner"\` — поверх верхней части слайдов; \`outer\` — под основной областью.
+
+### Прогресс autoplay
+- \`showAutoplayProgress={true}\` — линейная полоска заполнения до следующего слайда за \`autoplayInterval\`.
+- \`showAutoplayCountdown\` — подпись «N с» до автопереключения; пауза при \`pauseOnHover\` / \`pauseOnFocus\` замораживает таймер.
+- Расположение синхронизировано с \`progressBarPosition\` (\`inner\` — поверх слайдов снизу, \`outer\` — под областью).
+
+### Coverflow, Flip и Stack
+- \`coverflow\` — 3D-перспектива, поворот и глубина боковых слайдов (как в Swiper Coverflow).
+- \`flip\` — 3D-переворот карточек при смене активного слайда.
+- \`stack\` — перелистывание «стопкой»: активный слайд уезжает в сторону и уходит **под** следующий (как hero-слайдер на [bruno-pizza.ru](https://krasnodar.bruno-pizza.ru/)). Следующие слайды лежат сзади с лёгким уменьшением scale.
+
+### Parallax
+- \`animation="parallax"\` или \`parallax={true}\` — слои слайда движутся с разной скоростью при drag, стрелках и autoplay.
+- **Carousel.Image** — фон (\`parallaxBackgroundRatio\`, по умолчанию \`0.35\`) медленнее ленты; лёгкий scale компенсирует края.
+- **Carousel.OverlayPanel** / **Carousel.Overlay** — передний план быстрее (\`parallaxForegroundRatio\`, по умолчанию \`1.12\`).
+- **Carousel.ParallaxLayer** — обёртка для произвольного контента с пресетом \`layer\`.
+- На каждом слое: \`parallax={0.5}\` или \`parallax={false}\` для точной настройки.
+- При \`prefers-reduced-motion\` parallax отключается.
+- Для vertical автоматически используется ось \`rotateX\`.
+
+### CarouselSlideInfo
+| Поле | Зачем |
+|------|--------|
+| \`slideIndex\` | Индекс с 0. |
+| \`slideId\` | Id из \`Carousel.Slide\`. |
+| \`slideLabel\` | Пользовательская подпись слайда. |
+| \`imageSrc\` / \`imageAlt\` | Данные из **Carousel.Image**. |
+| \`caption\` | Текст **Carousel.Caption**. |
+| \`thumbnailSrc\` | URL миниатюры. |
+
+### Случайный порядок
+- \`random={true}\` перемешивает слайды алгоритмом Fisher–Yates при монтировании и при изменении набора (\`slideId\` / \`key\`).
+- \`randomSeed\` задаёт детерминированный порядок для тестов и SSR.
+- Порядок стабилен до смены пропа \`random\`, \`randomSeed\` или состава слайдов; навигация и \`activeIndex\` / \`activeSlideId\` работают в перемешанной последовательности.
+- Миниатюры, точки и колбэки \`onSlideChange\` / \`onSlideClick\` используют тот же порядок.
+
+### События слайдов
+- **onSlideChange** — при смене активного слайда и при монтировании: \`activeIndex\`, \`current\`, \`previous\`, \`next\` (\`CarouselSlideInfo | null\` на границах без \`loop\`).
+- **onSlideClick** — клик по области слайда: \`slide\` + \`nativeEvent\`. Клики по стрелкам, точкам, заголовку и другим контролам игнорируются.
+- **onThumbnailClick** — клик по миниатюре (превью): те же данные; параллельно выполняется переключение на выбранный слайд.
+- **onTitleClick** — клик по тексту **Carousel.Caption** (заголовок слайда); не дублирует \`onSlideClick\`.
+
+### Пример
+\`\`\`tsx
+const promoItems: CarouselItemDefinition[] = [
+  {
+    slideId: 'combo',
+    slideLabel: 'Комбо недели',
+    imageSrc: '/banners/combo.jpg',
+    imageAlt: 'Комбо недели',
+    caption: '2 пиццы + напиток',
+  },
+  {
+    slideId: 'custom',
+    slideLabel: 'Кастомный слайд',
+    children: (
+      <>
+        <Carousel.Image src="/banners/sale.jpg" alt="Акция" />
+        <Carousel.OverlayPanel>
+          <Carousel.OverlayPanel.Title>−20%</Carousel.OverlayPanel.Title>
+        </Carousel.OverlayPanel>
+      </>
+    ),
+  },
+];
+
+<Carousel items={promoItems} loop navigation={CarouselNavigation.BOTH} aria-label="Акции" />
+
+// или декларативно:
+<Carousel
+  loop
+  onSlideChange={({ activeIndex, current, previous, next }) => {
+    console.log(activeIndex, current.slideId, previous?.slideId, next?.slideId);
+  }}
+  onSlideClick={({ slide }) => {
+    console.log('slide', slide.slideId, slide.slideIndex);
+  }}
+  onThumbnailClick={({ slide }) => {
+    console.log('thumbnail', slide.slideId, slide.slideIndex);
+  }}
+  onTitleClick={({ slide }) => {
+    console.log('title', slide.slideId, slide.caption);
+  }}
+  aria-label="Галерея проекта"
+>
+  <Carousel.Slide slideId="facade" slideLabel="Фасад здания">
+    <Carousel.Image src="/photos/facade.jpg" alt="Фасад здания днём" />
+    <Carousel.OverlayPanel placement={CarouselSlideOverlayPanelPlacement.BOTTOM}>
+      <Carousel.OverlayPanel.Title>Фасад</Carousel.OverlayPanel.Title>
+      <Carousel.OverlayPanel.Text>Главный вход здания</Carousel.OverlayPanel.Text>
+    </Carousel.OverlayPanel>
+    <Carousel.Overlay placement={CarouselSlideOverlayPlacement.TOP} align={CarouselSlideOverlayAlign.END}>
+      {(slide) => <button type="button">Открыть {slide.slideId}</button>}
+    </Carousel.Overlay>
+    <Carousel.Caption>Фасад</Carousel.Caption>
+  </Carousel.Slide>
+  <Carousel.Slide slideId="lobby" slideLabel="Интерьер холла">
+    <Carousel.Image src="/photos/lobby.jpg" alt="Холл с высокими потолками" />
+    <Carousel.Caption>Холл</Carousel.Caption>
+  </Carousel.Slide>
+</Carousel>
+\`\`\`
+`.trim();
+
 /** @see PaginationProps — отдельно от TablePagination */
 export const DOC_PAGINATION = `
 ### Назначение
@@ -436,9 +877,56 @@ export const DOC_PAGINATION = `
 /** @see AccordionProps */
 export const DOC_ACCORDION = `
 ### Назначение
-Аккордеон: несколько элементов с уникальными id, заголовок и подзаголовок, позиционирование элемента (start/center/last), **allowMultiple**, **autoClose**.
+Секции с раскрывающимся содержимым: заголовок, опциональный подзаголовок, анимация открытия. Составной API — **Accordion** + **Accordion.Item** + **Accordion.Trigger** + **Accordion.Content**.
 
-Стили из темы (цвета, шрифты, радиусы).
+Стили (цвета, шрифты, радиусы, разделители) берутся из **theme.accordions**.
+
+### Корневой Accordion
+| Проп | Зачем |
+|------|--------|
+| \`defaultOpen\` | Открыть секцию по умолчанию (id \`default\`, если у Item не задан \`value\`). |
+| \`allowMultiple\` | Разрешить одновременно несколько открытых секций. |
+| \`autoClose\` | При открытии новой секции закрывать остальные (приоритет выше \`allowMultiple\`). |
+| \`onChange\` | \`(isOpen: boolean) => void\` — колбэк переключения активной секции. |
+| \`firstItemBorderRadius\` | Скругление **верхних** углов у **первого** \`Accordion.Item\` (по умолчанию \`true\`). При \`false\` — ровный верх (удобно при встраивании в карточку или панель). |
+| \`lastItemBorderRadius\` | Скругление **нижних** углов у **последнего** \`Accordion.Item\` (по умолчанию \`true\`). При \`false\` — ровный низ. |
+
+Пропсы скругления независимы: можно убрать только верх, только низ или оба.
+
+### Accordion.Item
+| Проп | Зачем |
+|------|--------|
+| \`value\` | Уникальный id секции (для состояния открытия). |
+| \`position\` | \`start\` \| \`center\` \| \`last\` — радиусы и разделители между элементами группы. |
+
+### Accordion.Trigger
+| Проп | Зачем |
+|------|--------|
+| \`title\` | Основной заголовок. |
+| \`subtitle\` | Подзаголовок под title. |
+| \`align\` | \`left\` \| \`center\` \| \`right\` — выравнивание заголовка. |
+
+### Accordion.Content
+| Проп | Зачем |
+|------|--------|
+| \`align\` | Выравнивание текста содержимого. |
+
+### Glass-тема (glassLight / glassDark)
+В glass-палитре аккордеон получает лёгкую полупрозрачность и **backdrop-filter** (как pagination): фон \`rgba(255,255,255,0.26)\` на светлой теме, \`0.06\` на тёмной; разделители — **theme.colors.borderSecondary**. Переключите глобальную тему Storybook на **glassLight** или **glassDark**, либо оберните в **ThemeProvider** с \`glassLightTheme\` / \`glassDarkTheme\`.
+
+### Пример
+\`\`\`tsx
+<Accordion autoClose firstItemBorderRadius={false} lastItemBorderRadius={false}>
+  <Accordion.Item value="general" position="start">
+    <Accordion.Trigger title="Общие" subtitle="Кратко" />
+    <Accordion.Content>Текст секции.</Accordion.Content>
+  </Accordion.Item>
+  <Accordion.Item value="details" position="last">
+    <Accordion.Trigger title="Подробности" />
+    <Accordion.Content>Ещё текст.</Accordion.Content>
+  </Accordion.Item>
+</Accordion>
+\`\`\`
 `.trim();
 
 /** @see ProgressProps */
@@ -464,7 +952,23 @@ export const DOC_CALENDAR = `
 
 **showDateRollers** — роллеры день/месяц/год; **monthYearLayout="split"** — отдельные триггеры месяца и года.
 
-Режимы выбора и типы значений — см. **CalendarProps** (\`selectionMode\`, single/range).
+Режимы выбора — **CalendarProps** (\`selectionMode\`: \`single\` / \`range\`).
+
+### Черновик пикера (standalone)
+
+| Проп | Описание |
+|------|----------|
+| **\`onPickerChange\`** | Колбэк черновика до \`onChange\` / \`onRangeChange\`. |
+| **\`modifyPickerValue\`** | Модификатор черновика. |
+| **\`deferPickerCommit\`** | Коммит только по «OK» / «Применить» в футере (появляется автоматически). |
+| **\`onRangeChange\`** | Коммит диапазона (\`selectionMode="range"\`). |
+
+**Не активируется при \`onSelectDate\`** — в **DateInput** / **DateTimeInput** черновик обрабатывается на уровне поля.
+
+### Где черновик уже есть (дублировать не нужно)
+
+- **DateInput**, **TimeInput**, **DateTimeInput** — полный API + попап поля.
+- **DateRollerPicker**, **TimePickerColumns** — низкоуровневые блоки внутри Calendar / Input.
 `.trim();
 
 /** @see SpinnerProps */
@@ -589,7 +1093,7 @@ export const DOC_SLIDER_INPUT = `
 - **DateInput** (\`range\`) — тот же паттерн «одно значение / пара», другой тип данных.
 
 ### Документация
-- Сайт: \`documentation/content/docs/ru/web/v_0.2.2/components-slider-input.mdx\`
+- Сайт: \`documentation/content/docs/ru/web/v_0.2.3/components-slider-input.mdx\`
 - Storybook: **UI Kit → Inputs → SliderInput** (истории по режимам и состояниям)
 `.trim();
 
@@ -649,7 +1153,7 @@ export const DOC_THEME_SELECTOR = `
 
 Работает с любым числом тем. Переключение: \`setThemeMode(appThemes.themeMode.ocean)\` — type-safe id.
 
-См. сторис **UI Kit/Theming/ThemeSelector** и [Theming](/docs/web/v_0.2.2/theming).
+См. сторис **UI Kit/Theming/ThemeSelector** и [Theming](/docs/web/v_0.2.3/theming).
 `.trim();
 
 /** @see SidemenuProps */

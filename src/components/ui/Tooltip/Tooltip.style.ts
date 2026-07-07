@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components';
 import { TooltipPosition } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
+import type { Colors, ThemeColorScheme, TooltipTheme } from '../../../types/theme';
 import {
   buildHoverPressMotionCss,
   buildSurfaceTransitionCss,
@@ -8,6 +9,95 @@ import {
   uiMotionSurfaceEasing,
 } from '../../../handlers/uiMotionStyleHandlers';
 import { ZIndexHandler } from '../../../handlers/uiHandlers';
+import { getTooltipSurfaceTokens } from '../../../handlers/tooltipGlassHandlers';
+
+type TooltipStyledThemeSlice = {
+  mode: ThemeColorScheme;
+  colors: Colors;
+  tooltips?: TooltipTheme;
+};
+
+/**
+ * Базовые стили tooltip с учётом glass-темы.
+ * @param theme — styled-components theme
+ */
+const tooltipSurfaceStyles = (theme: TooltipStyledThemeSlice) => {
+  const surfaceTokens = getTooltipSurfaceTokens({
+    mode: theme.mode,
+    colors: theme.colors,
+    tooltips: theme.tooltips,
+  });
+  const backdropFilter = theme.tooltips?.settings?.backdropFilter;
+
+  return css`
+    background: ${surfaceTokens.background};
+    color: ${surfaceTokens.textColor};
+    ${surfaceTokens.border ? `border: ${surfaceTokens.border};` : ''}
+    ${backdropFilter
+      ? css`
+          backdrop-filter: ${backdropFilter};
+          -webkit-backdrop-filter: ${backdropFilter};
+        `
+      : ''}
+  `;
+};
+
+/**
+ * CSS-стрелка tooltip.
+ * @param arrowColor — цвет заливки стрелки
+ * @param placement — позиция тултипа
+ */
+const tooltipArrowStyles = (arrowColor: string, placement: TooltipPosition) => {
+  if (placement === TooltipPosition.TOP) {
+    return css`
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-top: 8px solid ${arrowColor};
+    `;
+  }
+  if (placement === TooltipPosition.BOTTOM) {
+    return css`
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-bottom: 8px solid ${arrowColor};
+    `;
+  }
+  if (placement === TooltipPosition.LEFT) {
+    return css`
+      right: 0px;
+      top: 50%;
+      transform: translateY(-50%) translateX(50%);
+      width: 0;
+      height: 0;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-left: 8px solid ${arrowColor};
+    `;
+  }
+  if (placement === TooltipPosition.RIGHT) {
+    return css`
+      left: 0px;
+      top: 50%;
+      transform: translateY(-50%) translateX(-50%);
+      width: 0;
+      height: 0;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-right: 8px solid ${arrowColor};
+    `;
+  }
+  return '';
+};
 
 /**
  * Контейнер для триггера тултипа
@@ -31,10 +121,7 @@ export const TooltipContent = styled.div<{
   $size: Size;
 }>`
   position: fixed;
-  /* Фон и стрелка: theme.colors.info (яркий синий), не theme.colors.primary (палитра blue — тёмная) */
-  background: ${({ theme }) => theme.colors.info};
-  /* Белый текст на ярком info */
-  color: #ffffff;
+  ${({ theme }) => tooltipSurfaceStyles(theme)}
   border-radius: 16px; // Border radius из макета
   font-family: ${({ theme }) => theme.fonts.primary}; // Montserrat из макета
   font-weight: 500; // Medium из макета
@@ -133,57 +220,13 @@ export const TooltipContent = styled.div<{
     transition: opacity 0.2s ease-in-out;
 
     ${({ theme, $placement }) => {
-      const arrowColor = theme.colors.info;
+      const surfaceTokens = getTooltipSurfaceTokens({
+        mode: theme.mode,
+        colors: theme.colors,
+        tooltips: theme.tooltips,
+      });
 
-      if ($placement === TooltipPosition.TOP) {
-        return css`
-          bottom: -8px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 0;
-          height: 0;
-          border-left: 8px solid transparent;
-          border-right: 8px solid transparent;
-          border-top: 8px solid ${arrowColor};
-        `;
-      }
-      if ($placement === TooltipPosition.BOTTOM) {
-        return css`
-          top: -8px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 0;
-          height: 0;
-          border-left: 8px solid transparent;
-          border-right: 8px solid transparent;
-          border-bottom: 8px solid ${arrowColor};
-        `;
-      }
-      if ($placement === TooltipPosition.LEFT) {
-        return css`
-          right: 0px;
-          top: 50%;
-          transform: translateY(-50%) translateX(50%);
-          width: 0;
-          height: 0;
-          border-top: 8px solid transparent;
-          border-bottom: 8px solid transparent;
-          border-left: 8px solid ${arrowColor};
-        `;
-      }
-      if ($placement === TooltipPosition.RIGHT) {
-        return css`
-          left: 0px;
-          top: 50%;
-          transform: translateY(-50%) translateX(-50%);
-          width: 0;
-          height: 0;
-          border-top: 8px solid transparent;
-          border-bottom: 8px solid transparent;
-          border-right: 8px solid ${arrowColor};
-        `;
-      }
-      return '';
+      return tooltipArrowStyles(surfaceTokens.arrowColor, $placement);
     }}
   }
 `;

@@ -152,6 +152,17 @@ export const AvatarCounter = styled.div<{
   transition: ${({ theme }) => theme.avatarGroups.counter.transition};
   flex-shrink: ${({ theme }) => theme.avatarGroups.settings.flexShrink};
 
+  ${({ theme }) => {
+    const backdropFilter = theme.avatarGroups.settings.backdropFilter;
+
+    return backdropFilter
+      ? css`
+          backdrop-filter: ${backdropFilter};
+          -webkit-backdrop-filter: ${backdropFilter};
+        `
+      : '';
+  }}
+
   ${({ theme, size = Size.MD }) => {
     const avatarSize = theme.avatars.sizes[size];
     return css`

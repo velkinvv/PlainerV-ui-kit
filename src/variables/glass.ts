@@ -11,6 +11,8 @@ export type GlassSurfacePalette = {
   pageBackground: string;
   surface: string;
   surfaceElevated: string;
+  /** Более плотная поверхность для popover, dropdown, календаря и других всплывающих панелей */
+  surfaceFloating: string;
   surfaceMuted: string;
   surfaceSubtle: string;
   border: string;
@@ -28,14 +30,15 @@ export const glassSurfacePaletteLight: GlassSurfacePalette = {
     radial-gradient(ellipse 60% 45% at 20% 85%, rgba(165, 243, 252, 0.3) 0%, transparent 50%),
     linear-gradient(165deg, #dbeafe 0%, #e9d5ff 38%, #fce7f3 72%, #cffafe 100%)
   `,
-  surface: 'rgba(255, 255, 255, 0.52)',
-  surfaceElevated: 'rgba(255, 255, 255, 0.68)',
-  surfaceMuted: 'rgba(255, 255, 255, 0.38)',
-  surfaceSubtle: 'rgba(255, 255, 255, 0.28)',
-  border: 'rgba(255, 255, 255, 0.55)',
-  borderSubtle: 'rgba(255, 255, 255, 0.35)',
-  borderHairline: 'rgba(0, 0, 0, 0.06)',
-  overlay: 'rgba(15, 23, 42, 0.22)',
+  surface: 'rgba(255, 255, 255, 0.34)',
+  surfaceElevated: 'rgba(255, 255, 255, 0.44)',
+  surfaceFloating: 'rgba(255, 255, 255, 0.86)',
+  surfaceMuted: 'rgba(255, 255, 255, 0.24)',
+  surfaceSubtle: 'rgba(255, 255, 255, 0.16)',
+  border: 'rgba(255, 255, 255, 0.38)',
+  borderSubtle: 'rgba(255, 255, 255, 0.24)',
+  borderHairline: 'rgba(0, 0, 0, 0.05)',
+  overlay: 'rgba(15, 23, 42, 0.14)',
 };
 
 /** Тёмная glass-палитра (iOS / macOS dark vibrancy) */
@@ -46,14 +49,15 @@ export const glassSurfacePaletteDark: GlassSurfacePalette = {
     radial-gradient(ellipse 60% 45% at 70% 85%, rgba(236, 72, 153, 0.12) 0%, transparent 55%),
     linear-gradient(165deg, #0f172a 0%, #1e1b4b 40%, #0c1222 75%, #111827 100%)
   `,
-  surface: 'rgba(30, 30, 34, 0.62)',
-  surfaceElevated: 'rgba(44, 44, 48, 0.72)',
-  surfaceMuted: 'rgba(255, 255, 255, 0.08)',
-  surfaceSubtle: 'rgba(255, 255, 255, 0.05)',
-  border: 'rgba(255, 255, 255, 0.18)',
-  borderSubtle: 'rgba(255, 255, 255, 0.12)',
-  borderHairline: 'rgba(255, 255, 255, 0.08)',
-  overlay: 'rgba(0, 0, 0, 0.45)',
+  surface: 'rgba(30, 30, 34, 0.42)',
+  surfaceElevated: 'rgba(44, 44, 48, 0.50)',
+  surfaceFloating: 'rgba(28, 28, 32, 0.90)',
+  surfaceMuted: 'rgba(255, 255, 255, 0.05)',
+  surfaceSubtle: 'rgba(255, 255, 255, 0.03)',
+  border: 'rgba(255, 255, 255, 0.14)',
+  borderSubtle: 'rgba(255, 255, 255, 0.09)',
+  borderHairline: 'rgba(255, 255, 255, 0.06)',
+  overlay: 'rgba(0, 0, 0, 0.32)',
 };
 
 export const glassSurfacePalettes = {

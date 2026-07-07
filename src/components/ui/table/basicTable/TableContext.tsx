@@ -1,15 +1,22 @@
 ﻿import React, { createContext, useContext } from 'react';
-import type { TableCellVariant, TableSize } from '@/types/ui';
+import type { TableCellVariant, TableColumnColorMap, TableRowColorMap, TableSize } from '@/types/ui';
 
-/** ╨б╨╡╨║╤Ж╨╕╤П ╤В╨░╨▒╨╗╨╕╤Ж╤Л: ╨▓╨╗╨╕╤П╨╡╤В ╨╜╨░ ╤В╨╡╨│ ╤П╤З╨╡╨╣╨║╨╕ ╨┐╨╛ ╤Г╨╝╨╛╨╗╤З╨░╨╜╨╕╤О (`th` ╨▓ ╤И╨░╨┐╨║╨╡). */
+/** Секция таблицы: влияет на тег ячеек по умолчанию (`th` в шапке). */
 export type TableSection = 'head' | 'body' | 'footer';
 
-type TableRootContextValue = {
+type TableRootContextValue<
+  RowColorKey extends string = string,
+  ColumnColorKey extends string = string,
+> = {
   size: TableSize;
   striped: boolean;
   stickyHeader: boolean;
   /** Тонкая вертикальная граница между колонками (кроме последней ячейки в строке) */
   columnDividers: boolean;
+  /** Карта цветов фона строк из пропса `Table rowColorMap` */
+  rowColorMap?: TableRowColorMap<RowColorKey>;
+  /** Карта цветов фона колонок из пропса `Table columnColorMap` */
+  columnColorMap?: TableColumnColorMap<ColumnColorKey>;
 };
 
 const TableRootContext = createContext<TableRootContextValue | null>(null);
@@ -19,22 +26,28 @@ const TableSectionContext = createContext<TableSection>('body');
 /**
  * ╨Ъ╨╛╨╜╤В╨╡╨║╤Б╤В ╨║╨╛╤А╨╜╨╡╨▓╨╛╨╣ ╤В╨░╨▒╨╗╨╕╤Ж╤Л: ╤А╨░╨╖╨╝╨╡╤А, ╨╖╨╡╨▒╤А╨░, ╨╗╨╕╨┐╨║╨░╤П ╤И╨░╨┐╨║╨░.
  */
-export function TableRootProvider({
+export function TableRootProvider<
+  RowColorKey extends string = string,
+  ColumnColorKey extends string = string,
+>({
   value,
   children,
 }: {
-  value: TableRootContextValue;
+  value: TableRootContextValue<RowColorKey, ColumnColorKey>;
   children: React.ReactNode;
 }): React.ReactElement {
   return <TableRootContext.Provider value={value}>{children}</TableRootContext.Provider>;
 }
 
-export function useTableRootContext(): TableRootContextValue {
-  const ctx = useContext(TableRootContext);
-  if (!ctx) {
+export function useTableRootContext<
+  RowColorKey extends string = string,
+  ColumnColorKey extends string = string,
+>(): TableRootContextValue<RowColorKey, ColumnColorKey> {
+  const contextValue = useContext(TableRootContext);
+  if (!contextValue) {
     return { size: 'md', striped: false, stickyHeader: false, columnDividers: true };
   }
-  return ctx;
+  return contextValue as TableRootContextValue<RowColorKey, ColumnColorKey>;
 }
 
 /**

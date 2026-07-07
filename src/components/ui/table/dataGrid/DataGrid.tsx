@@ -41,7 +41,10 @@ import {
   dataGridSizeToTableSize,
   getDataGridCellValue,
   getDataGridColDragDisplacementPx,
+  getDataGridDisplayColumns,
   getDataGridRowDragDisplacementPx,
+  resolveDataGridColumnBackgroundColor,
+  resolveDataGridRowBackgroundColor,
   resolveDataGridExpandedRowDataStatus,
   sliceRowsForPagination,
   toIdSet,
@@ -106,9 +109,12 @@ import { DataGridExcelExportButton } from './excelExport/DataGridExcelExportButt
  *   пустой `rows` / отсутствие строк — блок в `tbody` с иконкой лупы (`emptyStateTitle`, `emptyStateDescription`, `renderEmptyState`), шапка остаётся.
  *   статусы данных (`dataStatus`, `loadingDisplay`, `error`, `statusMessage`, `renderErrorState`, …) — загрузка, скелетон, ошибка и информационные сообщения.
  */
-export function DataGrid<Row extends DataGridBaseRow>(
-  props: DataGridProps<Row>,
-): React.ReactElement {
+export function DataGrid<
+  Row extends DataGridBaseRow<string> = DataGridBaseRow,
+  RowColorKey extends string = string,
+  ColumnColorKey extends string = string,
+>(props: DataGridProps<Row, RowColorKey, ColumnColorKey>): React.ReactElement {
+  const theme = useTheme() as ThemeType;
   const {
     tableId,
     columns,
@@ -160,6 +166,9 @@ export function DataGrid<Row extends DataGridBaseRow>(
     statusMessageVariant = 'info',
     renderStatusMessage,
     rowBackgroundColorByStatus,
+    rowColorMap,
+    rowColorField,
+    columnColorMap,
     expandedRowIds,
     getRowExpandable,
     getExpandedRowDataStatus,
@@ -207,6 +216,23 @@ export function DataGrid<Row extends DataGridBaseRow>(
     className,
     style,
   } = props;
+
+  const displayColumns = useMemo(
+    () => getDataGridDisplayColumns<Row, ColumnColorKey>(columns),
+    [columns],
+  );
+
+  const columnBackgroundByField = useMemo(() => {
+    const backgroundByField = new Map<string, string | undefined>();
+    for (const column of displayColumns) {
+      const fieldName = String(column.field);
+      backgroundByField.set(
+        fieldName,
+        resolveDataGridColumnBackgroundColor(column.columnColor, theme.colors, columnColorMap),
+      );
+    }
+    return backgroundByField;
+  }, [displayColumns, columnColorMap, theme.colors]);
 
   const tableSize = useMemo(() => dataGridSizeToTableSize(size), [size]);
   const multiColumnSortEnabled = Boolean(multiColumnSort);
@@ -445,7 +471,6 @@ export function DataGrid<Row extends DataGridBaseRow>(
     [renderExpandedRow, error],
   );
 
-  const theme = useTheme() as ThemeType;
   const resolvedSurfaces = useMemo(
     () => normalizeTableSurfaceBackgrounds(surfaceBackgrounds),
     [surfaceBackgrounds],
@@ -748,7 +773,7 @@ export function DataGrid<Row extends DataGridBaseRow>(
   );
 
   const colCount =
-    columns.length +
+    displayColumns.length +
     (displayRowSelectionColumn ? 1 : 0) +
     (showExpandColumn ? 1 : 0) +
     (enableRowDrag ? 1 : 0);
@@ -817,11 +842,12 @@ export function DataGrid<Row extends DataGridBaseRow>(
     if (!excelExport) {
       return [];
     }
-    return (
-      excelExport.columns ??
-      convertDataGridColumnsToExportColumns(columns, excelExport.ignoreFields)
-    );
-  }, [columns, excelExport]);
+    const ignoredFields = [
+      ...(excelExport.ignoreFields?.map(String) ?? []),
+      ...(rowColorField != null ? [String(rowColorField)] : ['rowColor']),
+    ];
+    return excelExport.columns ?? convertDataGridColumnsToExportColumns(columns, ignoredFields);
+  }, [columns, excelExport, rowColorField]);
 
   const showHeaderToolbar =
     showBuiltinHeaderToolbarActions || showExcelExportButton || headerToolbar != null;
@@ -967,7 +993,8 @@ export function DataGrid<Row extends DataGridBaseRow>(
                   </TableCell>
                 ) : null}
                 {showExpandColumn ? <TableCell padding="checkbox" aria-label="Развернуть" /> : null}
-                {columns.map((col, colIndex) => {
+                {displayColumns.map((col) => {
+                  const colIndex = columns.indexOf(col);
                   const fieldStr = String(col.field);
                   const sortable = Boolean(col.sortable && onSortChange);
                   const sortCriterionIndex = getDataGridSortCriterionIndexForField(
@@ -1018,6 +1045,7 @@ export function DataGrid<Row extends DataGridBaseRow>(
                       align={headerAlign}
                       activeColumn={headerSortActive}
                       headerMaxLines={mergedHeaderMaxLinesRaw}
+                      columnColor={columnBackgroundByField.get(fieldStr)}
                       style={buildColumnDragCellStyle(colIndex, thStyle)}
                       draggable={enableColumnDrag && !col.disableReorder}
                       onDragStart={(dragEvent: React.DragEvent<HTMLTableCellElement>) => {
@@ -1107,7 +1135,7 @@ export function DataGrid<Row extends DataGridBaseRow>(
               {showSkeletonBody ? (
                 <DataGridSkeletonBody
                   rowCount={skeletonBodyRowCount}
-                  columnCount={columns.length}
+                  columnCount={displayColumns.length}
                   tableSize={tableSize}
                   showSelectionColumn={displayRowSelectionColumn}
                   showExpandColumn={showExpandColumn}
@@ -1126,10 +1154,15 @@ export function DataGrid<Row extends DataGridBaseRow>(
                     const rowId = getRowId(row);
                     const disabled = disabledSet.has(rowId);
                     const selected = selectedSet.has(rowId);
-                    const bg = rowBackgroundColorByStatus?.(row);
-                    const rowStyle: React.CSSProperties | undefined = bg
-                      ? { backgroundColor: bg }
-                      : undefined;
+                    const rowBackgroundColor = resolveDataGridRowBackgroundColor(
+                      row,
+                      theme.colors,
+                      {
+                        rowBackgroundColorByStatus,
+                        rowColorMap,
+                        rowColorField,
+                      },
+                    );
                     const expandable = getRowExpandable?.(row) ?? false;
                     const expanded = expandedSet.has(rowId);
                     const expandedDataStatus = resolveDataGridExpandedRowDataStatus(row, {
@@ -1155,8 +1188,7 @@ export function DataGrid<Row extends DataGridBaseRow>(
                             transition: DATA_GRID_ROW_DRAG_SHIFT_TRANSITION,
                           }
                         : undefined;
-                    const mergedRowStyle: React.CSSProperties | undefined =
-                      rowDragShiftStyle != null ? { ...rowStyle, ...rowDragShiftStyle } : rowStyle;
+                    const mergedRowStyle: React.CSSProperties | undefined = rowDragShiftStyle;
 
                     const cells = (
                       <>
@@ -1230,7 +1262,8 @@ export function DataGrid<Row extends DataGridBaseRow>(
                             ) : null}
                           </TableCell>
                         ) : null}
-                        {columns.map((col, colIndex) => {
+                        {displayColumns.map((col) => {
+                          const colIndex = columns.indexOf(col);
                           const fieldStr = String(col.field);
                           const widthForBodyCell =
                             columnResizePreview?.field === fieldStr
@@ -1253,6 +1286,7 @@ export function DataGrid<Row extends DataGridBaseRow>(
                                     ? 'center'
                                     : 'left'
                               }
+                              columnColor={columnBackgroundByField.get(fieldStr)}
                               style={buildColumnDragCellStyle(colIndex, tdStyle)}
                               onDragOver={(dragEvent: React.DragEvent<HTMLTableCellElement>) =>
                                 handleColDragOverTarget(colIndex, dragEvent)
@@ -1274,6 +1308,7 @@ export function DataGrid<Row extends DataGridBaseRow>(
                         selected={selected}
                         disabled={disabled}
                         dragging={Boolean(enableRowDrag && dragRowFrom === rowIndex)}
+                        rowColor={rowBackgroundColor}
                         style={mergedRowStyle}
                         onClick={(e) => {
                           onRowClick?.(row, e);
@@ -1317,7 +1352,7 @@ export function DataGrid<Row extends DataGridBaseRow>(
                               colSpan={colCount}
                               padding="none"
                               style={{
-                                backgroundColor: bg,
+                                backgroundColor: rowBackgroundColor,
                                 verticalAlign: 'top',
                                 padding: 0,
                               }}

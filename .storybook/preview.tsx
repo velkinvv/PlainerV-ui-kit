@@ -119,6 +119,7 @@ const preview: Preview = {
           ],
           'Data Display': [
             'Typography',
+            'Carousel',
             'Avatar',
             'AvatarGroup',
             'Badge',

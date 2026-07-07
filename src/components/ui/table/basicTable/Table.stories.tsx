@@ -1,7 +1,7 @@
 ﻿import React, { useMemo, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Size } from '@/types/sizes';
-import type { TableSortDirection } from '@/types/ui';
+import type { TableSortDirection, TableRowColorMap, TableColumnColorMap } from '@/types/ui';
 import {
   TableContainer,
   TableContainerScroll,
@@ -21,6 +21,7 @@ import { TableCellHeadLineClamp } from './Table.style';
 import { TableWithTextFilterInHeader as tableColumnFilterTableStorySource } from './TableColumnFilters.stories';
 import { tableStoriesStyles } from './Table.stories.styles';
 import { noopHandler } from '@/handlers';
+import { lightTheme } from '@/themes/themes';
 
 const meta: Meta<typeof Table> = {
   title: 'UI Kit/Data Display/Table',
@@ -563,4 +564,161 @@ export const StripedSizes: Story = {
       </TableContainer>
     </div>
   ),
+};
+
+/** Цветная подсветка строк через явный CSS в `TableRow rowColor`. */
+export const RowBackgroundColors: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Передайте уже резолвленный CSS в `TableRow rowColor`. Для ключей и карты цветов см. **RowBackgroundByRowColorKey**.',
+      },
+    },
+  },
+  render: () => (
+    <TableContainer elevated>
+      <TableContainerScroll>
+        <Table aria-label="Строки с цветным фоном">
+          <TableHead>
+            <TableRow>
+              <TableCell>Блюдо</TableCell>
+              <TableCell align="right">Ккал</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {sampleRows.slice(0, 5).map((rowItem, rowIndex) => (
+              <TableRow
+                key={rowItem.id}
+                rowColor={
+                  rowIndex === 0
+                    ? `color-mix(in srgb, ${lightTheme.colors.danger} 14%, ${lightTheme.colors.backgroundSecondary})`
+                    : rowIndex === 2
+                      ? `color-mix(in srgb, ${lightTheme.colors.success} 14%, ${lightTheme.colors.backgroundSecondary})`
+                      : undefined
+                }
+              >
+                <TableCell>{rowItem.name}</TableCell>
+                <TableCell align="right">{rowItem.calories}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainerScroll>
+    </TableContainer>
+  ),
+};
+
+/** Фон строки: ключ `rowColorKey` + карта `rowColorMap` на `Table`. */
+export const RowBackgroundByRowColorKey: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Задайте `rowColorMap` на `Table`, а в `TableRow` — ключ через `rowColorKey`. Значение карты — CSS-строка или `(colors) => …` с палитрой UI-kit.',
+      },
+    },
+  },
+  render: () => {
+    type StoryRowColorKey = 'danger' | 'success';
+
+    const rowColorMap: TableRowColorMap<StoryRowColorKey> = {
+      danger: (colors) =>
+        `color-mix(in srgb, ${colors.danger} 14%, ${colors.backgroundSecondary})`,
+      success: (colors) =>
+        `color-mix(in srgb, ${colors.success} 14%, ${colors.backgroundSecondary})`,
+    };
+
+    const rowColorKeys: Array<StoryRowColorKey | undefined> = [
+      'danger',
+      undefined,
+      'success',
+      undefined,
+      'danger',
+    ];
+
+    return (
+      <TableContainer elevated>
+        <TableContainerScroll>
+          <Table<StoryRowColorKey> aria-label="Строки с ключами цвета" rowColorMap={rowColorMap}>
+            <TableHead>
+              <TableRow>
+                <TableCell>Блюдо</TableCell>
+                <TableCell align="right">Ккал</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {sampleRows.slice(0, 5).map((rowItem, rowIndex) => (
+                <TableRow<StoryRowColorKey>
+                  key={rowItem.id}
+                  rowColorKey={rowColorKeys[rowIndex]}
+                >
+                  <TableCell>{rowItem.name}</TableCell>
+                  <TableCell align="right">{rowItem.calories}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainerScroll>
+      </TableContainer>
+    );
+  },
+};
+
+/** Фон колонки: ключ `columnColorKey` + карта `columnColorMap` на `Table`. */
+export const ColumnBackgroundByColumnColorKey: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Задайте `columnColorMap` на `Table`, а в ячейках одной колонки — один и тот же `columnColorKey`. Значение карты — CSS-строка или `(colors) => …`.',
+      },
+    },
+  },
+  render: () => {
+    type StoryColumnColorKey = 'info' | 'warning';
+
+    const columnColorMap: TableColumnColorMap<StoryColumnColorKey> = {
+      info: (colors) =>
+        `color-mix(in srgb, ${colors.info} 12%, ${colors.backgroundSecondary})`,
+      warning: (colors) =>
+        `color-mix(in srgb, ${colors.warning} 12%, ${colors.backgroundSecondary})`,
+    };
+
+    return (
+      <TableContainer elevated>
+        <TableContainerScroll>
+          <Table<string, StoryColumnColorKey>
+            aria-label="Колонки с ключами цвета"
+            columnColorMap={columnColorMap}
+          >
+            <TableHead>
+              <TableRow>
+                <TableCell>Блюдо</TableCell>
+                <TableCell<StoryColumnColorKey> columnColorKey="info" align="right">
+                  Ккал
+                </TableCell>
+                <TableCell<StoryColumnColorKey> columnColorKey="warning" align="right">
+                  №
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {sampleRows.slice(0, 5).map((rowItem) => (
+                <TableRow key={rowItem.id}>
+                  <TableCell>{rowItem.name}</TableCell>
+                  <TableCell<StoryColumnColorKey> columnColorKey="info" align="right">
+                    {rowItem.calories}
+                  </TableCell>
+                  <TableCell<StoryColumnColorKey> columnColorKey="warning" align="right">
+                    {rowItem.id}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainerScroll>
+      </TableContainer>
+    );
+  },
 };

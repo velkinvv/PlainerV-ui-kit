@@ -13,6 +13,41 @@ import {
   uiMotionSurfaceEasing,
 } from '../../../handlers/uiMotionStyleHandlers';
 import { ZIndexHandler } from '../../../handlers/uiHandlers';
+import { getHintSurfaceTokens } from '../../../handlers/hintGlassHandlers';
+import type { Colors, HintTheme, ThemeColorScheme } from '../../../types/theme';
+
+type HintStyledThemeSlice = {
+  mode: ThemeColorScheme;
+  colors: Colors;
+  hints: HintTheme;
+};
+
+/**
+ * Стили поверхности hint с учётом glass-темы.
+ * @param theme — styled-components theme
+ * @param variant — вариант hint
+ */
+const hintSurfaceStyles = (theme: HintStyledThemeSlice, variant: HintVariant) => {
+  const surfaceTokens = getHintSurfaceTokens(variant, {
+    mode: theme.mode,
+    colors: theme.colors,
+    hints: theme.hints,
+  });
+  const backdropFilter = theme.hints?.settings?.backdropFilter;
+
+  return css`
+    background: ${surfaceTokens.background};
+    color: ${surfaceTokens.textColor};
+    border: ${surfaceTokens.border ?? 'none'};
+    box-shadow: ${surfaceTokens.boxShadow};
+    ${backdropFilter
+      ? css`
+          backdrop-filter: ${backdropFilter};
+          -webkit-backdrop-filter: ${backdropFilter};
+        `
+      : ''}
+  `;
+};
 
 /**
  * Внешний контейнер для hint (AnchorWrapper)
@@ -95,15 +130,7 @@ export const HintContent = styled.div<{
   }}
 
   /* Варианты из темы */
-  ${({ $variant = 'default', theme }) => {
-    const variantConfig = theme.hints.variants[$variant as keyof typeof theme.hints.variants];
-    return css`
-      background: ${variantConfig.background};
-      color: ${variantConfig.color};
-      border: ${variantConfig.border};
-      box-shadow: ${variantConfig.boxShadow};
-    `;
-  }}
+  ${({ $variant = 'default', theme }) => hintSurfaceStyles(theme, $variant as HintVariant)}
 
   /* Состояния из темы с учетом позиционирования и анимации (аналогично Tooltip) */
   ${({ $isVisible, $placement, $animationPreset = AnimationPreset.FADE, theme }) => {
@@ -226,10 +253,12 @@ export const HintContent = styled.div<{
   ${({ $showArrow, $placement, $variant = 'default', $isVisible, theme }) => {
     if (!$showArrow) return '';
 
-    const variantConfig = theme.hints.variants[$variant as keyof typeof theme.hints.variants];
-    // Извлекаем цвет границы для стрелки (убираем "1px solid " если есть)
-    const borderColor =
-      variantConfig.border.replace(/^\d+px\s+solid\s+/, '') || variantConfig.border;
+    const surfaceTokens = getHintSurfaceTokens($variant as HintVariant, {
+      mode: theme.mode,
+      colors: theme.colors,
+      hints: theme.hints,
+    });
+    const arrowColor = surfaceTokens.arrowColor;
 
     return css`
       &::after {
@@ -249,7 +278,7 @@ export const HintContent = styled.div<{
               height: 0;
               border-left: 8px solid transparent;
               border-right: 8px solid transparent;
-              border-top: 8px solid ${borderColor};
+              border-top: 8px solid ${arrowColor};
             `;
           }
           if ($placement === HintPosition.BOTTOM) {
@@ -261,7 +290,7 @@ export const HintContent = styled.div<{
               height: 0;
               border-left: 8px solid transparent;
               border-right: 8px solid transparent;
-              border-bottom: 8px solid ${borderColor};
+              border-bottom: 8px solid ${arrowColor};
             `;
           }
           if ($placement === HintPosition.LEFT) {
@@ -273,7 +302,7 @@ export const HintContent = styled.div<{
               height: 0;
               border-top: 8px solid transparent;
               border-bottom: 8px solid transparent;
-              border-left: 8px solid ${borderColor};
+              border-left: 8px solid ${arrowColor};
             `;
           }
           if ($placement === HintPosition.RIGHT) {
@@ -285,7 +314,7 @@ export const HintContent = styled.div<{
               height: 0;
               border-top: 8px solid transparent;
               border-bottom: 8px solid transparent;
-              border-right: 8px solid ${borderColor};
+              border-right: 8px solid ${arrowColor};
             `;
           }
           // Для угловых позиций стрелка направлена к центру элемента
@@ -297,7 +326,7 @@ export const HintContent = styled.div<{
               height: 0;
               border-left: 8px solid transparent;
               border-right: 8px solid transparent;
-              border-top: 8px solid ${borderColor};
+              border-top: 8px solid ${arrowColor};
             `;
           }
           if ($placement === HintPosition.TOP_RIGHT) {
@@ -308,7 +337,7 @@ export const HintContent = styled.div<{
               height: 0;
               border-left: 8px solid transparent;
               border-right: 8px solid transparent;
-              border-top: 8px solid ${borderColor};
+              border-top: 8px solid ${arrowColor};
             `;
           }
           if ($placement === HintPosition.BOTTOM_LEFT) {
@@ -319,7 +348,7 @@ export const HintContent = styled.div<{
               height: 0;
               border-left: 8px solid transparent;
               border-right: 8px solid transparent;
-              border-bottom: 8px solid ${borderColor};
+              border-bottom: 8px solid ${arrowColor};
             `;
           }
           if ($placement === HintPosition.BOTTOM_RIGHT) {
@@ -330,7 +359,7 @@ export const HintContent = styled.div<{
               height: 0;
               border-left: 8px solid transparent;
               border-right: 8px solid transparent;
-              border-bottom: 8px solid ${borderColor};
+              border-bottom: 8px solid ${arrowColor};
             `;
           }
           return '';

@@ -1,5 +1,7 @@
 ﻿import React, { forwardRef, useState, useRef, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { clsx } from 'clsx';
+import { useTheme } from 'styled-components';
 import { ButtonVariant, TooltipPosition, type DatePickerProps } from '../../../../types/ui';
 import {
   parseDate,
@@ -7,6 +9,13 @@ import {
   toISODateString,
   getWeekdayNames,
 } from '../../../../handlers/dateHandlers';
+import {
+  computeRangeDatesAfterDayClick,
+  datePickerDraftDatesFromValue,
+  resolveDatePickerDraft,
+  type DatePickerDraftDates,
+  type DatePickerDraftPhase,
+} from '../../../../handlers/dateInputPickerHandlers';
 import { getClearIconSizeForInputField } from '../../../../handlers/iconHandlers';
 import { Size, IconSize } from '../../../../types/sizes';
 import { Calendar } from '../../Calendar/Calendar';
@@ -14,6 +23,12 @@ import { Button } from '../../buttons/Button/Button';
 import { Icon } from '../../Icon/Icon';
 import { Tooltip } from '../../Tooltip/Tooltip';
 import { Hint, HintPosition, HintVariant } from '../../Hint/Hint';
+import {
+  resolveFloatingOverlayPortalRoot,
+  resolveFloatingOverlayZIndex,
+} from '../../../../handlers/floatingOverlayHandlers';
+import { useFloatingOverlayLayer } from '../../../../contexts/FloatingOverlayLayerContext';
+import { useFloatingOverlayPosition } from '../../../../hooks/useFloatingOverlayPosition';
 import {
   InputContainerWithPadding,
   LoadingSpinner,
@@ -90,10 +105,16 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
       calendarFullWidth = false,
       prefix,
       suffix,
+      onPickerChange,
+      modifyPickerValue,
+      deferPickerCommit,
       ...props
     },
     ref,
   ) => {
+    const shouldDeferPickerCommit =
+      deferPickerCommit ?? Boolean(onPickerChange || modifyPickerValue);
+
     const [isOpen, setIsOpen] = useState(false);
     const [currentDate, setCurrentDate] = useState(new Date());
     const [inputValue, setInputValue] = useState('');
@@ -137,6 +158,23 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
 
     const inputRef = useRef<HTMLInputElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+    const calendarPopupRef = useRef<HTMLDivElement>(null);
+    const theme = useTheme();
+    const floatingOverlayLayer = useFloatingOverlayLayer();
+    const floatingOverlayZIndex = resolveFloatingOverlayZIndex(
+      floatingOverlayLayer.minimumZIndex,
+      theme.dropdowns?.settings?.zIndex,
+    );
+    const floatingPortalRoot = resolveFloatingOverlayPortalRoot(
+      undefined,
+      floatingOverlayLayer.portalRoot,
+    );
+    const { position: calendarPopupPosition } = useFloatingOverlayPosition({
+      isOpen,
+      anchorRef: containerRef,
+      overlayRef: calendarPopupRef,
+      positioningMode: 'autoFlip',
+    });
 
     // Refs для сегментов даты (отдельные для каждого picker в range режиме)
     const startDayRef = useRef<HTMLSpanElement>(null);
@@ -396,11 +434,104 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
       }
     };
 
-    // Используем хендлеры для работы с датами
     const formatDate = useCallback(
       (date: Date | null) => formatDateForDisplay(date, format),
       [format],
     );
+
+    const syncDraftFromValue = useCallback(() => {
+      const draftDates = datePickerDraftDatesFromValue(value, range);
+
+      if (!range) {
+        setSelectedDate(draftDates.selectedDate);
+        if (draftDates.selectedDate) {
+          setCurrentDate(draftDates.selectedDate);
+        }
+        return;
+      }
+
+      setRangeStart(draftDates.rangeStart);
+      setRangeEnd(draftDates.rangeEnd);
+      if (draftDates.rangeStart) {
+        setCurrentDate(draftDates.rangeStart);
+      }
+      setTempRangeEnd(null);
+    }, [range, value]);
+
+    /**
+     * Обновляет черновик пикера с учётом `modifyPickerValue` / `onPickerChange`.
+     * @param nextDraftDates — новые даты черновика
+     * @param phase — фаза изменения
+     * @param options.updateInputPreview — обновить текст в поле (по умолчанию false при отложенном коммите)
+     */
+    const applyPickerDraftUpdate = useCallback(
+      (
+        nextDraftDates: DatePickerDraftDates,
+        phase: DatePickerDraftPhase,
+        options?: { updateInputPreview?: boolean },
+      ) => {
+        const resolvedDates = resolveDatePickerDraft({
+          draftDates: nextDraftDates,
+          range,
+          format,
+          phase,
+          modifyPickerValue,
+          onPickerChange,
+        });
+
+        if (!range) {
+          setSelectedDate(resolvedDates.selectedDate);
+          if (resolvedDates.selectedDate) {
+            setCurrentDate(resolvedDates.selectedDate);
+          }
+        } else {
+          if (resolvedDates.rangeStart) {
+            setCurrentDate(resolvedDates.rangeStart);
+          }
+          setRangeStart(resolvedDates.rangeStart);
+          setRangeEnd(resolvedDates.rangeEnd);
+          setTempRangeEnd(null);
+        }
+
+        const shouldUpdateInputPreview =
+          options?.updateInputPreview ?? !shouldDeferPickerCommit;
+
+        if (shouldUpdateInputPreview) {
+          if (!range) {
+            setInputValue(resolvedDates.selectedDate ? formatDate(resolvedDates.selectedDate) : '');
+          } else if (resolvedDates.rangeStart && resolvedDates.rangeEnd) {
+            setInputValue(
+              `${formatDate(resolvedDates.rangeStart)} — ${formatDate(resolvedDates.rangeEnd)}`,
+            );
+          } else if (resolvedDates.rangeStart) {
+            setInputValue(formatDate(resolvedDates.rangeStart));
+          } else {
+            setInputValue('');
+          }
+        }
+
+        return resolvedDates;
+      },
+      [
+        range,
+        format,
+        modifyPickerValue,
+        onPickerChange,
+        shouldDeferPickerCommit,
+        formatDate,
+      ],
+    );
+
+    useEffect(() => {
+      if (isOpen) {
+        syncDraftFromValue();
+        return;
+      }
+
+      if (shouldDeferPickerCommit) {
+        syncDraftFromValue();
+      }
+    }, [isOpen, shouldDeferPickerCommit, syncDraftFromValue]);
 
     const _getDisplayValue = (): string => {
       if (!range) {
@@ -415,8 +546,12 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
       }
     };
 
-    // Синхронизируем inputValue с выбранными датами
+    // Синхронизируем inputValue с применённым значением (не с черновиком пикера)
     useEffect(() => {
+      if (shouldDeferPickerCommit && isOpen) {
+        return;
+      }
+
       if (!range) {
         setInputValue(selectedDate ? formatDate(selectedDate) : '');
       } else {
@@ -428,38 +563,35 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
           setInputValue('');
         }
       }
-    }, [selectedDate, rangeStart, rangeEnd, range, formatDate]);
-
-    // Используем хендлеры для работы с датами
+    }, [
+      selectedDate,
+      rangeStart,
+      rangeEnd,
+      range,
+      formatDate,
+      shouldDeferPickerCommit,
+      isOpen,
+    ]);
 
     const handleDayClick = (date: Date) => {
       if (!range) {
+        if (shouldDeferPickerCommit) {
+          applyPickerDraftUpdate(
+            { selectedDate: date, rangeStart: null, rangeEnd: null },
+            'pick',
+          );
+          return;
+        }
+
         setSelectedDate(date);
         setInputValue(formatDate(date));
-        if (onChange) {
-          onChange(toISODateString(date));
-        }
+        onChange?.(toISODateString(date));
         setIsOpen(false);
-      } else {
-        if (!rangeStart || (rangeStart && rangeEnd)) {
-          setRangeStart(date);
-          setCurrentDate(date); // Обновляем текущий месяц в календаре
-          setRangeEnd(null);
-          setTempRangeEnd(null);
-          setInputValue(formatDate(date));
-        } else {
-          if (date < rangeStart) {
-            setRangeStart(date);
-            setCurrentDate(date); // Обновляем текущий месяц в календаре
-            setRangeEnd(rangeStart);
-            setInputValue(`${formatDate(date)} — ${formatDate(rangeStart)}`);
-          } else {
-            setRangeEnd(date);
-            setTempRangeEnd(null);
-            setInputValue(`${formatDate(rangeStart)} — ${formatDate(date)}`);
-          }
-        }
+        return;
       }
+
+      const nextDraftDates = computeRangeDatesAfterDayClick(date, rangeStart, rangeEnd);
+      applyPickerDraftUpdate(nextDraftDates, 'pick');
     };
 
     const handleDayMouseEnter = (date: Date) => {
@@ -475,47 +607,73 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
     };
 
     /** Роллеры: одиночная дата без закрытия попапа; диапазон — та же логика, что у клика по дню */
-    const handleCalendarRollersDate = (d: Date) => {
+    const handleCalendarRollersDate = (pickedDate: Date) => {
       if (!range) {
-        setSelectedDate(d);
-        setInputValue(formatDate(d));
-        if (onChange) {
-          onChange(toISODateString(d));
+        if (shouldDeferPickerCommit) {
+          applyPickerDraftUpdate(
+            { selectedDate: pickedDate, rangeStart: null, rangeEnd: null },
+            'pick',
+          );
+          setCurrentDate(pickedDate);
+          return;
         }
-        setCurrentDate(d);
+
+        setSelectedDate(pickedDate);
+        setInputValue(formatDate(pickedDate));
+        onChange?.(toISODateString(pickedDate));
+        setCurrentDate(pickedDate);
         return;
       }
-      handleDayClick(d);
+
+      handleDayClick(pickedDate);
     };
 
     const handleApply = () => {
-      if (range && rangeStart && rangeEnd) {
-        if (onChange) {
-          onChange({
-            start: toISODateString(rangeStart),
-            end: toISODateString(rangeEnd),
+      if (range) {
+        if (!rangeStart || !rangeEnd) {
+          return;
+        }
+
+        const resolvedDates = applyPickerDraftUpdate(
+          { selectedDate: null, rangeStart, rangeEnd },
+          'apply',
+          { updateInputPreview: true },
+        );
+
+        if (resolvedDates.rangeStart && resolvedDates.rangeEnd) {
+          onChange?.({
+            start: toISODateString(resolvedDates.rangeStart),
+            end: toISODateString(resolvedDates.rangeEnd),
           });
         }
+      } else if (selectedDate) {
+        const resolvedDates = applyPickerDraftUpdate(
+          { selectedDate, rangeStart: null, rangeEnd: null },
+          'apply',
+          { updateInputPreview: true },
+        );
+
+        if (resolvedDates.selectedDate) {
+          onChange?.(toISODateString(resolvedDates.selectedDate));
+        }
       }
+
       setIsOpen(false);
     };
 
     const handleClear = () => {
+      applyPickerDraftUpdate(
+        { selectedDate: null, rangeStart: null, rangeEnd: null },
+        'clear',
+        { updateInputPreview: true },
+      );
+
       if (!range) {
-        setSelectedDate(null);
-        setInputValue('');
-        if (onChange) {
-          onChange('');
-        }
+        onChange?.('');
       } else {
-        setRangeStart(null);
-        setRangeEnd(null);
-        setTempRangeEnd(null);
-        setInputValue('');
-        if (onChange) {
-          onChange({ start: '', end: '' });
-        }
+        onChange?.({ start: '', end: '' });
       }
+
       setIsOpen(false);
     };
 
@@ -907,9 +1065,14 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
 
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
-        if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-          setIsOpen(false);
+        const target = event.target as Node;
+        if (
+          containerRef.current?.contains(target) ||
+          calendarPopupRef.current?.contains(target)
+        ) {
+          return;
         }
+        setIsOpen(false);
       };
 
       const handleEscape = (event: KeyboardEvent) => {
@@ -1082,72 +1245,89 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
               ) : null;
             })()}
         </DateInputFieldStack>
-
-        <CalendarPopup isOpen={isOpen} size={size} $calendarFullWidth={calendarFullWidth}>
-          {renderTopPanel && (
-            <div style={{ padding: '16px', borderBottom: '1px solid #e0e0e0' }}>
-              {renderTopPanel()}
-            </div>
-          )}
-
-          <Calendar
-            embedded
-            showTitle={false}
-            visibleMonth={currentDate}
-            onVisibleMonthChange={(monthStart) => setCurrentDate(monthStart)}
-            locale="ru-RU"
-            weekStartsOn={1}
-            headerMode="monthYear"
-            showMonthPicker
-            monthYearLayout={calendarMonthYearLayout}
-            showDateRollers={showDateRollers}
-            onRollersDateChange={handleCalendarRollersDate}
-            size={size}
-            disabled={disabled}
-            minDate={minDate}
-            maxDate={maxDate}
-            isDateDisabled={isDateDisabled}
-            selectionMode={range ? 'range' : 'single'}
-            {...(!range ? { value: selectedDate } : {})}
-            rangeStart={range ? rangeStart : null}
-            rangeEnd={range ? rangeEnd : null}
-            rangeHoverDate={range ? tempRangeEnd : null}
-            onSelectDate={handleDayClick}
-            onDayMouseEnter={handleDayMouseEnter}
-            onDayMouseLeave={handleDayMouseLeave}
-            weekdays={getWeekdayNames()}
-            footer={
-              <>
-                <Button
-                  variant={ButtonVariant.SECONDARY}
-                  size={size}
-                  type="button"
-                  onClick={handleClear}
-                >
-                  Очистить
-                </Button>
-                {range ? (
-                  <Button
-                    variant={ButtonVariant.PRIMARY}
-                    size={size}
-                    type="button"
-                    onClick={handleApply}
-                  >
-                    Применить
-                  </Button>
-                ) : null}
-              </>
-            }
-          />
-
-          {renderBottomPanel && (
-            <div style={{ padding: '16px', borderTop: '1px solid #e0e0e0' }}>
-              {renderBottomPanel()}
-            </div>
-          )}
-        </CalendarPopup>
       </InputContainerWithPadding>
     );
+
+    const calendarPopupPortal =
+      isOpen && floatingPortalRoot
+        ? createPortal(
+            <CalendarPopup
+              ref={calendarPopupRef}
+              isOpen={isOpen}
+              size={size}
+              $calendarFullWidth={calendarFullWidth}
+              $portaled
+              style={{
+                left: calendarPopupPosition.x,
+                top: calendarPopupPosition.y,
+                zIndex: floatingOverlayZIndex,
+              }}
+            >
+              {renderTopPanel && (
+                <div style={{ padding: '16px', borderBottom: '1px solid #e0e0e0' }}>
+                  {renderTopPanel()}
+                </div>
+              )}
+
+              <Calendar
+                embedded
+                showTitle={false}
+                visibleMonth={currentDate}
+                onVisibleMonthChange={(monthStart) => setCurrentDate(monthStart)}
+                locale="ru-RU"
+                weekStartsOn={1}
+                headerMode="monthYear"
+                showMonthPicker
+                monthYearLayout={calendarMonthYearLayout}
+                showDateRollers={showDateRollers}
+                onRollersDateChange={handleCalendarRollersDate}
+                size={size}
+                disabled={disabled}
+                minDate={minDate}
+                maxDate={maxDate}
+                isDateDisabled={isDateDisabled}
+                selectionMode={range ? 'range' : 'single'}
+                {...(!range ? { value: selectedDate } : {})}
+                rangeStart={range ? rangeStart : null}
+                rangeEnd={range ? rangeEnd : null}
+                rangeHoverDate={range ? tempRangeEnd : null}
+                onSelectDate={handleDayClick}
+                onDayMouseEnter={handleDayMouseEnter}
+                onDayMouseLeave={handleDayMouseLeave}
+                weekdays={getWeekdayNames()}
+                footer={
+                  <>
+                    <Button
+                      variant={ButtonVariant.SECONDARY}
+                      size={size}
+                      type="button"
+                      onClick={handleClear}
+                    >
+                      Очистить
+                    </Button>
+                    {range || shouldDeferPickerCommit ? (
+                      <Button
+                        variant={ButtonVariant.PRIMARY}
+                        size={size}
+                        type="button"
+                        onClick={handleApply}
+                      >
+                        {range ? 'Применить' : 'OK'}
+                      </Button>
+                    ) : null}
+                  </>
+                }
+              />
+
+              {renderBottomPanel && (
+                <div style={{ padding: '16px', borderTop: '1px solid #e0e0e0' }}>
+                  {renderBottomPanel()}
+                </div>
+              )}
+            </CalendarPopup>,
+            floatingPortalRoot,
+          )
+        : null;
 
     if (tooltip) {
       if (tooltipType === 'hint') {
@@ -1161,9 +1341,12 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
                 : HintPosition.RIGHT;
 
         return (
-          <Hint content={tooltip} placement={hintPosition} variant={HintVariant.DEFAULT}>
-            {dateInputContent}
-          </Hint>
+          <>
+            <Hint content={tooltip} placement={hintPosition} variant={HintVariant.DEFAULT}>
+              {dateInputContent}
+            </Hint>
+            {calendarPopupPortal}
+          </>
         );
       } else {
         const tooltipPos =
@@ -1176,14 +1359,22 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
                 : TooltipPosition.RIGHT;
 
         return (
-          <Tooltip content={tooltip} position={tooltipPos}>
-            {dateInputContent}
-          </Tooltip>
+          <>
+            <Tooltip content={tooltip} position={tooltipPos}>
+              {dateInputContent}
+            </Tooltip>
+            {calendarPopupPortal}
+          </>
         );
       }
     }
 
-    return dateInputContent;
+    return (
+      <>
+        {dateInputContent}
+        {calendarPopupPortal}
+      </>
+    );
   },
 );
 

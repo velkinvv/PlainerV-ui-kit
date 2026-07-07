@@ -24,6 +24,8 @@ import { getSheetOverlayMotion, getSheetPanelMotion, sheetSizeToCss } from './ha
 import { useOverlayVisibility } from '../../../hooks/useOverlayVisibility';
 import { useOverlayPortal } from '../../../hooks/useOverlayPortal';
 import { useOverlayPresentation } from '../../../hooks/useOverlayPresentation';
+import { FloatingOverlayLayerProvider } from '../../../contexts/FloatingOverlayLayerContext';
+import { ZIndexHandler } from '../../../handlers/uiHandlers';
 
 const DEFAULT_PLACEMENT = 'bottom' as const;
 
@@ -99,6 +101,19 @@ export const Sheet = forwardRef<HTMLElement, SheetProps>(
       overlayStyle,
       portalZIndex,
     });
+    const sheetOverlayZIndex = useMemo(() => {
+      if (portalZIndex !== undefined) {
+        return portalZIndex;
+      }
+
+      if (overlayInlineStyle?.zIndex !== undefined) {
+        return Number(overlayInlineStyle.zIndex);
+      }
+
+      return ZIndexHandler('modal');
+    }, [portalZIndex, overlayInlineStyle?.zIndex]);
+    const floatingPortalRoot =
+      typeof document !== 'undefined' ? document.body : null;
 
     const panelMotion = useMemo(
       () => getSheetPanelMotion(placement, Boolean(prefersReducedMotion)),
@@ -156,7 +171,11 @@ export const Sheet = forwardRef<HTMLElement, SheetProps>(
         data-sheet-overlay
         aria-hidden={ariaHidden}
       >
-        <SheetPanel
+        <FloatingOverlayLayerProvider
+          baseZIndex={sheetOverlayZIndex}
+          portalRoot={floatingPortalRoot}
+        >
+          <SheetPanel
           ref={setPanelRef}
           $widthCss={widthCss}
           $heightCss={heightCss}
@@ -191,6 +210,7 @@ export const Sheet = forwardRef<HTMLElement, SheetProps>(
             {children}
           </SheetBody>
         </SheetPanel>
+        </FloatingOverlayLayerProvider>
       </SheetOverlay>
     );
 

@@ -3,10 +3,18 @@ import React, { useState } from 'react';
 import { fn } from '@storybook/test';
 import { DateInput } from './DateInput';
 import { Size, IconSize } from '../../../../types/sizes';
-import type { DateTimeRange } from '../../../../types/ui';
+import type { DatePickerDraftContext, DateTimeRange } from '../../../../types/ui';
 import { Icon } from '../../Icon/Icon';
 import { DOC_DATE_INPUT } from '@/components/ui/storyDocs/uiKitDocs';
 import { dateInputStoriesStyles } from './DateInput.stories.styles';
+import {
+  createRangeEndPlusDaysModifier,
+  formatPickerDraftForDisplay,
+} from './DateInputPickerDraft.stories.helpers';
+import {
+  getStoryInfoBoxProps,
+  STORY_INFO_MUTED_CLASS_NAME,
+} from '../../../../handlers/inputFieldStories.styles';
 
 const meta: Meta<typeof DateInput> = {
   title: 'UI Kit/Inputs/DateInput',
@@ -111,6 +119,35 @@ const meta: Meta<typeof DateInput> = {
       control: { type: 'text' },
       description: 'Дополнительное имя поля формы',
     },
+    onPickerChange: {
+      action: 'pickerChange',
+      description:
+        'Изменения черновика в календаре до `onChange`. Второй аргумент — `DatePickerDraftContext` (`phase`, `range`, `format`).',
+      table: {
+        type: {
+          summary: '(draft: string | DateTimeRange, context: DatePickerDraftContext) => void',
+        },
+      },
+    },
+    modifyPickerValue: {
+      description:
+        'Модификатор черновика перед `onPickerChange`. Верните новое значение или `undefined`.',
+      table: {
+        type: {
+          summary:
+            '(draft: string | DateTimeRange, context: DatePickerDraftContext) => string | DateTimeRange | undefined',
+        },
+      },
+    },
+    deferPickerCommit: {
+      control: { type: 'boolean' },
+      description:
+        'Отложить запись в поле до «Применить» / «OK». По умолчанию `true`, если задан `onPickerChange` или `modifyPickerValue`.',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'true при колбэках черновика' },
+      },
+    },
   },
   args: {
     onChange: fn(),
@@ -210,7 +247,7 @@ export const Interactive: Story = {
     return (
       <div style={dateInputStoriesStyles.columnGap16}>
         <DateInput label="Дата" value={value} onChange={handleChange} placeholder="Выберите дату" />
-        <div style={dateInputStoriesStyles.infoBox}>
+        <div {...getStoryInfoBoxProps(dateInputStoriesStyles.infoBox)}>
           <strong>Выбранная дата:</strong> {value || 'Не выбрано'}
         </div>
       </div>
@@ -259,7 +296,7 @@ export const RangeInteractive: Story = {
           onChange={handleChange}
           placeholder="Выберите диапазон дат"
         />
-        <div style={dateInputStoriesStyles.infoBox}>
+        <div {...getStoryInfoBoxProps(dateInputStoriesStyles.infoBox)}>
           <strong>Выбранный диапазон:</strong>
           <br />
           Начало: {range.start || 'Не выбрано'}
@@ -268,6 +305,173 @@ export const RangeInteractive: Story = {
         </div>
       </div>
     );
+  },
+};
+
+/** Конец диапазона автоматически = начало + 7 дней (черновик до «Применить») */
+export const RangeWithModifyPickerValue: Story = {
+  name: 'Picker Draft / Range + modifyPickerValue (+7 дней)',
+  render: () => {
+    const [appliedRange, setAppliedRange] = useState({ start: '', end: '' });
+    const [pickerDraft, setPickerDraft] = useState<DateTimeRange>({ start: '', end: '' });
+    const [lastContext, setLastContext] = useState<DatePickerDraftContext | null>(null);
+
+    const handleChange = (newValue: string | DateTimeRange) => {
+      if (typeof newValue === 'object') {
+        setAppliedRange(newValue);
+      }
+    };
+
+    const handlePickerChange = (draft: string | DateTimeRange, context: DatePickerDraftContext) => {
+      if (typeof draft === 'object') {
+        setPickerDraft(draft);
+      }
+      setLastContext(context);
+    };
+
+    return (
+      <div style={dateInputStoriesStyles.columnGap16}>
+        <DateInput
+          range
+          label="Диапазон с автоконцом (+7 дней от начала)"
+          value={appliedRange}
+          onChange={handleChange}
+          onPickerChange={handlePickerChange}
+          modifyPickerValue={createRangeEndPlusDaysModifier(7)}
+          placeholder="Выберите начало диапазона"
+        />
+        <div {...getStoryInfoBoxProps(dateInputStoriesStyles.infoBox)}>
+          <strong>Применённое значение (onChange):</strong>
+          <br />
+          Начало: {appliedRange.start || '—'}
+          <br />
+          Конец: {appliedRange.end || '—'}
+        </div>
+        <div {...getStoryInfoBoxProps(dateInputStoriesStyles.infoBox)}>
+          <strong>Черновик пикера (onPickerChange):</strong>
+          <br />
+          {formatPickerDraftForDisplay(pickerDraft, true)}
+          {lastContext ? (
+            <>
+              <br />
+              <span
+                className={STORY_INFO_MUTED_CLASS_NAME}
+                style={dateInputStoriesStyles.smallNoteText}
+              >
+                phase: {lastContext.phase}, format: {lastContext.format}
+              </span>
+            </>
+          ) : null}
+        </div>
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Типичный сценарий модификатора: после выбора начала `modifyPickerValue` задаёт конец (+7 дней). В календаре виден черновик; в поле — только после «Применить».',
+      },
+    },
+  },
+};
+
+/** Одиночная дата: наблюдение за черновиком через onPickerChange */
+export const SinglePickerDraftOnPickerChange: Story = {
+  name: 'Picker Draft / Single + onPickerChange',
+  render: () => {
+    const [appliedValue, setAppliedValue] = useState('');
+    const [pickerDraft, setPickerDraft] = useState('');
+    const [lastPhase, setLastPhase] = useState<string>('—');
+
+    const handleChange = (newValue: string | DateTimeRange) => {
+      if (typeof newValue === 'string') {
+        setAppliedValue(newValue);
+      }
+    };
+
+    const handlePickerChange = (draft: string | DateTimeRange, context: DatePickerDraftContext) => {
+      setPickerDraft(typeof draft === 'string' ? draft : '');
+      setLastPhase(context.phase);
+    };
+
+    return (
+      <div style={dateInputStoriesStyles.columnGap16}>
+        <DateInput
+          label="Одиночная дата с отложенным коммитом"
+          value={appliedValue}
+          onChange={handleChange}
+          onPickerChange={handlePickerChange}
+          placeholder="Откройте календарь и нажмите OK"
+        />
+        <div {...getStoryInfoBoxProps(dateInputStoriesStyles.infoBox)}>
+          <strong>Применено (onChange):</strong> {appliedValue || '—'}
+        </div>
+        <div {...getStoryInfoBoxProps(dateInputStoriesStyles.infoBox)}>
+          <strong>Черновик (onPickerChange):</strong> {pickerDraft || '—'}
+          <br />
+          <span
+            className={STORY_INFO_MUTED_CLASS_NAME}
+            style={dateInputStoriesStyles.smallNoteText}
+          >
+            Последняя phase: {lastPhase}
+          </span>
+        </div>
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'С `onPickerChange` одиночная дата не применяется сразу: нужна кнопка OK. Текст поля не меняется, пока попап открыт.',
+      },
+    },
+  },
+};
+
+/** deferPickerCommit: false — черновик в календаре, но поле обновляется сразу */
+export const PickerDraftImmediatePreview: Story = {
+  name: 'Picker Draft / deferPickerCommit: false',
+  render: () => {
+    const [appliedRange, setAppliedRange] = useState({ start: '', end: '' });
+
+    const handleChange = (newValue: string | DateTimeRange) => {
+      if (typeof newValue === 'object') {
+        setAppliedRange(newValue);
+      }
+    };
+
+    return (
+      <div style={dateInputStoriesStyles.columnGap16}>
+        <DateInput
+          range
+          label="Модификатор +7 дней, поле обновляется сразу"
+          value={appliedRange}
+          onChange={handleChange}
+          modifyPickerValue={createRangeEndPlusDaysModifier(7)}
+          deferPickerCommit={false}
+          placeholder="Выберите начало диапазона"
+        />
+        <div {...getStoryInfoBoxProps(dateInputStoriesStyles.infoBox)}>
+          <strong>onChange (после «Применить»):</strong>
+          <br />
+          {formatPickerDraftForDisplay(appliedRange, true)}
+        </div>
+        <p style={dateInputStoriesStyles.smallNoteText}>
+          При <code>deferPickerCommit: false</code> текст поля следует за черновиком в попапе, но{' '}
+          <code>onChange</code> по-прежнему вызывается только по «Применить» (режим диапазона).
+        </p>
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Сравнение с отложенным коммитом: превью в поле обновляется при выборе, контролируемое значение — после «Применить».',
+      },
+    },
   },
 };
 
@@ -291,7 +495,7 @@ export const WithMinMaxDates: Story = {
           maxDate={maxDate}
           placeholder="Выберите дату в 2024 году"
         />
-        <div style={dateInputStoriesStyles.infoBox}>
+        <div {...getStoryInfoBoxProps(dateInputStoriesStyles.infoBox)}>
           <strong>Ограничения:</strong>
           <br />
           Минимальная дата: {minDate.toLocaleDateString('ru-RU')}
@@ -1882,7 +2086,7 @@ export const InputBehaviorDemo: Story = {
           helperText="Backspace и Delete теперь работают корректно"
         />
 
-        <div style={dateInputStoriesStyles.infoBoxWithTopMargin}>
+        <div {...getStoryInfoBoxProps(dateInputStoriesStyles.infoBoxWithTopMargin)}>
           <h4 style={dateInputStoriesStyles.heading14}>Исправления:</h4>
           <ul style={dateInputStoriesStyles.list12}>
             <li>✅ Нет автоматического заполнения при вводе одного символа</li>
@@ -2138,7 +2342,7 @@ export const IgnoreMaskCharactersDemo: Story = {
           helperText="Считаются только цифры, разделители игнорируются (8/8)"
         />
 
-        <div style={dateInputStoriesStyles.infoBoxWithTopMargin}>
+        <div {...getStoryInfoBoxProps(dateInputStoriesStyles.infoBoxWithTopMargin)}>
           <h4 style={dateInputStoriesStyles.heading14}>Сравнение:</h4>
           <ul style={dateInputStoriesStyles.list12}>
             <li>
@@ -2205,7 +2409,7 @@ export const CharacterCounterThresholdDemo: Story = {
           helperText="Счетчик никогда не показывается"
         />
 
-        <div style={dateInputStoriesStyles.infoBoxWithTopMargin}>
+        <div {...getStoryInfoBoxProps(dateInputStoriesStyles.infoBoxWithTopMargin)}>
           <h4 style={dateInputStoriesStyles.heading14}>Пороги видимости для дат:</h4>
           <ul style={dateInputStoriesStyles.list12}>
             <li>
@@ -2271,7 +2475,7 @@ export const AdditionalLabelDemo: Story = {
           helperText="Документ должен быть действителен на момент подачи заявления"
         />
 
-        <div style={dateInputStoriesStyles.infoBoxWithTopMargin}>
+        <div {...getStoryInfoBoxProps(dateInputStoriesStyles.infoBoxWithTopMargin)}>
           <h4 style={dateInputStoriesStyles.heading14}>Дополнительные метки для дат:</h4>
           <ul style={dateInputStoriesStyles.list12}>
             <li>

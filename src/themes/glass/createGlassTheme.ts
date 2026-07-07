@@ -7,6 +7,21 @@ import {
   getGlassSurfacePalette,
   type GlassPaletteVariant,
 } from '../../variables/glass';
+import { createGlassButtonThemeOverride } from './glassButtonVariants';
+import {
+  createGlassAvatarGroupThemeOverride,
+  createGlassAvatarThemeOverride,
+} from './glassAvatarVariants';
+import { createGlassBadgeThemeOverride } from './glassBadgeVariants';
+import { createGlassTagThemeOverride } from './glassTagVariants';
+import { createGlassPillThemeOverride } from './glassPillVariants';
+import { createGlassPaginationThemeOverride } from './glassPaginationVariants';
+import { createGlassToastThemeOverride } from './glassToastVariants';
+import { createGlassSnackbarThemeOverride } from './glassSnackbarVariants';
+import { createGlassTooltipThemeOverride } from './glassTooltipVariants';
+import { createGlassHintThemeOverride } from './glassHintVariants';
+import { createGlassAccordionThemeOverride } from './glassAccordionVariants';
+import { createGlassModalThemeOverride } from './glassModalVariants';
 import { glassBackdropFilters } from '../../variables/blur';
 
 /**
@@ -21,6 +36,7 @@ export function createGlassThemeOverride(paletteVariant: GlassPaletteVariant): T
   const {
     surface,
     surfaceElevated,
+    surfaceFloating,
     surfaceMuted,
     surfaceSubtle,
     border,
@@ -54,29 +70,23 @@ export function createGlassThemeOverride(paletteVariant: GlassPaletteVariant): T
     dropdowns: {
       variants: {
         default: {
-          background: surfaceElevated,
+          background: surfaceFloating,
           border: `1px solid ${borderSubtle}`,
         },
         elevated: {
-          background: surfaceElevated,
+          background: surfaceFloating,
           border: `1px solid ${borderSubtle}`,
         },
         outlined: {
-          background: surface,
+          background: surfaceFloating,
           border: `1px solid ${border}`,
         },
       },
       settings: {
-        backdropFilter: backdrop.subtle,
+        backdropFilter: backdrop.default,
       },
     },
-    modals: {
-      overlay: {
-        background:
-          paletteVariant === 'dark' ? 'rgba(0, 0, 0, 0.35)' : 'rgba(15, 23, 42, 0.18)',
-        backdropFilter: backdrop.strong,
-      },
-    },
+    modals: createGlassModalThemeOverride(paletteVariant),
     tables: {
       shell: {
         background: surfaceElevated,
@@ -96,25 +106,18 @@ export function createGlassThemeOverride(paletteVariant: GlassPaletteVariant): T
         oddRowBackground: surfaceSubtle,
       },
     },
-    hints: {
-      variants: {
-        default: {
-          background: surfaceElevated,
-          border: `1px solid ${borderSubtle}`,
-        },
-      },
-    },
-    buttons: {
-      variants: {
-        outline: {
-          background: surface,
-          border: `1px solid ${borderSubtle}`,
-        },
-        ghost: {
-          background: 'transparent',
-        },
-      },
-    },
+    hints: createGlassHintThemeOverride(paletteVariant),
+    accordions: createGlassAccordionThemeOverride(paletteVariant),
+    buttons: createGlassButtonThemeOverride(paletteVariant),
+    avatars: createGlassAvatarThemeOverride(paletteVariant),
+    avatarGroups: createGlassAvatarGroupThemeOverride(paletteVariant),
+    badges: createGlassBadgeThemeOverride(paletteVariant),
+    tags: createGlassTagThemeOverride(paletteVariant),
+    pills: createGlassPillThemeOverride(paletteVariant),
+    paginations: createGlassPaginationThemeOverride(paletteVariant),
+    toasts: createGlassToastThemeOverride(paletteVariant),
+    snackbars: createGlassSnackbarThemeOverride(paletteVariant),
+    tooltips: createGlassTooltipThemeOverride(paletteVariant),
   };
 }
 

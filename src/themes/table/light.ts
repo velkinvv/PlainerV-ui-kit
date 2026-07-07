@@ -8,8 +8,8 @@ import { lightShadows } from '../../variables/shadows';
  * Светлая тема для таблицы (`Table`, `DataGrid`): скругления, фоны, зебра, состояния строк.
  */
 export const lightTableTheme: TableTheme = {
-  /** Источник скругления таблицы (`tableBorderRadiusFromTheme`); по умолчанию как у Card MD. */
-  borderRadius: lightCardTheme.sizes[Size.MD].borderRadius,
+  /** Внешнее скругление оболочки таблицы — на ступень меньше, чем Card MD. */
+  borderRadius: lightCardTheme.sizes[Size.SM].borderRadius,
   shell: {
     border: `1px solid ${colors.grey[200]}`,
     background: colors.neutral[10],

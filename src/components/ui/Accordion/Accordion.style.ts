@@ -1,16 +1,76 @@
 import styled, { css } from 'styled-components';
 import { motion } from 'framer-motion';
 import { Size } from '../../../types/sizes';
+import type { AccordionTheme, Colors, ThemeColorScheme } from '../../../types/theme';
 import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
+import {
+  getAccordionPositionStyles,
+  getAccordionSurfaceTokens,
+  type AccordionItemPosition,
+} from '../../../handlers/accordionGlassHandlers';
+
+type AccordionStyledThemeSlice = {
+  mode: ThemeColorScheme;
+  colors: Colors;
+  accordions: AccordionTheme;
+};
+
+/**
+ * Контекст темы аккордеона для резолва glass-токенов.
+ * @param theme — styled-components theme
+ */
+const getAccordionThemeContext = (theme: AccordionStyledThemeSlice) => ({
+  mode: theme.mode,
+  colors: theme.colors,
+  accordions: theme.accordions,
+});
+
+/**
+ * CSS vibrancy для glass-аккордеона.
+ * @param theme — styled-components theme
+ */
+const accordionGlassBackdropCss = (theme: AccordionStyledThemeSlice) => {
+  const backdropFilter = theme.accordions?.settings?.backdropFilter;
+
+  return backdropFilter
+    ? css`
+        backdrop-filter: ${backdropFilter};
+        -webkit-backdrop-filter: ${backdropFilter};
+      `
+    : '';
+};
 
 /**
  * Контейнер аккордеона
+ * @param $firstItemBorderRadius — скругление верхних углов первого элемента
+ * @param $lastItemBorderRadius — скругление нижних углов последнего элемента
  */
-export const AccordionContainer = styled.div`
+export const AccordionContainer = styled.div<{
+  $firstItemBorderRadius?: boolean;
+  $lastItemBorderRadius?: boolean;
+}>`
   display: flex;
   flex-direction: column;
   gap: 0;
   width: 100%;
+
+  & > .ui-accordion-item:first-child {
+    ${({ $firstItemBorderRadius = true }) =>
+      !$firstItemBorderRadius &&
+      css`
+        border-top-left-radius: 0 !important;
+        border-top-right-radius: 0 !important;
+      `}
+  }
+
+  & > .ui-accordion-item:last-child {
+    ${({ $lastItemBorderRadius = true }) =>
+      !$lastItemBorderRadius &&
+      css`
+        border-bottom-left-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+      `}
+  }
 `;
 
 /**
@@ -19,7 +79,7 @@ export const AccordionContainer = styled.div`
 export const AccordionTrigger = styled.button<{ $size?: Size }>`
   width: 100%;
   padding: ${({ theme, $size = Size.MD }) => theme.accordions.sizes[$size].padding};
-  background: ${({ theme }) => theme.accordions.variants.default.background};
+  background: ${({ theme }) => getAccordionSurfaceTokens(getAccordionThemeContext(theme)).background};
   border: none;
   cursor: ${({ theme }) => theme.accordions.settings.cursor.clickable};
   display: flex;
@@ -29,15 +89,16 @@ export const AccordionTrigger = styled.button<{ $size?: Size }>`
   font-family: ${({ theme }) => theme.accordions.settings.fontFamily};
   font-size: ${({ theme, $size = Size.MD }) => theme.accordions.sizes[$size].fontSize};
   font-weight: ${({ theme }) => theme.accordions.settings.fontWeight.title};
-  color: ${({ theme }) => theme.accordions.variants.default.color};
+  color: ${({ theme }) => getAccordionSurfaceTokens(getAccordionThemeContext(theme)).textColor};
   line-height: ${({ theme, $size = Size.MD }) => theme.accordions.sizes[$size].lineHeight};
   transition: ${({ theme }) => theme.accordions.animations.transition};
   will-change: transform, background-color, color;
   user-select: ${({ theme }) => theme.accordions.settings.userSelect};
 
   &:hover {
-    background: ${({ theme }) => theme.accordions.variants.hover.background};
-    color: ${({ theme }) => theme.accordions.variants.hover.color};
+    background: ${({ theme }) =>
+      getAccordionSurfaceTokens(getAccordionThemeContext(theme)).hoverBackground};
+    color: ${({ theme }) => getAccordionSurfaceTokens(getAccordionThemeContext(theme)).textColor};
   }
   ${buildHoverPressMotionCss({
     hoverSelector: '&:hover',
@@ -54,7 +115,7 @@ export const AccordionTrigger = styled.button<{ $size?: Size }>`
     transition: ${({ theme }) => theme.accordions.animations.chevronTransition};
     width: ${({ theme, $size = Size.MD }) => theme.accordions.iconSizes[$size].width};
     height: ${({ theme, $size = Size.MD }) => theme.accordions.iconSizes[$size].height};
-    color: ${({ theme }) => theme.accordions.variants.default.color};
+    color: ${({ theme }) => getAccordionSurfaceTokens(getAccordionThemeContext(theme)).textColor};
   }
 
   &[data-state='open'] .chevron {
@@ -66,7 +127,8 @@ export const AccordionTrigger = styled.button<{ $size?: Size }>`
  * Контент аккордеона
  */
 export const AccordionContent = styled(motion.div)`
-  background: ${({ theme }) => theme.accordions.variants.default.background} !important;
+  background: ${({ theme }) =>
+    getAccordionSurfaceTokens(getAccordionThemeContext(theme)).background} !important;
   overflow: ${({ theme }) => theme.accordions.settings.overflow};
   position: relative;
   z-index: ${({ theme }) => theme.accordions.settings.zIndex};
@@ -78,15 +140,16 @@ export const AccordionContent = styled(motion.div)`
  * @param position - позиция элемента (start, center, last)
  */
 export const AccordionItemContainer = styled.div<{
-  $position?: 'start' | 'center' | 'last';
+  $position?: AccordionItemPosition;
 }>`
   overflow: ${({ theme }) => theme.accordions.settings.overflow};
-  background: ${({ theme }) => theme.accordions.variants.default.background};
+  background: ${({ theme }) => getAccordionSurfaceTokens(getAccordionThemeContext(theme)).background};
+  ${({ theme }) => accordionGlassBackdropCss(getAccordionThemeContext(theme))}
 
   /* Границы и радиусы согласно позиции элемента */
   ${({ $position, theme }) => {
     const position = $position || 'center';
-    const positionStyles = theme.accordions.positions[position];
+    const positionStyles = getAccordionPositionStyles(position, getAccordionThemeContext(theme));
 
     return css`
       border-radius: ${positionStyles.borderRadius};
@@ -114,7 +177,7 @@ export const ContentInner = styled.div<{
   font-family: ${({ theme }) => theme.accordions.settings.fontFamily};
   font-size: ${({ theme, $size = Size.MD }) => theme.accordions.contentSizes[$size].fontSize};
   font-weight: ${({ theme }) => theme.accordions.settings.fontWeight.content};
-  color: ${({ theme }) => theme.accordions.variants.default.color};
+  color: ${({ theme }) => getAccordionSurfaceTokens(getAccordionThemeContext(theme)).textColor};
   line-height: ${({ theme, $size = Size.MD }) => theme.accordions.contentSizes[$size].lineHeight};
   text-align: ${({ $align = 'left' }) => $align};
 `;
@@ -145,7 +208,7 @@ export const AccordionTitle = styled.div<{
   font-family: ${({ theme }) => theme.accordions.settings.fontFamily};
   font-size: ${({ theme, $size = Size.MD }) => theme.accordions.sizes[$size].fontSize};
   font-weight: ${({ theme }) => theme.accordions.settings.fontWeight.title};
-  color: ${({ theme }) => theme.accordions.variants.default.color};
+  color: ${({ theme }) => getAccordionSurfaceTokens(getAccordionThemeContext(theme)).textColor};
   line-height: ${({ theme, $size = Size.MD }) => theme.accordions.sizes[$size].lineHeight};
   text-align: ${({ $align = 'left' }) => $align};
 `;
@@ -161,7 +224,7 @@ export const AccordionSubtitle = styled.div<{
   font-family: ${({ theme }) => theme.accordions.settings.fontFamily};
   font-size: ${({ theme, $size = Size.MD }) => theme.accordions.subtitleSizes[$size].fontSize};
   font-weight: ${({ theme }) => theme.accordions.settings.fontWeight.subtitle};
-  color: ${({ theme }) => theme.accordions.variants.default.color};
+  color: ${({ theme }) => getAccordionSurfaceTokens(getAccordionThemeContext(theme)).textColor};
   line-height: ${({ theme, $size = Size.MD }) => theme.accordions.subtitleSizes[$size].lineHeight};
   text-align: ${({ $align = 'left' }) => $align};
 `;

@@ -1,5 +1,22 @@
-import type { CSSProperties } from 'react';
+import type { CSSProperties, HTMLAttributes } from 'react';
 import { lightTheme } from '@/themes/themes';
+
+/** Класс светлого инфо-блока в сторис (тёмный текст поверх Docs glassDark). */
+export const STORY_INFO_BOX_CLASS_NAME = 'plainerv-story-info-box';
+
+/** Muted-текст внутри {@link STORY_INFO_BOX_CLASS_NAME}. */
+export const STORY_INFO_MUTED_CLASS_NAME = 'plainerv-story-info-muted';
+
+/**
+ * Пропсы div для инфо-блока сторис: класс + inline-стили.
+ * @param boxStyle — стиль из `inputFieldStoriesStyles.infoBox` / `infoBoxWithTopMargin`
+ */
+export function getStoryInfoBoxProps(boxStyle: CSSProperties): HTMLAttributes<HTMLDivElement> {
+  return {
+    className: STORY_INFO_BOX_CLASS_NAME,
+    style: boxStyle,
+  };
+}
 
 /**
  * Общие CSS-объекты для storybook-историй полей ввода даты/времени (верстка демо, инфо-блоки, нативные кнопки).
@@ -58,6 +75,7 @@ export const inputFieldStoriesStyles = {
     marginTop: '12px',
     padding: '12px',
     backgroundColor: lightTheme.colors.backgroundTertiary,
+    color: lightTheme.colors.text,
     borderRadius: '8px',
     fontSize: '12px',
     overflow: 'auto',
@@ -71,6 +89,7 @@ export const inputFieldStoriesStyles = {
     maxHeight: 120,
     overflow: 'auto',
     backgroundColor: lightTheme.colors.backgroundTertiary,
+    color: lightTheme.colors.text,
     padding: '8px',
     borderRadius: '8px',
   } satisfies CSSProperties,
@@ -139,6 +158,8 @@ export const inputFieldStoriesStyles = {
   infoBox: {
     padding: '12px',
     backgroundColor: lightTheme.colors.backgroundTertiary,
+    color: lightTheme.colors.text,
+    border: `1px solid ${lightTheme.colors.borderSecondary}`,
     borderRadius: '4px',
   } satisfies CSSProperties,
 
@@ -146,6 +167,8 @@ export const inputFieldStoriesStyles = {
     marginTop: '16px',
     padding: '12px',
     backgroundColor: lightTheme.colors.backgroundTertiary,
+    color: lightTheme.colors.text,
+    border: `1px solid ${lightTheme.colors.borderSecondary}`,
     borderRadius: '4px',
   } satisfies CSSProperties,
 

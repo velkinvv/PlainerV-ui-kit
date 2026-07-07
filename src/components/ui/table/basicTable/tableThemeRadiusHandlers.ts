@@ -14,7 +14,7 @@ export const PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR = '--plainer-table-header-b
 export const PLAINER_TABLE_BORDER_RADIUS_CSS_VAR = '--plainer-table-border-radius';
 
 /** Запасной радиус, если в теме нет токенов таблицы и карточки. */
-const TABLE_THEME_FALLBACK_BORDER_RADIUS = '16px';
+const TABLE_THEME_FALLBACK_BORDER_RADIUS = '12px';
 
 /**
  * Скругление из ступени **Card** (для `shellInset` и явного размера карточки).

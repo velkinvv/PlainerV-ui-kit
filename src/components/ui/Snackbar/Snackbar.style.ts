@@ -60,6 +60,17 @@ export const SnackbarBar = styled.div<{ $tokens: SnackbarSurfaceTokens }>`
   background: ${({ $tokens }) => $tokens.surface};
   color: ${({ $tokens }) => $tokens.messageColor};
   width: 100%;
+
+  ${({ theme }) => {
+    const backdropFilter = theme.snackbars?.settings?.backdropFilter;
+
+    return backdropFilter
+      ? css`
+          backdrop-filter: ${backdropFilter};
+          -webkit-backdrop-filter: ${backdropFilter};
+        `
+      : '';
+  }}
 `;
 
 /**

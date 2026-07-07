@@ -1,14 +1,20 @@
 import styled, { type DefaultTheme } from 'styled-components';
 import { motion } from 'framer-motion';
-import { ThemeColorScheme } from '../../../types/theme';
+import { ThemeColorScheme, type ThemeType } from '../../../types/theme';
 import { ModalSize } from '../../../types/sizes';
 import {
   getModalContainerStyles,
-  getModalOverlayStyles,
   getModalComponentStyles,
   getModalSize,
 } from '../../../handlers/modalThemeHandlers';
+import {
+  getModalContainerBackground,
+  getModalOverlayTokens,
+  getModalThemeContext,
+} from '../../../handlers/modalGlassHandlers';
 import { glassSurfaceMaterialCss } from '../../../handlers/glassSurfaceHandlers';
+
+type ModalStyledThemeSlice = Pick<ThemeType, 'mode' | 'colors' | 'modals' | 'surfaceMaterial'>;
 
 /**
  * Оверлей модального окна
@@ -73,7 +79,7 @@ export const Overlay = styled(motion.div)<{
     $overlayCss?: OverlayCss;
     $overlayVariant?: OverlayVariant;
   }) => {
-    const overlayStyles = getModalOverlayStyles(theme.modals);
+    const overlayStyles = getModalOverlayTokens(getModalThemeContext(theme));
     const overrides = getModalThemeOverrides(theme);
     const variantOverrides = getOverlayVariantFromTheme(theme, $overlayVariant);
     const variantPreset = overlayVariantPresets[$overlayVariant];
@@ -109,7 +115,7 @@ export const Overlay = styled(motion.div)<{
  * @param size - размер модального окна
  */
 export const ModalContainer = styled(motion.div)<{ size: ModalSize; $mobile?: boolean }>`
-  background-color: ${({ theme }) => theme.colors.card};
+  background-color: ${({ theme }) => getModalContainerBackground(getModalThemeContext(theme))};
   color: ${({ theme }) => theme.colors.text};
   box-shadow: ${({ theme }) =>
     theme.mode === ThemeColorScheme.DARK
@@ -117,7 +123,7 @@ export const ModalContainer = styled(motion.div)<{ size: ModalSize; $mobile?: bo
       : theme.surfaceMaterial
         ? theme.boxShadow.modal
         : '0 16px 32px rgba(0, 0, 0, 0.08)'};
-  overflow: hidden;
+  overflow: visible;
   display: flex;
   flex-direction: column;
   ${({ theme }) => glassSurfaceMaterialCss(theme)}

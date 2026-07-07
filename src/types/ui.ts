@@ -1,3 +1,4 @@
+import type { Colors } from './theme';
 import type React from 'react';
 import type { Size, IconSize, ModalSize } from './sizes';
 import type { Target, Transition } from 'framer-motion';
@@ -2285,17 +2286,490 @@ export interface FloatingMenuDragHandleProps extends BaseComponentProps {
 export type FloatingMenuDividerProps = BaseComponentProps;
 
 /**
+ * Размер панели действий: высота кнопок и overflow-меню (XL — 56px, L — 48px, M — 40px, S — 32px).
+ */
+export enum ActionBarSize {
+  XL = 'XL',
+  LG = 'LG',
+  MD = 'MD',
+  SM = 'SM',
+}
+
+/**
+ * Элемент конфигурации ActionBar.
+ * @property itemId — уникальный идентификатор действия
+ * @property withDivider — разделитель после кнопки (логическая группа)
+ */
+export interface ActionBarItemDefinition {
+  itemId: string;
+  withDivider?: boolean;
+}
+
+/**
+ * Опции рендера пункта overflow-меню ActionBar.
+ * @property closeMenu — закрыть выпадающее меню (после выбора действия)
+ */
+export interface ActionBarDropMenuRenderOptions {
+  closeMenu?: () => void;
+}
+
+/**
+ * Панель действий: горизонтальный ряд иконок с группировкой и overflow-меню при нехватке ширины.
+ * @property size — размер кнопок (по умолчанию XL)
+ * @property items — порядок действий и разделителей
+ * @property renderActionBarItem — рендер видимой кнопки по `itemId`
+ * @property renderDropMenuItem — рендер строки overflow-меню по `itemId`
+ * @property itemIsDisabled — проверка disabled для overflow-пунктов
+ * @property overflowMenuAriaLabel — подпись кнопки «ещё» и меню (по умолчанию «Дополнительные действия»)
+ * @property aria-label — подпись для `role="toolbar"`
+ */
+export interface ActionBarProps
+  extends
+    Omit<BaseComponentProps, 'children'>,
+    Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+  size?: ActionBarSize;
+  items: ActionBarItemDefinition[];
+  renderActionBarItem: (itemId: string) => React.ReactNode;
+  renderDropMenuItem: (itemId: string, options?: ActionBarDropMenuRenderOptions) => React.ReactNode;
+  itemIsDisabled?: (itemId: string) => boolean;
+  overflowMenuAriaLabel?: string;
+  'aria-label': string;
+}
+
+/**
+ * Кнопка действия на панели (обёртка над IconButton с размером из ActionBar).
+ * @property barSize — размер панели (влияет на габариты кнопки)
+ */
+export interface ActionBarItemProps extends IconButtonProps {
+  barSize?: ActionBarSize;
+}
+
+/**
+ * Вертикальный разделитель между группами действий.
+ * @property barSize — высота линии разделителя
+ */
+export interface ActionBarDividerProps extends BaseComponentProps {
+  barSize?: ActionBarSize;
+}
+
+/**
+ * Содержимое строки overflow-меню (иконка + подпись).
+ * @property barSize — размер иконки в пункте меню
+ */
+export interface ActionBarDropMenuItemProps extends BaseComponentProps {
+  barSize?: ActionBarSize;
+  children?: React.ReactNode;
+}
+
+/** Анимация смены слайдов карусели */
+export enum CarouselAnimation {
+  /** Горизонтальный сдвиг ленты */
+  SLIDE = 'slide',
+  /** Плавное затухание */
+  FADE = 'fade',
+  /** Масштаб с затуханием */
+  SCALE = 'scale',
+  /** 3D coverflow — перспектива и поворот боковых слайдов */
+  COVERFLOW = 'coverflow',
+  /** 3D flip — переворот карточек при смене слайда */
+  FLIP = 'flip',
+  /** Stack — активный слайд уезжает в сторону и уходит под следующий */
+  STACK = 'stack',
+  /** Горизонтальный slide с parallax-слоями (эквивалент slide + parallax) */
+  PARALLAX = 'parallax',
+}
+
+/** Способ навигации по слайдам */
+export enum CarouselNavigation {
+  /** Только стрелки «назад / вперёд» */
+  ARROWS = 'arrows',
+  /** Только точки-индикаторы */
+  DOTS = 'dots',
+  /** Стрелки и точки */
+  BOTH = 'both',
+  /** Без видимых контролов (свайп / автопрокрутка / программно) */
+  NONE = 'none',
+  /** Только полоса миниатюр под основной областью */
+  THUMBNAILS = 'thumbnails',
+}
+
+/** Расположение точек-индикаторов относительно области слайдов */
+export enum CarouselDotsPosition {
+  /** Поверх нижней части слайдов */
+  INNER = 'inner',
+  /** Под областью слайдов */
+  OUTER = 'outer',
+}
+
+/** Ориентация карусели */
+export enum CarouselOrientation {
+  /** Горизонтальная прокрутка (по умолчанию) */
+  HORIZONTAL = 'horizontal',
+  /** Вертикальная прокрутка */
+  VERTICAL = 'vertical',
+}
+
+/** Расположение полоски прогресса слайдов */
+export enum CarouselProgressBarPosition {
+  /** Поверх верхней части области слайдов */
+  INNER = 'inner',
+  /** Под основной областью слайдов */
+  OUTER = 'outer',
+}
+
+/** Метаданные одного слайда карусели */
+export type CarouselSlideInfo = {
+  /** Индекс слайда с 0 */
+  slideIndex: number;
+  /** Пользовательский идентификатор слайда (`Carousel.Slide slideId`) */
+  slideId?: string;
+  /** Пользовательская подпись слайда */
+  slideLabel?: string;
+  /** URL основного изображения */
+  imageSrc?: string;
+  /** alt изображения */
+  imageAlt?: string;
+  /** Текст подписи из Carousel.Caption */
+  caption?: string;
+  /** URL миниатюры для полосы навигации */
+  thumbnailSrc?: string;
+};
+
+/** Событие смены активного слайда */
+export type CarouselSlideChangeEvent = {
+  /** Индекс активного слайда (с 0) */
+  activeIndex: number;
+  /** Данные активного слайда */
+  current: CarouselSlideInfo;
+  /** Слайд перед текущим в порядке карусели; null на первом слайде без loop */
+  previous: CarouselSlideInfo | null;
+  /** Слайд после текущего; null на последнем слайде без loop */
+  next: CarouselSlideInfo | null;
+};
+
+/** Событие клика по слайду */
+export type CarouselSlideClickEvent = {
+  /** Данные слайда, по которому кликнули */
+  slide: CarouselSlideInfo;
+  /** Нативное событие мыши */
+  nativeEvent: React.MouseEvent<HTMLElement>;
+};
+
+/**
+ * Карусель изображений и произвольного контента в слайдах.
+ * @property activeIndex — активный слайд (контролируемый режим, с 0)
+ * @property defaultActiveIndex — начальный слайд (неконтролируемый режим)
+ * @property onActiveIndexChange — колбэк смены слайда (только индекс)
+ * @property onSlideChange — колбэк смены слайда с данными current / previous / next
+ * @property onSlideClick — колбэк клика по слайду
+ * @property onThumbnailClick — колбэк клика по миниатюре (превью) слайда
+ * @property onTitleClick — колбэк клика по заголовку (`Carousel.Caption`) слайда
+ * @property random — случайный порядок отображения слайдов при монтировании
+ * @property loop — зацикливание (после последнего — первый)
+ * @property animation — тип анимации смены слайдов
+ * @property animationDuration — длительность анимации в мс
+ * @property navigation — набор контролов навигации
+ * @property dotsPosition — inner / outer для точек
+ * @property thumbnails — полоса миниатюр под основной областью (можно вместе со стрелками / точками)
+ * @property thumbnailHeight — высота миниатюры в px (по умолчанию 72)
+ * @property showCaption — показывать подписи `Carousel.Caption` (по умолчанию true)
+ * @property fullscreen — включить полноэкранный просмотр слайда
+ * @property fullscreenOpenAriaLabel — подпись кнопки открытия полноэкранного режима
+ * @property fullscreenCloseAriaLabel — подпись кнопки закрытия полноэкранного режима
+ * @property onFullscreenChange — колбэк смены состояния полноэкранного режима
+ * @property autoplay — автоматическая смена слайдов
+ * @property autoplayInterval — интервал автопрокрутки в мс
+ * @property pauseOnHover — пауза автопрокрутки при наведении
+ * @property pauseOnFocus — пауза при фокусе внутри карусели
+ * @property swipeEnabled — свайп на touch / pointer
+ * @property aspectRatio — соотношение сторон области слайдов (например `16 / 9`)
+ * @property height — фиксированная высота области (альтернатива aspectRatio)
+ * @property size — размер контролов и скругления
+ * @property aria-label — обязательная подпись region
+ */
+export interface CarouselProps extends BaseComponentProps {
+  activeIndex?: number;
+  defaultActiveIndex?: number;
+  onActiveIndexChange?: (activeIndex: number) => void;
+  /** Колбэк смены активного слайда с id, индексом и соседними слайдами */
+  onSlideChange?: (event: CarouselSlideChangeEvent) => void;
+  /** Колбэк клика по области слайда */
+  onSlideClick?: (event: CarouselSlideClickEvent) => void;
+  /** Колбэк клика по миниатюре (превью) слайда */
+  onThumbnailClick?: (event: CarouselSlideClickEvent) => void;
+  /** Колбэк клика по заголовку слайда (`Carousel.Caption`) */
+  onTitleClick?: (event: CarouselSlideClickEvent) => void;
+  /** Случайный порядок отображения слайдов (перемешивание при монтировании и смене набора) */
+  random?: boolean;
+  loop?: boolean;
+  animation?: CarouselAnimation;
+  animationDuration?: number;
+  navigation?: CarouselNavigation;
+  dotsPosition?: CarouselDotsPosition;
+  /** Полоса миниатюр под основной областью */
+  thumbnails?: boolean;
+  /** Высота миниатюры в px */
+  thumbnailHeight?: number;
+  /** Показывать подписи слайдов (`Carousel.Caption`) */
+  showCaption?: boolean;
+  /** Включить полноэкранный просмотр активного слайда */
+  fullscreen?: boolean;
+  /** Подпись кнопки открытия полноэкранного режима */
+  fullscreenOpenAriaLabel?: string;
+  /** Подпись кнопки закрытия полноэкранного режима */
+  fullscreenCloseAriaLabel?: string;
+  /** Колбэк смены состояния полноэкранного режима */
+  onFullscreenChange?: (isFullscreenOpen: boolean) => void;
+  /** Управляемый slideId активного слайда */
+  activeSlideId?: string;
+  /** slideId активного слайда по умолчанию (uncontrolled) */
+  defaultSlideId?: string;
+  /** Колбэк смены activeSlideId */
+  onActiveSlideIdChange?: (activeSlideId: string | undefined) => void;
+  /** Радиус видимых слайдов вокруг активного (lazy render); undefined — все слайды */
+  visibleSlidesRange?: number;
+  /** Предзагружать изображения соседних слайдов */
+  preloadAdjacentSlides?: boolean;
+  /** Seed для детерминированного shuffle при random=true */
+  randomSeed?: number;
+  /** Включить навигацию с клавиатуры на основной карусели */
+  keyboardEnabled?: boolean;
+  /** aria-label кнопки «предыдущий слайд» */
+  previousSlideAriaLabel?: string;
+  /** aria-label кнопки «следующий слайд» */
+  nextSlideAriaLabel?: string;
+  /** aria-label списка точек */
+  dotsListAriaLabel?: string;
+  /** aria-label кнопки точки */
+  slideDotAriaLabel?: (slideIndex: number, slideCount: number) => string;
+  /** aria-label кнопки паузы автопрокрутки */
+  autoplayPauseAriaLabel?: string;
+  /** aria-label кнопки запуска автопрокрутки */
+  autoplayPlayAriaLabel?: string;
+  /** aria-label полноэкранного оверлея */
+  fullscreenOverlayAriaLabel?: string;
+  /** Текст счётчика слайдов в fullscreen */
+  fullscreenCounterAriaLabel?: (activeIndex: number, slideCount: number) => string;
+  /** Ориентация карусели: горизонтальная или вертикальная */
+  orientation?: CarouselOrientation;
+  /** Показывать сегментированную полоску прогресса слайдов */
+  showProgressBar?: boolean;
+  /** Расположение полоски прогресса */
+  progressBarPosition?: CarouselProgressBarPosition;
+  /** aria-label полоски прогресса для screen readers */
+  progressBarAriaLabel?: string;
+  /** Линейный прогресс до следующего слайда при autoplay */
+  showAutoplayProgress?: boolean;
+  /** Показывать обратный отсчёт в секундах рядом с прогрессом autoplay */
+  showAutoplayCountdown?: boolean;
+  /** aria-label линейного прогресса autoplay */
+  autoplayProgressAriaLabel?: string;
+  /** Включить parallax-эффект слоёв слайда (фон медленнее, оверлеи быстрее) */
+  parallax?: boolean;
+  /** Коэффициент parallax фона по умолчанию (0…1, медленнее слайда) */
+  parallaxBackgroundRatio?: number;
+  /** Кoэффициент parallax переднего плана по умолчанию (>1, быстрее слайда) */
+  parallaxForegroundRatio?: number;
+  autoplay?: boolean;
+  autoplayInterval?: number;
+  pauseOnHover?: boolean;
+  pauseOnFocus?: boolean;
+  swipeEnabled?: boolean;
+  aspectRatio?: string;
+  height?: string | number;
+  size?: Size;
+  'aria-label': string;
+  /**
+   * Слайды из данных: при непустом массиве рендерятся как **Carousel.Slide** с теми же полями;
+   * **children** для списка слайдов не используется.
+   */
+  items?: CarouselItemDefinition[];
+}
+
+/**
+ * Описание слайда для пропа **items** у **Carousel**.
+ * @property slideId — идентификатор для колбэков и controlled `activeSlideId`
+ * @property slideLabel — подпись для aria-label слайда
+ * @property thumbnailSrc — URL миниатюры для полосы навигации
+ * @property imageSrc — URL изображения (рендерит **Carousel.Image**, если нет **children**)
+ * @property imageAlt — alt изображения (рекомендуется при **imageSrc**)
+ * @property objectFit — object-fit для автоматического **Carousel.Image**
+ * @property loading — lazy / eager для **Carousel.Image**
+ * @property imageThumbnailSrc — thumbnailSrc у **Carousel.Image**
+ * @property parallax — parallax для автоматического **Carousel.Image**
+ * @property caption — подпись под изображением (**Carousel.Caption**)
+ * @property children — произвольное содержимое слайда (приоритет над **imageSrc** / **caption**)
+ * @property className — CSS-класс оболочки **Carousel.Slide**
+ */
+export interface CarouselItemDefinition {
+  slideId?: string;
+  slideLabel?: string;
+  thumbnailSrc?: string;
+  imageSrc?: string;
+  imageAlt?: string;
+  objectFit?: 'cover' | 'contain' | 'fill' | 'none';
+  loading?: 'lazy' | 'eager';
+  imageThumbnailSrc?: string;
+  parallax?: boolean | number;
+  caption?: React.ReactNode;
+  children?: React.ReactNode;
+  className?: string;
+}
+
+/**
+ * Слайд карусели.
+ * @property slideId — пользовательский идентификатор слайда (для колбэков onSlideChange / onSlideClick)
+ * @property slideLabel — подпись для `aria-label` («Слайд N из M» генерируется автоматически, если не задано)
+ * @property thumbnailSrc — URL миниатюры (перекрывает src из Carousel.Image)
+ */
+export interface CarouselSlideProps extends BaseComponentProps {
+  slideId?: string;
+  slideLabel?: string;
+  thumbnailSrc?: string;
+}
+
+/**
+ * Изображение внутри слайда карусели.
+ * @property src — URL изображения
+ * @property alt — текстовая альтернатива (обязательна для a11y)
+ * @property objectFit — CSS object-fit
+ * @property loading — lazy / eager
+ * @property thumbnailSrc — отдельный URL для полосы миниатюр (если отличается от src)
+ */
+export interface CarouselImageProps extends BaseComponentProps {
+  src: string;
+  alt: string;
+  objectFit?: 'cover' | 'contain' | 'fill' | 'none';
+  loading?: 'lazy' | 'eager';
+  thumbnailSrc?: string;
+  /** Parallax: true — дефолт фона, false — отключить, число — коэффициент 0…2 */
+  parallax?: boolean | number;
+}
+
+/** Подпись под изображением в слайде */
+export interface CarouselCaptionProps extends BaseComponentProps {
+  children?: React.ReactNode;
+}
+
+/** Расположение оверлея поверх слайда */
+export enum CarouselSlideOverlayPlacement {
+  /** Горизонтальная полоса сверху */
+  TOP = 'top',
+  /** Горизонтальная полоса снизу */
+  BOTTOM = 'bottom',
+  /** Вертикальная полоса слева */
+  LEFT = 'left',
+  /** Вертикальная полоса справа */
+  RIGHT = 'right',
+}
+
+/** Выравнивание содержимого внутри зоны оверлея */
+export enum CarouselSlideOverlayAlign {
+  /** Начало оси: слева для top/bottom, сверху для left/right */
+  START = 'start',
+  /** По центру */
+  CENTER = 'center',
+  /** Конец оси: справа для top/bottom, снизу для left/right */
+  END = 'end',
+}
+
+/**
+ * Оверлей поверх слайда (кнопки, бейджи и т.д.).
+ * @property placement — зона: top, bottom, left, right
+ * @property align — выравнивание внутри зоны: start, center, end
+ * @property children — содержимое или render prop `(slide: CarouselSlideInfo) => ReactNode`
+ */
+export interface CarouselSlideOverlayProps extends Omit<BaseComponentProps, 'children'> {
+  placement: CarouselSlideOverlayPlacement;
+  align?: CarouselSlideOverlayAlign;
+  /** Parallax: true — дефолт переднего плана, false — отключить, число — коэффициент 0…2 */
+  parallax?: boolean | number;
+  children?: React.ReactNode | ((slide: CarouselSlideInfo) => React.ReactNode);
+}
+
+/** Расположение контентной панели поверх слайда */
+export enum CarouselSlideOverlayPanelPlacement {
+  /** Полоса контента сверху слайда */
+  TOP = 'top',
+  /** Блок по центру слайда */
+  CENTER = 'center',
+  /** Полоса контента снизу слайда */
+  BOTTOM = 'bottom',
+  /** На весь слайд — контент выравнивается через `align` */
+  STRETCH = 'stretch',
+}
+
+/** Градиентная подложка под текст для читаемости на изображении */
+export enum CarouselSlideOverlayPanelGradient {
+  /** Без подложки */
+  NONE = 'none',
+  /** Затемнение сверху */
+  TOP = 'top',
+  /** Затемнение снизу */
+  BOTTOM = 'bottom',
+  /** Равномерное затемнение на весь слайд */
+  FULL = 'full',
+}
+
+/**
+ * Контентная панель поверх слайда (заголовок, текст, кнопки и др.).
+ * @property placement — зона панели: top, center, bottom, stretch
+ * @property align — выравнивание содержимого: start, center, end
+ * @property gradient — градиентная подложка для читаемости текста
+ * @property children — содержимое или render prop `(slide: CarouselSlideInfo) => ReactNode`
+ */
+export interface CarouselSlideOverlayPanelProps extends Omit<BaseComponentProps, 'children'> {
+  placement?: CarouselSlideOverlayPanelPlacement;
+  align?: CarouselSlideOverlayAlign;
+  gradient?: CarouselSlideOverlayPanelGradient;
+  /** Parallax: true — дефолт панели, false — отключить, число — коэффициент 0…2 */
+  parallax?: boolean | number;
+  children?: React.ReactNode | ((slide: CarouselSlideInfo) => React.ReactNode);
+}
+
+/** Пропсы заголовка внутри `Carousel.OverlayPanel` */
+export interface CarouselSlideOverlayPanelTitleProps extends BaseComponentProps {
+  children?: React.ReactNode;
+}
+
+/** Пропсы текста внутри `Carousel.OverlayPanel` */
+export interface CarouselSlideOverlayPanelTextProps extends BaseComponentProps {
+  children?: React.ReactNode;
+}
+
+/** Пресет parallax-слоя внутри слайда */
+export type CarouselParallaxLayerPresetName = 'background' | 'content' | 'overlayPanel' | 'overlay';
+
+/**
+ * Parallax-обёртка для произвольного содержимого слайда.
+ * @property parallax — true / false / коэффициент 0…2
+ * @property layer — пресет коэффициента: background, content, overlayPanel, overlay
+ * @property children — содержимое слоя
+ */
+export interface CarouselParallaxLayerProps extends BaseComponentProps {
+  parallax?: boolean | number;
+  layer?: CarouselParallaxLayerPresetName;
+  children?: React.ReactNode;
+}
+
+/**
  * Пропсы аккордеона
  * @property defaultOpen - Открыт ли по умолчанию
  * @property allowMultiple - Позволяет открывать несколько элементов одновременно
  * @property autoClose - Автоматически закрывать другие элементы при открытии нового
  * @property onChange - Обработчик изменения состояния
+ * @property firstItemBorderRadius - Скругление верхних углов у первого элемента (по умолчанию `true`)
+ * @property lastItemBorderRadius - Скругление нижних углов у последнего элемента (по умолчанию `true`)
  */
 export interface AccordionProps extends BaseComponentProps {
   defaultOpen?: boolean;
   allowMultiple?: boolean; // Позволяет открывать несколько элементов одновременно
   autoClose?: boolean; // Автоматически закрывать другие элементы при открытии нового
   onChange?: (isOpen: boolean) => void;
+  /** Если `false`, у первого элемента аккордеона убираются верхние скругления */
+  firstItemBorderRadius?: boolean;
+  /** Если `false`, у последнего элемента аккордеона убираются нижние скругления */
+  lastItemBorderRadius?: boolean;
 }
 
 /**
@@ -2490,6 +2964,30 @@ export interface CalendarProps
   showDateRollers?: boolean;
   monthYearLayout?: CalendarMonthYearLayout;
   onRollersDateChange?: (date: Date) => void;
+  /**
+   * Изменения выбора до `onChange` / `onRangeChange`.
+   * Не используется, если задан `onSelectDate` (режим встраивания в DateInput / DateTimeInput).
+   */
+  onPickerChange?: (draft: string | DateTimeRange, context: DatePickerDraftContext) => void;
+  /**
+   * Модификатор черновика перед `onPickerChange`.
+   * Верните новое значение или `undefined`, чтобы оставить черновик без изменений.
+   */
+  modifyPickerValue?: (
+    draft: string | DateTimeRange,
+    context: DatePickerDraftContext,
+  ) => string | DateTimeRange | undefined;
+  /**
+   * Не вызывать `onChange` / `onRangeChange` до кнопки «OK» в футере.
+   * По умолчанию `true`, если задан `onPickerChange` или `modifyPickerValue` (и нет `onSelectDate`).
+   */
+  deferPickerCommit?: boolean;
+  /**
+   * Коммит диапазона в standalone-режиме (`selectionMode="range"`, без `onSelectDate`).
+   * @param start — начало диапазона
+   * @param end — конец диапазона
+   */
+  onRangeChange?: (start: Date, end: Date) => void;
 }
 
 /**
@@ -3512,49 +4010,138 @@ export interface DateTimeRange {
 }
 
 /**
- * Пропсы компонента ввода даты и времени
- * @property value - Значение даты/времени
- * @property onChange - Обработчик изменения
- * @property label - Метка (`ReactNode`)
- * @property placeholder - Плейсхолдер
- * @property disabled - Отключить поле ввода
- * @property size - Размер поля ввода
- * @property error - Сообщение об ошибке
- * @property type - Тип ввода (date, time, datetime)
- * @property range - Режим диапазона
- * @property startValue - Начальное значение диапазона
- * @property endValue - Конечное значение диапазона
- * @property onRangeChange - Обработчик изменения диапазона
- * @property showIcon - Показывать ли иконку
+ * Пропсы поля даты и времени (`DateTimeInput`).
+ * Объединяет календарь из **DateInput** и выбор времени из **TimeInput** в одном попапе.
+ * Крестик очистки: `displayClearIcon`, `onClearIconClick`, `clearIconProps` из `BaseInputProps`.
+ *
+ * ### Черновик пикера
+ * - `onPickerChange` — колбэк изменений в попапе до `onChange` (см. `DateTimePickerDraftContext`).
+ * - `modifyPickerValue` — модификатор черновика перед `onPickerChange`.
+ * - `deferPickerCommit` — отложить запись в поле до «Применить» / «OK`.
  */
-export interface DateTimeInputProps extends BaseComponentProps {
-  value?: string;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  label?: ReactNode;
-  placeholder?: string;
-  disabled?: boolean;
+export interface DateTimeInputProps extends Omit<BaseInputProps, 'value' | 'onChange' | 'size'> {
+  value?: string | DateTimeRange;
+  onChange?: (value: string | DateTimeRange) => void;
+  /** Размер поля (в `DateTimeInput` по умолчанию `Size.SM`) */
   size?: Size;
-  error?: string;
-  type?: 'date' | 'time' | 'datetime';
+  /** Режим: `false` — одно значение, `true` — диапазон `{ start, end }` */
+  range?: boolean;
+  minDate?: Date;
+  maxDate?: Date;
   showIcon?: boolean;
+  icon?: React.ReactNode;
+  renderTopPanel?: () => React.ReactNode;
+  renderBottomPanel?: () => React.ReactNode;
+  status?: 'error' | 'success' | 'warning';
+  disabledDates?: Date[];
+  disabledDays?: number[];
+  disabledMonths?: number[];
+  disabledYears?: number[];
+  showSeconds?: boolean;
+  minuteStep?: number;
+  secondStep?: number;
+  disabledTimes?: string[];
+  disabledHours?: number[];
+  disabledMinutes?: number[];
+  disabledSeconds?: number[];
+  /** Формат отображения (по умолчанию `DD.MM.YYYY HH:mm`) */
+  format?: string;
+  showDateRollers?: boolean;
+  calendarMonthYearLayout?: 'combined' | 'split';
+  calendarFullWidth?: boolean;
+  prefix?: React.ReactNode;
+  suffix?: React.ReactNode;
+  /**
+   * Изменения в попапе до записи в `onChange` поля.
+   * При каждом выборе даты или времени; с `deferPickerCommit` поле обновляется только по «Применить» / «OK».
+   */
+  onPickerChange?: (draft: string | DateTimeRange, context: DateTimePickerDraftContext) => void;
+  /**
+   * Модификатор черновика пикера (например, сдвинуть конец диапазона от начала).
+   * Верните новое значение или `undefined`, чтобы оставить черновик без изменений.
+   */
+  modifyPickerValue?: (
+    draft: string | DateTimeRange,
+    context: DateTimePickerDraftContext,
+  ) => string | DateTimeRange | undefined;
+  /**
+   * Не применять выбор пикера к полю до «Применить» / «OK».
+   * По умолчанию `true`, если задан `onPickerChange` или `modifyPickerValue`.
+   */
+  deferPickerCommit?: boolean;
 }
 
-export interface DateTimeInputRangeProps extends BaseComponentProps {
+/**
+ * Пропсы `DateTimeInputRange` — алиас для `DateTimeInput` с `range: true`.
+ */
+export interface DateTimeInputRangeProps extends Omit<
+  DateTimeInputProps,
+  'range' | 'value' | 'onChange'
+> {
   value?: DateTimeRange;
   onChange?: (range: DateTimeRange) => void;
-  label?: ReactNode;
-  placeholder?: string;
-  disabled?: boolean;
-  size?: Size;
-  error?: string;
-  type?: 'date' | 'time' | 'datetime';
-  showIcon?: boolean;
+}
+
+/**
+ * Фаза изменения черновика в календаре `DateInput`.
+ */
+export type DatePickerDraftPhase = 'pick' | 'apply' | 'clear';
+
+/**
+ * Фаза изменения черновика в пикере `TimeInput`.
+ */
+export type TimePickerDraftPhase = 'pick' | 'apply' | 'clear';
+
+/**
+ * Фаза изменения черновика в пикере `DateTimeInput`.
+ */
+export type DateTimePickerDraftPhase = 'pick' | 'apply' | 'clear';
+
+/**
+ * Контекст колбэков `onPickerChange` / `modifyPickerValue` у `DateInput`.
+ * @property phase — этап: выбор, применение или очистка
+ * @property range — режим диапазона
+ * @property format — формат отображения поля
+ */
+export interface DatePickerDraftContext {
+  phase: DatePickerDraftPhase;
+  range: boolean;
+  format: string;
+}
+
+/**
+ * Контекст колбэков `onPickerChange` / `modifyPickerValue` у `TimeInput`.
+ * @property phase — этап: выбор, применение или очистка
+ * @property range — режим диапазона
+ * @property format — формат отображения поля
+ */
+export interface TimePickerDraftContext {
+  phase: TimePickerDraftPhase;
+  range: boolean;
+  format: string;
+}
+
+/**
+ * Контекст колбэков `onPickerChange` / `modifyPickerValue` у `DateTimeInput`.
+ * @property phase — этап: выбор, применение или очистка
+ * @property range — режим диапазона
+ * @property format — формат отображения поля
+ */
+export interface DateTimePickerDraftContext {
+  phase: DateTimePickerDraftPhase;
+  range: boolean;
+  format: string;
 }
 
 /**
  * Пропсы поля даты (`DateInput`).
  * Крестик очистки: `displayClearIcon`, `onClearIconClick`, `clearIconProps` из `BaseInputProps`.
  * Составное поле (InputEx): `prefix`, `suffix` — те же слоты, что у `Input` (см. `InputFieldShell`).
+ *
+ * ### Черновик пикера
+ * - `onPickerChange` — колбэк изменений в календаре до `onChange` (см. `DatePickerDraftContext`).
+ * - `modifyPickerValue` — модификатор черновика перед `onPickerChange`.
+ * - `deferPickerCommit` — отложить запись в поле до «Применить» / «OK`.
  */
 export interface DatePickerProps extends Omit<BaseInputProps, 'value' | 'onChange' | 'size'> {
   value?: string | DateTimeRange;
@@ -3585,6 +4172,24 @@ export interface DatePickerProps extends Omit<BaseInputProps, 'value' | 'onChang
   prefix?: React.ReactNode;
   /** Слот справа от поля даты в одной рамке (как `Input.suffix`). */
   suffix?: React.ReactNode;
+  /**
+   * Изменения в календаре до записи в `onChange` поля.
+   * Для диапазона — при каждом выборе дня; для одиночной даты — если включён отложенный коммит.
+   */
+  onPickerChange?: (draft: string | DateTimeRange, context: DatePickerDraftContext) => void;
+  /**
+   * Модификатор черновика пикера (например, сдвинуть конец диапазона от начала).
+   * Верните новое значение или `undefined`, чтобы оставить черновик без изменений.
+   */
+  modifyPickerValue?: (
+    draft: string | DateTimeRange,
+    context: DatePickerDraftContext,
+  ) => string | DateTimeRange | undefined;
+  /**
+   * Не применять выбор календаря к полю до «Применить» / «OK».
+   * По умолчанию `true`, если задан `onPickerChange` или `modifyPickerValue`.
+   */
+  deferPickerCommit?: boolean;
 }
 
 /**
@@ -3617,6 +4222,11 @@ export interface TimeRange {
  * @property disabledSeconds - Массив дизейбленных секунд (числа от 0 до 59)
  * @remarks Крестик очистки: `displayClearIcon`, `onClearIconClick` и `clearIconProps` из `BaseInputProps`.
  * Составное поле: `prefix`, `suffix` — как у `Input` (`InputFieldShell`).
+ *
+ * ### Черновик пикера
+ * - `onPickerChange` — колбэк изменений в пикере до `onChange` (см. `TimePickerDraftContext`).
+ * - `modifyPickerValue` — модификатор черновика перед `onPickerChange`.
+ * - `deferPickerCommit` — отложить запись в поле до «Применить» / «OK`.
  */
 export interface TimeInputProps extends Omit<BaseInputProps, 'value' | 'onChange' | 'size'> {
   value?: string | TimeRange;
@@ -3643,6 +4253,24 @@ export interface TimeInputProps extends Omit<BaseInputProps, 'value' | 'onChange
   prefix?: React.ReactNode;
   /** Слот справа от поля времени в одной рамке (как `Input.suffix`). */
   suffix?: React.ReactNode;
+  /**
+   * Изменения в пикере до записи в `onChange` поля.
+   * Для диапазона — при каждом выборе часа/минуты/секунды; для одиночного времени — если включён отложенный коммит.
+   */
+  onPickerChange?: (draft: string | TimeRange, context: TimePickerDraftContext) => void;
+  /**
+   * Модификатор черновика пикера (например, сдвинуть конец диапазона от начала).
+   * Верните новое значение или `undefined`, чтобы оставить черновик без изменений.
+   */
+  modifyPickerValue?: (
+    draft: string | TimeRange,
+    context: TimePickerDraftContext,
+  ) => string | TimeRange | undefined;
+  /**
+   * Не применять выбор пикера к полю до «Применить» / «OK».
+   * По умолчанию `true`, если задан `onPickerChange` или `modifyPickerValue`.
+   */
+  deferPickerCommit?: boolean;
 }
 
 /**
@@ -4095,11 +4723,16 @@ export interface TableContainerProps extends BaseComponentProps {
  * @property striped - Чередование фона строк в `tbody`; по умолчанию `false` — фон строк как у карточки
  * @property columnDividers - Тонкая вертикальная линия между колонками (`border-inline-end` у ячеек, кроме последней в строке); по умолчанию `true`
  * @property surfaceBackgrounds - Переопределяет фоны из `TableContainer`; иначе из контекста оболочки
+ * @property rowColorMap - Карта ключ → CSS-цвет; в `TableRow` передаётся ключ через `rowColorKey`
+ * @property columnColorMap - Карта ключ → CSS-цвет; в `TableCell` передаётся ключ через `columnColorKey`
  * @property className - Доп. класс
  * @property children - `TableHead`, `TableBody`, …
  * @property style - Инлайн-стили таблицы
  */
-export interface TableProps
+export interface TableProps<
+  RowColorKey extends string = string,
+  ColumnColorKey extends string = string,
+>
   extends
     BaseComponentProps,
     Omit<React.TableHTMLAttributes<HTMLTableElement>, 'children' | 'className' | 'style'> {
@@ -4109,6 +4742,10 @@ export interface TableProps
   /** Вертикальные разделители между колонками; по умолчанию включены */
   columnDividers?: boolean;
   surfaceBackgrounds?: TableSurfaceBackgroundsInput;
+  /** Карта цветов фона строк; ключ передаётся в `TableRow rowColorKey` */
+  rowColorMap?: TableRowColorMap<RowColorKey>;
+  /** Карта цветов фона колонок; ключ передаётся в `TableCell columnColorKey` */
+  columnColorMap?: TableColumnColorMap<ColumnColorKey>;
   style?: React.CSSProperties;
 }
 
@@ -4150,13 +4787,19 @@ export interface TableFooterProps
  * @property hover - Подсветка при наведении (по умолчанию true для body-строк)
  * @property disabled - Пониженная непрозрачность (disabled-состояние макета)
  * @property dragging - Строка удерживается при перетаскивании (источник HTML5 DnD): приглушение и подсказка рамкой
+ * @property rowColor - CSS-цвет фона строки (уже резолвленный; приоритетнее `rowColorKey`)
+ * @property rowColorKey - Ключ из `rowColorMap` родительской `Table` / значение `row.rowColor` в DataGrid
  */
-export interface TableRowProps
+export interface TableRowProps<RowColorKey extends string = string>
   extends BaseComponentProps, React.HTMLAttributes<HTMLTableRowElement> {
   selected?: boolean;
   hover?: boolean;
   disabled?: boolean;
   dragging?: boolean;
+  /** CSS-цвет фона строки (явный, без резолва через карту) */
+  rowColor?: string;
+  /** Ключ цвета из `rowColorMap` таблицы */
+  rowColorKey?: RowColorKey;
   style?: React.CSSProperties;
 }
 
@@ -4172,8 +4815,10 @@ export type TableCellVariant = 'head' | 'body' | 'footer';
  * @property activeColumn - Для шапки: усиленная нижняя граница активной сортируемой колонки (макет Figma)
  * @property headerMaxLines - Только шапка: максимум строк текста с многоточием (`line-clamp`); без пропа — одна строка (`nowrap`)
  * @property colSpan / rowSpan / scope — стандартные атрибуты таблицы
+ * @property columnColor - CSS-цвет фона ячейки/колонки (явный; приоритетнее `columnColorKey`)
+ * @property columnColorKey - Ключ из `columnColorMap` родительской `Table`
  */
-export interface TableCellProps
+export interface TableCellProps<ColumnColorKey extends string = string>
   extends BaseComponentProps, Omit<React.TdHTMLAttributes<HTMLTableCellElement>, 'align'> {
   align?: 'inherit' | 'left' | 'center' | 'right' | 'justify';
   component?: React.ElementType;
@@ -4186,6 +4831,10 @@ export interface TableCellProps
   colSpan?: number;
   rowSpan?: number;
   scope?: string;
+  /** CSS-цвет фона ячейки (явный, без резолва через карту) */
+  columnColor?: string;
+  /** Ключ цвета из `columnColorMap` таблицы */
+  columnColorKey?: ColumnColorKey;
   style?: React.CSSProperties;
 }
 
@@ -4285,11 +4934,106 @@ export interface TableSortLabelProps
 /** Идентификатор строки в DataGrid */
 export type DataGridRowId = string;
 
+/** Резолвер цвета фона: CSS-строка или функция от палитры UI-kit */
+export type TableColorResolver = string | ((colors: Colors) => string);
+
+/** @deprecated Алиас `TableColorResolver` для фона строк */
+export type TableRowColorResolver = TableColorResolver;
+
+/** @deprecated Алиас `TableColorResolver` для фона колонок */
+export type TableColumnColorResolver = TableColorResolver;
+
+/**
+ * Карта ключ → цвет фона (строка или `(colors) => string`).
+ */
+export type TableColorMap<ColorKey extends string = string> = Readonly<
+  Partial<Record<ColorKey, TableColorResolver>>
+>;
+
+/**
+ * Карта ключ → цвет фона строки для **DataGrid** / **Table**.
+ * Ключи совпадают со значениями `row[rowColorField]` (по умолчанию `rowColor`).
+ */
+export type TableRowColorMap<RowColorKey extends string = string> = TableColorMap<RowColorKey>;
+
+/**
+ * Карта ключ → цвет фона колонки для **DataGrid** / **Table**.
+ * Ключи совпадают с `columns[].columnColor` или `TableCell columnColorKey`.
+ */
+export type TableColumnColorMap<ColumnColorKey extends string = string> =
+  TableColorMap<ColumnColorKey>;
+
 /** Минимальная строка: обязательный `id` */
-export interface DataGridBaseRow {
+export interface DataGridBaseRow<RowColorKey extends string = string> {
   id: DataGridRowId;
+  /** Ключ из `rowColorMap` таблицы (не CSS-цвет) */
+  rowColor?: RowColorKey;
   [key: string]: unknown;
 }
+
+/**
+ * Строка DataGrid с типизированным ключом `rowColor`.
+ * @typeParam Row — поля строки без `id` и `rowColor`
+ * @typeParam RowColorKey — допустимые ключи `rowColor` / `rowColorMap`
+ */
+export type DataGridRowWithColors<
+  Row extends Record<string, unknown>,
+  RowColorKey extends string,
+> = Omit<Row, 'rowColor' | 'id'> & DataGridBaseRow<RowColorKey>;
+
+/**
+ * Пропсы DataGrid с согласованными `rowColor` в `rows` и `rowColorMap`.
+ */
+export type DataGridWithRowColors<
+  Row extends Record<string, unknown>,
+  RowColorKey extends string,
+> = DataGridProps<DataGridRowWithColors<Row, RowColorKey>, RowColorKey, string>;
+
+/**
+ * Колонка DataGrid с типизированным ключом `columnColor`.
+ */
+export type DataGridColumnWithColors<
+  Row extends DataGridBaseRow = DataGridBaseRow,
+  ColumnColorKey extends string = string,
+> = DataGridColumn<Row, ColumnColorKey>;
+
+/**
+ * Пропсы DataGrid с согласованными `columnColor` в `columns` и `columnColorMap`.
+ */
+export type DataGridWithColumnColors<
+  Row extends Record<string, unknown>,
+  ColumnColorKey extends string,
+> = DataGridProps<DataGridBaseRow & Row, string, ColumnColorKey>;
+
+/**
+ * Пропсы DataGrid с типизированными картами цветов строк и колонок.
+ */
+export type DataGridWithRowAndColumnColors<
+  Row extends Record<string, unknown>,
+  RowColorKey extends string,
+  ColumnColorKey extends string,
+> = DataGridProps<DataGridRowWithColors<Row, RowColorKey>, RowColorKey, ColumnColorKey>;
+
+/**
+ * Пропсы Table с типизированной картой цветов строк.
+ */
+export type TableWithRowColors<RowColorKey extends string> = TableProps<RowColorKey, string>;
+
+/**
+ * Пропсы Table с типизированной картой цветов колонок.
+ */
+export type TableWithColumnColors<ColumnColorKey extends string> = TableProps<
+  string,
+  ColumnColorKey
+>;
+
+/**
+ * Пропсы Table с типизированными картами цветов строк и колонок.
+ */
+export type TableWithRowAndColumnColors<
+  RowColorKey extends string,
+  ColumnColorKey extends string,
+> = TableProps<RowColorKey, ColumnColorKey>;
 
 /** Направление сортировки в модели грида */
 export type DataGridSortDirection = 'asc' | 'desc';
@@ -4593,7 +5337,10 @@ export interface DataGridRowDragStartParams {
 }
 
 /** Описание колонки грида (поле, заголовок, рендер ячейки) */
-export interface DataGridColumn<Row extends DataGridBaseRow = DataGridBaseRow> {
+export interface DataGridColumn<
+  Row extends DataGridBaseRow = DataGridBaseRow,
+  ColumnColorKey extends string = string,
+> {
   /** Ключ поля в строке (строка допускает вложенные пути через точку, напр. `user.name`) */
   field: keyof Row | string;
   /** Заголовок колонки */
@@ -4623,6 +5370,10 @@ export interface DataGridColumn<Row extends DataGridBaseRow = DataGridBaseRow> {
   render?: (params: DataGridRenderCellParams<Row>) => ReactNode;
   /** Не участвует в перестановке колонок drag-and-drop */
   disableReorder?: boolean;
+  /** Ключ из `columnColorMap` таблицы (не CSS-цвет) */
+  columnColor?: ColumnColorKey;
+  /** Скрыть колонку в UI (например служебное поле `rowColor`) */
+  hide?: boolean;
   /** Не показывать ручку изменения ширины при `enableColumnResize` и `onColumnResize` */
   disableResize?: boolean;
   /** Максимум строк заголовка; перекрывает `headerMaxLines` у `DataGrid`, если задано */
@@ -4835,10 +5586,12 @@ export interface DataGridExpandedRowChangeParams {
  * @property size — `Size` дизайн-системы → плотность `Table` и размеры контролов
  */
 export interface DataGridProps<
-  Row extends DataGridBaseRow = DataGridBaseRow,
+  Row extends DataGridBaseRow<string> = DataGridBaseRow,
+  RowColorKey extends string = string,
+  ColumnColorKey extends string = string,
 > extends BaseComponentProps {
   tableId: string;
-  columns: readonly DataGridColumn<Row>[];
+  columns: readonly DataGridColumn<Row, ColumnColorKey>[];
   rows?: readonly Row[];
   totalRows: number;
   getRowId?: (row: Row) => DataGridRowId;
@@ -4947,8 +5700,23 @@ export interface DataGridProps<
   statusMessageVariant?: DataGridStatusMessageVariant;
   /** Свой рендер полосы сообщения над данными */
   renderStatusMessage?: () => React.ReactNode;
-  /** Цвет фона строки; например по статусу из `row` */
+  /** Цвет фона строки; например по статусу из `row` (возвращает CSS-цвет) */
   rowBackgroundColorByStatus?: (row: Row) => string | undefined;
+  /**
+   * Карта ключ → цвет фона строки. В `rows` передаётся ключ (`rowColor` по умолчанию),
+   * значение резолвится через эту карту и палитру UI-kit.
+   */
+  rowColorMap?: TableRowColorMap<RowColorKey>;
+  /**
+   * Имя поля строки с ключом цвета (по умолчанию `rowColor`).
+   * Используется после `rowBackgroundColorByStatus`, если тот не вернул цвет.
+   */
+  rowColorField?: keyof Row | string;
+  /**
+   * Карта ключ → цвет фона колонки. В `columns[].columnColor` передаётся ключ,
+   * значение резолвится через эту карту и палитру UI-kit.
+   */
+  columnColorMap?: TableColumnColorMap<ColumnColorKey>;
   expandedRowIds?: ReadonlySet<DataGridRowId> | readonly DataGridRowId[];
   getRowExpandable?: (row: Row) => boolean;
   /**

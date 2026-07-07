@@ -51,7 +51,7 @@ export function createGlassColors(paletteVariant: GlassPaletteVariant): Colors {
     border: glassPalette.borderHairline,
     borderSecondary: glassPalette.borderSubtle,
     borderTertiary: glassPalette.border,
-    borderHover: isDarkBase ? 'rgba(255, 255, 255, 0.22)' : 'rgba(0, 0, 0, 0.12)',
+    borderHover: isDarkBase ? 'rgba(255, 255, 255, 0.16)' : 'rgba(0, 0, 0, 0.08)',
 
     success: isDarkBase ? colors.green[400] : colors.green[600],
     successHover: isDarkBase ? colors.green[300] : colors.green[700],

@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useTheme } from 'styled-components';
 
 import clsx from 'clsx';
 
@@ -12,9 +13,11 @@ import {
   isClickInsideDropdown,
 } from '../Dropdown/handlers';
 import { PopoverSurface } from './Popover.style';
-
-const defaultPortalRoot = (): HTMLElement | null =>
-  typeof document !== 'undefined' ? document.body : null;
+import {
+  resolveFloatingOverlayPortalRoot,
+  resolveFloatingOverlayZIndex,
+} from '../../../handlers/floatingOverlayHandlers';
+import { useFloatingOverlayLayer } from '../../../contexts/FloatingOverlayLayerContext';
 
 /**
  * Всплывающая панель с произвольным содержимым у триггера.
@@ -72,6 +75,12 @@ export const Popover: React.FC<PopoverProps> = ({
 }) => {
   const rootRef = useRef<HTMLDivElement>(null);
   const surfaceRef = useRef<HTMLDivElement>(null);
+  const theme = useTheme();
+  const floatingOverlayLayer = useFloatingOverlayLayer();
+  const floatingOverlayZIndex = resolveFloatingOverlayZIndex(
+    floatingOverlayLayer.minimumZIndex,
+    theme.dropdowns?.settings?.zIndex,
+  );
   const isControlled = openControlled !== undefined;
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const isOpen = isControlled ? Boolean(openControlled) : internalOpen;
@@ -186,7 +195,10 @@ export const Popover: React.FC<PopoverProps> = ({
     ...restTriggerWrapperProps
   } = triggerWrapperProps ?? {};
 
-  const portalTarget = portalContainer ?? defaultPortalRoot();
+  const portalTarget = resolveFloatingOverlayPortalRoot(
+    portalContainer,
+    floatingOverlayLayer.portalRoot,
+  );
 
   const positionMode = inline ? 'absolute' : 'fixed';
 
@@ -202,6 +214,7 @@ export const Popover: React.FC<PopoverProps> = ({
       $positionMode={positionMode}
       $contentWidth={contentWidth}
       $contentMaxHeight={contentMaxHeight}
+      $overlayZIndex={floatingOverlayZIndex}
     >
       {children}
     </PopoverSurface>

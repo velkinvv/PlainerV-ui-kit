@@ -234,3 +234,13 @@ html[data-theme='dark'] .sbdocs a {
 html[data-theme='dark'] .sbdocs a:hover {
   color: var(--plainerv-sb-docs-link-hover);
 }
+
+/* Инфо-блоки в сторис: светлая подложка + тёмный текст (перебивает Docs glassDark) */
+.plainerv-story-info-box,
+.plainerv-story-info-box strong {
+  color: #212121 !important;
+}
+
+.plainerv-story-info-muted {
+  color: #616161 !important;
+}

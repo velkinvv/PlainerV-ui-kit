@@ -4,7 +4,16 @@ import { TimeInput } from './TimeInput';
 import { Size, IconSize } from '../../../../types/sizes';
 import { Icon } from '../../Icon/Icon';
 import { DOC_TIME_INPUT } from '@/components/ui/storyDocs/uiKitDocs';
+import {
+  getStoryInfoBoxProps,
+  STORY_INFO_MUTED_CLASS_NAME,
+} from '../../../../handlers/inputFieldStories.styles';
 import { timeInputStoriesStyles } from './TimeInput.stories.styles';
+import type { TimePickerDraftContext, TimeRange } from '../../../../types/ui';
+import {
+  createRangeEndPlusHoursModifier,
+  formatTimePickerDraftForDisplay,
+} from './TimeInputPickerDraft.stories.helpers';
 
 const meta: Meta<typeof TimeInput> = {
   title: 'UI Kit/Inputs/TimeInput',
@@ -121,6 +130,35 @@ const meta: Meta<typeof TimeInput> = {
       control: { type: 'text' },
       description: 'Дополнительное имя поля формы',
     },
+    onPickerChange: {
+      action: 'pickerChange',
+      description:
+        'Изменения черновика в пикере до `onChange`. Второй аргумент — `TimePickerDraftContext`.',
+      table: {
+        type: {
+          summary: '(draft: string | TimeRange, context: TimePickerDraftContext) => void',
+        },
+      },
+    },
+    modifyPickerValue: {
+      description:
+        'Модификатор черновика перед `onPickerChange`. Верните новое значение или `undefined`.',
+      table: {
+        type: {
+          summary:
+            '(draft: string | TimeRange, context: TimePickerDraftContext) => string | TimeRange | undefined',
+        },
+      },
+    },
+    deferPickerCommit: {
+      control: { type: 'boolean' },
+      description:
+        'Отложить запись в поле до «Применить» / «OK». По умолчанию `true`, если задан `onPickerChange` или `modifyPickerValue`.',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'true при колбэках черновика' },
+      },
+    },
   },
   args: {
     clearIconProps: {},
@@ -159,6 +197,110 @@ export const Range: Story = {
     range: true,
     placeholder: 'Выберите диапазон времени',
     onChange: (value) => console.log('Time range changed:', value),
+  },
+};
+
+/** Конец диапазона = начало + 2 часа (черновик до «Применить») */
+export const RangeWithModifyPickerValue: Story = {
+  name: 'Picker Draft / Range + modifyPickerValue (+2 часа)',
+  render: () => {
+    const [appliedRange, setAppliedRange] = useState<TimeRange>({ start: '', end: '' });
+    const [pickerDraft, setPickerDraft] = useState<TimeRange>({ start: '', end: '' });
+    const [lastContext, setLastContext] = useState<TimePickerDraftContext | null>(null);
+
+    const handleChange = (newValue: string | TimeRange) => {
+      if (typeof newValue === 'object') {
+        setAppliedRange(newValue);
+      }
+    };
+
+    const handlePickerChange = (draft: string | TimeRange, context: TimePickerDraftContext) => {
+      if (typeof draft === 'object') {
+        setPickerDraft(draft);
+      }
+      setLastContext(context);
+    };
+
+    return (
+      <div style={timeInputStoriesStyles.columnGap16}>
+        <TimeInput
+          range
+          label="Диапазон: конец = начало + 2 часа"
+          value={appliedRange}
+          onChange={handleChange}
+          onPickerChange={handlePickerChange}
+          modifyPickerValue={createRangeEndPlusHoursModifier(2)}
+          placeholder="Выберите начало диапазона"
+        />
+        <div {...getStoryInfoBoxProps(timeInputStoriesStyles.infoBox)}>
+          <strong>Применённое значение (onChange):</strong>
+          <br />
+          {formatTimePickerDraftForDisplay(appliedRange, true)}
+        </div>
+        <div {...getStoryInfoBoxProps(timeInputStoriesStyles.infoBox)}>
+          <strong>Черновик пикера (onPickerChange):</strong>
+          <br />
+          {formatTimePickerDraftForDisplay(pickerDraft, true)}
+          {lastContext ? (
+            <>
+              <br />
+              <span
+                className={STORY_INFO_MUTED_CLASS_NAME}
+                style={timeInputStoriesStyles.smallNoteText}
+              >
+                phase: {lastContext.phase}, format: {lastContext.format}
+              </span>
+            </>
+          ) : null}
+        </div>
+      </div>
+    );
+  },
+};
+
+/** Одиночное время: наблюдение за черновиком через onPickerChange */
+export const SinglePickerDraftOnPickerChange: Story = {
+  name: 'Picker Draft / Single + onPickerChange',
+  render: () => {
+    const [appliedValue, setAppliedValue] = useState('');
+    const [pickerDraft, setPickerDraft] = useState('');
+    const [lastPhase, setLastPhase] = useState<string>('—');
+
+    const handleChange = (newValue: string | TimeRange) => {
+      if (typeof newValue === 'string') {
+        setAppliedValue(newValue);
+      }
+    };
+
+    const handlePickerChange = (draft: string | TimeRange, context: TimePickerDraftContext) => {
+      setPickerDraft(typeof draft === 'string' ? draft : '');
+      setLastPhase(context.phase);
+    };
+
+    return (
+      <div style={timeInputStoriesStyles.columnGap16}>
+        <TimeInput
+          label="Время с отложенным коммитом"
+          value={appliedValue}
+          onChange={handleChange}
+          onPickerChange={handlePickerChange}
+          placeholder="Откройте пикер и нажмите OK"
+        />
+        <div {...getStoryInfoBoxProps(timeInputStoriesStyles.infoBox)}>
+          <strong>Применено (onChange):</strong> {appliedValue || '—'}
+        </div>
+        <div {...getStoryInfoBoxProps(timeInputStoriesStyles.infoBox)}>
+          <strong>Черновик (onPickerChange):</strong> {pickerDraft || '—'}
+          <br />
+          <span
+            className={STORY_INFO_MUTED_CLASS_NAME}
+            style={timeInputStoriesStyles.smallNoteText}
+          >
+            Последняя phase: {lastPhase}
+          </span>
+        </div>
+      </div>
+    );
   },
 };
 
@@ -1949,7 +2091,7 @@ export const IgnoreMaskCharactersDemo: Story = {
           helperText="Считаются только цифры, разделители игнорируются (6/6)"
         />
 
-        <div style={timeInputStoriesStyles.infoBoxWithTopMargin}>
+        <div {...getStoryInfoBoxProps(timeInputStoriesStyles.infoBoxWithTopMargin)}>
           <h4 style={timeInputStoriesStyles.heading14}>Сравнение:</h4>
           <ul style={timeInputStoriesStyles.list12}>
             <li>
@@ -2015,7 +2157,7 @@ export const CharacterCounterThresholdDemo: Story = {
           helperText="Счетчик никогда не показывается"
         />
 
-        <div style={timeInputStoriesStyles.infoBoxWithTopMargin}>
+        <div {...getStoryInfoBoxProps(timeInputStoriesStyles.infoBoxWithTopMargin)}>
           <h4 style={timeInputStoriesStyles.heading14}>Пороги видимости для времени:</h4>
           <ul style={timeInputStoriesStyles.list12}>
             <li>
@@ -2082,7 +2224,7 @@ export const AdditionalLabelDemo: Story = {
           helperText="Уведомления отправляются ежедневно в указанное время"
         />
 
-        <div style={timeInputStoriesStyles.infoBoxWithTopMargin}>
+        <div {...getStoryInfoBoxProps(timeInputStoriesStyles.infoBoxWithTopMargin)}>
           <h4 style={timeInputStoriesStyles.heading14}>Дополнительные метки для времени:</h4>
           <ul style={timeInputStoriesStyles.list12}>
             <li>

@@ -1,6 +1,14 @@
 import type { IconName } from '@/icons';
 import type { ToastType } from '@/types/ui';
 import { ThemeColorScheme } from '@/types/theme';
+import {
+  getToastGlassPillVisualTokens,
+  getToastGlassSurfaceTokens,
+  isToastGlassTheme,
+  type ToastPillVisualTokens,
+  type ToastSurfaceTokens,
+  type ToastThemeContext,
+} from '@/handlers/toastGlassHandlers';
 import { success } from '@/variables/colors/success';
 import { danger } from '@/variables/colors/danger';
 import { warning } from '@/variables/colors/warning';
@@ -8,32 +16,11 @@ import { primary } from '@/variables/colors/primary';
 import { neutral } from '@/variables/colors/neutral';
 import grey from '@/variables/colors/grey';
 
-/**
- * Токены фона и текста карточки toast (без привязки к styled-theme).
- */
-export interface ToastSurfaceTokens {
-  accent: string;
-  surface: string;
-  titleColor: string;
-  bodyColor: string;
-}
-
-/**
- * Токены внешнего вида «пилюля» (макет Figma): тонированный фон, обводка акцентом, иконка с glow, тёмный заголовок.
- */
-export interface ToastPillVisualTokens {
-  surface: string;
-  border: string;
-  titleColor: string;
-  bodyColor: string;
-  iconColor: string;
-  /** Цвет мягкого свечения вокруг иконки (drop-shadow) */
-  iconGlow: string;
-  actionBg: string;
-  actionText: string;
-  /** Цвет иконки закрытия (контурный крестик справа) */
-  dismissIcon: string;
-}
+export type {
+  ToastPillVisualTokens,
+  ToastSurfaceTokens,
+  ToastThemeContext,
+} from '@/handlers/toastGlassHandlers';
 
 /**
  * Генерирует id записи для стека toast.
@@ -48,9 +35,17 @@ export function createToastId(): string {
 /**
  * Возвращает палитру карточки по типу уведомления и теме.
  * @param type - Категория (акцентная полоса слева)
- * @param mode - Режим темы из ThemeProvider
+ * @param context - Режим темы и опционально `toasts` / `colors` для glass
  */
-export function getToastSurfaceTokens(type: ToastType, mode: ThemeColorScheme): ToastSurfaceTokens {
+export function getToastSurfaceTokens(
+  type: ToastType,
+  context: ToastThemeContext,
+): ToastSurfaceTokens {
+  if (isToastGlassTheme(context)) {
+    return getToastGlassSurfaceTokens(type, context);
+  }
+
+  const mode = context.mode;
   const isDark = mode === ThemeColorScheme.DARK;
   const bodyColor = isDark ? neutral[300] : grey[600];
 
@@ -118,15 +113,20 @@ export function getToastPillIconName(type: ToastType): IconName {
  * Палитра «пилюли» по типу и теме (макет Figma: пастельный фон, рамка цветом типа, иконка с glow, заголовок тёмно‑серый).
  * Фон и вторичный текст согласованы с {@link getToastSurfaceTokens}.
  * @param type - Категория уведомления
- * @param mode - Режим темы
+ * @param context - Режим темы и опционально `toasts` / `colors` для glass
  */
 export function getToastPillVisualTokens(
   type: ToastType,
-  mode: ThemeColorScheme,
+  context: ToastThemeContext,
 ): ToastPillVisualTokens {
+  if (isToastGlassTheme(context)) {
+    return getToastGlassPillVisualTokens(type, context);
+  }
+
+  const mode = context.mode;
   const isDark = mode === ThemeColorScheme.DARK;
   const white = '#ffffff';
-  const cardTokens = getToastSurfaceTokens(type, mode);
+  const cardTokens = getToastSurfaceTokens(type, context);
   const dismissIcon = isDark ? neutral[400] : grey[500];
   /** Заголовок по макету — тёмный нейтральный, акцент только в иконке и рамке */
   const titleColor = isDark ? neutral[200] : grey[900];

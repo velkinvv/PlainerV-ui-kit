@@ -1,7 +1,9 @@
 ﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import { Accordion } from './Accordion';
 import { DOC_ACCORDION } from '@/components/ui/storyDocs/uiKitDocs';
+import { glassLightTheme } from '@/themes/themes';
 import { accordionStoriesStyles } from './Accordion.stories.styles';
 
 const meta: Meta<typeof Accordion> = {
@@ -37,6 +39,16 @@ const meta: Meta<typeof Accordion> = {
       table: {
         type: { summary: '(isOpen: boolean) => void' },
       },
+    },
+    firstItemBorderRadius: {
+      control: { type: 'boolean' },
+      description: 'Скругление верхних углов у первого элемента',
+      table: { type: { summary: 'boolean' }, defaultValue: { summary: 'true' } },
+    },
+    lastItemBorderRadius: {
+      control: { type: 'boolean' },
+      description: 'Скругление нижних углов у последнего элемента',
+      table: { type: { summary: 'boolean' }, defaultValue: { summary: 'true' } },
     },
   },
 };
@@ -523,6 +535,166 @@ export const AutoCloseWithMultiple: Story = {
       description: {
         story:
           'Пример комбинированного поведения - когда включены и allowMultiple, и autoClose, приоритет имеет autoClose. Это обеспечивает предсказуемое поведение аккордеона.',
+      },
+    },
+  },
+};
+
+export const WithoutOuterBorderRadius: Story = {
+  name: 'Без внешних скруглений',
+  args: {
+    firstItemBorderRadius: false,
+    lastItemBorderRadius: false,
+    children: (
+      <>
+        <Accordion.Item value="item1" position="start">
+          <Accordion.Trigger title="Первый элемент" subtitle="Без верхних скруглений" />
+          <Accordion.Content>
+            У корневого Accordion задано firstItemBorderRadius=false — верх аккордеона ровный.
+          </Accordion.Content>
+        </Accordion.Item>
+        <Accordion.Item value="item2" position="center">
+          <Accordion.Trigger title="Средний элемент" subtitle="Без изменений" />
+          <Accordion.Content>Средние элементы не затрагиваются отдельными пропсами.</Accordion.Content>
+        </Accordion.Item>
+        <Accordion.Item value="item3" position="last">
+          <Accordion.Trigger title="Последний элемент" subtitle="Без нижних скруглений" />
+          <Accordion.Content>
+            lastItemBorderRadius=false убирает скругление только у нижних углов последнего элемента.
+          </Accordion.Content>
+        </Accordion.Item>
+      </>
+    ),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Оба пропса выключены: аккордеон без скругления сверху и снизу — удобно вставлять во внешний контейнер с собственным radius.',
+      },
+    },
+  },
+};
+
+export const WithoutFirstItemBorderRadius: Story = {
+  name: 'Без скругления первого элемента',
+  args: {
+    firstItemBorderRadius: false,
+    children: (
+      <>
+        <Accordion.Item value="item1" position="start">
+          <Accordion.Trigger title="Первый элемент" />
+          <Accordion.Content>Только верхние углы без скругления.</Accordion.Content>
+        </Accordion.Item>
+        <Accordion.Item value="item2" position="last">
+          <Accordion.Trigger title="Последний элемент" />
+          <Accordion.Content>Нижние углы остаются скруглёнными.</Accordion.Content>
+        </Accordion.Item>
+      </>
+    ),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'firstItemBorderRadius=false — у первого Accordion.Item обнуляются border-top-left/right-radius.',
+      },
+    },
+  },
+};
+
+export const WithoutLastItemBorderRadius: Story = {
+  name: 'Без скругления последнего элемента',
+  args: {
+    lastItemBorderRadius: false,
+    children: (
+      <>
+        <Accordion.Item value="item1" position="start">
+          <Accordion.Trigger title="Первый элемент" />
+          <Accordion.Content>Верхние углы остаются скруглёнными.</Accordion.Content>
+        </Accordion.Item>
+        <Accordion.Item value="item2" position="last">
+          <Accordion.Trigger title="Последний элемент" />
+          <Accordion.Content>Нижние углы без скругления.</Accordion.Content>
+        </Accordion.Item>
+      </>
+    ),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'lastItemBorderRadius=false — у последнего Accordion.Item обнуляются border-bottom-left/right-radius.',
+      },
+    },
+  },
+};
+
+export const EmbeddedInContainer: Story = {
+  name: 'Встроенный в карточку',
+  render: () => (
+    <div style={accordionStoriesStyles.embeddedContainer}>
+      <Accordion firstItemBorderRadius={false} lastItemBorderRadius={false} autoClose>
+        <Accordion.Item value="item1" position="start">
+          <Accordion.Trigger title="Секция 1" subtitle="Встроенный аккордеон" />
+          <Accordion.Content>
+            Внешний контейнер задаёт скругление; аккордеон примыкает к краям без двойного radius.
+          </Accordion.Content>
+        </Accordion.Item>
+        <Accordion.Item value="item2" position="center">
+          <Accordion.Trigger title="Секция 2" />
+          <Accordion.Content>Средние элементы сохраняют разделители из темы.</Accordion.Content>
+        </Accordion.Item>
+        <Accordion.Item value="item3" position="last">
+          <Accordion.Trigger title="Секция 3" />
+          <Accordion.Content>Нижний край аккордеона совпадает с нижним краем карточки.</Accordion.Content>
+        </Accordion.Item>
+      </Accordion>
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Типичный сценарий: firstItemBorderRadius и lastItemBorderRadius = false внутри родителя с border-radius.',
+      },
+    },
+  },
+};
+
+export const GlassVibrancy: Story = {
+  name: 'Glass vibrancy',
+  render: () => (
+    <StyledThemeProvider theme={glassLightTheme}>
+      <div
+        style={{
+          ...accordionStoriesStyles.glassDemoCanvas,
+          background: glassLightTheme.surfaceMaterial?.pageBackground,
+          backgroundAttachment: 'fixed',
+        }}
+      >
+        <Accordion autoClose>
+          <Accordion.Item value="item1" position="start">
+            <Accordion.Trigger title="Glass аккордеон" subtitle="Лёгкая прозрачность" />
+            <Accordion.Content>
+              В темах glassLight / glassDark фон полупрозрачный, backdrop-filter из theme.accordions.settings.
+            </Accordion.Content>
+          </Accordion.Item>
+          <Accordion.Item value="item2" position="center">
+            <Accordion.Trigger title="Разделители" subtitle="borderSecondary" />
+            <Accordion.Content>Границы между секциями берутся из палитры glass-темы.</Accordion.Content>
+          </Accordion.Item>
+          <Accordion.Item value="item3" position="last">
+            <Accordion.Trigger title="Hover" />
+            <Accordion.Content>При наведении фон секции слегка усиливается.</Accordion.Content>
+          </Accordion.Item>
+        </Accordion>
+      </div>
+    </StyledThemeProvider>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Демо glassLightTheme. В Storybook можно также переключить глобальную тему на glassLight / glassDark.',
       },
     },
   },

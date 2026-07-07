@@ -1,11 +1,109 @@
-﻿import type { DragEvent } from 'react';
+﻿import type { CSSProperties, DragEvent } from 'react';
+import type { Colors } from '@/types/theme';
 import type {
   DataGridBaseRow,
+  DataGridColumn,
   DataGridExpandedRowDataStatus,
   DataGridPaginationModel,
+  TableColumnColorMap,
+  TableRowColorMap,
   TableSize,
 } from '@/types/ui';
 import { Size } from '@/types/sizes';
+import {
+  resolveTableColumnBackgroundColor,
+  resolveTableRowColorFromMap,
+} from '@/handlers/tableRowColorHandlers';
+
+/** Имя поля строки с ключом цвета фона по умолчанию */
+export const DATA_GRID_DEFAULT_ROW_COLOR_FIELD = 'rowColor';
+
+/**
+ * Опции резолва фона строки DataGrid.
+ * @property rowBackgroundColorByStatus — явный колбэк (приоритетнее `rowColorMap`)
+ * @property rowColorMap — карта ключ → CSS-цвет
+ * @property rowColorField — имя поля с ключом в объекте строки
+ */
+export type ResolveDataGridRowBackgroundColorOptions<
+  Row extends DataGridBaseRow<string>,
+  RowColorKey extends string = string,
+> = {
+  rowBackgroundColorByStatus?: (row: Row) => string | undefined;
+  rowColorMap?: TableRowColorMap<RowColorKey>;
+  rowColorField?: keyof Row | string;
+};
+
+/**
+ * Возвращает CSS-цвет фона строки:
+ * 1) `rowBackgroundColorByStatus`, 2) ключ из строки + `rowColorMap`.
+ * @param row — объект строки
+ * @param colors — палитра UI-kit из темы
+ * @param options — колбэк, карта и имя поля ключа
+ */
+export function resolveDataGridRowBackgroundColor<
+  Row extends DataGridBaseRow<string>,
+  RowColorKey extends string = string,
+>(
+  row: Row,
+  colors: Colors,
+  options: ResolveDataGridRowBackgroundColorOptions<Row, RowColorKey> = {},
+): string | undefined {
+  const callbackColor = options.rowBackgroundColorByStatus?.(row)?.trim();
+  if (callbackColor) {
+    return callbackColor;
+  }
+
+  const rowColorField = String(options.rowColorField ?? DATA_GRID_DEFAULT_ROW_COLOR_FIELD);
+  const rowColorKey = getDataGridCellValue(row, rowColorField);
+  return resolveTableRowColorFromMap(rowColorKey, options.rowColorMap, colors);
+}
+
+/**
+ * Возвращает CSS-цвет фона колонки по ключу `columnColor` и `columnColorMap`.
+ * @param columnColor — ключ из `columns[].columnColor`
+ * @param colors — палитра UI-kit из темы
+ * @param columnColorMap — карта ключ → CSS-цвет
+ */
+export function resolveDataGridColumnBackgroundColor<ColumnColorKey extends string = string>(
+  columnColor: string | undefined,
+  colors: Colors,
+  columnColorMap?: TableColumnColorMap<ColumnColorKey>,
+): string | undefined {
+  return resolveTableColumnBackgroundColor({
+    columnColorKey: columnColor as ColumnColorKey | undefined,
+    columnColorMap,
+    colors,
+  });
+}
+
+/**
+ * Добавляет `backgroundColor` к инлайн-стилю ячейки, если цвет задан.
+ * @param baseStyle — исходный стиль ячейки
+ * @param backgroundColor — резолвленный CSS-цвет фона
+ */
+export function mergeDataGridCellStyleWithBackgroundColor(
+  baseStyle: CSSProperties,
+  backgroundColor?: string,
+): CSSProperties {
+  if (backgroundColor == null || backgroundColor.trim().length === 0) {
+    return baseStyle;
+  }
+
+  return { ...baseStyle, backgroundColor };
+}
+
+/**
+ * Колонки, видимые в шапке и теле таблицы (без `hide: true`).
+ * @param columns — описание колонок DataGrid
+ */
+export function getDataGridDisplayColumns<
+  Row extends DataGridBaseRow,
+  ColumnColorKey extends string = string,
+>(
+  columns: readonly DataGridColumn<Row, ColumnColorKey>[],
+): DataGridColumn<Row, ColumnColorKey>[] {
+  return columns.filter((column) => !column.hide);
+}
 
 /**
  * ╨б╨╛╨┐╨╛╤Б╤В╨░╨▓╨╗╨╡╨╜╨╕╨╡ ╤А╨░╨╖╨╝╨╡╤А╨░ ╨┤╨╕╨╖╨░╨╣╨╜-╤Б╨╕╤Б╤В╨╡╨╝╤Л ╤Б ╨┐╨╗╨╛╤В╨╜╨╛╤Б╤В╤М╤О ╨┐╤А╨╕╨╝╨╕╤В╨╕╨▓╨░ `Table`.

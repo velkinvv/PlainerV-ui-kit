@@ -9,7 +9,28 @@
 
 ---
 
-## [0.2.2] - 2026-05-26
+## [0.2.3] - 2026-07-05
+
+### Added
+
+- **Glass-темы:** `glassLight` и `glassDark` с vibrancy-эффектом на базе blur-токенов (`glass`, `glassDark`, `surfaceMaterial`).
+- **Blur-токены:** расширены классы `glassDarkLight`, `glassDarkStrong`; хелперы `parseBackdropFilterFromBlurClass`, `glassBackdropFilters`.
+- **Storybook:** mesh-gradient фон canvas, поддержка `glassLight` / `glassDark` в toolbar и Docs.
+
+### Changed
+
+- **Компоненты:** Card, Modal, Dropdown, Input, FloatingMenu, Table — `backdrop-filter` для glass-поверхностей.
+- **GlobalStyles:** mesh-gradient на `html` для glass-тем.
+
+### Fixed
+
+- **Windows / dev:** `cross-env` в скрипте `npm start`; optional dependency `@rollup/rollup-win32-x64-msvc`.
+
+### Added (документация)
+
+- Документация **v0.2.3**; обновлены README, CHANGELOG, ссылки в Storybook docs.
+
+---
 
 ### Added
 

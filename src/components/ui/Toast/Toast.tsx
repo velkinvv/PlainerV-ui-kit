@@ -1,11 +1,12 @@
 import React from 'react';
+import { useTheme as useStyledTheme } from 'styled-components';
 import { ToastAppearance, type ToastItem } from '@/types/ui';
 import { useTheme } from '@/themes/ThemeProvider';
 import { Icon } from '../Icon/Icon';
 import { IconSize } from '@/types/sizes';
 import grey from '@/variables/colors/grey';
 import { neutral } from '@/variables/colors/neutral';
-import { ThemeColorScheme } from '@/types/theme';
+import { ThemeColorScheme, type ThemeType } from '@/types/theme';
 import {
   ToastCard,
   ToastDismiss,
@@ -24,7 +25,12 @@ import {
   ToastTextBlock,
   ToastTitle,
 } from './Toast.style';
-import { getToastPillIconName, getToastPillVisualTokens, getToastSurfaceTokens } from './handlers';
+import {
+  getToastPillIconName,
+  getToastPillVisualTokens,
+  getToastSurfaceTokens,
+  type ToastThemeContext,
+} from './handlers';
 
 /**
  * Пропсы карточки одного toast (рендер внутри `ToastProvider`).
@@ -53,6 +59,12 @@ export const Toast: React.FC<ToastProps> = ({
   timing,
 }) => {
   const { mode } = useTheme();
+  const styledTheme = useStyledTheme() as ThemeType;
+  const toastThemeContext: ToastThemeContext = {
+    mode,
+    colors: styledTheme.colors,
+    toasts: styledTheme.toasts,
+  };
   const resolvedAppearance = toast.appearance ?? ToastAppearance.PILL;
 
   if (resolvedAppearance === ToastAppearance.PILL) {
@@ -60,7 +72,7 @@ export const Toast: React.FC<ToastProps> = ({
       <ToastPillView
         toast={toast}
         onClose={onClose}
-        mode={mode}
+        themeContext={toastThemeContext}
         onPauseTimer={onPauseTimer}
         onResumeTimer={onResumeTimer}
         timing={timing}
@@ -72,7 +84,7 @@ export const Toast: React.FC<ToastProps> = ({
     <ToastCardView
       toast={toast}
       onClose={onClose}
-      mode={mode}
+      themeContext={toastThemeContext}
       onPauseTimer={onPauseTimer}
       onResumeTimer={onResumeTimer}
       timing={timing}
@@ -89,16 +101,17 @@ export const Toast: React.FC<ToastProps> = ({
 const ToastCardView: React.FC<{
   toast: ToastItem;
   onClose: (id: string) => void;
-  mode: ThemeColorScheme;
+  themeContext: ToastThemeContext;
   onPauseTimer: (id: string) => void;
   onResumeTimer: (id: string) => void;
   timing?: {
     duration: number;
     remaining: number;
   };
-}> = ({ toast, onClose, mode, onPauseTimer, onResumeTimer, timing }) => {
-  const tokens = getToastSurfaceTokens(toast.type, mode);
-  const iconColor = mode === ThemeColorScheme.DARK ? neutral[400] : grey[500];
+}> = ({ toast, onClose, themeContext, onPauseTimer, onResumeTimer, timing }) => {
+  const tokens = getToastSurfaceTokens(toast.type, themeContext);
+  const iconColor =
+    themeContext.mode === ThemeColorScheme.DARK ? neutral[400] : grey[500];
   const progressPercent =
     timing && timing.duration > 0
       ? Math.max(0, Math.min(100, (timing.remaining / timing.duration) * 100))
@@ -151,15 +164,15 @@ const ToastCardView: React.FC<{
 const ToastPillView: React.FC<{
   toast: ToastItem;
   onClose: (id: string) => void;
-  mode: ThemeColorScheme;
+  themeContext: ToastThemeContext;
   onPauseTimer: (id: string) => void;
   onResumeTimer: (id: string) => void;
   timing?: {
     duration: number;
     remaining: number;
   };
-}> = ({ toast, onClose, mode, onPauseTimer, onResumeTimer, timing }) => {
-  const pill = getToastPillVisualTokens(toast.type, mode);
+}> = ({ toast, onClose, themeContext, onPauseTimer, onResumeTimer, timing }) => {
+  const pill = getToastPillVisualTokens(toast.type, themeContext);
   const iconName = getToastPillIconName(toast.type);
   const hasAction = Boolean(toast.actionLabel?.trim());
   const progressPercent =

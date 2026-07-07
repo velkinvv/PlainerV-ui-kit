@@ -122,6 +122,49 @@ export {
   FloatingMenuDragSource,
 } from '@/types/ui';
 
+export {
+  ActionBar,
+  ActionBarItem,
+  ActionBarItemWithTooltip,
+  ActionBarDivider,
+  ActionBarDropMenuItem,
+} from './ActionBar';
+export type {
+  ActionBarProps,
+  ActionBarItemProps,
+  ActionBarDividerProps,
+  ActionBarDropMenuItemProps,
+  ActionBarItemDefinition,
+  ActionBarDropMenuRenderOptions,
+} from '@/types/ui';
+export { ActionBarSize } from '@/types/ui';
+
+export {
+  Carousel,
+  CarouselSlide,
+  CarouselImage,
+  CarouselCaption,
+  CarouselSlideOverlay,
+} from './Carousel';
+export type {
+  CarouselProps,
+  CarouselSlideProps,
+  CarouselImageProps,
+  CarouselCaptionProps,
+  CarouselSlideOverlayProps,
+  CarouselItemDefinition,
+  CarouselSlideInfo,
+  CarouselSlideChangeEvent,
+  CarouselSlideClickEvent,
+} from '@/types/ui';
+export {
+  CarouselAnimation,
+  CarouselNavigation,
+  CarouselDotsPosition,
+  CarouselSlideOverlayPlacement,
+  CarouselSlideOverlayAlign,
+} from '@/types/ui';
+
 export { Pagination } from './Pagination';
 export type { PaginationProps } from '@/types/ui';
 
@@ -230,6 +273,20 @@ export {
 export type {
   DataGridProps,
   DataGridBaseRow,
+  DataGridRowWithColors,
+  DataGridWithRowColors,
+  DataGridColumnWithColors,
+  DataGridWithColumnColors,
+  DataGridWithRowAndColumnColors,
+  TableRowColorMap,
+  TableRowColorResolver,
+  TableColumnColorMap,
+  TableColumnColorResolver,
+  TableColorMap,
+  TableColorResolver,
+  TableWithRowColors,
+  TableWithColumnColors,
+  TableWithRowAndColumnColors,
   DataGridRowId,
   DataGridColumn,
   DataGridColumnFilterIconPosition,
@@ -306,4 +363,11 @@ export type { RadioButtonProps, RadioButtonGroupProps, RadioButtonGroupOption } 
 
 export { DateInput } from './inputs/DateInput';
 export { TimeInput } from './inputs/TimeInput';
-export type { DateTimeRange, DatePickerProps as DateInputProps, TimeInputProps } from '@/types/ui';
+export { DateTimeInput, DateTimeInputRange } from './inputs/DateTimeInput';
+export type {
+  DateTimeRange,
+  DatePickerProps as DateInputProps,
+  TimeInputProps,
+  DateTimeInputProps,
+  DateTimeInputRangeProps,
+} from '@/types/ui';

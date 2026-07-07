@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useLayoutEffect, forwardRef } from 'react';
 import { createPortal, flushSync } from 'react-dom';
 import { clsx } from 'clsx';
+import { useTheme } from 'styled-components';
 import {
   ButtonVariant,
   type DropdownMenuItemValue,
@@ -45,6 +46,11 @@ import {
   defaultDropdownSearchMatches,
   getDropdownItemSearchHaystackParts,
 } from '../../../handlers/dropdownSearchMatchHandlers';
+import {
+  resolveFloatingOverlayPortalRoot,
+  resolveFloatingOverlayZIndex,
+} from '../../../handlers/floatingOverlayHandlers';
+import { useFloatingOverlayLayer } from '../../../contexts/FloatingOverlayLayerContext';
 
 export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
   (
@@ -148,6 +154,17 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
     );
     const [asyncError, setAsyncError] = useState<unknown>(null);
     const shouldUseAsyncItems = Boolean(loadItems) && !items;
+
+    const theme = useTheme();
+    const floatingOverlayLayer = useFloatingOverlayLayer();
+    const floatingOverlayZIndex = resolveFloatingOverlayZIndex(
+      floatingOverlayLayer.minimumZIndex,
+      theme.dropdowns?.settings?.zIndex,
+    );
+    const floatingPortalRoot = resolveFloatingOverlayPortalRoot(
+      portalContainer,
+      floatingOverlayLayer.portalRoot,
+    );
 
     useEffect(() => {
       if (!searchable) return;
@@ -864,6 +881,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
         $dropContainerCssMixin={dropContainerCssMixin}
         $inline={inline}
         $menuDensity={menuDensity}
+        $overlayZIndex={floatingOverlayZIndex}
         style={dropContainerStyle}
         onScrollCapture={onMenuScroll || onMenuLoadMore ? handleMenuScrollCapture : undefined}
         {...dropdownContentFocusProps}
@@ -943,8 +961,8 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
 
         {shouldRender &&
           !inline &&
-          typeof document !== 'undefined' &&
-          createPortal(dropdownContent, portalContainer ?? document.body)}
+          floatingPortalRoot &&
+          createPortal(dropdownContent, floatingPortalRoot)}
       </>
     );
   },

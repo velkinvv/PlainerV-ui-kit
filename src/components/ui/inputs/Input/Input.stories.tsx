@@ -7,6 +7,7 @@ import React from 'react';
 import { Size, IconSize } from '../../../../types/sizes';
 import { InputVariant, type SelectOption } from '../../../../types/ui';
 import { DOC_INPUT } from '@/components/ui/storyDocs/uiKitDocs';
+import { getStoryInfoBoxProps } from '../../../../handlers/inputFieldStories.styles';
 import { inputStoriesStyles } from './Input.stories.styles';
 import { inputArgsStory, inputRenderStory } from './inputStoriesDocs';
 
@@ -1205,7 +1206,7 @@ export const IgnoreMaskCharactersDemo: Story = {
           helperText="Считаются только цифры, разделители игнорируются (8/8)"
         />
 
-        <div style={inputStoriesStyles.infoBoxWithTopMargin}>
+        <div {...getStoryInfoBoxProps(inputStoriesStyles.infoBoxWithTopMargin)}>
           <h4 style={inputStoriesStyles.heading14}>Сравнение:</h4>
           <ul style={inputStoriesStyles.list12}>
             <li>
@@ -1269,7 +1270,7 @@ export const CharacterCounterThresholdDemo: Story = {
           helperText="Счетчик никогда не показывается"
         />
 
-        <div style={inputStoriesStyles.infoBoxWithTopMargin}>
+        <div {...getStoryInfoBoxProps(inputStoriesStyles.infoBoxWithTopMargin)}>
           <h4 style={inputStoriesStyles.heading14}>Пороги видимости:</h4>
           <ul style={inputStoriesStyles.list12}>
             <li>
@@ -1334,7 +1335,7 @@ export const AdditionalLabelDemo: Story = {
           helperText="Используется для двухфакторной аутентификации"
         />
 
-        <div style={inputStoriesStyles.infoBoxWithTopMargin}>
+        <div {...getStoryInfoBoxProps(inputStoriesStyles.infoBoxWithTopMargin)}>
           <h4 style={inputStoriesStyles.heading14}>Дополнительные метки:</h4>
           <ul style={inputStoriesStyles.list12}>
             <li>

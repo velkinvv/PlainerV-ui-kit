@@ -6,10 +6,40 @@ import {
   TabItemTextPosition,
   TabsVerticalPosition,
 } from '../../../types/ui';
-import { ThemeColorScheme } from '../../../types/theme';
+import { type ThemeType } from '../../../types/theme';
 import { BorderRadiusHandler } from '../../../handlers/uiHandlers';
 import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
+import { getTabsSurfaceTokens } from '../../../handlers/tabsGlassHandlers';
 import type { PillSegmentMetrics } from './pillSegmentTrack/pillSegmentMetricsTypes';
+
+type TabItemStyledThemeSlice = Pick<
+  ThemeType,
+  'mode' | 'colors' | 'borderRadius' | 'boxShadow' | 'surfaceMaterial' | 'dropdowns'
+>;
+
+/**
+ * Контекст темы вкладок для резолва glass-токенов.
+ * @param theme — styled-components theme
+ */
+const getTabsThemeContext = (theme: TabItemStyledThemeSlice) => ({
+  mode: theme.mode,
+  colors: theme.colors,
+  surfaceMaterial: theme.surfaceMaterial,
+  dropdowns: theme.dropdowns,
+  boxShadow: theme.boxShadow,
+});
+
+/**
+ * CSS vibrancy для glass-поверхностей вкладок.
+ * @param backdropFilter — значение backdrop-filter из токенов
+ */
+const tabsBackdropFilterCss = (backdropFilter?: string) =>
+  backdropFilter
+    ? css`
+        backdrop-filter: ${backdropFilter};
+        -webkit-backdrop-filter: ${backdropFilter};
+      `
+    : '';
 
 /** Отступ трека pill от краёв сегментов; участвует в calc скругления оболочки вместе с темой. */
 const pillTrackInset = '3px';
@@ -76,8 +106,10 @@ export const TabItemGroupListRoot = styled.div<{
           align-items: stretch;
         `}
 
-  ${({ $variant, $direction, $filledSegmentTriggers, $scrollable, theme }) =>
-    $variant === TabsVariant.PILL
+  ${({ $variant, $direction, $filledSegmentTriggers, $scrollable, theme }) => {
+    const surfaceTokens = getTabsSurfaceTokens(getTabsThemeContext(theme));
+
+    return $variant === TabsVariant.PILL
       ? css`
           position: relative;
           align-items: stretch;
@@ -86,10 +118,9 @@ export const TabItemGroupListRoot = styled.div<{
           padding: ${pillTrackInset};
           overflow: ${$scrollable ? 'visible' : 'hidden'};
           border-radius: calc(${BorderRadiusHandler(theme.borderRadius)} + ${pillTrackInset});
-          border: none;
-          background: ${theme.mode === ThemeColorScheme.DARK
-            ? '#1c1c1c'
-            : theme.colors.backgroundTertiary};
+          border: ${surfaceTokens.pillTrackBorder ?? 'none'};
+          background: ${surfaceTokens.pillTrackBackground};
+          ${tabsBackdropFilterCss(surfaceTokens.backdropFilter)}
         `
       : $variant === TabsVariant.MINIMAL ||
           $variant === TabsVariant.LINE ||
@@ -99,8 +130,9 @@ export const TabItemGroupListRoot = styled.div<{
             padding: 0;
             border: none;
             background: ${$filledSegmentTriggers
-              ? theme.colors.backgroundSecondary
+              ? surfaceTokens.filledTrackBackground
               : 'transparent'};
+            ${$filledSegmentTriggers ? tabsBackdropFilterCss(surfaceTokens.backdropFilter) : ''}
             ${$variant === TabsVariant.LINE
               ? css`
                   border-bottom: ${$direction === TabsDirection.HORIZONTAL
@@ -124,7 +156,8 @@ export const TabItemGroupListRoot = styled.div<{
             padding: 0;
             border: none;
             background: transparent;
-          `}
+          `;
+  }}
 
   ${({ $direction }) =>
     $direction === TabsDirection.HORIZONTAL
@@ -190,18 +223,15 @@ export const PillSegmentThumb = styled.div<{ $metrics: PillSegmentMetrics | null
     height 0.46s cubic-bezier(0.34, 1.18, 0.46, 1),
     opacity 0.16s ease;
 
-  ${({ theme }) =>
-    theme.mode === ThemeColorScheme.DARK
-      ? css`
-          border-radius: ${BorderRadiusHandler(theme.borderRadius)};
-          background: #444444;
-          box-shadow: none;
-        `
-      : css`
-          border-radius: ${BorderRadiusHandler(theme.borderRadius)};
-          background: ${theme.colors.backgroundSecondary};
-          box-shadow: ${theme.boxShadow.sm};
-        `}
+  ${({ theme }) => {
+    const surfaceTokens = getTabsSurfaceTokens(getTabsThemeContext(theme));
+
+    return css`
+      border-radius: ${BorderRadiusHandler(theme.borderRadius)};
+      background: ${surfaceTokens.pillThumbBackground};
+      box-shadow: ${surfaceTokens.pillThumbBoxShadow};
+    `;
+  }}
 `;
 
 /**
@@ -559,7 +589,9 @@ export const TabItemTrigger = styled.button<{
             border-radius: 0;
 
             &:hover:enabled {
-              background: ${$isActive ? theme.colors.primary : theme.colors.backgroundTertiary};
+              background: ${$isActive
+                ? theme.colors.primary
+                : getTabsSurfaceTokens(getTabsThemeContext(theme)).segmentHoverBackground};
               color: ${$isActive ? '#ffffff' : theme.colors.text};
             }
             ${buildHoverPressMotionCss({
@@ -611,7 +643,7 @@ export const TabItemContent = styled.div<{
 }>`
   display: ${({ $isActive }) => ($isActive ? 'block' : 'none')};
   padding: 16px;
-  background: ${({ theme }) => theme.colors.backgroundSecondary};
+  background: transparent;
 
   ${({ $direction }) =>
     $direction === TabsDirection.VERTICAL
