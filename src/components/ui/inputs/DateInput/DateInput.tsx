@@ -35,11 +35,11 @@ import {
   SkeletonEffect,
   StyledInput,
   IconWrapper,
+  CharacterCounterMotion,
 } from '../shared';
 import { InputFieldShell } from '../Input/InputFieldShell';
 import {
   CalendarPopup,
-  CharacterCounter,
   DateInputFieldStack,
   DateSegment,
   DateSegmentsContainer,
@@ -1238,11 +1238,13 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
                   ? false
                   : currentLength >= props.maxLength! * characterCounterVisibilityThreshold);
 
-              return shouldShowCounter ? (
-                <CharacterCounter $size={size} $isOverLimit={currentLength > props.maxLength!}>
-                  {`${currentLength}/${props.maxLength}`}
-                </CharacterCounter>
-              ) : null;
+              return (
+                <CharacterCounterMotion
+                  visible={shouldShowCounter}
+                  currentLength={currentLength}
+                  maxLength={props.maxLength!}
+                />
+              );
             })()}
         </DateInputFieldStack>
       </InputContainerWithPadding>

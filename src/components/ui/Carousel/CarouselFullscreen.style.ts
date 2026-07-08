@@ -94,7 +94,7 @@ export const CarouselFullscreenHeader = styled.header`
 `;
 
 /** Счётчик слайдов в полноэкранном режиме */
-export const CarouselFullscreenCounter = styled.p`
+export const CarouselFullscreenCounter = styled(motion.p)`
   margin: 0;
   font-size: 14px;
   line-height: 1.4;

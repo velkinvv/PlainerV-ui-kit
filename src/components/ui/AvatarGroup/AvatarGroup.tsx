@@ -4,6 +4,7 @@ import { AvatarGroupVariant, type AvatarGroupProps } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 import { Avatar } from '../Avatar/Avatar';
 import { AvatarWrapper, AvatarGroupContainer, AvatarCounter } from './AvatarGroup.style';
+import { ValueMotionPresence } from '../ValueMotion';
 
 /**
  * Компонент группы аватаров
@@ -74,8 +75,6 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
 
     // Рендерим счетчик дополнительных аватаров
     const renderCounter = () => {
-      if (remainingCount <= 0) return null;
-
       const remainingAvatars = avatars.slice(maxForVariant);
 
       const handleCounterClick = () => {
@@ -85,15 +84,23 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
       };
 
       return (
-        <AvatarCounter
+        <ValueMotionPresence
+          as={AvatarCounter}
+          visible={remainingCount > 0}
+          contentKey={`counter:${remainingCount}`}
+          interactive={Boolean(onCounterClick)}
           size={size}
           variant={variant}
           className="ui-avatar-counter"
-          title={`Ещё ${remainingCount} ${remainingCount === 1 ? 'пользователь' : 'пользователей'}`}
-          onClick={handleCounterClick}
+          title={
+            remainingCount > 0
+              ? `Ещё ${remainingCount} ${remainingCount === 1 ? 'пользователь' : 'пользователей'}`
+              : undefined
+          }
+          onClick={onCounterClick ? handleCounterClick : undefined}
         >
           +{remainingCount}
-        </AvatarCounter>
+        </ValueMotionPresence>
       );
     };
 

@@ -1,15 +1,29 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { clsx } from 'clsx';
 import {
+  ActionBarOrientation,
   ActionBarSize,
   type ActionBarItemDefinition,
   type ActionBarProps,
 } from '../../../types/ui';
-import { ActionBarRoot } from './ActionBar.style';
+import {
+  DEFAULT_ACTION_BAR_DYNAMIC_SIZE_INSET_PX,
+  resolveActionBarDynamicMaxSizeCss,
+  resolveActionBarLayoutOptions,
+} from '@/handlers/actionBarOrientationHandlers';
+import { ACTION_BAR_SIZE_ANIMATION_RELEASE_MS } from '@/handlers/actionBarItemPresenceHandlers';
+import {
+  ActionBarRoot,
+  ActionBarVerticalRoot,
+  ActionBarMotionRoot,
+} from './ActionBar.style';
 import { ActionBarDivider } from './ActionBarDivider';
 import { ActionBarDropMenuItem } from './ActionBarDropMenuItem';
 import { ActionBarItem, ActionBarItemWithTooltip } from './ActionBarItem';
+import { ActionBarLayoutProvider } from './ActionBarLayoutContext';
 import { ActionBarOverflowMenu } from './ActionBarOverflowMenu';
+import { ActionBarVisibleItemMotion } from './ActionBarVisibleItemMotion';
 import {
   getActionBarDividerSlotWidthPx,
   getActionBarItemSizePx,
@@ -19,15 +33,7 @@ import {
 const DEFAULT_OVERFLOW_MENU_ARIA_LABEL = 'Дополнительные действия';
 
 /**
- * Панель действий: горизонтальный ряд иконок с группировкой разделителями и overflow-меню.
- * @param size — размер кнопок (XL / LG / MD / SM)
- * @param items — порядок действий
- * @param renderActionBarItem — рендер видимой кнопки
- * @param renderDropMenuItem — рендер строки overflow-меню
- * @param itemIsDisabled — disabled для overflow-пунктов
- * @param overflowMenuAriaLabel — подпись overflow-кнопки и меню
- * @param aria-label — подпись toolbar
- * @param className — CSS-класс корня
+ * Панель действий: горизонтальный или вертикальный ряд иконок с группировкой и overflow-меню.
  */
 export const ActionBar: React.FC<ActionBarProps> & {
   Item: typeof ActionBarItem;
@@ -36,11 +42,16 @@ export const ActionBar: React.FC<ActionBarProps> & {
   DropMenuItem: typeof ActionBarDropMenuItem;
 } = ({
   size = ActionBarSize.XL,
+  orientation: orientationProp,
+  dynamicSize: dynamicSizeProp,
+  dynamicSizeInsetPx = DEFAULT_ACTION_BAR_DYNAMIC_SIZE_INSET_PX,
   items,
   renderActionBarItem,
   renderDropMenuItem,
   itemIsDisabled = () => false,
   overflowMenuAriaLabel = DEFAULT_OVERFLOW_MENU_ARIA_LABEL,
+  dynamicHeight = false,
+  dynamicHeightInsetPx,
   className,
   'aria-label': ariaLabel,
   ...htmlProps
@@ -49,11 +60,85 @@ export const ActionBar: React.FC<ActionBarProps> & {
   const [containerWidth, setContainerWidth] = useState(0);
   const [visibleItems, setVisibleItems] = useState<ActionBarItemDefinition[]>(items);
   const [hiddenItems, setHiddenItems] = useState<ActionBarItemDefinition[]>([]);
+  const [sizeAnimating, setSizeAnimating] = useState(false);
+  const previousItemsLengthRef = useRef<number | null>(null);
+  const sizeAnimationReleaseTimerRef = useRef<number | null>(null);
+
+  const { orientation, dynamicSize } = resolveActionBarLayoutOptions({
+    orientation: orientationProp,
+    dynamicSize: dynamicSizeProp,
+    dynamicHeight,
+  });
+
+  const insetPx = dynamicHeightInsetPx ?? dynamicSizeInsetPx;
+  const isHorizontalStatic =
+    orientation === ActionBarOrientation.HORIZONTAL && !dynamicSize;
+  const isVerticalStatic =
+    orientation === ActionBarOrientation.VERTICAL && !dynamicSize;
 
   const itemSizePx = getActionBarItemSizePx(size);
   const dividerSlotWidthPx = getActionBarDividerSlotWidthPx();
 
+  const dynamicSizeMaxCss = useMemo(
+    () => resolveActionBarDynamicMaxSizeCss(orientation, insetPx),
+    [orientation, insetPx],
+  );
+
+  const beginSizeAnimation = useCallback(() => {
+    if (!dynamicSize) {
+      return;
+    }
+
+    setSizeAnimating(true);
+
+    if (sizeAnimationReleaseTimerRef.current != null) {
+      window.clearTimeout(sizeAnimationReleaseTimerRef.current);
+    }
+
+    sizeAnimationReleaseTimerRef.current = window.setTimeout(() => {
+      setSizeAnimating(false);
+      sizeAnimationReleaseTimerRef.current = null;
+    }, ACTION_BAR_SIZE_ANIMATION_RELEASE_MS);
+  }, [dynamicSize]);
+
+  const endSizeAnimation = useCallback(() => {
+    if (sizeAnimationReleaseTimerRef.current != null) {
+      window.clearTimeout(sizeAnimationReleaseTimerRef.current);
+      sizeAnimationReleaseTimerRef.current = null;
+    }
+
+    setSizeAnimating(false);
+  }, []);
+
   useLayoutEffect(() => {
+    if (!dynamicSize) {
+      return undefined;
+    }
+
+    if (previousItemsLengthRef.current === null) {
+      previousItemsLengthRef.current = items.length;
+      return undefined;
+    }
+
+    if (previousItemsLengthRef.current !== items.length) {
+      previousItemsLengthRef.current = items.length;
+      beginSizeAnimation();
+    }
+
+    return () => {
+      if (sizeAnimationReleaseTimerRef.current != null) {
+        window.clearTimeout(sizeAnimationReleaseTimerRef.current);
+      }
+    };
+  }, [beginSizeAnimation, dynamicSize, items.length]);
+
+  useLayoutEffect(() => {
+    if (!isHorizontalStatic) {
+      setVisibleItems(items);
+      setHiddenItems([]);
+      return;
+    }
+
     const containerElement = containerRef.current;
 
     if (!containerElement) {
@@ -71,9 +156,13 @@ export const ActionBar: React.FC<ActionBarProps> & {
     return () => {
       resizeObserver.disconnect();
     };
-  }, []);
+  }, [isHorizontalStatic, items]);
 
   useLayoutEffect(() => {
+    if (!isHorizontalStatic) {
+      return;
+    }
+
     const splitResult = splitActionBarItemsByContainerWidth(
       items,
       containerWidth,
@@ -83,33 +172,97 @@ export const ActionBar: React.FC<ActionBarProps> & {
 
     setVisibleItems(splitResult.visibleItems);
     setHiddenItems(splitResult.hiddenItems);
-  }, [containerWidth, dividerSlotWidthPx, itemSizePx, items]);
+  }, [containerWidth, dividerSlotWidthPx, isHorizontalStatic, itemSizePx, items]);
 
-  const renderVisibleItem = (item: ActionBarItemDefinition) => (
-    <React.Fragment key={item.itemId}>
+  const renderVisibleItemContent = (item: ActionBarItemDefinition) => (
+    <>
       {renderActionBarItem(item.itemId)}
       {item.withDivider ? <ActionBarDivider barSize={size} /> : null}
-    </React.Fragment>
+    </>
+  );
+
+  const renderVisibleItem = (item: ActionBarItemDefinition, itemIndex: number, itemsList: ActionBarItemDefinition[]) => {
+    if (dynamicSize) {
+      return (
+        <ActionBarVisibleItemMotion
+          key={item.itemId}
+          orientation={orientation}
+          isLastItem={itemIndex === itemsList.length - 1}
+        >
+          {renderVisibleItemContent(item)}
+        </ActionBarVisibleItemMotion>
+      );
+    }
+
+    return (
+      <React.Fragment key={item.itemId}>{renderVisibleItemContent(item)}</React.Fragment>
+    );
+  };
+
+  const visibleItemsContent = dynamicSize ? (
+    <AnimatePresence initial={false} mode="sync" onExitComplete={endSizeAnimation}>
+      {visibleItems.map((item, itemIndex) => renderVisibleItem(item, itemIndex, visibleItems))}
+    </AnimatePresence>
+  ) : (
+    visibleItems.map((item, itemIndex) => renderVisibleItem(item, itemIndex, visibleItems))
+  );
+
+  const rootClassName = clsx(
+    'ui-action-bar',
+    orientation === ActionBarOrientation.VERTICAL
+      ? 'ui-action-bar--vertical'
+      : 'ui-action-bar--horizontal',
+    dynamicSize && 'ui-action-bar--dynamic-size',
+    className,
   );
 
   return (
-    <ActionBarRoot
-      ref={containerRef}
-      $barSize={size}
-      role="toolbar"
-      aria-label={ariaLabel}
-      className={clsx('ui-action-bar', className)}
-      {...htmlProps}
-    >
-      {visibleItems.map(renderVisibleItem)}
-      <ActionBarOverflowMenu
-        barSize={size}
-        hiddenItems={hiddenItems}
-        renderDropMenuItem={renderDropMenuItem}
-        itemIsDisabled={itemIsDisabled}
-        overflowMenuAriaLabel={overflowMenuAriaLabel}
-      />
-    </ActionBarRoot>
+    <ActionBarLayoutProvider orientation={orientation}>
+      {dynamicSize ? (
+        <ActionBarMotionRoot
+          ref={containerRef}
+          $barSize={size}
+          $orientation={orientation}
+          $dynamicSizeMaxCss={dynamicSizeMaxCss}
+          $sizeAnimating={sizeAnimating}
+          layout={false}
+          role="toolbar"
+          aria-label={ariaLabel}
+          className={rootClassName}
+        >
+          {visibleItemsContent}
+        </ActionBarMotionRoot>
+      ) : isVerticalStatic ? (
+        <ActionBarVerticalRoot
+          ref={containerRef}
+          $barSize={size}
+          role="toolbar"
+          aria-label={ariaLabel}
+          className={rootClassName}
+          {...htmlProps}
+        >
+          {visibleItemsContent}
+        </ActionBarVerticalRoot>
+      ) : (
+        <ActionBarRoot
+          ref={containerRef}
+          $barSize={size}
+          role="toolbar"
+          aria-label={ariaLabel}
+          className={rootClassName}
+          {...htmlProps}
+        >
+          {visibleItemsContent}
+          <ActionBarOverflowMenu
+            barSize={size}
+            hiddenItems={hiddenItems}
+            renderDropMenuItem={renderDropMenuItem}
+            itemIsDisabled={itemIsDisabled}
+            overflowMenuAriaLabel={overflowMenuAriaLabel}
+          />
+        </ActionBarRoot>
+      )}
+    </ActionBarLayoutProvider>
   );
 };
 

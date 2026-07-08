@@ -40,11 +40,10 @@ import {
 } from '../../../../handlers/floatingOverlayHandlers';
 import { useFloatingOverlayLayer } from '../../../../contexts/FloatingOverlayLayerContext';
 import { useFloatingOverlayPosition } from '../../../../hooks/useFloatingOverlayPosition';
-import { SkeletonEffect } from '../shared';
+import { SkeletonEffect, CharacterCounterMotion } from '../shared';
 import { InputFieldShell } from '../Input/InputFieldShell';
 import {
   ActionButton,
-  CharacterCounter,
   Container,
   ErrorMessage,
   ExtraText,
@@ -1525,11 +1524,13 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                 ? false
                 : currentLength >= props.maxLength! * characterCounterVisibilityThreshold);
 
-            return shouldShowCounter ? (
-              <CharacterCounter size={size} $isOverLimit={currentLength > props.maxLength!}>
-                {`${currentLength}/${props.maxLength}`}
-              </CharacterCounter>
-            ) : null;
+            return (
+              <CharacterCounterMotion
+                visible={shouldShowCounter}
+                currentLength={currentLength}
+                maxLength={props.maxLength!}
+              />
+            );
           })()}
       </Container>
     );

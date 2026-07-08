@@ -3,6 +3,7 @@ import { clsx } from 'clsx';
 import type { PillProps, PillStatus } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 import { PillRoot, PillIndicator, PillLoadingIndicator, PillText } from './Pill.style';
+import { ValueMotion } from '../ValueMotion';
 import { PillSkeletonRoot } from './PillSkeleton.style';
 import {
   getPillGeometry,
@@ -50,6 +51,10 @@ export const Pill = forwardRef<HTMLElement, PillProps>(
     const geometry = useMemo(() => getPillGeometry(size), [size]);
     const isRadio = role === 'radio';
     const resolvedStatus: PillStatus = status ?? 'default';
+    const indicatorMotionKey = useMemo(
+      () => `pill:${selected}:${resolvedStatus}`,
+      [resolvedStatus, selected],
+    );
     const isInteractionBlocked = disabled || loading;
 
     const handleClick = useCallback(
@@ -102,7 +107,9 @@ export const Pill = forwardRef<HTMLElement, PillProps>(
         {loading ? (
           <PillLoadingIndicator $g={geometry} $status={resolvedStatus} aria-hidden />
         ) : (
-          <PillIndicator
+          <ValueMotion
+            as={PillIndicator}
+            contentKey={indicatorMotionKey}
             $g={geometry}
             $selected={selected}
             $disabled={disabled}

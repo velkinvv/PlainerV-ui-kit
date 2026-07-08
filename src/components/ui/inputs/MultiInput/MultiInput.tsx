@@ -25,7 +25,7 @@ import {
   SkeletonEffect,
   AdditionalLabel,
   ExtraText,
-  CharacterCounter,
+  CharacterCounterMotion,
   RequiredIndicator,
   shouldShowInputClearButton,
 } from '../shared';
@@ -505,11 +505,11 @@ export const MultiInput = forwardRef<HTMLInputElement, MultiInputProps>(
           {helperText && !error && !success ? <HelperText>{helperText}</HelperText> : null}
           {extraText ? <ExtraText>{extraText}</ExtraText> : null}
 
-          {showCounter && effectiveMaxLength ? (
-            <CharacterCounter $isOverLimit={currentLength > effectiveMaxLength}>
-              {currentLength}/{effectiveMaxLength}
-            </CharacterCounter>
-          ) : null}
+          <CharacterCounterMotion
+            visible={Boolean(showCounter && effectiveMaxLength)}
+            currentLength={currentLength}
+            maxLength={effectiveMaxLength ?? 0}
+          />
         </InputControlStack>
       </InputContainer>
     );

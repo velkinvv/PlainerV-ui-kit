@@ -4,6 +4,7 @@ import { TooltipPosition, type TagColorVariant, type TagProps } from '../../../t
 import { Size } from '../../../types/sizes';
 import { Tooltip } from '../Tooltip/Tooltip';
 import { TagRoot, TagIconSlot, TagLabel, TagStatusMarker } from './Tag.style';
+import { ValueMotion } from '../ValueMotion';
 import { TagSkeletonRoot } from './TagSkeleton.style';
 import { getTagMetrics, getTagSkeletonDefaultWidthPx, tagLengthToCss } from './handlers';
 
@@ -83,6 +84,7 @@ export const Tag = forwardRef<HTMLElement, TagProps>(
     const useNativeButton = rootElement === 'button';
     const clickable = Boolean(onClick) && !disabled;
     const showMarker = statusDisplay === 'marker';
+    const markerMotionKey = `${paletteColorVariant}:${customColors?.marker ?? ''}`;
 
     const role = roleProp ?? (clickable && !useNativeButton ? 'button' : undefined);
     const tabIndex = tabIndexProp ?? (clickable && !useNativeButton ? 0 : undefined);
@@ -155,7 +157,9 @@ export const Tag = forwardRef<HTMLElement, TagProps>(
         className={clsx('ui-tag', className)}
       >
         {showMarker ? (
-          <TagStatusMarker
+          <ValueMotion
+            as={TagStatusMarker}
+            contentKey={markerMotionKey}
             $markerColor={paletteColorVariant}
             $markerFill={customColors?.marker}
             aria-hidden

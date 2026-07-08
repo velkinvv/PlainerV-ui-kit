@@ -4,6 +4,7 @@ import { ThemeColorScheme, type ThemeType } from '../../../types/theme';
 import type { StepperProps, StepperLinearStep } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
 import { IconSize } from '../../../types/sizes';
+import { ValueMotion } from '../ValueMotion';
 import {
   StepperBackButton,
   StepperCompactCounter,
@@ -178,7 +179,9 @@ const StepperCompactView = forwardRef<
               transform={`rotate(-90 ${COMPACT_SVG_SIZE / 2} ${COMPACT_SVG_SIZE / 2})`}
             />
           </svg>
-          <StepperCompactCounter>{counterText}</StepperCompactCounter>
+          <ValueMotion as={StepperCompactCounter} contentKey={counterText}>
+            {counterText}
+          </ValueMotion>
         </StepperCompactSvgWrap>
         <StepperCompactTextCol $appearance={appearance}>
           <StepperCompactTitle>{title}</StepperCompactTitle>

@@ -7,7 +7,7 @@ import { useUiMotionPresets } from '../../../hooks/useUiMotion';
 import { applyColorAlpha } from '../../../handlers/glassColorHandlers';
 import { Icon } from '../Icon';
 import { Tooltip } from '../Tooltip/Tooltip';
-import { Badge } from '../Badge/Badge';
+import { BadgePresence } from '../Badge/Badge';
 import {
   AvatarWrapper,
   AvatarContainer,
@@ -246,17 +246,16 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
           {renderContent()}
         </AvatarContainer>
         {/* Badge с количеством сообщений вне AvatarContainer (у него overflow: hidden); враппер с полями — см. AvatarWrapper.$hasMessageBadge */}
-        {hasMessageBadge && (
-          <AvatarMessageBadgeAnchor>
-            <Badge
-              variant={getBadgeVariantByStatus(status)}
-              size={size === Size.LG ? Size.MD : Size.SM}
-              rounded={true}
-            >
-              {(messageCount ?? 0) > 99 ? '99+' : (messageCount ?? 0)}
-            </Badge>
-          </AvatarMessageBadgeAnchor>
-        )}
+        <AvatarMessageBadgeAnchor>
+          <BadgePresence
+            visible={hasMessageBadge}
+            variant={getBadgeVariantByStatus(status)}
+            size={size === Size.LG ? Size.MD : Size.SM}
+            rounded={true}
+          >
+            {(messageCount ?? 0) > 99 ? '99+' : (messageCount ?? 0)}
+          </BadgePresence>
+        </AvatarMessageBadgeAnchor>
       </AvatarWrapper>
     );
 

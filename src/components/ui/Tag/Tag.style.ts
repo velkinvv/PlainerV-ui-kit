@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { motion } from 'framer-motion';
 import { createStyledShouldForwardProp } from '../../../handlers/styledComponentHandlers';
 import { TransitionHandler } from '../../../handlers/uiHandlers';
 import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
@@ -334,7 +335,7 @@ export const TagRoot = styled.span.withConfig({
 `;
 
 /** Цветная метка статуса слева (режим `statusDisplay="marker"`) */
-export const TagStatusMarker = styled.span.withConfig({
+export const TagStatusMarker = styled(motion.span).withConfig({
   shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $markerColor: TagColorVariant; $markerFill?: string }>`
   flex-shrink: 0;

@@ -17,4 +17,10 @@ export const badgeStoriesStyles = {
     gap: 12,
     flexWrap: 'wrap',
   } satisfies CSSProperties,
+  wrapColumn: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 16,
+    alignItems: 'flex-start',
+  } satisfies CSSProperties,
 };

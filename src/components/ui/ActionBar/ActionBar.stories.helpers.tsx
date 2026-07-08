@@ -1,5 +1,9 @@
 import { useCallback, useMemo, useState } from 'react';
-import { ActionBarSize, type ActionBarItemDefinition } from '../../../types/ui';
+import {
+  ActionBarSize,
+  ButtonVariant,
+  type ActionBarItemDefinition,
+} from '../../../types/ui';
 import { IconSize } from '../../../types/sizes';
 import { Icon } from '../Icon/Icon';
 import { ActionBar } from './ActionBar';
@@ -24,6 +28,24 @@ export type ActionBarDemoActionItem = {
   label: string;
   disabled?: boolean;
   iconName: ActionBarDemoIconName;
+};
+
+/** Опции mapActionBarDemoItems */
+export type MapActionBarDemoItemsOptions = {
+  /** id пункта с кратковременным пульсом */
+  highlightedItemId?: string | null;
+};
+
+/** Опции useActionBarDemoConfig */
+export type UseActionBarDemoConfigOptions = {
+  /** Выбранное действие — подсветка variant SECONDARY */
+  activeItemId?: string;
+  /** id пункта с highlightPulse (если не задано в items) */
+  highlightedItemId?: string | null;
+  /** Колбэк выбора действия кликом */
+  onSelectItem?: (itemId: string) => void;
+  /** Колбэк клика с подписью (интерактивные сторис) */
+  onActionClick?: (itemId: string, label: string) => void;
 };
 
 /** Полный набор действий для overflow-демо */
@@ -51,54 +73,95 @@ export const actionBarDemoActionsShort: ActionBarDemoActionItem[] = [
 /**
  * Преобразует демо-конфиг в массив `items` для ActionBar.
  * @param actionRows — строки демо-действий
+ * @param options — highlightedItemId для highlightPulse
  */
 export function mapActionBarDemoItems(
   actionRows: ActionBarDemoActionItem[],
+  options?: MapActionBarDemoItemsOptions,
 ): ActionBarItemDefinition[] {
+  const highlightedItemId = options?.highlightedItemId;
+
   return actionRows.map(({ itemId, withDivider }) => ({
     itemId,
     withDivider,
+    highlightPulse: highlightedItemId != null && highlightedItemId === itemId,
   }));
+}
+
+/**
+ * Нормализует аргумент options / legacy onActionClick.
+ * @param options — объект опций или legacy-колбэк
+ */
+function resolveActionBarDemoConfigOptions(
+  options?: UseActionBarDemoConfigOptions | ((itemId: string, label: string) => void),
+): UseActionBarDemoConfigOptions {
+  if (typeof options === 'function') {
+    return { onActionClick: options };
+  }
+
+  return options ?? {};
 }
 
 /**
  * Хук конфигурации ActionBar для сторис: рендеры кнопок и overflow-меню.
  * @param actionRows — список демо-действий
  * @param barSize — размер панели
- * @param onActionClick — колбэк клика по действию (для интерактивных сторис)
+ * @param options — activeItemId, highlightPulse, onSelectItem, onActionClick
  */
 export function useActionBarDemoConfig(
   actionRows: ActionBarDemoActionItem[],
   barSize: ActionBarSize = ActionBarSize.XL,
-  onActionClick?: (itemId: string, label: string) => void,
+  options?: UseActionBarDemoConfigOptions | ((itemId: string, label: string) => void),
 ) {
-  const items = useMemo(() => mapActionBarDemoItems(actionRows), [actionRows]);
+  const resolvedOptions = resolveActionBarDemoConfigOptions(options);
+
+  const items = useMemo(
+    () =>
+      mapActionBarDemoItems(actionRows, {
+        highlightedItemId: resolvedOptions.highlightedItemId,
+      }),
+    [actionRows, resolvedOptions.highlightedItemId],
+  );
 
   const findActionItem = useCallback(
     (itemId: string) => actionRows.find((row) => row.itemId === itemId),
     [actionRows],
   );
 
+  const findItemDefinition = useCallback(
+    (itemId: string) => items.find((entry) => entry.itemId === itemId),
+    [items],
+  );
+
   const renderActionBarItem = useCallback(
     (itemId: string) => {
       const actionItem = findActionItem(itemId);
+      const itemDefinition = findItemDefinition(itemId);
 
       if (!actionItem) {
         return null;
       }
 
+      const isActive = resolvedOptions.activeItemId === itemId;
+
       return (
         <ActionBar.ItemWithTooltip
           barSize={barSize}
+          variant={isActive ? ButtonVariant.SECONDARY : ButtonVariant.GHOST}
+          highlightPulse={Boolean(itemDefinition?.highlightPulse)}
           tooltipText={actionItem.label}
           aria-label={actionItem.label}
+          aria-pressed={isActive}
           disabled={actionItem.disabled}
           icon={<Icon name={actionItem.iconName} size={IconSize.SM} color="currentColor" />}
-          onClick={() => onActionClick?.(itemId, actionItem.label)}
+          onClick={() => {
+            resolvedOptions.onSelectItem?.(itemId);
+            resolvedOptions.onActionClick?.(itemId, actionItem.label);
+          }}
         />
       );
     },
-    [barSize, findActionItem, onActionClick],
+    [barSize, findActionItem, findItemDefinition, resolvedOptions],
   );
 
   const renderDropMenuItem = useCallback(
@@ -146,4 +209,13 @@ export function useActionBarLastActionState() {
     lastActionLabel,
     handleActionClick,
   };
+}
+
+/** Подпись демо-действия по itemId */
+export function resolveActionBarDemoItemLabel(
+  itemId: string,
+  actionRows: ActionBarDemoActionItem[] = actionBarDemoActionsFull,
+): string {
+  const actionItem = actionRows.find((entry) => entry.itemId === itemId);
+  return actionItem?.label ?? itemId;
 }

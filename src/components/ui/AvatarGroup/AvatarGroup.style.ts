@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { motion } from 'framer-motion';
 import { AvatarGroupVariant } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 
@@ -133,7 +134,7 @@ export const AvatarGroupContainer = styled.div<{
  * @param size - размер аватара
  * @param variant - вариант отображения
  */
-export const AvatarCounter = styled.div<{
+export const AvatarCounter = styled(motion.div)<{
   size?: Size;
   variant?: AvatarGroupVariant;
 }>`

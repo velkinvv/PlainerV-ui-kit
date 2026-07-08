@@ -87,5 +87,6 @@ export function mapSidemenuItemToNavigationProps(entry: SidemenuItem): Navigatio
     tooltip: entry.tooltip,
     popover: entry.popover,
     popoverActivateNavigation: entry.popoverActivateNavigation,
+    highlightPulse: entry.highlightPulse,
   };
 }

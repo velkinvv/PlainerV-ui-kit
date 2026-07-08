@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { motion } from 'framer-motion';
 import { ButtonVariant } from '@/types/ui';
 import { getButtonVariant } from '@/handlers/buttonThemeHandlers';
 import {
@@ -202,7 +203,7 @@ export const PageButton = styled.button<{
  * @property $fontSize — размер шрифта
  * @property $radius — скругление
  */
-export const PaginationCompactCurrent = styled.span<{
+export const PaginationCompactCurrent = styled(motion.span)<{
   $minW: string;
   $minH: string;
   $fontSize: string;

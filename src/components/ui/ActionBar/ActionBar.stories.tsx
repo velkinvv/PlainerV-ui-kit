@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import { ActionBar } from './ActionBar';
-import { ActionBarSize } from '../../../types/ui';
+import { ActionBarOrientation, ActionBarSize } from '../../../types/ui';
 import { DOC_ACTION_BAR } from '@/components/ui/storyDocs/uiKitDocs';
 import { actionBarStoriesStyles } from './ActionBar.stories.styles';
 import {
@@ -10,6 +10,7 @@ import {
   useActionBarDemoConfig,
   useActionBarLastActionState,
 } from './ActionBar.stories.helpers';
+import { ActionBarDynamicSizeDemo } from './ActionBarDynamicSizeDemo';
 
 const meta: Meta<typeof ActionBar> = {
   title: 'UI Kit/Layout/ActionBar',
@@ -81,6 +82,48 @@ const meta: Meta<typeof ActionBar> = {
       control: 'text',
       table: { type: { summary: 'string' } },
     },
+    orientation: {
+      control: { type: 'select' },
+      options: Object.values(ActionBarOrientation),
+      description: 'Горизонтальная или вертикальная раскладка панели.',
+      table: {
+        type: { summary: 'ActionBarOrientation' },
+        defaultValue: { summary: 'ActionBarOrientation.HORIZONTAL' },
+      },
+    },
+    dynamicSize: {
+      control: 'boolean',
+      description:
+        'Динамический размер панели: layout spring + AnimatePresence при добавлении/удалении действий.',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    dynamicSizeInsetPx: {
+      control: { type: 'number', min: 0, max: 64, step: 4 },
+      description: 'Отступ для max-width (horizontal) или max-height (vertical), px.',
+      table: {
+        type: { summary: 'number' },
+        defaultValue: { summary: '16' },
+      },
+    },
+    dynamicHeight: {
+      control: 'boolean',
+      description: 'Legacy: vertical + dynamicSize.',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    dynamicHeightInsetPx: {
+      control: { type: 'number', min: 0, max: 64, step: 4 },
+      description: 'Legacy: алиас для dynamicSizeInsetPx.',
+      table: {
+        type: { summary: 'number' },
+        defaultValue: { summary: '16' },
+      },
+    },
   },
 };
 
@@ -89,6 +132,8 @@ type Story = StoryObj<typeof ActionBar>;
 
 type ActionBarStoryDemoProps = {
   size?: ActionBarSize;
+  orientation?: ActionBarOrientation;
+  dynamicSize?: boolean;
   'aria-label'?: string;
   overflowMenuAriaLabel?: string;
   actionRows?: typeof actionBarDemoActionsFull;
@@ -98,6 +143,8 @@ type ActionBarStoryDemoProps = {
 
 const ActionBarStoryDemo = ({
   size = ActionBarSize.XL,
+  orientation = ActionBarOrientation.HORIZONTAL,
+  dynamicSize = false,
   'aria-label': ariaLabel = 'Панель действий',
   overflowMenuAriaLabel,
   actionRows = actionBarDemoActionsFull,
@@ -124,6 +171,8 @@ const ActionBarStoryDemo = ({
         <ActionBar
           {...demoConfig}
           size={size}
+          orientation={orientation}
+          dynamicSize={dynamicSize}
           aria-label={ariaLabel}
           overflowMenuAriaLabel={overflowMenuAriaLabel}
         />
@@ -259,3 +308,111 @@ export const WithDisabledOverflowItem: Story = {
     </div>
   ),
 };
+
+/** Вертикальная статическая панель (без overflow-меню) */
+export const VerticalStatic: Story = {
+  name: 'Vertical — статическая колонка',
+  render: () => (
+    <div style={actionBarStoriesStyles.page}>
+      <p style={actionBarStoriesStyles.hint}>
+        `orientation={ActionBarOrientation.VERTICAL}` без **dynamicSize** — колонка фиксированной
+        ширины, все действия видимы.
+      </p>
+      <ActionBarStoryDemo
+        size={ActionBarSize.XL}
+        aria-label="Вертикальная панель действий"
+        shellStyle={{ width: 'auto' }}
+        orientation={ActionBarOrientation.VERTICAL}
+      />
+    </div>
+  ),
+};
+
+/** dynamicSize — добавление в конец, горизонтальная панель */
+export const DynamicSizeHorizontal: Story = {
+  name: 'Dynamic size — горизонтально',
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        story:
+          '**dynamicSize** в горизонтальной ориентации: панель расширяется по ширине, новые действия добавляются в конец с sync-анимацией.',
+      },
+    },
+  },
+  render: () => (
+    <ActionBarDynamicSizeDemo
+      insertAfterSelection={false}
+      initialOrientation={ActionBarOrientation.HORIZONTAL}
+    />
+  ),
+};
+
+/** dynamicSize — добавление в конец, вертикальная панель */
+export const DynamicSizeVertical: Story = {
+  name: 'Dynamic size — вертикально',
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        story:
+          '**dynamicSize** в вертикальной ориентации: панель расширяется по высоте, новые действия добавляются в конец с sync-анимацией.',
+      },
+    },
+  },
+  render: () => (
+    <ActionBarDynamicSizeDemo
+      insertAfterSelection={false}
+      initialOrientation={ActionBarOrientation.VERTICAL}
+    />
+  ),
+};
+
+/** dynamicSize — вставка после выбранного, горизонтальная панель */
+export const DynamicSizeRemoveSelectedHorizontal: Story = {
+  name: 'Dynamic size — горизонтально, любая позиция',
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        story:
+          'Горизонтальная панель: выберите действие кликом. Новое добавляется справа от выбранного. «Удалить выбранное» убирает активную кнопку с той же анимацией.',
+      },
+    },
+  },
+  render: () => (
+    <ActionBarDynamicSizeDemo
+      insertAfterSelection
+      initialOrientation={ActionBarOrientation.HORIZONTAL}
+    />
+  ),
+};
+
+/** dynamicSize — вставка после выбранного, вертикальная панель */
+export const DynamicSizeRemoveSelectedVertical: Story = {
+  name: 'Dynamic size — вертикально, любая позиция',
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        story:
+          'Вертикальная панель: выберите действие кликом. Новое добавляется ниже выбранного. «Удалить выбранное» убирает активную кнопку с той же анимацией.',
+      },
+    },
+  },
+  render: () => (
+    <ActionBarDynamicSizeDemo
+      insertAfterSelection
+      initialOrientation={ActionBarOrientation.VERTICAL}
+    />
+  ),
+};
+
+/** @deprecated Используйте {@link DynamicSizeHorizontal} */
+export const DynamicSize: Story = DynamicSizeHorizontal;
+
+/** @deprecated Используйте {@link DynamicSizeRemoveSelectedHorizontal} или {@link DynamicSizeRemoveSelectedVertical} */
+export const DynamicSizeRemoveSelected: Story = DynamicSizeRemoveSelectedVertical;
+
+/** @deprecated Используйте {@link DynamicSizeHorizontal} */
+export const DynamicHeight: Story = DynamicSizeHorizontal;

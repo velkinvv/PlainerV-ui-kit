@@ -510,7 +510,7 @@ export const ExtraText = styled.span`
   display: block;
 `;
 
-export const CharacterCounter = styled.span<{ $isOverLimit?: boolean }>`
+export const CharacterCounter = styled(motion.span)<{ $isOverLimit?: boolean }>`
   font-family: ${({ theme }) => theme.typography.caption.fontFamily};
   font-size: ${({ theme }) => theme.typography.caption.fontSize};
   font-weight: ${({ theme }) => theme.typography.caption.fontWeight};

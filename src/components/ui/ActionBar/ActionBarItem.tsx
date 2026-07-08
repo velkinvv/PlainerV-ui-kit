@@ -18,6 +18,7 @@ export const ActionBarItem = forwardRef<HTMLButtonElement, ActionBarItemProps>(
     {
       barSize = ActionBarSize.XL,
       variant = ButtonVariant.GHOST,
+      highlightPulse = false,
       className,
       size,
       ...iconButtonProps
@@ -27,7 +28,11 @@ export const ActionBarItem = forwardRef<HTMLButtonElement, ActionBarItemProps>(
     const resolvedSize = size ?? resolveActionBarIconButtonSize(barSize);
 
     return (
-      <ActionBarItemSlot $barSize={barSize} className={clsx('ui-action-bar-item', className)}>
+      <ActionBarItemSlot
+        $barSize={barSize}
+        $highlightPulse={highlightPulse}
+        className={clsx('ui-action-bar-item', className)}
+      >
         <IconButton ref={ref} variant={variant} size={resolvedSize} {...iconButtonProps} />
       </ActionBarItemSlot>
     );

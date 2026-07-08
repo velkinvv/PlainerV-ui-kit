@@ -9,6 +9,20 @@
 
 ---
 
+## [0.2.5] - 2026-07-08
+
+### Added
+
+- **Темизация:** оси **ThemeVariant** × **ThemeColorScheme** (`setThemeVariant`, `setColorScheme`); компонент **ThemeVariantSelector**.
+- **Детские темы:** `kidsBoys` и `kidsGirls` (светлая/тёмная палитра 8–11 лет); legacy `kids` мигрирует в `kidsBoys`.
+- **Storybook:** toolbar с двумя переключателями (Тема + Цвет), поддержка kidsBoys/kidsGirls в Docs и canvas.
+
+### Added (документация)
+
+- Документация **v0.2.5**; обновлены README, CHANGELOG, ссылки в Storybook docs.
+
+---
+
 ## [0.2.4] - 2026-07-07
 
 ### Added

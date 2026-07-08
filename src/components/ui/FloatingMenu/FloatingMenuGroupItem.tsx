@@ -34,6 +34,7 @@ export const FloatingMenuGroupItem: React.FC<FloatingMenuGroupItemProps> = ({
   dropdownContent,
   tooltip,
   tooltipPosition = TooltipPosition.TOP,
+  highlightPulse = false,
   onClick,
   className,
   'aria-label': ariaLabel,
@@ -179,6 +180,7 @@ export const FloatingMenuGroupItem: React.FC<FloatingMenuGroupItemProps> = ({
       $active={active}
       $disabled={disabled}
       $insetGroup={insetGroup}
+      $highlightPulse={highlightPulse}
       aria-label={ariaLabel}
       aria-expanded={hasMenu ? isOpen : undefined}
       aria-haspopup={hasMenu ? 'true' : undefined}

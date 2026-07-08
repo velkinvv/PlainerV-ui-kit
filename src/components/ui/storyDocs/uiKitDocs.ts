@@ -504,9 +504,11 @@ export const DOC_FLOATING_MENU = `
 /** @see ActionBarProps и связанные */
 export const DOC_ACTION_BAR = `
 ### Назначение
-Горизонтальная **панель действий** с иконками: логические группы разделяются **ActionBar.Divider**, при нехватке ширины лишние кнопки автоматически уходят в **overflow-меню**.
+**Панель действий** с иконками: **горизонтальная** (по умолчанию) или **вертикальная** (\`orientation\`). Логические группы разделяются **ActionBar.Divider**. В горизонтальном режиме при нехватке ширины лишние кнопки уходят в **overflow-меню**.
 
-Отличается от **FloatingMenu** (плавающая панель у края экрана / draggable) — **ActionBar** встраивается в layout (шапка таблицы, тулбар карточки, строка над контентом) и занимает **100% ширины** родителя.
+Режим **dynamicSize** — «пилюля» с layout spring и AnimatePresence при добавлении/удалении пунктов; работает в обеих ориентациях. Overflow-меню отключено, при переполнении — прокрутка внутри панели.
+
+Отличается от **FloatingMenu** (плавающая панель у края экрана / draggable) — **ActionBar** встраивается в layout (шапка таблицы, тулбар карточки).
 
 Составной API: **ActionBar**, **ActionBar.Item**, **ActionBar.ItemWithTooltip**, **ActionBar.Divider**, **ActionBar.DropMenuItem**.
 
@@ -528,6 +530,10 @@ export const DOC_ACTION_BAR = `
 | \`renderDropMenuItem\` | Рендер строки overflow-меню; опционально \`options.closeMenu\` — закрыть меню после действия. |
 | \`itemIsDisabled\` | \`(itemId) => boolean\` — disabled для пунктов overflow-меню. |
 | \`size\` | Размер кнопок панели (**ActionBarSize**, по умолчанию XL). |
+| \`orientation\` | **ActionBarOrientation**: \`horizontal\` (по умолчанию) или \`vertical\`. |
+| \`dynamicSize\` | Динамический размер панели с layout-анимацией и AnimatePresence пунктов. |
+| \`dynamicSizeInsetPx\` | Отступ для max-width / max-height (px, по умолчанию 16). |
+| \`dynamicHeight\` | Legacy: \`vertical\` + \`dynamicSize\`. |
 | \`overflowMenuAriaLabel\` | Подпись кнопки «ещё» и меню (по умолчанию «Дополнительные действия»). |
 | \`aria-label\` | **Обязательна** — подпись для \`role="toolbar"\`. |
 | \`className\` | CSS-класс на корне. |
@@ -1093,7 +1099,7 @@ export const DOC_SLIDER_INPUT = `
 - **DateInput** (\`range\`) — тот же паттерн «одно значение / пара», другой тип данных.
 
 ### Документация
-- Сайт: \`documentation/content/docs/ru/web/v_0.2.4/components-slider-input.mdx\`
+- Сайт: \`documentation/content/docs/ru/web/v_0.2.5/components-slider-input.mdx\`
 - Storybook: **UI Kit → Inputs → SliderInput** (истории по режимам и состояниям)
 `.trim();
 
@@ -1145,7 +1151,7 @@ export const DOC_THEME_TOGGLE = `
 
 Пара **ThemeVariantSelector** + **ThemeToggle** — основной способ переключения встроенных тем. Для каталога из 3+ кастомных id используйте **ThemeSelector** или \`setThemeMode\`.
 
-См. [Theming](/docs/web/v_0.2.4/theming).
+См. [Theming](/docs/web/v_0.2.5/theming).
 `.trim();
 
 /** ThemeVariantSelector — ThemeVariantSelectorProps */
@@ -1155,7 +1161,7 @@ export const DOC_THEME_VARIANT_SELECTOR = `
 
 Комбинируйте с **ThemeToggle** для полного управления темой. Скрывается, если в каталоге доступен только один вариант.
 
-См. сторис **UI Kit/Theming/ThemeVariantSelector** и [Theming](/docs/web/v_0.2.4/theming).
+См. сторис **UI Kit/Theming/ThemeVariantSelector** и [Theming](/docs/web/v_0.2.5/theming).
 `.trim();
 
 /** ThemeSelector — ThemeSelectorProps */
@@ -1165,7 +1171,7 @@ export const DOC_THEME_SELECTOR = `
 
 Работает с любым числом тем. Переключение: \`setThemeMode(appThemes.themeMode.ocean)\` — type-safe id.
 
-См. сторис **UI Kit/Theming/ThemeSelector** и [Theming](/docs/web/v_0.2.4/theming).
+См. сторис **UI Kit/Theming/ThemeSelector** и [Theming](/docs/web/v_0.2.5/theming).
 `.trim();
 
 /** @see SidemenuProps */

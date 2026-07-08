@@ -13,7 +13,7 @@ import { navigationMenuItemContentMotionTransition } from '@/handlers/navigation
 import { navigationMenuSubtreeContainsActiveId } from '@/handlers/navigationMenuNestedHandlers';
 import { wrapNavigationMenuItemTrigger } from '@/handlers/navigationMenuItemOverlayHandlers';
 import { Popover } from '../Popover/Popover';
-import { Badge } from '../Badge/Badge';
+import { BadgePresence } from '../Badge/Badge';
 import { Spinner } from '../Spinner/Spinner';
 import { Skeleton } from '../Skeleton/Skeleton';
 import { Icon } from '../Icon/Icon';
@@ -24,9 +24,8 @@ import {
 } from './NavigationMenuContext';
 import { NavigationMenuDepthProvider, useNavigationMenuDepth } from './NavigationMenuDepthContext';
 import {
-  NavigationMenuRowCollapse,
-  NavigationMenuRowCollapseInner,
   NavigationMenuRowCollapseDiv,
+  NavigationMenuRowCollapseInner,
   NavigationMenuItemContentMotion,
   NavigationMenuItemSkeletonSurface,
   NavigationMenuItemButton,
@@ -43,6 +42,7 @@ import {
   NavigationMenuNestedList,
   NavigationMenuBranchChevron,
 } from './NavigationMenu.style';
+import { NavigationMenuItemOuterRow } from './NavigationMenuItemOuterRow';
 
 /**
  * Пункт меню навигации (`NavigationMenu`). Поддерживает иконку, бейдж, суффикс, режим collapsed и **вложенные уровни** (`items`).
@@ -67,6 +67,7 @@ import {
  * @param tooltip — обёртка {@link Tooltip}; не используется, если задан hint
  * @param popover — компонент Popover: панель в `popover.children`, триггер — строка пункта; снаружи hint/tooltip
  * @param popoverActivateNavigation — при popover на листе: явно `true`, чтобы клик ещё и выбрал пункт (**activeId**)
+ * @param highlightPulse — кратковременная подсветка-пульс строки (например, только что добавленный пункт)
  */
 export const NavigationMenuItem = React.forwardRef<
   HTMLButtonElement | HTMLAnchorElement,
@@ -95,6 +96,9 @@ export const NavigationMenuItem = React.forwardRef<
       tooltip,
       popover,
       popoverActivateNavigation,
+      presenceMotion = false,
+      presenceMotionIsLastItem = false,
+      highlightPulse = false,
     },
     ref,
   ) => {
@@ -256,7 +260,8 @@ export const NavigationMenuItem = React.forwardRef<
       $disabled: surfaceInteractiveDisabled,
       $appearance: activeAppearance,
       $status: status,
-      className: clsx('ui-navigation-menu-item', className),
+      $highlightPulse: highlightPulse,
+      className: clsx('ui-navigation-menu-item', highlightPulse && 'ui-navigation-menu-item--highlight-pulse', className),
       'aria-current': active && !hasNestedBranch ? ('page' as const) : undefined,
       /* Нативный title убираем, если показываем Hint/Tooltip — иначе дублируется «браузерная» подсказка */
       title: hint != null || effectiveTooltip != null ? undefined : resolvedTitle,
@@ -290,24 +295,26 @@ export const NavigationMenuItem = React.forwardRef<
 
     if (skeleton) {
       return (
-        <NavigationMenuRowCollapse $isVisible={isVisible}>
-          <NavigationMenuRowCollapseInner>
-            <NavigationMenuItemContentMotion {...motionInnerProps}>
-              <NavigationMenuItemSkeletonSurface $collapsed={collapsed} aria-hidden>
-                {/* Одна полоса на всю строку, как у пункта DropdownMenuItem при skeleton */}
-                <Skeleton
-                  variant={SkeletonVariant.CUSTOM}
-                  shape="rect"
-                  width="100%"
-                  height={32}
-                  borderRadius={6}
-                  animated
-                  ariaLabel="Загрузка пункта меню"
-                />
-              </NavigationMenuItemSkeletonSurface>
-            </NavigationMenuItemContentMotion>
-          </NavigationMenuRowCollapseInner>
-        </NavigationMenuRowCollapse>
+        <NavigationMenuItemOuterRow
+          presenceMotion={presenceMotion}
+          presenceMotionIsLastItem={presenceMotionIsLastItem}
+          isVisible={isVisible}
+        >
+          <NavigationMenuItemContentMotion {...motionInnerProps}>
+            <NavigationMenuItemSkeletonSurface $collapsed={collapsed} aria-hidden>
+              {/* Одна полоса на всю строку, как у пункта DropdownMenuItem при skeleton */}
+              <Skeleton
+                variant={SkeletonVariant.CUSTOM}
+                shape="rect"
+                width="100%"
+                height={32}
+                borderRadius={6}
+                animated
+                ariaLabel="Загрузка пункта меню"
+              />
+            </NavigationMenuItemSkeletonSurface>
+          </NavigationMenuItemContentMotion>
+        </NavigationMenuItemOuterRow>
       );
     }
 
@@ -316,22 +323,20 @@ export const NavigationMenuItem = React.forwardRef<
         {icon != null || showFloatingBadge ? (
           <NavigationMenuItemIconWrap>
             {icon}
-            {showFloatingBadge ? (
-              <NavigationMenuBadgeFloatRoot>
-                <Badge variant={BadgeVariant.DEFAULT} size={Size.SM}>
-                  {badge}
-                </Badge>
-              </NavigationMenuBadgeFloatRoot>
-            ) : null}
+            <NavigationMenuBadgeFloatRoot>
+              <BadgePresence visible={showFloatingBadge} variant={BadgeVariant.DEFAULT} size={Size.SM}>
+                {badge}
+              </BadgePresence>
+            </NavigationMenuBadgeFloatRoot>
           </NavigationMenuItemIconWrap>
         ) : null}
         <NavigationMenuItemLabel $collapsed={collapsed}>{label}</NavigationMenuItemLabel>
         {children}
         {showInlineBadge ? (
           <NavigationMenuBadgeInlineRoot>
-            <Badge variant={BadgeVariant.DEFAULT} size={Size.MD}>
+            <BadgePresence visible variant={BadgeVariant.DEFAULT} size={Size.MD}>
               {badge}
-            </Badge>
+            </BadgePresence>
           </NavigationMenuBadgeInlineRoot>
         ) : null}
         {loading ? (
@@ -486,13 +491,15 @@ export const NavigationMenuItem = React.forwardRef<
     );
 
     return (
-      <NavigationMenuRowCollapse $isVisible={isVisible}>
-        <NavigationMenuRowCollapseInner>
-          <NavigationMenuItemContentMotion {...motionInnerProps}>
-            {leafTrigger}
-          </NavigationMenuItemContentMotion>
-        </NavigationMenuRowCollapseInner>
-      </NavigationMenuRowCollapse>
+      <NavigationMenuItemOuterRow
+        presenceMotion={presenceMotion}
+        presenceMotionIsLastItem={presenceMotionIsLastItem}
+        isVisible={isVisible}
+      >
+        <NavigationMenuItemContentMotion {...motionInnerProps}>
+          {leafTrigger}
+        </NavigationMenuItemContentMotion>
+      </NavigationMenuItemOuterRow>
     );
   },
 );

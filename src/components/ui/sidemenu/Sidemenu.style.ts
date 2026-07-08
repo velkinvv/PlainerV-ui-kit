@@ -4,6 +4,7 @@ import { Size } from '@/types/sizes';
 import { SidemenuHorizontalPlacement } from '@/types/ui';
 import { BoxShadowHandler } from '@/handlers/uiHandlers';
 import { cardBorderRadiusFromTheme } from '@/handlers/cardThemeHandlers';
+import { verticalScrollWithoutLayoutShiftCss } from '@/handlers/scrollOverlayStyles';
 
 /**
  * Корневая панель {@link Sidemenu}: карточка или колонна у края экрана.
@@ -13,18 +14,71 @@ import { cardBorderRadiusFromTheme } from '@/handlers/cardThemeHandlers';
 export const SidemenuPanelRoot = styled(motion.div)<{
   $edgeAttached: boolean;
   $horizontalPlacement: SidemenuHorizontalPlacement;
+  $dynamicHeight?: boolean;
+  $dynamicHeightMaxCss?: string;
+  /** Идёт анимация высоты пунктов — overflow hidden на панели и body */
+  $sizeAnimating?: boolean;
 }>`
   display: flex;
   flex-direction: column;
   align-items: center;
   background: ${({ theme }) => theme?.colors?.backgroundSecondary};
   position: relative;
-  overflow: hidden;
   box-sizing: border-box;
   flex-shrink: 0;
+  overflow: hidden;
 
-  ${({ $edgeAttached, $horizontalPlacement, theme }) =>
-    $edgeAttached
+  ${({ $dynamicHeight }) =>
+    $dynamicHeight
+      ? css`
+          .ui-sidemenu__navigation ul {
+            gap: 0;
+          }
+
+          /* gap между пунктами через margin; :last-child перекрывает motion после смены позиции */
+          .ui-navigation-menu-row-presence {
+            margin-bottom: 4px;
+          }
+
+          .ui-navigation-menu-row-presence:last-child {
+            margin-bottom: 0 !important;
+          }
+        `
+      : ''}
+
+  ${({ $edgeAttached, $horizontalPlacement, $dynamicHeight, $dynamicHeightMaxCss, theme }) => {
+    if ($dynamicHeight) {
+      return css`
+        height: auto;
+        max-height: ${$dynamicHeightMaxCss ?? 'min(calc(100vh - 32px), calc(100% - 32px))'};
+        min-height: 0;
+        align-self: flex-start;
+        ${$edgeAttached
+          ? css`
+              border-radius: 0;
+              box-shadow: none;
+              border: none;
+              ${$horizontalPlacement === SidemenuHorizontalPlacement.RIGHT
+                ? css`
+                    border-left: 1px solid ${theme?.colors?.border};
+                  `
+                : css`
+                    border-right: 1px solid ${theme?.colors?.border};
+                  `}
+            `
+          : css`
+              border-radius: ${cardBorderRadiusFromTheme(
+                theme,
+                theme?.borderRadius ?? theme?.globalSize,
+              )};
+              border: 1px solid ${theme?.colors?.border};
+              box-shadow: ${BoxShadowHandler(Size.LG)};
+            `}
+        padding: 0 0 30px 0;
+      `;
+    }
+
+    return $edgeAttached
       ? css`
           border-radius: 0;
           box-shadow: none;
@@ -50,7 +104,8 @@ export const SidemenuPanelRoot = styled(motion.div)<{
           padding: 0 0 30px 0;
           height: 741px;
           box-shadow: ${BoxShadowHandler(Size.LG)};
-        `}
+        `;
+  }}
 `;
 
 /**
@@ -61,15 +116,26 @@ export const SidemenuPanelRoot = styled(motion.div)<{
 export const SidemenuNavigationBodyZone = styled.div<{
   $edgeAttached: boolean;
   $menuJustifyContent: 'flex-start' | 'center' | 'flex-end';
+  $dynamicHeight?: boolean;
+  $sizeAnimating?: boolean;
 }>`
   display: flex;
   flex-direction: column;
   width: 100%;
   min-height: 0;
-  flex: 1 1 auto;
+  flex: ${({ $dynamicHeight }) => ($dynamicHeight ? '1 1 auto' : '1 1 auto')};
+  overflow-x: hidden;
 
-  ${({ $edgeAttached, $menuJustifyContent }) =>
-    $edgeAttached
+  ${({ $dynamicHeight, $sizeAnimating }) => {
+    if (!$dynamicHeight || $sizeAnimating) {
+      return 'overflow-y: hidden;';
+    }
+
+    return verticalScrollWithoutLayoutShiftCss;
+  }}
+
+  ${({ $edgeAttached, $menuJustifyContent, $dynamicHeight }) =>
+    $edgeAttached && !$dynamicHeight
       ? css`
           justify-content: ${$menuJustifyContent};
         `
@@ -83,10 +149,16 @@ export const SidemenuNavigationBodyZone = styled.div<{
 export const SidemenuMenuItemsContainer = styled.div<{
   $leadPaddingTopPx: number;
   $fillBodyZone: boolean;
+  $dynamicHeight?: boolean;
 }>`
   display: flex;
   flex-direction: column;
-  flex: ${({ $fillBodyZone }) => ($fillBodyZone ? '1' : '0 1 auto')};
+  flex: ${({ $fillBodyZone, $dynamicHeight }) => {
+    if ($dynamicHeight) {
+      return '0 1 auto';
+    }
+    return $fillBodyZone ? '1' : '0 1 auto';
+  }};
   width: 100%;
   padding: ${({ $leadPaddingTopPx }) => `${$leadPaddingTopPx}px 10px 0`};
   min-height: 0;

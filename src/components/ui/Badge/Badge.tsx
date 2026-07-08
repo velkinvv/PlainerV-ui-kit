@@ -1,9 +1,20 @@
 import React, { forwardRef } from 'react';
 import { clsx } from 'clsx';
+import { AnimatePresence } from 'framer-motion';
 import { type BadgeProps, BadgeVariant } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
-import { useUiMotionPresets } from '../../../hooks/useUiMotion';
+import { formatBadgeDisplayContent } from '../../../handlers/badgeContentHandlers';
+import { useBadgeMotion } from '../../../hooks/useBadgeMotion';
 import { BadgeContainer } from './Badge.style';
+
+/**
+ * Пропсы бейджа с управлением видимостью (AnimatePresence).
+ * @property visible — показывать бейдж; при false — анимированное исчезновение
+ */
+export type BadgePresenceProps = BadgeProps & {
+  /** Показывать бейдж (для анимации появления/исчезновения) */
+  visible?: boolean;
+};
 
 export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
   (
@@ -12,33 +23,22 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
       variant = BadgeVariant.DEFAULT,
       size = Size.MD,
       isDot = false,
-      rounded = true, // По умолчанию true для Badge согласно макету
+      rounded = true,
       className,
       onClick,
+      motionEnabled = true,
     },
     ref,
   ) => {
-    const uiMotion = useUiMotionPresets();
+    const { motionProps } = useBadgeMotion({
+      children,
+      isDot,
+      size,
+      interactive: Boolean(onClick),
+      motionEnabled,
+    });
 
-    // Функция для форматирования содержимого Badge
-    const formatBadgeContent = (content: React.ReactNode): React.ReactNode => {
-      if (isDot) return null;
-
-      // Если содержимое - число больше 9, показываем "9+"
-      if (typeof content === 'number' && content > 9) {
-        return '9+';
-      }
-
-      // Если содержимое - строка, которая является числом больше 9
-      if (typeof content === 'string') {
-        const num = parseInt(content, 10);
-        if (!isNaN(num) && num > 9) {
-          return '9+';
-        }
-      }
-
-      return content;
-    };
+    const formattedContent = formatBadgeDisplayContent(children, isDot);
 
     return (
       <BadgeContainer
@@ -49,12 +49,33 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
         rounded={rounded}
         className={clsx('ui-badge', className)}
         onClick={onClick}
-        {...uiMotion.badge(Boolean(onClick))}
+        {...motionProps}
       >
-        {formatBadgeContent(children)}
+        {formattedContent}
       </BadgeContainer>
     );
   },
 );
 
 Badge.displayName = 'Badge';
+
+/**
+ * Бейдж с AnimatePresence для сценариев появления/исчезновения (Avatar, Tabs, Select).
+ *
+ * @param visible — монтировать бейдж в DOM
+ */
+export const BadgePresence = forwardRef<HTMLSpanElement, BadgePresenceProps>(
+  ({ visible = true, children, ...badgeProps }, ref) => {
+    return (
+      <AnimatePresence mode="popLayout">
+        {visible ? (
+          <Badge ref={ref} {...badgeProps}>
+            {children}
+          </Badge>
+        ) : null}
+      </AnimatePresence>
+    );
+  },
+);
+
+BadgePresence.displayName = 'BadgePresence';

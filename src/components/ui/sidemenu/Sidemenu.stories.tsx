@@ -40,6 +40,7 @@ import {
   SidemenuPlacementMatrixPage,
 } from './Sidemenu.stories.placement.helpers';
 import { sidemenuPlacementStoriesStyles } from './Sidemenu.stories.placement.styles';
+import { SidemenuDynamicHeightDemo } from './SidemenuDynamicHeightDemo';
 
 const sidemenuStoryThemeStyles = createSidemenuStoryThemeStyles(lightTheme);
 const edgeAttachedPageRootStyle = {
@@ -184,6 +185,23 @@ const meta: Meta<typeof Sidemenu> = {
       control: { type: 'number' },
       description: 'Задержка скрытия off-screen после mouseleave (мс)',
       table: { type: { summary: 'number' } },
+    },
+    dynamicHeight: {
+      control: 'boolean',
+      description:
+        'Динамическая высота по содержимому с layout-анимацией и AnimatePresence для пунктов.',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    dynamicHeightInsetPx: {
+      control: { type: 'number', min: 0, max: 64, step: 4 },
+      description: 'Отступ от краёв родителя / вьюпорта для max-height (px).',
+      table: {
+        type: { summary: 'number' },
+        defaultValue: { summary: '16' },
+      },
     },
   },
 };
@@ -1491,4 +1509,34 @@ export const OffScreenPlacementMatrix: Story = {
       ))}
     </SidemenuPlacementMatrixPage>
   ),
+};
+
+/** Динамическая высота и анимация добавления/удаления пунктов */
+export const DynamicHeight: Story = {
+  name: 'Dynamic height — анимированная высота',
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        story:
+          '**dynamicHeight** — панель подстраивает высоту под число пунктов. Max-height ограничен родителем и вьюпортом минус **dynamicHeightInsetPx**. Добавление и удаление пунктов анимируется (height + opacity).',
+      },
+    },
+  },
+  render: () => <SidemenuDynamicHeightDemo insertAfterSelection={false} />,
+};
+
+/** Удаление выбранного пункта из начала, середины или конца списка */
+export const DynamicHeightRemoveSelected: Story = {
+  name: 'Dynamic height — удаление выбранного (любая позиция)',
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        story:
+          'Выберите пункт кликом (строка «Выбран: …»). **Добавить после выбранного** вставляет новый пункт под ним — в начало, середину или конец. **Удалить выбранный пункт** убирает именно выбранный элемент, не последний в списке.',
+      },
+    },
+  },
+  render: () => <SidemenuDynamicHeightDemo insertAfterSelection />,
 };

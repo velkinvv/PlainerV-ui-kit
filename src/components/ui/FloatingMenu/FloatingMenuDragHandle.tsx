@@ -13,7 +13,7 @@ export const FloatingMenuDragHandle: React.FC<FloatingMenuDragHandleProps> = ({
   className,
   children,
 }) => {
-  const { setHasDragHandle } = useFloatingMenuRootContext();
+  const { setHasDragHandle, orientation } = useFloatingMenuRootContext();
 
   useEffect(() => {
     setHasDragHandle(true);
@@ -23,6 +23,7 @@ export const FloatingMenuDragHandle: React.FC<FloatingMenuDragHandleProps> = ({
   return (
     <FloatingMenuDragHandleRoot
       className={clsx('ui-floating-menu-drag-handle', className)}
+      $orientation={orientation}
       data-floating-menu-drag-handle
       aria-label="Переместить панель"
     >

@@ -820,6 +820,7 @@ export interface FileInputProps extends Omit<
  * @property isDot - Специальный dot размер (8x8px без текста)
  * @property rounded - Закругленные углы (по умолчанию true для Badge)
  * @property onClick - Обработчик клика
+ * @property motionEnabled - Lifecycle-анимации (появление, пульс значения, layout размера)
  */
 export interface BadgeProps extends BaseComponentProps {
   variant?: BadgeVariant;
@@ -827,6 +828,8 @@ export interface BadgeProps extends BaseComponentProps {
   isDot?: boolean; // Специальный dot размер
   rounded?: boolean;
   onClick?: () => void;
+  /** Включить анимации появления, пульса и смены размера (по умолчанию true) */
+  motionEnabled?: boolean;
 }
 
 /**
@@ -2138,6 +2141,15 @@ export interface NavigationMenuItemProps {
    * Только для **листа** с **popover**: при `true` клик по строке ещё и выставляет **activeId**; при `false` или без явного значения при наличии **popover** выбор пункта не выполняется (удобно, когда панель заменяет переход).
    */
   popoverActivateNavigation?: boolean;
+  /**
+   * Mount/unmount анимация строки (AnimatePresence в {@link Sidemenu} при **dynamicHeight**).
+   * Для вложенных веток не применяется.
+   */
+  presenceMotion?: boolean;
+  /** Последний пункт списка — без нижнего gap при presenceMotion */
+  presenceMotionIsLastItem?: boolean;
+  /** Кратковременная подсветка-пульс (например, только что добавленный пункт) */
+  highlightPulse?: boolean;
 }
 
 /**
@@ -2173,6 +2185,14 @@ export interface MenuItemProps {
   destructive?: boolean;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   className?: string;
+}
+
+/**
+ * Ориентация плавающей панели: горизонтальная (ряд) или вертикальная (колонка).
+ */
+export enum FloatingMenuOrientation {
+  HORIZONTAL = 'horizontal',
+  VERTICAL = 'vertical',
 }
 
 /**
@@ -2228,6 +2248,9 @@ export enum FloatingMenuDragSource {
  * @property dragSource — перетаскивание за всю панель или только за `DragHandle`
  * @property defaultOffset — начальные координаты `left/top` в px при `draggable` (если не заданы — центр по нижнему краю)
  * @property zIndex — слой отображения
+ * @property dynamicSize — динамический размер панели и sync-анимация появления/удаления пунктов в группах
+ * @property dynamicSizeInsetPx — отступ для max-width / max-height при dynamicSize (px)
+ * @property orientation — горизонтальная или вертикальная раскладка
  * @property aria-label — подпись для `role="toolbar"`
  */
 export interface FloatingMenuProps extends BaseComponentProps {
@@ -2236,6 +2259,9 @@ export interface FloatingMenuProps extends BaseComponentProps {
   dragSource?: FloatingMenuDragSource;
   defaultOffset?: { x: number; y: number };
   zIndex?: number;
+  orientation?: FloatingMenuOrientation;
+  dynamicSize?: boolean;
+  dynamicSizeInsetPx?: number;
   'aria-label': string;
 }
 
@@ -2257,6 +2283,7 @@ export interface FloatingMenuGroupProps extends BaseComponentProps {
  * @property dropdownContent — вложенное меню (обычно `<Menu>…</Menu>`)
  * @property tooltip — текст или узел для `Tooltip`
  * @property tooltipPosition — положение подсказки
+ * @property highlightPulse — кратковременная подсветка-пульс (например, после добавления)
  * @property onClick — клик по кнопке
  */
 export interface FloatingMenuGroupItemProps extends BaseComponentProps {
@@ -2268,6 +2295,7 @@ export interface FloatingMenuGroupItemProps extends BaseComponentProps {
   dropdownContent?: React.ReactNode;
   tooltip?: React.ReactNode;
   tooltipPosition?: TooltipPosition;
+  highlightPulse?: boolean;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   'aria-label': string;
 }
@@ -2299,10 +2327,12 @@ export enum ActionBarSize {
  * Элемент конфигурации ActionBar.
  * @property itemId — уникальный идентификатор действия
  * @property withDivider — разделитель после кнопки (логическая группа)
+ * @property highlightPulse — кратковременная подсветка-пульс (например, после добавления)
  */
 export interface ActionBarItemDefinition {
   itemId: string;
   withDivider?: boolean;
+  highlightPulse?: boolean;
 }
 
 /**
@@ -2314,34 +2344,56 @@ export interface ActionBarDropMenuRenderOptions {
 }
 
 /**
- * Панель действий: горизонтальный ряд иконок с группировкой и overflow-меню при нехватке ширины.
+ * Ориентация панели ActionBar.
+ */
+export enum ActionBarOrientation {
+  HORIZONTAL = 'horizontal',
+  VERTICAL = 'vertical',
+}
+
+/**
+ * Панель действий: горизонтальный или вертикальный ряд иконок с группировкой и overflow-меню.
  * @property size — размер кнопок (по умолчанию XL)
+ * @property orientation — горизонтальная или вертикальная раскладка (по умолчанию horizontal)
+ * @property dynamicSize — динамический размер панели с layout-анимацией и AnimatePresence пунктов
+ * @property dynamicSizeInsetPx — отступ для max-width / max-height (px)
  * @property items — порядок действий и разделителей
  * @property renderActionBarItem — рендер видимой кнопки по `itemId`
  * @property renderDropMenuItem — рендер строки overflow-меню по `itemId`
  * @property itemIsDisabled — проверка disabled для overflow-пунктов
  * @property overflowMenuAriaLabel — подпись кнопки «ещё» и меню (по умолчанию «Дополнительные действия»)
  * @property aria-label — подпись для `role="toolbar"`
+ * @property dynamicHeight — legacy: `orientation=vertical` + `dynamicSize=true`
+ * @property dynamicHeightInsetPx — legacy: алиас для `dynamicSizeInsetPx`
  */
 export interface ActionBarProps
   extends
     Omit<BaseComponentProps, 'children'>,
     Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   size?: ActionBarSize;
+  orientation?: ActionBarOrientation;
+  dynamicSize?: boolean;
+  dynamicSizeInsetPx?: number;
   items: ActionBarItemDefinition[];
   renderActionBarItem: (itemId: string) => React.ReactNode;
   renderDropMenuItem: (itemId: string, options?: ActionBarDropMenuRenderOptions) => React.ReactNode;
   itemIsDisabled?: (itemId: string) => boolean;
   overflowMenuAriaLabel?: string;
   'aria-label': string;
+  /** @deprecated Используйте `orientation={ActionBarOrientation.VERTICAL}` и `dynamicSize` */
+  dynamicHeight?: boolean;
+  /** @deprecated Используйте `dynamicSizeInsetPx` */
+  dynamicHeightInsetPx?: number;
 }
 
 /**
  * Кнопка действия на панели (обёртка над IconButton с размером из ActionBar).
  * @property barSize — размер панели (влияет на габариты кнопки)
+ * @property highlightPulse — кратковременная подсветка-пульс слота
  */
 export interface ActionBarItemProps extends IconButtonProps {
   barSize?: ActionBarSize;
+  highlightPulse?: boolean;
 }
 
 /**
@@ -4386,6 +4438,8 @@ export interface SidemenuItem {
   tooltip?: Omit<TooltipProps, 'children'>;
   popover?: Omit<PopoverProps, 'trigger'>;
   popoverActivateNavigation?: boolean;
+  /** Кратковременная подсветка-пульс строки (например, после добавления в dynamicHeight) */
+  highlightPulse?: boolean;
 }
 
 /**
@@ -4414,7 +4468,8 @@ export interface SidemenuItem {
  * @property offScreenHideDelayMs — задержка перед скрытием после ухода курсора (мс, по умолчанию 1500)
  * @property expandToggleRender — кнопка в шапке: **isExpanded**, **toggleExpanded**
  * @property onExpandToggleClick — до смены состояния; у встроенной кнопки можно отменить через **preventDefault**
- * @property showExpandToggleButton — показать встроенную кнопку дополнительно при **CLICK** / **HOVER**
+ * @property dynamicHeight — динамическая высота по содержимому с анимацией пунктов
+ * @property dynamicHeightInsetPx — отступ для max-height (px)
  * @property footer — нижний слот панели: произвольный контент (второе меню, действия и т.д.)
  * @property slotStyles — **header** / **body** / **footer**: высота, flex, overflow (см. {@link SidemenuSlotStyles})
  */
@@ -4467,6 +4522,8 @@ export interface SidemenuProps extends BaseComponentProps {
    */
   verticalAlignment?: SidemenuVerticalAlignment;
   variant?: SidemenuVariant;
+  /** Контролируемый выбранный пункт (id); если не задан — из флага `active` в `items` */
+  activeItemId?: string;
   onItemClick?: (item: SidemenuItem) => void;
   expandInteraction?: NavigationMenuExpandInteraction;
   expanded?: boolean;
@@ -4498,6 +4555,17 @@ export interface SidemenuProps extends BaseComponentProps {
    * Режим **TOGGLE_BUTTON** уже показывает такую кнопку по умолчанию.
    */
   showExpandToggleButton?: boolean;
+  /**
+   * Динамическая высота панели по содержимому с layout-анимацией и AnimatePresence для пунктов.
+   * **max-height**: `min(100vh - inset×2, 100% - inset×2)`; при переполнении — прокрутка body.
+   * @default false
+   */
+  dynamicHeight?: boolean;
+  /**
+   * Отступ от краёв родителя / вьюпорта для расчёта max-height (px).
+   * @default 16
+   */
+  dynamicHeightInsetPx?: number;
 }
 
 /** Контекст для {@link SidemenuProps.expandToggleRender} */

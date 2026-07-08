@@ -1,4 +1,5 @@
 import styled, { css, type DefaultTheme } from 'styled-components';
+import { motion } from 'framer-motion';
 import { createStyledShouldForwardProp } from '../../../handlers/styledComponentHandlers';
 import { TransitionHandler } from '../../../handlers/uiHandlers';
 import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
@@ -136,7 +137,7 @@ export const PillRoot = styled.button.withConfig({
  * @property $disabled - Отключено
  * @property $status - Цвет кольца и точки в выбранном состоянии
  */
-export const PillIndicator = styled.span.withConfig({
+export const PillIndicator = styled(motion.span).withConfig({
   shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $g: PillGeometry; $selected?: boolean; $disabled?: boolean; $status?: PillStatus }>`
   position: relative;

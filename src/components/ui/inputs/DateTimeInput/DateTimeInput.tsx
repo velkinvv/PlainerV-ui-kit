@@ -42,11 +42,11 @@ import {
   SkeletonEffect,
   StyledInput,
   IconWrapper,
+  CharacterCounterMotion,
 } from '../shared';
 import { InputFieldShell } from '../Input/InputFieldShell';
 import { TimePickerColumns } from '../shared/TimePickerColumns';
 import {
-  CharacterCounter,
   DateInputFieldStack,
   DateTimeCalendarColumn,
   DateTimePickerBody,
@@ -802,11 +802,13 @@ export const DateTimeInput = forwardRef<HTMLInputElement, DateTimeInputProps>(
                   (characterCounterVisibilityThreshold !== 1 &&
                     currentLength >= props.maxLength! * characterCounterVisibilityThreshold);
 
-                return shouldShowCounter ? (
-                  <CharacterCounter $size={size} $isOverLimit={currentLength > props.maxLength!}>
-                    {`${currentLength}/${props.maxLength}`}
-                  </CharacterCounter>
-                ) : null;
+                return (
+                  <CharacterCounterMotion
+                    visible={shouldShowCounter}
+                    currentLength={currentLength}
+                    maxLength={props.maxLength!}
+                  />
+                );
               })()
             : null}
         </DateInputFieldStack>

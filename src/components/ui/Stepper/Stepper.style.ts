@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { motion } from 'framer-motion';
 import type { StepperAppearance } from '../../../types/ui';
 import type { ThemeType } from '../../../types/theme';
 import { BorderRadiusHandler } from '../../../handlers/uiHandlers';
@@ -97,7 +98,7 @@ export const StepperCompactSvgWrap = styled.div`
 `;
 
 /** Центральный текст «N/M» в компактном кольце */
-export const StepperCompactCounter = styled.span`
+export const StepperCompactCounter = styled(motion.span)`
   position: absolute;
   inset: 0;
   display: flex;

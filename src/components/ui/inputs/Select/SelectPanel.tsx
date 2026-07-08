@@ -19,7 +19,7 @@ import {
 } from '../../../../types/ui';
 import { IconSize, Size } from '../../../../types/sizes';
 import { getClearIconSizeForInputField } from '../../../../handlers/iconHandlers';
-import { Badge } from '../../Badge/Badge';
+import { BadgePresence } from '../../Badge/Badge';
 import { Icon } from '../../Icon/Icon';
 import { Tooltip } from '../../Tooltip/Tooltip';
 import { Hint, HintVariant, type HintPosition } from '../../Hint/Hint';
@@ -761,13 +761,11 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
           </SelectTriggerButton>
         )}
         {isLoading ? <LoadingSpinner size={size} /> : null}
-        {showMultiCountBadge ? (
-          <SelectMultiCountBadgeSlot aria-hidden>
-            <Badge variant={BadgeVariant.DEFAULT_MAIN} size={size}>
-              {multiSelectedCount}
-            </Badge>
-          </SelectMultiCountBadgeSlot>
-        ) : null}
+        <SelectMultiCountBadgeSlot aria-hidden>
+          <BadgePresence visible={showMultiCountBadge} variant={BadgeVariant.DEFAULT_MAIN} size={size}>
+            {multiSelectedCount}
+          </BadgePresence>
+        </SelectMultiCountBadgeSlot>
         {isMultiChipTrigger && multiSelectedCount > 0 ? (
           <SelectMultiClearAllBtn
             type="button"

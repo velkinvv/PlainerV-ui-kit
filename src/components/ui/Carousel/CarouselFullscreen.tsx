@@ -25,6 +25,7 @@ import { useOverlayPresentation } from '../../../hooks/useOverlayPresentation';
 import { useOverlayVisibility } from '../../../hooks/useOverlayVisibility';
 import { canGoToNextCarouselSlide, canGoToPreviousCarouselSlide } from './handlers';
 import { Icon } from '../Icon/Icon';
+import { ValueMotion } from '../ValueMotion';
 import { CarouselSlideInteractionContext } from './CarouselSlideInteractionContext';
 import {
   CarouselFullscreenArrowsLayer,
@@ -178,7 +179,9 @@ export const CarouselFullscreen: React.FC<CarouselFullscreenProps> = ({
         onClick={(event) => event.stopPropagation()}
       >
         <CarouselFullscreenHeader>
-          <CarouselFullscreenCounter>{counterLabel}</CarouselFullscreenCounter>
+          <ValueMotion as={CarouselFullscreenCounter} contentKey={counterLabel}>
+            {counterLabel}
+          </ValueMotion>
           <CarouselFullscreenCloseButton
             ref={closeButtonRef}
             type="button"

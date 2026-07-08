@@ -30,8 +30,9 @@ export type { SelectProps, SelectOption } from '@/types/ui';
 
 export { Form, HiddenUsernameField } from './Form';
 
-export { Badge } from './Badge';
+export { Badge, BadgePresence } from './Badge';
 export type { BadgeProps } from '@/types/ui';
+export type { BadgePresenceProps } from './Badge';
 
 export { Tag } from './Tag';
 export type {
@@ -137,7 +138,7 @@ export type {
   ActionBarItemDefinition,
   ActionBarDropMenuRenderOptions,
 } from '@/types/ui';
-export { ActionBarSize } from '@/types/ui';
+export { ActionBarSize, ActionBarOrientation } from '@/types/ui';
 
 export {
   Carousel,

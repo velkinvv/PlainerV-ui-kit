@@ -21,4 +21,15 @@ describe('FloatingMenu', () => {
     expect(screen.getByRole('toolbar', { name: 'Тестовая панель' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Пункт' })).toBeInTheDocument();
   });
+
+  it('рендерит dynamicSize с классом ui-floating-menu--dynamic-size', () => {
+    wrap(
+      <FloatingMenu aria-label="Динамическая панель" dynamicSize>
+        <FloatingMenu.Group>
+          <FloatingMenu.GroupItem icon={<span>x</span>} aria-label="Пункт" />
+        </FloatingMenu.Group>
+      </FloatingMenu>,
+    );
+    expect(document.querySelector('.ui-floating-menu--dynamic-size')).toBeInTheDocument();
+  });
 });
