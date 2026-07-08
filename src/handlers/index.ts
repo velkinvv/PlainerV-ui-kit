@@ -18,6 +18,8 @@ export * from './dropdownThemeHandlers';
 export * from './glassSurfaceHandlers';
 export * from './storybookCanvasRoomHandlers';
 export * from './storybookThemeHandlers';
+export * from './themeVariantHandlers';
+export * from './pageBackgroundHandlers';
 export * from './dropdownSearchMatchHandlers';
 export * from './navigationMenuMotionHandlers';
 export * from './navigationMenuItemStatusHandlers';

@@ -16,7 +16,7 @@ export * from './handlers';
 // Themes
 export { ThemeProvider, useTheme } from './themes/ThemeProvider';
 export type { ThemeProviderProps, ThemeContextProps } from './themes/ThemeProvider';
-export { lightTheme, darkTheme, glassLightTheme, glassDarkTheme, glassTheme } from './themes/themes';
+export { lightTheme, darkTheme, glassLightTheme, glassDarkTheme, glassTheme, kidsBoysLightTheme, kidsBoysDarkTheme, kidsGirlsLightTheme, kidsGirlsDarkTheme, kidsLightTheme, kidsDarkTheme } from './themes/themes';
 export { mergeTheme } from './themes/mergeTheme';
 export { useMergeTheme } from './hooks/useMergeTheme';
 export type { UseMergeThemeOptions } from './hooks/useMergeTheme';
@@ -44,6 +44,16 @@ export {
   resolveThemeCatalogItem,
   DEFAULT_THEME_STORAGE_KEY,
 } from './handlers/themeCatalogHandlers';
+export {
+  THEME_VARIANT_STORAGE_KEY,
+  COLOR_SCHEME_STORAGE_KEY,
+  themeVariantLabels,
+  resolveBuiltinThemeMode,
+  parseThemeModeToAxes,
+  getAvailableThemeVariants,
+  readStoredThemeAxes,
+  writeStoredThemeAxes,
+} from './handlers/themeVariantHandlers';
 export { builtinThemeCatalog } from './themes/ThemeProvider';
 
 // Variables

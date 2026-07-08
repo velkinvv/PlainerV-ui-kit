@@ -36,20 +36,44 @@ html[data-theme='light'] {
 }
 
 html[data-theme='glassLight'],
-html[data-theme='glassDark'] {
+html[data-theme='glassDark'],
+html[data-theme='kidsBoysLight'],
+html[data-theme='kidsBoysDark'],
+html[data-theme='kidsGirlsLight'],
+html[data-theme='kidsGirlsDark'],
+html[data-theme='kidsLight'],
+html[data-theme='kidsDark'] {
   background: var(--plainerv-sb-docs-page-mesh) !important;
   background-attachment: fixed !important;
 }
 
 html[data-theme='glassLight'] body,
 html[data-theme='glassDark'] body,
+html[data-theme='kidsBoysLight'] body,
+html[data-theme='kidsBoysDark'] body,
+html[data-theme='kidsGirlsLight'] body,
+html[data-theme='kidsGirlsDark'] body,
+html[data-theme='kidsLight'] body,
+html[data-theme='kidsDark'] body,
 html[data-theme='glassLight'] #root,
-html[data-theme='glassDark'] #root {
+html[data-theme='glassDark'] #root,
+html[data-theme='kidsBoysLight'] #root,
+html[data-theme='kidsBoysDark'] #root,
+html[data-theme='kidsGirlsLight'] #root,
+html[data-theme='kidsGirlsDark'] #root,
+html[data-theme='kidsLight'] #root,
+html[data-theme='kidsDark'] #root {
   background: transparent !important;
 }
 
 html[data-theme='glassLight'] .plainerv-story-canvas-room,
-html[data-theme='glassDark'] .plainerv-story-canvas-room {
+html[data-theme='glassDark'] .plainerv-story-canvas-room,
+html[data-theme='kidsBoysLight'] .plainerv-story-canvas-room,
+html[data-theme='kidsBoysDark'] .plainerv-story-canvas-room,
+html[data-theme='kidsGirlsLight'] .plainerv-story-canvas-room,
+html[data-theme='kidsGirlsDark'] .plainerv-story-canvas-room,
+html[data-theme='kidsLight'] .plainerv-story-canvas-room,
+html[data-theme='kidsDark'] .plainerv-story-canvas-room {
   background: var(--plainerv-sb-docs-page-mesh) !important;
   background-attachment: fixed !important;
 }

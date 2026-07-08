@@ -1141,9 +1141,21 @@ export const DOC_ICON_CATEGORIES = `
 /** ThemeToggle — ThemeToggleProps */
 export const DOC_THEME_TOGGLE = `
 ### Назначение
-Переключатель **ThemeMode.light** ↔ **ThemeMode.dark**, если обе темы есть в каталоге **ThemeProvider**.
+Переключатель **светлой / тёмной палитры** (\`setColorScheme\`). Сохраняет текущий **ThemeVariant** (standard, glass).
 
-Для трёх и более тем используйте **ThemeSelector** или \`setThemeMode\` из **useTheme** (см. **UI Kit → Theming**).
+Пара **ThemeVariantSelector** + **ThemeToggle** — основной способ переключения встроенных тем. Для каталога из 3+ кастомных id используйте **ThemeSelector** или \`setThemeMode\`.
+
+См. [Theming](/docs/web/v_0.2.4/theming).
+`.trim();
+
+/** ThemeVariantSelector — ThemeVariantSelectorProps */
+export const DOC_THEME_VARIANT_SELECTOR = `
+### Назначение
+Переключатель **варианта оформления** (\`setThemeVariant\`): стандартная / стеклянная. Сохраняет текущую палитру (light / dark).
+
+Комбинируйте с **ThemeToggle** для полного управления темой. Скрывается, если в каталоге доступен только один вариант.
+
+См. сторис **UI Kit/Theming/ThemeVariantSelector** и [Theming](/docs/web/v_0.2.4/theming).
 `.trim();
 
 /** ThemeSelector — ThemeSelectorProps */

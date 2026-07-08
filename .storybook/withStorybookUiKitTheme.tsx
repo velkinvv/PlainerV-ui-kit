@@ -1,9 +1,10 @@
 import type { Decorator } from '@storybook/react';
 import { ThemeProvider, type ThemeProviderProps } from '../src/themes/ThemeProvider';
 import {
-  resolveStorybookThemeGlobal,
+  resolveStorybookGlobalsAxes,
+  resolveStorybookThemeGlobalFromAxes,
   resolveStorybookThemeMode,
-  writeStorybookThemeGlobal,
+  writeStorybookThemeAxes,
 } from '../src/handlers/storybookThemeHandlers';
 
 /**
@@ -16,15 +17,16 @@ export type PlainervThemeStoryParameters = Pick<
 >;
 
 /**
- * Подключает UI-kit {@link ThemeProvider} к глобалу `theme` из `@storybook/addon-themes`.
+ * Подключает UI-kit {@link ThemeProvider} к globals `themeVariant` и `colorScheme`.
  * Опционально: `context.parameters.plainervTheme` — переопределения без вложенного провайдера.
  */
 export const withStorybookUiKitTheme: Decorator = (Story, context) => {
-  const resolvedTheme = resolveStorybookThemeGlobal(context.globals?.theme);
+  const axes = resolveStorybookGlobalsAxes(context.globals);
+  const resolvedTheme = resolveStorybookThemeGlobalFromAxes(axes.themeVariant, axes.colorScheme);
   const initialThemeMode = resolveStorybookThemeMode(resolvedTheme);
   const plainervTheme = context.parameters?.plainervTheme as PlainervThemeStoryParameters | undefined;
 
-  writeStorybookThemeGlobal(resolvedTheme);
+  writeStorybookThemeAxes(axes);
 
   return (
     <ThemeProvider

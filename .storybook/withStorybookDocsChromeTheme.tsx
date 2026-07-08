@@ -4,9 +4,10 @@ import { ThemeProvider } from 'storybook/theming';
 import { createPlainerVStorybookChromeTheme } from './storybookManagerTheme';
 import {
   applyPlainervStorybookDocsCssVariables,
-  resolvePlainervStorybookDocsThemeMode,
+  resolvePlainervStorybookDocsThemeModeFromAxes,
   type PlainervStorybookDocsThemeMode,
 } from './plainervStorybookDocsTokens';
+import { resolveStorybookGlobalsAxes } from '../src/handlers/storybookThemeHandlers';
 
 /** Тема блоков Docs (таблица пропсов, превью, тулбар зума) — из палитры UI-kit. */
 const lightDocsChromeTheme = createPlainerVStorybookChromeTheme('light');
@@ -23,7 +24,11 @@ const DocsChromeThemeWrapper = ({ children, resolvedTheme }: DocsChromeThemeWrap
   }, [resolvedTheme]);
 
   const docsChromeTheme =
-    resolvedTheme === 'dark' || resolvedTheme === 'glassDark'
+    resolvedTheme === 'dark' ||
+    resolvedTheme === 'glassDark' ||
+    resolvedTheme === 'kidsBoysDark' ||
+    resolvedTheme === 'kidsGirlsDark' ||
+    resolvedTheme === 'kidsDark'
       ? darkDocsChromeTheme
       : lightDocsChromeTheme;
 
@@ -31,10 +36,14 @@ const DocsChromeThemeWrapper = ({ children, resolvedTheme }: DocsChromeThemeWrap
 };
 
 /**
- * Синхронизирует `storybook/theming` и CSS-переменные Docs с глобалом `theme` (addon-themes).
+ * Синхронизирует `storybook/theming` и CSS-переменные Docs с globals themeVariant × colorScheme.
  */
 export const withStorybookDocsChromeTheme: Decorator = (Story, context) => {
-  const resolvedTheme = resolvePlainervStorybookDocsThemeMode(context.globals?.theme);
+  const axes = resolveStorybookGlobalsAxes(context.globals);
+  const resolvedTheme = resolvePlainervStorybookDocsThemeModeFromAxes(
+    axes.themeVariant,
+    axes.colorScheme,
+  );
 
   applyPlainervStorybookDocsCssVariables(resolvedTheme);
 

@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import type { ThemeColorScheme, ThemeType } from '../types/theme';
+import type { ThemeColorScheme, ThemeType, ThemeVariant } from '../types/theme';
 import type { ThemeCatalogMeta } from '../types/themeCatalog';
 
 /**
@@ -12,8 +12,21 @@ export interface ThemeContextProps<TThemeMode extends string = string> {
   themeModes: readonly TThemeMode[];
   themes: readonly ThemeCatalogMeta<TThemeMode>[];
   cycleTheme: () => void;
-  /** Палитра активной темы — только для стилей, не для переключения. */
+
+  /**
+   * Визуальный вариант оформления (standard, glass).
+   * `undefined` для кастомных тем каталога без привязки к варианту.
+   */
+  themeVariant?: ThemeVariant;
+  /** Доступные варианты оформления в текущем каталоге. */
+  themeVariants: readonly ThemeVariant[];
+  /** Переключает вариант оформления, сохраняя текущую палитру. */
+  setThemeVariant: (nextThemeVariant: ThemeVariant) => void;
+
+  /** Палитра активной темы (светлая / тёмная). */
   colorScheme: ThemeColorScheme;
+  /** Переключает палитру, сохраняя текущий вариант оформления. */
+  setColorScheme: (nextColorScheme: ThemeColorScheme) => void;
   isDarkColorScheme: boolean;
   getThemeByMode: (themeMode: TThemeMode) => ThemeType | undefined;
 
@@ -31,7 +44,7 @@ export interface ThemeContextProps<TThemeMode extends string = string> {
   themeIds: readonly TThemeMode[];
   /** @deprecated {@link colorScheme} */
   mode: ThemeColorScheme;
-  /** @deprecated {@link setThemeMode} */
+  /** @deprecated {@link setColorScheme} */
   setMode: (colorScheme: ThemeColorScheme) => void;
   /** @deprecated */
   toggle: () => void;

@@ -1,7 +1,10 @@
 import { createGlobalStyle, css } from 'styled-components';
 import './fonts.css';
 import { globalScrollbarStyles } from './globalScrollbarStyles';
-import { glassPageBackgroundCss } from '../handlers/glassSurfaceHandlers';
+import {
+  hasThemePageBackground,
+  themePageBackgroundCss,
+} from '../handlers/pageBackgroundHandlers';
 
 /**
  * Глобальные стили приложения
@@ -21,7 +24,7 @@ const GlobalStylesComponent = createGlobalStyle`
     line-height: 1.4;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    ${({ theme }) => glassPageBackgroundCss(theme)}
+    ${({ theme }) => themePageBackgroundCss(theme)}
   }
 
   body {
@@ -31,9 +34,9 @@ const GlobalStylesComponent = createGlobalStyle`
     line-height: ${({ theme }) => theme.lineHeights.normal};
     color: ${({ theme }) => theme.colors.text};
     background-color: ${({ theme }) =>
-      theme.surfaceMaterial?.pageBackground ? 'transparent' : theme.colors.background};
+      hasThemePageBackground(theme) ? 'transparent' : theme.colors.background};
     ${({ theme }) =>
-      theme.surfaceMaterial?.pageBackground
+      hasThemePageBackground(theme)
         ? css`
             background: transparent;
           `

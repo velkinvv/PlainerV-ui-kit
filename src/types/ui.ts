@@ -4510,9 +4510,21 @@ export type SidemenuExpandToggleRenderContext = {
 
 /**
  * Пропсы переключателя темы
- * Простой компонент для переключения между светлой и темной темами
+ * Переключает светлую и тёмную палитру, сохраняя текущий вариант оформления.
  */
 export type ThemeToggleProps = BaseComponentProps;
+
+/**
+ * Пропсы переключателя варианта оформления (standard / glass).
+ * @property showLabel - Показывать текстовую подпись над select
+ * @property label - Текст подписи
+ * @property ariaLabel - Подпись для скринридеров
+ */
+export type ThemeVariantSelectorProps = BaseComponentProps & {
+  showLabel?: boolean;
+  label?: string;
+  ariaLabel?: string;
+};
 
 /**
  * Пропсы переключателя каталога тем (N тем).

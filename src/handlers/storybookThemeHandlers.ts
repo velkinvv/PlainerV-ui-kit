@@ -1,87 +1,141 @@
-import { ThemeColorScheme, ThemeMode } from '../types/theme';
+import { ThemeColorScheme, ThemeMode, ThemeVariant } from '../types/theme';
+import {
+  isThemeColorScheme,
+  normalizeThemeVariant,
+  readStoredThemeAxes,
+  resolveBuiltinThemeMode,
+  writeStoredThemeAxes,
+} from './themeVariantHandlers';
 
-/** Значение глобала `theme` в Storybook (addon-themes). */
-export type StorybookThemeGlobal = 'light' | 'dark' | 'glassLight' | 'glassDark';
+/** Globals Storybook для осей темы */
+export type StorybookThemeGlobals = {
+  /** Вариант оформления (standard / glass / kidsBoys / kidsGirls) */
+  themeVariant?: unknown;
+  /** Светлая или тёмная палитра */
+  colorScheme?: unknown;
+  /** @deprecated Legacy flat theme id от addon-themes */
+  theme?: unknown;
+};
+
+/** Оси темы Storybook */
+export type StorybookThemeAxes = {
+  themeVariant: ThemeVariant;
+  colorScheme: ThemeColorScheme;
+  themeMode: string;
+};
+
+/** Id встроенной темы для атрибута `data-theme` и {@link ThemeProvider} */
+export type StorybookDataTheme = ReturnType<typeof resolveBuiltinThemeMode>;
 
 const STORYBOOK_THEME_STORAGE_KEY = 'storybook-theme';
 
-/**
- * Читает сохранённую тему Storybook из localStorage.
- */
-export function readStorybookThemeGlobal(): StorybookThemeGlobal {
-  if (typeof window === 'undefined') {
-    return 'light';
-  }
-
-  const stored = window.localStorage.getItem(STORYBOOK_THEME_STORAGE_KEY);
-  if (stored === 'dark' || stored === 'glassLight' || stored === 'glassDark') {
-    return stored;
-  }
-  if (stored === 'glass') {
-    return 'glassLight';
-  }
-
-  return 'light';
-}
+const builtinThemeModes = Object.values(ThemeMode) as string[];
 
 /**
- * Нормализует значение глобала `theme` из Storybook.
- * @param rawTheme — `context.globals.theme`
+ * Собирает оси темы из globals Storybook.
+ *
+ * @param globals - globals Storybook (`themeVariant`, `colorScheme`)
  */
-export function resolveStorybookThemeGlobal(rawTheme: unknown): StorybookThemeGlobal {
-  if (
-    rawTheme === 'dark' ||
-    rawTheme === 'light' ||
-    rawTheme === 'glassLight' ||
-    rawTheme === 'glassDark'
-  ) {
-    return rawTheme;
-  }
-
-  if (rawTheme === 'glass') {
-    return 'glassLight';
-  }
-
-  return readStorybookThemeGlobal();
-}
-
-/**
- * Id темы UI-kit для {@link ThemeProvider}.
- * @param storybookTheme — нормализованный глобал Storybook
- */
-export function resolveStorybookThemeMode(storybookTheme: StorybookThemeGlobal): string {
-  switch (storybookTheme) {
-    case 'dark':
-      return ThemeMode.dark;
-    case 'glassDark':
-      return ThemeMode.glassDark;
-    case 'glassLight':
-      return ThemeMode.glassLight;
-    default:
-      return ThemeMode.light;
-  }
-}
-
-/**
- * Палитра {@link ThemeColorScheme} для legacy-пропсов (не используйте для выбора glass-темы).
- * @param storybookTheme — нормализованный глобал Storybook
- */
-export function resolveStorybookColorScheme(
-  storybookTheme: StorybookThemeGlobal,
-): ThemeColorScheme {
-  return storybookTheme === 'dark' || storybookTheme === 'glassDark'
-    ? ThemeColorScheme.DARK
+export function resolveStorybookGlobalsAxes(
+  globals: StorybookThemeGlobals = {},
+): StorybookThemeAxes {
+  const themeVariant =
+    normalizeThemeVariant(globals.themeVariant) ?? ThemeVariant.standard;
+  const colorScheme = isThemeColorScheme(globals.colorScheme)
+    ? globals.colorScheme
     : ThemeColorScheme.LIGHT;
+
+  return {
+    themeVariant,
+    colorScheme,
+    themeMode: resolveBuiltinThemeMode(themeVariant, colorScheme),
+  };
 }
 
 /**
- * Сохраняет тему Storybook в localStorage (ключ addon-themes).
- * @param storybookTheme — нормализованный глобал Storybook
+ * Читает сохранённые или переданные оси темы Storybook.
+ *
+ * @param globals - опциональные globals Storybook при инициализации preview
  */
-export function writeStorybookThemeGlobal(storybookTheme: StorybookThemeGlobal): void {
-  if (typeof window === 'undefined') {
-    return;
+export function readStorybookThemeAxes(globals?: StorybookThemeGlobals): StorybookThemeAxes {
+  if (typeof window !== 'undefined') {
+    const legacyThemeMode = window.localStorage.getItem(STORYBOOK_THEME_STORAGE_KEY) ?? undefined;
+    const storedAxes = readStoredThemeAxes(builtinThemeModes, legacyThemeMode);
+
+    if (storedAxes?.variant && storedAxes.colorScheme) {
+      return {
+        themeVariant: storedAxes.variant,
+        colorScheme: storedAxes.colorScheme,
+        themeMode: storedAxes.themeMode,
+      };
+    }
   }
 
-  window.localStorage.setItem(STORYBOOK_THEME_STORAGE_KEY, storybookTheme);
+  if (globals && (globals.themeVariant !== undefined || globals.colorScheme !== undefined)) {
+    return resolveStorybookGlobalsAxes(globals);
+  }
+
+  return {
+    themeVariant: ThemeVariant.standard,
+    colorScheme: ThemeColorScheme.LIGHT,
+    themeMode: ThemeMode.light,
+  };
+}
+
+/**
+ * Возвращает id встроенной темы по осям (для `data-theme` и ThemeProvider).
+ *
+ * @param themeVariant - вариант оформления
+ * @param colorScheme - цветовая схема
+ */
+export function resolveStorybookThemeModeFromAxes(
+  themeVariant: ThemeVariant,
+  colorScheme: ThemeColorScheme,
+): StorybookDataTheme {
+  return resolveBuiltinThemeMode(themeVariant, colorScheme);
+}
+
+/**
+ * @deprecated Используйте {@link resolveStorybookThemeModeFromAxes}
+ */
+export function resolveStorybookThemeGlobalFromAxes(
+  themeVariant: ThemeVariant,
+  colorScheme: ThemeColorScheme,
+): StorybookDataTheme {
+  return resolveStorybookThemeModeFromAxes(themeVariant, colorScheme);
+}
+
+/**
+ * Нормализует id темы для {@link ThemeProvider} (миграция legacy `kidsLight` / `kidsDark`).
+ *
+ * @param themeMode - id темы из Storybook
+ */
+export function resolveStorybookThemeMode(themeMode: string): string {
+  if (builtinThemeModes.includes(themeMode)) {
+    return themeMode;
+  }
+
+  if (themeMode === 'kidsLight') {
+    return ThemeMode.kidsBoysLight;
+  }
+
+  if (themeMode === 'kidsDark') {
+    return ThemeMode.kidsBoysDark;
+  }
+
+  return ThemeMode.light;
+}
+
+/**
+ * Сохраняет оси темы Storybook в localStorage.
+ *
+ * @param axes - вариант оформления, палитра и итоговый id темы
+ */
+export function writeStorybookThemeAxes(axes: StorybookThemeAxes): void {
+  writeStoredThemeAxes(
+    axes.themeVariant,
+    axes.colorScheme,
+    axes.themeMode,
+    STORYBOOK_THEME_STORAGE_KEY,
+  );
 }

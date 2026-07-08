@@ -1,15 +1,16 @@
 import { addons } from 'storybook/manager-api';
 import { GLOBALS_UPDATED } from 'storybook/internal/core-events';
+import { ThemeColorScheme } from '../src/types/theme';
 import { createPlainerVStorybookChromeTheme } from './storybookManagerTheme';
 
-const STORAGE_KEY = 'storybook-theme';
+const STORAGE_KEY = 'plainerv-color-scheme';
 
 /**
- * Стартовая тема shell по тому же ключу, что и превью / {@link ThemeProvider}.
+ * Стартовая тема shell по ключу палитры (синхронно с превью).
  */
-function readStoredPreviewTheme(): 'light' | 'dark' {
+function readStoredPreviewColorScheme(): 'light' | 'dark' {
   try {
-    if (globalThis.localStorage?.getItem(STORAGE_KEY) === 'dark') {
+    if (globalThis.localStorage?.getItem(STORAGE_KEY) === ThemeColorScheme.DARK) {
       return 'dark';
     }
   } catch {
@@ -19,20 +20,34 @@ function readStoredPreviewTheme(): 'light' | 'dark' {
 }
 
 addons.setConfig({
-  theme: createPlainerVStorybookChromeTheme(readStoredPreviewTheme()),
+  theme: createPlainerVStorybookChromeTheme(readStoredPreviewColorScheme()),
 });
 
 addons.register('plainerv-sync-chrome-theme', () => {
   const channel = addons.getChannel();
   channel.on(
     GLOBALS_UPDATED,
-    (payload: { globals?: { theme?: string } } | undefined) => {
-      const themeName = payload?.globals?.theme;
-      if (themeName === 'dark') {
+    (payload: { globals?: { colorScheme?: string; theme?: string } } | undefined) => {
+      const colorScheme = payload?.globals?.colorScheme;
+
+      if (colorScheme === ThemeColorScheme.DARK) {
         addons.setConfig({ theme: createPlainerVStorybookChromeTheme('dark') });
         return;
       }
-      if (themeName === 'light') {
+
+      if (colorScheme === ThemeColorScheme.LIGHT) {
+        addons.setConfig({ theme: createPlainerVStorybookChromeTheme('light') });
+        return;
+      }
+
+      // Legacy: flat global `theme` до перехода на две оси
+      const legacyTheme = payload?.globals?.theme;
+      if (legacyTheme === 'dark' || legacyTheme === 'glassDark' || legacyTheme === 'kidsDark' || legacyTheme === 'kidsBoysDark' || legacyTheme === 'kidsGirlsDark') {
+        addons.setConfig({ theme: createPlainerVStorybookChromeTheme('dark') });
+        return;
+      }
+
+      if (legacyTheme === 'light' || legacyTheme === 'glassLight' || legacyTheme === 'kidsLight' || legacyTheme === 'kidsBoysLight' || legacyTheme === 'kidsGirlsLight') {
         addons.setConfig({ theme: createPlainerVStorybookChromeTheme('light') });
       }
     },

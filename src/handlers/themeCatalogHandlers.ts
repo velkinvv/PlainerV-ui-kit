@@ -1,6 +1,7 @@
 import {
   ThemeColorScheme,
   ThemeMode,
+  ThemeVariant,
   type BuiltinThemeMode,
   type ThemeModeMap,
   type ThemeType,
@@ -14,8 +15,23 @@ import type {
   ThemeCatalogItemWithId,
   ThemeCatalogMeta,
 } from '../types/themeCatalog';
-import { darkTheme, glassDarkTheme, glassLightTheme, lightTheme } from '../themes/themes';
+import {
+  darkTheme,
+  glassDarkTheme,
+  glassLightTheme,
+  kidsBoysDarkTheme,
+  kidsBoysLightTheme,
+  kidsGirlsDarkTheme,
+  kidsGirlsLightTheme,
+  lightTheme,
+} from '../themes/themes';
 import { mergeTheme } from '../themes/mergeTheme';
+import {
+  parseThemeModeToAxes,
+  readStoredThemeAxes,
+  resolveBuiltinThemeMode,
+  writeStoredThemeAxes,
+} from './themeVariantHandlers';
 
 export const DEFAULT_THEME_STORAGE_KEY = 'plainerv-theme-id';
 export const LEGACY_STORYBOOK_THEME_STORAGE_KEY = 'storybook-theme';
@@ -34,6 +50,22 @@ function resolveCatalogBaseTheme(themeMode: string, baseMode: ThemeColorScheme):
     return glassDarkTheme;
   }
 
+  if (themeMode === ThemeMode.kidsBoysLight || themeMode === ThemeMode.kidsLight) {
+    return kidsBoysLightTheme;
+  }
+
+  if (themeMode === ThemeMode.kidsBoysDark || themeMode === ThemeMode.kidsDark) {
+    return kidsBoysDarkTheme;
+  }
+
+  if (themeMode === ThemeMode.kidsGirlsLight) {
+    return kidsGirlsLightTheme;
+  }
+
+  if (themeMode === ThemeMode.kidsGirlsDark) {
+    return kidsGirlsDarkTheme;
+  }
+
   return baseMode === ThemeColorScheme.DARK ? darkTheme : lightTheme;
 }
 
@@ -42,20 +74,48 @@ export function createBuiltinThemeCatalog(): ThemeCatalog<BuiltinThemeMode> {
     [ThemeMode.light]: {
       label: 'Light',
       baseMode: ThemeColorScheme.LIGHT,
+      variant: ThemeVariant.standard,
     },
     [ThemeMode.dark]: {
       label: 'Dark',
       baseMode: ThemeColorScheme.DARK,
+      variant: ThemeVariant.standard,
     },
     [ThemeMode.glassLight]: {
       label: 'Glass Light',
       baseMode: ThemeColorScheme.LIGHT,
+      variant: ThemeVariant.glass,
       theme: glassLightTheme,
     },
     [ThemeMode.glassDark]: {
       label: 'Glass Dark',
       baseMode: ThemeColorScheme.DARK,
+      variant: ThemeVariant.glass,
       theme: glassDarkTheme,
+    },
+    [ThemeMode.kidsBoysLight]: {
+      label: 'Kids Boys Light',
+      baseMode: ThemeColorScheme.LIGHT,
+      variant: ThemeVariant.kidsBoys,
+      theme: kidsBoysLightTheme,
+    },
+    [ThemeMode.kidsBoysDark]: {
+      label: 'Kids Boys Dark',
+      baseMode: ThemeColorScheme.DARK,
+      variant: ThemeVariant.kidsBoys,
+      theme: kidsBoysDarkTheme,
+    },
+    [ThemeMode.kidsGirlsLight]: {
+      label: 'Kids Girls Light',
+      baseMode: ThemeColorScheme.LIGHT,
+      variant: ThemeVariant.kidsGirls,
+      theme: kidsGirlsLightTheme,
+    },
+    [ThemeMode.kidsGirlsDark]: {
+      label: 'Kids Girls Dark',
+      baseMode: ThemeColorScheme.DARK,
+      variant: ThemeVariant.kidsGirls,
+      theme: kidsGirlsDarkTheme,
     },
   };
 }
@@ -123,7 +183,11 @@ export function resolveThemeCatalogItem<TThemeMode extends string>(
   const baseMode =
     definition.baseMode ??
     definition.theme?.mode ??
-    (themeMode === ThemeMode.dark || themeMode === ThemeMode.glassDark
+    (themeMode === ThemeMode.dark ||
+    themeMode === ThemeMode.glassDark ||
+    themeMode === ThemeMode.kidsBoysDark ||
+    themeMode === ThemeMode.kidsGirlsDark ||
+    themeMode === ThemeMode.kidsDark
       ? ThemeColorScheme.DARK
       : ThemeColorScheme.LIGHT);
 
@@ -150,6 +214,7 @@ export function resolveThemeCatalogItem<TThemeMode extends string>(
     label: definition.label ?? themeMode,
     baseMode,
     theme,
+    variant: definition.variant ?? parseThemeModeToAxes(themeMode, baseMode).variant,
   };
 }
 
@@ -168,6 +233,7 @@ export function getThemeCatalogMeta<TThemeMode extends string>(
     name: item.name,
     label: item.label,
     colorScheme: item.theme.mode,
+    variant: item.variant,
   }));
 }
 
@@ -191,7 +257,16 @@ export const getNextThemeId = getNextThemeMode;
 export function findThemeModeByColorScheme<TThemeMode extends string>(
   resolvedItems: ResolvedThemeCatalogItem<TThemeMode>[],
   colorScheme: ThemeColorScheme,
+  variant?: ThemeVariant,
 ): TThemeMode | undefined {
+  if (variant) {
+    const targetMode = resolveBuiltinThemeMode(variant, colorScheme);
+    const exactMatch = resolvedItems.find((item) => item.name === targetMode);
+    if (exactMatch) {
+      return exactMatch.name;
+    }
+  }
+
   return resolvedItems.find((item) => item.theme.mode === colorScheme)?.name;
 }
 
@@ -212,6 +287,11 @@ export function readStoredThemeMode<TThemeMode extends string>(
     return saved as TThemeMode;
   }
 
+  const axesFromNewStorage = readStoredThemeAxes(themeModes);
+  if (axesFromNewStorage?.themeMode && themeModes.includes(axesFromNewStorage.themeMode as TThemeMode)) {
+    return axesFromNewStorage.themeMode as TThemeMode;
+  }
+
   const legacyMode = window.localStorage.getItem(LEGACY_STORYBOOK_THEME_STORAGE_KEY);
   if (legacyMode === ThemeMode.dark && themeModes.includes(ThemeMode.dark as TThemeMode)) {
     return ThemeMode.dark as TThemeMode;
@@ -221,6 +301,31 @@ export function readStoredThemeMode<TThemeMode extends string>(
   }
   if (legacyMode === ThemeMode.glassDark && themeModes.includes(ThemeMode.glassDark as TThemeMode)) {
     return ThemeMode.glassDark as TThemeMode;
+  }
+  if (legacyMode === ThemeMode.kidsLight || legacyMode === 'kidsLight') {
+    if (themeModes.includes(ThemeMode.kidsBoysLight as TThemeMode)) {
+      return ThemeMode.kidsBoysLight as TThemeMode;
+    }
+    if (themeModes.includes(ThemeMode.kidsLight as TThemeMode)) {
+      return ThemeMode.kidsLight as TThemeMode;
+    }
+  }
+  if (legacyMode === ThemeMode.kidsDark || legacyMode === 'kidsDark') {
+    if (themeModes.includes(ThemeMode.kidsBoysDark as TThemeMode)) {
+      return ThemeMode.kidsBoysDark as TThemeMode;
+    }
+    if (themeModes.includes(ThemeMode.kidsDark as TThemeMode)) {
+      return ThemeMode.kidsDark as TThemeMode;
+    }
+  }
+  if (legacyMode === ThemeVariant.kids || legacyMode === 'kids') {
+    const migratedMode =
+      readStoredThemeAxes(themeModes)?.colorScheme === ThemeColorScheme.DARK
+        ? ThemeMode.kidsBoysDark
+        : ThemeMode.kidsBoysLight;
+    if (themeModes.includes(migratedMode as TThemeMode)) {
+      return migratedMode as TThemeMode;
+    }
   }
   if (legacyMode === 'glass' && themeModes.includes(ThemeMode.glassLight as TThemeMode)) {
     return ThemeMode.glassLight as TThemeMode;
@@ -245,16 +350,26 @@ export function writeStoredThemeMode<TThemeMode extends string>(
     return;
   }
 
-  window.localStorage.setItem(storageKey, themeMode);
+  const axes = parseThemeModeToAxes(themeMode, colorScheme);
+  writeStoredThemeAxes(axes.variant, colorScheme, themeMode, storageKey);
+
   window.localStorage.setItem(
     LEGACY_STORYBOOK_THEME_STORAGE_KEY,
     themeMode === ThemeMode.glassLight || themeMode === ThemeMode.glass
       ? ThemeMode.glassLight
       : themeMode === ThemeMode.glassDark
         ? ThemeMode.glassDark
-        : colorScheme === ThemeColorScheme.DARK
-          ? ThemeMode.dark
-          : ThemeMode.light,
+        : themeMode === ThemeMode.kidsBoysLight ||
+            themeMode === ThemeMode.kidsGirlsLight ||
+            themeMode === ThemeMode.kidsLight
+          ? ThemeMode.kidsLight
+          : themeMode === ThemeMode.kidsBoysDark ||
+              themeMode === ThemeMode.kidsGirlsDark ||
+              themeMode === ThemeMode.kidsDark
+            ? ThemeMode.kidsDark
+            : colorScheme === ThemeColorScheme.DARK
+              ? ThemeMode.dark
+              : ThemeMode.light,
   );
 }
 

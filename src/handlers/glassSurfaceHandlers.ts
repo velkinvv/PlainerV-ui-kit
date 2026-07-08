@@ -1,5 +1,6 @@
 import { css, type RuleSet } from 'styled-components';
 import type { ThemeType } from '../types/theme';
+import { getThemePageBackground, themePageBackgroundCss } from './pageBackgroundHandlers';
 
 /**
  * Проверяет, активна ли glass-тема (есть vibrancy-материал поверхности).
@@ -31,17 +32,7 @@ export function glassSurfaceMaterialCss(theme: ThemeType): RuleSet {
  * @param theme — активная тема styled-components
  */
 export function glassPageBackgroundCss(theme: ThemeType): RuleSet {
-  const pageBackground = theme.surfaceMaterial?.pageBackground;
-
-  if (!pageBackground) {
-    return css``;
-  }
-
-  return css`
-    background: ${pageBackground};
-    background-attachment: fixed;
-    min-height: 100vh;
-  `;
+  return themePageBackgroundCss(theme);
 }
 
 /**
@@ -66,7 +57,7 @@ export type StoryCanvasBackgroundStyle = {
 };
 
 /**
- * Фон области сторис: mesh-gradient для glass, иначе токены темы.
+ * Фон области сторис: mesh-gradient для glass/kids, иначе токены темы.
  * @param theme — активная тема styled-components
  * @param options.disableBackground — не задавать фон
  * @param options.useSecondarySurface — карточка Docs (`backgroundSecondary`)
@@ -85,7 +76,7 @@ export function resolveStoryCanvasBackgroundStyle(
     };
   }
 
-  const pageBackground = theme.surfaceMaterial?.pageBackground;
+  const pageBackground = getThemePageBackground(theme);
   if (pageBackground) {
     return {
       background: pageBackground,

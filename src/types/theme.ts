@@ -2323,6 +2323,8 @@ export type ThemeType = {
   colors: Colors; // Фоновые цвета темы
   /** Glass / vibrancy: размытие и фон canvas; задаётся в glassLight / glassDark темах */
   surfaceMaterial?: SurfaceMaterial;
+  /** Декоративный фон страницы (kids и др.); body остаётся прозрачным */
+  pageBackground?: string;
   media: MediaType; // Медиа-запросы
   sizes: SizesType; // Размеры элементов
   durations: DurationsType; // Длительности анимаций
@@ -2377,6 +2379,30 @@ export enum ThemeColorScheme {
 }
 
 /**
+ * Визуальный вариант оформления (стандартная, стеклянная и т.д.).
+ * Комбинируется с {@link ThemeColorScheme} для получения итоговой темы.
+ *
+ * @example
+ * standard + light → ThemeMode.light
+ * glass + dark → ThemeMode.glassDark
+ */
+export const ThemeVariant = {
+  /** Классическое оформление без glass-эффектов */
+  standard: 'standard',
+  /** Стеклянное оформление с vibrancy и backdrop-filter */
+  glass: 'glass',
+  /** Детская тема для мальчиков (8–11 лет) */
+  kidsBoys: 'kidsBoys',
+  /** Детская тема для девочек (8–11 лет) */
+  kidsGirls: 'kidsGirls',
+  /** @deprecated Используйте {@link ThemeVariant.kidsBoys} */
+  kids: 'kidsBoys',
+} as const;
+
+/** Union встроенных вариантов оформления. */
+export type ThemeVariant = (typeof ThemeVariant)[keyof typeof ThemeVariant];
+
+/**
  * Встроенные id тем (`light`, `dark`).
  * Расширяется через {@link defineThemeCatalog}: `appThemes.themeMode.ocean`.
  *
@@ -2391,6 +2417,18 @@ export const ThemeMode = {
   glassLight: 'glassLight',
   /** Glass на тёмной палитре (vibrancy + {@link ThemeColorScheme.DARK}) */
   glassDark: 'glassDark',
+  /** Kids (мальчики) на светлой палитре */
+  kidsBoysLight: 'kidsBoysLight',
+  /** Kids (мальчики) на тёмной палитре */
+  kidsBoysDark: 'kidsBoysDark',
+  /** Kids (девочки) на светлой палитре */
+  kidsGirlsLight: 'kidsGirlsLight',
+  /** Kids (девочки) на тёмной палитре */
+  kidsGirlsDark: 'kidsGirlsDark',
+  /** @deprecated Используйте {@link ThemeMode.kidsBoysLight} */
+  kidsLight: 'kidsBoysLight',
+  /** @deprecated Используйте {@link ThemeMode.kidsBoysDark} */
+  kidsDark: 'kidsBoysDark',
   /** @deprecated Используйте {@link ThemeMode.glassLight} */
   glass: 'glassLight',
 } as const;

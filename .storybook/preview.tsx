@@ -1,71 +1,80 @@
 import type { Preview } from '@storybook/react';
-import addonThemes from '@storybook/addon-themes';
-import { withThemeByDataAttribute } from '@storybook/addon-themes';
+import { ThemeColorScheme, ThemeVariant } from '../src/types/theme';
+import { readStorybookThemeAxes } from '../src/handlers/storybookThemeHandlers';
+import { themeVariantLabels } from '../src/handlers/themeVariantHandlers';
 import { withStorybookUiKitTheme } from './withStorybookUiKitTheme';
 import { withStorybookDocsChromeTheme } from './withStorybookDocsChromeTheme';
 import { withStoryCanvasRoom } from './withStoryCanvasRoom';
 import { withStorybookMotion } from './withStorybookMotion';
+import { withStorybookThemeDataAttribute } from './withStorybookThemeDataAttribute';
 import './preview-storybook-overlays.css';
 import './preview-storybook-docs-theme.css';
 import './preview-storybook-motion.css';
 import { getStoryDocsSourceCode } from '../src/handlers/storybookStoryDocs';
-import { readStorybookThemeGlobal } from '../src/handlers/storybookThemeHandlers';
 
-const themeAddonAnnotations = addonThemes();
-
-/**
- * Стартовое значение глобала `theme` (тулбар аддона тем).
- */
-function getInitialStorybookThemeGlobal() {
-  return readStorybookThemeGlobal();
-}
+const initialThemeAxes = readStorybookThemeAxes();
 
 /**
  * Глобальные параметры превью.
- * Декоратор {@link withStorybookUiKitTheme} подключает `ThemeProvider` для styled-components: без `theme` в
- * контексте падает доступ к `theme.sizes` / `theme.buttons` и т.д.
- * **Не оборачивайте** сторис в ещё один `ThemeProvider`: используйте `parameters.plainervTheme`
- * (`themeOverrides`, `themes`, `applyGlobalStyles`) — см. {@link withStorybookUiKitTheme}.
- *
- * `@storybook/addon-themes`: `withThemeByDataAttribute` выставляет `data-theme` на `<html>` (CSS / селекторы).
- * {@link withStorybookUiKitTheme} читает `context.globals.theme` и передаёт тему в {@link ThemeProvider} в iframe превью.
- * Оформление shell (сайдбар, хедер) — в `.storybook/manager.ts` через палитру UI-kit.
- *
- * `withStoryCanvasRoom` — внутри `ThemeProvider` (в массиве — перед `withStorybookUiKitTheme`), в Docs фон `backgroundSecondary`.
- * {@link withStorybookDocsChromeTheme} + `preview-storybook-docs-theme.css` — тёмные Docs (таблица, превью, тулбар).
- *
- * Выпадающие меню / Hint / Tooltip рендерятся через `createPortal` в `document.body` текущего документа
- * и `position: fixed`. Портал в `window.top.document` не используется: стили styled-components
- * вешаются на `document` iframe, узлы в другом документе остаются без стилей.
- * См. `preview-storybook-overlays.css` и `dropdownInline` / `portalContainer`.
+ * Декоратор {@link withStorybookUiKitTheme} подключает `ThemeProvider` для styled-components.
+ * Toolbar: два переключателя — `themeVariant` (standard / glass / kidsBoys / kidsGirls) и `colorScheme` (light / dark).
  */
 const preview: Preview = {
-  ...themeAddonAnnotations,
+  globalTypes: {
+    /** Legacy flat theme id — скрыт, используйте themeVariant + colorScheme */
+    theme: {
+      name: 'Theme (legacy)',
+      description: 'Устаревший глобал; не отображается в toolbar',
+      toolbar: {
+        hidden: true,
+        items: [],
+      },
+    },
+    themeVariant: {
+      name: 'Тема',
+      description: 'Вариант оформления',
+      toolbar: {
+        title: 'Тема',
+        icon: 'paintbrush',
+        items: [
+          { value: ThemeVariant.standard, title: themeVariantLabels[ThemeVariant.standard] },
+          { value: ThemeVariant.glass, title: themeVariantLabels[ThemeVariant.glass] },
+          { value: ThemeVariant.kidsBoys, title: themeVariantLabels[ThemeVariant.kidsBoys] },
+          { value: ThemeVariant.kidsGirls, title: themeVariantLabels[ThemeVariant.kidsGirls] },
+        ],
+        dynamicTitle: true,
+      },
+    },
+    colorScheme: {
+      name: 'Цвет',
+      description: 'Светлая или тёмная палитра',
+      toolbar: {
+        title: 'Цвет',
+        icon: 'circlehollow',
+        items: [
+          { value: ThemeColorScheme.LIGHT, title: 'Светлая' },
+          { value: ThemeColorScheme.DARK, title: 'Тёмная' },
+        ],
+        dynamicTitle: true,
+      },
+    },
+  },
   initialGlobals: {
-    ...(themeAddonAnnotations.initialGlobals ?? {}),
-    theme: getInitialStorybookThemeGlobal(),
+    themeVariant: initialThemeAxes.themeVariant,
+    colorScheme: initialThemeAxes.colorScheme,
   },
   decorators: [
-    /**
-     * Storybook 9: **первый** декоратор — ближе к сторис, **последний** — снаружи.
-     * `withStoryCanvasRoom` должен быть **внутри** `withStorybookUiKitTheme` → в массиве canvas **раньше**, uiKit **позже**.
-     * Снаружи → внутрь: data-theme → ThemeProvider → canvas → Docs chrome → motion → сторис.
-     */
     withStorybookMotion,
     withStorybookDocsChromeTheme,
     withStoryCanvasRoom,
     withStorybookUiKitTheme,
-    withThemeByDataAttribute({
-      themes: {
-        light: 'light',
-        dark: 'dark',
-        glassLight: 'glassLight',
-        glassDark: 'glassDark',
-      },
-      defaultTheme: getInitialStorybookThemeGlobal(),
-    }),
+    withStorybookThemeDataAttribute,
   ],
   parameters: {
+    /** Скрывает legacy toolbar `@storybook/addon-themes` (glassDark theme и т.д.) */
+    themes: {
+      disable: true,
+    },
     options: {
       /**
        * Порядок в сайдбаре: сначала группы по названию, затем сторис внутри группы по фиксированному списку.
