@@ -13,7 +13,7 @@ import {
 import { ActionBarDynamicSizeDemo } from './ActionBarDynamicSizeDemo';
 
 const meta: Meta<typeof ActionBar> = {
-  title: 'UI Kit/Layout/ActionBar',
+  title: 'UI Kit/Buttons/ActionBar',
   component: ActionBar,
   parameters: {
     layout: 'padded',

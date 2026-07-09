@@ -4,6 +4,7 @@ import { MultiInput } from './MultiInput';
 import { Form } from '../../Form';
 import { Size } from '../../../../types/sizes';
 import { InputVariant } from '../../../../types/ui';
+import { DOC_MULTI_INPUT } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof MultiInput> = {
   title: 'UI Kit/Inputs/MultiInput',
@@ -12,8 +13,7 @@ const meta: Meta<typeof MultiInput> = {
     layout: 'padded',
     docs: {
       description: {
-        component:
-          'Несколько токенов в одном поле (чипы + ввод). Поведение близко к [Admiral MultiInputField](https://admiralds.github.io/react-ui/?path=/docs/admiral-2-1-form-field-multiinputfield--docs).',
+        component: DOC_MULTI_INPUT,
       },
     },
   },
@@ -26,10 +26,15 @@ const meta: Meta<typeof MultiInput> = {
     ),
   ],
   argTypes: {
-    size: { control: { type: 'select' }, options: Object.values(Size) },
+    size: {
+      control: { type: 'select' },
+      options: Object.values(Size),
+      description: 'Размер поля (как у Input)',
+    },
     variant: {
       control: { type: 'select' },
       options: [InputVariant.DEFAULT, InputVariant.CLEAR],
+      description: 'Вид рамки поля',
     },
     commitWithComma: {
       description: 'Фиксировать токен по клавише `,`',
@@ -40,6 +45,14 @@ const meta: Meta<typeof MultiInput> = {
     duplicates: {
       control: { type: 'select' },
       options: ['allow', 'reject'],
+      description: 'Разрешать или отклонять дубликаты',
+    },
+    maxItems: {
+      description: 'Максимум токенов',
+    },
+    validateToken: {
+      control: false,
+      description: 'Предикат валидации токена перед добавлением',
     },
   },
 };

@@ -462,13 +462,154 @@ export interface ButtonGroupProps extends Omit<BaseComponentProps, 'children'> {
   ariaLabel?: string;
 }
 
+/** Внешний вид split-кнопки `MultiButton` */
+export type MultiButtonAppearance = 'primary' | 'secondary' | 'outline';
+
 /**
- * Пропсы иконочной кнопки
- * @property variant - Специальный стиль иконочной кнопки
- * @property size - Размер кнопки
- * @property icon - Иконка
- * @property notificationCount - Количество уведомлений (красный бейдж)
+ * Split-кнопка: основное действие + меню дополнительных действий (шеврон).
+ * @property children - Подпись основной кнопки
+ * @property items - Пункты выпадающего меню
+ * @property onMainButtonClick - Клик по основной кнопке (не открывает меню)
+ * @property onSelectItem - Выбор пункта меню
+ * @property selected / value - Выбранный пункт меню
+ * @property appearance - Визуальный стиль пары кнопок
+ * @property size - Размер
+ * @property disabled - Блокировка всего компонента
+ * @property disabledMainButton - Блокировка только основной кнопки (меню доступно)
+ * @property skeleton - Режим скелетона
+ * @property isVisible / onVisibilityChange - Controlled видимость меню
  */
+export interface MultiButtonProps
+  extends
+    BaseComponentProps,
+    Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'children' | 'color'> {
+  children?: React.ReactNode;
+  items?: DropdownProps['items'];
+  /**
+   * Клик по основной кнопке.
+   * @param event - Событие мыши
+   */
+  onMainButtonClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  /**
+   * Выбор пункта меню.
+   * @param value - Значение пункта
+   * @param event - Событие клика
+   */
+  onSelectItem?: (
+    value?: DropdownMenuItemValue,
+    event?: React.MouseEvent<HTMLElement>,
+  ) => void;
+  selected?: DropdownMenuItemValue | DropdownMenuItemValue[];
+  value?: DropdownMenuItemValue | DropdownMenuItemValue[];
+  appearance?: MultiButtonAppearance;
+  size?: Size;
+  disabled?: boolean;
+  disabledMainButton?: boolean;
+  skeleton?: boolean;
+  isVisible?: boolean;
+  /**
+   * Смена видимости меню.
+   * @param isVisible - Новое состояние
+   */
+  onVisibilityChange?: (isVisible: boolean) => void;
+  menuWidth?: DropdownProps['menuWidth'];
+  menuMaxHeight?: DropdownProps['menuMaxHeight'];
+}
+
+/** Внешний вид сегментированного контрола */
+export type SegmentedControlAppearance = 'outline' | 'filled';
+
+/** Режим выбора сегментов */
+export type SegmentedControlSelectionMode = 'single' | 'multiple';
+
+/**
+ * Опция для data-driven режима `SegmentedControl`.
+ * @property value - Значение сегмента
+ * @property label - Подпись
+ * @property disabled - Блокировка сегмента
+ * @property loading - Состояние загрузки
+ * @property leftIcon / rightIcon - Иконки
+ * @property displayAsSquare - Квадратный сегмент (только иконка)
+ */
+export type SegmentedControlOption = {
+  value: string;
+  label?: React.ReactNode;
+  disabled?: boolean;
+  loading?: boolean;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  displayAsSquare?: boolean;
+};
+
+/**
+ * Сегментированный контрол (группа radio/checkbox-сегментов).
+ * @property appearance - `outline` | `filled`
+ * @property size - Размер сегментов
+ * @property selectionMode - `single` (radio) | `multiple` (checkbox)
+ * @property value / defaultValue - Controlled / uncontrolled значение
+ * @property onChange - Смена значения
+ * @property name - Имя группы для native input
+ * @property options - Data-driven список (приоритет над children, если непустой)
+ * @property children - Составной API через `SegmentedControl.Item`
+ * @property ariaLabel - Подпись группы
+ * @property fullWidth - Растянуть на ширину родителя
+ */
+export interface SegmentedControlProps
+  extends
+    BaseComponentProps,
+    Omit<React.HTMLAttributes<HTMLFieldSetElement>, 'onChange' | 'defaultValue' | 'children'> {
+  appearance?: SegmentedControlAppearance;
+  size?: Size;
+  selectionMode?: SegmentedControlSelectionMode;
+  value?: string | string[];
+  defaultValue?: string | string[];
+  /**
+   * Смена выбранного значения.
+   * @param nextValue - Для single — строка; для multiple — массив
+   * @param event - Событие изменения input
+   */
+  onChange?: (
+    nextValue: string | string[],
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => void;
+  name?: string;
+  options?: SegmentedControlOption[];
+  children?: React.ReactNode;
+  ariaLabel?: string;
+  fullWidth?: boolean;
+}
+
+/**
+ * Сегмент контрола.
+ * @property value - Значение сегмента
+ * @property checked - Controlled выбранность (если группа не управляет value)
+ * @property defaultChecked - Uncontrolled начальная выбранность
+ * @property disabled - Блокировка
+ * @property loading - Спиннер вместо контента
+ * @property leftIcon / rightIcon - Иконки
+ * @property displayAsSquare - Квадратный сегмент
+ * @property children - Подпись
+ */
+export interface SegmentedControlItemProps
+  extends
+    BaseComponentProps,
+    Omit<React.LabelHTMLAttributes<HTMLLabelElement>, 'onChange' | 'children'> {
+  value: string;
+  checked?: boolean;
+  defaultChecked?: boolean;
+  disabled?: boolean;
+  loading?: boolean;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  displayAsSquare?: boolean;
+  children?: React.ReactNode;
+  /**
+   * Нативное изменение input (дополнительно к групповому onChange).
+   * @param event - Событие change
+   */
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
 /**
  * Пропсы иконочной кнопки
  * @property variant - Визуальный стиль кнопки (дублирует ButtonVariant)
@@ -944,6 +1085,30 @@ export type DropdownTagTriggerProps = Omit<
  */
 export type PillStatus = 'default' | 'success' | 'warning' | 'danger' | 'info';
 
+/** Семантический статус точки `Pulse` */
+export type PulseStatus = 'info' | 'danger' | 'success' | 'warning';
+
+/**
+ * Кастомный цвет точки Pulse.
+ * @property background - Цвет заливки точки и волны
+ */
+export type PulseCustomColors = {
+  background?: string;
+};
+
+/**
+ * Статусная точка с расходящейся волной (индикатор активности / статуса).
+ * @property size - SM / MD / LG (диаметр точки)
+ * @property status - Семантический цвет
+ * @property customColors - Перекрывает цвет `status`, если задан `background`
+ */
+export interface PulseProps
+  extends BaseComponentProps, Omit<React.HTMLAttributes<HTMLSpanElement>, 'children' | 'color'> {
+  size?: Size;
+  status?: PulseStatus;
+  customColors?: PulseCustomColors;
+}
+
 /**
  * Чип «Pill» с круглым индикатором слева (макет Figma: default / hover / active / selected / disabled).
  * @property children - Подпись (например «Pill»)
@@ -978,6 +1143,132 @@ export interface PillProps
   skeleton?: boolean;
   /** Ширина скелетона в px (по умолчанию от `size`) */
   skeletonWidth?: number;
+}
+
+/** Вид заливки чипа: мягкий фон или обводка */
+export type ChipAppearance = 'filled' | 'outline';
+
+/** Режим выбора в группе `Chips` */
+export type ChipsSelectionMode = 'none' | 'single' | 'multiple';
+
+/**
+ * Один чип: текст, иконки, badge, удаление, выбранное состояние.
+ * @property children - Текст / контент чипа
+ * @property size - Высота и отступы (`SM` по умолчанию; поддерживаются `SM` и `MD`)
+ * @property appearance - `filled` или `outline`
+ * @property selected - Визуально выбранное состояние
+ * @property disabled - Блокировка клика и удаления
+ * @property leftIcon - Иконка слева от текста
+ * @property rightIcon - Иконка справа; скрывается, если передан `onClose`
+ * @property badge - Число справа от текста (через `Badge`); `0` / `undefined` — не показывать
+ * @property onClose - Колбэк удаления; показывает кнопку-крестик
+ * @property onClick - Клик по чипу (выбор / действие)
+ * @property value - Идентификатор в группе `Chips`
+ * @property tooltipWhenTruncated - Показывать `Tooltip`, если текст обрезан
+ * @property tooltipContent - Контент тултипа при обрезке (иначе строковые `children`)
+ * @property maxWidth - Ограничение ширины (для ellipsis)
+ * @property as - Корневой элемент: `span` | `button`
+ */
+export interface ChipProps
+  extends BaseComponentProps, Omit<React.HTMLAttributes<HTMLElement>, 'children' | 'onClick'> {
+  children?: React.ReactNode;
+  size?: Size;
+  appearance?: ChipAppearance;
+  selected?: boolean;
+  disabled?: boolean;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  badge?: number;
+  /**
+   * Удаление чипа. Клик по крестику не всплывает как выбор.
+   * @param event - Событие клика по кнопке удаления
+   */
+  onClose?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onClick?: React.MouseEventHandler<HTMLElement>;
+  /** Идентификатор значения в группе `Chips` */
+  value?: string;
+  tooltipWhenTruncated?: boolean;
+  tooltipContent?: React.ReactNode;
+  /** Максимальная ширина чипа (часто вместе с `tooltipWhenTruncated`) */
+  maxWidth?: number | string;
+  as?: 'span' | 'button';
+}
+
+/**
+ * Группа чипов с опциональным выбором и клавиатурной навигацией.
+ * @property selectionMode - `none` | `single` | `multiple`
+ * @property value - Controlled значение (`string` для single, `string[]` для multiple)
+ * @property defaultValue - Uncontrolled начальное значение
+ * @property onChange - Колбэк нового значения
+ * @property disabled - Блокировка всей группы
+ * @property size - Дефолтный размер для дочерних `Chip`
+ * @property appearance - Дефолтный вид для дочерних `Chip`
+ * @property children - Элементы `Chip` (при выборе у каждого нужен `value`)
+ */
+export interface ChipsProps
+  extends BaseComponentProps, Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> {
+  selectionMode?: ChipsSelectionMode;
+  value?: string | string[];
+  defaultValue?: string | string[];
+  /**
+   * Смена выбранного значения группы.
+   * @param nextValue - Для `single` — строка; для `multiple` — массив строк
+   */
+  onChange?: (nextValue: string | string[]) => void;
+  disabled?: boolean;
+  size?: Size;
+  appearance?: ChipAppearance;
+  children?: React.ReactNode;
+}
+
+/** Семантика списка: нумерованный (`ol`) или маркированный (`ul`) */
+export type ListVariant = 'ordered' | 'unordered';
+
+/** Стиль маркера нумерованного списка */
+export type ListOrderedMarkerStyle = 'numbers' | 'lower-letters' | 'upper-letters';
+
+/** Стиль маркера маркированного списка */
+export type ListUnorderedMarkerStyle = 'bullet' | 'virgule' | 'icon';
+
+/** Объединённый тип стиля маркера */
+export type ListMarkerStyle = ListOrderedMarkerStyle | ListUnorderedMarkerStyle;
+
+/**
+ * Типографический список (ordered / unordered).
+ * @property variant - `ordered` (`ol`) или `unordered` (`ul`)
+ * @property markerStyle - Стиль маркеров (зависит от `variant`)
+ * @property size - `SM` | `MD` (типографика и высота маркера)
+ * @property gap - Расстояние между пунктами (px или CSS-строка; по умолчанию 8)
+ * @property children - Пункты `List.Item` (и вложенные `List`)
+ */
+export interface ListProps
+  extends BaseComponentProps, Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
+  variant?: ListVariant;
+  markerStyle?: ListMarkerStyle;
+  size?: Size;
+  gap?: number | string;
+  children?: React.ReactNode;
+}
+
+/**
+ * Пункт списка.
+ * @property children - Текст и/или вложенный `List`, опционально `List.Icon`
+ */
+export interface ListItemProps
+  extends BaseComponentProps, Omit<React.LiHTMLAttributes<HTMLLIElement>, 'children'> {
+  children?: React.ReactNode;
+}
+
+/**
+ * Иконка-маркер пункта при `markerStyle="icon"`.
+ * @property name - Имя иконки из набора `Icon`
+ * @property color - Цвет иконки (по умолчанию secondary)
+ * @property children - Альтернатива `name`: произвольный ReactNode
+ */
+export interface ListIconProps extends BaseComponentProps {
+  name?: IconName;
+  color?: string;
+  children?: React.ReactNode;
 }
 
 /** Значение диапазона для `RangeSlider`: [нижняя граница, верхняя граница] */
@@ -1749,6 +2040,70 @@ export interface DropdownProps extends BaseComponentProps {
    * Нужен для чекбокса родителя и каскада; без него используются только `nestedItems` из пропсов пункта.
    */
   lookupTreeMenuItemByValue?: (itemValue: string) => DropdownMenuItemProps | null;
+}
+
+/**
+ * Опции для кастомного триггера `DropMenu` (`renderContentProp`).
+ * @property buttonRef - Ref на элемент триггера (для позиционирования и фокуса)
+ * @property menuState - Открыто ли меню
+ * @property handleKeyDown - Обработчик клавиш триггера (Enter/Space/ArrowDown)
+ * @property handleClick - Переключение видимости меню
+ * @property statusIcon - Иконка шеврона (состояние меню)
+ * @property disabled - Доступность триггера
+ */
+export interface DropMenuRenderContentProps {
+  buttonRef: React.Ref<HTMLElement>;
+  menuState: boolean;
+  handleKeyDown?: (event: React.KeyboardEvent) => void;
+  handleClick?: (event: React.MouseEvent) => void;
+  statusIcon?: React.ReactNode;
+  disabled?: boolean;
+}
+
+/**
+ * Выпадающее меню с кастомным или стандартным триггером (фасад над `Dropdown`).
+ * @property renderContentProp - Рендер кастомного триггера; приоритетнее `trigger`
+ * @property trigger - Кастомный триггер (как у `Dropdown`), если нет `renderContentProp`
+ * @property buttonProps - Пропсы дефолтной кнопки, если нет `renderContentProp` и `trigger`
+ * @property items - Пункты меню
+ * @property selected - Алиас выбранного значения (если нет `value`)
+ * @property value - Выбранное значение / массив
+ * @property onSelectItem - Выбор пункта (канонический колбэк)
+ * @property onSelect - Алиас `onSelectItem` (как у `Dropdown`)
+ * @property isVisible - Controlled видимость меню
+ * @property onVisibilityChange - Смена видимости
+ * @property defaultOpen - Начальная открытость в uncontrolled-режиме
+ */
+export interface DropMenuProps
+  extends Omit<
+    DropdownProps,
+    'isMenuOpen' | 'onMenuOpenChange' | 'trigger' | 'children'
+  > {
+  /**
+   * Кастомный триггер. Получает ref, состояние меню и обработчики.
+   * @param options - См. {@link DropMenuRenderContentProps}
+   */
+  renderContentProp?: (options: DropMenuRenderContentProps) => React.ReactNode;
+  /** Кастомный триггер без render-prop (как у `Dropdown`) */
+  trigger?: React.ReactNode;
+  /** Алиас выбранного значения; при наличии `value` игнорируется */
+  selected?: DropdownMenuItemValue | DropdownMenuItemValue[];
+  /**
+   * Выбор пункта меню.
+   * @param value - Значение пункта
+   * @param event - Событие клика
+   */
+  onSelectItem?: (
+    value?: DropdownMenuItemValue,
+    event?: React.MouseEvent<HTMLElement>,
+  ) => void;
+  /** Controlled видимость выпадающего меню */
+  isVisible?: boolean;
+  /**
+   * Смена видимости меню.
+   * @param isVisible - Новое состояние
+   */
+  onVisibilityChange?: (isVisible: boolean) => void;
 }
 
 /** Пропсы верхней/нижней панели выпадающего меню (`renderTopPanel` / `renderBottomPanel`) */

@@ -1,10 +1,25 @@
 // UI Components
-export { Button, ButtonGroup } from './buttons';
-export type { ButtonProps, ButtonGroupProps, ButtonGroupAttachedShape } from '@/types/ui';
+export { Button, ButtonGroup, MultiButton } from './buttons';
+export type {
+  ButtonProps,
+  ButtonGroupProps,
+  ButtonGroupAttachedShape,
+  MultiButtonProps,
+  MultiButtonAppearance,
+} from '@/types/ui';
 export { Link, LinkMode } from './Link';
 export type { LinkProps, LinkTextProps, LinkButtonProps } from './Link';
 export { IconButton } from './buttons';
 export type { IconButtonProps } from '@/types/ui';
+
+export { SegmentedControl } from './SegmentedControl';
+export type {
+  SegmentedControlProps,
+  SegmentedControlItemProps,
+  SegmentedControlOption,
+  SegmentedControlAppearance,
+  SegmentedControlSelectionMode,
+} from '@/types/ui';
 
 export { Input } from './inputs/Input';
 export type {
@@ -43,6 +58,17 @@ export type {
   TagCustomColors,
 } from '@/types/ui';
 
+export { List } from './List';
+export type {
+  ListProps,
+  ListItemProps,
+  ListIconProps,
+  ListVariant,
+  ListMarkerStyle,
+  ListOrderedMarkerStyle,
+  ListUnorderedMarkerStyle,
+} from '@/types/ui';
+
 export { Breadcrumb } from './Breadcrumb';
 export type { BreadcrumbProps, BreadcrumbItem } from '@/types/ui';
 
@@ -75,6 +101,9 @@ export { GridMode } from '@/types/ui';
 
 export { Dropdown } from './Dropdown';
 export type { DropdownProps } from '@/types/ui';
+
+export { DropMenu } from './DropMenu';
+export type { DropMenuProps, DropMenuRenderContentProps } from '@/types/ui';
 
 export { Popover } from './Popover/Popover';
 export type { PopoverProps, PopoverVariant } from '@/types/ui';
@@ -198,6 +227,9 @@ export type {
 export { Spinner } from './Spinner';
 export type { SpinnerProps } from '@/types/ui';
 
+export { Pulse } from './Pulse';
+export type { PulseProps, PulseStatus, PulseCustomColors } from '@/types/ui';
+
 export { Skeleton } from './Skeleton';
 export type { SkeletonProps } from '@/types/ui';
 
@@ -207,6 +239,15 @@ export type { DividerProps } from '@/types/ui';
 export { Pill } from './Pill';
 export type { PillProps, PillStatus } from '@/types/ui';
 export type { PillGeometry } from './Pill';
+
+export { Chip, Chips } from './Chip';
+export type {
+  ChipProps,
+  ChipsProps,
+  ChipAppearance,
+  ChipsSelectionMode,
+} from '@/types/ui';
+export type { ChipGeometry } from './Chip';
 
 export { Slider, RangeSlider } from './Slider';
 export type { SliderProps, RangeSliderProps, SliderRangeValue } from '@/types/ui';

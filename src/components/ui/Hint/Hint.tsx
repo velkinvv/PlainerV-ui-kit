@@ -50,7 +50,7 @@ export const Hint = forwardRef<HTMLDivElement, HintProps>(
       delay = 500,
       variant = HintVariant.DEFAULT,
       visibilityTrigger = HintVisibilityTrigger.HOVER,
-      positioningMode = 'default',
+      positioningMode = 'autoFlip',
       isOpen,
       defaultOpen,
       onOpenChange,

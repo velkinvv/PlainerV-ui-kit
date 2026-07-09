@@ -9,8 +9,10 @@ import type { PopoverProps } from '@/types/ui';
 
 import {
   calculateDropdownPosition,
+  findScrollableParents,
   handleClickOutsideEvent,
   isClickInsideDropdown,
+  removeScrollListeners,
 } from '../Dropdown/handlers';
 import { PopoverSurface } from './Popover.style';
 import {
@@ -54,7 +56,7 @@ export const Popover: React.FC<PopoverProps> = ({
   onOpenChange,
   size = Size.MD,
   variant = 'default',
-  positioningMode = 'default',
+  positioningMode = 'autoFlip',
   preferredPlacement = 'below',
   portalContainer,
   offset = 4,
@@ -134,10 +136,34 @@ export const Popover: React.FC<PopoverProps> = ({
     };
     window.addEventListener('scroll', onScrollOrResize, true);
     window.addEventListener('resize', onScrollOrResize);
+    document.addEventListener('scroll', onScrollOrResize, true);
+
+    const scrollableElements = findScrollableParents(rootRef.current);
+    scrollableElements.forEach((element) => {
+      if (element instanceof HTMLElement) {
+        element.addEventListener('scroll', onScrollOrResize, true);
+      }
+    });
+
     return () => {
       window.removeEventListener('scroll', onScrollOrResize, true);
       window.removeEventListener('resize', onScrollOrResize);
+      document.removeEventListener('scroll', onScrollOrResize, true);
+      removeScrollListeners(scrollableElements, onScrollOrResize);
     };
+  }, [isOpen, updatePosition]);
+
+  useEffect(() => {
+    if (!isOpen || !surfaceRef.current || typeof ResizeObserver === 'undefined') {
+      return;
+    }
+
+    const resizeObserver = new ResizeObserver(() => {
+      updatePosition();
+    });
+
+    resizeObserver.observe(surfaceRef.current);
+    return () => resizeObserver.disconnect();
   }, [isOpen, updatePosition]);
 
   useEffect(() => {

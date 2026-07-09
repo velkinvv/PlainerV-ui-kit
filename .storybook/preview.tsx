@@ -94,14 +94,15 @@ const preview: Preview = {
         // Без аннотаций TypeScript: Storybook парсит `storySort` и выполняет через eval как JS.
         const groupOrderMap = {
           Inputs: 1,
-          'Data Display': 2,
-          Feedback: 3,
-          Surfaces: 4,
-          Navigation: 5,
-          Layout: 6,
-          Utils: 7,
-          Hooks: 8,
-          Theming: 9,
+          Buttons: 2,
+          'Data Display': 3,
+          Feedback: 4,
+          Surfaces: 5,
+          Navigation: 6,
+          Layout: 7,
+          Utils: 8,
+          Hooks: 9,
+          Theming: 10,
         };
 
         /**
@@ -109,22 +110,31 @@ const preview: Preview = {
          */
         const storyOrderByGroup = {
           Inputs: [
-            'Button',
-            'IconButton',
-            'ButtonGroup',
             'Link',
             'Input',
             'TextArea',
             'FileInput',
             'Select',
+            'MultiInput',
+            'NumberInput',
             'DateInput',
             'TimeInput',
+            'DateTimeInput',
+            'SliderInput',
             'Calendar',
+            'Slider',
+          ],
+          Buttons: [
+            'Button',
+            'IconButton',
+            'ButtonGroup',
+            'MultiButton',
+            'SegmentedControl',
             'Checkbox',
             'Switch',
             'RadioButton',
             'RadioButtonGroup',
-            'Slider',
+            'ActionBar',
           ],
           'Data Display': [
             'Typography',
@@ -134,6 +144,9 @@ const preview: Preview = {
             'Badge',
             'Tag',
             'Pill',
+            'Chip',
+            'List',
+            'Accordion',
             'Table',
             'DataGrid',
             'Progress',
@@ -144,7 +157,7 @@ const preview: Preview = {
             'Icon/Test',
             'Icon/Icon Test',
           ],
-          Feedback: ['Toast', 'Snackbar', 'Tooltip', 'Hint', 'Spinner', 'Accordion'],
+          Feedback: ['Toast', 'Snackbar', 'Tooltip', 'Hint', 'Spinner', 'Pulse'],
           Surfaces: ['Card', 'Modal', 'Drawer', 'Sheet', 'Divider'],
           Navigation: [
             'Breadcrumb',
@@ -152,6 +165,7 @@ const preview: Preview = {
             'Dropdown',
             'Dropdown/DropdownMenu',
             'Dropdown/DropdownMenuItem',
+            'DropMenu',
             'FloatingMenu',
             'NavigationMenu',
             'Pagination',
@@ -188,7 +202,7 @@ const preview: Preview = {
         };
 
         /**
-         * @param storyTitle — полный `title` сторис (например `UI Kit/Inputs/Button`)
+         * @param storyTitle — полный `title` сторис (например `UI Kit/Buttons/Button`)
          * @returns приоритет группы в сайдбаре (меньше — выше)
          */
         const getGroupRank = (storyTitle) => {
@@ -201,7 +215,7 @@ const preview: Preview = {
         };
 
         /**
-         * @param storyTitle — полный `title` сторис (например `UI Kit/Inputs/Button`)
+         * @param storyTitle — полный `title` сторис (например `UI Kit/Buttons/Button`)
          * @returns индекс в таблице порядка внутри группы или -1, если не задано явно
          */
         const getWithinGroupOrderIndex = (storyTitle) => {

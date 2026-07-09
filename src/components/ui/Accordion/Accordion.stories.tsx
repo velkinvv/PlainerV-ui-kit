@@ -7,7 +7,7 @@ import { glassLightTheme } from '@/themes/themes';
 import { accordionStoriesStyles } from './Accordion.stories.styles';
 
 const meta: Meta<typeof Accordion> = {
-  title: 'UI Kit/Feedback/Accordion',
+  title: 'UI Kit/Data Display/Accordion',
   component: Accordion,
   parameters: {
     layout: 'padded',

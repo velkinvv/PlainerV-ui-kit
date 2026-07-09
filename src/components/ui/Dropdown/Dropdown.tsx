@@ -94,7 +94,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       alignSelf,
       dropContainerStyle,
       dropContainerCssMixin,
-      positioningMode = 'default',
+      positioningMode = 'autoFlip',
       portalContainer,
       searchable = false,
       searchPlaceholder = 'Поиск...',

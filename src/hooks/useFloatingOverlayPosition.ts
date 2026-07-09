@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useLayoutEffect, useState, type RefObject } from 'react';
 
-import { calculateDropdownPosition } from '../components/ui/Dropdown/handlers';
+import {
+  calculateDropdownPosition,
+  findScrollableParents,
+  removeScrollListeners,
+} from '../components/ui/Dropdown/handlers';
 import type { DropdownPositioningMode } from '../types/ui';
 
 export type UseFloatingOverlayPositionParameters = {
@@ -76,12 +80,23 @@ export function useFloatingOverlayPosition({
 
     window.addEventListener('scroll', handleScrollOrResize, true);
     window.addEventListener('resize', handleScrollOrResize);
+    document.addEventListener('scroll', handleScrollOrResize, true);
+
+    const scrollableElements = findScrollableParents(anchorRef.current);
+
+    scrollableElements.forEach((element) => {
+      if (element instanceof HTMLElement) {
+        element.addEventListener('scroll', handleScrollOrResize, true);
+      }
+    });
 
     return () => {
       window.removeEventListener('scroll', handleScrollOrResize, true);
       window.removeEventListener('resize', handleScrollOrResize);
+      document.removeEventListener('scroll', handleScrollOrResize, true);
+      removeScrollListeners(scrollableElements, handleScrollOrResize);
     };
-  }, [isOpen, updatePosition]);
+  }, [anchorRef, isOpen, updatePosition]);
 
   useEffect(() => {
     if (!isOpen || !overlayRef.current || typeof ResizeObserver === 'undefined') {

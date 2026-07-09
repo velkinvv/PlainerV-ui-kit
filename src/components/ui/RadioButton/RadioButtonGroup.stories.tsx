@@ -14,7 +14,7 @@ import { DOC_RADIO_BUTTON_GROUP } from '@/components/ui/storyDocs/uiKitDocs';
 import { radioButtonGroupStoriesStyles } from './RadioButtonGroup.stories.styles';
 
 const meta: Meta<typeof RadioButtonGroup> = {
-  title: 'UI Kit/Inputs/RadioButtonGroup',
+  title: 'UI Kit/Buttons/RadioButtonGroup',
   component: RadioButtonGroup,
   parameters: {
     layout: 'padded',

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { clsx } from 'clsx';
 import {
@@ -8,6 +8,7 @@ import {
   type FloatingMenuGroupItemProps,
 } from '@/types/ui';
 import { Size } from '@/types/sizes';
+import { useFloatingOverlayPosition } from '@/hooks/useFloatingOverlayPosition';
 import { Tooltip } from '../Tooltip/Tooltip';
 import { useFloatingMenuGroupContext, useFloatingMenuRootContext } from './FloatingMenuContext';
 import {
@@ -16,7 +17,6 @@ import {
   FloatingMenuItemChevron,
   FloatingMenuItemIconSlot,
 } from './FloatingMenu.style';
-import { getDropdownPanelPosition } from './handlers';
 
 const HOVER_OPEN_MS = 120;
 const HOVER_CLOSE_MS = 220;
@@ -47,10 +47,17 @@ export const FloatingMenuGroupItem: React.FC<FloatingMenuGroupItemProps> = ({
 
   const buttonRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
-  const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
 
   const hasMenu = Boolean(dropdownContent);
   const isOpen = openDropdownId === itemId;
+
+  const { position: panelPosition } = useFloatingOverlayPosition({
+    isOpen,
+    anchorRef: buttonRef,
+    overlayRef: panelRef,
+    positioningMode: 'autoFlip',
+    offset: 6,
+  });
 
   const open = useCallback(() => {
     if (!hasMenu || disabled) {
@@ -73,14 +80,6 @@ export const FloatingMenuGroupItem: React.FC<FloatingMenuGroupItemProps> = ({
       open();
     }
   }, [close, disabled, hasMenu, isOpen, open]);
-
-  useLayoutEffect(() => {
-    if (!isOpen || !buttonRef.current) {
-      setCoords(null);
-      return;
-    }
-    setCoords(getDropdownPanelPosition(buttonRef.current));
-  }, [isOpen]);
 
   const hoverOpenTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const hoverCloseTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -205,12 +204,12 @@ export const FloatingMenuGroupItem: React.FC<FloatingMenuGroupItemProps> = ({
   );
 
   const panel =
-    typeof document !== 'undefined' && isOpen && coords && hasMenu && dropdownContent ? (
+    typeof document !== 'undefined' && isOpen && hasMenu && dropdownContent ? (
       <FloatingMenuDropdownPanel
         ref={panelRef}
         className="ui-floating-menu-dropdown-panel"
         $zIndex={zIndex + 2}
-        style={{ top: coords.top, left: coords.left }}
+        style={{ top: panelPosition.y, left: panelPosition.x }}
         data-floating-menu-dropdown-panel
         onMouseEnter={() => {
           if (dropdownTrigger === FloatingMenuDropdownTrigger.HOVER) {

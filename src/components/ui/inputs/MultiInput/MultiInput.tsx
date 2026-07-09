@@ -30,11 +30,7 @@ import {
   shouldShowInputClearButton,
 } from '../shared';
 import { InputFieldShell } from '../Input/InputFieldShell';
-import {
-  SelectMultiChip,
-  SelectMultiChipLabel,
-  SelectMultiChipRemove,
-} from '../Select/Select.style';
+import { Chip } from '../../Chip';
 import { MultiInputInner, MultiInputNativeInput } from './MultiInput.style';
 import {
   normalizeMultiInputToken,
@@ -45,7 +41,7 @@ import {
 /**
  * Поле для ввода нескольких токенов (как теги внутри рамки инпута): тот же контейнер, лейблы и статусы, что у `Input`.
  * Фиксация токена: Enter; по желанию запятая; при вставке — разбор по переносам/запятым/`;`/табам.
- * Референс по UX: [Admiral MultiInputField](https://admiralds.github.io/react-ui/?path=/docs/admiral-2-1-form-field-multiinputfield--docs).
+ * Токены рендерятся через `Chip`.
  *
  * @param value - Массив токенов (контролируемый режим).
  * @param defaultValue - Начальные токены (неконтролируемый режим).
@@ -387,30 +383,19 @@ export const MultiInput = forwardRef<HTMLInputElement, MultiInputProps>(
 
         <MultiInputInner>
           {items.map((token, index) => (
-            <SelectMultiChip key={`${String(index)}-${token}`}>
-              <SelectMultiChipLabel title={token}>{token}</SelectMultiChipLabel>
-              {showTokenRemove ? (
-                <SelectMultiChipRemove
-                  type="button"
-                  disabled={disabled}
-                  aria-label={`Удалить «${token}»`}
-                  onMouseDown={(mouseEvent: React.MouseEvent<HTMLButtonElement>) => {
-                    mouseEvent.preventDefault();
-                    mouseEvent.stopPropagation();
-                  }}
-                  onClick={() => {
-                    removeTokenAt(index);
-                  }}
-                >
-                  <Icon
-                    name="IconExClose"
-                    size={IconSize.XS}
-                    color="currentColor"
-                    {...clearIconProps}
-                  />
-                </SelectMultiChipRemove>
-              ) : null}
-            </SelectMultiChip>
+            <Chip
+              key={`${String(index)}-${token}`}
+              disabled={disabled}
+              onClose={
+                showTokenRemove
+                  ? () => {
+                      removeTokenAt(index);
+                    }
+                  : undefined
+              }
+            >
+              {token}
+            </Chip>
           ))}
 
           <MultiInputNativeInput

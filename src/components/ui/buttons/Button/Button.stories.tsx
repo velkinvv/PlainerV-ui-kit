@@ -8,7 +8,7 @@ import { DOC_BUTTON } from '@/components/ui/storyDocs/uiKitDocs';
 import { buttonStoriesStyles } from '@/handlers/buttonStories.styles';
 
 const meta: Meta<typeof Button> = {
-  title: 'UI Kit/Inputs/Button',
+  title: 'UI Kit/Buttons/Button',
   component: Button,
   parameters: {
     layout: 'padded',

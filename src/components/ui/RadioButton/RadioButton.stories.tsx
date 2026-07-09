@@ -9,7 +9,7 @@ import { DOC_RADIO_BUTTON } from '@/components/ui/storyDocs/uiKitDocs';
 import { radioButtonStoriesStyles } from './RadioButton.stories.styles';
 
 const meta: Meta<typeof RadioButton> = {
-  title: 'UI Kit/Inputs/RadioButton',
+  title: 'UI Kit/Buttons/RadioButton',
   component: RadioButton,
   parameters: {
     layout: 'padded',

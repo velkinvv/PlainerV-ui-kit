@@ -7,6 +7,36 @@
 
 ## [Unreleased]
 
+### Added
+
+- **Chip** / **Chips:** капсула и группа с выбором (`selectionMode` none/single/multiple); Select / MultiInput используют атом **Chip**.
+- **DropMenu:** фасад над **Dropdown** (триггер `renderContentProp` / `trigger` / кнопка, алиасы `isVisible` / `onSelectItem`).
+- **List:** типографический список ordered/unordered, маркеры (numbers, letters, bullet, virgule, icon), вложенность.
+- **MultiButton:** split-кнопка (main + шеврон через **DropMenu**).
+- **Pulse:** статусная точка с волной (`status`, `customColors`, reduced-motion).
+- **SegmentedControl:** сегменты outline/filled, single/multiple, `options` или `SegmentedControl.Item`.
+
+### Added (документация)
+
+- Страницы **Chip + List**, **DropMenu + MultiButton**, **SegmentedControl + Pulse**; обновлены каталог, Storybook docs и сторис.
+
+---
+
+## [0.2.6] - 2026-07-08
+
+### Added
+
+- **ActionBar:** `dynamicSize`, `orientation` (horizontal/vertical), sync-анимации add/remove, `highlightPulse`; без фона и бордера для встраивания.
+- **FloatingMenu:** `dynamicSize`, `orientation`, sync-анимации пунктов, `highlightPulse`.
+- **Sidemenu:** `dynamicHeight` с sync-анимациями, `highlightPulse`.
+- **Badge:** motion-анимация контента.
+- **ValueMotion:** компонент пульсирующего значения.
+- **Inputs:** анимированный счётчик символов (`CharacterCounterMotion`).
+
+### Added (документация)
+
+- Документация **v0.2.6**; обновлены README, CHANGELOG, ссылки в Storybook docs.
+
 ---
 
 ## [0.2.5] - 2026-07-08

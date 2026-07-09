@@ -20,6 +20,8 @@ export const DOC_BUTTON = `
 | \`href\`, \`target\`, \`rel\`, \`download\` | Рендер как **ссылка-кнопка** (\`<a>\` с теми же стилями). |
 
 Остальное — нативные атрибуты **HTMLButtonElement** (\`type\`, \`onClick\`, \`aria-*\`).
+
+Storybook: **UI Kit → Buttons → Button**.
 `.trim();
 
 /** @see IconButtonProps */
@@ -34,6 +36,55 @@ export const DOC_ICON_BUTTON = `
 | \`variant\`, \`size\` | Стиль и размер. |
 | \`loading\`, \`disabled\`, \`fullWidth\`, \`rounded\` | Как у базовой кнопки. |
 | \`showTooltip\`, \`tooltipText\` | Подпись для доступности и наведения. |
+
+Storybook: **UI Kit → Buttons → IconButton**.
+`.trim();
+
+/** @see SegmentedControlProps */
+export const DOC_SEGMENTED_CONTROL = `
+### Назначение
+Сегментированный контрол: выбор **одного** или **нескольких** сегментов в склеенной группе (переключатель вида, фильтры, период).
+
+### API
+| Проп | Зачем |
+|------|--------|
+| \`appearance\` | **outline** \| **filled**. |
+| \`size\` | **Size** SM / MD / LG. |
+| \`selectionMode\` | **single** (radio) \| **multiple** (checkbox). |
+| \`value\` / \`defaultValue\` / \`onChange\` | Controlled / uncontrolled; для multiple — \`string[]\`. |
+| \`options\` | Data-driven список (\`SegmentedControlOption[]\`); приоритет над children, если непустой. |
+| \`children\` | Составной API: **SegmentedControl.Item**. |
+| \`ariaLabel\`, \`fullWidth\`, \`name\` | a11y, растяжение, имя native input. |
+
+### Item / option
+\`leftIcon\` / \`rightIcon\`, \`loading\`, \`disabled\`, \`displayAsSquare\` (квадрат только с иконкой).
+
+### Отличия
+- **ButtonGroup** (\`selectable\`) — группа обычных кнопок; **Tabs** — навигация по панелям.
+- Storybook: **UI Kit → Buttons → SegmentedControl**.
+`.trim();
+
+/** @see MultiButtonProps */
+export const DOC_MULTI_BUTTON = `
+### Назначение
+Split-кнопка: **основное действие** + **шеврон** с выпадающим меню дополнительных действий. Меню строится на **DropMenu**.
+
+### Пропсы
+| Проп | Зачем |
+|------|--------|
+| \`children\` | Подпись основной кнопки. |
+| \`onMainButtonClick\` | Клик по main (меню **не** открывает). |
+| \`items\`, \`onSelectItem\`, \`selected\` / \`value\` | Пункты и выбор в меню. |
+| \`appearance\` | primary \| secondary \| outline. |
+| \`size\` | SM / MD / LG. |
+| \`disabled\` | Блокирует main и меню. |
+| \`disabledMainButton\` | Блокирует только main (шеврон доступен). |
+| \`skeleton\` | Скелетон пары кнопок. |
+| \`isVisible\` / \`onVisibilityChange\` | Controlled видимость меню. |
+| \`menuWidth\`, \`menuMaxHeight\` | Размеры панели меню. |
+
+### Связанные
+**DropMenu** (тот же движок меню), **Button** / **ButtonGroup**. Storybook: **UI Kit → Buttons → MultiButton**.
 `.trim();
 
 /** @see ButtonGroupProps */
@@ -53,6 +104,8 @@ export const DOC_BUTTON_GROUP = `
 
 ### Вёрстка attached
 В режиме **attached** — \`gap: 0\`, скругления только на внешних краях сегментов; **\`attachedShape="pill"\`** — капсула. **\`size\`** группы согласуйте с **size** дочерних кнопок. У **IconButton** в склеенной группе задавайте \`rounded={false}\`.
+
+Storybook: **UI Kit → Buttons → ButtonGroup**.
 `.trim();
 
 /** @see LinkProps */
@@ -111,8 +164,28 @@ export const DOC_SELECT = `
 
 ### Режимы \`mode\`
 - **select** — панель **Dropdown** (поиск в шапке панели по умолчанию, мультивыбор).
-- **searchSelect** — фильтр в поле, список по фокусу; при **multiple** в закрытом виде — чипы.
+- **searchSelect** — фильтр в поле, список по фокусу; при **multiple** в закрытом виде — токены на атоме **Chip** (удаление через \`onClose\`).
 - **native** — нативный \`<select>\`.
+
+### Связанные
+**Chip** / **Chips** — самостоятельные чипы вне поля; **MultiInput** — свободный ввод токенов (тоже на **Chip**).
+`.trim();
+
+/** @see MultiInputProps */
+export const DOC_MULTI_INPUT = `
+### Назначение
+Несколько **токенов** в одном поле: ввод + капсулы значений. Удаляемые значения рендерятся атомом **Chip**.
+
+### Поведение
+| Проп | Зачем |
+|------|--------|
+| \`value\` / \`defaultValue\` / \`onValuesChange\` | Controlled / uncontrolled список строк. |
+| \`commitWithComma\`, \`commitOnBlur\` | Фиксация черновика по \`,\` / blur. |
+| \`duplicates\` | \`allow\` \| \`reject\` — дубликаты. |
+| \`maxItems\`, \`validateToken\` | Лимит и валидация токена. |
+| \`size\`, \`variant\`, label / error / helperText | Как у **Input**. |
+
+Рекомендуется оборачивать в **Form** (как в сторис). Storybook: **UI Kit → Inputs → MultiInput**.
 `.trim();
 
 /** @see FileInputProps */
@@ -262,6 +335,64 @@ export const DOC_PILL = `
 - Размеры **SM / MD / LG**, геометрия **PillGeometry** по макету.
 `.trim();
 
+/** @see ListProps */
+export const DOC_LIST = `
+### Назначение
+Типографический список: **ordered** (\`ol\`) и **unordered** (\`ul\`) в одном компоненте **List**.
+
+### Составной API
+- **\`List.Item\`** — пункт
+- **\`List.Icon\`** — маркер-иконка при \`markerStyle="icon"\` (\`name\` из набора **Icon** или \`children\`)
+
+### Маркеры
+| variant | markerStyle |
+|---------|-------------|
+| ordered | **numbers**, **lower-letters**, **upper-letters** (кириллица а) / А)) |
+| unordered | **bullet**, **virgule** (тире), **icon** |
+
+### Пропсы
+| Проп | Зачем |
+|------|--------|
+| \`size\` | SM / MD — типографика и высота маркера. |
+| \`gap\` | Расстояние между пунктами (px или CSS; по умолчанию 8). |
+
+Вложенные \`List\` внутри пункта: для **numbers** — иерархия \`1.1.\`. Storybook: **UI Kit → Data Display → List**.
+`.trim();
+
+/** @see ChipProps, ChipsProps */
+export const DOC_CHIP = `
+### Назначение
+**Chip** — компактная капсула: текст, иконки, **badge**, удаление (\`onClose\`), состояния **selected / disabled**, виды **filled / outline**, тултип при обрезке текста.
+
+**Chips** — группа: layout, дефолты \`size\` / \`appearance\` через context, режимы выбора **none / single / multiple**, клавиатура (←/→, Space/Enter), a11y (\`radiogroup\` / \`group\`).
+
+### Chip — основные пропсы
+| Проп | Зачем |
+|------|--------|
+| \`size\` | SM \| MD (по умолчанию SM). |
+| \`appearance\` | filled \| outline. |
+| \`selected\`, \`disabled\` | Состояния. |
+| \`leftIcon\` / \`rightIcon\` | Иконки; \`rightIcon\` скрывается при \`onClose\`. |
+| \`badge\` | Число справа (\`0\` / \`undefined\` — не показывать). |
+| \`onClose\` | Крестик удаления (отдельный focus target). |
+| \`value\` | Идентификатор в группе **Chips**. |
+| \`tooltipWhenTruncated\`, \`maxWidth\` | Ellipsis + Tooltip. |
+| \`as\` | Корневой элемент: \`span\` \| \`button\`. |
+
+### Chips — выбор
+| Проп | Зачем |
+|------|--------|
+| \`selectionMode\` | none \| single \| multiple. |
+| \`value\` / \`defaultValue\` / \`onChange\` | Controlled / uncontrolled. |
+| \`size\`, \`appearance\`, \`disabled\` | Дефолты / блокировка группы. |
+
+### Отличия
+- **Tag** — семантические палитры и marker; **Pill** — переключатель с индикатором слева.
+- В **Select** / **MultiInput** для удаляемых значений используется атом **Chip**.
+
+Storybook: **UI Kit → Data Display → Chip**.
+`.trim();
+
 /** @see AvatarProps */
 export const DOC_AVATAR = `
 ### Назначение
@@ -325,6 +456,29 @@ export const DOC_HINT = `
 export const DOC_DROPDOWN = `
 ### Назначение
 Выпадающий блок с триггером и панелью: позиционирование (floating-ui), закрытие по клику снаружи/Escape, контролируемое открытие, слоты контента.
+`.trim();
+
+/** @see DropMenuProps */
+export const DOC_DROP_MENU = `
+### Назначение
+Выпадающее меню с гибким триггером: фасад над **Dropdown** (тот же движок меню, поиска, multi, virtual scroll, loadMore).
+
+### Триггер (приоритет)
+1. **\`renderContentProp(options)\`** — кастомный триггер (\`buttonRef\`, \`menuState\`, \`handleClick\`, \`handleKeyDown\`, \`statusIcon\`, \`disabled\`).
+2. **\`trigger\`** — как у Dropdown.
+3. Дефолтная **Button** из **\`buttonProps\`** + шеврон.
+
+### Алиасы и выбор
+| Алиас | Эквивалент Dropdown |
+|-------|---------------------|
+| \`isVisible\` / \`onVisibilityChange\` | \`isMenuOpen\` / \`onMenuOpenChange\` |
+| \`selected\` | fallback для \`value\` |
+| \`onSelectItem\` | канонический выбор; \`onSelect\` тоже вызывается, если передан |
+
+Остальные пропсы меню — как у **Dropdown** (\`items\`, \`searchable\`, \`multiSelection\`, \`loading\`, панели и т.д.).
+
+### Связанные
+**MultiButton** использует **DropMenu** для шеврона. Storybook: **UI Kit → Navigation → DropMenu**.
 `.trim();
 
 /** @see PopoverProps */
@@ -599,6 +753,8 @@ const items = [
   itemIsDisabled={(itemId) => disabledIds.has(itemId)}
 />
 \`\`\`
+
+Storybook: **UI Kit → Buttons → ActionBar**.
 `.trim();
 
 /** @see CarouselProps и связанные */
@@ -933,6 +1089,8 @@ export const DOC_ACCORDION = `
   </Accordion.Item>
 </Accordion>
 \`\`\`
+
+Storybook: **UI Kit → Data Display → Accordion**.
 `.trim();
 
 /** @see ProgressProps */
@@ -977,6 +1135,23 @@ export const DOC_CALENDAR = `
 - **DateRollerPicker**, **TimePickerColumns** — низкоуровневые блоки внутри Calendar / Input.
 `.trim();
 
+/** @see PulseProps */
+export const DOC_PULSE = `
+### Назначение
+Статусная **точка** с расходящейся **волной** — индикатор активности / онлайн-статуса (не путать с **Spinner** — загрузка процесса).
+
+### Пропсы
+| Проп | Зачем |
+|------|--------|
+| \`size\` | SM / MD / LG — диаметр точки. |
+| \`status\` | info \| danger \| success \| warning. |
+| \`customColors.background\` | Свой цвет (перекрывает \`status\`). |
+
+По умолчанию \`aria-hidden\`. При \`prefers-reduced-motion\` волна отключается.
+
+Storybook: **UI Kit → Feedback → Pulse**.
+`.trim();
+
 /** @see SpinnerProps */
 export const DOC_SPINNER = `
 ### Назначение
@@ -1003,6 +1178,8 @@ export const DOC_CHECKBOX = `
 Чекбокс: **checked** / **indeterminate**, **Size**, ошибка, связь с лейблом, нативные атрибуты **input**.
 
 Для группы связанных опций см. **CheckboxGroup** в том же модуле.
+
+Storybook: **UI Kit → Buttons → Checkbox**.
 `.trim();
 
 /** @see RadioButtonProps */
@@ -1011,12 +1188,16 @@ export const DOC_RADIO_BUTTON = `
 Одна опция: **RadioButtonVariant**, подпись и позиция (**RadioButtonLabelPosition**), тултип, дополнительный лейбл поля, иконки.
 
 В группе используйте общий **name**; для набора опций удобнее **RadioButtonGroup**.
+
+Storybook: **UI Kit → Buttons → RadioButton**.
 `.trim();
 
 /** @see RadioButtonGroupProps */
 export const DOC_RADIO_BUTTON_GROUP = `
 ### Назначение
 Группа опций: массив значений (**RadioButtonGroupOption**), **orientation** horizontal | vertical, **value** / **onChange**, **disabled**, **readOnly**, **size**, ошибка (**error**), те же визуальные варианты, что у одиночной **RadioButton**.
+
+Storybook: **UI Kit → Buttons → RadioButtonGroup**.
 `.trim();
 
 /** @see SwitchProps */
@@ -1025,6 +1206,8 @@ export const DOC_SWITCH = `
 Переключатель Plainer: трек и бегунок, подпись слева/справа, \`role="switch"\`, состояние ошибки, **Size**.
 
 Значение — через **checked** / **defaultChecked** и нативное событие **change** (\`event.target.checked\`).
+
+Storybook: **UI Kit → Buttons → Switch**.
 `.trim();
 
 /** @see SliderProps, RangeSliderProps */
@@ -1099,7 +1282,7 @@ export const DOC_SLIDER_INPUT = `
 - **DateInput** (\`range\`) — тот же паттерн «одно значение / пара», другой тип данных.
 
 ### Документация
-- Сайт: \`documentation/content/docs/ru/web/v_0.2.5/components-slider-input.mdx\`
+- Сайт: \`documentation/content/docs/ru/web/v_0.2.6/components-slider-input.mdx\`
 - Storybook: **UI Kit → Inputs → SliderInput** (истории по режимам и состояниям)
 `.trim();
 
@@ -1151,7 +1334,7 @@ export const DOC_THEME_TOGGLE = `
 
 Пара **ThemeVariantSelector** + **ThemeToggle** — основной способ переключения встроенных тем. Для каталога из 3+ кастомных id используйте **ThemeSelector** или \`setThemeMode\`.
 
-См. [Theming](/docs/web/v_0.2.5/theming).
+См. [Theming](/docs/web/v_0.2.6/theming).
 `.trim();
 
 /** ThemeVariantSelector — ThemeVariantSelectorProps */
@@ -1161,7 +1344,7 @@ export const DOC_THEME_VARIANT_SELECTOR = `
 
 Комбинируйте с **ThemeToggle** для полного управления темой. Скрывается, если в каталоге доступен только один вариант.
 
-См. сторис **UI Kit/Theming/ThemeVariantSelector** и [Theming](/docs/web/v_0.2.5/theming).
+См. сторис **UI Kit/Theming/ThemeVariantSelector** и [Theming](/docs/web/v_0.2.6/theming).
 `.trim();
 
 /** ThemeSelector — ThemeSelectorProps */
@@ -1171,7 +1354,7 @@ export const DOC_THEME_SELECTOR = `
 
 Работает с любым числом тем. Переключение: \`setThemeMode(appThemes.themeMode.ocean)\` — type-safe id.
 
-См. сторис **UI Kit/Theming/ThemeSelector** и [Theming](/docs/web/v_0.2.5/theming).
+См. сторис **UI Kit/Theming/ThemeSelector** и [Theming](/docs/web/v_0.2.6/theming).
 `.trim();
 
 /** @see SidemenuProps */

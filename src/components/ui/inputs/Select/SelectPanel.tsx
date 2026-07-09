@@ -39,13 +39,11 @@ import {
 import { Dropdown, DropdownMenuFromDefinitions } from '../../Dropdown';
 import { normalizeDropdownValue } from '../../Dropdown/handlers';
 import { findDropdownMenuItemByValueInDefinitions } from '../../../../handlers/dropdownTreeSelectionHandlers';
+import { Chip } from '../../Chip';
 import {
   SelectChevronFlip,
   SelectChevronSlot,
   SelectDropdownAnchor,
-  SelectMultiChip,
-  SelectMultiChipLabel,
-  SelectMultiChipRemove,
   SelectMultiClearAllBtn,
   SelectMultiCountBadgeSlot,
   SelectMultiPlaceholder,
@@ -715,26 +713,13 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
                 </SelectMultiPlaceholder>
               ) : (
                 multiChipEntries.map((chip) => (
-                  <SelectMultiChip key={chip.value}>
-                    <SelectMultiChipLabel title={chip.label}>{chip.label}</SelectMultiChipLabel>
-                    <SelectMultiChipRemove
-                      type="button"
-                      disabled={selectDisabled}
-                      aria-label={`Удалить «${chip.label}»`}
-                      onMouseDown={(mouseEvent: React.MouseEvent<HTMLButtonElement>) => {
-                        mouseEvent.preventDefault();
-                        mouseEvent.stopPropagation();
-                      }}
-                      onClick={handleMultiChipRemoveClick(chip.value)}
-                    >
-                      <Icon
-                        name="IconExClose"
-                        size={IconSize.XS}
-                        color="currentColor"
-                        {...clearIconProps}
-                      />
-                    </SelectMultiChipRemove>
-                  </SelectMultiChip>
+                  <Chip
+                    key={chip.value}
+                    disabled={selectDisabled}
+                    onClose={handleMultiChipRemoveClick(chip.value)}
+                  >
+                    {chip.label}
+                  </Chip>
                 ))
               )}
             </SelectMultiTriggerRoot>
