@@ -4,7 +4,17 @@ import { Calendar } from './Calendar';
 import { darkTheme } from '../../../themes/themes';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import { DOC_CALENDAR } from '@/components/ui/storyDocs/uiKitDocs';
+import {
+  getStoryInfoBoxProps,
+  inputFieldStoriesStyles,
+  STORY_INFO_MUTED_CLASS_NAME,
+} from '../../../handlers/inputFieldStories.styles';
 import { calendarStoriesStyles, createCalendarStoryThemeStyles } from './Calendar.stories.styles';
+import type { DatePickerDraftContext, DateTimeRange } from '../../../types/ui';
+import {
+  createCalendarRangeEndPlusDaysModifier,
+  formatCalendarPickerDraftForDisplay,
+} from './CalendarPickerDraft.stories.helpers';
 
 const meta: Meta<typeof Calendar> = {
   title: 'UI Kit/Inputs/Calendar',
@@ -67,6 +77,18 @@ const meta: Meta<typeof Calendar> = {
       control: { type: 'boolean' },
       description: 'Растянуть календарь на всю ширину контейнера',
       table: { type: { summary: 'boolean' } },
+    },
+    onPickerChange: {
+      action: 'pickerChange',
+      description:
+        'Черновик до onChange/onRangeChange. Не работает вместе с onSelectDate (режим DateInput).',
+    },
+    modifyPickerValue: {
+      description: 'Модификатор черновика (standalone).',
+    },
+    deferPickerCommit: {
+      control: { type: 'boolean' },
+      description: 'Отложить onChange/onRangeChange до OK/Применить.',
     },
   },
 };
@@ -227,6 +249,101 @@ export const RollersAndSplitHeader: Story = {
         monthYearLayout="split"
         showTitle
       />
+    );
+  },
+};
+
+/** Standalone: черновик одиночной даты */
+export const SinglePickerDraftOnPickerChange: Story = {
+  name: 'Picker Draft / Single + onPickerChange',
+  render: () => {
+    const [appliedDate, setAppliedDate] = useState<Date | null>(null);
+    const [pickerDraft, setPickerDraft] = useState('');
+    const [lastPhase, setLastPhase] = useState<string>('—');
+
+    const handlePickerChange = (draft: string | DateTimeRange, context: DatePickerDraftContext) => {
+      setPickerDraft(typeof draft === 'string' ? draft : '');
+      setLastPhase(context.phase);
+    };
+
+    return (
+      <div style={calendarStoriesStyles.storyStack}>
+        <Calendar
+          showTitle
+          value={appliedDate}
+          onChange={setAppliedDate}
+          onPickerChange={handlePickerChange}
+          defaultVisibleMonth={new Date(2025, 8, 1)}
+        />
+        <div {...getStoryInfoBoxProps(inputFieldStoriesStyles.infoBox)}>
+          <strong>Применено (onChange):</strong>{' '}
+          {appliedDate ? appliedDate.toLocaleDateString('ru-RU') : '—'}
+        </div>
+        <div {...getStoryInfoBoxProps(inputFieldStoriesStyles.infoBox)}>
+          <strong>Черновик (onPickerChange):</strong> {pickerDraft || '—'}
+          <br />
+          <span
+            className={STORY_INFO_MUTED_CLASS_NAME}
+            style={inputFieldStoriesStyles.smallNoteText}
+          >
+            phase: {lastPhase}
+          </span>
+        </div>
+      </div>
+    );
+  },
+};
+
+/** Standalone: диапазон, конец = начало + 7 дней */
+export const RangeWithModifyPickerValue: Story = {
+  name: 'Picker Draft / Range + modifyPickerValue (+7 дней)',
+  render: () => {
+    const [rangeStart, setRangeStart] = useState<Date | null>(null);
+    const [rangeEnd, setRangeEnd] = useState<Date | null>(null);
+    const [pickerDraft, setPickerDraft] = useState<DateTimeRange>({ start: '', end: '' });
+
+    const handlePickerChange = (draft: string | DateTimeRange) => {
+      if (typeof draft === 'object') {
+        setPickerDraft(draft);
+      }
+    };
+
+    return (
+      <div style={calendarStoriesStyles.storyStack}>
+        <Calendar
+          showTitle
+          selectionMode="range"
+          rangeStart={rangeStart}
+          rangeEnd={rangeEnd}
+          onRangeChange={(start, end) => {
+            setRangeStart(start);
+            setRangeEnd(end);
+          }}
+          onPickerChange={handlePickerChange}
+          modifyPickerValue={createCalendarRangeEndPlusDaysModifier(7)}
+          defaultVisibleMonth={new Date(2025, 8, 1)}
+        />
+        <div {...getStoryInfoBoxProps(inputFieldStoriesStyles.infoBox)}>
+          <strong>Применено (onRangeChange):</strong>
+          <br />
+          {formatCalendarPickerDraftForDisplay(
+            {
+              start: rangeStart
+                ? `${rangeStart.getFullYear()}-${String(rangeStart.getMonth() + 1).padStart(2, '0')}-${String(rangeStart.getDate()).padStart(2, '0')}`
+                : '',
+              end: rangeEnd
+                ? `${rangeEnd.getFullYear()}-${String(rangeEnd.getMonth() + 1).padStart(2, '0')}-${String(rangeEnd.getDate()).padStart(2, '0')}`
+                : '',
+            },
+            true,
+          )}
+        </div>
+        <div {...getStoryInfoBoxProps(inputFieldStoriesStyles.infoBox)}>
+          <strong>Черновик (onPickerChange):</strong>
+          <br />
+          {formatCalendarPickerDraftForDisplay(pickerDraft, true)}
+        </div>
+      </div>
     );
   },
 };

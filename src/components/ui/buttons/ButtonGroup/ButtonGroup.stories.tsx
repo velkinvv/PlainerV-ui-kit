@@ -40,7 +40,7 @@ const SelectableButtonGroupStory = ({
 };
 
 const meta: Meta<typeof ButtonGroup> = {
-  title: 'UI Kit/Inputs/ButtonGroup',
+  title: 'UI Kit/Buttons/ButtonGroup',
   component: ButtonGroup,
   args: {
     attached: true,

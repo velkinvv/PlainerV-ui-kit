@@ -706,6 +706,8 @@ export type ButtonTheme = {
       disabled: string;
       loading: string;
     };
+    /** Лёгкий backdrop-filter для glass-тем (vibrancy кнопок) */
+    backdropFilter?: string;
   };
 };
 
@@ -899,6 +901,74 @@ export type BadgeTheme = {
       default: string;
       clickable: string;
     };
+    /** Лёгкий backdrop-filter для glass-тем (vibrancy бейджей) */
+    backdropFilter?: string;
+  };
+};
+
+/**
+ * Тема для тегов (Tag).
+ * Основная палитра задаётся через `theme.colors`; glass-override добавляет vibrancy.
+ */
+export type TagTheme = {
+  settings: {
+    /** Лёгкий backdrop-filter для glass-тем (vibrancy тегов) */
+    backdropFilter?: string;
+  };
+};
+
+/**
+ * Тема для Pill.
+ * Основная палитра задаётся через `theme.colors`; glass-override добавляет vibrancy.
+ */
+export type PillTheme = {
+  settings: {
+    /** Лёгкий backdrop-filter для glass-тем (vibrancy pill) */
+    backdropFilter?: string;
+  };
+};
+
+/**
+ * Тема для Pagination.
+ * Основная палитра задаётся через `theme.colors`; glass-override добавляет vibrancy.
+ */
+export type PaginationTheme = {
+  settings: {
+    /** Лёгкий backdrop-filter для glass-тем (vibrancy пагинации) */
+    backdropFilter?: string;
+  };
+};
+
+/**
+ * Тема для Toast.
+ * Основная палитра задаётся через handlers; glass-override добавляет vibrancy.
+ */
+export type ToastTheme = {
+  settings: {
+    /** Лёгкий backdrop-filter для glass-тем (vibrancy toast) */
+    backdropFilter?: string;
+  };
+};
+
+/**
+ * Тема для Snackbar.
+ * Основная палитра задаётся через handlers; glass-override добавляет vibrancy.
+ */
+export type SnackbarTheme = {
+  settings: {
+    /** Лёгкий backdrop-filter для glass-тем (vibrancy snackbar) */
+    backdropFilter?: string;
+  };
+};
+
+/**
+ * Тема для Tooltip.
+ * Основная палитра задаётся через handlers; glass-override добавляет vibrancy.
+ */
+export type TooltipTheme = {
+  settings: {
+    /** Лёгкий backdrop-filter для glass-тем (vibrancy tooltip) */
+    backdropFilter?: string;
   };
 };
 
@@ -1087,6 +1157,8 @@ export type AccordionTheme = {
     };
     overflow: string;
     zIndex: number;
+    /** Лёгкий backdrop-filter для glass-тем (vibrancy аккордеона) */
+    backdropFilter?: string;
   };
 };
 
@@ -1289,6 +1361,10 @@ export type AvatarTheme = {
       overlay: number;
       status: number;
     };
+    /** Лёгкий backdrop-filter для glass-тем (vibrancy аватаров) */
+    backdropFilter?: string;
+    /** Прозрачность фона инициалов в glass-темах (0–1) */
+    backgroundAlpha?: number;
   };
 };
 
@@ -1377,6 +1453,8 @@ export type AvatarGroupTheme = {
   settings: {
     lineHeight: string;
     flexShrink: number;
+    /** Лёгкий backdrop-filter для glass-тем (vibrancy счётчика группы) */
+    backdropFilter?: string;
   };
 };
 
@@ -1823,6 +1901,8 @@ export type HintTheme = {
     display: string;
     alignItems: string;
     justifyContent: string;
+    /** Лёгкий backdrop-filter для glass-тем (vibrancy hint) */
+    backdropFilter?: string;
   };
 };
 
@@ -2222,12 +2302,29 @@ export type RadioButtonTheme = {
 };
 
 /**
+ * Материал поверхности для glass-темы (iOS / macOS vibrancy).
+ * Когда задан — компоненты применяют backdrop-filter к карточкам, полям ввода и панелям.
+ */
+export type SurfaceMaterial = {
+  /** CSS-значение `backdrop-filter` для полупрозрачных поверхностей */
+  backdropFilter: string;
+  /** CSS-значение `-webkit-backdrop-filter` (Safari); по умолчанию совпадает с `backdropFilter` */
+  webkitBackdropFilter?: string;
+  /** Фон страницы / canvas (градиент или mesh), видимый сквозь стекло */
+  pageBackground?: string;
+};
+
+/**
  * Полный тип темы
  * Объединяет все аспекты темы в единую структуру
  */
 export type ThemeType = {
   borderRadius: Size; // Радиус скругления углов
   colors: Colors; // Фоновые цвета темы
+  /** Glass / vibrancy: размытие и фон canvas; задаётся в glassLight / glassDark темах */
+  surfaceMaterial?: SurfaceMaterial;
+  /** Декоративный фон страницы (kids и др.); body остаётся прозрачным */
+  pageBackground?: string;
   media: MediaType; // Медиа-запросы
   sizes: SizesType; // Размеры элементов
   durations: DurationsType; // Длительности анимаций
@@ -2240,6 +2337,18 @@ export type ThemeType = {
   blur: BlurType; // Размытие
   buttons: ButtonTheme; // Тема для кнопок
   badges: BadgeTheme; // Тема для бейджей
+  /** Glass-настройки тегов; задаётся в glassLight / glassDark темах */
+  tags?: TagTheme;
+  /** Glass-настройки Pill; задаётся в glassLight / glassDark темах */
+  pills?: PillTheme;
+  /** Glass-настройки Pagination; задаётся в glassLight / glassDark темах */
+  paginations?: PaginationTheme;
+  /** Glass-настройки Toast; задаётся в glassLight / glassDark темах */
+  toasts?: ToastTheme;
+  /** Glass-настройки Snackbar; задаётся в glassLight / glassDark темах */
+  snackbars?: SnackbarTheme;
+  /** Glass-настройки Tooltip; задаётся в glassLight / glassDark темах */
+  tooltips?: TooltipTheme;
   accordions: AccordionTheme; // Тема для аккордеонов
   avatars: AvatarTheme; // Тема для аватаров
   avatarGroups: AvatarGroupTheme; // Тема для групп аватаров
@@ -2270,6 +2379,30 @@ export enum ThemeColorScheme {
 }
 
 /**
+ * Визуальный вариант оформления (стандартная, стеклянная и т.д.).
+ * Комбинируется с {@link ThemeColorScheme} для получения итоговой темы.
+ *
+ * @example
+ * standard + light → ThemeMode.light
+ * glass + dark → ThemeMode.glassDark
+ */
+export const ThemeVariant = {
+  /** Классическое оформление без glass-эффектов */
+  standard: 'standard',
+  /** Стеклянное оформление с vibrancy и backdrop-filter */
+  glass: 'glass',
+  /** Детская тема для мальчиков (8–11 лет) */
+  kidsBoys: 'kidsBoys',
+  /** Детская тема для девочек (8–11 лет) */
+  kidsGirls: 'kidsGirls',
+  /** @deprecated Используйте {@link ThemeVariant.kidsBoys} */
+  kids: 'kidsBoys',
+} as const;
+
+/** Union встроенных вариантов оформления. */
+export type ThemeVariant = (typeof ThemeVariant)[keyof typeof ThemeVariant];
+
+/**
  * Встроенные id тем (`light`, `dark`).
  * Расширяется через {@link defineThemeCatalog}: `appThemes.themeMode.ocean`.
  *
@@ -2280,6 +2413,24 @@ export enum ThemeColorScheme {
 export const ThemeMode = {
   light: ThemeColorScheme.LIGHT,
   dark: ThemeColorScheme.DARK,
+  /** Glass на светлой палитре (vibrancy + {@link ThemeColorScheme.LIGHT}) */
+  glassLight: 'glassLight',
+  /** Glass на тёмной палитре (vibrancy + {@link ThemeColorScheme.DARK}) */
+  glassDark: 'glassDark',
+  /** Kids (мальчики) на светлой палитре */
+  kidsBoysLight: 'kidsBoysLight',
+  /** Kids (мальчики) на тёмной палитре */
+  kidsBoysDark: 'kidsBoysDark',
+  /** Kids (девочки) на светлой палитре */
+  kidsGirlsLight: 'kidsGirlsLight',
+  /** Kids (девочки) на тёмной палитре */
+  kidsGirlsDark: 'kidsGirlsDark',
+  /** @deprecated Используйте {@link ThemeMode.kidsBoysLight} */
+  kidsLight: 'kidsBoysLight',
+  /** @deprecated Используйте {@link ThemeMode.kidsBoysDark} */
+  kidsDark: 'kidsBoysDark',
+  /** @deprecated Используйте {@link ThemeMode.glassLight} */
+  glass: 'glassLight',
 } as const;
 
 /** Union встроенных id тем. */

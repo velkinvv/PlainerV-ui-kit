@@ -1,7 +1,11 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import type { NullableRefObject } from '../../../types/reactRefs';
 import type { Target, Transition } from 'framer-motion';
 import type { ModalButtonProps } from '../../../types/ui';
+import {
+  useOverlayFocusTrap,
+  useOverlayInitialFocus,
+} from '../../../handlers/overlayFocusHandlers';
 
 interface UseModalEscapeParams {
   isOpen: boolean;
@@ -76,66 +80,16 @@ export const useModalFocus = ({
   initialFocusSelector,
   fallbackRef,
 }: UseModalFocusParams) => {
-  const previouslyFocusedElement = useRef<HTMLElement | null>(null);
-
-  useEffect(() => {
-    if (isOpen) {
-      previouslyFocusedElement.current = document.activeElement as HTMLElement;
-      const selectorTarget = initialFocusSelector
-        ? (document.querySelector(initialFocusSelector) as HTMLElement | null)
-        : null;
-      const focusTarget = initialFocusRef?.current ?? selectorTarget ?? fallbackRef.current;
-      focusTarget?.focus?.();
-    } else {
-      previouslyFocusedElement.current?.focus?.();
-      previouslyFocusedElement.current = null;
-    }
-  }, [isOpen, initialFocusRef, initialFocusSelector, fallbackRef]);
+  useOverlayInitialFocus({
+    isOpen,
+    initialFocusRef,
+    initialFocusSelector,
+    fallbackRef,
+  });
 };
 
-const FOCUSABLE_SELECTOR =
-  'a[href], area[href], input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
-
 export const useFocusTrap = (isOpen: boolean, containerRef: NullableRefObject) => {
-  useEffect(() => {
-    if (!isOpen || !containerRef.current) {
-      return;
-    }
-
-    const container = containerRef.current;
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== 'Tab') return;
-
-      const focusable = Array.from(
-        container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
-      ).filter(
-        (element) => !element.hasAttribute('disabled') && !element.getAttribute('aria-hidden'),
-      );
-
-      if (focusable.length === 0) {
-        event.preventDefault();
-        container.focus();
-        return;
-      }
-
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-
-      if (event.shiftKey) {
-        if (document.activeElement === first) {
-          event.preventDefault();
-          last.focus();
-        }
-      } else if (document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-
-    container.addEventListener('keydown', handleKeyDown);
-    return () => container.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, containerRef]);
+  useOverlayFocusTrap(isOpen, containerRef);
 };
 
 type AnimationPresetKey = 'default' | 'fade' | 'slideUp';

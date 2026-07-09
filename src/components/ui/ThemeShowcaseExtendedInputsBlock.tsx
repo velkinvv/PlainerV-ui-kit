@@ -4,6 +4,7 @@ import { Select } from './inputs/Select';
 import { TextArea } from './inputs/TextArea';
 import { DateInput } from './inputs/DateInput';
 import { TimeInput } from './inputs/TimeInput';
+import { DateTimeInput } from './inputs/DateTimeInput';
 import type { SelectOption } from '../../types/ui';
 import { themeShowcaseStoriesStyles } from './ThemeShowcase.stories.styles';
 
@@ -21,6 +22,7 @@ export const ThemeShowcaseExtendedInputsBlock = () => {
   const [textAreaValue, setTextAreaValue] = useState('');
   const [dateValue, setDateValue] = useState('');
   const [timeValue, setTimeValue] = useState('');
+  const [dateTimeValue, setDateTimeValue] = useState('');
 
   return (
     <Form
@@ -63,6 +65,15 @@ export const ThemeShowcaseExtendedInputsBlock = () => {
           onChange={(nextValue) => {
             if (typeof nextValue === 'string') {
               setTimeValue(nextValue);
+            }
+          }}
+        />
+        <DateTimeInput
+          label="Дата и время"
+          value={dateTimeValue}
+          onChange={(nextValue) => {
+            if (typeof nextValue === 'string') {
+              setDateTimeValue(nextValue);
             }
           }}
         />

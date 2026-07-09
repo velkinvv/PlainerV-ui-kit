@@ -332,6 +332,10 @@ export const calculateDropdownPosition = ({
       y = clamp(viewportHeight - menuHeight - offset, offset, triggerRect.bottom + offset);
     }
 
+    if (menuWidth > 0 && (mode === 'autoFlip' || mode === 'autoFit')) {
+      x = clamp(x, offset, viewportWidth - menuWidth - offset);
+    }
+
     if (mode === 'autoFit' && menuWidth > 0) {
       const maxX = viewportWidth - menuWidth - offset;
       if (triggerRect.left + menuWidth > viewportWidth) {

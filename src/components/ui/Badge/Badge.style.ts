@@ -2,6 +2,25 @@ import styled, { css } from 'styled-components';
 import { motion } from 'framer-motion';
 import { type BadgeProps, BadgeVariant } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
+import type { BadgeTheme } from '../../../types/theme';
+
+/**
+ * CSS-стили варианта бейджа из темы (фон, текст, граница, тень).
+ * @param variantStyles — объект варианта из theme.badges.variants
+ */
+const getBadgeVariantStyles = (
+  variantStyles: BadgeTheme['variants'][keyof BadgeTheme['variants']],
+  isDot?: boolean,
+) => css`
+  background: ${variantStyles.background};
+  color: ${variantStyles.color};
+  ${variantStyles.border ? `border: ${variantStyles.border};` : ''}
+  ${isDot && variantStyles.boxShadow
+    ? css`
+        box-shadow: ${variantStyles.boxShadow};
+      `
+    : ''}
+`;
 
 /**
  * Контейнер бейджа
@@ -30,6 +49,17 @@ export const BadgeContainer = styled(motion.span)<BadgeProps>`
   user-select: ${({ theme }) => theme.badges.settings.userSelect};
   white-space: ${({ theme }) => theme.badges.settings.whiteSpace};
 
+  ${({ theme }) => {
+    const backdropFilter = theme.badges.settings.backdropFilter;
+
+    return backdropFilter
+      ? css`
+          backdrop-filter: ${backdropFilter};
+          -webkit-backdrop-filter: ${backdropFilter};
+        `
+      : '';
+  }}
+
   ${({ size, isDot, theme }) => css`
     ${isDot
       ? css`
@@ -53,85 +83,34 @@ export const BadgeContainer = styled(motion.span)<BadgeProps>`
     const badgeTheme = theme.badges;
 
     switch (variant) {
-      // Новые варианты согласно макету
       case BadgeVariant.DEFAULT:
-        return css`
-          background: ${badgeTheme.variants.default.background};
-          color: ${badgeTheme.variants.default.color};
-        `;
+        return getBadgeVariantStyles(badgeTheme.variants.default, isDot);
       case BadgeVariant.DEFAULT_MAIN:
-        return css`
-          background: ${badgeTheme.variants.defaultMain.background};
-          color: ${badgeTheme.variants.defaultMain.color};
-        `;
+        return getBadgeVariantStyles(badgeTheme.variants.defaultMain, isDot);
       case BadgeVariant.DEFAULT_MAIN_INVERSION:
-        return css`
-          background: ${badgeTheme.variants.defaultMainInversion.background};
-          color: ${badgeTheme.variants.defaultMainInversion.color};
-        `;
+        return getBadgeVariantStyles(badgeTheme.variants.defaultMainInversion, isDot);
       case BadgeVariant.DEFAULT_SUCCESS:
-        return css`
-          background: ${badgeTheme.variants.defaultSuccess.background};
-          color: ${badgeTheme.variants.defaultSuccess.color};
-          ${isDot &&
-          badgeTheme.variants.defaultSuccess.boxShadow &&
-          css`
-            box-shadow: ${badgeTheme.variants.defaultSuccess.boxShadow};
-          `}
-        `;
+        return getBadgeVariantStyles(badgeTheme.variants.defaultSuccess, isDot);
       case BadgeVariant.DISABLE:
-        return css`
-          background: ${badgeTheme.variants.disable.background};
-          color: ${badgeTheme.variants.disable.color};
-        `;
+        return getBadgeVariantStyles(badgeTheme.variants.disable, isDot);
       case BadgeVariant.OUTLINE:
-        return css`
-          background: ${badgeTheme.variants.outline.background};
-          color: ${badgeTheme.variants.outline.color};
-          border: ${badgeTheme.variants.outline.border};
-        `;
+        return getBadgeVariantStyles(badgeTheme.variants.outline, isDot);
       case BadgeVariant.OUTLINE_INVERSION:
-        return css`
-          background: ${badgeTheme.variants.outlineInversion.background};
-          color: ${badgeTheme.variants.outlineInversion.color};
-          border: ${badgeTheme.variants.outlineInversion.border};
-        `;
-      // Обратная совместимость
+        return getBadgeVariantStyles(badgeTheme.variants.outlineInversion, isDot);
       case BadgeVariant.PRIMARY:
-        return css`
-          background: ${badgeTheme.variants.primary.background};
-          color: ${badgeTheme.variants.primary.color};
-        `;
+        return getBadgeVariantStyles(badgeTheme.variants.primary, isDot);
       case BadgeVariant.SECONDARY:
-        return css`
-          background: ${badgeTheme.variants.secondary.background};
-          color: ${badgeTheme.variants.secondary.color};
-        `;
+        return getBadgeVariantStyles(badgeTheme.variants.secondary, isDot);
       case BadgeVariant.SUCCESS:
-        return css`
-          background: ${badgeTheme.variants.success.background};
-          color: ${badgeTheme.variants.success.color};
-        `;
+        return getBadgeVariantStyles(badgeTheme.variants.success, isDot);
       case BadgeVariant.DANGER:
-        return css`
-          background: ${badgeTheme.variants.danger.background};
-          color: ${badgeTheme.variants.danger.color};
-        `;
+        return getBadgeVariantStyles(badgeTheme.variants.danger, isDot);
       case BadgeVariant.WARNING:
-        return css`
-          background: ${badgeTheme.variants.warning.background};
-          color: ${badgeTheme.variants.warning.color};
-        `;
+        return getBadgeVariantStyles(badgeTheme.variants.warning, isDot);
       case BadgeVariant.INFO:
-        return css`
-          background: ${badgeTheme.variants.info.background};
-          color: ${badgeTheme.variants.info.color};
-        `;
+        return getBadgeVariantStyles(badgeTheme.variants.info, isDot);
       default:
-        return css`
-          background: ${badgeTheme.variants.default.background};
-          color: ${badgeTheme.variants.default.color};
-        `;
+        return getBadgeVariantStyles(badgeTheme.variants.default, isDot);
     }
   }}
 

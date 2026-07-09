@@ -19,25 +19,31 @@ import { useResolvedTableSurfaceBackgrounds } from './tableSurfaceBackgroundHook
  * @param props.stickyHeader — фиксированная шапка при `scrollAreaMaxHeight` (split-layout)
  * @param props.size — плотность ячеек (`sm` | `md`)
  * @param props.striped — зебра по строкам в `tbody`
+ * @param props.rowColorMap — карта ключ → цвет; в `TableRow` передаётся `rowColorKey`
+ * @param props.columnColorMap — карта ключ → цвет; в `TableCell` передаётся `columnColorKey`
  * @param props.surfaceBackgrounds — прозрачные фоны (переопределяет `TableContainer`)
  * @param props.className — CSS-класс
  * @param props.children — секции `TableHead`, `TableBody`, …
  */
-export const Table = forwardRef<HTMLTableElement, TableProps>(
-  (
-    {
-      stickyHeader = false,
-      size = 'md',
-      striped = false,
-      columnDividers = true,
-      surfaceBackgrounds,
-      className,
-      children,
-      style,
-      ...rest
-    },
-    ref,
-  ) => {
+function TableInner<
+  RowColorKey extends string = string,
+  ColumnColorKey extends string = string,
+>(
+  {
+    stickyHeader = false,
+    size = 'md',
+    striped = false,
+    columnDividers = true,
+    surfaceBackgrounds,
+    rowColorMap,
+    columnColorMap,
+    className,
+    children,
+    style,
+    ...rest
+  }: TableProps<RowColorKey, ColumnColorKey>,
+  ref: React.ForwardedRef<HTMLTableElement>,
+) {
     const resolvedSurfaces = useResolvedTableSurfaceBackgrounds(surfaceBackgrounds);
     const tableBodyScroll = useTableBodyScroll();
     const { horizontalScroll } = useTableHorizontalScroll();
@@ -80,8 +86,8 @@ export const Table = forwardRef<HTMLTableElement, TableProps>(
     );
 
     const ctx = useMemo(
-      () => ({ size, striped, stickyHeader, columnDividers }),
-      [size, striped, stickyHeader, columnDividers],
+      () => ({ size, striped, stickyHeader, columnDividers, rowColorMap, columnColorMap }),
+      [size, striped, stickyHeader, columnDividers, rowColorMap, columnColorMap],
     );
 
     const styledTableProps = {
@@ -123,7 +129,13 @@ export const Table = forwardRef<HTMLTableElement, TableProps>(
         </StyledTable>
       </TableRootProvider>
     );
-  },
-);
+}
 
-Table.displayName = 'Table';
+TableInner.displayName = 'Table';
+
+export const Table = forwardRef(TableInner) as <
+  RowColorKey extends string = string,
+  ColumnColorKey extends string = string,
+>(
+  props: TableProps<RowColorKey, ColumnColorKey> & { ref?: React.Ref<HTMLTableElement> },
+) => React.ReactElement;

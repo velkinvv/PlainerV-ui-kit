@@ -20,7 +20,7 @@ import {
   SkeletonEffect,
   AdditionalLabel,
   ExtraText,
-  CharacterCounter,
+  CharacterCounterMotion,
   RequiredIndicator,
   getInputDisplayValue,
   shouldShowInputClearButton,
@@ -307,11 +307,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           {helperText && !error && !success && <HelperText>{helperText}</HelperText>}
           {extraText && <ExtraText>{extraText}</ExtraText>}
 
-          {showCounter && (
-            <CharacterCounter $isOverLimit={currentLength > maxLength}>
-              {currentLength}/{maxLength}
-            </CharacterCounter>
-          )}
+          <CharacterCounterMotion
+            visible={showCounter}
+            currentLength={currentLength}
+            maxLength={maxLength}
+          />
         </InputControlStack>
       </InputContainer>
     );

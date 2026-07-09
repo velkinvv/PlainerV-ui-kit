@@ -5,6 +5,7 @@ import {
   FloatingMenuDropdownTrigger,
   FloatingMenuDragSource,
   FloatingMenuGroupVariant,
+  FloatingMenuOrientation,
   FloatingMenuPlacement,
   NavigationMenuActiveAppearance,
 } from '@/types/ui';
@@ -13,6 +14,7 @@ import { NavigationMenu } from '../NavigationMenu/NavigationMenu';
 import { NavigationMenuItem } from '../NavigationMenu/NavigationMenuItem';
 import { DOC_FLOATING_MENU } from '@/components/ui/storyDocs/uiKitDocs';
 import { floatingMenuStoriesStyles } from './FloatingMenu.stories.styles';
+import { FloatingMenuDynamicSizeDemo } from './FloatingMenuDynamicSizeDemo';
 
 const meta: Meta<typeof FloatingMenu> = {
   title: 'UI Kit/Navigation/FloatingMenu',
@@ -72,6 +74,32 @@ const meta: Meta<typeof FloatingMenu> = {
     zIndex: {
       control: 'number',
       table: { type: { summary: 'number' } },
+    },
+    dynamicSize: {
+      control: 'boolean',
+      description:
+        'Динамический размер панели: sync AnimatePresence при добавлении/удалении пунктов в обеих ориентациях.',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    dynamicSizeInsetPx: {
+      control: { type: 'number', min: 0, max: 64, step: 4 },
+      description: 'Отступ для max-width (horizontal) или max-height (vertical), px.',
+      table: {
+        type: { summary: 'number' },
+        defaultValue: { summary: '16' },
+      },
+    },
+    orientation: {
+      control: { type: 'select' },
+      options: Object.values(FloatingMenuOrientation),
+      description: 'Горизонтальная или вертикальная раскладка панели.',
+      table: {
+        type: { summary: 'FloatingMenuOrientation' },
+        defaultValue: { summary: 'FloatingMenuOrientation.HORIZONTAL' },
+      },
     },
     children: {
       control: false,
@@ -226,4 +254,72 @@ export const Placements: Story = {
       </div>
     );
   },
+};
+
+/** Вертикальная статическая колонка */
+export const VerticalStatic: Story = {
+  name: 'Vertical — статическая колонка',
+  render: () => (
+    <FloatingMenu
+      aria-label="Вертикальная панель инструментов"
+      orientation={FloatingMenuOrientation.VERTICAL}
+      placement={FloatingMenuPlacement.LEFT_CENTER}
+    >
+      <FloatingMenu.Group>
+        <FloatingMenu.GroupItem
+          icon={<Icon name="PhosphorArrowFatLineLeft" size="sm" color="currentColor" />}
+          active
+          aria-label="Выбор"
+          tooltip="Выбор"
+        />
+        <FloatingMenu.GroupItem
+          icon={<span aria-hidden>T</span>}
+          aria-label="Текст"
+          tooltip="Текст"
+        />
+        <FloatingMenu.GroupItem
+          icon={<span aria-hidden>✎</span>}
+          aria-label="Рисование"
+          tooltip="Рисование"
+        />
+      </FloatingMenu.Group>
+      <FloatingMenu.Divider />
+      <FloatingMenu.Group variant={FloatingMenuGroupVariant.INSET}>
+        <FloatingMenu.GroupItem icon={<span>∟</span>} active aria-label="Линейка" />
+        <FloatingMenu.GroupItem icon={<span>&lt;/&gt;</span>} aria-label="Код" />
+      </FloatingMenu.Group>
+    </FloatingMenu>
+  ),
+};
+
+/** dynamicSize — добавление в конец, анимация horizontal / vertical */
+export const DynamicSize: Story = {
+  name: 'Dynamic size — анимация horizontal / vertical',
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        story:
+          '**dynamicSize** включает sync AnimatePresence для пунктов в обеих ориентациях. Переключите ориентацию — анимация width (horizontal) или height (vertical).',
+      },
+    },
+  },
+  render: () => (
+    <FloatingMenuDynamicSizeDemo insertAfterSelection={false} initialOrientation={FloatingMenuOrientation.HORIZONTAL} />
+  ),
+};
+
+/** dynamicSize — вставка после выбранного и удаление выбранного */
+export const DynamicSizeRemoveSelected: Story = {
+  name: 'Dynamic size — любая позиция',
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        story:
+          'Выберите инструмент кликом. Новый добавляется после/ниже выбранного. «Удалить выбранный» убирает активную кнопку с той же анимацией.',
+      },
+    },
+  },
+  render: () => <FloatingMenuDynamicSizeDemo insertAfterSelection initialOrientation={FloatingMenuOrientation.VERTICAL} />,
 };

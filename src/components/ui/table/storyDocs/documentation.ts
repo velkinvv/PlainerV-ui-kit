@@ -62,6 +62,8 @@ export const TABLE_KIT_DOC = `
 | \`size\` | \`'sm' | 'md'\` | Плотность отступов ячеек (\`md\` по умолчанию). |
 | \`striped\` | \`boolean\` | По умолчанию **\`false\`**: фон строк \`tbody\` как у карточки, без чередования. **\`true\`** — зебра (см. сторис **PlainBody** без пропа и **Basic** с \`striped\`). |
 | \`columnDividers\` | \`boolean\` | Тонкая вертикальная линия между колонками (\`border-inline-end\` у всех ячеек строки, кроме последней). По умолчанию \`true\`; \`false\` — без разделителей. |
+| \`rowColorMap\` | \`TableRowColorMap\` | Карта \`{ [ключ]: string | (colors) => string }\`; в \`TableRow\` передаётся ключ через \`rowColorKey\`. |
+| \`columnColorMap\` | \`TableColumnColorMap\` | Карта \`{ [ключ]: string | (colors) => string }\`; в \`TableCell\` передаётся ключ через \`columnColorKey\`. |
 | \`aria-label\` | строка | Доступность: краткое название таблицы для скринридеров. |
 | \`style\` | — | На \`<table>\` можно задать CSS-переменную \`--plainer-table-header-background\` для фона шапки (\`thead\`, липкие \`th\`). В \`DataGrid\` это задаётся через \`tableHeaderVariant\` / \`tableHeaderBackground\`. |
 
@@ -79,6 +81,8 @@ export const TABLE_KIT_DOC = `
 | \`hover\` | \`boolean\` | Подсветка при наведении; для строк \`tbody\` по умолчанию \`true\`. |
 | \`disabled\` | \`boolean\` | Визуально «неактивная» строка (пониженная непрозрачность). |
 | \`dragging\` | \`boolean\` | Строка — источник HTML5 drag-and-drop (стили перетаскивания). |
+| \`rowColor\` | \`string\` | CSS-цвет фона строки (явный; приоритетнее \`rowColorKey\`). |
+| \`rowColorKey\` | ключ из \`rowColorMap\` | Ключ цвета; резолвится через \`rowColorMap\` родительской \`Table\`. |
 
 ### TableCell
 
@@ -90,6 +94,8 @@ export const TABLE_KIT_DOC = `
 | \`padding\` | \`'normal' | 'checkbox' | 'none'\` | Узкая колонка чекбокса, без отступов или обычная ячейка. |
 | \`activeColumn\` | \`boolean\` | Только в шапке: усиленная нижняя граница у активной сортируемой колонки (макет). |
 | \`headerMaxLines\` | \`number\` | Только шапка (\`th\`): не больше заданного числа строк текста; лишнее обрезается с «…» (\`-webkit-line-clamp\`). Без пропа — одна строка без переноса (\`white-space: nowrap\`), как раньше. Значения \`< 1\` игнорируются; сверху действует потолок (см. \`TABLE_HEADER_MAX_LINES_CAP\` в \`tableHeaderClampHandlers\`). |
+| \`columnColor\` | \`string\` | CSS-цвет фона ячейки (явный; приоритетнее \`columnColorKey\`). |
+| \`columnColorKey\` | ключ из \`columnColorMap\` | Ключ цвета колонки; резолвится через \`columnColorMap\` родительской \`Table\`. |
 | \`colSpan\`, \`rowSpan\`, \`scope\` | — | Стандартные атрибуты таблицы. |
 
 У ячеек в \`thead\` и \`tfoot\` по умолчанию задана **одинаковая** \`min-height\` строки (зависит от \`size\` таблицы: \`sm\` / \`md\`), чтобы высота шапки совпадала с высотой строки подвала при обычном однострочном тексте (полужирный заголовок и иконки сортировки не «выбивают» ряд выше подвала).
@@ -156,6 +162,9 @@ export const TABLE_KIT_DOC = `
 - **PaginationEmbeddedInCard** — пагинация внутри \`TableContainer\` с \`embeddedInTableCard\`.
 - **StickyHeader** — липкая шапка при скролле (\`scrollAreaMaxHeight\` на scroll-обёртке).
 - **StripedSizes** — сравнение \`striped\` и размеров \`sm\` / \`md\`.
+- **RowBackgroundColors** — явный CSS в \`TableRow rowColor\`.
+- **RowBackgroundByRowColorKey** — ключ в \`TableRow rowColorKey\` + \`rowColorMap\` на \`Table\`.
+- **ColumnBackgroundByColumnColorKey** — ключ в \`TableCell columnColorKey\` + \`columnColorMap\` на \`Table\`.
 `.trim();
 
 /** Описание компонента DataGrid для Storybook Docs. */
@@ -190,6 +199,8 @@ export const DATAGRID_DOC = `
 | \`format\` | Декларативное форматирование ячейки (\`TableCellFormat\`): маски, ссылки, числа, даты и др.; ниже по приоритету, чем \`render\` колонки и \`renderCell\` грида. В Excel используется та же логика подписей (\`enum\`, даты и т.д.). |
 | \`render\` | Ячейка; имеет приоритет над глобальным \`renderCell\` грида. Текст для Excel извлекается из \`children\` / \`label\` узла; для Tag/Pill — пресеты цветов по \`colorVariant\` / \`data-status\`. |
 | \`disableReorder\` | Не таскать колонку при \`enableColumnDrag\`. |
+| \`columnColor\` | Ключ из \`columnColorMap\` таблицы (не CSS-цвет); подсветка всей колонки. |
+| \`hide\` | Скрыть колонку в UI (например служебное поле \`rowColor\`). |
 | \`disableResize\` | Не показывать ручку ширины при \`enableColumnResize\` + \`onColumnResize\`. |
 | \`headerMaxLines\` | Свой лимит строк заголовка; иначе берётся \`headerMaxLines\` у грида. |
 | \`filterable\` | Показать встроенную кнопку-иконку фильтра в заголовке; клик — в \`onColumnFilterClick\` у грида (откройте \`Dropdown\` / панель в родителе). |
@@ -314,7 +325,10 @@ export const DATAGRID_DOC = `
 | \`surfaceBackgrounds\` | Прозрачные фоны по частям (\`shell\`, \`header\`, \`bodyRow\`, \`pagination\`, …) или shorthand \`'transparent'\` — таблица принимает фон родителя. |
 | \`shellInset\` | Внутренние отступы на белом фоне карточки (внешняя обводка карточки сохраняется); сетка без своей рамки, не вплотную к краю. |
 | \`shellInsetPadding\` | Отступ канавы (число — px); по умолчанию \`theme.tables.shell.insetPadding\` или padding **Card** MD. |
-| \`rowBackgroundColorByStatus\` | \`(row) => цвет\` — фон строки по данным (статусы). |
+| \`rowBackgroundColorByStatus\` | \`(row) => CSS-цвет\` — приоритетнее \`rowColorMap\`. |
+| \`rowColorMap\` | \`{ [ключ]: string | (colors) => string }\` — карта цветов; в строках передаётся ключ (\`rowColor\`). |
+| \`rowColorField\` | Имя поля с ключом цвета (по умолчанию \`rowColor\`). |
+| \`columnColorMap\` | \`{ [ключ]: string | (colors) => string }\` — карта цветов колонок; в \`columns[].columnColor\` передаётся ключ. |
 | \`tableAriaLabel\` | \`aria-label\` таблицы. |
 | \`style\` | Инлайн-стиль корня грида. |
 | \`headerToolbar\` | Слот над строкой с названиями колонок: первая строка \`thead\`, одна ячейка на всю ширину (\`colSpan\`), удобно для **IconButton** (настройки, экспорт, **история**, **документация** и т.д.). В split-layout панель **не** прокручивается по горизонтали вместе с колонками — фиксирована по ширине карточки. |
@@ -442,6 +456,8 @@ export const DATAGRID_DOC = `
 | **ServerPaginationMode** | \`paginationMode="server"\`, срез \`rows\` и \`totalRows\` как с API. |
 | **RowClickHandlers** | \`onRowClick\`, \`onRowDoubleClick\`. |
 | **RowBackgroundByStatus** | \`rowBackgroundColorByStatus\`. |
+| **RowBackgroundByRowColor** | Ключ в \`row.rowColor\` + \`rowColorMap\` в пропсах (строка или \`(colors) => …\`). |
+| **ColumnBackgroundByColumnColor** | Ключ в \`columns[].columnColor\` + \`columnColorMap\` в пропсах. |
 | **RenderRowWrapper** | \`renderRowWrapper\` — атрибуты на \`tr\`. |
 | **CustomRowIdentifier** | \`getRowId\` и согласованные \`selectedIds\`. |
 | **GlobalRenderCell** | Глобальный \`renderCell\` без \`render\` у колонки. |

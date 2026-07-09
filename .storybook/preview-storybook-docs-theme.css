@@ -11,6 +11,7 @@
 html[data-theme='dark'] {
   color-scheme: dark;
   --plainerv-sb-docs-bg: #212121;
+  --plainerv-sb-docs-page-mesh: #212121;
   --plainerv-sb-docs-surface: #424242;
   --plainerv-sb-docs-surface-muted: #616161;
   --plainerv-sb-docs-border: #757575;
@@ -23,6 +24,7 @@ html[data-theme='dark'] {
 
 html[data-theme='light'] {
   --plainerv-sb-docs-bg: #fafafa;
+  --plainerv-sb-docs-page-mesh: #fafafa;
   --plainerv-sb-docs-surface: #ffffff;
   --plainerv-sb-docs-surface-muted: #f5f5f5;
   --plainerv-sb-docs-border: #eeeeee;
@@ -31,6 +33,49 @@ html[data-theme='light'] {
   --plainerv-sb-docs-text-muted: #757575;
   --plainerv-sb-docs-link: #2196f3;
   --plainerv-sb-docs-link-hover: #1976d2;
+}
+
+html[data-theme='glassLight'],
+html[data-theme='glassDark'],
+html[data-theme='kidsBoysLight'],
+html[data-theme='kidsBoysDark'],
+html[data-theme='kidsGirlsLight'],
+html[data-theme='kidsGirlsDark'],
+html[data-theme='kidsLight'],
+html[data-theme='kidsDark'] {
+  background: var(--plainerv-sb-docs-page-mesh) !important;
+  background-attachment: fixed !important;
+}
+
+html[data-theme='glassLight'] body,
+html[data-theme='glassDark'] body,
+html[data-theme='kidsBoysLight'] body,
+html[data-theme='kidsBoysDark'] body,
+html[data-theme='kidsGirlsLight'] body,
+html[data-theme='kidsGirlsDark'] body,
+html[data-theme='kidsLight'] body,
+html[data-theme='kidsDark'] body,
+html[data-theme='glassLight'] #root,
+html[data-theme='glassDark'] #root,
+html[data-theme='kidsBoysLight'] #root,
+html[data-theme='kidsBoysDark'] #root,
+html[data-theme='kidsGirlsLight'] #root,
+html[data-theme='kidsGirlsDark'] #root,
+html[data-theme='kidsLight'] #root,
+html[data-theme='kidsDark'] #root {
+  background: transparent !important;
+}
+
+html[data-theme='glassLight'] .plainerv-story-canvas-room,
+html[data-theme='glassDark'] .plainerv-story-canvas-room,
+html[data-theme='kidsBoysLight'] .plainerv-story-canvas-room,
+html[data-theme='kidsBoysDark'] .plainerv-story-canvas-room,
+html[data-theme='kidsGirlsLight'] .plainerv-story-canvas-room,
+html[data-theme='kidsGirlsDark'] .plainerv-story-canvas-room,
+html[data-theme='kidsLight'] .plainerv-story-canvas-room,
+html[data-theme='kidsDark'] .plainerv-story-canvas-room {
+  background: var(--plainerv-sb-docs-page-mesh) !important;
+  background-attachment: fixed !important;
 }
 
 html[data-theme='dark'] body,
@@ -212,4 +257,14 @@ html[data-theme='dark'] .sbdocs a {
 
 html[data-theme='dark'] .sbdocs a:hover {
   color: var(--plainerv-sb-docs-link-hover);
+}
+
+/* Инфо-блоки в сторис: светлая подложка + тёмный текст (перебивает Docs glassDark) */
+.plainerv-story-info-box,
+.plainerv-story-info-box strong {
+  color: #212121 !important;
+}
+
+.plainerv-story-info-muted {
+  color: #616161 !important;
 }

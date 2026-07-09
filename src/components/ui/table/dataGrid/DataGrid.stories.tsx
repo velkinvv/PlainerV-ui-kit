@@ -11,6 +11,9 @@ import {
   type DataGridExpandedRowDataStatus,
   type DataGridPaginationModel,
   type DataGridSortModel,
+  type DataGridRowWithColors,
+  type TableRowColorMap,
+  type TableColumnColorMap,
 } from '@/types/ui';
 import { Card } from '../../Card/Card';
 import { Typography } from '../../Typography/Typography';
@@ -192,6 +195,18 @@ const meta: Meta<typeof DataGrid> = {
     style: { description: 'Инлайн-стиль корневого контейнера грида.' },
     isLoading: { description: 'Глобальный оверлей загрузки над таблицей.' },
     rowBackgroundColorByStatus: { description: '(row) => CSS-цвет фона строки или undefined.' },
+    rowColorMap: {
+      description:
+        'Карта `{ [ключ]: string | (colors) => string }`. В строках передаётся ключ (`rowColor` по умолчанию), не CSS-цвет.',
+    },
+    rowColorField: {
+      description:
+        'Имя поля строки с ключом цвета (по умолчанию `rowColor`). Используется с `rowColorMap`, если `rowBackgroundColorByStatus` не вернул цвет.',
+    },
+    columnColorMap: {
+      description:
+        'Карта `{ [ключ]: string | (colors) => string }`. В `columns[].columnColor` передаётся ключ, не CSS-цвет.',
+    },
     expandedRowIds: { description: 'Контролируемые раскрытые id.' },
     onExpandedRowChange: {
       description:
@@ -2169,6 +2184,88 @@ export const RowBackgroundByStatus: Story = {
       size={Size.MD}
     />
   ),
+};
+
+/** Фон строки: ключ `rowColor` в данных + карта `rowColorMap` в пропсах таблицы. */
+export const RowBackgroundByRowColor: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'В каждой строке передайте ключ в `rowColor` (например `"danger"`). CSS-цвет задаётся в `rowColorMap`: строкой или `(colors) => …` с палитрой UI-kit. Колонку `rowColor` можно скрыть через `hide: true`.',
+      },
+    },
+  },
+  render: () => {
+    type StoryRowColorKey = 'danger' | 'success';
+    type StoryRow = DataGridRowWithColors<DataGridStoryDemoRow, StoryRowColorKey>;
+
+    const rowColorMap: TableRowColorMap<StoryRowColorKey> = {
+      danger: (colors) =>
+        `color-mix(in srgb, ${colors.danger} 14%, ${colors.backgroundSecondary})`,
+      success: (colors) =>
+        `color-mix(in srgb, ${colors.success} 14%, ${colors.backgroundSecondary})`,
+    };
+
+    const rowsWithColorKeys: StoryRow[] = TABLE_STORY_DEMO_ROWS.slice(0, 8).map((demoRow, rowIndex) => ({
+      ...demoRow,
+      rowColor:
+        rowIndex % 3 === 0 ? ('danger' as const) : rowIndex % 3 === 1 ? ('success' as const) : undefined,
+    }));
+
+    return (
+      <DataGrid<StoryRow, StoryRowColorKey>
+        tableId="story-data-grid-row-color"
+        columns={[
+          ...demoColumns.slice(0, 4),
+          { field: 'rowColor', headerName: 'rowColor', hide: true },
+        ]}
+        rows={rowsWithColorKeys}
+        totalRows={rowsWithColorKeys.length}
+        rowColorMap={rowColorMap}
+        size={Size.MD}
+      />
+    );
+  },
+};
+
+/** Фон колонки: ключ `columnColor` в описании колонки + `columnColorMap` в пропсах. */
+export const ColumnBackgroundByColumnColor: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'В `columns[].columnColor` передайте ключ (например `"info"`). CSS-цвет задаётся в `columnColorMap`: строкой или `(colors) => …`. Подсветка применяется к шапке и всем ячейкам колонки.',
+      },
+    },
+  },
+  render: () => {
+    type StoryColumnColorKey = 'info' | 'warning';
+
+    const columnColorMap: TableColumnColorMap<StoryColumnColorKey> = {
+      info: (colors) =>
+        `color-mix(in srgb, ${colors.info} 12%, ${colors.backgroundSecondary})`,
+      warning: (colors) =>
+        `color-mix(in srgb, ${colors.warning} 12%, ${colors.backgroundSecondary})`,
+    };
+
+    const columnsWithColor: DataGridColumn<DataGridStoryDemoRow, StoryColumnColorKey>[] = [
+      { field: 'user', headerName: 'Пользователь' },
+      { field: 'dateLabel', headerName: 'Дата', columnColor: 'info' },
+      { field: 'login', headerName: 'Логин', columnColor: 'warning' },
+    ];
+
+    return (
+      <DataGrid<DataGridStoryDemoRow, string, StoryColumnColorKey>
+        tableId="story-data-grid-column-color"
+        columns={columnsWithColor}
+        rows={TABLE_STORY_DEMO_ROWS.slice(0, 8)}
+        totalRows={8}
+        columnColorMap={columnColorMap}
+        size={Size.MD}
+      />
+    );
+  },
 };
 
 /** Обёртка над строкой `tr`: `renderRowWrapper` (например `data-*` или провайдер контекста). */

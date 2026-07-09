@@ -1,5 +1,7 @@
-﻿import React, { forwardRef, useState, useRef, useEffect } from 'react';
+﻿import React, { forwardRef, useState, useRef, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { clsx } from 'clsx';
+import { useTheme } from 'styled-components';
 import { ButtonVariant, TooltipPosition, type TimeInputProps } from '../../../../types/ui';
 import {
   parseTime,
@@ -21,16 +23,27 @@ import {
   isTimeRangeStart,
   isTimeRangeEnd,
 } from './handlers';
+import {
+  resolveTimePickerDraft,
+  timePickerDraftTimesFromValue,
+  type TimePickerDraftPhase,
+  type TimePickerDraftTimes,
+} from '../../../../handlers/timeInputPickerHandlers';
 import { getClearIconSizeForInputField } from '../../../../handlers/iconHandlers';
 import { Size, IconSize } from '../../../../types/sizes';
 import { Icon } from '../../Icon/Icon';
 import { Tooltip } from '../../Tooltip/Tooltip';
 import { Hint, HintPosition, HintVariant } from '../../Hint/Hint';
-import { SkeletonEffect } from '../shared';
+import {
+  resolveFloatingOverlayPortalRoot,
+  resolveFloatingOverlayZIndex,
+} from '../../../../handlers/floatingOverlayHandlers';
+import { useFloatingOverlayLayer } from '../../../../contexts/FloatingOverlayLayerContext';
+import { useFloatingOverlayPosition } from '../../../../hooks/useFloatingOverlayPosition';
+import { SkeletonEffect, CharacterCounterMotion } from '../shared';
 import { InputFieldShell } from '../Input/InputFieldShell';
 import {
   ActionButton,
-  CharacterCounter,
   Container,
   ErrorMessage,
   ExtraText,
@@ -110,10 +123,16 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
       format = 'HH:mm', // Формат отображения времени по умолчанию
       prefix,
       suffix,
+      onPickerChange,
+      modifyPickerValue,
+      deferPickerCommit,
       ...props
     },
     ref,
   ) => {
+    const shouldDeferPickerCommit =
+      deferPickerCommit ?? Boolean(onPickerChange || modifyPickerValue);
+
     const [isOpen, setIsOpen] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
     const [activeSegment, setActiveSegment] = useState<'hours' | 'minutes' | 'seconds' | null>(
@@ -216,14 +235,36 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
     const [activePicker, setActivePicker] = useState<'start' | 'end'>('start');
     const _inputRef = useRef<HTMLInputElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+    const timePickerPopupRef = useRef<HTMLDivElement>(null);
+    const theme = useTheme();
+    const floatingOverlayLayer = useFloatingOverlayLayer();
+    const floatingOverlayZIndex = resolveFloatingOverlayZIndex(
+      floatingOverlayLayer.minimumZIndex,
+      theme.dropdowns?.settings?.zIndex,
+    );
+    const floatingPortalRoot = resolveFloatingOverlayPortalRoot(
+      undefined,
+      floatingOverlayLayer.portalRoot,
+    );
+    const { position: timePickerPopupPosition } = useFloatingOverlayPosition({
+      isOpen,
+      anchorRef: containerRef,
+      overlayRef: timePickerPopupRef,
+      positioningMode: 'autoFlip',
+    });
 
     // Обработчик кликов вне компонента
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
-        if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-          setIsOpen(false);
-          setIsFocused(false);
+        const target = event.target as Node;
+        if (
+          containerRef.current?.contains(target) ||
+          timePickerPopupRef.current?.contains(target)
+        ) {
+          return;
         }
+        setIsOpen(false);
+        setIsFocused(false);
       };
 
       if (isOpen) {
@@ -235,18 +276,127 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
       };
     }, [isOpen]);
 
-    // Обновляем inputValue при изменении value
+    const formatTime = useCallback(
+      (time: Date | null) => (time ? formatTimeForDisplay(time, format) : ''),
+      [format],
+    );
+
+    const syncDraftFromValue = useCallback(() => {
+      const draftTimes = timePickerDraftTimesFromValue(value, range);
+
+      if (!range) {
+        setSelectedTime(draftTimes.selectedTime);
+        if (draftTimes.selectedTime) {
+          setCurrentTime(draftTimes.selectedTime);
+        }
+        return;
+      }
+
+      setRangeStart(draftTimes.rangeStart);
+      setRangeEnd(draftTimes.rangeEnd);
+      if (draftTimes.rangeStart) {
+        setCurrentTime(draftTimes.rangeStart);
+      }
+      setTempRangeEnd(null);
+    }, [range, value]);
+
+    /**
+     * Обновляет черновик пикера с учётом `modifyPickerValue` / `onPickerChange`.
+     * @param nextDraftTimes — новое время черновика
+     * @param phase — фаза изменения
+     * @param options.updateInputPreview — обновить текст в поле
+     */
+    const applyPickerDraftUpdate = useCallback(
+      (
+        nextDraftTimes: TimePickerDraftTimes,
+        phase: TimePickerDraftPhase,
+        options?: { updateInputPreview?: boolean },
+      ) => {
+        const resolvedTimes = resolveTimePickerDraft({
+          draftTimes: nextDraftTimes,
+          range,
+          format,
+          phase,
+          modifyPickerValue,
+          onPickerChange,
+        });
+
+        if (!range) {
+          setSelectedTime(resolvedTimes.selectedTime);
+          if (resolvedTimes.selectedTime) {
+            setCurrentTime(resolvedTimes.selectedTime);
+          }
+        } else {
+          if (resolvedTimes.rangeStart) {
+            setCurrentTime(resolvedTimes.rangeStart);
+          }
+          setRangeStart(resolvedTimes.rangeStart);
+          setRangeEnd(resolvedTimes.rangeEnd);
+          setTempRangeEnd(null);
+        }
+
+        const shouldUpdateInputPreview =
+          options?.updateInputPreview ?? !shouldDeferPickerCommit;
+
+        if (shouldUpdateInputPreview) {
+          if (!range) {
+            setInputValue(resolvedTimes.selectedTime ? formatTime(resolvedTimes.selectedTime) : '');
+          } else if (resolvedTimes.rangeStart && resolvedTimes.rangeEnd) {
+            setInputValue(
+              `${formatTime(resolvedTimes.rangeStart)} — ${formatTime(resolvedTimes.rangeEnd)}`,
+            );
+          } else if (resolvedTimes.rangeStart) {
+            setInputValue(formatTime(resolvedTimes.rangeStart));
+          } else {
+            setInputValue('');
+          }
+        }
+
+        return resolvedTimes;
+      },
+      [
+        range,
+        format,
+        modifyPickerValue,
+        onPickerChange,
+        shouldDeferPickerCommit,
+        formatTime,
+      ],
+    );
+
     useEffect(() => {
+      if (isOpen) {
+        syncDraftFromValue();
+        return;
+      }
+
+      if (shouldDeferPickerCommit) {
+        syncDraftFromValue();
+      }
+    }, [isOpen, shouldDeferPickerCommit, syncDraftFromValue]);
+
+    // Синхронизируем inputValue с применённым значением (не с черновиком пикера)
+    useEffect(() => {
+      if (shouldDeferPickerCommit && isOpen) {
+        return;
+      }
+
       if (range && rangeStart && rangeEnd) {
-        setInputValue(
-          `${formatTimeForDisplay(rangeStart, format)} — ${formatTimeForDisplay(rangeEnd, format)}`,
-        );
+        setInputValue(`${formatTime(rangeStart)} — ${formatTime(rangeEnd)}`);
       } else if (!range && selectedTime) {
-        setInputValue(formatTimeForDisplay(selectedTime, format));
+        setInputValue(formatTime(selectedTime));
       } else {
         setInputValue('');
       }
-    }, [range, rangeStart, rangeEnd, selectedTime, format]);
+    }, [
+      range,
+      rangeStart,
+      rangeEnd,
+      selectedTime,
+      formatTime,
+      shouldDeferPickerCommit,
+      isOpen,
+    ]);
 
     // Обработчики событий
     const _handleFocus = () => {
@@ -397,14 +547,21 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
           );
         }
 
-        // Обновляем соответствующее время
-        if (targetPicker === 'start') {
-          setRangeStart(newTime);
-          setCurrentTime(newTime);
-        } else {
-          setRangeEnd(newTime);
-          setCurrentTime(newTime);
-        }
+        // Обновляем соответствующее время через черновик пикера
+        const nextDraftTimes: TimePickerDraftTimes =
+          targetPicker === 'start'
+            ? {
+                selectedTime: null,
+                rangeStart: newTime,
+                rangeEnd,
+              }
+            : {
+                selectedTime: null,
+                rangeStart,
+                rangeEnd: newTime,
+              };
+
+        applyPickerDraftUpdate(nextDraftTimes, 'pick');
       } else {
         // В обычном режиме используем старую логику
         const activeTime = getActiveTime();
@@ -441,6 +598,14 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
         setCurrentTime(newTime);
         setSelectedTime(newTime);
 
+        if (shouldDeferPickerCommit) {
+          applyPickerDraftUpdate(
+            { selectedTime: newTime, rangeStart: null, rangeEnd: null },
+            'pick',
+          );
+          return;
+        }
+
         if (onChange) {
           onChange(toISOTimeString(newTime, showSeconds ? 'HH:mm:ss' : 'HH:mm'));
         }
@@ -460,13 +625,15 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
     };
 
     const handleClear = () => {
-      setSelectedTime(null);
-      setRangeStart(null);
-      setRangeEnd(null);
-      setTempRangeEnd(null);
+      applyPickerDraftUpdate(
+        { selectedTime: null, rangeStart: null, rangeEnd: null },
+        'clear',
+        { updateInputPreview: true },
+      );
+
       setActivePicker('start');
-      setInputValue('');
       setActiveSegment(null);
+
       if (onChange) {
         onChange(range ? { start: '', end: '' } : '');
       }
@@ -777,14 +944,35 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
     };
 
     const handleApply = () => {
-      if (range && rangeStart && rangeEnd) {
-        if (onChange) {
-          onChange({
-            start: toISOTimeString(rangeStart, format),
-            end: toISOTimeString(rangeEnd, format),
+      if (range) {
+        if (!rangeStart || !rangeEnd) {
+          return;
+        }
+
+        const resolvedTimes = applyPickerDraftUpdate(
+          { selectedTime: null, rangeStart, rangeEnd },
+          'apply',
+          { updateInputPreview: true },
+        );
+
+        if (resolvedTimes.rangeStart && resolvedTimes.rangeEnd) {
+          onChange?.({
+            start: toISOTimeString(resolvedTimes.rangeStart, format),
+            end: toISOTimeString(resolvedTimes.rangeEnd, format),
           });
         }
+      } else if (selectedTime) {
+        const resolvedTimes = applyPickerDraftUpdate(
+          { selectedTime, rangeStart: null, rangeEnd: null },
+          'apply',
+          { updateInputPreview: true },
+        );
+
+        if (resolvedTimes.selectedTime) {
+          onChange?.(toISOTimeString(resolvedTimes.selectedTime, format));
+        }
       }
+
       setIsOpen(false);
     };
 
@@ -1336,26 +1524,38 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                 ? false
                 : currentLength >= props.maxLength! * characterCounterVisibilityThreshold);
 
-            return shouldShowCounter ? (
-              <CharacterCounter size={size} $isOverLimit={currentLength > props.maxLength!}>
-                {`${currentLength}/${props.maxLength}`}
-              </CharacterCounter>
-            ) : null;
+            return (
+              <CharacterCounterMotion
+                visible={shouldShowCounter}
+                currentLength={currentLength}
+                maxLength={props.maxLength!}
+              />
+            );
           })()}
+      </Container>
+    );
 
-        <TimePickerPopup
+    const timePickerPopupPortal =
+      isOpen && floatingPortalRoot
+        ? createPortal(
+            <TimePickerPopup
           isOpen={isOpen}
           size={size}
           showSeconds={showSeconds}
           className="time-picker-popup"
-          style={
-            range
+          ref={timePickerPopupRef}
+          $portaled
+          style={{
+            left: timePickerPopupPosition.x,
+            top: timePickerPopupPosition.y,
+            zIndex: floatingOverlayZIndex,
+            ...(range
               ? {
                   minWidth: showSeconds ? '800px' : '600px',
                   maxWidth: showSeconds ? '800px' : '600px',
                 }
-              : {}
-          }
+              : {}),
+          }}
         >
           {renderTopPanel && (
             <div style={{ padding: '16px', borderBottom: '1px solid #e0e0e0' }}>
@@ -1707,7 +1907,16 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                 <ActionButton variant={ButtonVariant.SECONDARY} onClick={handleClear}>
                   Очистить
                 </ActionButton>
-                <ActionButton variant={ButtonVariant.PRIMARY} onClick={() => setIsOpen(false)}>
+                <ActionButton
+                  variant={ButtonVariant.PRIMARY}
+                  onClick={() => {
+                    if (shouldDeferPickerCommit) {
+                      handleApply();
+                      return;
+                    }
+                    setIsOpen(false);
+                  }}
+                >
                   OK
                 </ActionButton>
               </Footer>
@@ -1719,9 +1928,10 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
               )}
             </>
           )}
-        </TimePickerPopup>
-      </Container>
-    );
+            </TimePickerPopup>,
+            floatingPortalRoot,
+          )
+        : null;
 
     if (tooltip) {
       if (tooltipType === 'hint') {
@@ -1735,9 +1945,12 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                 : HintPosition.RIGHT;
 
         return (
-          <Hint content={tooltip} placement={hintPosition} variant={HintVariant.DEFAULT}>
-            {timeInputContent}
-          </Hint>
+          <>
+            <Hint content={tooltip} placement={hintPosition} variant={HintVariant.DEFAULT}>
+              {timeInputContent}
+            </Hint>
+            {timePickerPopupPortal}
+          </>
         );
       } else {
         const tooltipPos =
@@ -1750,14 +1963,22 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                 : TooltipPosition.RIGHT;
 
         return (
-          <Tooltip content={tooltip} position={tooltipPos}>
-            {timeInputContent}
-          </Tooltip>
+          <>
+            <Tooltip content={tooltip} position={tooltipPos}>
+              {timeInputContent}
+            </Tooltip>
+            {timePickerPopupPortal}
+          </>
         );
       }
     }
 
-    return timeInputContent;
+    return (
+      <>
+        {timeInputContent}
+        {timePickerPopupPortal}
+      </>
+    );
   },
 );
 

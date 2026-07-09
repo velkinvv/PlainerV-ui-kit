@@ -1,6 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
-import { ThemeColorScheme, ThemeMode, type BuiltinThemeMode, type ThemeType } from '../types/theme';
+import {
+  ThemeColorScheme,
+  ThemeMode,
+  type BuiltinThemeMode,
+  type ThemeType,
+  type ThemeVariant,
+} from '../types/theme';
 import type { CustomThemesByMode, ThemeOverridesByMode } from '../types/themeOverride';
 import type { ThemeCatalog } from '../types/themeCatalog';
 import { GlobalStyles } from '../styles/GlobalStyles';
@@ -17,6 +23,11 @@ import {
   resolveThemeCatalog,
   writeStoredThemeMode,
 } from '../handlers/themeCatalogHandlers';
+import {
+  getAvailableThemeVariants,
+  parseThemeModeToAxes,
+  resolveBuiltinThemeMode,
+} from '../handlers/themeVariantHandlers';
 import { ThemeContext, type ThemeContextProps } from './themeContext';
 
 export type { ThemeContextProps } from './themeContext';
@@ -62,10 +73,13 @@ export function ThemeProvider<TThemeMode extends string = BuiltinThemeMode>({
     if (themesProp) {
       return themesProp;
     }
-    return buildThemeCatalogFromLegacyProps(
-      themeOverrides,
-      customThemes,
-    ) as ThemeCatalog<TThemeMode>;
+    if (themeOverrides || customThemes) {
+      return buildThemeCatalogFromLegacyProps(
+        themeOverrides,
+        customThemes,
+      ) as ThemeCatalog<TThemeMode>;
+    }
+    return createBuiltinThemeCatalog() as ThemeCatalog<TThemeMode>;
   }, [themesProp, themeOverrides, customThemes]);
 
   const resolvedCatalog = useMemo(() => resolveThemeCatalog(catalog), [catalog]);
@@ -73,6 +87,11 @@ export function ThemeProvider<TThemeMode extends string = BuiltinThemeMode>({
   const themeModes = useMemo(() => getThemeCatalogModes(catalog) as TThemeMode[], [catalog]);
 
   const themesMeta = useMemo(() => getThemeCatalogMeta(resolvedCatalog), [resolvedCatalog]);
+
+  const themeVariants = useMemo(
+    () => getAvailableThemeVariants(themeModes),
+    [themeModes],
+  );
 
   const themeByMode = useMemo(() => {
     const map = new Map<TThemeMode, ThemeType>();
@@ -112,6 +131,18 @@ export function ThemeProvider<TThemeMode extends string = BuiltinThemeMode>({
   const [themeMode, setThemeModeState] = useState<TThemeMode>(resolveInitialThemeMode);
 
   useEffect(() => {
+    const explicitInitial = initialThemeModeProp ?? initialThemeName ?? initialThemeId;
+    if (!explicitInitial) {
+      return;
+    }
+
+    const nextThemeMode = ensureValidThemeMode(explicitInitial, themeModes, fallbackThemeMode);
+    setThemeModeState((currentThemeMode) =>
+      currentThemeMode === nextThemeMode ? currentThemeMode : nextThemeMode,
+    );
+  }, [initialThemeModeProp, initialThemeName, initialThemeId, themeModes, fallbackThemeMode]);
+
+  useEffect(() => {
     if (!themeModes.includes(themeMode)) {
       setThemeModeState(fallbackThemeMode);
     }
@@ -127,6 +158,9 @@ export function ThemeProvider<TThemeMode extends string = BuiltinThemeMode>({
 
   const colorScheme = activeTheme.mode;
 
+  const activeCatalogItem = resolvedCatalog.find((item) => item.name === themeMode);
+  const themeVariant = activeCatalogItem?.variant ?? parseThemeModeToAxes(themeMode, colorScheme).variant;
+
   const setThemeMode = useCallback(
     (nextThemeMode: TThemeMode) => {
       setThemeModeState(ensureValidThemeMode(nextThemeMode, themeModes, fallbackThemeMode));
@@ -134,14 +168,37 @@ export function ThemeProvider<TThemeMode extends string = BuiltinThemeMode>({
     [themeModes, fallbackThemeMode],
   );
 
-  const setMode = useCallback(
+  const setColorScheme = useCallback(
     (nextColorScheme: ThemeColorScheme) => {
-      const target = findThemeModeByColorScheme(resolvedCatalog, nextColorScheme);
+      const target = findThemeModeByColorScheme(resolvedCatalog, nextColorScheme, themeVariant);
       if (target) {
         setThemeMode(target);
       }
     },
-    [resolvedCatalog, setThemeMode],
+    [resolvedCatalog, themeVariant, setThemeMode],
+  );
+
+  const setThemeVariant = useCallback(
+    (nextThemeVariant: ThemeVariant) => {
+      const target = findThemeModeByColorScheme(resolvedCatalog, colorScheme, nextThemeVariant);
+      if (target) {
+        setThemeMode(target);
+        return;
+      }
+
+      const builtinTarget = resolveBuiltinThemeMode(nextThemeVariant, colorScheme);
+      if (themeModes.includes(builtinTarget as TThemeMode)) {
+        setThemeMode(builtinTarget as TThemeMode);
+      }
+    },
+    [resolvedCatalog, colorScheme, themeModes, setThemeMode],
+  );
+
+  const setMode = useCallback(
+    (nextColorScheme: ThemeColorScheme) => {
+      setColorScheme(nextColorScheme);
+    },
+    [setColorScheme],
   );
 
   const cycleTheme = useCallback(() => {
@@ -175,7 +232,11 @@ export function ThemeProvider<TThemeMode extends string = BuiltinThemeMode>({
       themeModes,
       themes: themesMeta,
       cycleTheme,
+      themeVariant,
+      themeVariants,
+      setThemeVariant,
       colorScheme,
+      setColorScheme,
       isDarkColorScheme: colorScheme === ThemeColorScheme.DARK,
       getThemeByMode,
       themeName: themeMode,
@@ -196,7 +257,11 @@ export function ThemeProvider<TThemeMode extends string = BuiltinThemeMode>({
       themeModes,
       themesMeta,
       cycleTheme,
+      themeVariant,
+      themeVariants,
+      setThemeVariant,
       colorScheme,
+      setColorScheme,
       getThemeByMode,
       setMode,
       toggle,

@@ -1,11 +1,13 @@
 import React, { forwardRef } from 'react';
 import { clsx } from 'clsx';
+import { useTheme } from 'styled-components';
 import { AvatarState, AvatarStatus, BadgeVariant, type AvatarProps } from '../../../types/ui';
 import { Size, IconSize } from '../../../types/sizes';
 import { useUiMotionPresets } from '../../../hooks/useUiMotion';
+import { applyColorAlpha } from '../../../handlers/glassColorHandlers';
 import { Icon } from '../Icon';
 import { Tooltip } from '../Tooltip/Tooltip';
-import { Badge } from '../Badge/Badge';
+import { BadgePresence } from '../Badge/Badge';
 import {
   AvatarWrapper,
   AvatarContainer,
@@ -107,6 +109,7 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
     },
     ref,
   ) => {
+    const theme = useTheme();
     const uiMotion = useUiMotionPresets();
     const [imageError, setImageError] = React.useState(false);
 
@@ -128,7 +131,12 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
     };
 
     const getFallbackBackgroundColor = () => {
-      if (userName) return generateBackgroundColor(userName);
+      if (userName) {
+        return applyColorAlpha(
+          generateBackgroundColor(userName),
+          theme.avatars.settings.backgroundAlpha,
+        );
+      }
       return undefined;
     };
 
@@ -238,17 +246,16 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
           {renderContent()}
         </AvatarContainer>
         {/* Badge с количеством сообщений вне AvatarContainer (у него overflow: hidden); враппер с полями — см. AvatarWrapper.$hasMessageBadge */}
-        {hasMessageBadge && (
-          <AvatarMessageBadgeAnchor>
-            <Badge
-              variant={getBadgeVariantByStatus(status)}
-              size={size === Size.LG ? Size.MD : Size.SM}
-              rounded={true}
-            >
-              {(messageCount ?? 0) > 99 ? '99+' : (messageCount ?? 0)}
-            </Badge>
-          </AvatarMessageBadgeAnchor>
-        )}
+        <AvatarMessageBadgeAnchor>
+          <BadgePresence
+            visible={hasMessageBadge}
+            variant={getBadgeVariantByStatus(status)}
+            size={size === Size.LG ? Size.MD : Size.SM}
+            rounded={true}
+          >
+            {(messageCount ?? 0) > 99 ? '99+' : (messageCount ?? 0)}
+          </BadgePresence>
+        </AvatarMessageBadgeAnchor>
       </AvatarWrapper>
     );
 

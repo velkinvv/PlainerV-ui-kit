@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { motion } from 'framer-motion';
 import { AvatarGroupVariant } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 
@@ -133,7 +134,7 @@ export const AvatarGroupContainer = styled.div<{
  * @param size - размер аватара
  * @param variant - вариант отображения
  */
-export const AvatarCounter = styled.div<{
+export const AvatarCounter = styled(motion.div)<{
   size?: Size;
   variant?: AvatarGroupVariant;
 }>`
@@ -151,6 +152,17 @@ export const AvatarCounter = styled.div<{
   cursor: ${({ theme }) => theme.avatarGroups.counter.cursor};
   transition: ${({ theme }) => theme.avatarGroups.counter.transition};
   flex-shrink: ${({ theme }) => theme.avatarGroups.settings.flexShrink};
+
+  ${({ theme }) => {
+    const backdropFilter = theme.avatarGroups.settings.backdropFilter;
+
+    return backdropFilter
+      ? css`
+          backdrop-filter: ${backdropFilter};
+          -webkit-backdrop-filter: ${backdropFilter};
+        `
+      : '';
+  }}
 
   ${({ theme, size = Size.MD }) => {
     const avatarSize = theme.avatars.sizes[size];

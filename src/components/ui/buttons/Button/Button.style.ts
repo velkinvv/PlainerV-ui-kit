@@ -41,6 +41,7 @@ const sharedButtonCss = css<ButtonProps>`
     const buttonSize = getButtonSize(theme.buttons, size);
     const settings = getButtonSettings(theme.buttons);
     const animations = getButtonAnimations(theme.buttons);
+    const backdropFilter = settings.backdropFilter;
 
     return css`
       font-family: ${settings.fontFamily};
@@ -52,6 +53,12 @@ const sharedButtonCss = css<ButtonProps>`
       white-space: ${settings.whiteSpace};
       cursor: ${settings.cursor.default};
       transition: ${animations.transition};
+      ${backdropFilter
+        ? css`
+            backdrop-filter: ${backdropFilter};
+            -webkit-backdrop-filter: ${backdropFilter};
+          `
+        : ''}
 
       /* Размеры и отступы */
       min-height: ${buttonSize.minHeight};

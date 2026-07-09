@@ -112,16 +112,51 @@ export const blurClasses = {
   '2xl': `backdrop-filter: blur(${blur['2xl']});`,
   '3xl': `backdrop-filter: blur(${blur['3xl']});`,
 
-  // Классы с дополнительными эффектами
+  // Классы с дополнительными эффектами (glass / vibrancy)
   glass: `backdrop-filter: blur(${blur.md}) saturate(1.8) brightness(1.1);`,
   glassLight: `backdrop-filter: blur(${blur.sm}) saturate(1.5) brightness(1.05);`,
   glassStrong: `backdrop-filter: blur(${blur.lg}) saturate(2) brightness(1.2);`,
+  /** Glass на тёмной палитре — приглушённая яркость */
+  glassDark: `backdrop-filter: blur(${blur.md}) saturate(1.8) brightness(0.92);`,
+  glassDarkLight: `backdrop-filter: blur(${blur.sm}) saturate(1.5) brightness(0.95);`,
+  glassDarkStrong: `backdrop-filter: blur(${blur.lg}) saturate(2) brightness(0.88);`,
 
   // Классы для фильтрации самого элемента
   filterSm: `filter: blur(${blur.sm});`,
   filterMd: `filter: blur(${blur.md});`,
   filterLg: `filter: blur(${blur.lg});`,
 };
+
+/**
+ * Извлекает значение CSS-свойства `backdrop-filter` из строки {@link blurClasses}.
+ * @param blurClass — строка вида `backdrop-filter: blur(8px) saturate(1.8);`
+ */
+export function parseBackdropFilterFromBlurClass(blurClass: string): string {
+  return blurClass
+    .replace(/^\s*backdrop-filter:\s*/i, '')
+    .replace(/;\s*$/, '')
+    .trim();
+}
+
+/**
+ * Готовые значения `backdrop-filter` для glass-тем (из {@link blurClasses}).
+ * Используйте в `surfaceMaterial` и токенах dropdown / modal.
+ */
+export const glassBackdropFilters = {
+  light: {
+    /** Основные поверхности — {@link blurClasses.glass} */
+    default: parseBackdropFilterFromBlurClass(blurClasses.glass),
+    /** Dropdown / hint — {@link blurClasses.glassLight} */
+    subtle: parseBackdropFilterFromBlurClass(blurClasses.glassLight),
+    /** Modal overlay — {@link blurClasses.glassStrong} */
+    strong: parseBackdropFilterFromBlurClass(blurClasses.glassStrong),
+  },
+  dark: {
+    default: parseBackdropFilterFromBlurClass(blurClasses.glassDark),
+    subtle: parseBackdropFilterFromBlurClass(blurClasses.glassDarkLight),
+    strong: parseBackdropFilterFromBlurClass(blurClasses.glassDarkStrong),
+  },
+} as const;
 
 /**
  * Экспорт для обратной совместимости

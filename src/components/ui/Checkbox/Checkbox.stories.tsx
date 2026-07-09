@@ -7,7 +7,7 @@ import { DOC_CHECKBOX } from '@/components/ui/storyDocs/uiKitDocs';
 import { checkboxStoriesStyles } from './Checkbox.stories.styles';
 
 const meta: Meta<typeof Checkbox> = {
-  title: 'UI Kit/Inputs/Checkbox',
+  title: 'UI Kit/Buttons/Checkbox',
   component: Checkbox,
   parameters: {
     layout: 'padded',

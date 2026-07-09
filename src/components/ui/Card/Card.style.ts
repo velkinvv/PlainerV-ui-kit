@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { CardVariant, type CardProps } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 import { getCardSizeSettings } from '@/handlers/cardThemeHandlers';
+import { glassSurfaceMaterialCss } from '@/handlers/glassSurfaceHandlers';
 
 /**
  * Стилизованная карточка
@@ -20,6 +21,7 @@ export const StyledCard = styled(motion.div)<CardProps>`
   overflow: ${({ theme }) => theme.cards.settings.overflow};
   transition: ${({ theme }) => theme.cards.animations.transition};
   user-select: ${({ theme }) => theme.cards.settings.userSelect};
+  ${({ theme }) => glassSurfaceMaterialCss(theme)}
 
   ${({ fullWidth, theme }) =>
     fullWidth &&

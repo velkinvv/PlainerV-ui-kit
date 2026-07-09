@@ -1,7 +1,7 @@
-﻿import React from 'react';
+﻿import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
-import { Badge } from './Badge';
+import { Badge, BadgePresence } from './Badge';
 import {
   BadgeStoriesSizesRoot,
   BadgeStoriesSizeFigure,
@@ -273,6 +273,45 @@ export const NumberLimiting: Story = {
       <Badge variant={BadgeVariant.DEFAULT}>999</Badge>
     </div>
   ),
+  parameters: {
+    layout: 'padded',
+  },
+};
+
+/** Появление, пульс при смене значения и исчезновение */
+export const AnimatedLifecycle: Story = {
+  render: () => {
+    const [messageCount, setMessageCount] = useState(3);
+    const [isVisible, setIsVisible] = useState(true);
+    const [badgeSize, setBadgeSize] = useState<Size>(Size.SM);
+
+    return (
+      <div style={badgeStoriesStyles.wrapColumn}>
+        <BadgePresence visible={isVisible} variant={BadgeVariant.DANGER} size={badgeSize}>
+          {messageCount}
+        </BadgePresence>
+        <div style={badgeStoriesStyles.wrapRow}>
+          <button type="button" onClick={() => setMessageCount((value) => value + 1)}>
+            +1
+          </button>
+          <button type="button" onClick={() => setMessageCount((value) => Math.max(0, value - 1))}>
+            −1
+          </button>
+          <button type="button" onClick={() => setIsVisible((value) => !value)}>
+            {isVisible ? 'Скрыть' : 'Показать'}
+          </button>
+          <button
+            type="button"
+            onClick={() =>
+              setBadgeSize((currentSize) => (currentSize === Size.SM ? Size.MD : Size.SM))
+            }
+          >
+            Размер
+          </button>
+        </div>
+      </div>
+    );
+  },
   parameters: {
     layout: 'padded',
   },

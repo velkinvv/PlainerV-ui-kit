@@ -5,7 +5,7 @@ import {
   TabItemTriggerLabel,
   TabItemBadgeWrap,
 } from './TabItem.style';
-import { Badge } from '../Badge/Badge';
+import { BadgePresence } from '../Badge/Badge';
 import {
   BadgeVariant,
   SpinnerVariant,
@@ -55,9 +55,9 @@ export function renderTabItemTriggerInner(params: {
       {iconEnd ? <TabItemIconSlot>{iconEnd}</TabItemIconSlot> : null}
       {badge != null && badge !== false ? (
         <TabItemBadgeWrap>
-          <Badge variant={BadgeVariant.DEFAULT} size={Size.SM}>
+          <BadgePresence visible variant={BadgeVariant.DEFAULT} size={Size.SM}>
             {badge}
-          </Badge>
+          </BadgePresence>
         </TabItemBadgeWrap>
       ) : null}
       {loading ? (

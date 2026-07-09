@@ -12,6 +12,13 @@ export const calendarStoriesStyles = {
     padding: 24,
     borderRadius: 12,
   } satisfies CSSProperties,
+
+  storyStack: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+    maxWidth: '420px',
+  } satisfies CSSProperties,
 };
 
 export const createCalendarStoryThemeStyles = (theme: ThemeType) => ({

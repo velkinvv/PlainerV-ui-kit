@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 import { FloatingMenuPlacement } from '@/types/ui';
+import { calculateDropdownPosition } from '@/components/ui/Dropdown/handlers';
 
 const SAFE = 16;
 
@@ -76,24 +77,21 @@ export function clampFloatingMenuToViewport(
 }
 
 /**
- * Позиция панели выпадающего меню под триггером.
+ * Позиция панели выпадающего меню под триггером (viewport + fixed).
  * @param trigger — DOM-элемент кнопки
- * @param menuWidth — ширина меню (если известна)
+ * @param menuElement — DOM панели для flip/fit (если уже смонтирована)
  */
 export function getDropdownPanelPosition(
   trigger: HTMLElement,
-  menuWidth?: number,
+  menuElement?: HTMLElement | null,
 ): { top: number; left: number } {
-  const rect = trigger.getBoundingClientRect();
-  const scrollX = window.scrollX ?? window.pageXOffset;
-  const scrollY = window.scrollY ?? window.pageYOffset;
-  const w = menuWidth ?? 200;
-  let left = rect.left + scrollX;
-  const top = rect.bottom + scrollY + 6;
-  const rightEdge = left + w;
-  const vw = window.innerWidth;
-  if (rightEdge > vw + scrollX - 8) {
-    left = Math.max(8 + scrollX, vw + scrollX - w - 8);
-  }
-  return { top, left };
+  const nextPosition = calculateDropdownPosition({
+    triggerElement: trigger,
+    menuElement: menuElement ?? null,
+    offset: 6,
+    mode: 'autoFlip',
+    preferredPlacement: 'below',
+  });
+
+  return { top: nextPosition.y, left: nextPosition.x };
 }

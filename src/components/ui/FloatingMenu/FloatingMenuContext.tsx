@@ -1,17 +1,29 @@
 import { createContext, useContext, type Dispatch, type SetStateAction } from 'react';
-import { FloatingMenuGroupVariant, type FloatingMenuDragSource } from '@/types/ui';
+import {
+  FloatingMenuGroupVariant,
+  FloatingMenuOrientation,
+  type FloatingMenuDragSource,
+} from '@/types/ui';
 
 /** Контекст корня плавающего меню */
 export interface FloatingMenuRootContextValue {
   draggable: boolean;
   dragSource: FloatingMenuDragSource;
   zIndex: number;
-  /** id открытого выпадающего пункта (для взаимного закрытия) */
+  orientation: FloatingMenuOrientation;
+  /** Включён режим dynamicSize */
+  dynamicSize: boolean;
+  /** CSS max-width / max-height для dynamicSize */
+  dynamicSizeMaxCss?: string;
+  /** Блокировка overflow на время size-анимации */
+  sizeAnimating: boolean;
   openDropdownId: string | null;
   setOpenDropdownId: Dispatch<SetStateAction<string | null>>;
-  /** Зарегистрирован ли дочерний DragHandle (для режима HANDLE) */
   hasDragHandle: boolean;
   setHasDragHandle: (v: boolean) => void;
+  registerGroupItemCount: (groupId: string, itemCount: number) => void;
+  unregisterGroupItemCount: (groupId: string) => void;
+  endSizeAnimation: () => void;
 }
 
 export const FloatingMenuRootContext = createContext<FloatingMenuRootContextValue | undefined>(
@@ -19,11 +31,11 @@ export const FloatingMenuRootContext = createContext<FloatingMenuRootContextValu
 );
 
 export const useFloatingMenuRootContext = (): FloatingMenuRootContextValue => {
-  const ctx = useContext(FloatingMenuRootContext);
-  if (!ctx) {
+  const contextValue = useContext(FloatingMenuRootContext);
+  if (!contextValue) {
     throw new Error('Компоненты FloatingMenu.* должны находиться внутри FloatingMenu');
   }
-  return ctx;
+  return contextValue;
 };
 
 /** Контекст группы (default / inset) */

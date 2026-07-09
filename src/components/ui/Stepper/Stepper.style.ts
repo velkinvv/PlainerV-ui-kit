@@ -1,8 +1,24 @@
 import styled, { css } from 'styled-components';
+import { motion } from 'framer-motion';
 import type { StepperAppearance } from '../../../types/ui';
+import type { ThemeType } from '../../../types/theme';
 import { BorderRadiusHandler } from '../../../handlers/uiHandlers';
 import { createStyledShouldForwardProp } from '../../../handlers/styledComponentHandlers';
 import { neutral } from '../../../variables/colors/neutral';
+import { getStepperRootSurfaceTokens, getStepperTextTokens } from '../../../handlers/stepperGlassHandlers';
+
+type StepperStyledThemeSlice = Pick<ThemeType, 'mode' | 'colors' | 'surfaceMaterial' | 'dropdowns'>;
+
+/**
+ * Контекст темы степпера для резолва glass-токенов.
+ * @param theme — styled-components theme
+ */
+const getStepperThemeContext = (theme: StepperStyledThemeSlice) => ({
+  mode: theme.mode,
+  colors: theme.colors,
+  surfaceMaterial: theme.surfaceMaterial,
+  dropdowns: theme.dropdowns,
+});
 
 /**
  * Корень степпера (`nav`): горизонтальный ряд, скругление из `theme.borderRadius` (`BorderRadiusHandler`).
@@ -22,17 +38,24 @@ export const StepperRoot = styled.nav.withConfig({
   padding: 10px 14px;
   border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
 
-  ${({ $appearance, theme }) =>
-    $appearance === 'dark'
-      ? css`
-          background: ${neutral[800]};
-          color: ${theme.colors.backgroundSecondary};
-        `
-      : css`
-          background: ${theme.colors.backgroundSecondary};
-          color: ${theme.colors.text};
-          border: 1px solid ${theme.colors.border};
-        `}
+  ${({ $appearance, theme }) => {
+    const surfaceTokens = getStepperRootSurfaceTokens(
+      getStepperThemeContext(theme),
+      $appearance,
+    );
+
+    return css`
+      background: ${surfaceTokens.background};
+      color: ${surfaceTokens.color};
+      ${surfaceTokens.border ? `border: ${surfaceTokens.border};` : ''}
+      ${surfaceTokens.backdropFilter
+        ? css`
+            backdrop-filter: ${surfaceTokens.backdropFilter};
+            -webkit-backdrop-filter: ${surfaceTokens.backdropFilter};
+          `
+        : ''}
+    `;
+  }}
 `;
 
 /**
@@ -53,7 +76,7 @@ export const StepperBackButton = styled.button.withConfig({
   background: transparent;
   cursor: pointer;
   color: ${({ theme, $appearance }) =>
-    $appearance === 'dark' ? theme.colors.backgroundSecondary : theme.colors.text};
+    getStepperTextTokens(getStepperThemeContext(theme), $appearance).backButton};
 
   &:focus-visible {
     outline: 2px solid ${({ theme }) => theme.colors.primary};
@@ -75,7 +98,7 @@ export const StepperCompactSvgWrap = styled.div`
 `;
 
 /** Центральный текст «N/M» в компактном кольце */
-export const StepperCompactCounter = styled.span`
+export const StepperCompactCounter = styled(motion.span)`
   position: absolute;
   inset: 0;
   display: flex;
@@ -101,14 +124,12 @@ export const StepperCompactTextCol = styled.div.withConfig({
   min-width: 0;
   text-align: left;
 
-  ${({ $appearance, theme }) =>
-    $appearance === 'dark'
-      ? css`
-          color: ${theme.colors.backgroundSecondary};
-        `
-      : css`
-          color: ${theme.colors.text};
-        `}
+  ${({ $appearance, theme }) => {
+    const textTokens = getStepperTextTokens(getStepperThemeContext(theme), $appearance);
+    return css`
+      color: ${textTokens.primary};
+    `;
+  }}
 `;
 
 export const StepperCompactTitle = styled.span`
@@ -134,7 +155,7 @@ export const StepperCompactSubtitle = styled.span.withConfig({
   overflow: hidden;
   text-overflow: ellipsis;
   color: ${({ theme, $appearance }) =>
-    $appearance === 'dark' ? theme.colors.textTertiary : theme.colors.textSecondary};
+    getStepperTextTokens(getStepperThemeContext(theme), $appearance).secondary};
 `;
 
 /** Ряд шагов в линейном варианте (без кнопки назад) */
@@ -173,7 +194,7 @@ export const StepperLinearStepHint = styled.span.withConfig({
   font-size: 11px;
   line-height: 1.2;
   color: ${({ theme, $appearance }) =>
-    $appearance === 'dark' ? theme.colors.textTertiary : theme.colors.textTertiary};
+    getStepperTextTokens(getStepperThemeContext(theme), $appearance).tertiary};
 `;
 
 /**
@@ -189,10 +210,8 @@ export const StepperLinearStepTitle = styled.span.withConfig({
   line-height: 1.25;
   white-space: nowrap;
   color: ${({ theme, $appearance, $muted }) => {
-    if ($appearance === 'dark') {
-      return $muted ? theme.colors.textSecondary : theme.colors.backgroundSecondary;
-    }
-    return $muted ? theme.colors.textSecondary : theme.colors.text;
+    const textTokens = getStepperTextTokens(getStepperThemeContext(theme), $appearance);
+    return $muted ? textTokens.secondary : textTokens.primary;
   }};
 `;
 

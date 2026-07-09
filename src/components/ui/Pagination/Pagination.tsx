@@ -4,6 +4,7 @@ import type { PaginationProps } from '@/types/ui';
 import { IconSize, Size } from '@/types/sizes';
 import { Icon } from '../Icon/Icon';
 import { buildPaginationSegments, getPaginationDimensions } from './handlers';
+import { ValueMotion } from '../ValueMotion';
 import {
   Ellipsis,
   PageButton,
@@ -119,7 +120,9 @@ export const Pagination: React.FC<PaginationProps> = ({
         <PaginationList $gap={dim.gap}>
           {variant === 'compact' ? (
             <PaginationListItem>
-              <PaginationCompactCurrent
+              <ValueMotion
+                as={PaginationCompactCurrent}
+                contentKey={`page:${currentPage}`}
                 aria-current="page"
                 aria-label={`Текущая страница ${currentPage} из ${totalPages}`}
                 $minW={dim.minWidth}
@@ -128,7 +131,7 @@ export const Pagination: React.FC<PaginationProps> = ({
                 $radius={dim.borderRadius}
               >
                 {currentPage}
-              </PaginationCompactCurrent>
+              </ValueMotion>
             </PaginationListItem>
           ) : (
             segments.map((seg) => {

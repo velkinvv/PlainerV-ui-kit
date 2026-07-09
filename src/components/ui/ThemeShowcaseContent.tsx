@@ -25,6 +25,7 @@ import {
   ThemeShowcaseButtonControlsBlock,
   ThemeShowcaseSliderBlock,
 } from './ThemeShowcaseControlsBlock';
+import { ThemeShowcaseNewComponentsBlock } from './ThemeShowcaseNewComponentsBlock';
 import { ThemeShowcaseTableBlock } from './ThemeShowcaseTableBlock';
 import { ThemeShowcaseCalendarBlock } from './ThemeShowcaseCalendarBlock';
 import { ThemeShowcaseOverlaysBlock } from './ThemeShowcaseOverlaysBlock';
@@ -90,6 +91,10 @@ export const ThemeShowcaseContent = ({ pageTitle, pageTitleStyle }: ThemeShowcas
 
         <ShowcaseCard title="Button group & IconButton">
           <ThemeShowcaseButtonControlsBlock />
+        </ShowcaseCard>
+
+        <ShowcaseCard title="Chip, List, DropMenu & more" columnSpan={2}>
+          <ThemeShowcaseNewComponentsBlock />
         </ShowcaseCard>
 
         <ShowcaseCard title="Inputs">

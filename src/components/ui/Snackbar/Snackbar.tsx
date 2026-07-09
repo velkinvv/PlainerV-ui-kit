@@ -1,13 +1,14 @@
 import React from 'react';
+import { useTheme as useStyledTheme } from 'styled-components';
 import type { SnackbarItem } from '@/types/ui';
 import { useTheme } from '@/themes/ThemeProvider';
 import { Icon } from '../Icon/Icon';
 import { IconSize } from '@/types/sizes';
 import grey from '@/variables/colors/grey';
 import { neutral } from '@/variables/colors/neutral';
-import { ThemeColorScheme } from '@/types/theme';
+import { ThemeColorScheme, type ThemeType } from '@/types/theme';
 import { SnackbarAction, SnackbarBar, SnackbarDismiss, SnackbarMessage } from './Snackbar.style';
-import { getSnackbarSurfaceTokens } from './handlers';
+import { getSnackbarSurfaceTokens, type SnackbarThemeContext } from './handlers';
 
 /**
  * Пропсы одной полосы snackbar (рендер внутри `SnackbarProvider`).
@@ -26,7 +27,13 @@ export interface SnackbarProps {
  */
 export const Snackbar: React.FC<SnackbarProps> = ({ snackbar, onClose, onActionClick }) => {
   const { mode } = useTheme();
-  const tokens = getSnackbarSurfaceTokens(mode);
+  const styledTheme = useStyledTheme() as ThemeType;
+  const snackbarThemeContext: SnackbarThemeContext = {
+    mode,
+    colors: styledTheme.colors,
+    snackbars: styledTheme.snackbars,
+  };
+  const tokens = getSnackbarSurfaceTokens(snackbarThemeContext);
   const dismissIconColor = mode === ThemeColorScheme.DARK ? neutral[300] : grey[400];
 
   return (

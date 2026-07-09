@@ -1,9 +1,8 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 
-import { NavigationMenu } from '../NavigationMenu';
 import { Icon } from '../Icon/Icon';
-import { NavigationMenuActiveAppearance, NavigationMenuExpandInteraction } from '@/types/ui';
+import { NavigationMenuExpandInteraction } from '@/types/ui';
 import {
   SidemenuVariant,
   SidemenuHorizontalPlacement,
@@ -13,12 +12,12 @@ import {
 } from '../../../types/ui';
 import { IconSize } from '../../../types/sizes';
 import { sidemenuOffScreenInnerPanelTransition } from '@/handlers/offScreenPanelMotionHandlers';
-import { resolveSidemenuEdgeMenuJustifyContent } from '@/handlers/sidemenuPlacementHandlers';
 import {
-  mapSidemenuItemToNavigationProps,
-  resolveSidemenuActiveId,
-  findSidemenuItemById,
-} from '@/handlers/navigationMenuNestedHandlers';
+  DEFAULT_SIDEMENU_DYNAMIC_HEIGHT_INSET_PX,
+  resolveSidemenuDynamicHeightMaxCss,
+} from '@/handlers/sidemenuDynamicHeightHandlers';
+import { SIDEMENU_SIZE_ANIMATION_RELEASE_MS } from '@/handlers/sidemenuItemPresenceHandlers';
+import { resolveSidemenuEdgeMenuJustifyContent } from '@/handlers/sidemenuPlacementHandlers';
 import { useNavigationMenuExpand } from '@/hooks/useNavigationMenuExpand';
 import {
   SidemenuExpandToggleButton,
@@ -38,6 +37,7 @@ import {
 } from './Sidemenu.style';
 import { SidemenuOffScreenHoverShell } from './SidemenuOffScreenHoverShell';
 import { SidemenuFloatingPositionShell } from './SidemenuFloatingPositionShell';
+import { SidemenuMenuItemsList } from './SidemenuMenuItemsList';
 
 const DEFAULT_SIDEMENU_COMPACT = 100;
 const DEFAULT_SIDEMENU_EXPANDED = 310;
@@ -55,6 +55,7 @@ const sidemenuPanelMotionTransition = {
  * Боковое меню навигации: пункты через {@link NavigationMenu}, логотип, компактная / полная раскладка.
  *
  * @param items — список пунктов меню (`SidemenuItem[]`)
+ * @param activeItemId — контролируемый выбранный пункт (id)
  * @param logo — опционально иконка и заголовок в шапке (игнорируются для блока шапки, если задан **logoSlot**)
  * @param logoSlot — произвольный контент слева в шапке вместо **logo.icon** / **logo.title**
  * @param variant — при `expandInteraction === none` задаёт ширину и подписи; иначе начальное состояние через `defaultExpanded` / `variant`
@@ -82,6 +83,8 @@ const sidemenuPanelMotionTransition = {
  * @param showExpandToggleButton — встроенная кнопка при режимах CLICK / HOVER
  * @param footer — нижний слот: произвольный ReactNode (второе меню, кнопки и т.д.); клик по обёртке не переключает раскрытие панели
  * @param slotStyles — инлайн-стили зон **header** / **body** / **footer** (высота, flex, overflow)
+ * @param dynamicHeight — высота по содержимому с анимацией; max-height от родителя / вьюпорта
+ * @param dynamicHeightInsetPx — отступ для max-height (px)
  * @param edgeAttached — панель без скругления и тени у края экрана (**min-height: 100vh**)
  * @param horizontalPlacement — левый или правый край экрана
  * @param verticalAlignment — верх / центр / низ (вся панель или только блок пунктов при **edgeAttached**)
@@ -96,6 +99,7 @@ export const Sidemenu: React.FC<SidemenuProps> = ({
   horizontalPlacement = SidemenuHorizontalPlacement.LEFT,
   verticalAlignment = SidemenuVerticalAlignment.TOP,
   variant = SidemenuVariant.EXPANDED,
+  activeItemId,
   className,
   onItemClick,
   expandInteraction: expandInteractionProp,
@@ -118,6 +122,8 @@ export const Sidemenu: React.FC<SidemenuProps> = ({
   expandToggleRender,
   onExpandToggleClick,
   showExpandToggleButton = false,
+  dynamicHeight = false,
+  dynamicHeightInsetPx = DEFAULT_SIDEMENU_DYNAMIC_HEIGHT_INSET_PX,
 }) => {
   const expandInteraction = expandInteractionProp ?? NavigationMenuExpandInteraction.NONE;
 
@@ -188,19 +194,10 @@ export const Sidemenu: React.FC<SidemenuProps> = ({
       )
     ) : null;
 
-  const handleItemClick = (item: SidemenuItem) => {
+  const handleItemClick = useCallback((item: SidemenuItem) => {
     onItemClick?.(item);
     item.onClick?.();
-  };
-
-  const resolvedActiveId = resolveSidemenuActiveId(items);
-
-  const handleNavigationActiveChange = (nextActiveId: string) => {
-    const selectedItem = findSidemenuItemById(items, nextActiveId);
-    if (selectedItem) {
-      handleItemClick(selectedItem);
-    }
-  };
+  }, [onItemClick]);
 
   const isFullLayout = expand.isExpanded;
 
@@ -224,9 +221,73 @@ export const Sidemenu: React.FC<SidemenuProps> = ({
   const offScreenLayerZIndex = offScreenZIndex ?? DEFAULT_OFF_SCREEN_Z_INDEX;
 
   const shouldFillMenuBodyZone =
-    !edgeAttached || verticalAlignment === SidemenuVerticalAlignment.TOP;
+    !dynamicHeight && (!edgeAttached || verticalAlignment === SidemenuVerticalAlignment.TOP);
   const edgeMenuJustifyContent = resolveSidemenuEdgeMenuJustifyContent(verticalAlignment);
   const shouldUseFloatingPositionShell = !edgeAttached && !offScreenHoverReveal;
+  const dynamicHeightMaxCss = useMemo(
+    () => resolveSidemenuDynamicHeightMaxCss(dynamicHeightInsetPx),
+    [dynamicHeightInsetPx],
+  );
+
+  /** Блокируем overflow на время анимации высоты пунктов */
+  const [sizeAnimating, setSizeAnimating] = useState(false);
+  const previousItemsLengthRef = useRef<number | null>(null);
+  const sizeAnimationReleaseTimerRef = useRef<number | null>(null);
+
+  const beginSizeAnimation = useCallback(() => {
+    if (!dynamicHeight) {
+      return;
+    }
+
+    setSizeAnimating(true);
+
+    if (sizeAnimationReleaseTimerRef.current != null) {
+      window.clearTimeout(sizeAnimationReleaseTimerRef.current);
+    }
+
+    sizeAnimationReleaseTimerRef.current = window.setTimeout(() => {
+      setSizeAnimating(false);
+      sizeAnimationReleaseTimerRef.current = null;
+    }, SIDEMENU_SIZE_ANIMATION_RELEASE_MS);
+  }, [dynamicHeight]);
+
+  const endSizeAnimation = useCallback(() => {
+    if (sizeAnimationReleaseTimerRef.current != null) {
+      window.clearTimeout(sizeAnimationReleaseTimerRef.current);
+      sizeAnimationReleaseTimerRef.current = null;
+    }
+
+    setSizeAnimating(false);
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!dynamicHeight) {
+      return undefined;
+    }
+
+    if (previousItemsLengthRef.current === null) {
+      previousItemsLengthRef.current = items.length;
+      return undefined;
+    }
+
+    if (previousItemsLengthRef.current !== items.length) {
+      previousItemsLengthRef.current = items.length;
+      beginSizeAnimation();
+    }
+
+    return () => {
+      if (sizeAnimationReleaseTimerRef.current != null) {
+        window.clearTimeout(sizeAnimationReleaseTimerRef.current);
+      }
+    };
+  }, [beginSizeAnimation, dynamicHeight, items.length]);
+
+  const panelMotionTransition = useMemo(() => {
+    if (offScreenHoverReveal) {
+      return sidemenuOffScreenInnerPanelTransition;
+    }
+    return sidemenuPanelMotionTransition;
+  }, [offScreenHoverReveal]);
 
   /** У режима «за краем» входная анимация только обрезкой снаружи, без сдвига x с экрана */
   const panelMotionInitial = offScreenHoverReveal
@@ -243,9 +304,13 @@ export const Sidemenu: React.FC<SidemenuProps> = ({
     <SidemenuPanelRoot
       $edgeAttached={edgeAttached}
       $horizontalPlacement={horizontalPlacement}
+      $dynamicHeight={dynamicHeight}
+      $dynamicHeightMaxCss={dynamicHeight ? dynamicHeightMaxCss : undefined}
+      $sizeAnimating={dynamicHeight && sizeAnimating}
       className={clsx(
         'ui-sidemenu',
         edgeAttached && 'ui-sidemenu--edge-attached',
+        dynamicHeight && 'ui-sidemenu--dynamic-height',
         `ui-sidemenu--placement-${horizontalPlacement}`,
         `ui-sidemenu--align-${verticalAlignment}`,
         className,
@@ -253,9 +318,7 @@ export const Sidemenu: React.FC<SidemenuProps> = ({
       {...expand.expandRootProps}
       initial={panelMotionInitial}
       animate={panelMotionAnimate}
-      transition={
-        offScreenHoverReveal ? sidemenuOffScreenInnerPanelTransition : sidemenuPanelMotionTransition
-      }
+      transition={panelMotionTransition}
     >
       {shouldRenderHeaderRow ? (
         <SidemenuHeaderSection style={slotStyles?.header}>
@@ -293,27 +356,27 @@ export const Sidemenu: React.FC<SidemenuProps> = ({
       <SidemenuNavigationBodyZone
         $edgeAttached={edgeAttached}
         $menuJustifyContent={edgeMenuJustifyContent}
+        $dynamicHeight={dynamicHeight}
+        $sizeAnimating={dynamicHeight && sizeAnimating}
       >
         <SidemenuMenuItemsContainer
           $leadPaddingTopPx={shouldRenderHeaderRow ? 0 : 24}
           $fillBodyZone={shouldFillMenuBodyZone}
+          $dynamicHeight={dynamicHeight}
           style={slotStyles?.body}
         >
-          <NavigationMenu
+          <SidemenuMenuItemsList
+            items={items}
+            activeItemId={activeItemId}
+            animateItemPresence={dynamicHeight}
+            onItemClick={handleItemClick}
             collapsed={!isFullLayout}
-            activeId={resolvedActiveId}
-            onActiveChange={handleNavigationActiveChange}
-            activeAppearance={NavigationMenuActiveAppearance.HIGHLIGHTED}
-            aria-label="Основная навигация приложения"
-            className="ui-sidemenu__navigation"
-          >
-            {items.map((menuEntry) => (
-              <NavigationMenu.Item
-                key={menuEntry.id}
-                {...mapSidemenuItemToNavigationProps(menuEntry)}
-              />
-            ))}
-          </NavigationMenu>
+            onPresenceAnimatingChange={(isAnimating) => {
+              if (!isAnimating) {
+                endSizeAnimation();
+              }
+            }}
+          />
         </SidemenuMenuItemsContainer>
       </SidemenuNavigationBodyZone>
 

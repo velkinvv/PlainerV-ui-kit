@@ -44,6 +44,9 @@ export {
   getInputMinHeight,
 } from './InputStyles';
 
+export { CharacterCounterMotion } from './CharacterCounterMotion';
+export type { CharacterCounterMotionProps } from './CharacterCounterMotion';
+
 // Общие хелперы поведения для Input/TextArea
 export {
   getInputDisplayValue,

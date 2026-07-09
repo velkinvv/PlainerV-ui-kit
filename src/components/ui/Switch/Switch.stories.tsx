@@ -5,7 +5,7 @@ import { Size } from '../../../types/sizes';
 import { DOC_SWITCH } from '@/components/ui/storyDocs/uiKitDocs';
 
 const meta: Meta<typeof Switch> = {
-  title: 'UI Kit/Inputs/Switch',
+  title: 'UI Kit/Buttons/Switch',
   component: Switch,
   parameters: {
     layout: 'padded',

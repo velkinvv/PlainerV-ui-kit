@@ -1,10 +1,25 @@
 // UI Components
-export { Button, ButtonGroup } from './buttons';
-export type { ButtonProps, ButtonGroupProps, ButtonGroupAttachedShape } from '@/types/ui';
+export { Button, ButtonGroup, MultiButton } from './buttons';
+export type {
+  ButtonProps,
+  ButtonGroupProps,
+  ButtonGroupAttachedShape,
+  MultiButtonProps,
+  MultiButtonAppearance,
+} from '@/types/ui';
 export { Link, LinkMode } from './Link';
 export type { LinkProps, LinkTextProps, LinkButtonProps } from './Link';
 export { IconButton } from './buttons';
 export type { IconButtonProps } from '@/types/ui';
+
+export { SegmentedControl } from './SegmentedControl';
+export type {
+  SegmentedControlProps,
+  SegmentedControlItemProps,
+  SegmentedControlOption,
+  SegmentedControlAppearance,
+  SegmentedControlSelectionMode,
+} from '@/types/ui';
 
 export { Input } from './inputs/Input';
 export type {
@@ -30,8 +45,9 @@ export type { SelectProps, SelectOption } from '@/types/ui';
 
 export { Form, HiddenUsernameField } from './Form';
 
-export { Badge } from './Badge';
+export { Badge, BadgePresence } from './Badge';
 export type { BadgeProps } from '@/types/ui';
+export type { BadgePresenceProps } from './Badge';
 
 export { Tag } from './Tag';
 export type {
@@ -40,6 +56,17 @@ export type {
   TagAppearance,
   TagStatusDisplay,
   TagCustomColors,
+} from '@/types/ui';
+
+export { List } from './List';
+export type {
+  ListProps,
+  ListItemProps,
+  ListIconProps,
+  ListVariant,
+  ListMarkerStyle,
+  ListOrderedMarkerStyle,
+  ListUnorderedMarkerStyle,
 } from '@/types/ui';
 
 export { Breadcrumb } from './Breadcrumb';
@@ -74,6 +101,9 @@ export { GridMode } from '@/types/ui';
 
 export { Dropdown } from './Dropdown';
 export type { DropdownProps } from '@/types/ui';
+
+export { DropMenu } from './DropMenu';
+export type { DropMenuProps, DropMenuRenderContentProps } from '@/types/ui';
 
 export { Popover } from './Popover/Popover';
 export type { PopoverProps, PopoverVariant } from '@/types/ui';
@@ -122,6 +152,49 @@ export {
   FloatingMenuDragSource,
 } from '@/types/ui';
 
+export {
+  ActionBar,
+  ActionBarItem,
+  ActionBarItemWithTooltip,
+  ActionBarDivider,
+  ActionBarDropMenuItem,
+} from './ActionBar';
+export type {
+  ActionBarProps,
+  ActionBarItemProps,
+  ActionBarDividerProps,
+  ActionBarDropMenuItemProps,
+  ActionBarItemDefinition,
+  ActionBarDropMenuRenderOptions,
+} from '@/types/ui';
+export { ActionBarSize, ActionBarOrientation } from '@/types/ui';
+
+export {
+  Carousel,
+  CarouselSlide,
+  CarouselImage,
+  CarouselCaption,
+  CarouselSlideOverlay,
+} from './Carousel';
+export type {
+  CarouselProps,
+  CarouselSlideProps,
+  CarouselImageProps,
+  CarouselCaptionProps,
+  CarouselSlideOverlayProps,
+  CarouselItemDefinition,
+  CarouselSlideInfo,
+  CarouselSlideChangeEvent,
+  CarouselSlideClickEvent,
+} from '@/types/ui';
+export {
+  CarouselAnimation,
+  CarouselNavigation,
+  CarouselDotsPosition,
+  CarouselSlideOverlayPlacement,
+  CarouselSlideOverlayAlign,
+} from '@/types/ui';
+
 export { Pagination } from './Pagination';
 export type { PaginationProps } from '@/types/ui';
 
@@ -154,6 +227,9 @@ export type {
 export { Spinner } from './Spinner';
 export type { SpinnerProps } from '@/types/ui';
 
+export { Pulse } from './Pulse';
+export type { PulseProps, PulseStatus, PulseCustomColors } from '@/types/ui';
+
 export { Skeleton } from './Skeleton';
 export type { SkeletonProps } from '@/types/ui';
 
@@ -163,6 +239,15 @@ export type { DividerProps } from '@/types/ui';
 export { Pill } from './Pill';
 export type { PillProps, PillStatus } from '@/types/ui';
 export type { PillGeometry } from './Pill';
+
+export { Chip, Chips } from './Chip';
+export type {
+  ChipProps,
+  ChipsProps,
+  ChipAppearance,
+  ChipsSelectionMode,
+} from '@/types/ui';
+export type { ChipGeometry } from './Chip';
 
 export { Slider, RangeSlider } from './Slider';
 export type { SliderProps, RangeSliderProps, SliderRangeValue } from '@/types/ui';
@@ -230,6 +315,20 @@ export {
 export type {
   DataGridProps,
   DataGridBaseRow,
+  DataGridRowWithColors,
+  DataGridWithRowColors,
+  DataGridColumnWithColors,
+  DataGridWithColumnColors,
+  DataGridWithRowAndColumnColors,
+  TableRowColorMap,
+  TableRowColorResolver,
+  TableColumnColorMap,
+  TableColumnColorResolver,
+  TableColorMap,
+  TableColorResolver,
+  TableWithRowColors,
+  TableWithColumnColors,
+  TableWithRowAndColumnColors,
   DataGridRowId,
   DataGridColumn,
   DataGridColumnFilterIconPosition,
@@ -283,6 +382,9 @@ export type { ThemeToggleProps } from '@/types/ui';
 export { ThemeSelector } from './ThemeSelector';
 export type { ThemeSelectorProps } from '@/types/ui';
 
+export { ThemeVariantSelector } from './ThemeVariantSelector';
+export type { ThemeVariantSelectorProps } from '@/types/ui';
+
 export { Sidemenu } from './sidemenu';
 export type { SidemenuProps } from '@/types/ui';
 
@@ -306,4 +408,11 @@ export type { RadioButtonProps, RadioButtonGroupProps, RadioButtonGroupOption } 
 
 export { DateInput } from './inputs/DateInput';
 export { TimeInput } from './inputs/TimeInput';
-export type { DateTimeRange, DatePickerProps as DateInputProps, TimeInputProps } from '@/types/ui';
+export { DateTimeInput, DateTimeInputRange } from './inputs/DateTimeInput';
+export type {
+  DateTimeRange,
+  DatePickerProps as DateInputProps,
+  TimeInputProps,
+  DateTimeInputProps,
+  DateTimeInputRangeProps,
+} from '@/types/ui';

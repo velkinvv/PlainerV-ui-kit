@@ -34,7 +34,7 @@ import {
   SkeletonEffect,
   AdditionalLabel,
   ExtraText,
-  CharacterCounter,
+  CharacterCounterMotion,
   RequiredIndicator,
   shouldShowInputClearButton,
 } from '../shared';
@@ -485,11 +485,11 @@ export const SliderInputSingle = forwardRef<HTMLInputElement, SliderInputSingleP
         {helperText && !error && !success ? <HelperText>{helperText}</HelperText> : null}
         {extraText ? <ExtraText>{extraText}</ExtraText> : null}
 
-        {showCounter && maxLength ? (
-          <CharacterCounter $isOverLimit={currentLength > maxLength}>
-            {currentLength}/{maxLength}
-          </CharacterCounter>
-        ) : null}
+        <CharacterCounterMotion
+          visible={Boolean(showCounter && maxLength)}
+          currentLength={currentLength}
+          maxLength={maxLength ?? 0}
+        />
       </InputContainer>
     );
   },

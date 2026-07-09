@@ -3,6 +3,7 @@ import { DOC_THEME_SELECTOR } from '@/components/ui/storyDocs/uiKitDocs';
 import React from 'react';
 import { ThemeColorScheme } from '@/types/theme';
 import { defineThemeCatalog } from '@/handlers/themeCatalogHandlers';
+import { resolveStorybookGlobalsAxes } from '@/handlers/storybookThemeHandlers';
 import { ThemeProvider } from '@/themes/ThemeProvider';
 import { Button } from '@/components/ui/buttons/Button';
 import { Typography } from '@/components/ui/Typography';
@@ -35,9 +36,9 @@ const appThemes = defineThemeCatalog([
 type AppThemeMode = (typeof appThemes.themeModes)[number];
 
 const withMultiThemeCatalog: Decorator = (Story, context) => {
-  const rawTheme = context.globals?.theme;
+  const { colorScheme } = resolveStorybookGlobalsAxes(context.globals);
   const initialThemeMode: AppThemeMode =
-    rawTheme === 'dark' ? appThemes.themeMode.dark : appThemes.themeMode.light;
+    colorScheme === ThemeColorScheme.DARK ? appThemes.themeMode.dark : appThemes.themeMode.light;
 
   return (
     <ThemeProvider<AppThemeMode>

@@ -59,6 +59,7 @@ export const AvatarContainer = styled(motion.div)<AvatarProps>`
   border-radius: ${({ theme }) => theme.avatars.settings.borderRadius};
   overflow: ${({ theme }) => theme.avatars.settings.overflow};
   background: ${({ theme }) => theme.avatars.variants.default.background};
+  border: ${({ theme }) => theme.avatars.variants.default.border || 'none'};
   cursor: ${({ cursor, onClick, theme }) =>
     cursor ||
     (onClick ? theme.avatars.settings.cursor.clickable : theme.avatars.settings.cursor.default)};
@@ -66,6 +67,17 @@ export const AvatarContainer = styled(motion.div)<AvatarProps>`
   width: 100%;
   height: 100%;
   user-select: ${({ theme }) => theme.avatars.settings.userSelect};
+
+  ${({ theme }) => {
+    const backdropFilter = theme.avatars.settings.backdropFilter;
+
+    return backdropFilter
+      ? css`
+          backdrop-filter: ${backdropFilter};
+          -webkit-backdrop-filter: ${backdropFilter};
+        `
+      : '';
+  }}
 
   ${({ state, theme }) => {
     if (
@@ -128,6 +140,18 @@ export const AvatarFallback = styled.div<{ $backgroundColor?: string }>`
   color: ${({ theme }) => theme.avatars.variants.default.color};
   background: ${({ $backgroundColor, theme }) =>
     $backgroundColor || theme.avatars.variants.default.background};
+  border: ${({ theme }) => theme.avatars.variants.default.border || 'none'};
+
+  ${({ theme }) => {
+    const backdropFilter = theme.avatars.settings.backdropFilter;
+
+    return backdropFilter
+      ? css`
+          backdrop-filter: ${backdropFilter};
+          -webkit-backdrop-filter: ${backdropFilter};
+        `
+      : '';
+  }}
 `;
 
 /**

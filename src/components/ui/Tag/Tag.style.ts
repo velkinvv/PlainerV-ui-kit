@@ -1,8 +1,10 @@
 import styled, { css } from 'styled-components';
+import { motion } from 'framer-motion';
 import { createStyledShouldForwardProp } from '../../../handlers/styledComponentHandlers';
 import { TransitionHandler } from '../../../handlers/uiHandlers';
 import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
-import { ThemeColorScheme, type Colors } from '../../../types/theme';
+import { getGlassTagTone } from '../../../handlers/tagGlassHandlers';
+import { ThemeColorScheme, type Colors, type TagTheme } from '../../../types/theme';
 import type {
   TagAppearance,
   TagColorVariant,
@@ -72,10 +74,14 @@ type TagTone = {
 };
 
 const getTagTone = (
-  theme: { colors: Colors; mode?: ThemeColorScheme },
+  theme: { colors: Colors; mode?: ThemeColorScheme; tags?: TagTheme },
   color: TagColorVariant,
   isDark: boolean,
 ): TagTone => {
+  if (theme.tags?.settings?.backdropFilter) {
+    return getGlassTagTone(theme, color, isDark);
+  }
+
   const mix = (accent: string, lightPct: number, darkPct: number) =>
     `color-mix(in srgb, ${accent} ${isDark ? darkPct : lightPct}%, ${theme.colors.input})`;
 
@@ -178,7 +184,7 @@ const getTagTone = (
 };
 
 const palette = (
-  theme: { colors: Colors; mode?: ThemeColorScheme },
+  theme: { colors: Colors; mode?: ThemeColorScheme; tags?: TagTheme },
   color: TagColorVariant,
   appearance: TagAppearance,
 ) => {
@@ -250,6 +256,17 @@ export const TagRoot = styled.span.withConfig({
     $disabled ? 'not-allowed' : $clickable ? 'pointer' : 'default'};
   opacity: ${({ $disabled }) => ($disabled ? 0.55 : 1)};
 
+  ${({ theme }) => {
+    const backdropFilter = theme.tags?.settings?.backdropFilter;
+
+    return backdropFilter
+      ? css`
+          backdrop-filter: ${backdropFilter};
+          -webkit-backdrop-filter: ${backdropFilter};
+        `
+      : '';
+  }}
+
   ${({ $widthCss }) => $widthCss && `width: ${$widthCss};`}
   ${({ $maxWidthCss }) => $maxWidthCss && `max-width: ${$maxWidthCss};`}
 
@@ -318,7 +335,7 @@ export const TagRoot = styled.span.withConfig({
 `;
 
 /** Цветная метка статуса слева (режим `statusDisplay="marker"`) */
-export const TagStatusMarker = styled.span.withConfig({
+export const TagStatusMarker = styled(motion.span).withConfig({
   shouldForwardProp: createStyledShouldForwardProp(),
 })<{ $markerColor: TagColorVariant; $markerFill?: string }>`
   flex-shrink: 0;

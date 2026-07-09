@@ -11,9 +11,17 @@ import type {
   DropdownMenuItemProps,
   DropdownMenuItemValue,
 } from '../../../types/ui';
+import { ButtonVariant } from '../../../types/ui';
 import { Size, IconSize } from '../../../types/sizes';
 import { Icon } from '../Icon/Icon';
+import { Button } from '../buttons/Button/Button';
 import { Dropdown } from '../Dropdown/Dropdown';
+import {
+  computeRangeDatesAfterDayClick,
+  resolveDatePickerDraft,
+  type DatePickerDraftDates,
+  type DatePickerDraftPhase,
+} from '../../../handlers/dateInputPickerHandlers';
 import {
   CalendarRoot,
   CalendarTitle,
@@ -46,6 +54,9 @@ import {
 } from './handlers';
 import { DateRollerPicker } from '../DateRollerPicker/DateRollerPicker';
 import { CalendarMonthYearSplit } from './CalendarMonthYearSplit';
+
+/** Формат строк черновика в колбэках Calendar (ISO-дата) */
+const CALENDAR_PICKER_DRAFT_FORMAT = 'YYYY-MM-DD';
 
 /**
  * Календарь по макету: сетка месяца, навигация, выбор дня, выпадающий список месяца/года.
@@ -86,11 +97,20 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
       showDateRollers = false,
       monthYearLayout = 'combined',
       onRollersDateChange,
+      onPickerChange,
+      modifyPickerValue,
+      deferPickerCommit,
+      onRangeChange,
       className,
       ...rest
     },
     ref,
   ) => {
+    /** Черновик только в standalone; при `onSelectDate` коммит на стороне родителя (DateInput и т.д.) */
+    const shouldUsePickerDraft =
+      !onSelectDate && Boolean(onPickerChange || modifyPickerValue);
+    const shouldDeferPickerCommit = deferPickerCommit ?? shouldUsePickerDraft;
+
     const isControlled = valueProp !== undefined;
     const [internalValue, setInternalValue] = useState<Date | null>(defaultValue ?? null);
     const selected = isControlled ? (valueProp ?? null) : internalValue;
@@ -127,6 +147,142 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
     );
 
     const [monthMenuOpen, setMonthMenuOpen] = useState(false);
+
+    const [draftSelectedDate, setDraftSelectedDate] = useState<Date | null>(null);
+    const [draftRangeStart, setDraftRangeStart] = useState<Date | null>(null);
+    const [draftRangeEnd, setDraftRangeEnd] = useState<Date | null>(null);
+    const [draftRangeHoverDate, setDraftRangeHoverDate] = useState<Date | null>(null);
+
+    const syncDraftFromProps = useCallback(() => {
+      if (!shouldUsePickerDraft) {
+        return;
+      }
+
+      if (selectionMode === 'single') {
+        setDraftSelectedDate(selected);
+        return;
+      }
+
+      setDraftRangeStart(rangeStart);
+      setDraftRangeEnd(rangeEnd);
+      setDraftRangeHoverDate(null);
+    }, [shouldUsePickerDraft, selectionMode, selected, rangeStart, rangeEnd]);
+
+    /**
+     * Обновляет черновик с учётом модификатора и `onPickerChange`.
+     * @param nextDraftDates — новые даты черновика
+     * @param phase — фаза изменения
+     */
+    const applyPickerDraftUpdate = useCallback(
+      (nextDraftDates: DatePickerDraftDates, phase: DatePickerDraftPhase) => {
+        const isRangeMode = selectionMode === 'range';
+        const resolvedDates = resolveDatePickerDraft({
+          draftDates: nextDraftDates,
+          range: isRangeMode,
+          format: CALENDAR_PICKER_DRAFT_FORMAT,
+          phase,
+          modifyPickerValue,
+          onPickerChange,
+        });
+
+        if (!isRangeMode) {
+          setDraftSelectedDate(resolvedDates.selectedDate);
+        } else {
+          setDraftRangeStart(resolvedDates.rangeStart);
+          setDraftRangeEnd(resolvedDates.rangeEnd);
+          setDraftRangeHoverDate(null);
+        }
+
+        if (!shouldDeferPickerCommit) {
+          if (!isRangeMode && resolvedDates.selectedDate) {
+            if (!isControlled) {
+              setInternalValue(resolvedDates.selectedDate);
+            }
+            onChange?.(resolvedDates.selectedDate);
+          } else if (
+            isRangeMode &&
+            resolvedDates.rangeStart &&
+            resolvedDates.rangeEnd
+          ) {
+            onRangeChange?.(resolvedDates.rangeStart, resolvedDates.rangeEnd);
+          }
+        }
+
+        return resolvedDates;
+      },
+      [
+        selectionMode,
+        modifyPickerValue,
+        onPickerChange,
+        shouldDeferPickerCommit,
+        isControlled,
+        onChange,
+        onRangeChange,
+      ],
+    );
+
+    useEffect(() => {
+      syncDraftFromProps();
+    }, [syncDraftFromProps]);
+
+    const effectiveSelected = shouldUsePickerDraft ? draftSelectedDate : selected;
+    const effectiveRangeStart = shouldUsePickerDraft ? draftRangeStart : rangeStart;
+    const effectiveRangeEnd = shouldUsePickerDraft ? draftRangeEnd : rangeEnd;
+    const effectiveRangeHover = shouldUsePickerDraft ? draftRangeHoverDate : rangeHoverDate;
+
+    const handleDraftApply = useCallback(() => {
+      if (selectionMode === 'single') {
+        if (!draftSelectedDate) {
+          return;
+        }
+
+        const resolvedDates = applyPickerDraftUpdate(
+          { selectedDate: draftSelectedDate, rangeStart: null, rangeEnd: null },
+          'apply',
+        );
+
+        if (resolvedDates.selectedDate) {
+          if (!isControlled) {
+            setInternalValue(resolvedDates.selectedDate);
+          }
+          onChange?.(resolvedDates.selectedDate);
+        }
+        return;
+      }
+
+      if (!draftRangeStart || !draftRangeEnd) {
+        return;
+      }
+
+      const resolvedDates = applyPickerDraftUpdate(
+        { selectedDate: null, rangeStart: draftRangeStart, rangeEnd: draftRangeEnd },
+        'apply',
+      );
+
+      if (resolvedDates.rangeStart && resolvedDates.rangeEnd) {
+        onRangeChange?.(resolvedDates.rangeStart, resolvedDates.rangeEnd);
+      }
+    }, [
+      selectionMode,
+      draftSelectedDate,
+      draftRangeStart,
+      draftRangeEnd,
+      applyPickerDraftUpdate,
+      isControlled,
+      onChange,
+      onRangeChange,
+    ]);
+
+    const handleDraftClear = useCallback(() => {
+      applyPickerDraftUpdate(
+        { selectedDate: null, rangeStart: null, rangeEnd: null },
+        'clear',
+      );
+
+      if (!isControlled) {
+        setInternalValue(null);
+      }
+    }, [applyPickerDraftUpdate, isControlled]);
 
     const weekdayLabels = useMemo(() => {
       if (weekdaysProp?.length === 7) {
@@ -225,31 +381,91 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
         if (isDateDisabled?.(dayOnly)) {
           return;
         }
+
         if (onSelectDate) {
           onSelectDate(dayOnly);
           return;
         }
+
+        if (shouldUsePickerDraft) {
+          if (selectionMode === 'single') {
+            applyPickerDraftUpdate(
+              { selectedDate: dayOnly, rangeStart: null, rangeEnd: null },
+              'pick',
+            );
+            return;
+          }
+
+          const nextDraftDates = computeRangeDatesAfterDayClick(
+            dayOnly,
+            draftRangeStart,
+            draftRangeEnd,
+          );
+          applyPickerDraftUpdate(nextDraftDates, 'pick');
+          return;
+        }
+
         if (!isControlled) {
           setInternalValue(dayOnly);
         }
         onChange?.(dayOnly);
       },
-      [disabled, minDate, maxDate, isDateDisabled, onSelectDate, isControlled, onChange],
+      [
+        disabled,
+        minDate,
+        maxDate,
+        isDateDisabled,
+        onSelectDate,
+        shouldUsePickerDraft,
+        selectionMode,
+        applyPickerDraftUpdate,
+        draftRangeStart,
+        draftRangeEnd,
+        isControlled,
+        onChange,
+      ],
     );
+
+    const handleDraftDayMouseEnter = useCallback(
+      (dayOnly: Date) => {
+        if (shouldUsePickerDraft && selectionMode === 'range' && draftRangeStart && !draftRangeEnd) {
+          setDraftRangeHoverDate(dayOnly);
+        }
+        onDayMouseEnter?.(dayOnly);
+      },
+      [
+        shouldUsePickerDraft,
+        selectionMode,
+        draftRangeStart,
+        draftRangeEnd,
+        onDayMouseEnter,
+      ],
+    );
+
+    const handleDraftDayMouseLeave = useCallback(() => {
+      if (shouldUsePickerDraft && selectionMode === 'range') {
+        setDraftRangeHoverDate(null);
+      }
+      onDayMouseLeave?.();
+    }, [shouldUsePickerDraft, selectionMode, onDayMouseLeave]);
 
     const rollerValue = useMemo(() => {
       if (selectionMode === 'range') {
-        const anchor = rangeEnd ?? rangeStart;
+        const anchor = effectiveRangeEnd ?? effectiveRangeStart;
         if (anchor) {
           return new Date(anchor.getFullYear(), anchor.getMonth(), anchor.getDate());
         }
         return new Date(effectiveVisible.getFullYear(), effectiveVisible.getMonth(), 1);
       }
-      if (selected) {
-        return new Date(selected.getFullYear(), selected.getMonth(), selected.getDate());
+      if (effectiveSelected) {
+        return new Date(
+          effectiveSelected.getFullYear(),
+          effectiveSelected.getMonth(),
+          effectiveSelected.getDate(),
+        );
       }
       return new Date(effectiveVisible.getFullYear(), effectiveVisible.getMonth(), 1);
-    }, [selectionMode, rangeEnd, rangeStart, selected, effectiveVisible]);
+    }, [selectionMode, effectiveRangeEnd, effectiveRangeStart, effectiveSelected, effectiveVisible]);
 
     const handleRollersChange = useCallback(
       (next: Date) => {
@@ -404,14 +620,14 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
             const isDis = disabled || outside || customDis;
             const isSel =
               selectionMode === 'single' &&
-              selected != null &&
-              isSameCalendarDay(dayOnly, selected);
+              effectiveSelected != null &&
+              isSameCalendarDay(dayOnly, effectiveSelected);
             const rangeFlags = getRangeDayVisualFlags(
               dayOnly,
               selectionMode,
-              rangeStart,
-              rangeEnd,
-              rangeHoverDate,
+              effectiveRangeStart,
+              effectiveRangeEnd,
+              effectiveRangeHover,
             );
             const isTod = isSameCalendarDay(dayOnly, today);
 
@@ -430,8 +646,8 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
                 $disabled={isDis}
                 disabled={isDis}
                 onClick={() => handleDayClick(cell.date)}
-                onMouseEnter={() => onDayMouseEnter?.(dayOnly)}
-                onMouseLeave={() => onDayMouseLeave?.()}
+                onMouseEnter={() => handleDraftDayMouseEnter(dayOnly)}
+                onMouseLeave={handleDraftDayMouseLeave}
               >
                 {cell.date.getDate()}
               </CalendarDayButton>
@@ -439,7 +655,28 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
           })}
         </CalendarGrid>
 
-        {footer ? <CalendarFooter>{footer}</CalendarFooter> : null}
+        {footer ? (
+          <CalendarFooter>{footer}</CalendarFooter>
+        ) : shouldDeferPickerCommit && shouldUsePickerDraft ? (
+          <CalendarFooter>
+            <Button
+              variant={ButtonVariant.SECONDARY}
+              size={size}
+              type="button"
+              onClick={handleDraftClear}
+            >
+              Очистить
+            </Button>
+            <Button
+              variant={ButtonVariant.PRIMARY}
+              size={size}
+              type="button"
+              onClick={handleDraftApply}
+            >
+              {selectionMode === 'range' ? 'Применить' : 'OK'}
+            </Button>
+          </CalendarFooter>
+        ) : null}
       </CalendarRoot>
     );
   },

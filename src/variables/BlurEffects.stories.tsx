@@ -105,6 +105,21 @@ export const SpecialBlurEffects: Story = {
         value: blurClasses.glassStrong,
         description: 'Сильный эффект стекла для важных элементов',
       },
+      {
+        name: 'Glass Dark',
+        value: blurClasses.glassDark,
+        description: 'Glass на тёмной палитре (glassDark-тема)',
+      },
+      {
+        name: 'Light Glass Dark',
+        value: blurClasses.glassDarkLight,
+        description: 'Лёгкий glass для тёмной палитры',
+      },
+      {
+        name: 'Strong Glass Dark',
+        value: blurClasses.glassDarkStrong,
+        description: 'Сильный glass для тёмной палитры (modal overlay)',
+      },
     ],
   },
 };

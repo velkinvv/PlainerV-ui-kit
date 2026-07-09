@@ -1,15 +1,17 @@
 import { ThemeColorScheme } from '@/types/theme';
 import { neutral } from '@/variables/colors/neutral';
 import { primary } from '@/variables/colors/primary';
+import {
+  getSnackbarGlassSurfaceTokens,
+  isSnackbarGlassTheme,
+  type SnackbarSurfaceTokens,
+  type SnackbarThemeContext,
+} from '@/handlers/snackbarGlassHandlers';
 
-/**
- * Токены «инверсной» полосы snackbar (тёмная плашка, светлый текст).
- */
-export interface SnackbarSurfaceTokens {
-  surface: string;
-  messageColor: string;
-  actionColor: string;
-}
+export type {
+  SnackbarSurfaceTokens,
+  SnackbarThemeContext,
+} from '@/handlers/snackbarGlassHandlers';
 
 /**
  * Генерирует id записи для стека snackbar.
@@ -23,9 +25,15 @@ export function createSnackbarId(): string {
 
 /**
  * Палитра компактной полосы по теме (контрастная плашка внизу экрана).
- * @param mode - Режим темы из ThemeProvider
+ * @param context - Режим темы и опционально `snackbars` / `colors` для glass
  */
-export function getSnackbarSurfaceTokens(mode: ThemeColorScheme): SnackbarSurfaceTokens {
+export function getSnackbarSurfaceTokens(context: SnackbarThemeContext): SnackbarSurfaceTokens {
+  if (isSnackbarGlassTheme(context)) {
+    return getSnackbarGlassSurfaceTokens(context);
+  }
+
+  const mode = context.mode;
+
   if (mode === ThemeColorScheme.DARK) {
     return {
       surface: neutral[800],
@@ -33,6 +41,7 @@ export function getSnackbarSurfaceTokens(mode: ThemeColorScheme): SnackbarSurfac
       actionColor: primary[200],
     };
   }
+
   return {
     surface: neutral[900],
     messageColor: neutral[10],

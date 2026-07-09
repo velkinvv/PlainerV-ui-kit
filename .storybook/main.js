@@ -32,7 +32,7 @@ module.exports = {
     const mergedRelative = [...new Set([...withoutTablePkg, ...forcedStoryPaths])];
     return mergedRelative.map(relativePath => path.join('..', relativePath).replace(/\\/g, '/'));
   },
-  addons: ['@storybook/addon-links', '@storybook/addon-docs', '@storybook/addon-themes'],
+  addons: ['@storybook/addon-links', '@storybook/addon-docs'],
   /** Полная таблица пропсов из TypeScript (в т.ч. `forwardRef` и поля из `SelectProps` / `DropdownProps`). */
   typescript: {
     reactDocgen: 'react-docgen-typescript',

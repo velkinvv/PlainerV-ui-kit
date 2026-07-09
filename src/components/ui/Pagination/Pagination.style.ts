@@ -1,8 +1,11 @@
 import styled, { css } from 'styled-components';
-import { ThemeColorScheme } from '@/types/theme';
+import { motion } from 'framer-motion';
 import { ButtonVariant } from '@/types/ui';
 import { getButtonVariant } from '@/handlers/buttonThemeHandlers';
-import grey from '@/variables/colors/grey';
+import {
+  getPaginationActivePageBoxShadow,
+  getPaginationSurfacePalette,
+} from '@/handlers/paginationGlassHandlers';
 
 /**
  * Корневой `nav`: центрирует плашку пагинации.
@@ -28,8 +31,19 @@ export const PaginationBar = styled.div`
   padding: 4px 8px;
   gap: 2px;
   border-radius: 9999px;
-  background: ${({ theme }) =>
-    theme.mode === ThemeColorScheme.DARK ? grey[800] : theme.colors.backgroundSecondary};
+  background: ${({ theme }) => getPaginationSurfacePalette(theme).barBackground};
+  border: ${({ theme }) => getPaginationSurfacePalette(theme).barBorder};
+
+  ${({ theme }) => {
+    const backdropFilter = theme.paginations?.settings?.backdropFilter;
+
+    return backdropFilter
+      ? css`
+          backdrop-filter: ${backdropFilter};
+          -webkit-backdrop-filter: ${backdropFilter};
+        `
+      : '';
+  }}
 `;
 
 /**
@@ -78,8 +92,7 @@ export const PaginationArrowButton = styled.button<{
   transition: background 0.15s ease;
 
   &:hover:enabled {
-    background: ${({ theme }) =>
-      theme.mode === ThemeColorScheme.DARK ? 'rgba(255, 255, 255, 0.08)' : '#f5f5f5'};
+    background: ${({ theme }) => getPaginationSurfacePalette(theme).itemHoverBackground};
   }
 
   &:disabled {
@@ -129,7 +142,7 @@ export const PageButton = styled.button<{
     opacity 0.15s ease;
 
   ${({ theme, $active, $disabled }) => {
-    const dark = theme.mode === ThemeColorScheme.DARK;
+    const surfaces = getPaginationSurfacePalette(theme);
     const labelColor = theme.colors.text;
     const accentFill = theme.colors.info;
     const accentFillHover = theme.colors.infoHover;
@@ -150,18 +163,14 @@ export const PageButton = styled.button<{
     if ($active) {
       return css`
         color: ${primaryButtonStyles.color};
-        background: ${accentFill};
+        background: ${surfaces.activePageBackground(accentFill)};
         cursor: default;
-        box-shadow:
-          0 0 0 1px color-mix(in srgb, ${accentFill} 45%, transparent),
-          0 4px 14px color-mix(in srgb, ${accentFill} 40%, transparent);
+        box-shadow: ${getPaginationActivePageBoxShadow(surfaces, accentFill)};
 
         &:hover {
           color: ${labelOnAccent};
-          background: ${accentFillHover};
-          box-shadow:
-            0 0 0 1px color-mix(in srgb, ${accentFillHover} 45%, transparent),
-            0 4px 14px color-mix(in srgb, ${accentFillHover} 38%, transparent);
+          background: ${surfaces.activePageHoverBackground(accentFillHover)};
+          box-shadow: ${getPaginationActivePageBoxShadow(surfaces, accentFillHover)};
         }
       `;
     }
@@ -172,7 +181,7 @@ export const PageButton = styled.button<{
       cursor: pointer;
 
       &:hover {
-        background: ${dark ? 'rgba(255, 255, 255, 0.08)' : '#f5f5f5'};
+        background: ${surfaces.itemHoverBackground};
       }
 
       &:focus {
@@ -194,7 +203,7 @@ export const PageButton = styled.button<{
  * @property $fontSize — размер шрифта
  * @property $radius — скругление
  */
-export const PaginationCompactCurrent = styled.span<{
+export const PaginationCompactCurrent = styled(motion.span)<{
   $minW: string;
   $minH: string;
   $fontSize: string;
@@ -214,15 +223,14 @@ export const PaginationCompactCurrent = styled.span<{
   user-select: none;
 
   ${({ theme }) => {
+    const surfaces = getPaginationSurfacePalette(theme);
     const accentFill = theme.colors.info;
     const primaryButtonStyles = getButtonVariant(theme.buttons, ButtonVariant.PRIMARY);
 
     return css`
       color: ${primaryButtonStyles.color};
-      background: ${accentFill};
-      box-shadow:
-        0 0 0 1px color-mix(in srgb, ${accentFill} 45%, transparent),
-        0 4px 14px color-mix(in srgb, ${accentFill} 40%, transparent);
+      background: ${surfaces.activePageBackground(accentFill)};
+      box-shadow: ${getPaginationActivePageBoxShadow(surfaces, accentFill)};
     `;
   }}
 `;

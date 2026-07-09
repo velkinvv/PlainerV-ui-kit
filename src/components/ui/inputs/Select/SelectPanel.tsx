@@ -19,7 +19,7 @@ import {
 } from '../../../../types/ui';
 import { IconSize, Size } from '../../../../types/sizes';
 import { getClearIconSizeForInputField } from '../../../../handlers/iconHandlers';
-import { Badge } from '../../Badge/Badge';
+import { BadgePresence } from '../../Badge/Badge';
 import { Icon } from '../../Icon/Icon';
 import { Tooltip } from '../../Tooltip/Tooltip';
 import { Hint, HintVariant, type HintPosition } from '../../Hint/Hint';
@@ -39,13 +39,11 @@ import {
 import { Dropdown, DropdownMenuFromDefinitions } from '../../Dropdown';
 import { normalizeDropdownValue } from '../../Dropdown/handlers';
 import { findDropdownMenuItemByValueInDefinitions } from '../../../../handlers/dropdownTreeSelectionHandlers';
+import { Chip } from '../../Chip';
 import {
   SelectChevronFlip,
   SelectChevronSlot,
   SelectDropdownAnchor,
-  SelectMultiChip,
-  SelectMultiChipLabel,
-  SelectMultiChipRemove,
   SelectMultiClearAllBtn,
   SelectMultiCountBadgeSlot,
   SelectMultiPlaceholder,
@@ -715,26 +713,13 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
                 </SelectMultiPlaceholder>
               ) : (
                 multiChipEntries.map((chip) => (
-                  <SelectMultiChip key={chip.value}>
-                    <SelectMultiChipLabel title={chip.label}>{chip.label}</SelectMultiChipLabel>
-                    <SelectMultiChipRemove
-                      type="button"
-                      disabled={selectDisabled}
-                      aria-label={`Удалить «${chip.label}»`}
-                      onMouseDown={(mouseEvent: React.MouseEvent<HTMLButtonElement>) => {
-                        mouseEvent.preventDefault();
-                        mouseEvent.stopPropagation();
-                      }}
-                      onClick={handleMultiChipRemoveClick(chip.value)}
-                    >
-                      <Icon
-                        name="IconExClose"
-                        size={IconSize.XS}
-                        color="currentColor"
-                        {...clearIconProps}
-                      />
-                    </SelectMultiChipRemove>
-                  </SelectMultiChip>
+                  <Chip
+                    key={chip.value}
+                    disabled={selectDisabled}
+                    onClose={handleMultiChipRemoveClick(chip.value)}
+                  >
+                    {chip.label}
+                  </Chip>
                 ))
               )}
             </SelectMultiTriggerRoot>
@@ -761,13 +746,11 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
           </SelectTriggerButton>
         )}
         {isLoading ? <LoadingSpinner size={size} /> : null}
-        {showMultiCountBadge ? (
-          <SelectMultiCountBadgeSlot aria-hidden>
-            <Badge variant={BadgeVariant.DEFAULT_MAIN} size={size}>
-              {multiSelectedCount}
-            </Badge>
-          </SelectMultiCountBadgeSlot>
-        ) : null}
+        <SelectMultiCountBadgeSlot aria-hidden>
+          <BadgePresence visible={showMultiCountBadge} variant={BadgeVariant.DEFAULT_MAIN} size={size}>
+            {multiSelectedCount}
+          </BadgePresence>
+        </SelectMultiCountBadgeSlot>
         {isMultiChipTrigger && multiSelectedCount > 0 ? (
           <SelectMultiClearAllBtn
             type="button"

@@ -1,5 +1,12 @@
 // Экспорт тем
-export { lightTheme, darkTheme } from './themes';
+export { lightTheme, darkTheme, glassLightTheme, glassDarkTheme, glassTheme } from './themes';
+export {
+  createGlassThemeOverride,
+  glassLightThemeOverride,
+  glassDarkThemeOverride,
+  glassSurfacePalettes,
+  glassBackdropFilters,
+} from './glass';
 export { mergeTheme } from './mergeTheme';
 
 // Экспорт ThemeProvider

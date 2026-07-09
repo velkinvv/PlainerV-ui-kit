@@ -1,68 +1,80 @@
 import type { Preview } from '@storybook/react';
-import addonThemes from '@storybook/addon-themes';
-import { withThemeByDataAttribute } from '@storybook/addon-themes';
+import { ThemeColorScheme, ThemeVariant } from '../src/types/theme';
+import { readStorybookThemeAxes } from '../src/handlers/storybookThemeHandlers';
+import { themeVariantLabels } from '../src/handlers/themeVariantHandlers';
 import { withStorybookUiKitTheme } from './withStorybookUiKitTheme';
 import { withStorybookDocsChromeTheme } from './withStorybookDocsChromeTheme';
 import { withStoryCanvasRoom } from './withStoryCanvasRoom';
 import { withStorybookMotion } from './withStorybookMotion';
+import { withStorybookThemeDataAttribute } from './withStorybookThemeDataAttribute';
 import './preview-storybook-overlays.css';
 import './preview-storybook-docs-theme.css';
 import './preview-storybook-motion.css';
 import { getStoryDocsSourceCode } from '../src/handlers/storybookStoryDocs';
 
-const themeAddonAnnotations = addonThemes();
-
-/**
- * Стартовое значение глобала `theme` (тулбар аддона тем) — как у {@link ThemeProvider} / `localStorage`.
- */
-function getInitialStorybookThemeGlobal(): 'light' | 'dark' {
-  if (typeof window === 'undefined') {
-    return 'light';
-  }
-  return window.localStorage.getItem('storybook-theme') === 'dark' ? 'dark' : 'light';
-}
+const initialThemeAxes = readStorybookThemeAxes();
 
 /**
  * Глобальные параметры превью.
- * Декоратор {@link withStorybookUiKitTheme} подключает `ThemeProvider` для styled-components: без `theme` в
- * контексте падает доступ к `theme.sizes` / `theme.buttons` и т.д.
- * **Не оборачивайте** сторис в ещё один `ThemeProvider`: используйте `parameters.plainervTheme`
- * (`themeOverrides`, `themes`, `applyGlobalStyles`) — см. {@link withStorybookUiKitTheme}.
- *
- * `@storybook/addon-themes`: `withThemeByDataAttribute` выставляет `data-theme` на `<html>` (CSS / селекторы).
- * {@link withStorybookUiKitTheme} читает `context.globals.theme` и передаёт тему в {@link ThemeProvider} в iframe превью.
- * Оформление shell (сайдбар, хедер) — в `.storybook/manager.ts` через палитру UI-kit.
- *
- * `withStoryCanvasRoom` — внутри `ThemeProvider` (в массиве — перед `withStorybookUiKitTheme`), в Docs фон `backgroundSecondary`.
- * {@link withStorybookDocsChromeTheme} + `preview-storybook-docs-theme.css` — тёмные Docs (таблица, превью, тулбар).
- *
- * Выпадающие меню / Hint / Tooltip рендерятся через `createPortal` в `document.body` текущего документа
- * и `position: fixed`. Портал в `window.top.document` не используется: стили styled-components
- * вешаются на `document` iframe, узлы в другом документе остаются без стилей.
- * См. `preview-storybook-overlays.css` и `dropdownInline` / `portalContainer`.
+ * Декоратор {@link withStorybookUiKitTheme} подключает `ThemeProvider` для styled-components.
+ * Toolbar: два переключателя — `themeVariant` (standard / glass / kidsBoys / kidsGirls) и `colorScheme` (light / dark).
  */
 const preview: Preview = {
-  ...themeAddonAnnotations,
+  globalTypes: {
+    /** Legacy flat theme id — скрыт, используйте themeVariant + colorScheme */
+    theme: {
+      name: 'Theme (legacy)',
+      description: 'Устаревший глобал; не отображается в toolbar',
+      toolbar: {
+        hidden: true,
+        items: [],
+      },
+    },
+    themeVariant: {
+      name: 'Тема',
+      description: 'Вариант оформления',
+      toolbar: {
+        title: 'Тема',
+        icon: 'paintbrush',
+        items: [
+          { value: ThemeVariant.standard, title: themeVariantLabels[ThemeVariant.standard] },
+          { value: ThemeVariant.glass, title: themeVariantLabels[ThemeVariant.glass] },
+          { value: ThemeVariant.kidsBoys, title: themeVariantLabels[ThemeVariant.kidsBoys] },
+          { value: ThemeVariant.kidsGirls, title: themeVariantLabels[ThemeVariant.kidsGirls] },
+        ],
+        dynamicTitle: true,
+      },
+    },
+    colorScheme: {
+      name: 'Цвет',
+      description: 'Светлая или тёмная палитра',
+      toolbar: {
+        title: 'Цвет',
+        icon: 'circlehollow',
+        items: [
+          { value: ThemeColorScheme.LIGHT, title: 'Светлая' },
+          { value: ThemeColorScheme.DARK, title: 'Тёмная' },
+        ],
+        dynamicTitle: true,
+      },
+    },
+  },
   initialGlobals: {
-    ...(themeAddonAnnotations.initialGlobals ?? {}),
-    theme: getInitialStorybookThemeGlobal(),
+    themeVariant: initialThemeAxes.themeVariant,
+    colorScheme: initialThemeAxes.colorScheme,
   },
   decorators: [
-    /**
-     * Storybook 9: **первый** декоратор — ближе к сторис, **последний** — снаружи.
-     * `withStoryCanvasRoom` должен быть **внутри** `withStorybookUiKitTheme` → в массиве canvas **раньше**, uiKit **позже**.
-     * Снаружи → внутрь: data-theme → ThemeProvider → canvas → Docs chrome → motion → сторис.
-     */
     withStorybookMotion,
     withStorybookDocsChromeTheme,
     withStoryCanvasRoom,
     withStorybookUiKitTheme,
-    withThemeByDataAttribute({
-      themes: { light: 'light', dark: 'dark' },
-      defaultTheme: getInitialStorybookThemeGlobal(),
-    }),
+    withStorybookThemeDataAttribute,
   ],
   parameters: {
+    /** Скрывает legacy toolbar `@storybook/addon-themes` (glassDark theme и т.д.) */
+    themes: {
+      disable: true,
+    },
     options: {
       /**
        * Порядок в сайдбаре: сначала группы по названию, затем сторис внутри группы по фиксированному списку.
@@ -82,14 +94,15 @@ const preview: Preview = {
         // Без аннотаций TypeScript: Storybook парсит `storySort` и выполняет через eval как JS.
         const groupOrderMap = {
           Inputs: 1,
-          'Data Display': 2,
-          Feedback: 3,
-          Surfaces: 4,
-          Navigation: 5,
-          Layout: 6,
-          Utils: 7,
-          Hooks: 8,
-          Theming: 9,
+          Buttons: 2,
+          'Data Display': 3,
+          Feedback: 4,
+          Surfaces: 5,
+          Navigation: 6,
+          Layout: 7,
+          Utils: 8,
+          Hooks: 9,
+          Theming: 10,
         };
 
         /**
@@ -97,30 +110,43 @@ const preview: Preview = {
          */
         const storyOrderByGroup = {
           Inputs: [
-            'Button',
-            'IconButton',
-            'ButtonGroup',
             'Link',
             'Input',
             'TextArea',
             'FileInput',
             'Select',
+            'MultiInput',
+            'NumberInput',
             'DateInput',
             'TimeInput',
+            'DateTimeInput',
+            'SliderInput',
             'Calendar',
+            'Slider',
+          ],
+          Buttons: [
+            'Button',
+            'IconButton',
+            'ButtonGroup',
+            'MultiButton',
+            'SegmentedControl',
             'Checkbox',
             'Switch',
             'RadioButton',
             'RadioButtonGroup',
-            'Slider',
+            'ActionBar',
           ],
           'Data Display': [
             'Typography',
+            'Carousel',
             'Avatar',
             'AvatarGroup',
             'Badge',
             'Tag',
             'Pill',
+            'Chip',
+            'List',
+            'Accordion',
             'Table',
             'DataGrid',
             'Progress',
@@ -131,7 +157,7 @@ const preview: Preview = {
             'Icon/Test',
             'Icon/Icon Test',
           ],
-          Feedback: ['Toast', 'Snackbar', 'Tooltip', 'Hint', 'Spinner', 'Accordion'],
+          Feedback: ['Toast', 'Snackbar', 'Tooltip', 'Hint', 'Spinner', 'Pulse'],
           Surfaces: ['Card', 'Modal', 'Drawer', 'Sheet', 'Divider'],
           Navigation: [
             'Breadcrumb',
@@ -139,6 +165,7 @@ const preview: Preview = {
             'Dropdown',
             'Dropdown/DropdownMenu',
             'Dropdown/DropdownMenuItem',
+            'DropMenu',
             'FloatingMenu',
             'NavigationMenu',
             'Pagination',
@@ -175,7 +202,7 @@ const preview: Preview = {
         };
 
         /**
-         * @param storyTitle — полный `title` сторис (например `UI Kit/Inputs/Button`)
+         * @param storyTitle — полный `title` сторис (например `UI Kit/Buttons/Button`)
          * @returns приоритет группы в сайдбаре (меньше — выше)
          */
         const getGroupRank = (storyTitle) => {
@@ -188,7 +215,7 @@ const preview: Preview = {
         };
 
         /**
-         * @param storyTitle — полный `title` сторис (например `UI Kit/Inputs/Button`)
+         * @param storyTitle — полный `title` сторис (например `UI Kit/Buttons/Button`)
          * @returns индекс в таблице порядка внутри группы или -1, если не задано явно
          */
         const getWithinGroupOrderIndex = (storyTitle) => {

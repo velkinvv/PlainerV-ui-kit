@@ -11,6 +11,7 @@ import {
 } from '../../../../handlers/uiHandlers';
 import { getInputSideIconSlotSizePx } from '../../../../handlers/iconHandlers';
 import { getInputFieldWidthCss } from '../../../../handlers/inputFieldLayoutHandlers';
+import { glassSurfaceMaterialCss } from '../../../../handlers/glassSurfaceHandlers';
 import { Size } from '../../../../types/sizes';
 
 // ============================================================================
@@ -144,6 +145,7 @@ export const InputWrapper = styled(motion.div).withConfig({
   /* В узких контейнерах (Dropdown/Popover с menuWidth) не вылезать за padding — иначе обрезание при overflow:hidden */
   max-width: 100%;
   box-sizing: border-box;
+  ${({ theme }) => glassSurfaceMaterialCss(theme)}
 
   ${({ $compositeMode }) =>
     $compositeMode &&
@@ -508,7 +510,7 @@ export const ExtraText = styled.span`
   display: block;
 `;
 
-export const CharacterCounter = styled.span<{ $isOverLimit?: boolean }>`
+export const CharacterCounter = styled(motion.span)<{ $isOverLimit?: boolean }>`
   font-family: ${({ theme }) => theme.typography.caption.fontFamily};
   font-size: ${({ theme }) => theme.typography.caption.fontSize};
   font-weight: ${({ theme }) => theme.typography.caption.fontWeight};

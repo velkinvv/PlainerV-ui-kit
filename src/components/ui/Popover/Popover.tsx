@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useTheme } from 'styled-components';
 
 import clsx from 'clsx';
 
@@ -8,13 +9,17 @@ import type { PopoverProps } from '@/types/ui';
 
 import {
   calculateDropdownPosition,
+  findScrollableParents,
   handleClickOutsideEvent,
   isClickInsideDropdown,
+  removeScrollListeners,
 } from '../Dropdown/handlers';
 import { PopoverSurface } from './Popover.style';
-
-const defaultPortalRoot = (): HTMLElement | null =>
-  typeof document !== 'undefined' ? document.body : null;
+import {
+  resolveFloatingOverlayPortalRoot,
+  resolveFloatingOverlayZIndex,
+} from '../../../handlers/floatingOverlayHandlers';
+import { useFloatingOverlayLayer } from '../../../contexts/FloatingOverlayLayerContext';
 
 /**
  * Всплывающая панель с произвольным содержимым у триггера.
@@ -51,7 +56,7 @@ export const Popover: React.FC<PopoverProps> = ({
   onOpenChange,
   size = Size.MD,
   variant = 'default',
-  positioningMode = 'default',
+  positioningMode = 'autoFlip',
   preferredPlacement = 'below',
   portalContainer,
   offset = 4,
@@ -72,6 +77,12 @@ export const Popover: React.FC<PopoverProps> = ({
 }) => {
   const rootRef = useRef<HTMLDivElement>(null);
   const surfaceRef = useRef<HTMLDivElement>(null);
+  const theme = useTheme();
+  const floatingOverlayLayer = useFloatingOverlayLayer();
+  const floatingOverlayZIndex = resolveFloatingOverlayZIndex(
+    floatingOverlayLayer.minimumZIndex,
+    theme.dropdowns?.settings?.zIndex,
+  );
   const isControlled = openControlled !== undefined;
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const isOpen = isControlled ? Boolean(openControlled) : internalOpen;
@@ -125,10 +136,34 @@ export const Popover: React.FC<PopoverProps> = ({
     };
     window.addEventListener('scroll', onScrollOrResize, true);
     window.addEventListener('resize', onScrollOrResize);
+    document.addEventListener('scroll', onScrollOrResize, true);
+
+    const scrollableElements = findScrollableParents(rootRef.current);
+    scrollableElements.forEach((element) => {
+      if (element instanceof HTMLElement) {
+        element.addEventListener('scroll', onScrollOrResize, true);
+      }
+    });
+
     return () => {
       window.removeEventListener('scroll', onScrollOrResize, true);
       window.removeEventListener('resize', onScrollOrResize);
+      document.removeEventListener('scroll', onScrollOrResize, true);
+      removeScrollListeners(scrollableElements, onScrollOrResize);
     };
+  }, [isOpen, updatePosition]);
+
+  useEffect(() => {
+    if (!isOpen || !surfaceRef.current || typeof ResizeObserver === 'undefined') {
+      return;
+    }
+
+    const resizeObserver = new ResizeObserver(() => {
+      updatePosition();
+    });
+
+    resizeObserver.observe(surfaceRef.current);
+    return () => resizeObserver.disconnect();
   }, [isOpen, updatePosition]);
 
   useEffect(() => {
@@ -186,7 +221,10 @@ export const Popover: React.FC<PopoverProps> = ({
     ...restTriggerWrapperProps
   } = triggerWrapperProps ?? {};
 
-  const portalTarget = portalContainer ?? defaultPortalRoot();
+  const portalTarget = resolveFloatingOverlayPortalRoot(
+    portalContainer,
+    floatingOverlayLayer.portalRoot,
+  );
 
   const positionMode = inline ? 'absolute' : 'fixed';
 
@@ -202,6 +240,7 @@ export const Popover: React.FC<PopoverProps> = ({
       $positionMode={positionMode}
       $contentWidth={contentWidth}
       $contentMaxHeight={contentMaxHeight}
+      $overlayZIndex={floatingOverlayZIndex}
     >
       {children}
     </PopoverSurface>

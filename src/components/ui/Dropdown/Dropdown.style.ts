@@ -7,7 +7,7 @@ import {
   getDropdownItemStyles,
   getDropdownAnimations,
 } from '../../../handlers/dropdownThemeHandlers';
-import { overlayPanelBoxShadowFromTheme } from '../../../handlers/overlayPanelShadowHandlers';
+import { overlayPanelBoxShadowFromTheme, overlayPanelBackgroundFromTheme, overlayPanelBackdropFilterFromTheme } from '../../../handlers/overlayPanelShadowHandlers';
 import {
   buildHoverPressMotionCss,
   buildSurfaceTransitionCss,
@@ -66,6 +66,8 @@ export const DropdownContent = styled.div<{
   $menuMaxHeight?: string | number;
   $dropContainerCssMixin?: DropdownCssMixin;
   $inline?: boolean;
+  /** Перекрывает z-index из темы (оверлейный слой Modal / Drawer) */
+  $overlayZIndex?: number;
   /** Узкие внутренние отступы панели списка (календарь и т.п.) */
   $menuDensity?: 'default' | 'compact';
 }>`
@@ -73,23 +75,30 @@ export const DropdownContent = styled.div<{
   overflow: hidden;
   box-sizing: border-box;
 
-  ${({ theme, $size = Size.MD, $variant = 'default' }) => {
+  ${({ theme, $size = Size.MD, $variant = 'default', $overlayZIndex }) => {
     const styles = getDropdownContainerStyles(theme.dropdowns, $size, $variant);
+    const backdropFilter = overlayPanelBackdropFilterFromTheme(theme) ?? styles.backdropFilter;
     return css`
       min-width: ${styles.minWidth};
       max-width: ${styles.maxWidth};
       padding: ${styles.padding};
-      background: ${styles.background};
+      background: ${overlayPanelBackgroundFromTheme(theme, styles.background)};
       color: ${styles.color};
       border: ${styles.border};
       border-radius: ${styles.borderRadius};
       box-shadow: ${overlayPanelBoxShadowFromTheme(theme)};
-      z-index: ${styles.zIndex};
+      z-index: ${$overlayZIndex ?? styles.zIndex};
       font-family: ${styles.fontFamily};
       font-weight: ${styles.fontWeight};
       line-height: ${styles.lineHeight};
       text-align: ${styles.textAlign};
       user-select: ${styles.userSelect};
+      ${backdropFilter
+        ? css`
+            backdrop-filter: ${backdropFilter};
+            -webkit-backdrop-filter: ${backdropFilter};
+          `
+        : ''}
     `;
   }}
 

@@ -43,7 +43,7 @@ function LoginForm() {
 
 ### Группа кнопок
 
-Несколько действий в одной строке удобно обернуть в **`ButtonGroup`** (`@/components/ui`): задайте **`ariaLabel`** для доступности; для сегментированного вида — **`attached`**. Сторис: **Components/Buttons/ButtonGroup**.
+Несколько действий в одной строке удобно обернуть в **`ButtonGroup`** (`@/components/ui`): задайте **`ariaLabel`** для доступности; для сегментированного вида — **`attached`**. Сторис: **UI Kit → Buttons → ButtonGroup**.
 
 ### FileInput в форме
 

@@ -3,7 +3,10 @@ import { createStyledShouldForwardProp } from '../../../handlers/styledComponent
 import { motion } from 'framer-motion';
 import { Overlay } from '../Modal/Modal.style';
 import type { SheetPlacement } from '../../../types/ui';
+import { ThemeColorScheme } from '../../../types/theme';
 import { BorderRadiusHandler } from '../../../handlers/uiHandlers';
+import { getModalContainerBackground, getModalThemeContext } from '../../../handlers/modalGlassHandlers';
+import { glassSurfaceMaterialCss } from '../../../handlers/glassSurfaceHandlers';
 
 /**
  * Оверлей sheet: как у drawer, выравнивание по стороне.
@@ -44,11 +47,18 @@ export const SheetPanel = styled(motion.aside).withConfig({
 }>`
   display: flex;
   flex-direction: column;
-  background: ${({ theme }) => theme.colors?.background ?? '#ffffff'};
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+  background: ${({ theme }) => getModalContainerBackground(getModalThemeContext(theme))};
+  color: ${({ theme }) => theme.colors?.text ?? '#111'};
+  box-shadow: ${({ theme }) =>
+    theme.mode === ThemeColorScheme.DARK
+      ? '0 16px 48px rgba(0, 0, 0, 0.5)'
+      : theme.surfaceMaterial
+        ? theme.boxShadow.modal
+        : '0 16px 48px rgba(0, 0, 0, 0.12)'};
   overflow: hidden;
   max-width: 100vw;
   max-height: 100dvh;
+  ${({ theme }) => glassSurfaceMaterialCss(theme)}
 
   ${({ $placement, $widthCss, $heightCss }) =>
     $placement === 'left' || $placement === 'right'

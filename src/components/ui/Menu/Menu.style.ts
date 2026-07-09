@@ -1,13 +1,16 @@
 import styled, { css } from 'styled-components';
 import { ThemeColorScheme, type ThemeType } from '@/types/theme';
-import { overlayPanelBoxShadowFromTheme } from '../../../handlers/overlayPanelShadowHandlers';
+import {
+  overlayPanelBoxShadowFromTheme,
+  overlayPanelSurfaceCss,
+} from '../../../handlers/overlayPanelShadowHandlers';
 import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
 
 /** Внешняя «бумага» списка меню (тень и граница как у выпадающих панелей) */
 export const MenuSurface = styled.div`
   border-radius: 8px;
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  background: ${({ theme }) => theme.colors.background};
+  border: 1px solid ${({ theme }) => theme.colors.borderSecondary};
+  ${({ theme }) => overlayPanelSurfaceCss(theme)}
   box-shadow: ${({ theme }) => overlayPanelBoxShadowFromTheme(theme)};
   padding: 4px 0;
   min-width: 180px;

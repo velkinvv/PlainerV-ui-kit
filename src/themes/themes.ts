@@ -15,6 +15,9 @@ import { lightModalTheme, darkModalTheme } from './modal';
 import { lightProgressTheme, darkProgressTheme } from './progress';
 import { lightRadioButtonTheme, darkRadioButtonTheme } from './radioButton';
 import { Size } from '../types/sizes';
+import { mergeTheme } from './mergeTheme';
+import { createGlassThemeOverride } from './glass/createGlassTheme';
+import { createKidsThemeOverride } from './kids/createKidsTheme';
 
 /**
  * Светлая тема
@@ -121,3 +124,39 @@ export const darkTheme: ThemeType = {
   lineHeights,
   typography,
 };
+
+/** Glass на светлой палитре — vibrancy поверх mesh-gradient */
+export const glassLightTheme = mergeTheme(lightTheme, createGlassThemeOverride('light'));
+
+/** Glass на тёмной палитре — vibrancy поверх тёмного mesh-gradient */
+export const glassDarkTheme = mergeTheme(darkTheme, createGlassThemeOverride('dark'));
+
+/** Kids (мальчики) на светлой палитре — яркая детская тема 8–11 лет */
+export const kidsBoysLightTheme = mergeTheme(
+  lightTheme,
+  createKidsThemeOverride('boys', 'light'),
+);
+
+/** Kids (мальчики) на тёмной палитре */
+export const kidsBoysDarkTheme = mergeTheme(darkTheme, createKidsThemeOverride('boys', 'dark'));
+
+/** Kids (девочки) на светлой палитре */
+export const kidsGirlsLightTheme = mergeTheme(
+  lightTheme,
+  createKidsThemeOverride('girls', 'light'),
+);
+
+/** Kids (девочки) на тёмной палитре */
+export const kidsGirlsDarkTheme = mergeTheme(
+  darkTheme,
+  createKidsThemeOverride('girls', 'dark'),
+);
+
+/** @deprecated Используйте {@link kidsBoysLightTheme} */
+export const kidsLightTheme = kidsBoysLightTheme;
+
+/** @deprecated Используйте {@link kidsBoysDarkTheme} */
+export const kidsDarkTheme = kidsBoysDarkTheme;
+
+/** @deprecated Используйте {@link glassLightTheme} */
+export const glassTheme = glassLightTheme;

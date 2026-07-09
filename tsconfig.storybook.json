@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"],
+      "@/components/*": ["components/*"],
+      "@/types/*": ["types/*"],
+      "@/handlers/*": ["handlers/*"],
+      "@/themes/*": ["themes/*"],
+      "@/variables/*": ["variables/*"]
+    }
+  },
+  "include": [
+    "src/**/*.stories.ts",
+    "src/**/*.stories.tsx",
+    "src/**/*.mdx",
+    "src/types/styled.d.ts",
+    "src/themes/styled.d.ts"
+  ],
+  "exclude": ["node_modules", "dist", "storybook-static", "**/table_pkg/**"]
+}

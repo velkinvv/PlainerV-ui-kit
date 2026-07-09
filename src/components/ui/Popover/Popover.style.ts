@@ -7,7 +7,7 @@ import {
   getDropdownAnimations,
   getDropdownContainerStyles,
 } from '../../../handlers/dropdownThemeHandlers';
-import { overlayPanelBoxShadowFromTheme } from '../../../handlers/overlayPanelShadowHandlers';
+import { overlayPanelBoxShadowFromTheme, overlayPanelBackgroundFromTheme, overlayPanelBackdropFilterFromTheme } from '../../../handlers/overlayPanelShadowHandlers';
 import {
   buildSurfaceRevealAnimationCss,
   buildSurfaceTransitionCss,
@@ -25,6 +25,8 @@ export interface PopoverSurfaceStyledProps {
   $contentWidth?: string | number;
   /** Максимальная высота области контента со скроллом */
   $contentMaxHeight?: string | number;
+  /** Перекрывает z-index из темы dropdown */
+  $overlayZIndex?: number;
 }
 
 const widthCss = ($contentWidth?: string | number) =>
@@ -68,19 +70,20 @@ export const PopoverSurface = styled.div<PopoverSurfaceStyledProps>`
   opacity: 1;
   will-change: transform, opacity;
 
-  ${({ theme, $size, $variant }) => {
+  ${({ theme, $size, $variant, $overlayZIndex }) => {
     const styles = getDropdownContainerStyles(theme.dropdowns, $size, $variant);
     const animations = getDropdownAnimations(theme.dropdowns);
+    const backdropFilter = overlayPanelBackdropFilterFromTheme(theme) ?? styles.backdropFilter;
     return css`
       min-width: ${styles.minWidth};
       max-width: ${styles.maxWidth};
       padding: ${styles.padding};
-      background: ${styles.background};
+      background: ${overlayPanelBackgroundFromTheme(theme, styles.background)};
       color: ${styles.color};
       border: ${styles.border};
       border-radius: ${styles.borderRadius};
       box-shadow: ${overlayPanelBoxShadowFromTheme(theme)};
-      z-index: ${styles.zIndex};
+      z-index: ${$overlayZIndex ?? styles.zIndex};
       font-family: ${styles.fontFamily};
       font-weight: ${styles.fontWeight};
       line-height: ${styles.lineHeight};
@@ -89,7 +92,12 @@ export const PopoverSurface = styled.div<PopoverSurfaceStyledProps>`
       /* не наследуем nowrap от токенов dropdown — иначе длинный текст вылезает за max-width */
       white-space: normal;
       overflow-wrap: break-word;
-      backdrop-filter: ${styles.backdropFilter};
+      ${backdropFilter
+        ? css`
+            backdrop-filter: ${backdropFilter};
+            -webkit-backdrop-filter: ${backdropFilter};
+          `
+        : ''}
       transform: ${animations.openAnimation.transform};
       ${buildSurfaceTransitionCss(
         `${animations.openAnimation.duration} ${animations.openAnimation.easing}`,

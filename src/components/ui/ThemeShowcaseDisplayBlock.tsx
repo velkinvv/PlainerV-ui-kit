@@ -7,6 +7,7 @@ import { Skeleton } from './Skeleton';
 import { AvatarGroup } from './AvatarGroup';
 import { Icon } from './Icon';
 import { ThemeToggle } from './ThemeToggle';
+import { ThemeVariantSelector } from './ThemeVariantSelector';
 import { SkeletonVariant, type BreadcrumbItem } from '../../types/ui';
 import { Size, IconSize } from '../../types/sizes';
 import { themeShowcaseStoriesStyles } from './ThemeShowcase.stories.styles';
@@ -25,7 +26,7 @@ const avatarGroupItems = [
 ];
 
 /**
- * Typography, Link, Breadcrumb, Pill, Skeleton, AvatarGroup, Icon и ThemeToggle.
+ * Typography, Link, Breadcrumb, Pill, Skeleton, AvatarGroup, Icon, ThemeVariantSelector и ThemeToggle.
  */
 export const ThemeShowcaseDisplayBlock = () => (
   <div style={themeShowcaseStoriesStyles.badgeAvatarSection}>
@@ -73,6 +74,11 @@ export const ThemeShowcaseDisplayBlock = () => (
         <Icon name="IconExSettings" size={IconSize.MD} />
         <Icon name="IconExBell" size={IconSize.MD} />
       </div>
+    </div>
+
+    <div style={themeShowcaseStoriesStyles.badgeAvatarGroup}>
+      <span style={themeShowcaseStoriesStyles.badgeAvatarGroupLabel}>ThemeVariantSelector</span>
+      <ThemeVariantSelector />
     </div>
 
     <div style={themeShowcaseStoriesStyles.badgeAvatarGroup}>

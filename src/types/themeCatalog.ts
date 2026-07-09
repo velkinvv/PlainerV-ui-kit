@@ -1,4 +1,4 @@
-import type { ThemeColorScheme, ThemeModeMap, ThemeType } from './theme';
+import type { ThemeColorScheme, ThemeModeMap, ThemeType, ThemeVariant } from './theme';
 import type { ThemeOverride } from './themeOverride';
 
 /**
@@ -40,6 +40,8 @@ export type ThemeCatalogItemWithId = {
   override?: ThemeOverride;
   /** Палитра базовой темы для `mergeTheme` */
   baseMode?: ThemeColorScheme;
+  /** Визуальный вариант оформления (standard, glass, …) */
+  variant?: ThemeVariant;
 };
 
 export type ThemeCatalogItemDefinition = Omit<ThemeCatalogItemWithId, 'id'>;
@@ -65,10 +67,14 @@ export type ResolvedThemeCatalogItem<TThemeMode extends string = string> = {
   label: string;
   baseMode: ThemeColorScheme;
   theme: ThemeType;
+  /** Визуальный вариант оформления; `undefined` для кастомных тем */
+  variant?: ThemeVariant;
 };
 
 export type ThemeCatalogMeta<TThemeMode extends string = string> = {
   name: TThemeMode;
   label: string;
   colorScheme: ThemeColorScheme;
+  /** Визуальный вариант оформления; `undefined` для кастомных тем */
+  variant?: ThemeVariant;
 };

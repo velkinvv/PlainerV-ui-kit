@@ -7,6 +7,113 @@
 
 ## [Unreleased]
 
+### Added
+
+- **Chip** / **Chips:** капсула и группа с выбором (`selectionMode` none/single/multiple); Select / MultiInput используют атом **Chip**.
+- **DropMenu:** фасад над **Dropdown** (триггер `renderContentProp` / `trigger` / кнопка, алиасы `isVisible` / `onSelectItem`).
+- **List:** типографический список ordered/unordered, маркеры (numbers, letters, bullet, virgule, icon), вложенность.
+- **MultiButton:** split-кнопка (main + шеврон через **DropMenu**).
+- **Pulse:** статусная точка с волной (`status`, `customColors`, reduced-motion).
+- **SegmentedControl:** сегменты outline/filled, single/multiple, `options` или `SegmentedControl.Item`.
+
+### Added (документация)
+
+- Страницы **Chip + List**, **DropMenu + MultiButton**, **SegmentedControl + Pulse**; обновлены каталог, Storybook docs и сторис.
+
+---
+
+## [0.2.6] - 2026-07-08
+
+### Added
+
+- **ActionBar:** `dynamicSize`, `orientation` (horizontal/vertical), sync-анимации add/remove, `highlightPulse`; без фона и бордера для встраивания.
+- **FloatingMenu:** `dynamicSize`, `orientation`, sync-анимации пунктов, `highlightPulse`.
+- **Sidemenu:** `dynamicHeight` с sync-анимациями, `highlightPulse`.
+- **Badge:** motion-анимация контента.
+- **ValueMotion:** компонент пульсирующего значения.
+- **Inputs:** анимированный счётчик символов (`CharacterCounterMotion`).
+
+### Added (документация)
+
+- Документация **v0.2.6**; обновлены README, CHANGELOG, ссылки в Storybook docs.
+
+---
+
+## [0.2.5] - 2026-07-08
+
+### Added
+
+- **Темизация:** оси **ThemeVariant** × **ThemeColorScheme** (`setThemeVariant`, `setColorScheme`); компонент **ThemeVariantSelector**.
+- **Детские темы:** `kidsBoys` и `kidsGirls` (светлая/тёмная палитра 8–11 лет); legacy `kids` мигрирует в `kidsBoys`.
+- **Storybook:** toolbar с двумя переключателями (Тема + Цвет), поддержка kidsBoys/kidsGirls в Docs и canvas.
+
+### Added (документация)
+
+- Документация **v0.2.5**; обновлены README, CHANGELOG, ссылки в Storybook docs.
+
+---
+
+## [0.2.4] - 2026-07-07
+
+### Added
+
+- **Carousel:** компонент карусели с autoplay, parallax, overlay/overlayPanel, fullscreen, thumbnails, drag/swipe и эффектами слайдов.
+- **DateTimeInput:** поле даты и времени с picker-колонками; расширены **DateInput**, **TimeInput**, **Calendar**.
+- **ActionBar:** панель действий с overflow-меню.
+- **Glass-темизация:** Accordion, Avatar, Badge, Hint, Modal, Pagination, Pill, Snackbar, Stepper, Tabs, Tag, Toast, Tooltip и overlay-панели.
+- **Table / DataGrid:** цвета строк, доработки сторис и документации.
+- **Floating overlays:** `FloatingOverlayLayerContext`, `useFloatingOverlayPosition`, общие хендлеры позиционирования.
+
+### Fixed
+
+- **Carousel / сборка:** исправил путь импорта типов, типизацию `children` overlay/caption, циклическую зависимость overlay-хендлеров.
+
+### Added (документация)
+
+- Документация **v0.2.4**; обновлены README, CHANGELOG, ссылки в Storybook docs.
+
+---
+
+## [0.2.3] - 2026-07-05
+
+### Added
+
+- **Glass-темы:** `glassLight` и `glassDark` с vibrancy-эффектом на базе blur-токенов (`glass`, `glassDark`, `surfaceMaterial`).
+- **Blur-токены:** расширены классы `glassDarkLight`, `glassDarkStrong`; хелперы `parseBackdropFilterFromBlurClass`, `glassBackdropFilters`.
+- **Storybook:** mesh-gradient фон canvas, поддержка `glassLight` / `glassDark` в toolbar и Docs.
+
+### Changed
+
+- **Компоненты:** Card, Modal, Dropdown, Input, FloatingMenu, Table — `backdrop-filter` для glass-поверхностей.
+- **GlobalStyles:** mesh-gradient на `html` для glass-тем.
+
+### Fixed
+
+- **Windows / dev:** `cross-env` в скрипте `npm start`; optional dependency `@rollup/rollup-win32-x64-msvc`.
+
+### Added (документация)
+
+- Документация **v0.2.3**; обновлены README, CHANGELOG, ссылки в Storybook docs.
+
+---
+
+### Added
+
+- **Storybook:** обновлён **Theme Showcase**, интеграция с UI-kit и демонстрация тёмной темы.
+- **Тесты:** конфигурация **Jest** для **npm workspaces** (корневой `package.json` + `web`).
+
+### Changed
+
+- **Темизация:** доработана тёмная тема и визуальные токены в сторис **Theming**.
+
+### Fixed
+
+- **ESLint** и падения unit-тестов после обновления окружения.
+
+### Added (документация)
+
+- Документация **v0.2.2** на сайте; обновлены README, CHANGELOG, индекс версий.
+
 ---
 
 ## [0.2.1] - 2026-05-26

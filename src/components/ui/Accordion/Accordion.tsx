@@ -51,6 +51,8 @@ export const Accordion: React.FC<AccordionProps> & {
   defaultOpen = false,
   allowMultiple = false,
   autoClose = false,
+  firstItemBorderRadius = true,
+  lastItemBorderRadius = true,
   onChange,
 }) => {
   const [openItems, setOpenItems] = useState<Set<string>>(
@@ -78,7 +80,11 @@ export const Accordion: React.FC<AccordionProps> & {
 
   return (
     <AccordionContext.Provider value={{ openItems, toggleItem, allowMultiple, autoClose }}>
-      <AccordionContainer className={clsx('ui-accordion', className)}>
+      <AccordionContainer
+        className={clsx('ui-accordion', className)}
+        $firstItemBorderRadius={firstItemBorderRadius}
+        $lastItemBorderRadius={lastItemBorderRadius}
+      >
         {children}
       </AccordionContainer>
     </AccordionContext.Provider>

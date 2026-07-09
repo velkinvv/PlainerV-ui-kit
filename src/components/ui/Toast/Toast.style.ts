@@ -66,6 +66,17 @@ export const ToastCard = styled.article<{ $tokens: ToastSurfaceTokens }>`
   border-left: 4px solid ${({ $tokens }) => $tokens.accent};
   box-shadow: ${({ theme }) => theme.boxShadow.notification};
   font-family: ${({ theme }) => theme.fonts.primary};
+
+  ${({ theme }) => {
+    const backdropFilter = theme.toasts?.settings?.backdropFilter;
+
+    return backdropFilter
+      ? css`
+          backdrop-filter: ${backdropFilter};
+          -webkit-backdrop-filter: ${backdropFilter};
+        `
+      : '';
+  }}
 `;
 
 /**
@@ -151,6 +162,17 @@ export const ToastPillRoot = styled.article<{ $tokens: ToastPillVisualTokens }>`
   border: ${({ $tokens }) => $tokens.border};
   box-shadow: ${({ theme }) => theme.boxShadow.notification};
   font-family: ${({ theme }) => theme.fonts.primary};
+
+  ${({ theme }) => {
+    const backdropFilter = theme.toasts?.settings?.backdropFilter;
+
+    return backdropFilter
+      ? css`
+          backdrop-filter: ${backdropFilter};
+          -webkit-backdrop-filter: ${backdropFilter};
+        `
+      : '';
+  }}
 `;
 
 /**

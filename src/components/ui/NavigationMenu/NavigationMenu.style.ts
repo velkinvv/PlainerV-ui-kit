@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ThemeColorScheme, type ThemeType } from '@/types/theme';
 import { NavigationMenuActiveAppearance, type NavigationMenuItemStatus } from '@/types/ui';
 import { getNavigationMenuItemStatusBackgroundTint } from '@/handlers/navigationMenuItemStatusHandlers';
+import { navigationMenuItemHighlightPulseCss } from '@/handlers/navigationMenuItemHighlightHandlers';
 
 /** Корневой контейнер меню навигации */
 export const NavigationMenuNav = styled.nav`
@@ -38,6 +39,19 @@ export const NavigationMenuRow = styled.li`
   margin: 0;
   padding: 0;
   width: 100%;
+`;
+
+/**
+ * Motion-обёртка пункта для AnimatePresence (Sidemenu dynamicHeight).
+ * Схлопывает высоту при exit.
+ */
+export const NavigationMenuRowPresence = styled(motion.li)`
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  list-style: none;
+  overflow: hidden;
+  transform-origin: center top;
 `;
 
 /**
@@ -97,8 +111,9 @@ const navigationMenuItemSurface = (p: {
   $disabled: boolean;
   $appearance: NavigationMenuActiveAppearance;
   $status?: NavigationMenuItemStatus;
+  $highlightPulse?: boolean;
 }) => {
-  const { theme, $collapsed, $active, $disabled, $appearance, $status } = p;
+  const { theme, $collapsed, $active, $disabled, $appearance, $status, $highlightPulse } = p;
   const primary = theme.colors.primary;
   const isDark = theme.mode === ThemeColorScheme.DARK;
 
@@ -207,6 +222,8 @@ const navigationMenuItemSurface = (p: {
       outline: 2px solid ${primary};
       outline-offset: 2px;
     }
+
+    ${$highlightPulse ? navigationMenuItemHighlightPulseCss(theme) : ''}
   `;
 };
 
@@ -216,6 +233,8 @@ type NavigationMenuItemSurfaceProps = {
   $disabled: boolean;
   $appearance: NavigationMenuActiveAppearance;
   $status?: NavigationMenuItemStatus;
+  /** Кратковременная подсветка недавно добавленного пункта */
+  $highlightPulse?: boolean;
 };
 
 /** Интерактивная поверхность пункта (кнопка) */

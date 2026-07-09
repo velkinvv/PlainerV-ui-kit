@@ -49,7 +49,7 @@ export function convertDataGridColumnsToExportColumns<Row extends DataGridBaseRo
 ): DataGridExcelExportColumn[] {
   const ignored = new Set(ignoreFields?.map(String) ?? []);
   return columns
-    .filter((column) => !ignored.has(String(column.field)))
+    .filter((column) => !column.hide && !ignored.has(String(column.field)))
     .map((column) => {
       const fieldKey = String(column.field);
       return {

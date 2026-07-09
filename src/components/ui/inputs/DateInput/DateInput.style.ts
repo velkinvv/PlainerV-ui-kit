@@ -1,6 +1,6 @@
 ﻿import styled from 'styled-components';
 import { createStyledShouldForwardProp } from '../../../../handlers/styledComponentHandlers';
-import { overlayPanelBoxShadowFromTheme } from '../../../../handlers/overlayPanelShadowHandlers';
+import { overlayPanelBoxShadowFromTheme, overlayPanelSurfaceCss } from '../../../../handlers/overlayPanelShadowHandlers';
 import { BorderRadiusHandler, TransitionHandler } from '../../../../handlers/uiHandlers';
 import { Size } from '../../../../types/sizes';
 
@@ -130,24 +130,28 @@ export const DateInputFieldStack = styled.div.withConfig({
 `;
 
 export const CalendarPopup = styled.div.withConfig({
-  shouldForwardProp: createStyledShouldForwardProp(),
-})<{ isOpen: boolean; size?: Size; $calendarFullWidth?: boolean }>`
-  position: absolute;
-  top: 100%;
-  left: 0;
+  shouldForwardProp: createStyledShouldForwardProp(['$portaled']),
+})<{ isOpen: boolean; size?: Size; $calendarFullWidth?: boolean; $portaled?: boolean }>`
+  position: ${({ $portaled }) => ($portaled ? 'fixed' : 'absolute')};
+  ${({ $portaled }) =>
+    !$portaled &&
+    `
+      top: 100%;
+      left: 0;
+    `}
   /* По умолчанию — ширина контента; опционально можно растянуть на ширину поля */
   width: ${({ $calendarFullWidth }) => ($calendarFullWidth ? '100%' : 'max-content')};
   max-width: 100%;
-  background: ${({ theme }) => theme.colors.backgroundSecondary};
+  ${({ theme }) => overlayPanelSurfaceCss(theme)}
   border: 2px solid ${({ theme }) => theme.colors.borderSecondary};
   border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
   box-shadow: ${({ theme }) => overlayPanelBoxShadowFromTheme(theme)};
-  z-index: 1000;
   opacity: ${({ isOpen }) => (isOpen ? 1 : 0)};
   visibility: ${({ isOpen }) => (isOpen ? 'visible' : 'hidden')};
-  transform: ${({ isOpen }) => (isOpen ? 'translateY(0)' : 'translateY(-10px)')};
+  transform: ${({ isOpen, $portaled }) =>
+    $portaled ? 'none' : isOpen ? 'translateY(0)' : 'translateY(-10px)'};
   transition: ${TransitionHandler()};
-  margin-top: 4px;
+  margin-top: ${({ $portaled }) => ($portaled ? '0' : '4px')};
   padding: 16px;
   min-width: 280px;
 `;
