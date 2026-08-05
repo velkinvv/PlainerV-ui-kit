@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Chip, Chips } from './Chip';
 import { List } from './List';
+import { Tree } from './Tree';
 import { DropMenu } from './DropMenu';
 import { MultiButton } from './buttons/MultiButton';
 import { SegmentedControl } from './SegmentedControl';
@@ -19,7 +20,7 @@ const multiButtonItems = [
 ];
 
 /**
- * Chip, List, DropMenu, MultiButton, SegmentedControl и Pulse для Theme Showcase.
+ * Chip, List, Tree, DropMenu, MultiButton, SegmentedControl и Pulse для Theme Showcase.
  */
 export const ThemeShowcaseNewComponentsBlock = () => {
   const [chipValue, setChipValue] = useState<string[]>(['react']);
@@ -49,6 +50,26 @@ export const ThemeShowcaseNewComponentsBlock = () => {
           <List.Item>Первый пункт</List.Item>
           <List.Item>Второй пункт</List.Item>
         </List>
+      </div>
+
+      <div style={themeShowcaseStoriesStyles.badgeAvatarGroup}>
+        <span style={themeShowcaseStoriesStyles.badgeAvatarGroupLabel}>Tree</span>
+        <Tree
+          aria-label="Демо дерева"
+          size={Size.SM}
+          checkable
+          defaultExpandedIds={['root']}
+          items={[
+            {
+              id: 'root',
+              label: 'Корень',
+              children: [
+                { id: 'child-a', label: 'Узел A' },
+                { id: 'child-b', label: 'Узел B' },
+              ],
+            },
+          ]}
+        />
       </div>
 
       <div style={themeShowcaseStoriesStyles.badgeAvatarGroup}>

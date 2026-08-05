@@ -41,7 +41,10 @@ export const CheckboxInput = styled.input`
  * @param disabled - состояние отключения
  * @param size - размер чекбокса (SM=16px, MD=20px, LG=24px)
  */
-export const CheckboxBox = styled.div<{
+export const CheckboxBox = styled.div.withConfig({
+  shouldForwardProp: (propName) =>
+    !['checked', 'indeterminate', 'disabled', 'size'].includes(String(propName)),
+})<{
   checked: boolean;
   /** Промежуточное состояние: визуально как «включённый», с полоской вместо галочки */
   indeterminate?: boolean;
@@ -159,7 +162,10 @@ export const CheckboxBox = styled.div<{
  * @param checked - состояние выбора
  * @param size - размер чекбокса (SM=10px, MD=12px, LG=14px - пропорционально размеру чекбокса)
  */
-export const CheckIcon = styled.div<{ checked: boolean; indeterminate?: boolean; size?: Size }>`
+export const CheckIcon = styled.div.withConfig({
+  shouldForwardProp: (propName) =>
+    !['checked', 'indeterminate', 'size'].includes(String(propName)),
+})<{ checked: boolean; indeterminate?: boolean; size?: Size }>`
   opacity: ${({ checked, indeterminate }) => (checked || indeterminate ? 1 : 0)};
   transition: ${TransitionHandler()};
   transform: ${({ checked, indeterminate }) =>

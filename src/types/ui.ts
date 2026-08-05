@@ -1271,6 +1271,174 @@ export interface ListIconProps extends BaseComponentProps {
   children?: React.ReactNode;
 }
 
+/** Режим выбора строк дерева */
+export type TreeSelectionMode = 'single' | 'multiple';
+
+/**
+ * Тип контрола у узлов дерева.
+ * - `none` — без checkbox/radio
+ * - `checkbox` — множественная отметка с cascade
+ * - `radio` — эксклюзивный выбор одного узла (значение в selectedIds)
+ */
+export type TreeSelectionControl = 'none' | 'checkbox' | 'radio';
+
+/** Позиция drop относительно целевого узла */
+export type TreeDropPosition = 'before' | 'after' | 'into';
+
+/**
+ * Аргументы проверки возможности drop.
+ * @property dragIds - Перетаскиваемые узлы
+ * @property targetId - Цель
+ * @property position - before | after | into
+ */
+export interface TreeCanDropArgs {
+  dragIds: string[];
+  targetId: string;
+  position: TreeDropPosition;
+}
+
+/**
+ * Аргументы события внутреннего drop.
+ * @property dragIds - Перетаскиваемые узлы
+ * @property targetId - Цель
+ * @property position - before | after | into
+ */
+export interface TreeDropArgs {
+  dragIds: string[];
+  targetId: string;
+  position: TreeDropPosition;
+}
+
+/**
+ * Узел дерева в data-driven модели.
+ * @property id - Уникальный ключ
+ * @property label - Подпись
+ * @property icon - Опциональная иконка
+ * @property disabled - Блок взаимодействия
+ * @property draggable - Можно ли тащить узел
+ * @property droppable - Можно ли бросать на узел
+ * @property children - Дочерние узлы
+ * @property data - Произвольные метаданные
+ * @property tooltip - Конфиг Tooltip без children (как у NavigationMenu.Item)
+ * @property hint - Конфиг Hint без children; при одновременной передаче с tooltip имеет приоритет
+ * @property onClick - Клик по строке узла
+ */
+export interface TreeItemData {
+  id: string;
+  label: React.ReactNode;
+  icon?: React.ReactNode;
+  disabled?: boolean;
+  draggable?: boolean;
+  droppable?: boolean;
+  children?: TreeItemData[];
+  data?: unknown;
+  tooltip?: Omit<TooltipProps, 'children'>;
+  hint?: Omit<HintProps, 'children'>;
+  onClick?: (args: TreeItemEventArgs) => void;
+}
+
+/**
+ * Аргументы клика / активации узла Tree.
+ * @property itemId - Id узла
+ * @property item - Данные узла
+ * @property event - DOM-событие
+ */
+export interface TreeItemEventArgs {
+  itemId: string;
+  item: TreeItemData;
+  event: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>;
+}
+
+/**
+ * Аргументы выбора узла Tree (смена selectedIds).
+ * @property itemId - Id узла, по которому сработал выбор
+ * @property item - Данные узла
+ * @property selectedIds - Актуальный набор выбранных id
+ */
+export interface TreeItemSelectEventArgs {
+  itemId: string;
+  item: TreeItemData;
+  selectedIds: string[];
+}
+
+/**
+ * Пропсы корня Tree.
+ * @property size - SM | MD
+ * @property selectionControl - none | checkbox | radio (приоритетнее checkable)
+ * @property checkable - Алиас selectionControl="checkbox" (если selectionControl не задан)
+ * @property checkStrictly - Без связи parent↔children при check (только checkbox)
+ * @property checkOnRowClick - Клик по строке также переключает check (checkbox) или выбирает radio
+ * @property selectionMode - single | multiple (в radio всегда single)
+ * @property expandedIds / defaultExpandedIds / onExpandedChange - Раскрытие
+ * @property selectedIds / defaultSelectedIds / onSelectedChange - Выбор строк (и значение radio)
+ * @property checkedIds / defaultCheckedIds / onCheckedChange - Чекбоксы
+ * @property onItemClick - Клик по любому узлу
+ * @property onItemSelect - Выбор узла (после обновления selectedIds)
+ * @property items - Data-driven модель; непустой массив приоритетнее children
+ * @property draggable - Включить DnD
+ * @property canDrop - Правило разрешения drop
+ * @property onDrop - Внутренний перенос
+ * @property onExternalDragOver / onExternalDrop - Внешний drag в дерево
+ * @property onDragStart - Исходящий drag
+ * @property children - Compound: Tree.Item
+ */
+export interface TreeProps extends BaseComponentProps {
+  size?: Size;
+  selectionControl?: TreeSelectionControl;
+  checkable?: boolean;
+  checkStrictly?: boolean;
+  checkOnRowClick?: boolean;
+  selectionMode?: TreeSelectionMode;
+  expandedIds?: string[];
+  defaultExpandedIds?: string[];
+  onExpandedChange?: (expandedIds: string[]) => void;
+  selectedIds?: string[];
+  defaultSelectedIds?: string[];
+  onSelectedChange?: (selectedIds: string[]) => void;
+  checkedIds?: string[];
+  defaultCheckedIds?: string[];
+  onCheckedChange?: (checkedIds: string[]) => void;
+  onItemClick?: (args: TreeItemEventArgs) => void;
+  onItemSelect?: (args: TreeItemSelectEventArgs) => void;
+  items?: TreeItemData[];
+  draggable?: boolean;
+  canDrop?: (args: TreeCanDropArgs) => boolean;
+  onDrop?: (args: TreeDropArgs) => void;
+  onExternalDragOver?: (event: React.DragEvent<HTMLElement>) => void;
+  onExternalDrop?: (event: React.DragEvent<HTMLElement>, targetId: string | null) => void;
+  onDragStart?: (event: React.DragEvent<HTMLElement>, itemId: string) => void;
+  children?: React.ReactNode;
+  'aria-label'?: string;
+}
+
+/**
+ * Пропсы узла Tree.Item.
+ * @property id - Уникальный ключ
+ * @property label - Подпись
+ * @property icon - Опциональная иконка
+ * @property disabled - Блок взаимодействия
+ * @property draggable - Можно ли тащить узел
+ * @property droppable - Можно ли бросать на узел
+ * @property data - Произвольные метаданные
+ * @property tooltip - Конфиг Tooltip без children
+ * @property hint - Конфиг Hint без children (приоритетнее tooltip)
+ * @property onClick - Клик по строке узла
+ * @property children - Вложенные Tree.Item
+ */
+export interface TreeItemProps extends BaseComponentProps {
+  id: string;
+  label: React.ReactNode;
+  icon?: React.ReactNode;
+  disabled?: boolean;
+  draggable?: boolean;
+  droppable?: boolean;
+  data?: unknown;
+  tooltip?: Omit<TooltipProps, 'children'>;
+  hint?: Omit<HintProps, 'children'>;
+  onClick?: (args: TreeItemEventArgs) => void;
+  children?: React.ReactNode;
+}
+
 /** Значение диапазона для `RangeSlider`: [нижняя граница, верхняя граница] */
 export type SliderRangeValue = readonly [number, number];
 

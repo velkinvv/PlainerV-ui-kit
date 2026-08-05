@@ -24,19 +24,21 @@ export function navigationMenuSubtreeContainsActiveId(
 }
 
 /**
- * Первый активный id в дереве Sidemenu (глубина-first).
+ * Активный id в дереве Sidemenu: предпочитает самый глубокий лист с `active: true`.
+ * Родитель с `active: true` и активным потомком не перехватывает подсветку — остаётся
+ * «содержащим активный» через {@link navigationMenuSubtreeContainsActiveId}.
  * @param entries — корневые пункты
  */
 export function resolveSidemenuActiveId(entries: SidemenuItem[]): string | null {
   for (const entry of entries) {
+    if (entry.items != null && entry.items.length > 0) {
+      const nestedActiveId = resolveSidemenuActiveId(entry.items);
+      if (nestedActiveId != null) {
+        return nestedActiveId;
+      }
+    }
     if (entry.active === true) {
       return entry.id;
-    }
-    if (entry.items != null && entry.items.length > 0) {
-      const nestedId = resolveSidemenuActiveId(entry.items);
-      if (nestedId != null) {
-        return nestedId;
-      }
     }
   }
   return null;

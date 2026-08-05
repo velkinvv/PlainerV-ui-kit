@@ -69,6 +69,20 @@ export type {
   ListUnorderedMarkerStyle,
 } from '@/types/ui';
 
+export { Tree } from './Tree';
+export type {
+  TreeProps,
+  TreeItemProps,
+  TreeItemData,
+  TreeSelectionMode,
+  TreeSelectionControl,
+  TreeDropPosition,
+  TreeCanDropArgs,
+  TreeDropArgs,
+  TreeItemEventArgs,
+  TreeItemSelectEventArgs,
+} from '@/types/ui';
+
 export { Breadcrumb } from './Breadcrumb';
 export type { BreadcrumbProps, BreadcrumbItem } from '@/types/ui';
 
