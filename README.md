@@ -6,7 +6,7 @@
 
 Современная библиотека UI компонентов с поддержкой темизации и TypeScript.
 
-**Текущая версия:** `0.2.6` · ветка [`v_0.2.6`](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.2.6) · React 18+/19 · styled-components 6.x
+**Текущая версия:** `0.2.7` · ветка [`v_0.2.7`](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.2.7) · React 18+/19 · styled-components 6.x
 
 ## 🚀 Возможности
 
@@ -26,7 +26,7 @@
 ```bash
 npm i @velkinvv/plainerv react react-dom styled-components framer-motion
 # или конкретная версия кита:
-npm i @velkinvv/plainerv@0.2.6 react react-dom styled-components framer-motion
+npm i @velkinvv/plainerv@0.2.7 react react-dom styled-components framer-motion
 ```
 
 | Пакет | Диапазон (peer) |
@@ -136,7 +136,7 @@ import '@velkinvv/plainerv/styles';
 - **ThemeMode** — id темы (`ThemeMode.light`, `appThemes.themeMode.ocean`);
 - **ThemeColorScheme** — палитра токенов (`LIGHT` / `DARK`), поле `theme.mode` в styled-components.
 
-Подробнее: [документация Theming](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.2.6/documentation/content/docs/ru/web/v_0.2.6/theming.mdx) (на сайте: **Web → v0.2.6 → Theming**).
+Подробнее: [документация Theming](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.2.7/documentation/content/docs/ru/web/v_0.2.7/theming.mdx) (на сайте: **Web → v0.2.7 → Theming**).
 
 ### Базовое подключение
 
@@ -206,7 +206,7 @@ const brandLight = mergeTheme(lightTheme, { colors: { primary: '#0D9488' } });
 
 ## 🎯 Компоненты
 
-**Полный перечень публичных экспортов** — в [документации](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.2.6/documentation/content/docs/ru/web/v_0.2.6/components-catalog.mdx) (на сайте: **Web → v0.2.6 → Справочник компонентов**). Ниже — краткая группировка.
+**Полный перечень публичных экспортов** — в [документации](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.2.7/documentation/content/docs/ru/web/v_0.2.7/components-catalog.mdx) (на сайте: **Web → v0.2.7 → Справочник компонентов**). Ниже — краткая группировка.
 
 ### Кнопки и ссылки
 
@@ -217,7 +217,7 @@ const brandLight = mergeTheme(lightTheme, { colors: { primary: '#0D9488' } });
 
 ### Ввод и формы
 
-- **Input**, **TextArea**, **FileInput**, **Select**, **MultiInput**, **SliderInput** — поля (`Form`-совместимые). **SliderInput**: число + встроенный слайдер в рамке **Input**; проп **`range`** — диапазон «от / до» (пара чисел, два поля и два бегунка, как у **DateInput**). Типы **`SliderInputSingleProps`**, **`SliderInputRangeProps`**. Подробнее — [документация SliderInput](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.2.6/documentation/content/docs/ru/web/v_0.2.6/components-slider-input.mdx), Storybook **UI Kit → Inputs → SliderInput**.
+- **Input**, **TextArea**, **FileInput**, **Select**, **MultiInput**, **SliderInput** — поля (`Form`-совместимые). **SliderInput**: число + встроенный слайдер в рамке **Input**; проп **`range`** — диапазон «от / до» (пара чисел, два поля и два бегунка, как у **DateInput**). Типы **`SliderInputSingleProps`**, **`SliderInputRangeProps`**. Подробнее — [документация SliderInput](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.2.7/documentation/content/docs/ru/web/v_0.2.7/components-slider-input.mdx), Storybook **UI Kit → Inputs → SliderInput**.
 - **Form**, **HiddenUsernameField**.
 - **Checkbox**, **CheckboxGroup**, **Switch**, **RadioButton**, **RadioButtonGroup**.
 - **DateInput**, **TimeInput**.
@@ -554,6 +554,14 @@ npm run analyze
 
 *Размеры будут обновлены после первой сборки*
 
+## 📋 Что нового в 0.2.7
+
+- **Chip** / **Chips**, **List**, **DropMenu**, **MultiButton**, **Pulse**, **SegmentedControl**.
+- **Storybook:** категория **Buttons** (после Inputs); Accordion — в Data Display.
+- Гайды: Chip + List, DropMenu + MultiButton, SegmentedControl + Pulse.
+
+Подробности — в [CHANGELOG.md](CHANGELOG.md).
+
 ## 📋 Что нового в 0.2.6
 
 - **ActionBar:** `dynamicSize`, `orientation` (horizontal/vertical), sync-анимации add/remove, `highlightPulse`; без фона и бордера для встраивания.
@@ -675,6 +683,7 @@ MIT License - см. [LICENSE](LICENSE) для деталей.
 ## 🔗 Ссылки
 
 - [Репозиторий](https://github.com/velkinvv/PlainerV-ui-kit)
+- [Ветка v0.2.7](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.2.7)
 - [Ветка v0.2.6](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.2.6)
 - [Ветка v0.2.5](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.2.5)
 - [Ветка v0.2.4](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.2.4)

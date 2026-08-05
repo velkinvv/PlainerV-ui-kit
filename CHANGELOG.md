@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 
+---
+
+## [0.2.7] - 2026-07-09
+
 ### Added
 
 - **Chip** / **Chips:** капсула и группа с выбором (`selectionMode` none/single/multiple); Select / MultiInput используют атом **Chip**.
@@ -16,9 +20,13 @@
 - **Pulse:** статусная точка с волной (`status`, `customColors`, reduced-motion).
 - **SegmentedControl:** сегменты outline/filled, single/multiple, `options` или `SegmentedControl.Item`.
 
+### Changed
+
+- **Storybook:** категория **Buttons** (после Inputs); в неё перенесены Button, IconButton, ButtonGroup, MultiButton, SegmentedControl, Checkbox, Switch, RadioButton, RadioButtonGroup, ActionBar; Accordion — в Data Display.
+
 ### Added (документация)
 
-- Страницы **Chip + List**, **DropMenu + MultiButton**, **SegmentedControl + Pulse**; обновлены каталог, Storybook docs и сторис.
+- Документация **v0.2.7**; страницы **Chip + List**, **DropMenu + MultiButton**, **SegmentedControl + Pulse**; обновлены README, CHANGELOG, ссылки в Storybook docs.
 
 ---
 

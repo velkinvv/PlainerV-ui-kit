@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Единые тексты для вкладки Storybook Docs по компонентам UI Kit.
  * Сверено с `types/ui.ts`; таблицы и сценарии использования — для разработчиков.
  */
@@ -357,6 +357,41 @@ export const DOC_LIST = `
 | \`gap\` | Расстояние между пунктами (px или CSS; по умолчанию 8). |
 
 Вложенные \`List\` внутри пункта: для **numbers** — иерархия \`1.1.\`. Storybook: **UI Kit → Data Display → List**.
+`.trim();
+
+/** @see TreeProps, TreeItemProps, TreeItemData */
+export const DOC_TREE = `
+### Назначение
+Иерархическое **Tree**: каталоги, оргструктуры, фильтры с вложенностью. Expand/collapse, выбор строк, опциональные контролы, drag-and-drop.
+
+Контролы узлов — только компоненты UI Kit: **Checkbox** и **RadioButton** (не кастомная отрисовка).
+
+### API
+| Проп | Зачем |
+|------|--------|
+| \`size\` | **Size** SM / MD. |
+| \`selectionControl\` | **none** \| **checkbox** \| **radio**. Radio — эксклюзивный выбор одного узла в \`selectedIds\`. |
+| \`checkable\` | Алиас \`selectionControl="checkbox"\`, если \`selectionControl\` не задан. |
+| \`checkStrictly\` | Без cascade parent↔children (только checkbox). |
+| \`checkOnRowClick\` | Клик по строке также toggle check (checkbox). |
+| \`selectionMode\` | **single** \| **multiple** (при radio всегда single). |
+| \`expandedIds\` / \`defaultExpandedIds\` / \`onExpandedChange\` | Раскрытие. |
+| \`selectedIds\` / \`defaultSelectedIds\` / \`onSelectedChange\` | Выбор строк и значение radio. |
+| \`onItemClick\` | Клик по узлу (\`{ itemId, item, event }\`). |
+| \`onItemSelect\` | Выбор узла после смены \`selectedIds\` (\`{ itemId, item, selectedIds }\`). |
+| \`checkedIds\` / \`defaultCheckedIds\` / \`onCheckedChange\` | Чекбоксы. |
+| \`items\` | Data-driven модель; пустой массив — пустое дерево (без fallback на children). |
+| \`children\` | Составной API: **Tree.Item**. |
+| \`draggable\` | HTML5 DnD. |
+| \`canDrop\` / \`onDrop\` | Правила и результат внутреннего drop (\`before\` \| \`after\` \| \`into\`). |
+| \`onExternalDragOver\` / \`onExternalDrop\` / \`onDragStart\` | Внешний drag. |
+
+### Tree.Item / TreeItemData
+\`id\`, \`label\`, \`icon\`, \`disabled\`, \`draggable\`, \`droppable\`, \`children\`, \`data\`,
+\`tooltip\` / \`hint\` (как у **NavigationMenu.Item**; при обоих — **hint**),
+\`onClick\` (клик по строке узла).
+
+A11y: \`role="tree"\` / \`treeitem\`, стрелки, Enter/Space. Storybook: **UI Kit → Data Display → Tree**.
 `.trim();
 
 /** @see ChipProps, ChipsProps */
@@ -1282,7 +1317,7 @@ export const DOC_SLIDER_INPUT = `
 - **DateInput** (\`range\`) — тот же паттерн «одно значение / пара», другой тип данных.
 
 ### Документация
-- Сайт: \`documentation/content/docs/ru/web/v_0.2.6/components-slider-input.mdx\`
+- Сайт: \`documentation/content/docs/ru/web/v_0.2.7/components-slider-input.mdx\`
 - Storybook: **UI Kit → Inputs → SliderInput** (истории по режимам и состояниям)
 `.trim();
 
@@ -1334,7 +1369,7 @@ export const DOC_THEME_TOGGLE = `
 
 Пара **ThemeVariantSelector** + **ThemeToggle** — основной способ переключения встроенных тем. Для каталога из 3+ кастомных id используйте **ThemeSelector** или \`setThemeMode\`.
 
-См. [Theming](/docs/web/v_0.2.6/theming).
+См. [Theming](/docs/web/v_0.2.7/theming).
 `.trim();
 
 /** ThemeVariantSelector — ThemeVariantSelectorProps */
@@ -1344,7 +1379,7 @@ export const DOC_THEME_VARIANT_SELECTOR = `
 
 Комбинируйте с **ThemeToggle** для полного управления темой. Скрывается, если в каталоге доступен только один вариант.
 
-См. сторис **UI Kit/Theming/ThemeVariantSelector** и [Theming](/docs/web/v_0.2.6/theming).
+См. сторис **UI Kit/Theming/ThemeVariantSelector** и [Theming](/docs/web/v_0.2.7/theming).
 `.trim();
 
 /** ThemeSelector — ThemeSelectorProps */
@@ -1354,7 +1389,7 @@ export const DOC_THEME_SELECTOR = `
 
 Работает с любым числом тем. Переключение: \`setThemeMode(appThemes.themeMode.ocean)\` — type-safe id.
 
-См. сторис **UI Kit/Theming/ThemeSelector** и [Theming](/docs/web/v_0.2.6/theming).
+См. сторис **UI Kit/Theming/ThemeSelector** и [Theming](/docs/web/v_0.2.7/theming).
 `.trim();
 
 /** @see SidemenuProps */
