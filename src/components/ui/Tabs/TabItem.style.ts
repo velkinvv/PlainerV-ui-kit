@@ -10,6 +10,7 @@ import { type ThemeType } from '../../../types/theme';
 import { BorderRadiusHandler } from '../../../handlers/uiHandlers';
 import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandlers';
 import { getTabsSurfaceTokens } from '../../../handlers/tabsGlassHandlers';
+import { resolveOnAccentTextColor } from '../../../handlers/onAccentColorHandlers';
 import type { PillSegmentMetrics } from './pillSegmentTrack/pillSegmentMetricsTypes';
 
 type TabItemStyledThemeSlice = Pick<
@@ -244,6 +245,8 @@ export const LineUnderlineTrackIndicator = styled.div<{
   $metrics: PillSegmentMetrics | null;
   $direction: TabsDirection;
   $thickIndicator: boolean;
+  /** Цвет полоски активного сегмента */
+  $accentColor: string;
 }>`
   position: absolute;
   z-index: 0;
@@ -251,7 +254,7 @@ export const LineUnderlineTrackIndicator = styled.div<{
   box-sizing: border-box;
   left: 0;
   top: 0;
-  background: ${({ theme }) => theme.colors.primary};
+  background: ${({ $accentColor }) => $accentColor};
   opacity: ${({ $metrics }) => ($metrics ? 1 : 0)};
   transition:
     transform 0.46s cubic-bezier(0.34, 1.18, 0.46, 1),
@@ -423,6 +426,10 @@ export const TabItemTrigger = styled.button<{
   $hasIcons?: boolean;
   $flexDirection?: string;
   $gap?: string;
+  /** Акцент активного сегмента */
+  $accentColor: string;
+  /** Кольцо фокуса */
+  $focusRingColor: string;
 }>`
   border: none;
   cursor: ${({ $disabled, $loading }) =>
@@ -451,6 +458,8 @@ export const TabItemTrigger = styled.button<{
     $scrollable,
     $slidingTrackIndicator,
     $filledSegmentTriggers,
+    $accentColor,
+    $focusRingColor,
     theme,
   }) =>
     $variant === TabsVariant.PILL
@@ -499,7 +508,7 @@ export const TabItemTrigger = styled.button<{
           }
 
           &:focus-visible {
-            outline: 2px solid ${theme.colors.primary};
+            outline: 2px solid ${$focusRingColor};
             outline-offset: -2px;
           }
         `
@@ -519,12 +528,12 @@ export const TabItemTrigger = styled.button<{
             border-bottom: ${$direction === TabsDirection.HORIZONTAL
               ? $slidingTrackIndicator
                 ? '1px solid transparent'
-                : `1px solid ${$isActive && !$disabled ? theme.colors.primary : 'transparent'}`
+                : `1px solid ${$isActive && !$disabled ? $accentColor : 'transparent'}`
               : 'none'};
             border-right: ${$direction === TabsDirection.VERTICAL
               ? $slidingTrackIndicator
                 ? '1px solid transparent'
-                : `1px solid ${$isActive && !$disabled ? theme.colors.primary : 'transparent'}`
+                : `1px solid ${$isActive && !$disabled ? $accentColor : 'transparent'}`
               : 'none'};
 
             ${$disabled
@@ -533,7 +542,7 @@ export const TabItemTrigger = styled.button<{
                 `
               : $isActive
                 ? css`
-                    color: ${theme.colors.primary};
+                    color: ${$accentColor};
                   `
                 : css`
                     color: ${theme.colors.textSecondary};
@@ -544,7 +553,7 @@ export const TabItemTrigger = styled.button<{
               color: ${$disabled
                 ? theme.colors.textDisabled
                 : $isActive
-                  ? theme.colors.primary
+                  ? $accentColor
                   : theme.colors.text};
             }
 
@@ -553,7 +562,7 @@ export const TabItemTrigger = styled.button<{
             }
 
             &:focus-visible {
-              outline: 2px solid ${theme.colors.primary};
+              outline: 2px solid ${$focusRingColor};
               outline-offset: 2px;
             }
           `
@@ -570,45 +579,55 @@ export const TabItemTrigger = styled.button<{
                     transform 0.18s ease;
                 `
               : ''}
-            background: ${$isActive && !$disabled ? theme.colors.primary : 'transparent'};
+            background: ${$isActive && !$disabled ? $accentColor : 'transparent'};
             color: ${$isActive && !$disabled
-              ? '#ffffff'
+              ? resolveOnAccentTextColor(theme)
               : $disabled
                 ? theme.colors.textDisabled
                 : theme.colors.textSecondary};
             border-bottom: ${$direction === TabsDirection.HORIZONTAL
               ? $slidingTrackIndicator
                 ? '2px solid transparent'
-                : `2px solid ${$isActive && !$disabled ? theme.colors.primary : 'transparent'}`
+                : `2px solid ${$isActive && !$disabled ? $accentColor : 'transparent'}`
               : 'none'};
             border-right: ${$direction === TabsDirection.VERTICAL
               ? $slidingTrackIndicator
                 ? '2px solid transparent'
-                : `2px solid ${$isActive && !$disabled ? theme.colors.primary : 'transparent'}`
+                : `2px solid ${$isActive && !$disabled ? $accentColor : 'transparent'}`
               : 'none'};
             border-radius: 0;
+            flex: 0 0 auto;
+            width: ${$direction === TabsDirection.VERTICAL ? '100%' : 'auto'};
+            box-shadow: none;
 
             &:hover:enabled {
-              background: ${$isActive
-                ? theme.colors.primary
-                : getTabsSurfaceTokens(getTabsThemeContext(theme)).segmentHoverBackground};
-              color: ${$isActive ? '#ffffff' : theme.colors.text};
+              color: ${$disabled
+                ? theme.colors.textDisabled
+                : $isActive
+                  ? resolveOnAccentTextColor(theme)
+                  : theme.colors.text};
+              background: ${$isActive && !$disabled
+                ? $accentColor
+                : !$disabled
+                  ? theme.colors.backgroundSecondary
+                  : 'transparent'};
             }
-            ${buildHoverPressMotionCss({
-              hoverSelector: '&:hover:enabled',
-              activeSelector: '&:active:enabled',
-              hoverTransform: !$disabled ? 'translateY(-1px)' : 'none',
-              activeTransform: !$disabled ? 'scale(0.98)' : 'none',
-            })}
 
             &:focus {
               outline: none;
             }
 
             &:focus-visible {
-              outline: 2px solid ${theme.colors.primary};
-              outline-offset: -2px;
+              outline: 2px solid ${$focusRingColor};
+              outline-offset: 2px;
             }
+
+            ${buildHoverPressMotionCss({
+              hoverSelector: '&:hover:enabled',
+              activeSelector: '&:active:enabled',
+              hoverTransform: !$disabled ? 'translateY(-1px)' : 'none',
+              activeTransform: !$disabled ? 'scale(0.98)' : 'none',
+            })}
           `}
 
   ${({ $textOrientation, $textPosition, $variant }) => {

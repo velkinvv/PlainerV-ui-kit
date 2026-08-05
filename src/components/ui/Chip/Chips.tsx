@@ -1,6 +1,8 @@
 import React, { forwardRef, useCallback, useMemo, useRef, useState } from 'react';
 import { clsx } from 'clsx';
+import { useTheme } from 'styled-components';
 import type { ChipsProps, ChipsSelectionMode } from '../../../types/ui';
+import { resolveControlAccentColors } from '../../../handlers/controlAccentColorHandlers';
 import { ChipGroupProvider, type ChipGroupContextValue } from './ChipContext';
 import { ChipsRoot } from './Chips.style';
 import { getChipsGroupRole, getNextChipFocusIndex, getNextChipsSelectionValue } from './handlers';
@@ -15,6 +17,7 @@ import { getChipsGroupRole, getNextChipFocusIndex, getNextChipsSelectionValue } 
  * @param props.disabled - Блокировка группы
  * @param props.size - Дефолтный размер дочерних `Chip`
  * @param props.appearance - Дефолтный вид дочерних `Chip`
+ * @param props.color - Дефолтный акцент выбранных чипов
  * @param props.children - Элементы `Chip`
  * @param ref - Ref на корневой контейнер
  */
@@ -28,6 +31,7 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
       disabled = false,
       size,
       appearance,
+      color = 'primary',
       children,
       className,
       role: roleProp,
@@ -36,6 +40,11 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
     },
     ref,
   ) => {
+    const theme = useTheme();
+    const accentColors = useMemo(
+      () => resolveControlAccentColors(theme, color),
+      [color, theme],
+    );
     const isControlled = valueProp !== undefined;
     const [uncontrolledValue, setUncontrolledValue] = useState<string | string[] | undefined>(
       defaultValue,
@@ -108,12 +117,16 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
         disabled,
         size,
         appearance,
+        accentColor: accentColors.checked,
+        accentFocusRingColor: accentColors.focusRing,
         onSelectChip,
         registerChipFocusElement,
         unregisterChipFocusElement,
         focusChipByOffset,
       }),
       [
+        accentColors.checked,
+        accentColors.focusRing,
         appearance,
         disabled,
         focusChipByOffset,

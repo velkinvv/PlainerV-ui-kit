@@ -1,4 +1,14 @@
 /**
+ * Полупрозрачный цвет через `color-mix` (без хардкода rgba).
+ * @param color — базовый цвет из темы
+ * @param alphaPercent — доля базового цвета 0–100
+ */
+export function mixColorWithTransparent(color: string, alphaPercent: number): string {
+  const clamped = Math.min(100, Math.max(0, Math.round(alphaPercent)));
+  return `color-mix(in srgb, ${color} ${clamped}%, transparent)`;
+}
+
+/**
  * Преобразует hex-цвет (#RRGGBB) в rgba с заданной прозрачностью.
  * @param hexColor — цвет в формате #RRGGBB
  * @param alpha — прозрачность от 0 до 1

@@ -2,7 +2,7 @@ import type { Colors, SnackbarTheme } from '../types/theme';
 import { ThemeColorScheme } from '../types/theme';
 import { neutral } from '../variables/colors/neutral';
 import { primary } from '../variables/colors/primary';
-import { withHexAlpha } from './glassColorHandlers';
+import { mixColorWithTransparent, withHexAlpha } from './glassColorHandlers';
 
 /** Токены «инверсной» полосы snackbar */
 export interface SnackbarSurfaceTokens {
@@ -18,11 +18,11 @@ export type SnackbarThemeContext = {
   snackbars?: SnackbarTheme;
 };
 
-/** Прозрачность тёмной glass-плашки на светлой теме */
+/** Прозрачность тёмной glass-плашки на светлой теме, 0–1 */
 const INVERSE_SURFACE_ALPHA_LIGHT = 0.78;
 
-/** Прозрачность светлой glass-плашки на тёмной теме */
-const INVERSE_SURFACE_ALPHA_DARK = 0.12;
+/** Прозрачность светлой glass-плашки на тёмной теме, % */
+const INVERSE_SURFACE_ALPHA_DARK_PERCENT = 12;
 
 /**
  * Проверяет, активна ли glass-тема для snackbar.
@@ -40,18 +40,23 @@ export function getSnackbarGlassSurfaceTokens(
   context: SnackbarThemeContext,
 ): SnackbarSurfaceTokens {
   const isDark = context.mode === ThemeColorScheme.DARK;
-  const messageColor = neutral[10];
+  const onAccent = context.colors?.onAccent ?? '#ffffff';
+  const messageColor = context.colors?.onAccent ?? neutral[10];
 
   if (isDark) {
     return {
-      surface: `rgba(255, 255, 255, ${INVERSE_SURFACE_ALPHA_DARK})`,
+      surface: mixColorWithTransparent(onAccent, INVERSE_SURFACE_ALPHA_DARK_PERCENT),
       messageColor,
       actionColor: primary[200],
     };
   }
 
+  const inverseBase = context.colors?.text ?? neutral[900];
+
   return {
-    surface: withHexAlpha(neutral[900], INVERSE_SURFACE_ALPHA_LIGHT),
+    surface: inverseBase.startsWith('#')
+      ? withHexAlpha(inverseBase, INVERSE_SURFACE_ALPHA_LIGHT)
+      : mixColorWithTransparent(inverseBase, Math.round(INVERSE_SURFACE_ALPHA_LIGHT * 100)),
     messageColor,
     actionColor: primary[300],
   };

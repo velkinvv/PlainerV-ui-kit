@@ -48,6 +48,11 @@ const meta: Meta<typeof Checkbox> = {
       control: 'boolean',
       description: 'Обязательное поле: * у fieldLabel и required у input',
     },
+    color: {
+      control: 'text',
+      description:
+        'Акцент checked/indeterminate: primary | success | error | warning | info или CSS-цвет',
+    },
     fullWidth: {
       control: 'boolean',
       description: 'Растянуть контейнер поля на всю доступную ширину',
@@ -403,4 +408,18 @@ function CheckboxGroupSuccessDemo() {
 
 export const CheckboxGroupWithSuccessAndExtra: Story = {
   render: () => <CheckboxGroupSuccessDemo />,
+};
+
+export const Colors: Story = {
+  name: 'Цвета (color)',
+  render: () => (
+    <div style={checkboxStoriesStyles.checkboxGroupColumn}>
+      <Checkbox checked label="success (default)" color="success" />
+      <Checkbox checked label="primary" color="primary" />
+      <Checkbox checked label="info" color="info" />
+      <Checkbox checked label="warning" color="warning" />
+      <Checkbox checked label="error" color="error" />
+      <Checkbox checked label="custom #9c27b0" color="#9c27b0" />
+    </div>
+  ),
 };

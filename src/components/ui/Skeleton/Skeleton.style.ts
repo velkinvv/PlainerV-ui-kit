@@ -28,20 +28,9 @@ export const SkeletonWrapper = styled.span<{
   border-radius: ${({ $borderRadius, $shape }) =>
     $borderRadius || ($shape === 'circle' ? '999px' : '12px')};
   background: ${({ theme }) => {
-    if (theme.mode === 'dark') {
-      return `linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0.08) 0%,
-        rgba(255, 255, 255, 0.18) 50%,
-        rgba(255, 255, 255, 0.08) 100%
-      )`;
-    }
-    return `linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0.06) 0%,
-      rgba(0, 0, 0, 0.12) 50%,
-      rgba(0, 0, 0, 0.06) 100%
-    )`;
+    const edge = `color-mix(in srgb, ${theme.colors.text} 6%, transparent)`;
+    const mid = `color-mix(in srgb, ${theme.colors.text} 12%, transparent)`;
+    return `linear-gradient(90deg, ${edge} 0%, ${mid} 50%, ${edge} 100%)`;
   }};
   background-size: 200% 100%;
   ${({ $animated, $animationSpeed }) =>

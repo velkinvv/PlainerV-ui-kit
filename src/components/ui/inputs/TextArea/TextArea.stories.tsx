@@ -49,6 +49,10 @@ const meta: Meta<typeof TextArea> = {
     },
     required: { control: 'boolean', description: 'Обязательное поле (звёздочка у label)' },
     fullWidth: { control: 'boolean', description: 'Растянуть на ширину контейнера' },
+    autoWidth: {
+      control: 'boolean',
+      description: 'Ширина по содержимому (auto), без фиксированных 335px',
+    },
     readOnly: { control: 'boolean', description: 'Только чтение (серый фон, без resize)' },
     disabled: { control: 'boolean', description: 'Отключено' },
     skeleton: { control: 'boolean', description: 'Скелетон вместо поля' },

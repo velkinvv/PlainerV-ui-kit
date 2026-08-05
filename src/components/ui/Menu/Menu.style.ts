@@ -44,7 +44,7 @@ const menuItemButtonStyles = (props: {
 }) => {
   const { theme, $dense, $selected, $destructive } = props;
   const isDark = theme.mode === ThemeColorScheme.DARK;
-  const hoverBg = isDark ? '#2a2a2a' : '#f5f5f5';
+  const hoverBg = isDark ? theme.colors.backgroundQuaternary : theme.colors.backgroundTertiary;
   const selectedBg =
     theme.mode === ThemeColorScheme.DARK
       ? `color-mix(in srgb, ${theme.colors.primary} 22%, ${theme.colors.background})`

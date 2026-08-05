@@ -2,6 +2,7 @@ import type { ThemeType } from '../types/theme';
 import { ThemeColorScheme } from '../types/theme';
 import { isOverlayPanelGlassTheme } from './overlayPanelGlassHandlers';
 import { overlayPanelBackdropFilterFromTheme } from './overlayPanelShadowHandlers';
+import { mixColorWithTransparent } from './glassColorHandlers';
 
 /** Контекст темы для резолва glass-токенов вкладок */
 export type TabsThemeContext = Pick<
@@ -27,31 +28,30 @@ export interface TabsSurfaceTokens {
   pillTrackBorder?: string;
 }
 
-/** Непрозрачность pill/filled-трека — чуть плотнее, чем у dropdown (0.26 / 0.06) */
-const TABS_TRACK_ALPHA_LIGHT = 0.34;
+/** Непрозрачность pill/filled-трека — чуть плотнее, чем у dropdown, % */
+const TABS_TRACK_ALPHA_LIGHT = 34;
 
-const TABS_TRACK_ALPHA_DARK = 0.1;
+const TABS_TRACK_ALPHA_DARK = 10;
 
-/** Непрозрачность pill-thumb — контрастнее трека */
-const TABS_THUMB_ALPHA_LIGHT = 0.5;
+/** Непрозрачность pill-thumb — контрастнее трека, % */
+const TABS_THUMB_ALPHA_LIGHT = 50;
 
-const TABS_THUMB_ALPHA_DARK = 0.16;
+const TABS_THUMB_ALPHA_DARK = 16;
 
-/** Hover залитого сегмента */
-const TABS_HOVER_ALPHA_LIGHT = 0.24;
+/** Hover залитого сегмента, % */
+const TABS_HOVER_ALPHA_LIGHT = 24;
 
-const TABS_HOVER_ALPHA_DARK = 0.14;
+const TABS_HOVER_ALPHA_DARK = 14;
 
 /**
- * Glass-фон трека вкладок.
+ * Glass-фон трека вкладок из `onAccent`.
  * @param mode — светлая или тёмная тема
+ * @param onAccent — цвет из темы
  */
-function getTabsGlassTrackBackground(mode: ThemeColorScheme): string {
-  if (mode === ThemeColorScheme.DARK) {
-    return `rgba(255, 255, 255, ${TABS_TRACK_ALPHA_DARK})`;
-  }
-
-  return `rgba(255, 255, 255, ${TABS_TRACK_ALPHA_LIGHT})`;
+function getTabsGlassTrackBackground(mode: ThemeColorScheme, onAccent: string): string {
+  const alphaPercent =
+    mode === ThemeColorScheme.DARK ? TABS_TRACK_ALPHA_DARK : TABS_TRACK_ALPHA_LIGHT;
+  return mixColorWithTransparent(onAccent, alphaPercent);
 }
 
 /**
@@ -68,29 +68,34 @@ export function isTabsGlassTheme(context: TabsThemeContext): boolean {
  */
 export function getTabsSurfaceTokens(context: TabsThemeContext): TabsSurfaceTokens {
   const isDark = context.mode === ThemeColorScheme.DARK;
+  const onAccent = context.colors?.onAccent ?? '#ffffff';
 
   if (isTabsGlassTheme(context)) {
-    const trackBackground = getTabsGlassTrackBackground(context.mode);
+    const trackBackground = getTabsGlassTrackBackground(context.mode, onAccent);
 
     return {
       pillTrackBackground: trackBackground,
       filledTrackBackground: trackBackground,
-      pillThumbBackground: isDark
-        ? `rgba(255, 255, 255, ${TABS_THUMB_ALPHA_DARK})`
-        : `rgba(255, 255, 255, ${TABS_THUMB_ALPHA_LIGHT})`,
+      pillThumbBackground: mixColorWithTransparent(
+        onAccent,
+        isDark ? TABS_THUMB_ALPHA_DARK : TABS_THUMB_ALPHA_LIGHT,
+      ),
       pillThumbBoxShadow: isDark ? 'none' : (context.boxShadow?.sm ?? 'none'),
-      segmentHoverBackground: isDark
-        ? `rgba(255, 255, 255, ${TABS_HOVER_ALPHA_DARK})`
-        : `rgba(255, 255, 255, ${TABS_HOVER_ALPHA_LIGHT})`,
+      segmentHoverBackground: mixColorWithTransparent(
+        onAccent,
+        isDark ? TABS_HOVER_ALPHA_DARK : TABS_HOVER_ALPHA_LIGHT,
+      ),
       backdropFilter: overlayPanelBackdropFilterFromTheme(context as ThemeType),
       pillTrackBorder: `1px solid ${context.colors.borderSecondary}`,
     };
   }
 
   return {
-    pillTrackBackground: isDark ? '#1c1c1c' : context.colors.backgroundTertiary,
+    pillTrackBackground: context.colors.backgroundTertiary,
     filledTrackBackground: context.colors.backgroundSecondary,
-    pillThumbBackground: isDark ? '#444444' : context.colors.backgroundSecondary,
+    pillThumbBackground: isDark
+      ? context.colors.backgroundQuaternary
+      : context.colors.backgroundSecondary,
     pillThumbBoxShadow: isDark ? 'none' : (context.boxShadow?.sm ?? 'none'),
     segmentHoverBackground: context.colors.backgroundTertiary,
   };

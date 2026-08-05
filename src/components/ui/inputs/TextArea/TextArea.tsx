@@ -62,6 +62,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       additionalLabel,
       helperText,
       fullWidth = false,
+      autoWidth = false,
       disabled = false,
       readOnly = false,
       required = false,
@@ -162,6 +163,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       success,
       status: currentStatus,
       fullWidth,
+      autoWidth,
       focused,
       readOnly,
       className,
@@ -254,7 +256,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     if (skeleton) {
       return (
         <InputContainer fullWidth={fullWidth} aria-busy="true">
-          <InputControlStack fullWidth={fullWidth}>
+          <InputControlStack fullWidth={fullWidth} autoWidth={autoWidth}>
             {label ? (
               <Label as="span">
                 {label}
@@ -262,7 +264,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
               </Label>
             ) : null}
             {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
-            <TextAreaSkeleton fullWidth={fullWidth} $rows={rows} role="presentation" />
+            <TextAreaSkeleton fullWidth={fullWidth} autoWidth={autoWidth} $rows={rows} role="presentation" />
           </InputControlStack>
         </InputContainer>
       );
@@ -270,7 +272,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
 
     return (
       <InputContainer fullWidth={fullWidth}>
-        <InputControlStack fullWidth={fullWidth}>
+        <InputControlStack fullWidth={fullWidth} autoWidth={autoWidth}>
           {label && (
             <Label>
               {label}

@@ -1,6 +1,6 @@
 import styled, { type DefaultTheme } from 'styled-components';
 import { motion } from 'framer-motion';
-import { ThemeColorScheme, type ThemeType } from '../../../types/theme';
+import type { ThemeType } from '../../../types/theme';
 import { ModalSize } from '../../../types/sizes';
 import {
   getModalContainerStyles,
@@ -39,16 +39,37 @@ const getModalThemeOverrides = (theme: DefaultTheme): ModalThemeOverrides =>
 const overlayVariantPresets: Record<OverlayVariant, OverlayVariantTokens> = {
   default: {},
   blur: {
-    background: 'rgba(15, 23, 42, 0.55)',
     backdropFilter: 'blur(8px)',
   },
-  dark: {
-    background: 'rgba(7, 10, 16, 0.85)',
-  },
+  dark: {},
   frosted: {
-    background: 'rgba(255, 255, 255, 0.2)',
     backdropFilter: 'blur(16px) saturate(160%)',
   },
+};
+
+/**
+ * Фон оверлея по варианту — из токенов темы (без хардкода slate/white rgba).
+ * @param theme - Тема
+ * @param variant - Вариант оверлея
+ */
+const resolveOverlayVariantBackground = (
+  theme: DefaultTheme,
+  variant: OverlayVariant,
+): string | undefined => {
+  const overlay = theme.colors.overlay;
+  const onAccent = theme.colors.onAccent ?? theme.colors.backgroundSecondary;
+
+  switch (variant) {
+    case 'blur':
+      return overlay;
+    case 'dark':
+      return `color-mix(in srgb, ${theme.colors.text} 55%, ${overlay})`;
+    case 'frosted':
+      return `color-mix(in srgb, ${onAccent} 22%, transparent)`;
+    case 'default':
+    default:
+      return undefined;
+  }
 };
 
 const getOverlayVariantFromTheme = (theme: DefaultTheme, variant: OverlayVariant) =>
@@ -84,7 +105,10 @@ export const Overlay = styled(motion.div)<{
     const variantOverrides = getOverlayVariantFromTheme(theme, $overlayVariant);
     const variantPreset = overlayVariantPresets[$overlayVariant];
     const background =
-      variantOverrides?.background ?? variantPreset.background ?? overlayStyles.background;
+      variantOverrides?.background ??
+      resolveOverlayVariantBackground(theme, $overlayVariant) ??
+      variantPreset.background ??
+      overlayStyles.background;
     const backdropFilter =
       variantOverrides?.backdropFilter ??
       variantPreset.backdropFilter ??
@@ -117,12 +141,7 @@ export const Overlay = styled(motion.div)<{
 export const ModalContainer = styled(motion.div)<{ size: ModalSize; $mobile?: boolean }>`
   background-color: ${({ theme }) => getModalContainerBackground(getModalThemeContext(theme))};
   color: ${({ theme }) => theme.colors.text};
-  box-shadow: ${({ theme }) =>
-    theme.mode === ThemeColorScheme.DARK
-      ? '0 16px 48px rgba(0, 0, 0, 0.5)'
-      : theme.surfaceMaterial
-        ? theme.boxShadow.modal
-        : '0 16px 32px rgba(0, 0, 0, 0.08)'};
+  box-shadow: ${({ theme }) => theme.boxShadow.modal};
   overflow: visible;
   display: flex;
   flex-direction: column;
@@ -268,7 +287,8 @@ export const CloseButton = styled.button`
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    box-shadow: 0 0 0 3px
+      ${({ theme }) => `color-mix(in srgb, ${theme.colors.primary} 20%, transparent)`};
   }
 `;
 
@@ -364,7 +384,7 @@ export const ModalButtonsIcon = styled.div`
  * Описание модального окна
  */
 export const ModalDescription = styled.p`
-  color: #6b7280;
+  color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 0.875rem;
   line-height: 1.5;
   margin: 0 0 1rem 0;

@@ -28,6 +28,7 @@ import {
   getSliderValueLabelRootPaddingHorizontalPx,
   resolveSliderTrackMetrics,
   resolveSliderAccentKind,
+  resolveSliderFillAccentColors,
   sliderThumbLeftCalcCss,
   getSliderEmbeddedFooterHeightPx,
   getSliderEmbeddedThumbBottomCss,
@@ -46,6 +47,7 @@ import {
 } from './SliderEmbeddedInInput.style';
 import { SliderFieldShell } from './SliderFieldShell';
 import { SliderSkeletonSingle } from './SliderSkeleton';
+import { SliderTrackWithSideIcons } from './SliderTrackWithSideIcons';
 
 const defaultFormat = (n: number) => formatSliderNumberRu(n);
 
@@ -61,6 +63,8 @@ const defaultFormat = (n: number) => formatSliderNumberRu(n);
  * @param props.trackRailHeightPx / trackActiveHeightPx — опциональная толщина линий (см. типы)
  * @param props.label / additionalLabel / helperText / extraText / error / success / required — как у инпутов
  * @param props.skeleton / status — скелетон и визуальный акцент (см. типы)
+ * @param props.leftIcon / rightIcon / onLeftIconClick / onRightIconClick — боковые иконки у трека
+ * @param props.sideIconsWhenDisabled — `'disable'` | `'hide'` при disabled
  * @param props.disabled / fullWidth / size / className / name — см. типы
  */
 export const Slider: React.FC<SliderProps> = ({
@@ -90,10 +94,18 @@ export const Slider: React.FC<SliderProps> = ({
   status,
   className,
   name,
+  color,
   embeddedInInput = false,
   showScaleRow = true,
   onSliderFocus,
   onSliderBlur,
+  leftIcon,
+  rightIcon,
+  onLeftIconClick,
+  onRightIconClick,
+  sideIconsWhenDisabled = 'disable',
+  leftIconAriaLabel,
+  rightIconAriaLabel,
 }) => {
   const min = minProp;
   const max = Math.max(min, maxProp);
@@ -252,6 +264,11 @@ export const Slider: React.FC<SliderProps> = ({
     [error, success, status],
   );
 
+  const fillAccentColors = useMemo(
+    () => resolveSliderFillAccentColors(theme, accentKind, color),
+    [accentKind, color, theme],
+  );
+
   const helperTextStatus = useMemo(() => {
     if (error || success) {
       return undefined;
@@ -294,7 +311,9 @@ export const Slider: React.FC<SliderProps> = ({
       type="button"
       id={thumbId}
       $thumbPx={thumbPx}
-      $accent={accentKind}
+      $accentColor={fillAccentColors.checked}
+      $accentHoverColor={fillAccentColors.checkedHover}
+      $focusRingColor={fillAccentColors.focusRing}
       $disabled={disabled}
       disabled={disabled}
       style={
@@ -342,7 +361,7 @@ export const Slider: React.FC<SliderProps> = ({
               $thumbInsetPx={thumbInsetPx}
               $thumbSizePx={thumbPx}
               $activeHeightPx={track.activeHeightPx}
-              $accent={accentKind}
+              $accentColor={fillAccentColors.checked}
               $fillToEnd={isSliderEmbeddedTrackFilledToEnd(pct)}
               aria-hidden
             />
@@ -370,7 +389,7 @@ export const Slider: React.FC<SliderProps> = ({
           $thumbInsetPx={thumbInsetPx}
           $thumbSizePx={thumbPx}
           $activeHeightPx={track.activeHeightPx}
-          $accent={accentKind}
+          $accentColor={fillAccentColors.checked}
           aria-hidden
         />
         {thumbNode}
@@ -378,8 +397,23 @@ export const Slider: React.FC<SliderProps> = ({
     </SliderTrackRingWrap>
   );
 
+  const trackWithSideIcons = (
+    <SliderTrackWithSideIcons
+      track={trackNode}
+      embedded={embeddedInInput}
+      leftIcon={leftIcon}
+      rightIcon={rightIcon}
+      onLeftIconClick={onLeftIconClick}
+      onRightIconClick={onRightIconClick}
+      disabled={disabled}
+      sideIconsWhenDisabled={sideIconsWhenDisabled}
+      leftIconAriaLabel={leftIconAriaLabel}
+      rightIconAriaLabel={rightIconAriaLabel}
+    />
+  );
+
   const sliderBody = embeddedInInput ? (
-    trackNode
+    trackWithSideIcons
   ) : (
     <SliderRoot
       className={clsx('ui-slider', !hasFieldChrome && className)}
@@ -395,7 +429,7 @@ export const Slider: React.FC<SliderProps> = ({
           <SliderScaleLabel>{formatMaxLabel(max)}</SliderScaleLabel>
         </SliderScaleRow>
       ) : null}
-      {trackNode}
+      {trackWithSideIcons}
       {showValueLabel ? (
         <SliderValuesRow aria-hidden={false}>
           <SliderValueLabel

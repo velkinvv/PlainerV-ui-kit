@@ -44,15 +44,6 @@ export const StyledIconButton = styled(motion.button).withConfig(
   gap: 0;
   line-height: 0;
 
-  /* Базовые стили (fallback) - только для не-skeleton вариантов */
-  ${({ variant }) =>
-    variant !== ButtonVariant.SKELETON &&
-    css`
-      background-color: #007bff;
-      color: #ffffff;
-      border: 1px solid #007bff;
-    `}
-
   /* Размеры кнопки */
   ${({ size = Size.MD }) => {
     switch (size) {
@@ -115,9 +106,11 @@ export const StyledIconButton = styled(motion.button).withConfig(
 
     // Специальная обработка для skeleton варианта
     if (variant === ButtonVariant.SKELETON) {
+      const skeletonGradient = `linear-gradient(90deg, ${theme.colors.border} 25%, ${theme.colors.backgroundTertiary} 50%, ${theme.colors.border} 75%)`;
+      const skeletonBorder = `2px solid ${theme.colors.border}`;
+      const skeletonColor = theme.colors.textTertiary;
       return css`
-        background-image: ${variantStyles.background ||
-        'linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%)'};
+        background-image: ${variantStyles.background || skeletonGradient};
         background-size: ${(variantStyles as { backgroundSize?: string }).backgroundSize ||
         '200% 100%'};
         background-position: ${(variantStyles as { backgroundPosition?: string })
@@ -125,8 +118,8 @@ export const StyledIconButton = styled(motion.button).withConfig(
         background-repeat: no-repeat;
         animation: ${(variantStyles as { animation?: string }).animation ||
         'skeleton-loading 1.5s infinite ease-in-out'};
-        color: ${variantStyles.color || '#9ca3af80'};
-        border: ${variantStyles.border || '2px solid #d1d5db'};
+        color: ${variantStyles.color || skeletonColor};
+        border: ${variantStyles.border || skeletonBorder};
 
         /* В skeleton-режиме оставляем прозрачность без blur, чтобы не было оптического смещения центра. */
         .ui-icon-button-content {
@@ -134,8 +127,7 @@ export const StyledIconButton = styled(motion.button).withConfig(
         }
 
         &:hover:not(:disabled) {
-          background-image: ${variantStyles.hover?.background ||
-          'linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%)'};
+          background-image: ${variantStyles.hover?.background || skeletonGradient};
           background-size: ${(variantStyles.hover as { backgroundSize?: string })?.backgroundSize ||
           '200% 100%'};
           background-position: ${(variantStyles.hover as { backgroundPosition?: string })
@@ -143,8 +135,8 @@ export const StyledIconButton = styled(motion.button).withConfig(
           background-repeat: no-repeat;
           animation: ${(variantStyles.hover as { animation?: string })?.animation ||
           'skeleton-loading 1.5s infinite ease-in-out'};
-          color: ${variantStyles.hover?.color || '#9ca3af80'};
-          border: ${variantStyles.hover?.border || '2px solid #d1d5db'};
+          color: ${variantStyles.hover?.color || skeletonColor};
+          border: ${variantStyles.hover?.border || skeletonBorder};
 
           .ui-icon-button-content {
             opacity: 0.7;
@@ -152,8 +144,7 @@ export const StyledIconButton = styled(motion.button).withConfig(
         }
 
         &:active:not(:disabled) {
-          background-image: ${variantStyles.active?.background ||
-          'linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%)'};
+          background-image: ${variantStyles.active?.background || skeletonGradient};
           background-size: ${(variantStyles.active as { backgroundSize?: string })
             ?.backgroundSize || '200% 100%'};
           background-position: ${(variantStyles.active as { backgroundPosition?: string })
@@ -161,8 +152,8 @@ export const StyledIconButton = styled(motion.button).withConfig(
           background-repeat: no-repeat;
           animation: ${(variantStyles.active as { animation?: string })?.animation ||
           'skeleton-loading 1.5s infinite ease-in-out'};
-          color: ${variantStyles.active?.color || '#9ca3af80'};
-          border: ${variantStyles.active?.border || '2px solid #d1d5db'};
+          color: ${variantStyles.active?.color || skeletonColor};
+          border: ${variantStyles.active?.border || skeletonBorder};
 
           .ui-icon-button-content {
             opacity: 0.7;
@@ -170,13 +161,12 @@ export const StyledIconButton = styled(motion.button).withConfig(
         }
 
         &:focus-visible {
-          border: ${variantStyles.focus?.border || '2px solid #9ca3af'};
+          border: ${variantStyles.focus?.border || `2px solid ${theme.colors.borderHover}`};
           outline: ${variantStyles.focus?.outline || 'none'};
         }
 
         &:disabled {
-          background-image: ${variantStyles.disabled?.background ||
-          'linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%)'};
+          background-image: ${variantStyles.disabled?.background || skeletonGradient};
           background-size: ${(variantStyles.disabled as { backgroundSize?: string })
             ?.backgroundSize || '200% 100%'};
           background-position: ${(variantStyles.disabled as { backgroundPosition?: string })
@@ -184,8 +174,8 @@ export const StyledIconButton = styled(motion.button).withConfig(
           background-repeat: no-repeat;
           animation: ${(variantStyles.disabled as { animation?: string })?.animation ||
           'skeleton-loading 1.5s infinite ease-in-out'};
-          color: ${variantStyles.disabled?.color || '#9ca3af80'};
-          border: ${variantStyles.disabled?.border || '2px solid #d1d5db'};
+          color: ${variantStyles.disabled?.color || theme.colors.textDisabled};
+          border: ${variantStyles.disabled?.border || skeletonBorder};
           opacity: 0.6;
           cursor: not-allowed;
 

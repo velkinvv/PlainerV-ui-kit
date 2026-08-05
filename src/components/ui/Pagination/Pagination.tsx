@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { clsx } from 'clsx';
+import { useTheme } from 'styled-components';
 import type { PaginationProps } from '@/types/ui';
 import { IconSize, Size } from '@/types/sizes';
+import { resolveControlAccentColors } from '@/handlers/controlAccentColorHandlers';
 import { Icon } from '../Icon/Icon';
 import { buildPaginationSegments, getPaginationDimensions } from './handlers';
 import { ValueMotion } from '../ValueMotion';
@@ -51,8 +53,14 @@ export const Pagination: React.FC<PaginationProps> = ({
   size = Size.MD,
   disabled = false,
   ariaLabel = 'Пагинация',
+  color = 'info',
   className,
 }) => {
+  const theme = useTheme();
+  const accentColors = useMemo(
+    () => resolveControlAccentColors(theme, color),
+    [color, theme],
+  );
   const isControlled = pageProp !== undefined;
   const [internalPage, setInternalPage] = useState(() =>
     Math.min(Math.max(1, defaultPage), Math.max(1, totalPages)),
@@ -111,6 +119,7 @@ export const Pagination: React.FC<PaginationProps> = ({
             $minW={dim.minWidth}
             $minH={dim.minHeight}
             $radius={dim.borderRadius}
+            $focusRingColor={accentColors.focusRing}
             onClick={() => setPage(currentPage - 1)}
           >
             <Icon name="PhosphorCaretLeft" size={iconSize} color="currentColor" />
@@ -129,6 +138,7 @@ export const Pagination: React.FC<PaginationProps> = ({
                 $minH={dim.minHeight}
                 $fontSize={dim.fontSize}
                 $radius={dim.borderRadius}
+                $accentColor={accentColors.checked}
               >
                 {currentPage}
               </ValueMotion>
@@ -156,6 +166,9 @@ export const Pagination: React.FC<PaginationProps> = ({
                     $minH={dim.minHeight}
                     $fontSize={dim.fontSize}
                     $radius={dim.borderRadius}
+                    $accentColor={accentColors.checked}
+                    $accentHoverColor={accentColors.checkedHover}
+                    $focusRingColor={accentColors.focusRing}
                     aria-label={`Страница ${seg.page}`}
                     aria-current={isActive ? 'page' : undefined}
                     onClick={() => {
@@ -180,6 +193,7 @@ export const Pagination: React.FC<PaginationProps> = ({
             $minW={dim.minWidth}
             $minH={dim.minHeight}
             $radius={dim.borderRadius}
+            $focusRingColor={accentColors.focusRing}
             onClick={() => setPage(currentPage + 1)}
           >
             <Icon name="PhosphorCaretRight" size={iconSize} color="currentColor" />

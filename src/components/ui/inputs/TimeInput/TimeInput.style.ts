@@ -593,3 +593,15 @@ export const RegularTimeInput = styled.input.withConfig({
     cursor: not-allowed;
   }
 `;
+
+/**
+ * Шапка / подвал панели Time пикера.
+ * @property $edge - `bottom` — шапка, `top` — подвал
+ */
+export const TimeInputPickerChrome = styled.div<{ $edge: 'top' | 'bottom' }>`
+  padding: 16px;
+  border-top: ${({ $edge, theme }) =>
+    $edge === 'top' ? `1px solid ${theme.colors.border}` : 'none'};
+  border-bottom: ${({ $edge, theme }) =>
+    $edge === 'bottom' ? `1px solid ${theme.colors.border}` : 'none'};
+`;

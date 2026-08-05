@@ -8,8 +8,10 @@ import React, {
   useState,
 } from 'react';
 import { clsx } from 'clsx';
+import { useTheme } from 'styled-components';
 import { TooltipPosition, type ChipProps } from '../../../types/ui';
 import { IconSize, Size } from '../../../types/sizes';
+import { resolveControlAccentColors } from '../../../handlers/controlAccentColorHandlers';
 import { Badge } from '../Badge/Badge';
 import { Icon } from '../Icon/Icon';
 import { Tooltip } from '../Tooltip/Tooltip';
@@ -45,6 +47,7 @@ import {
  * @param props.tooltipWhenTruncated / tooltipContent - Тултип при ellipsis
  * @param props.maxWidth - Ограничение ширины
  * @param props.as - `span` | `button`
+ * @param props.color - Акцент выбранного чипа (default `primary`)
  * @param ref - Ref на корневой элемент
  */
 export const Chip = forwardRef<HTMLElement, ChipProps>(
@@ -65,6 +68,7 @@ export const Chip = forwardRef<HTMLElement, ChipProps>(
       tooltipContent,
       maxWidth,
       as: asProp,
+      color: colorProp,
       className,
       role: roleProp,
       tabIndex: tabIndexProp,
@@ -73,10 +77,21 @@ export const Chip = forwardRef<HTMLElement, ChipProps>(
     },
     ref,
   ) => {
+    const theme = useTheme();
     const groupContext = useChipGroupContext();
     const size = sizeProp ?? groupContext?.size ?? Size.SM;
     const appearance = appearanceProp ?? groupContext?.appearance ?? 'filled';
     const disabled = Boolean(disabledProp || groupContext?.disabled);
+    const accentColors = useMemo(
+      () => resolveControlAccentColors(theme, colorProp ?? 'primary'),
+      [colorProp, theme],
+    );
+    const accentColor = colorProp
+      ? accentColors.checked
+      : (groupContext?.accentColor ?? accentColors.checked);
+    const focusRingColor = colorProp
+      ? accentColors.focusRing
+      : (groupContext?.accentFocusRingColor ?? accentColors.focusRing);
     const geometry = useMemo(() => getChipGeometry(size), [size]);
     const maxWidthCss = chipLengthToCss(maxWidth);
 
@@ -253,6 +268,8 @@ export const Chip = forwardRef<HTMLElement, ChipProps>(
         $fontSize={geometry.fontSize}
         $minHeight={geometry.minHeight}
         $maxWidthCss={maxWidthCss}
+        $accentColor={accentColor}
+        $focusRingColor={focusRingColor}
         className={clsx('ui-chip', className)}
       >
         {leftIcon ? <ChipIconSlot aria-hidden>{leftIcon}</ChipIconSlot> : null}
@@ -273,6 +290,7 @@ export const Chip = forwardRef<HTMLElement, ChipProps>(
             disabled={disabled}
             aria-label={closeAriaLabel}
             $sizePx={geometry.closeButtonSize}
+            $focusRingColor={focusRingColor}
             onMouseDown={(mouseEvent) => {
               mouseEvent.preventDefault();
               mouseEvent.stopPropagation();

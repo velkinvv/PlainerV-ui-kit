@@ -131,8 +131,10 @@ const StepperCompactView = forwardRef<
     );
 
     const trackStroke =
-      appearance === 'dark' ? 'rgba(255,255,255,0.12)' : (theme.colors?.progressTrack ?? '#e0e0e0');
-    const progressStroke = theme.colors?.progressFill ?? '#93e850';
+      appearance === 'dark'
+        ? `color-mix(in srgb, ${theme.colors.onAccent ?? theme.colors.text} 12%, transparent)`
+        : theme.colors.progressTrack;
+    const progressStroke = theme.colors.progressFill;
 
     return (
       <StepperRoot

@@ -63,13 +63,18 @@ function getHintVariantBaseColor(
  * Возвращает цвет текста для glass-варианта hint.
  * @param variant — вариант hint
  * @param mode — светлая или тёмная тема
+ * @param onAccent — цвет текста на акценте из темы
  */
-function getHintGlassTextColor(variant: HintVariant, mode: ThemeColorScheme): string {
+function getHintGlassTextColor(
+  variant: HintVariant,
+  mode: ThemeColorScheme,
+  onAccent?: string,
+): string {
   if (variant === HintVariant.WARNING && mode === ThemeColorScheme.LIGHT) {
     return grey[900];
   }
 
-  return '#ffffff';
+  return onAccent ?? '#ffffff';
 }
 
 /**
@@ -86,7 +91,7 @@ export function getHintGlassSurfaceTokens(
 
   return {
     background: withHexAlpha(baseColor, GLASS_OVERLAY_FILLED_ALPHA),
-    textColor: getHintGlassTextColor(variant, context.mode),
+    textColor: getHintGlassTextColor(variant, context.mode, context.colors?.onAccent),
     arrowColor: withHexAlpha(baseColor, GLASS_OVERLAY_FILLED_ALPHA),
     border: `1px solid ${withHexAlpha(baseColor, GLASS_OVERLAY_BORDER_ALPHA)}`,
     boxShadow: variantConfig.boxShadow,

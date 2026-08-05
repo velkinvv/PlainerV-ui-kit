@@ -13,6 +13,11 @@ export interface NavigationMenuContextValue {
   activeAppearance: NavigationMenuActiveAppearance;
   /** В compact: вложенные уровни показывать в панели при hover, а не в колонке */
   collapsedNestedFlyout: boolean;
+  /**
+   * Явный флаг авто-раскрытия аккордеона по activeId; `undefined` — поведение по умолчанию (`!collapsed`).
+   * Не открывает collapsed flyout.
+   */
+  autoExpandNestedOnActive?: boolean;
 }
 
 /**

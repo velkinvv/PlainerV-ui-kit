@@ -5,6 +5,7 @@ import type { Colors } from '../types/theme';
 import {
   getModalContainerBackground,
   getModalGlassContainerBackground,
+  getModalGlassOverlayBackground,
   getModalOverlayTokens,
   isModalGlassTheme,
 } from './modalGlassHandlers';
@@ -13,6 +14,8 @@ describe('modalGlassHandlers', () => {
   const colors = {
     card: '#ffffff',
     overlay: 'rgba(0, 0, 0, 0.5)',
+    onAccent: '#ffffff',
+    backgroundSecondary: '#ffffff',
   } as Colors;
 
   const plainContext = {
@@ -40,16 +43,19 @@ describe('modalGlassHandlers', () => {
   });
 
   it('getModalContainerBackground плотнее Card в glass-теме', () => {
-    expect(getModalContainerBackground(glassContext)).toBe('rgba(255, 255, 255, 0.68)');
-    expect(getModalGlassContainerBackground(ThemeColorScheme.LIGHT)).toBe(
-      'rgba(255, 255, 255, 0.68)',
+    const expected = getModalGlassContainerBackground(
+      ThemeColorScheme.LIGHT,
+      glassLightTheme.colors,
     );
+    expect(getModalContainerBackground(glassContext)).toBe(expected);
     expect(getModalContainerBackground(glassContext)).not.toBe(glassLightTheme.colors.card);
   });
 
   it('getModalOverlayTokens усиливает затемнение оверлея в glass-теме', () => {
     const tokens = getModalOverlayTokens(glassContext);
-    expect(tokens.background).toBe('rgba(15, 23, 42, 0.22)');
+    expect(tokens.background).toBe(
+      getModalGlassOverlayBackground(ThemeColorScheme.LIGHT, glassLightTheme.colors.overlay),
+    );
     expect(tokens.backdropFilter).toBe('blur(16px)');
   });
 

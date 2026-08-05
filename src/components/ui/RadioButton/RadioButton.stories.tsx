@@ -118,6 +118,11 @@ const meta: Meta<typeof RadioButton> = {
       control: 'text',
       description: 'Доп. строка под всем блоком сообщений — аналог `extraText` у Input',
     },
+    color: {
+      control: 'text',
+      description:
+        'Акцент во «вкл»: primary | success | error | warning | info или CSS-цвет (если нет error/status)',
+    },
   },
 };
 
@@ -773,4 +778,26 @@ export const ComplexExample: Story = {
       </div>
     );
   },
+};
+
+export const Colors: Story = {
+  name: 'Цвета (color)',
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <RadioButton checked label="success (default)" name="c-success" value="1" color="success" />
+      <RadioButton checked label="primary" name="c-primary" value="1" color="primary" />
+      <RadioButton checked label="info" name="c-info" value="1" color="info" />
+      <RadioButton checked label="warning" name="c-warning" value="1" color="warning" />
+      <RadioButton checked label="error" name="c-error" value="1" color="error" />
+      <RadioButton checked label="custom #9c27b0" name="c-custom" value="1" color="#9c27b0" />
+      <RadioButton
+        checked
+        label="outline + primary"
+        name="c-outline"
+        value="1"
+        color="primary"
+        variant={RadioButtonVariant.OUTLINE}
+      />
+    </div>
+  ),
 };

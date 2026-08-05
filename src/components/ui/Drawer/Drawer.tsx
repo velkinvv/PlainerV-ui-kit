@@ -2,6 +2,7 @@ import React, { forwardRef, useCallback, useId, useMemo, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, useReducedMotion } from 'framer-motion';
 import { clsx } from 'clsx';
+import { useTheme } from 'styled-components';
 import type { DrawerProps } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
 import { IconSize } from '../../../types/sizes';
@@ -64,6 +65,7 @@ export const Drawer = forwardRef<HTMLElement, DrawerProps>(
     },
     ref,
   ) => {
+    const theme = useTheme();
     const prefersReducedMotion = useReducedMotion();
     useModalEscape({ isOpen, closeOnEscape, closeOnEscapeKeyDown, onClose });
     const titleId = useId();
@@ -196,7 +198,7 @@ export const Drawer = forwardRef<HTMLElement, DrawerProps>(
                 {!title && showCloseButton ? <DrawerHeaderSpacer aria-hidden /> : null}
                 {showCloseButton ? (
                   <CloseButton type="button" onClick={onClose} aria-label="Закрыть">
-                    <Icon name="PhosphorX" size={IconSize.MD} color="#9E9E9E" />
+                    <Icon name="PhosphorX" size={IconSize.MD} color={theme.colors.textSecondary} />
                   </CloseButton>
                 ) : null}
               </DrawerHeader>

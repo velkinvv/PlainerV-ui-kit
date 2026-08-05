@@ -301,7 +301,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
                 </ModalHeaderTitleWrapper>
                 {showCloseButton && (
                   <CloseButton onClick={onClose} aria-label="Закрыть">
-                    <Icon name="PhosphorX" size={IconSize.MD} color="#9E9E9E" />
+                    <Icon name="PhosphorX" size={IconSize.MD} color={theme.colors.textSecondary} />
                   </CloseButton>
                 )}
               </ModalHeader>

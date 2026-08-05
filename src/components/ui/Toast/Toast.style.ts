@@ -303,7 +303,7 @@ export const ToastProgressTrack = styled.div`
   right: 0;
   bottom: 0;
   height: 3px;
-  background: rgba(0, 0, 0, 0.08);
+  background: ${({ theme }) => `color-mix(in srgb, ${theme.colors.text} 8%, transparent)`};
 `;
 
 /**

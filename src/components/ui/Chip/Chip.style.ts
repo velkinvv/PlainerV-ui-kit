@@ -14,6 +14,10 @@ type ChipRootProps = {
   $fontSize: string;
   $minHeight: string;
   $maxWidthCss?: string;
+  /** Акцент выбранного чипа */
+  $accentColor: string;
+  /** Кольцо фокуса */
+  $focusRingColor: string;
 };
 
 /**
@@ -22,6 +26,8 @@ type ChipRootProps = {
  * @property $selected - выбранное состояние
  * @property $clickable - есть обработчик клика
  * @property $disabled - блокировка
+ * @property $accentColor - цвет выбранного состояния
+ * @property $focusRingColor - цвет focus-ring
  */
 export const ChipRoot = styled.span.withConfig({
   shouldForwardProp: createStyledShouldForwardProp(),
@@ -48,14 +54,14 @@ export const ChipRoot = styled.span.withConfig({
     $disabled ? 'not-allowed' : $clickable ? 'pointer' : 'default'};
   opacity: ${({ $disabled }) => ($disabled ? 0.55 : 1)};
 
-  ${({ theme, $appearance, $selected }) => {
+  ${({ theme, $appearance, $selected, $accentColor }) => {
     if ($selected) {
       return css`
-        color: ${theme.colors.primary};
-        border: 1px solid ${theme.colors.primary};
+        color: ${$accentColor};
+        border: 1px solid ${$accentColor};
         background: color-mix(
           in srgb,
-          ${theme.colors.primary} ${$appearance === 'outline' ? 10 : 16}%,
+          ${$accentColor} ${$appearance === 'outline' ? 10 : 16}%,
           ${theme.colors.input}
         );
       `;
@@ -108,7 +114,7 @@ export const ChipRoot = styled.span.withConfig({
     `}
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.primary};
+    outline: 2px solid ${({ $focusRingColor }) => $focusRingColor};
     outline-offset: 2px;
   }
 `;
@@ -154,7 +160,7 @@ export const ChipBadgeSlot = styled.span`
  */
 export const ChipCloseButton = styled.button.withConfig({
   shouldForwardProp: createStyledShouldForwardProp(),
-})<{ $sizePx: number }>`
+})<{ $sizePx: number; $focusRingColor?: string }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -193,7 +199,7 @@ export const ChipCloseButton = styled.button.withConfig({
   }
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.primary};
+    outline: 2px solid ${({ $focusRingColor, theme }) => $focusRingColor ?? theme.colors.primary};
     outline-offset: 1px;
   }
 `;

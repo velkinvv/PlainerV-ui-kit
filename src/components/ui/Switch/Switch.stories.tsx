@@ -43,6 +43,11 @@ const meta: Meta<typeof Switch> = {
     },
     error: { description: 'Текст ошибки под переключателем' },
     fullWidth: { control: 'boolean', description: 'На всю ширину строки' },
+    color: {
+      control: 'text',
+      description:
+        'Цвет трека во «вкл»: primary | success | error | warning | info или CSS-цвет (#hex / rgb)',
+    },
     name: { description: 'Имя поля в форме' },
     id: { description: 'Явный id для связи с `label`' },
   },
@@ -138,3 +143,18 @@ export const FullWidth: Story = {
     name: 'fw',
   },
 };
+
+export const Colors: Story = {
+  name: 'Цвета (color)',
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <Switch label="success (default)" defaultChecked name="c-success" color="success" />
+      <Switch label="primary" defaultChecked name="c-primary" color="primary" />
+      <Switch label="info" defaultChecked name="c-info" color="info" />
+      <Switch label="warning" defaultChecked name="c-warning" color="warning" />
+      <Switch label="error" defaultChecked name="c-error" color="error" />
+      <Switch label="custom #9c27b0" defaultChecked name="c-custom" color="#9c27b0" />
+    </div>
+  ),
+};
+

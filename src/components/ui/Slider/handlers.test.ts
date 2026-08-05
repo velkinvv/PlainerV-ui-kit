@@ -10,6 +10,7 @@ import {
   getSliderTrackMetrics,
   resolveSliderTrackMetrics,
   resolveSliderAccentKind,
+  resolveSliderFillAccentColors,
   resolveSliderTrackRailBackground,
   clientXToSliderValue,
   sliderThumbLeftCalcCss,
@@ -102,13 +103,33 @@ describe('Slider handlers', () => {
     expect(resolveSliderAccentKind('', false, undefined)).toBe('default');
   });
 
+  it('resolveSliderFillAccentColors: default → info, status перекрывает color', () => {
+    const theme = {
+      colors: {
+        info: '#00ccff',
+        infoHover: '#00aadd',
+        success: '#00aa00',
+        successHover: '#008800',
+        danger: '#cc0000',
+        dangerHover: '#990000',
+        warning: '#ff8800',
+        primary: '#1111ff',
+        primaryHover: '#0000ee',
+      },
+    } as Parameters<typeof resolveSliderFillAccentColors>[0];
+
+    expect(resolveSliderFillAccentColors(theme, 'default').checked).toBe('#00ccff');
+    expect(resolveSliderFillAccentColors(theme, 'default', 'success').checked).toBe('#00aa00');
+    expect(resolveSliderFillAccentColors(theme, 'error', 'success').checked).toBe('#cc0000');
+  });
+
   it('resolveSliderTrackRailBackground: в тёмной теме — светлая полупрозрачная линия', () => {
     expect(
       resolveSliderTrackRailBackground({
         mode: ThemeColorScheme.DARK,
-        colors: { progressTrack: '#757575' },
+        colors: { progressTrack: '#757575', onAccent: '#ffffff' },
       } as Parameters<typeof resolveSliderTrackRailBackground>[0]),
-    ).toBe('rgba(255, 255, 255, 0.32)');
+    ).toBe('color-mix(in srgb, #ffffff 32%, transparent)');
 
     expect(
       resolveSliderTrackRailBackground({

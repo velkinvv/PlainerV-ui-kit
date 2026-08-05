@@ -55,6 +55,7 @@ export const DOC_SEGMENTED_CONTROL = `
 | \`options\` | Data-driven список (\`SegmentedControlOption[]\`); приоритет над children, если непустой. |
 | \`children\` | Составной API: **SegmentedControl.Item**. |
 | \`ariaLabel\`, \`fullWidth\`, \`name\` | a11y, растяжение, имя native input. |
+| \`color\` | Акцент выбранного сегмента (outline) и focus-ring: \`ControlColor\` / CSS (default \`primary\`). |
 
 ### Item / option
 \`leftIcon\` / \`rightIcon\`, \`loading\`, \`disabled\`, \`displayAsSquare\` (квадрат только с иконкой).
@@ -137,7 +138,7 @@ export const DOC_INPUT = `
 | \`prefix\`, \`suffix\` | Составное поле (InputEx): addon слева/справа в одной рамке; для \`Select\` / \`searchSelect\` в слоте включается \`embeddedInCompositeField\`. |
 | \`displayClearIcon\`, \`onClearIconClick\`, \`clearIconProps\` | Кнопка очистки. |
 | \`status\` | error | success | warning — цвет обводки. |
-| \`readOnly\`, \`fullWidth\`, \`textAlign\` | Поведение и вёрстка. |
+| \`readOnly\`, \`fullWidth\`, \`autoWidth\`, \`textAlign\` | Поведение и вёрстка. \`fullWidth\` → 100%; \`autoWidth\` → \`auto\` (без фиксированных 335px); иначе 335px. |
 | \`isLoading\`, \`skeleton\` | Индикаторы. |
 | \`tooltip\`, \`tooltipType\`, \`tooltipPosition\` | Подсказка к полю. |
 | \`displayCharacterCounter\`, \`maxLength\`, пороги счётчика | Лимит символов. |
@@ -161,6 +162,8 @@ export const DOC_SELECT = `
 Выбор значения из списка: одиночный или множественный режим, поиск, кастомный рендер опций, интеграция с **Input**-обёрткой (\`variant selector\`).
 
 Смотрите **SelectProps** в \`types/ui.ts\`: \`options\`, \`value\`, \`onValueChange\`, \`mode\`, \`searchable\`, размеры и состояния ошибки.
+
+Ширина поля: \`fullWidth\` / \`autoWidth\` — как у **Input** (приоритет \`fullWidth\` > \`autoWidth\` > 335px).
 
 ### Режимы \`mode\`
 - **select** — панель **Dropdown** (поиск в шапке панели по умолчанию, мультивыбор).
@@ -359,6 +362,31 @@ export const DOC_LIST = `
 Вложенные \`List\` внутри пункта: для **numbers** — иерархия \`1.1.\`. Storybook: **UI Kit → Data Display → List**.
 `.trim();
 
+/** @see TransferListProps */
+export const DOC_TRANSFER_LIST = `
+### Назначение
+**TransferList** — две панели с переносом пунктов (shuttle): доступные ↔ выбранные.
+
+### Варианты
+- **\`basic\`** — кнопки переноса выбранных и опционально «перенести всё» (\`showMoveAll\`)
+- **\`enhanced\`** — «выбрать все» и счётчик в шапке; только перенос выбранных
+
+### Значение
+- Простой режим: **\`value\` / \`defaultValue\`** — пункты **справа**; слева — остаток каталога **\`items\`**
+- Полный контроль: **\`leftValue\` / \`rightValue\`** (+ defaults)
+
+\`onChange({ leftValue, rightValue, reason })\` — \`move\` | \`move-all\` | \`dnd\` | \`reorder\`.
+
+### Поиск и DnD
+- **\`searchable\`** — локальный фильтр по подписи (не меняет модель)
+- **\`draggable\`** — HTML5 DnD между панелями и reorder внутри; кнопки остаются основным способом переноса
+
+### Тема
+Чекбоксы, кнопки и поле поиска из UI Kit; **\`color\`** — акцент checkbox (\`ControlColor\` | CSS, default \`primary\`).
+
+Storybook: **UI Kit → Inputs → TransferList**.
+`.trim();
+
 /** @see TreeProps, TreeItemProps, TreeItemData */
 export const DOC_TREE = `
 ### Назначение
@@ -413,6 +441,7 @@ export const DOC_CHIP = `
 | \`value\` | Идентификатор в группе **Chips**. |
 | \`tooltipWhenTruncated\`, \`maxWidth\` | Ellipsis + Tooltip. |
 | \`as\` | Корневой элемент: \`span\` \| \`button\`. |
+| \`color\` | Акцент selected: \`ControlColor\` / CSS (default \`primary\`); у **Chips** — дефолт для детей. |
 
 ### Chips — выбор
 | Проп | Зачем |
@@ -552,8 +581,9 @@ export const DOC_TABS = `
 ### Назначение
 Единый компонент **Tabs**: вкладки с панелями (**TabItem** с **children**) и сегменты **без** панелей (**Tabs.Item** / **TabItem** без **children**). Список вкладок можно задать дочерними узлами или пропом **items** (непустой массив имеет приоритет). Дочерние сегменты автоматически попадают во внутренний трек (**TabItemGroupList**); отдельная обёртка списка не нужна. Атрибуты трека — проп **segmentTrackProps** на корне **Tabs**.
 
-- **Варианты**: **TabsVariant.PILL** (скруглённый трек и «капля»); **TabsVariant.MINIMAL**, **TabsVariant.LINE**, **TabsVariant.UNDERLINE** — один тип текстового ряда со скользящей полоской **primary**, различие только в серой базовой линии **borderSecondary**: у **minimal** её нет, у **line** она на всю ширину/высоту трека, у **underline** — только под рядом триггеров (**fit-content**). Если **variant** не задан — **resolveTabsVariant** (горизонтально **pill**, вертикально **minimal**).
-- **filledSegmentTriggers** (на корне **Tabs** / **TabItem.Group**): для **minimal** / **line** / **underline** включает «залитые» сегменты (**primary** на активном), фон трека **backgroundSecondary** и полоску индикатора **2px** (без пропа — **1px** и без заливки у текстовых вариантов).
+- **Варианты**: **TabsVariant.PILL** (скруглённый трек и «капля»); **TabsVariant.MINIMAL**, **TabsVariant.LINE**, **TabsVariant.UNDERLINE** — один тип текстового ряда со скользящей полоской акцентного цвета, различие только в серой базовой линии **borderSecondary**: у **minimal** её нет, у **line** она на всю ширину/высоту трека, у **underline** — только под рядом триггеров (**fit-content**). Если **variant** не задан — **resolveTabsVariant** (горизонтально **pill**, вертикально **minimal**).
+- **filledSegmentTriggers** (на корне **Tabs** / **TabItem.Group**): для **minimal** / **line** / **underline** включает «залитые» сегменты (акцент на активном), фон трека **backgroundSecondary** и полоску индикатора **2px** (без пропа — **1px** и без заливки у текстовых вариантов).
+- **color** — акцент активной вкладки / индикатора / focus-ring (\`ControlColor\` / CSS, default \`primary\`).
 - **Направление**: **TabsDirection**, вертикально — **TabsVerticalPosition**.
 
 В режиме **pill** скругление сегментов — **BorderRadiusHandler(theme.borderRadius)**; оболочка трека — \`calc(radius + inset)\`; **overflow: hidden**; под активным сегментом анимированная «капля» (**PillSegmentThumb**). В текстовых вариантах активная отметка — скользящая полоска (**LineUnderlineTrackIndicator**) по нижнему (горизонталь) или правому (вертикаль) краю ряда триггеров.
@@ -663,7 +693,7 @@ export const DOC_NAVIGATION_MENU = `
 
 Вложенность: у **NavigationMenu.Item** (и у элемента **Sidemenu** — поле \`items\` у \`SidemenuItem\`) проп **items** — рекурсивное дерево; id **уникальны по всему дереву**; в развёрнутой панели ветка раскрывается кликом.
 
-В компактном режиме (**\`collapsed\`**) по умолчанию (**\`collapsedNestedFlyout\`**, по умолчанию **true**) подменю показывается в **панели справа** при наведении на ветку, а не с отступом в колонке. На листе по-прежнему **activeId**. Открытие подменю по умолчанию скрыто; **\`defaultNestedExpanded\`** у ветки задаёт начальное «открыто» (панель видна и у активного потомка подсвечивается авто-раскрытие). Чтобы отключить flyout и вернуть прежнее (вложенность в компактной колонке скрыта), задайте **\`collapsedNestedFlyout={false}\`** на **NavigationMenu**.
+В компактном режиме (**\`collapsed\`**) по умолчанию (**\`collapsedNestedFlyout\`**, по умолчанию **true**) подменю показывается в **панели справа** при наведении на ветку, а не с отступом в колонке. На листе по-прежнему **activeId**; ветка с активным потомком подсвечивается, но **flyout не открывается сам** из‑за **activeId** (только hover / клик / **defaultNestedExpanded={true}**). В развёрнутой колонке аккордеон по умолчанию раскрывается, если **activeId** в поддереве (**autoExpandNestedOnActive**, по умолчанию \`true\` только при \`!collapsed\`). Чтобы отключить flyout и вернуть прежнее (вложенность в компактной колонке скрыта), задайте **\`collapsedNestedFlyout={false}\`** на **NavigationMenu**.
 
 Опционально **expandInteraction** (\`none\` | \`click\` | \`hover\`): анимированная ширина и раскрытие подписей; колбэки **onExpand** / **onCollapse**, контроль через **expanded** и **onExpandedChange**.
 
@@ -1068,7 +1098,7 @@ export const DOC_PAGINATION = `
 Не путать с **TablePagination** (размер страницы и «строк на странице» под таблицей).
 
 ### Внешний вид (тема)
-В светлой теме плашка со скруглением и контрастным активным номером (**theme.colors.info**); в тёмной — тёмная плашка и светлый текст (см. сторис для точных токенов).
+В светлой теме плашка со скруглением и контрастным активным номером; в тёмной — тёмная плашка и светлый текст. Проп **\`color\`** — акцент активной страницы (\`ControlColor\` / CSS, default \`info\`).
 `.trim();
 
 /** @see AccordionProps */
@@ -1170,6 +1200,31 @@ export const DOC_CALENDAR = `
 - **DateRollerPicker**, **TimePickerColumns** — низкоуровневые блоки внутри Calendar / Input.
 `.trim();
 
+/** @see RatingProps */
+export const DOC_RATING = `
+### Назначение
+Компонент **оценки**: выбор и отображение рейтинга. Варианты **icons** (иконки с partial fill), **bar** (полоска с цветовой шкалой), **faces** (настроение), **dots** (точки).
+
+### API
+| Проп | Зачем |
+|------|--------|
+| \`variant\` | icons \\| bar \\| faces \\| dots (по умолчанию icons). |
+| \`value\` / \`defaultValue\` / \`onChange\` | Controlled / uncontrolled; \`null\` — без оценки. |
+| \`precision\` | Шаг (по умолчанию **1**; для половин — \`0.5\`). |
+| \`max\` | Верх шкалы (по умолчанию 5). |
+| \`readOnly\` / \`disabled\` | Только просмотр / блок. |
+| \`colorScale\` | default \\| traffic \\| массив цветов (для bar/dots). |
+| \`clearable\` | Повторный клик сбрасывает в \`null\`. |
+| \`showValueLabel\` | Число рядом. |
+| \`highlightSelectedOnly\` | Для faces — подсветка только выбранного (по умолчанию true). |
+| \`icon\` / \`emptyIcon\` | Кастом иконок в icons. |
+
+### Доступность
+Icons / faces / dots — radio group; bar — slider. В \`readOnly\` — \`role="img"\` и \`aria-label\`.
+
+Storybook: **UI Kit → Feedback → Rating**.
+`.trim();
+
 /** @see PulseProps */
 export const DOC_PULSE = `
 ### Назначение
@@ -1212,6 +1267,9 @@ export const DOC_CHECKBOX = `
 ### Назначение
 Чекбокс: **checked** / **indeterminate**, **Size**, ошибка, связь с лейблом, нативные атрибуты **input**.
 
+### Цвет (\`color\`)
+Как у **Switch**: пресеты **\`primary\`** | **\`success\`** (default) | **\`error\`** | **\`warning\`** | **\`info\`**, либо CSS-цвет.
+
 Для группы связанных опций см. **CheckboxGroup** в том же модуле.
 
 Storybook: **UI Kit → Buttons → Checkbox**.
@@ -1222,7 +1280,10 @@ export const DOC_RADIO_BUTTON = `
 ### Назначение
 Одна опция: **RadioButtonVariant**, подпись и позиция (**RadioButtonLabelPosition**), тултип, дополнительный лейбл поля, иконки.
 
-В группе используйте общий **name**; для набора опций удобнее **RadioButtonGroup**.
+### Цвет (\`color\`)
+Акцент во «вкл» (если нет \`error\` / \`status\`): те же пресеты / CSS-цвет, что у **Switch** и **Checkbox** (default \`success\`).
+
+В группе используйте общий **name**; для набора опций удобнее **RadioButtonGroup** (\`color\` можно задать в каждой **RadioButtonGroupOption**).
 
 Storybook: **UI Kit → Buttons → RadioButton**.
 `.trim();
@@ -1241,6 +1302,10 @@ export const DOC_SWITCH = `
 Переключатель Plainer: трек и бегунок, подпись слева/справа, \`role="switch"\`, состояние ошибки, **Size**.
 
 Значение — через **checked** / **defaultChecked** и нативное событие **change** (\`event.target.checked\`).
+
+### Цвет включённого трека (\`color\`)
+Пресеты темы (**ControlColor**): **\`primary\`** | **\`success\`** (default) | **\`error\`** | **\`warning\`** | **\`info\`**.  
+Либо произвольный CSS-цвет: \`color="#9c27b0"\`. Тот же API у **Checkbox** и **RadioButton**.
 
 Storybook: **UI Kit → Buttons → Switch**.
 `.trim();
@@ -1261,10 +1326,13 @@ export const DOC_SLIDER = `
 ### Состояния (**\`status\`**)
 **error** | **success** | **warning** — цвет активной полосы и обводка трека. Приоритет: **error** → **success** → **status** (\`resolveSliderAccentKind\`). **disabled** — прежнее затемнение.
 
+### Боковые иконки у трека
+**\`leftIcon\`** / **\`rightIcon\`** — слоты слева/справа от трека. **\`onLeftIconClick\`** / **\`onRightIconClick\`** — обёртка-кнопка. При **\`disabled\`**: **\`sideIconsWhenDisabled\`** = \`disable\` (кнопки disabled, default) или \`hide\` (слоты скрыты). Aria: **\`leftIconAriaLabel\`** / **\`rightIconAriaLabel\`**.
+
 ### Скелетон
 **\`skeleton\`** — шиммер вместо трека; **aria-busy** на контейнере; у range поля «От/До» скрыты.
 
-Акцент по умолчанию: **theme.colors.info** / **infoHover**.
+Акцент по умолчанию: **theme.colors.info**. Проп **\`color\`** — пресет \`ControlColor\` или CSS-цвет (если нет \`error\` / \`success\` / \`status\`).
 
 Для числового поля с той же шкалой в оболочке **Input** см. **SliderInput** (\`DOC_SLIDER_INPUT\`).
 `.trim();
@@ -1292,6 +1360,7 @@ export const DOC_SLIDER_INPUT = `
 | \`sliderSize\` | Размер трека и бегунка; по умолчанию совпадает с **\`size\`** поля. |
 | \`trackRailHeightPx\`, \`trackActiveHeightPx\` | Явная толщина серой и активной линии. |
 | \`formatValue\` | Формат числа в подписях и полях (как у **Slider**). |
+| \`color\` | Акцент трека (\`ControlColor\` / CSS, default \`info\`); как у **Slider**. |
 
 ### Числовые поля
 | Проп | Зачем |
@@ -1310,6 +1379,9 @@ export const DOC_SLIDER_INPUT = `
 ### Состояния (наследуются от Input)
 **\`label\`**, **\`helperText\`**, **\`extraText\`**, **\`additionalLabel\`**, **\`error\`**, **\`success\`**, **\`status\`** (\`error\` | \`success\` | \`warning\`), **\`disabled\`**, **\`readOnly\`**, **\`required\`**, **\`skeleton\`**, **\`isLoading\`**, **\`displayClearIcon\`**, иконки, тултип/hint, **\`variant\`** (\`default\` | \`clear\`).
 
+### Иконки у трека (не путать с полевыми)
+**\`trackLeftIcon\`** / **\`trackRightIcon\`**, **\`onTrackLeftIconClick\`** / **\`onTrackRightIconClick\`**, **\`sideIconsWhenDisabled\`**, **\`trackLeftIconAriaLabel\`** / **\`trackRightIconAriaLabel\`** — проброс во вложенный **Slider** / **RangeSlider**. Полевые **\`leftIcon\`** / **\`rightIcon\`** остаются в рамке Input.
+
 Очистка (**\`displayClearIcon\`**) сбрасывает значение к **\`min\`** (одиночный) или к \`[min, min]\` (range).
 
 ### Связанные компоненты
@@ -1317,7 +1389,7 @@ export const DOC_SLIDER_INPUT = `
 - **DateInput** (\`range\`) — тот же паттерн «одно значение / пара», другой тип данных.
 
 ### Документация
-- Сайт: \`documentation/content/docs/ru/web/v_0.2.7/components-slider-input.mdx\`
+- Сайт: \`documentation/content/docs/ru/web/v_0.2.8/components-slider-input.mdx\`
 - Storybook: **UI Kit → Inputs → SliderInput** (истории по режимам и состояниям)
 `.trim();
 
@@ -1369,7 +1441,7 @@ export const DOC_THEME_TOGGLE = `
 
 Пара **ThemeVariantSelector** + **ThemeToggle** — основной способ переключения встроенных тем. Для каталога из 3+ кастомных id используйте **ThemeSelector** или \`setThemeMode\`.
 
-См. [Theming](/docs/web/v_0.2.7/theming).
+См. [Theming](/docs/web/v_0.2.8/theming).
 `.trim();
 
 /** ThemeVariantSelector — ThemeVariantSelectorProps */
@@ -1379,7 +1451,7 @@ export const DOC_THEME_VARIANT_SELECTOR = `
 
 Комбинируйте с **ThemeToggle** для полного управления темой. Скрывается, если в каталоге доступен только один вариант.
 
-См. сторис **UI Kit/Theming/ThemeVariantSelector** и [Theming](/docs/web/v_0.2.7/theming).
+См. сторис **UI Kit/Theming/ThemeVariantSelector** и [Theming](/docs/web/v_0.2.8/theming).
 `.trim();
 
 /** ThemeSelector — ThemeSelectorProps */
@@ -1389,7 +1461,7 @@ export const DOC_THEME_SELECTOR = `
 
 Работает с любым числом тем. Переключение: \`setThemeMode(appThemes.themeMode.ocean)\` — type-safe id.
 
-См. сторис **UI Kit/Theming/ThemeSelector** и [Theming](/docs/web/v_0.2.7/theming).
+См. сторис **UI Kit/Theming/ThemeSelector** и [Theming](/docs/web/v_0.2.8/theming).
 `.trim();
 
 /** @see SidemenuProps */
@@ -1508,6 +1580,26 @@ export const DOC_TOAST = `
 |------|--------|
 | \`toast\` | Объект **ToastItem** (id, type, message, title?, duration?, appearance?, action?). |
 | \`onClose\` | Закрытие по id (таймер или крестик). |
+`.trim();
+
+/** @see AlertProps */
+export const DOC_ALERT = `
+### Назначение
+**Alert** — inline-уведомление в потоке страницы/формы (не overlay). Для всплывающих сообщений см. **Toast** / **Snackbar**.
+
+### Ключевые пропсы
+| Проп | Зачем |
+|------|--------|
+| \`severity\` | \`success\` \\| \`info\` \\| \`warning\` \\| \`error\` — смысл и дефолтная иконка |
+| \`variant\` | \`standard\` \\| \`filled\` \\| \`outlined\` |
+| \`color\` | Override палитры (\`ControlColor\` / CSS); иконка остаётся от \`severity\` |
+| \`title\` / **Alert.Title** | Заголовок |
+| \`icon\` | Кастом или \`false\` (скрыть) |
+| \`iconMapping\` | Частичный override иконок по severity |
+| \`action\` / \`onClose\` | Слот действия или крестик |
+| \`role\` | \`alert\` (default) или \`status\` |
+
+Storybook: **UI Kit → Feedback → Alert**.
 `.trim();
 
 export const DOC_THEME_SHOWCASE = `

@@ -4,7 +4,6 @@ import { buildHoverPressMotionCss } from '../../../handlers/uiMotionStyleHandler
 import { ThemeColorScheme } from '../../../types/theme';
 import grey from '../../../variables/colors/grey';
 import { neutral } from '../../../variables/colors/neutral';
-import { success } from '../../../variables/colors/success';
 import { getSwitchThumbTranslateX, type SwitchGeometry } from './handlers';
 
 /**
@@ -71,11 +70,15 @@ export const SwitchLabelText = styled.span<{ $disabled?: boolean }>`
  * @property $checked - Включён.
  * @property $disabled - Отключён.
  * @property $geometry - Размеры из хендлера.
+ * @property $checkedColor - Фон трека во «вкл».
+ * @property $checkedHoverColor - Hover при «вкл».
  */
 export const SwitchTrack = styled.span<{
   $checked: boolean;
   $disabled?: boolean;
   $geometry: SwitchGeometry;
+  $checkedColor: string;
+  $checkedHoverColor: string;
 }>`
   position: relative;
   flex-shrink: 0;
@@ -84,22 +87,22 @@ export const SwitchTrack = styled.span<{
   border-radius: 999px;
   transition: ${TransitionHandler()};
   will-change: transform, background-color;
-  background: ${({ theme, $checked, $disabled }) => {
+  background: ${({ theme, $checked, $disabled, $checkedColor }) => {
     if ($disabled) {
       return theme.mode === ThemeColorScheme.DARK ? grey[700] : grey[200];
     }
     if ($checked) {
-      return success[600];
+      return $checkedColor;
     }
     return theme.mode === ThemeColorScheme.DARK ? grey[600] : grey[300];
   }};
 
-  ${({ $disabled, $checked, theme }) =>
+  ${({ $disabled, $checked, theme, $checkedHoverColor }) =>
     !$disabled &&
     css`
       &:hover {
         background: ${$checked
-          ? success[500]
+          ? $checkedHoverColor
           : theme.mode === ThemeColorScheme.DARK
             ? grey[500]
             : grey[200]};
@@ -121,11 +124,13 @@ export const SwitchTrack = styled.span<{
  * @property $checked - Включён (сдвиг вправо для LTR).
  * @property $disabled - Отключён.
  * @property $geometry - Размеры.
+ * @property $focusRingColor - Цвет кольца фокуса.
  */
 export const SwitchThumb = styled.span<{
   $checked: boolean;
   $disabled?: boolean;
   $geometry: SwitchGeometry;
+  $focusRingColor: string;
 }>`
   position: absolute;
   top: ${({ $geometry }) => $geometry.padding}px;
@@ -143,7 +148,8 @@ export const SwitchThumb = styled.span<{
 
   ${SwitchRoot}:focus-within & {
     box-shadow:
-      0 0 0 2px ${success.bg},
+      0 0 0 2px
+        ${({ $focusRingColor }) => `color-mix(in srgb, ${$focusRingColor} 25%, transparent)`},
       0 1px 2px rgba(0, 0, 0, 0.12);
   }
 `;

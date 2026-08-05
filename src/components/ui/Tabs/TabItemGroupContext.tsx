@@ -15,6 +15,10 @@ export interface TabItemGroupContextType {
   filledSegmentTriggers: boolean;
   /** Прокрутка трека при переполнении (см. **Tabs.scrollable**) */
   scrollable: boolean;
+  /** Акцент активной вкладки / индикатора */
+  accentColor: string;
+  /** Кольцо фокуса триггеров */
+  focusRingColor: string;
 }
 
 export const TabItemGroupContext = createContext<TabItemGroupContextType | undefined>(undefined);

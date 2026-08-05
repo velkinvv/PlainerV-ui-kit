@@ -90,6 +90,7 @@ export const MultiInput = forwardRef<HTMLInputElement, MultiInputProps>(
       additionalLabel,
       helperText,
       fullWidth = false,
+      autoWidth = false,
       disabled = false,
       readOnly = false,
       required = false,
@@ -344,7 +345,7 @@ export const MultiInput = forwardRef<HTMLInputElement, MultiInputProps>(
     if (skeleton) {
       return (
         <InputContainer fullWidth={fullWidth} aria-busy="true">
-          <InputControlStack fullWidth={fullWidth}>
+          <InputControlStack fullWidth={fullWidth} autoWidth={autoWidth}>
             {label && (
               <Label as="span">
                 {label}
@@ -352,7 +353,7 @@ export const MultiInput = forwardRef<HTMLInputElement, MultiInputProps>(
               </Label>
             )}
             {additionalLabel && <AdditionalLabel>{additionalLabel}</AdditionalLabel>}
-            <SkeletonEffect size={size} fullWidth={fullWidth} role="presentation" />
+            <SkeletonEffect size={size} fullWidth={fullWidth} autoWidth={autoWidth} role="presentation" />
           </InputControlStack>
         </InputContainer>
       );
@@ -365,6 +366,7 @@ export const MultiInput = forwardRef<HTMLInputElement, MultiInputProps>(
       success,
       status: currentStatus,
       fullWidth,
+      autoWidth,
       focused,
       readOnly,
       className,
@@ -473,7 +475,7 @@ export const MultiInput = forwardRef<HTMLInputElement, MultiInputProps>(
               />
             ))
           : null}
-        <InputControlStack fullWidth={fullWidth}>
+        <InputControlStack fullWidth={fullWidth} autoWidth={autoWidth}>
           {label ? (
             <Label htmlFor={inputId}>
               {label}

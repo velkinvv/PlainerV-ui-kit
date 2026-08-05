@@ -22,6 +22,9 @@ export type SegmentedControlContextValue = {
   name?: string;
   selectedValue: string | string[] | undefined;
   isValueControlled: boolean;
+  /** Акцент выбранного сегмента (outline) и focus-ring */
+  accentColor: string;
+  accentFocusRingColor: string;
   /**
    * Обработчик смены сегмента.
    * @param segmentValue - Значение сегмента

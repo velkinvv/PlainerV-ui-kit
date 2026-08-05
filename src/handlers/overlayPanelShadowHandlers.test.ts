@@ -1,5 +1,6 @@
 import { ThemeColorScheme } from '../types/theme';
 import { glassDarkTheme, glassLightTheme, lightTheme } from '../themes/themes';
+import { mixColorWithTransparent } from './glassColorHandlers';
 import {
   getOverlayPanelGlassBackground,
   isOverlayPanelGlassTheme,
@@ -17,17 +18,19 @@ describe('overlayPanelGlassHandlers', () => {
   });
 
   it('getOverlayPanelGlassBackground возвращает лёгкую прозрачность', () => {
-    expect(getOverlayPanelGlassBackground(ThemeColorScheme.LIGHT)).toBe(
-      'rgba(255, 255, 255, 0.26)',
+    expect(getOverlayPanelGlassBackground(ThemeColorScheme.LIGHT, '#ffffff')).toBe(
+      mixColorWithTransparent('#ffffff', 26),
     );
-    expect(getOverlayPanelGlassBackground(ThemeColorScheme.DARK)).toBe(
-      'rgba(255, 255, 255, 0.06)',
+    expect(getOverlayPanelGlassBackground(ThemeColorScheme.DARK, '#ffffff')).toBe(
+      mixColorWithTransparent('#ffffff', 6),
     );
   });
 
   it('resolveOverlayPanelBackground использует fallback в обычной теме', () => {
     expect(resolveOverlayPanelBackground(lightTheme, '#ffffff')).toBe('#ffffff');
-    expect(resolveOverlayPanelBackground(glassLightTheme)).toBe('rgba(255, 255, 255, 0.26)');
+    expect(resolveOverlayPanelBackground(glassLightTheme)).toBe(
+      mixColorWithTransparent(glassLightTheme.colors.onAccent, 26),
+    );
   });
 });
 
@@ -38,8 +41,12 @@ describe('overlayPanelShadowHandlers', () => {
   });
 
   it('для glass-тем использует лёгкую прозрачность и vibrancy', () => {
-    expect(overlayPanelBackgroundFromTheme(glassDarkTheme)).toBe('rgba(255, 255, 255, 0.06)');
-    expect(overlayPanelBackgroundFromTheme(glassLightTheme)).toBe('rgba(255, 255, 255, 0.26)');
+    expect(overlayPanelBackgroundFromTheme(glassDarkTheme)).toBe(
+      mixColorWithTransparent(glassDarkTheme.colors.onAccent, 6),
+    );
+    expect(overlayPanelBackgroundFromTheme(glassLightTheme)).toBe(
+      mixColorWithTransparent(glassLightTheme.colors.onAccent, 26),
+    );
     expect(overlayPanelBackdropFilterFromTheme(glassDarkTheme)).toContain('blur(8px)');
     expect(overlayPanelBackdropFilterFromTheme(glassLightTheme)).toContain('blur(8px)');
   });

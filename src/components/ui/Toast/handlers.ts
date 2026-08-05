@@ -47,27 +47,34 @@ export function getToastSurfaceTokens(
 
   const mode = context.mode;
   const isDark = mode === ThemeColorScheme.DARK;
-  const bodyColor = isDark ? neutral[300] : grey[600];
+  const surfaceBase = context.colors?.backgroundSecondary ?? (isDark ? neutral[800] : grey[50]);
+  const bodyColor = context.colors?.textSecondary ?? (isDark ? neutral[300] : grey[600]);
 
   switch (type) {
     case 'success':
       return {
-        accent: success[500],
-        surface: isDark ? '#1e2a1c' : success.bg,
+        accent: context.colors?.success ?? success[500],
+        surface: isDark
+          ? `color-mix(in srgb, ${success[500]} 14%, ${surfaceBase})`
+          : success.bg,
         titleColor: isDark ? success[400] : success[600],
         bodyColor,
       };
     case 'error':
       return {
-        accent: danger[500],
-        surface: isDark ? '#2a1a1a' : danger.bg,
+        accent: context.colors?.danger ?? danger[500],
+        surface: isDark
+          ? `color-mix(in srgb, ${danger[500]} 14%, ${surfaceBase})`
+          : danger.bg,
         titleColor: isDark ? danger[300] : danger[600],
         bodyColor,
       };
     case 'warning':
       return {
-        accent: warning[500],
-        surface: isDark ? '#2a2818' : warning.bg,
+        accent: context.colors?.warning ?? warning[500],
+        surface: isDark
+          ? `color-mix(in srgb, ${warning[500]} 14%, ${surfaceBase})`
+          : warning.bg,
         titleColor: isDark ? warning[400] : grey[900],
         bodyColor,
       };
@@ -81,8 +88,10 @@ export function getToastSurfaceTokens(
     case 'info':
     default:
       return {
-        accent: primary[500],
-        surface: isDark ? '#13202e' : primary.bg,
+        accent: context.colors?.info ?? primary[500],
+        surface: isDark
+          ? `color-mix(in srgb, ${primary[500]} 14%, ${surfaceBase})`
+          : primary.bg,
         titleColor: isDark ? primary[300] : primary[700],
         bodyColor,
       };
@@ -125,7 +134,7 @@ export function getToastPillVisualTokens(
 
   const mode = context.mode;
   const isDark = mode === ThemeColorScheme.DARK;
-  const white = '#ffffff';
+  const onAccent = context.colors?.onAccent ?? '#ffffff';
   const cardTokens = getToastSurfaceTokens(type, context);
   const dismissIcon = isDark ? neutral[400] : grey[500];
   /** Заголовок по макету — тёмный нейтральный, акцент только в иконке и рамке */
@@ -134,32 +143,34 @@ export function getToastPillVisualTokens(
   const actionForType = (): Pick<ToastPillVisualTokens, 'actionBg' | 'actionText'> => {
     switch (type) {
       case 'success':
-        return { actionBg: success[500], actionText: white };
+        return { actionBg: success[500], actionText: onAccent };
       case 'error':
-        return { actionBg: danger[500], actionText: white };
+        return { actionBg: danger[500], actionText: onAccent };
       case 'warning':
         return { actionBg: warning[500], actionText: grey[900] };
       case 'neutral':
-        return { actionBg: isDark ? neutral[600] : grey[700], actionText: white };
+        return { actionBg: isDark ? neutral[600] : grey[700], actionText: onAccent };
       case 'info':
       default:
-        return { actionBg: primary[500], actionText: white };
+        return { actionBg: primary[500], actionText: onAccent };
     }
   };
 
   const iconGlowForType = (): string => {
     switch (type) {
       case 'success':
-        return 'rgba(34, 197, 94, 0.38)';
+        return `color-mix(in srgb, ${success[500]} 38%, transparent)`;
       case 'error':
-        return 'rgba(239, 68, 68, 0.38)';
+        return `color-mix(in srgb, ${danger[500]} 38%, transparent)`;
       case 'warning':
-        return 'rgba(234, 179, 8, 0.42)';
+        return `color-mix(in srgb, ${warning[500]} 42%, transparent)`;
       case 'neutral':
-        return isDark ? 'rgba(163, 163, 163, 0.32)' : 'rgba(115, 115, 115, 0.22)';
+        return isDark
+          ? `color-mix(in srgb, ${neutral[400]} 32%, transparent)`
+          : `color-mix(in srgb, ${grey[600]} 22%, transparent)`;
       case 'info':
       default:
-        return 'rgba(33, 150, 243, 0.4)';
+        return `color-mix(in srgb, ${primary[500]} 40%, transparent)`;
     }
   };
 

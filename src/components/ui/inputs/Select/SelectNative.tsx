@@ -7,6 +7,7 @@ import { Hint, HintVariant, type HintPosition } from '../../Hint/Hint';
 import { useFormContext } from '../../../../contexts/FormContext';
 import {
   InputContainer,
+  InputControlStack,
   Label,
   InputWrapper,
   HelperText,
@@ -49,6 +50,7 @@ export const SelectNative = forwardRef<HTMLSelectElement, SelectProps>(
       helperText,
       required = false,
       fullWidth = false,
+      autoWidth = false,
       readOnly = false,
       disabled = false,
       skeleton = false,
@@ -211,14 +213,16 @@ export const SelectNative = forwardRef<HTMLSelectElement, SelectProps>(
     if (skeleton) {
       return (
         <InputContainer fullWidth={fullWidth} aria-busy="true">
-          {label ? (
-            <Label as="span">
-              {label}
-              {required ? <RequiredIndicator>*</RequiredIndicator> : null}
-            </Label>
-          ) : null}
-          {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
-          <SkeletonEffect size={size} fullWidth={fullWidth} role="presentation" />
+          <InputControlStack fullWidth={fullWidth} autoWidth={autoWidth}>
+            {label ? (
+              <Label as="span">
+                {label}
+                {required ? <RequiredIndicator>*</RequiredIndicator> : null}
+              </Label>
+            ) : null}
+            {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
+            <SkeletonEffect size={size} fullWidth={fullWidth} autoWidth={autoWidth} role="presentation" />
+          </InputControlStack>
         </InputContainer>
       );
     }
@@ -240,79 +244,84 @@ export const SelectNative = forwardRef<HTMLSelectElement, SelectProps>(
 
     return (
       <InputContainer fullWidth={fullWidth}>
-        {label ? (
-          <Label htmlFor={id}>
-            {label}
-            {required ? <RequiredIndicator>*</RequiredIndicator> : null}
-          </Label>
-        ) : null}
+        <InputControlStack fullWidth={fullWidth} autoWidth={autoWidth}>
+          {label ? (
+            <Label htmlFor={id}>
+              {label}
+              {required ? <RequiredIndicator>*</RequiredIndicator> : null}
+            </Label>
+          ) : null}
 
-        {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
+          {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
 
-        {tooltip ? (
-          tooltipType === 'hint' ? (
-            <Hint
-              content={tooltip}
-              placement={tooltipPosition as HintPosition}
-              variant={HintVariant.DEFAULT}
-            >
-              <InputWrapper
-                variant={InputVariant.SELECTOR}
-                size={size}
-                error={error}
-                success={success}
-                status={currentStatus}
-                fullWidth={fullWidth}
-                focused={focused}
-                readOnly={readOnly}
-                className={className}
-                onFocus={onFocus}
-                onBlur={onBlur}
+          {tooltip ? (
+            tooltipType === 'hint' ? (
+              <Hint
+                content={tooltip}
+                placement={tooltipPosition as HintPosition}
+                variant={HintVariant.DEFAULT}
               >
-                {inner}
-              </InputWrapper>
-            </Hint>
+                <InputWrapper
+                  variant={InputVariant.SELECTOR}
+                  size={size}
+                  error={error}
+                  success={success}
+                  status={currentStatus}
+                  fullWidth={fullWidth}
+                  autoWidth={autoWidth}
+                  focused={focused}
+                  readOnly={readOnly}
+                  className={className}
+                  onFocus={onFocus}
+                  onBlur={onBlur}
+                >
+                  {inner}
+                </InputWrapper>
+              </Hint>
+            ) : (
+              <Tooltip content={tooltip} position={tooltipPosition as TooltipPosition}>
+                <InputWrapper
+                  variant={InputVariant.SELECTOR}
+                  size={size}
+                  error={error}
+                  success={success}
+                  status={currentStatus}
+                  fullWidth={fullWidth}
+                  autoWidth={autoWidth}
+                  focused={focused}
+                  readOnly={readOnly}
+                  className={className}
+                  onFocus={onFocus}
+                  onBlur={onBlur}
+                >
+                  {inner}
+                </InputWrapper>
+              </Tooltip>
+            )
           ) : (
-            <Tooltip content={tooltip} position={tooltipPosition as TooltipPosition}>
-              <InputWrapper
-                variant={InputVariant.SELECTOR}
-                size={size}
-                error={error}
-                success={success}
-                status={currentStatus}
-                fullWidth={fullWidth}
-                focused={focused}
-                readOnly={readOnly}
-                className={className}
-                onFocus={onFocus}
-                onBlur={onBlur}
-              >
-                {inner}
-              </InputWrapper>
-            </Tooltip>
-          )
-        ) : (
-          <InputWrapper
-            variant={InputVariant.SELECTOR}
-            size={size}
-            error={error}
-            success={success}
-            status={currentStatus}
-            fullWidth={fullWidth}
-            focused={focused}
-            readOnly={readOnly}
-            className={className}
-            onFocus={onFocus}
-            onBlur={onBlur}
-          >
-            {inner}
-          </InputWrapper>
-        )}
+            <InputWrapper
+              variant={InputVariant.SELECTOR}
+              size={size}
+              error={error}
+              success={success}
+              status={currentStatus}
+              fullWidth={fullWidth}
+              autoWidth={autoWidth}
+              focused={focused}
+              readOnly={readOnly}
+              className={className}
+              onFocus={onFocus}
+              onBlur={onBlur}
+            >
+              {inner}
+            </InputWrapper>
+          )}
 
-        {error ? <ErrorText>{error}</ErrorText> : null}
-        {success ? <SuccessText>Успешно</SuccessText> : null}
-        {helperText && !error && !success ? <HelperText>{helperText}</HelperText> : null}
-        {extraText ? <ExtraText>{extraText}</ExtraText> : null}
+          {error ? <ErrorText>{error}</ErrorText> : null}
+          {success ? <SuccessText>Успешно</SuccessText> : null}
+          {helperText && !error && !success ? <HelperText>{helperText}</HelperText> : null}
+          {extraText ? <ExtraText>{extraText}</ExtraText> : null}
+        </InputControlStack>
       </InputContainer>
     );
   },

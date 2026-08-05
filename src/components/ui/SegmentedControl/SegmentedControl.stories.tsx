@@ -58,6 +58,10 @@ const meta: Meta<typeof SegmentedControl> = {
       control: 'boolean',
       description: 'Растянуть на ширину родителя',
     },
+    color: {
+      control: 'text',
+      description: 'Акцент selected (outline) и focus-ring: primary | success | … или CSS',
+    },
     ariaLabel: {
       description: 'Подпись группы для a11y',
     },
@@ -172,6 +176,35 @@ export const LoadingAndSquare: Story = {
         />
       </SegmentedControl>
     </SegmentedControlStoriesRow>
+  ),
+};
+
+export const Colors: Story = {
+  name: 'Цвета (color)',
+  render: () => (
+    <SegmentedControlStoriesStack>
+      <section>
+        <SegmentedControlStoriesSectionTitle>primary (default)</SegmentedControlStoriesSectionTitle>
+        <SegmentedControl defaultValue="a" color="primary" ariaLabel="primary">
+          <SegmentedControl.Item value="a">A</SegmentedControl.Item>
+          <SegmentedControl.Item value="b">B</SegmentedControl.Item>
+        </SegmentedControl>
+      </section>
+      <section>
+        <SegmentedControlStoriesSectionTitle>success</SegmentedControlStoriesSectionTitle>
+        <SegmentedControl defaultValue="a" color="success" ariaLabel="success">
+          <SegmentedControl.Item value="a">A</SegmentedControl.Item>
+          <SegmentedControl.Item value="b">B</SegmentedControl.Item>
+        </SegmentedControl>
+      </section>
+      <section>
+        <SegmentedControlStoriesSectionTitle>custom</SegmentedControlStoriesSectionTitle>
+        <SegmentedControl defaultValue="a" color="#9c27b0" ariaLabel="custom">
+          <SegmentedControl.Item value="a">A</SegmentedControl.Item>
+          <SegmentedControl.Item value="b">B</SegmentedControl.Item>
+        </SegmentedControl>
+      </section>
+    </SegmentedControlStoriesStack>
   ),
 };
 

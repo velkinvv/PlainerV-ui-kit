@@ -1,11 +1,12 @@
 import type { ThemeType } from '../types/theme';
 import { ThemeColorScheme } from '../types/theme';
+import { mixColorWithTransparent } from './glassColorHandlers';
 import { isGlassColorScheme } from './glassSurfaceHandlers';
 
-/** Непрозрачность glass-панели выпадающих списков (как pagination / accordion) */
-const PANEL_ALPHA_LIGHT = 0.26;
+/** Непрозрачность glass-панели выпадающих списков (как pagination / accordion), % */
+const PANEL_ALPHA_LIGHT = 26;
 
-const PANEL_ALPHA_DARK = 0.06;
+const PANEL_ALPHA_DARK = 6;
 
 /**
  * Проверяет, активна ли glass-тема для всплывающих панелей.
@@ -18,13 +19,15 @@ export function isOverlayPanelGlassTheme(theme: Pick<ThemeType, 'surfaceMaterial
 /**
  * Glass-фон выпадающей панели (dropdown, select, popover, menu и аналоги).
  * @param mode — светлая или тёмная тема
+ * @param onAccent — цвет текста/поверхности на акценте из темы
  */
-export function getOverlayPanelGlassBackground(mode: ThemeColorScheme): string {
-  if (mode === ThemeColorScheme.DARK) {
-    return `rgba(255, 255, 255, ${PANEL_ALPHA_DARK})`;
-  }
-
-  return `rgba(255, 255, 255, ${PANEL_ALPHA_LIGHT})`;
+export function getOverlayPanelGlassBackground(
+  mode: ThemeColorScheme,
+  onAccent?: string,
+): string {
+  const base = onAccent ?? '#ffffff';
+  const alphaPercent = mode === ThemeColorScheme.DARK ? PANEL_ALPHA_DARK : PANEL_ALPHA_LIGHT;
+  return mixColorWithTransparent(base, alphaPercent);
 }
 
 /**
@@ -37,7 +40,7 @@ export function resolveOverlayPanelBackground(
   fallbackBackground?: string,
 ): string {
   if (isOverlayPanelGlassTheme(theme)) {
-    return getOverlayPanelGlassBackground(theme.mode);
+    return getOverlayPanelGlassBackground(theme.mode, theme.colors?.onAccent);
   }
 
   return fallbackBackground ?? theme.colors.backgroundSecondary;

@@ -24,6 +24,7 @@ import { Hint, HintVariant, type HintPosition } from '../../Hint/Hint';
 import { useFormContext } from '../../../../contexts/FormContext';
 import {
   InputContainer,
+  InputControlStack,
   Label,
   StyledInput,
   HelperText,
@@ -115,6 +116,7 @@ export const SliderInputRange = forwardRef<HTMLInputElement, SliderInputRangePro
       additionalLabel,
       helperText,
       fullWidth = false,
+      autoWidth = false,
       disabled = false,
       readOnly = false,
       required = false,
@@ -134,6 +136,14 @@ export const SliderInputRange = forwardRef<HTMLInputElement, SliderInputRangePro
       ignoreMaskCharacters: _ignoreMaskCharacters = false,
       onFocus: onFocusProp,
       onBlur: onBlurProp,
+      trackLeftIcon,
+      trackRightIcon,
+      onTrackLeftIconClick,
+      onTrackRightIconClick,
+      sideIconsWhenDisabled = 'disable',
+      trackLeftIconAriaLabel,
+      trackRightIconAriaLabel,
+      color,
       ...rest
     },
     ref,
@@ -336,14 +346,16 @@ export const SliderInputRange = forwardRef<HTMLInputElement, SliderInputRangePro
     if (skeleton) {
       return (
         <InputContainer fullWidth={fullWidth} aria-busy="true">
-          {label ? (
-            <Label as="span">
-              {label}
-              {required && <RequiredIndicator>*</RequiredIndicator>}
-            </Label>
-          ) : null}
-          {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
-          <SkeletonEffect size={size} fullWidth={fullWidth} role="presentation" />
+          <InputControlStack fullWidth={fullWidth} autoWidth={autoWidth}>
+            {label ? (
+              <Label as="span">
+                {label}
+                {required && <RequiredIndicator>*</RequiredIndicator>}
+              </Label>
+            ) : null}
+            {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
+            <SkeletonEffect size={size} fullWidth={fullWidth} autoWidth={autoWidth} role="presentation" />
+          </InputControlStack>
         </InputContainer>
       );
     }
@@ -491,6 +503,7 @@ export const SliderInputRange = forwardRef<HTMLInputElement, SliderInputRangePro
         success={success}
         status={currentStatus}
         fullWidth={fullWidth}
+        autoWidth={autoWidth}
         focused={focused}
         readOnly={readOnly}
         className={className}
@@ -516,11 +529,19 @@ export const SliderInputRange = forwardRef<HTMLInputElement, SliderInputRangePro
           error={error}
           success={success}
           status={currentStatus}
+          color={color}
           formatValue={formatValue}
           trackRailHeightPx={trackRailHeightPx}
           trackActiveHeightPx={trackActiveHeightPx}
           nameFrom={nameFrom}
           nameTo={nameTo}
+          leftIcon={trackLeftIcon}
+          rightIcon={trackRightIcon}
+          onLeftIconClick={onTrackLeftIconClick}
+          onRightIconClick={onTrackRightIconClick}
+          sideIconsWhenDisabled={sideIconsWhenDisabled}
+          leftIconAriaLabel={trackLeftIconAriaLabel}
+          rightIconAriaLabel={trackRightIconAriaLabel}
           onSliderFocus={() => {
             setThumbFocused(true);
             setFieldFocused(true);
@@ -560,32 +581,34 @@ export const SliderInputRange = forwardRef<HTMLInputElement, SliderInputRangePro
 
     return (
       <InputContainer fullWidth={fullWidth}>
-        {label ? (
-          <Label
-            htmlFor={showNumberField ? fromInputId : undefined}
-            as={showNumberField ? 'label' : 'span'}
-          >
-            {label}
-            {required ? <RequiredIndicator>*</RequiredIndicator> : null}
-          </Label>
-        ) : null}
+        <InputControlStack fullWidth={fullWidth} autoWidth={autoWidth}>
+          {label ? (
+            <Label
+              htmlFor={showNumberField ? fromInputId : undefined}
+              as={showNumberField ? 'label' : 'span'}
+            >
+              {label}
+              {required ? <RequiredIndicator>*</RequiredIndicator> : null}
+            </Label>
+          ) : null}
 
-        {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
+          {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
 
-        {withOptionalTooltip}
+          {withOptionalTooltip}
 
-        {scaleLabelsRow}
+          {scaleLabelsRow}
 
-        {error ? <ErrorText>{error}</ErrorText> : null}
-        {success ? <SuccessText>Успешно</SuccessText> : null}
-        {helperText && !error && !success ? <HelperText>{helperText}</HelperText> : null}
-        {extraText ? <ExtraText>{extraText}</ExtraText> : null}
+          {error ? <ErrorText>{error}</ErrorText> : null}
+          {success ? <SuccessText>Успешно</SuccessText> : null}
+          {helperText && !error && !success ? <HelperText>{helperText}</HelperText> : null}
+          {extraText ? <ExtraText>{extraText}</ExtraText> : null}
 
-        <CharacterCounterMotion
-          visible={Boolean(showCounter && maxLength)}
-          currentLength={draftLength}
-          maxLength={maxLength ?? 0}
-        />
+          <CharacterCounterMotion
+            visible={Boolean(showCounter && maxLength)}
+            currentLength={draftLength}
+            maxLength={maxLength ?? 0}
+          />
+        </InputControlStack>
       </InputContainer>
     );
   },

@@ -33,6 +33,12 @@ import {
   StepperNextStepInfo,
   LoadingSpinner,
   LinearLoadingSpinnerContainer,
+  ProgressStepsList,
+  ProgressStepRow,
+  ProgressStepBadge,
+  ProgressStepLabel,
+  ProgressStepMeta,
+  ProgressActionButton,
 } from './Progress.style';
 import { Size } from '../../../types/sizes';
 import {
@@ -213,44 +219,16 @@ const ProgressComponent = forwardRef<HTMLDivElement, ProgressProps>(
       const actionButtons = [];
       if (computedStatus === 'error' && onRetry) {
         actionButtons.push(
-          <button
-            key="retry"
-            onClick={onRetry}
-            style={{
-              padding: '4px 8px',
-              fontSize: '12px',
-              border: '1px solid',
-              borderColor: statusColor,
-              color: statusColor,
-              background: 'transparent',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              marginLeft: '8px',
-            }}
-          >
+          <ProgressActionButton key="retry" onClick={onRetry} $accentColor={statusColor}>
             Повторить
-          </button>,
+          </ProgressActionButton>,
         );
       }
       if (onPause && computedStatus === 'loading') {
         actionButtons.push(
-          <button
-            key="pause"
-            onClick={onPause}
-            style={{
-              padding: '4px 8px',
-              fontSize: '12px',
-              border: '1px solid',
-              borderColor: statusColor || '#666',
-              color: statusColor || '#666',
-              background: 'transparent',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              marginLeft: '8px',
-            }}
-          >
+          <ProgressActionButton key="pause" onClick={onPause} $accentColor={statusColor}>
             {paused ? 'Возобновить' : 'Пауза'}
-          </button>,
+          </ProgressActionButton>,
         );
       }
 
@@ -463,99 +441,46 @@ const ProgressComponent = forwardRef<HTMLDivElement, ProgressProps>(
                 {activeStep} из {totalSteps} шагов
               </StepperStepCounter>
             </StepperHeader>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '12px',
-                width: '100%',
-              }}
-            >
+            <ProgressStepsList>
               {steps.map((step, index) => {
                 const stepIndex = index;
                 const isCompleted = activeStep > stepIndex + 1;
                 const isActive = activeStep === stepIndex + 1;
+                const isFilled = isCompleted || isActive;
 
                 return (
-                  <div
+                  <ProgressStepRow
                     key={step.id}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      padding: '8px',
-                      borderRadius: '4px',
-                      backgroundColor: isActive ? 'rgba(148, 210, 99, 0.1)' : 'transparent',
-                      cursor: onStepClick ? 'pointer' : 'default',
-                    }}
+                    $active={isActive}
+                    $accentColor={statusColor}
+                    $clickable={Boolean(onStepClick)}
                     onClick={() => {
                       if (onStepClick) {
                         onStepClick(stepIndex, step);
                       }
                     }}
                   >
-                    <div
-                      style={{
-                        width: '24px',
-                        height: '24px',
-                        borderRadius: '50%',
-                        backgroundColor: isCompleted
-                          ? statusColor
-                          : isActive
-                            ? statusColor
-                            : '#E0E0E0',
-                        color: isCompleted || isActive ? '#ffffff' : '#666',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '12px',
-                        fontWeight: 600,
-                        flexShrink: 0,
-                      }}
-                    >
+                    <ProgressStepBadge $filled={isFilled} $accentColor={statusColor}>
                       {isCompleted ? '✓' : stepIndex + 1}
-                    </div>
+                    </ProgressStepBadge>
                     {step.icon && (
                       <span style={{ display: 'inline-flex', alignItems: 'center' }}>
                         {step.icon}
                       </span>
                     )}
                     <div style={{ flex: 1 }}>
-                      <div
-                        style={{
-                          fontSize: '14px',
-                          fontWeight: isActive ? 600 : 400,
-                          color: isActive ? statusColor : '#666',
-                        }}
-                      >
+                      <ProgressStepLabel $active={isActive} $accentColor={statusColor}>
                         {step.label}
-                      </div>
-                      {step.description && (
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            color: '#999',
-                            marginTop: '2px',
-                          }}
-                        >
-                          {step.description}
-                        </div>
-                      )}
+                      </ProgressStepLabel>
+                      {step.description ? (
+                        <ProgressStepMeta>{step.description}</ProgressStepMeta>
+                      ) : null}
                     </div>
-                    {isActive && (
-                      <div
-                        style={{
-                          fontSize: '12px',
-                          color: '#999',
-                        }}
-                      >
-                        Текущий шаг
-                      </div>
-                    )}
-                  </div>
+                    {isActive ? <ProgressStepMeta>Текущий шаг</ProgressStepMeta> : null}
+                  </ProgressStepRow>
                 );
               })}
-            </div>
+            </ProgressStepsList>
             {showNextStepInfo && nextStep && (
               <StepperNextStepInfo style={{ marginTop: '12px' }}>
                 Далее - {nextStep.label}

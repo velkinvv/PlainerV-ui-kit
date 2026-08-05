@@ -117,11 +117,12 @@ export const SliderTrackRail = styled.div<{ $thumbInsetPx: number; $railHeightPx
 `;
 
 /**
- * Заполненная часть трека (яркий акцент `theme.colors.info`, не `primary` из палитры blue).
+ * Заполненная часть трека.
  * @property $leftPct - Начало в % по внутренней ширине трека
  * @property $widthPct - Ширина в % по внутренней ширине
  * @property $thumbInsetPx / $thumbSizePx - Совпадают с геометрией бегунка
- * @property $activeHeightPx - Толщина синей полоски
+ * @property $activeHeightPx - Толщина активной полоски
+ * @property $accentColor - Цвет заливки
  */
 export const SliderTrackActive = styled.div<{
   $leftPct: number;
@@ -129,7 +130,7 @@ export const SliderTrackActive = styled.div<{
   $thumbInsetPx: number;
   $thumbSizePx: number;
   $activeHeightPx: number;
-  $accent: SliderAccentKind;
+  $accentColor: string;
 }>`
   position: absolute;
   left: ${({ $leftPct, $thumbInsetPx, $thumbSizePx }) =>
@@ -141,18 +142,7 @@ export const SliderTrackActive = styled.div<{
   height: ${({ $activeHeightPx }) => $activeHeightPx}px;
   margin-left: 0;
   border-radius: ${({ $activeHeightPx }) => Math.max(1, Math.round($activeHeightPx / 2))}px;
-  background: ${({ theme, $accent }) => {
-    switch ($accent) {
-      case 'error':
-        return theme.colors.danger;
-      case 'success':
-        return theme.colors.success;
-      case 'warning':
-        return theme.colors.warning;
-      default:
-        return theme.colors.info;
-    }
-  }};
+  background: ${({ $accentColor }) => $accentColor};
   z-index: 1;
   transition: ${TransitionHandler()};
   pointer-events: none;
@@ -162,12 +152,16 @@ export const SliderTrackActive = styled.div<{
  * Бегунок.
  * @property $thumbPx - Диаметр px
  * @property $disabled - Отключено
- * @property $accent - Цветовой акцент (трек и обводка согласованы)
+ * @property $accentColor - Цвет заливки
+ * @property $accentHoverColor - Hover заливки
+ * @property $focusRingColor - Кольцо фокуса
  */
 export const SliderThumb = styled.button<{
   $thumbPx: number;
   $disabled?: boolean;
-  $accent: SliderAccentKind;
+  $accentColor: string;
+  $accentHoverColor: string;
+  $focusRingColor: string;
 }>`
   position: absolute;
   top: 50%;
@@ -178,18 +172,7 @@ export const SliderThumb = styled.button<{
   padding: 0;
   border: none;
   border-radius: 50%;
-  background: ${({ theme, $accent }) => {
-    switch ($accent) {
-      case 'error':
-        return theme.colors.danger;
-      case 'success':
-        return theme.colors.success;
-      case 'warning':
-        return theme.colors.warning;
-      default:
-        return theme.colors.info;
-    }
-  }};
+  background: ${({ $accentColor }) => $accentColor};
   transform: translate(-50%, -50%);
   cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'grab')};
   z-index: 2;
@@ -197,19 +180,7 @@ export const SliderThumb = styled.button<{
   transition: ${TransitionHandler()};
 
   &:hover:not(:disabled) {
-    background: ${({ theme, $accent }) => {
-      switch ($accent) {
-        case 'error':
-          return theme.colors.dangerHover;
-        case 'success':
-          return theme.colors.successHover;
-        case 'warning':
-          return theme.colors.warning;
-        default:
-          return theme.colors.infoHover;
-      }
-    }};
-    filter: ${({ $accent }) => ($accent === 'warning' ? 'brightness(0.95)' : 'none')};
+    background: ${({ $accentHoverColor }) => $accentHoverColor};
   }
 
   &:active:not(:disabled) {
@@ -217,19 +188,7 @@ export const SliderThumb = styled.button<{
   }
 
   &:focus-visible {
-    outline: 2px solid
-      ${({ theme, $accent }) => {
-        switch ($accent) {
-          case 'error':
-            return theme.colors.danger;
-          case 'success':
-            return theme.colors.success;
-          case 'warning':
-            return theme.colors.warning;
-          default:
-            return theme.colors.info;
-        }
-      }};
+    outline: 2px solid ${({ $focusRingColor }) => $focusRingColor};
     outline-offset: 2px;
   }
 
@@ -264,6 +223,69 @@ export const SliderValueLabel = styled.span<{ $disabled?: boolean }>`
 /** Скрытый input для отправки формы (одиночный слайдер) */
 export const SliderHiddenInput = styled.input.attrs({ type: 'hidden' })`
   display: none;
+`;
+
+/**
+ * Ряд «боковая иконка — трек — боковая иконка».
+ * @property $embedded - В режиме `embeddedInInput` выравнивание по нижней кромке трека
+ */
+export const SliderTrackSideIconsRow = styled.div<{ $embedded?: boolean }>`
+  display: flex;
+  flex-direction: row;
+  align-items: ${({ $embedded }) => ($embedded ? 'flex-end' : 'center')};
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+`;
+
+/** Колонка трека внутри ряда с боковыми иконками */
+export const SliderTrackSideIconsTrack = styled.div`
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+`;
+
+/** Некликабельная обёртка боковой иконки (без `on*Click`) */
+export const SliderSideIconStatic = styled.span`
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  color: ${({ theme }) => theme.colors?.textSecondary ?? theme.colors.text};
+`;
+
+/**
+ * Кнопка боковой иконки слайдера.
+ * @property $disabled - Приглушённый вид
+ */
+export const SliderSideIconButton = styled.button.attrs({ type: 'button' })<{
+  $disabled?: boolean;
+}>`
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 4px;
+  border: none;
+  background: transparent;
+  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
+  color: ${({ theme, $disabled }) =>
+    $disabled
+      ? (theme.colors?.textTertiary ?? theme.colors.text)
+      : (theme.colors?.textSecondary ?? theme.colors.text)};
+  opacity: ${({ $disabled }) => ($disabled ? 0.55 : 1)};
+  transition: ${TransitionHandler()};
+
+  &:hover:not(:disabled) {
+    color: ${({ theme }) => theme.colors?.text ?? theme.colors.text};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors?.info ?? theme.colors.primary};
+    outline-offset: 2px;
+  }
 `;
 
 /** Ряд полей «От» / «До» под range */

@@ -412,7 +412,7 @@ export const HintActions = styled.div`
 export const HintFooter = styled.div`
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-top: 1px solid ${({ theme }) => theme.colors.border};
 `;
 
 /**
@@ -447,7 +447,7 @@ export const HintCloseButton = styled.button`
 
   &:hover {
     opacity: 1;
-    background: rgba(0, 0, 0, 0.05);
+    background: ${({ theme }) => `color-mix(in srgb, ${theme.colors.text} 5%, transparent)`};
   }
 
   &:focus {
@@ -483,7 +483,7 @@ export const HintTourContainer = styled.div`
   gap: 12px;
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-top: 1px solid ${({ theme }) => theme.colors.border};
 `;
 
 /**
@@ -520,7 +520,7 @@ export const HintTourHighlight = styled.div`
     inset: 0;
     border: 2px solid ${({ theme }) => theme.colors.primary};
     border-radius: 8px;
-    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 0 9999px ${({ theme }) => theme.colors.overlay};
     pointer-events: none;
     z-index: 999;
   }

@@ -1,8 +1,10 @@
 import React, { forwardRef, useCallback, useEffect, useId, useMemo, useRef } from 'react';
 import { clsx } from 'clsx';
+import { useTheme } from 'styled-components';
 import type { CheckboxProps } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 import { neutral } from '../../../variables/colors/neutral';
+import { resolveControlAccentColors } from '../../../handlers/controlAccentColorHandlers';
 import {
   CheckboxContainer,
   CheckboxInput,
@@ -67,6 +69,7 @@ function renderTextsBelowCheckboxInput({
  * @param props.success — успешное состояние («Успешно» под полем)
  * @param props.helperText — подсказка под полем
  * @param props.extraText — дополнительный текст под блоком ошибок/подсказок
+ * @param props.color — акцент checked/indeterminate (пресет или CSS-цвет)
  * @param props.disabled - Отключение
  * @param props.size - Размер
  */
@@ -89,10 +92,16 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       success = false,
       helperText,
       extraText,
+      color = 'success',
       ...restProps
     },
     ref,
   ) => {
+    const theme = useTheme();
+    const accentColors = useMemo(
+      () => resolveControlAccentColors(theme, color),
+      [color, theme],
+    );
     const checkboxIdStable = useId();
     const checkboxDomId = idProp ?? checkboxIdStable;
     const checkboxErrorDomIdentifier = useId();
@@ -226,6 +235,9 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           indeterminate={indeterminate}
           disabled={disabled}
           size={size}
+          $checkedColor={accentColors.checked}
+          $checkedHoverColor={accentColors.checkedHover}
+          $focusRingColor={accentColors.focusRing}
         >
           <CheckIcon checked={checked} indeterminate={indeterminate} size={size}>
             {indeterminate ? (

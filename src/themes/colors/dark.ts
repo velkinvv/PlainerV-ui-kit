@@ -85,6 +85,7 @@ export const darkColors: Colors = {
   tagAccentPink: colors.pink[400],
 
   // Специальные цвета
+  onAccent: colors.neutral[10],
   overlay: 'rgba(0, 0, 0, 0.55)',
   shadow: 'rgba(0, 0, 0, 0.25)',
   transparent: 'transparent',

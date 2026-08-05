@@ -1,6 +1,10 @@
 import type { Colors, TooltipTheme } from '../types/theme';
 import { ThemeColorScheme } from '../types/theme';
-import { withHexAlpha, GLASS_OVERLAY_FILLED_ALPHA, GLASS_OVERLAY_BORDER_ALPHA } from './glassColorHandlers';
+import {
+  withHexAlpha,
+  GLASS_OVERLAY_FILLED_ALPHA,
+  GLASS_OVERLAY_BORDER_ALPHA,
+} from './glassColorHandlers';
 
 /** Токены поверхности tooltip */
 export interface TooltipSurfaceTokens {
@@ -32,6 +36,14 @@ export function isTooltipGlassTheme(context: TooltipThemeContext): boolean {
 }
 
 /**
+ * Цвет текста на акцентном фоне tooltip.
+ * @param colors — палитра темы
+ */
+function resolveTooltipOnAccentText(colors: Colors): string {
+  return colors.onAccent ?? '#ffffff';
+}
+
+/**
  * Glass-палитра tooltip на базе `colors.info`.
  * @param context — контекст темы
  */
@@ -40,7 +52,7 @@ export function getTooltipGlassSurfaceTokens(context: TooltipThemeContext): Tool
 
   return {
     background: withHexAlpha(infoColor, FILLED_ALPHA),
-    textColor: '#ffffff',
+    textColor: resolveTooltipOnAccentText(context.colors),
     arrowColor: withHexAlpha(infoColor, FILLED_ALPHA),
     border: `1px solid ${withHexAlpha(infoColor, BORDER_ALPHA)}`,
   };
@@ -59,7 +71,7 @@ export function getTooltipSurfaceTokens(context: TooltipThemeContext): TooltipSu
 
   return {
     background: infoColor,
-    textColor: '#ffffff',
+    textColor: resolveTooltipOnAccentText(context.colors),
     arrowColor: infoColor,
   };
 }

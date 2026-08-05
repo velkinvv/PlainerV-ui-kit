@@ -65,6 +65,10 @@ const meta: Meta<typeof FileInput> = {
     accept: { description: 'HTML `accept`' },
     multiple: { control: 'boolean', description: 'Множественный выбор' },
     fullWidth: { control: 'boolean', description: 'На всю ширину контейнера' },
+    autoWidth: {
+      control: 'boolean',
+      description: 'Ширина по содержимому (auto), без фиксированных 335px',
+    },
     disabled: { control: 'boolean', description: 'Отключено' },
     skeleton: { control: 'boolean', description: 'Скелетон' },
     isLoading: { control: 'boolean', description: 'Спиннер в строке' },

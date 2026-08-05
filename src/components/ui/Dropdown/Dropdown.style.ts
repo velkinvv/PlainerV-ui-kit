@@ -12,8 +12,6 @@ import {
   buildHoverPressMotionCss,
   buildSurfaceTransitionCss,
 } from '../../../handlers/uiMotionStyleHandlers';
-import { colors } from '../../../variables/colors';
-import { primary } from '../../../variables/colors/primary';
 
 /**
  * Контейнер dropdown
@@ -161,7 +159,7 @@ export const DropdownContent = styled.div<{
 export const DropdownTopPanel = styled.div`
   width: 100%;
   box-sizing: border-box;
-  border-bottom: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#3a3a3a' : '#e5e7eb')};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.borderSecondary};
   margin-bottom: 4px;
   padding-bottom: 8px;
 `;
@@ -172,7 +170,7 @@ export const DropdownTopPanel = styled.div`
 export const DropdownBottomPanel = styled.div`
   width: 100%;
   box-sizing: border-box;
-  border-top: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#3a3a3a' : '#e5e7eb')};
+  border-top: 1px solid ${({ theme }) => theme.colors.borderSecondary};
   margin-top: 4px;
   padding-top: 8px;
 `;
@@ -185,24 +183,25 @@ export const DropdownSearchContainer = styled.div`
 export const DropdownSearchInput = styled.input`
   width: 100%;
   border-radius: 8px;
-  border: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#4b5563' : '#d1d5db')};
+  border: 1px solid ${({ theme }) => theme.colors.border};
   padding: 8px 12px;
   font-size: 14px;
-  background: ${({ theme }) => (theme.mode === 'dark' ? '#1f2937' : '#f9fafb')};
-  color: ${({ theme }) => (theme.mode === 'dark' ? '#f3f4f6' : '#111827')};
+  background: ${({ theme }) => theme.colors.backgroundTertiary};
+  color: ${({ theme }) => theme.colors.text};
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease;
 
   &:focus {
     outline: none;
-    border-color: ${({ theme }) => (theme.mode === 'dark' ? '#93c5fd' : '#2563eb')};
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
-    background: ${({ theme }) => (theme.mode === 'dark' ? '#111827' : '#fff')};
+    border-color: ${({ theme }) => theme.colors.primary};
+    box-shadow: 0 0 0 2px
+      ${({ theme }) => `color-mix(in srgb, ${theme.colors.primary} 20%, transparent)`};
+    background: ${({ theme }) => theme.colors.input ?? theme.colors.backgroundSecondary};
   }
 
   &::placeholder {
-    color: ${({ theme }) => (theme.mode === 'dark' ? '#6b7280' : '#9ca3af')};
+    color: ${({ theme }) => theme.colors.textTertiary};
   }
 `;
 
@@ -211,7 +210,7 @@ export const DropdownGroupHeader = styled.div`
   text-transform: uppercase;
   letter-spacing: 0.04em;
   font-size: 11px;
-  color: ${({ theme }) => (theme.mode === 'dark' ? '#9ca3af' : '#6b7280')};
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
 export const DropdownGroupTitle = styled.span`
@@ -223,7 +222,7 @@ export const DropdownGroupDescription = styled.span`
   font-size: 11px;
   text-transform: none;
   letter-spacing: 0;
-  color: ${({ theme }) => (theme.mode === 'dark' ? '#cbd5f5' : '#94a3b8')};
+  color: ${({ theme }) => theme.colors.textTertiary};
   margin-top: 2px;
 `;
 
@@ -232,7 +231,7 @@ export const DropdownGroupDescription = styled.span`
  */
 export const DropdownDivider = styled.div`
   height: 1px;
-  background: #ececec; // Используем цвет из макета
+  background: ${({ theme }) => theme.colors.border};
   margin: 4px 0;
   width: 100%;
 `;
@@ -244,7 +243,7 @@ export const DropdownMenuTreeNestedList = styled.div`
   width: 100%;
   padding-left: 10px;
   margin-left: 8px;
-  border-left: 1px solid ${({ theme }) => (theme.mode === 'dark' ? '#374151' : '#e5e7eb')};
+  border-left: 1px solid ${({ theme }) => theme.colors.borderSecondary};
 `;
 
 /** Обёртка иконки шеврона ветки: поворот без `style` на `Icon` (тип `IconProps` не принимает `style`). */
@@ -274,7 +273,7 @@ export const DropdownMenuTreeExpandButton = styled.button`
 
   &:hover {
     background: ${({ theme }) =>
-      theme.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)'};
+      `color-mix(in srgb, ${theme.colors.text} 6%, transparent)`};
   }
 
   &:active {
@@ -288,7 +287,7 @@ export const DropdownMenuTreeExpandButton = styled.button`
   })}
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors?.primary ?? '#2563eb'};
+    outline: 2px solid ${({ theme }) => theme.colors.primary};
     outline-offset: 1px;
   }
 `;
@@ -333,7 +332,7 @@ export const DropdownItem = styled.div.withConfig({
   ${({ theme, $size = Size.MD, $state }) => {
     const styles = getDropdownItemStyles(theme.dropdowns, $size, $state);
     // Default состояние: прозрачный фон, цвет neutral[800]
-    const defaultColor = theme.mode === 'dark' ? theme.colors.text : '#424242'; // Gray_02 / 9O
+    const defaultColor = theme.colors.text;
 
     return `
       padding: ${styles.padding};
@@ -355,7 +354,7 @@ export const DropdownItem = styled.div.withConfig({
           ? `
       border: none;
       outline: none;
-      box-shadow: 0 0 0 2px ${theme.mode === 'dark' ? primary[300] : primary[500]};
+      box-shadow: 0 0 0 2px ${theme.colors.primary};
     `
           : 'border: none;'
       }
@@ -392,7 +391,7 @@ export const DropdownItem = styled.div.withConfig({
   &:focus-visible {
     ${({ theme, $size = Size.MD }) => {
       const focusStyles = getDropdownItemStyles(theme.dropdowns, $size, 'focus');
-      const ringColor = theme.mode === 'dark' ? primary[300] : primary[500];
+      const ringColor = theme.colors.primary;
       return `
         background: ${'background' in focusStyles ? focusStyles.background : 'transparent'};
         color: ${'color' in focusStyles ? focusStyles.color : 'inherit'};
@@ -476,7 +475,7 @@ export const DropdownItemLoadingSpinner = styled.span`
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  border: 2px solid rgba(0, 0, 0, 0.1);
+  border: 2px solid ${({ theme }) => theme.colors.border};
   border-top-color: ${({ theme }) => theme.colors.primary};
   animation: ${spin} 0.8s linear infinite;
 `;
@@ -491,7 +490,7 @@ export const DropdownItemContent = styled.div`
 
 export const DropdownItemLabel = styled.span<{ $tone?: 'default' | 'danger' }>`
   font-weight: inherit;
-  color: ${({ $tone }) => ($tone === 'danger' ? colors.red[600] : 'inherit')};
+  color: ${({ theme, $tone }) => ($tone === 'danger' ? theme.colors.danger : 'inherit')};
   display: block;
   word-break: normal;
   overflow-wrap: break-word;
@@ -499,7 +498,7 @@ export const DropdownItemLabel = styled.span<{ $tone?: 'default' | 'danger' }>`
 
 export const DropdownItemDescription = styled.span`
   font-size: 12px;
-  color: ${({ theme }) => (theme.mode === 'dark' ? theme.colors.textSecondary : '#6b7280')};
+  color: ${({ theme }) => theme.colors.textSecondary};
   line-height: 1.4;
   word-break: break-word;
 `;
@@ -547,7 +546,7 @@ export const DropdownLoadingSpinner = styled.span`
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  border: 3px solid rgba(0, 0, 0, 0.1);
+  border: 3px solid ${({ theme }) => theme.colors.border};
   border-top-color: ${({ theme }) => theme.colors.primary};
   animation: ${spin} 0.8s linear infinite;
 `;

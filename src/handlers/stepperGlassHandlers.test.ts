@@ -1,5 +1,6 @@
 import { ThemeColorScheme } from '../types/theme';
 import { glassDarkTheme, glassLightTheme } from '../themes/themes';
+import { mixColorWithTransparent } from './glassColorHandlers';
 import {
   getStepperRootSurfaceTokens,
   getStepperTextTokens,
@@ -13,6 +14,7 @@ describe('stepperGlassHandlers', () => {
       backgroundSecondary: '#f5f5f5',
       text: '#212121',
       border: '#e0e0e0',
+      onAccent: '#ffffff',
     },
   };
 
@@ -30,7 +32,9 @@ describe('stepperGlassHandlers', () => {
 
   it('getStepperRootSurfaceTokens возвращает лёгкую прозрачность в glass-теме', () => {
     const tokens = getStepperRootSurfaceTokens(glassContext, 'light');
-    expect(tokens.background).toBe('rgba(255, 255, 255, 0.26)');
+    expect(tokens.background).toBe(
+      mixColorWithTransparent(glassLightTheme.colors.onAccent, 26),
+    );
     expect(tokens.border).toContain('solid');
     expect(tokens.backdropFilter).toContain('blur');
   });
@@ -49,10 +53,11 @@ describe('stepperGlassHandlers', () => {
     };
 
     const textTokens = getStepperTextTokens(glassDarkContext, 'dark');
+    const onAccent = glassDarkTheme.colors.onAccent;
 
-    expect(textTokens.primary).toBe('#FFFFFF');
-    expect(textTokens.secondary).toContain('rgba');
-    expect(textTokens.tertiary).toContain('rgba');
+    expect(textTokens.primary).toBe(onAccent);
+    expect(textTokens.secondary).toBe(mixColorWithTransparent(onAccent, 72));
+    expect(textTokens.tertiary).toBe(mixColorWithTransparent(onAccent, 52));
   });
 
   it('getStepperRootSurfaceTokens задаёт светлый color для dark appearance в glassDark', () => {
@@ -64,8 +69,9 @@ describe('stepperGlassHandlers', () => {
     };
 
     const tokens = getStepperRootSurfaceTokens(glassDarkContext, 'dark');
+    const onAccent = glassDarkTheme.colors.onAccent;
 
-    expect(tokens.color).toBe('#FFFFFF');
-    expect(tokens.background).toBe('rgba(255, 255, 255, 0.06)');
+    expect(tokens.color).toBe(onAccent);
+    expect(tokens.background).toBe(mixColorWithTransparent(onAccent, 6));
   });
 });

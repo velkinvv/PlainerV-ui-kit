@@ -16,8 +16,10 @@ import {
   type TabItemTextPosition,
   type TabItemTriggerHtmlProps,
   type TabsItemDefinition,
+  type ControlColor,
 } from '../../../types/ui';
 import { useTheme } from 'styled-components';
+import { resolveControlAccentColors } from '@/handlers/controlAccentColorHandlers';
 import { Skeleton } from '../Skeleton/Skeleton';
 import { renderTabItemTriggerInner } from './tabItemTriggerInner';
 import { resolveTabsVariant } from '@/handlers/resolveTabsVariant';
@@ -115,9 +117,14 @@ export const TabItem: React.FC<TabItemProps> & {
   contentProps,
 }) => {
   const theme = useTheme();
-  const spinnerColor = theme?.colors?.primary ?? '#68d5f8';
-
   const groupContext = useTabItemGroupContext();
+  const standaloneAccent = useMemo(
+    () => resolveControlAccentColors(theme, 'primary'),
+    [theme],
+  );
+  const accentColor = groupContext?.accentColor ?? standaloneAccent.checked;
+  const focusRingColor = groupContext?.focusRingColor ?? standaloneAccent.focusRing;
+  const spinnerColor = accentColor;
 
   const [internalActive, setInternalActive] = useState(defaultActive);
   const isControlled = controlledActive !== undefined;
@@ -230,6 +237,8 @@ export const TabItem: React.FC<TabItemProps> & {
         $hasIcons={!!(iconStart || iconEnd)}
         $flexDirection={flexDirection}
         $gap={gap}
+        $accentColor={accentColor}
+        $focusRingColor={focusRingColor}
         onClick={handleGroupClick}
         ref={mergedGroupTriggerReference as Ref<HTMLButtonElement>}
         aria-pressed={isActive}
@@ -328,6 +337,8 @@ export const TabItem: React.FC<TabItemProps> & {
         $hasIcons={!!(iconStart || iconEnd)}
         $flexDirection={flexDirectionStandalone}
         $gap={gapStandalone}
+        $accentColor={accentColor}
+        $focusRingColor={focusRingColor}
         onClick={handleStandaloneClick}
         ref={externalTriggerReference}
         aria-busy={loading ? true : undefined}
@@ -385,6 +396,11 @@ interface TabItemGroupProps extends Omit<React.HTMLAttributes<HTMLDivElement>, '
   filledSegmentTriggers?: boolean;
   /** Прокрутка трека при переполнении */
   scrollable?: boolean;
+  /**
+   * Акцент активной вкладки / индикатора / focus-ring.
+   * Default: `primary`.
+   */
+  color?: ControlColor | string;
 }
 
 // Компонент группы TabItem
@@ -403,8 +419,14 @@ export const TabItemGroup: React.FC<TabItemGroupProps> = ({
   segmentTrackProps,
   filledSegmentTriggers,
   scrollable = false,
+  color = 'primary',
   ...props
 }) => {
+  const theme = useTheme();
+  const accentColors = useMemo(
+    () => resolveControlAccentColors(theme, color),
+    [color, theme],
+  );
   const resolvedVariant = resolveTabsVariant(direction, variantProp);
 
   const resolvedFilledSegmentTriggers = Boolean(filledSegmentTriggers);
@@ -589,6 +611,8 @@ export const TabItemGroup: React.FC<TabItemGroupProps> = ({
         variant: resolvedVariant,
         filledSegmentTriggers: resolvedFilledSegmentTriggers,
         scrollable,
+        accentColor: accentColors.checked,
+        focusRingColor: accentColors.focusRing,
       }}
     >
       <TabItemGroupContainer

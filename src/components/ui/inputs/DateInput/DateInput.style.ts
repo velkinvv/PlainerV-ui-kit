@@ -1,6 +1,7 @@
 ﻿import styled from 'styled-components';
 import { createStyledShouldForwardProp } from '../../../../handlers/styledComponentHandlers';
 import { overlayPanelBoxShadowFromTheme, overlayPanelSurfaceCss } from '../../../../handlers/overlayPanelShadowHandlers';
+import { getInputFieldWidthCss } from '../../../../handlers/inputFieldLayoutHandlers';
 import { BorderRadiusHandler, TransitionHandler } from '../../../../handlers/uiHandlers';
 import { Size } from '../../../../types/sizes';
 
@@ -120,12 +121,12 @@ export const IconButton = styled.button`
 
 /** Ширина как у `InputWrapper`, чтобы счётчик и подписи не растягивались на 100% ширины внешнего контейнера */
 export const DateInputFieldStack = styled.div.withConfig({
-  shouldForwardProp: createStyledShouldForwardProp(),
-})<{ fullWidth?: boolean }>`
+  shouldForwardProp: createStyledShouldForwardProp(['fullWidth', 'autoWidth']),
+})<{ fullWidth?: boolean; autoWidth?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  width: ${({ fullWidth }) => (fullWidth ? '100%' : '335px')};
+  width: ${({ fullWidth, autoWidth }) => getInputFieldWidthCss(fullWidth, autoWidth)};
   max-width: 100%;
 `;
 
@@ -283,4 +284,16 @@ export const RangeDateLabel = styled.span<{ size?: Size }>`
 
 export const RangeDateSeparator = styled.span`
   color: ${({ theme }) => theme.colors.textSecondary};
+`;
+
+/**
+ * Шапка / подвал панели пикера даты (граница из темы).
+ * @property $edge - `bottom` — нижняя граница (шапка), `top` — верхняя (подвал)
+ */
+export const DateInputPickerChrome = styled.div<{ $edge: 'top' | 'bottom' }>`
+  padding: 16px;
+  border-top: ${({ $edge, theme }) =>
+    $edge === 'top' ? `1px solid ${theme.colors.border}` : 'none'};
+  border-bottom: ${({ $edge, theme }) =>
+    $edge === 'bottom' ? `1px solid ${theme.colors.border}` : 'none'};
 `;
