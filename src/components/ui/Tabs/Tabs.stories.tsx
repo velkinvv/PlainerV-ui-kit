@@ -12,7 +12,17 @@ import {
 } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
 import { DOC_TABS } from '@/components/ui/storyDocs/uiKitDocs';
-import { tabsStoriesStyles } from './Tabs.stories.styles';
+import {
+  TabsStoriesCodeBlock,
+  TabsStoriesColorsStack,
+  TabsStoriesControlledContainer,
+  TabsStoriesControlledLabel,
+  TabsStoriesDocsStack,
+  TabsStoriesPanelContent,
+  TabsStoriesPreviewPanel,
+  TabsStoriesScrollableHost,
+  TabsStoriesWideDashedPanel,
+} from './Tabs.stories.styles';
 
 const meta: Meta<typeof Tabs> = {
   title: 'UI Kit/Navigation/Tabs',
@@ -95,11 +105,16 @@ const meta: Meta<typeof Tabs> = {
     filledSegmentTriggers: {
       control: { type: 'boolean' },
       description:
-        'Для **minimal** / **line** / **underline**: заливка **primary** активного сегмента, фон трека **backgroundSecondary**, индикатор **2px**.',
+        'Для **minimal** / **line** / **underline**: заливка акцентного цвета активного сегмента, фон трека **backgroundSecondary**, индикатор **2px**.',
       table: {
         type: { summary: 'boolean' },
         defaultValue: { summary: 'undefined → false' },
       },
+    },
+    color: {
+      control: 'text',
+      description: 'Акцент активной вкладки / индикатора / focus-ring (ControlColor или CSS, default primary)',
+      table: { type: { summary: 'ControlColor | string' } },
     },
     onChange: {
       description:
@@ -163,10 +178,10 @@ export const PillSegmentedWithIconsAndBadge: Story = {
           iconStart={<Icon name="IconExHome" size="md" />}
           badge={3}
         >
-          <div style={tabsStoriesStyles.contentPadding16}>Контент «Входящие»</div>
+          <TabsStoriesPanelContent>Контент «Входящие»</TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="folders" label="Папки" iconEnd={<Icon name="IconExSettings" size="md" />}>
-          <div style={tabsStoriesStyles.contentPadding16}>Контент «Папки»</div>
+          <TabsStoriesPanelContent>Контент «Папки»</TabsStoriesPanelContent>
         </TabItem>
         <TabItem
           value="archive"
@@ -174,7 +189,7 @@ export const PillSegmentedWithIconsAndBadge: Story = {
           iconStart={<Icon name="IconExUser" size="md" />}
           badge={12}
         >
-          <div style={tabsStoriesStyles.contentPadding16}>Контент «Архив»</div>
+          <TabsStoriesPanelContent>Контент «Архив»</TabsStoriesPanelContent>
         </TabItem>
       </>
     ),
@@ -186,25 +201,21 @@ export const PillSegmentedWithIconsAndBadge: Story = {
 
 /** Много вкладок в узком контейнере: **scrollable** включает горизонтальную прокрутку трека. */
 export const ScrollableManyTabs: Story = {
-  args: {
-    scrollable: true,
-    defaultValue: 'tab-1',
-    ariaLabel: 'Прокручиваемые вкладки',
-    segmentTrackProps: { style: tabsStoriesStyles.scrollableTrackHost },
-    children: (
-      <>
+  render: () => (
+    <TabsStoriesScrollableHost>
+      <Tabs scrollable defaultValue="tab-1" ariaLabel="Прокручиваемые вкладки">
         {Array.from({ length: 12 }, (_, tabIndex) => {
           const tabNumber = tabIndex + 1;
           const tabValue = `tab-${tabNumber}`;
           return (
             <TabItem key={tabValue} value={tabValue} label={`Вкладка ${tabNumber}`}>
-              <div style={tabsStoriesStyles.contentPadding16}>Контент {tabNumber}</div>
+              <TabsStoriesPanelContent>Контент {tabNumber}</TabsStoriesPanelContent>
             </TabItem>
           );
         })}
-      </>
-    ),
-  },
+      </Tabs>
+    </TabsStoriesScrollableHost>
+  ),
   parameters: {
     layout: 'padded',
     docs: {
@@ -224,10 +235,10 @@ export const LineHorizontal: Story = {
     children: (
       <>
         <TabItem value="a" label="Вкладка A">
-          <div style={tabsStoriesStyles.contentPadding16}>Контент A</div>
+          <TabsStoriesPanelContent>Контент A</TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="b" label="Вкладка B">
-          <div style={tabsStoriesStyles.contentPadding16}>Контент B</div>
+          <TabsStoriesPanelContent>Контент B</TabsStoriesPanelContent>
         </TabItem>
       </>
     ),
@@ -243,13 +254,13 @@ export const MinimalHorizontal: Story = {
     children: (
       <>
         <TabItem value="a" label="Вкладка A">
-          <div style={tabsStoriesStyles.contentPadding16}>Контент A</div>
+          <TabsStoriesPanelContent>Контент A</TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="b" label="Вкладка B">
-          <div style={tabsStoriesStyles.contentPadding16}>Контент B</div>
+          <TabsStoriesPanelContent>Контент B</TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="c" label="Вкладка C">
-          <div style={tabsStoriesStyles.contentPadding16}>Контент C</div>
+          <TabsStoriesPanelContent>Контент C</TabsStoriesPanelContent>
         </TabItem>
       </>
     ),
@@ -261,9 +272,9 @@ export const MinimalHorizontal: Story = {
 export const TextVariantLineGrayFull: Story = {
   decorators: [
     (StoryComponent) => (
-      <div style={{ ...tabsStoriesStyles.wideDashedPanel, width: 440 }}>
+      <TabsStoriesWideDashedPanel $widthPx={440}>
         <StoryComponent />
-      </div>
+      </TabsStoriesWideDashedPanel>
     ),
   ],
   args: {
@@ -274,10 +285,10 @@ export const TextVariantLineGrayFull: Story = {
     children: (
       <>
         <TabItem value="a" label="Вкладка A">
-          <div style={tabsStoriesStyles.contentPadding16}>Контент A</div>
+          <TabsStoriesPanelContent>Контент A</TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="b" label="Вкладка B">
-          <div style={tabsStoriesStyles.contentPadding16}>Контент B</div>
+          <TabsStoriesPanelContent>Контент B</TabsStoriesPanelContent>
         </TabItem>
       </>
     ),
@@ -297,9 +308,9 @@ export const TextVariantLineGrayFull: Story = {
 export const TextVariantUnderlineGrayItems: Story = {
   decorators: [
     (StoryComponent) => (
-      <div style={{ ...tabsStoriesStyles.wideDashedPanel, width: 440 }}>
+      <TabsStoriesWideDashedPanel $widthPx={440}>
         <StoryComponent />
-      </div>
+      </TabsStoriesWideDashedPanel>
     ),
   ],
   args: {
@@ -310,10 +321,10 @@ export const TextVariantUnderlineGrayItems: Story = {
     children: (
       <>
         <TabItem value="a" label="Вкладка A">
-          <div style={tabsStoriesStyles.contentPadding16}>Контент A</div>
+          <TabsStoriesPanelContent>Контент A</TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="b" label="Вкладка B">
-          <div style={tabsStoriesStyles.contentPadding16}>Контент B</div>
+          <TabsStoriesPanelContent>Контент B</TabsStoriesPanelContent>
         </TabItem>
       </>
     ),
@@ -339,10 +350,10 @@ export const WithItemsProp: Story = {
         value: 'reports',
         label: 'Отчёты',
         children: (
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Отчёты</h3>
             <p>Панель задана через элемент массива **items** (**children** у строки описания).</p>
-          </div>
+          </TabsStoriesPanelContent>
         ),
       },
       {
@@ -350,23 +361,23 @@ export const WithItemsProp: Story = {
         label: 'Аналитика',
         iconStart: <Icon name="IconExUser" size="md" />,
         children: (
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Аналитика</h3>
             <p>
               В той же строке можно передать **iconStart**, **badge**, **loading**, **skeleton** и
               т.д.
             </p>
-          </div>
+          </TabsStoriesPanelContent>
         ),
       },
       {
         value: 'settings',
         label: 'Настройки',
         children: (
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Настройки</h3>
             <p>Переключение работает так же, как при дочерних **TabItem**.</p>
-          </div>
+          </TabsStoriesPanelContent>
         ),
       },
     ] satisfies TabsItemDefinition[],
@@ -390,24 +401,24 @@ export const WithLoadingSkeletonDisabled: Story = {
     children: (
       <>
         <TabItem value="ready" label="Готово">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <p>Обычная вкладка; переключение доступно.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="loading" label="Загрузка…" loading>
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <p>Контент панели (переключение на эту вкладку заблокировано, на триггере спиннер).</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="sk" label="" skeleton>
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <p>Плейсхолдер сегмента; клик недоступен.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="locked" label="Недоступно" disabled>
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <p>Вкладка явно отключена через **disabled**.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
       </>
     ),
@@ -434,9 +445,9 @@ export const WithItemsPropMinimalAndLoading: Story = {
         value: 'list',
         label: 'Список',
         children: (
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <p>Вкладки из **items** с **TabsVariant.MINIMAL**.</p>
-          </div>
+          </TabsStoriesPanelContent>
         ),
       },
       {
@@ -444,9 +455,9 @@ export const WithItemsPropMinimalAndLoading: Story = {
         label: 'Синхронизация',
         loading: true,
         children: (
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <p>После завершения загрузки можно снять **loading**.</p>
-          </div>
+          </TabsStoriesPanelContent>
         ),
       },
       {
@@ -454,9 +465,9 @@ export const WithItemsPropMinimalAndLoading: Story = {
         label: 'Архив',
         disabled: true,
         children: (
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <p>Отключённая вкладка в данных.</p>
-          </div>
+          </TabsStoriesPanelContent>
         ),
       },
     ] satisfies TabsItemDefinition[],
@@ -477,22 +488,22 @@ export const Default: Story = {
     children: (
       <>
         <TabItem value="overview" label="Overview">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Overview</h3>
             <p>This is the overview content of the tabs component.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="details" label="Details">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Details</h3>
             <p>Detailed information about the component.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="settings" label="Settings">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Settings</h3>
             <p>Configuration options and settings.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
       </>
     ),
@@ -508,22 +519,22 @@ export const WithDefaultActive: Story = {
     children: (
       <>
         <TabItem value="overview" label="Overview">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Overview</h3>
             <p>This tab is not active by default.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="details" label="Details">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Details</h3>
             <p>This tab is active by default.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="settings" label="Settings">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Settings</h3>
             <p>This tab is not active by default.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
       </>
     ),
@@ -538,22 +549,22 @@ export const WithIcons: Story = {
     children: (
       <>
         <TabItem value="home" label="🏠 Home">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Home</h3>
             <p>Welcome to the home page!</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="profile" label="👤 Profile">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Profile</h3>
             <p>User profile information.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="settings" label="⚙️ Settings">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Settings</h3>
             <p>Application settings and preferences.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
       </>
     ),
@@ -568,9 +579,9 @@ export const WithComplexContent: Story = {
     children: (
       <>
         <TabItem value="code" label="Code">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Code Example</h3>
-            <pre style={tabsStoriesStyles.codeBlock}>
+            <TabsStoriesCodeBlock>
               {`import { Tabs } from './Tabs';
 import { TabItem } from './TabItem';
 
@@ -582,21 +593,21 @@ import { TabItem } from './TabItem';
       Content for tab 2
     </TabItem>
 </Tabs>`}
-            </pre>
-          </div>
+            </TabsStoriesCodeBlock>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="preview" label="Preview">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Live Preview</h3>
-            <div style={tabsStoriesStyles.previewPanel}>
+            <TabsStoriesPreviewPanel>
               <p>This is a live preview of the tabs component.</p>
-            </div>
-          </div>
+            </TabsStoriesPreviewPanel>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="docs" label="Documentation">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Documentation</h3>
-            <div style={tabsStoriesStyles.docsStack}>
+            <TabsStoriesDocsStack>
               <div>
                 <h4>Props</h4>
                 <ul>
@@ -615,8 +626,8 @@ import { TabItem } from './TabItem';
                   content.
                 </p>
               </div>
-            </div>
-          </div>
+            </TabsStoriesDocsStack>
+          </TabsStoriesPanelContent>
         </TabItem>
       </>
     ),
@@ -635,31 +646,31 @@ export const Controlled: Story = {
     };
 
     return (
-      <div style={tabsStoriesStyles.controlledContainer}>
-        <p style={tabsStoriesStyles.controlledLabel}>
+      <TabsStoriesControlledContainer>
+        <TabsStoriesControlledLabel>
           Active tab: <strong>{activeTab}</strong>
-        </p>
+        </TabsStoriesControlledLabel>
         <Tabs defaultActiveTab={activeTab} onChange={handleChange}>
           <TabItem value="tab1" label="Tab 1">
-            <div style={tabsStoriesStyles.contentPadding16}>
+            <TabsStoriesPanelContent>
               <h3>Tab 1 Content</h3>
               <p>This is controlled externally.</p>
-            </div>
+            </TabsStoriesPanelContent>
           </TabItem>
           <TabItem value="tab2" label="Tab 2">
-            <div style={tabsStoriesStyles.contentPadding16}>
+            <TabsStoriesPanelContent>
               <h3>Tab 2 Content</h3>
               <p>This is also controlled externally.</p>
-            </div>
+            </TabsStoriesPanelContent>
           </TabItem>
           <TabItem value="tab3" label="Tab 3">
-            <div style={tabsStoriesStyles.contentPadding16}>
+            <TabsStoriesPanelContent>
               <h3>Tab 3 Content</h3>
               <p>This is controlled externally as well.</p>
-            </div>
+            </TabsStoriesPanelContent>
           </TabItem>
         </Tabs>
-      </div>
+      </TabsStoriesControlledContainer>
     );
   },
   parameters: {
@@ -673,35 +684,35 @@ export const Vertical: Story = {
     children: (
       <>
         <TabItem value="overview" label="Overview">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Overview</h3>
             <p>This is the overview content in vertical tabs layout.</p>
             <p>
               Vertical tabs are useful when you have many tabs or when you want to save horizontal
               space.
             </p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="details" label="Details">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Details</h3>
             <p>Detailed information about the component in vertical layout.</p>
             <p>You can see that tabs are now displayed on the left side.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="settings" label="Settings">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Settings</h3>
             <p>Configuration options and settings in vertical layout.</p>
             <p>The active tab indicator is now on the right side of the trigger.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="advanced" label="Advanced">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Advanced</h3>
             <p>Advanced settings and options in vertical layout.</p>
             <p>This demonstrates how vertical tabs can accommodate more content.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
       </>
     ),
@@ -723,28 +734,28 @@ export const VerticalWithIcons: Story = {
     children: (
       <>
         <TabItem value="home" label="🏠 Home">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Home</h3>
             <p>Welcome to the home page in vertical tabs layout!</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="profile" label="👤 Profile">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Profile</h3>
             <p>User profile information in vertical layout.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="messages" label="💬 Messages">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Messages</h3>
             <p>Your messages in vertical tabs layout.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="settings" label="⚙️ Settings">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Settings</h3>
             <p>Application settings in vertical layout.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
       </>
     ),
@@ -765,22 +776,22 @@ export const Horizontal: Story = {
     children: (
       <>
         <TabItem value="overview" label="Overview">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Overview</h3>
             <p>This is the overview content in horizontal tabs layout (default).</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="details" label="Details">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Details</h3>
             <p>Detailed information in horizontal layout.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="settings" label="Settings">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Settings</h3>
             <p>Configuration options in horizontal layout.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
       </>
     ),
@@ -806,37 +817,37 @@ export const VerticalWithVerticalText: Story = {
           label="Overview"
           textOrientation={TabItemTextOrientation.VERTICAL}
         >
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Overview</h3>
             <p>This is the overview content in vertical tabs layout with vertical text.</p>
             <p>Vertical text is useful when you have limited horizontal space.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="details" label="Details" textOrientation={TabItemTextOrientation.VERTICAL}>
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Details</h3>
             <p>Detailed information about the component in vertical layout with vertical text.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem
           value="settings"
           label="Settings"
           textOrientation={TabItemTextOrientation.VERTICAL}
         >
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Settings</h3>
             <p>Configuration options and settings in vertical layout with vertical text.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem
           value="advanced"
           label="Advanced"
           textOrientation={TabItemTextOrientation.VERTICAL}
         >
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Advanced</h3>
             <p>Advanced settings and options in vertical layout with vertical text.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
       </>
     ),
@@ -863,10 +874,10 @@ export const VerticalWithVerticalTextLeft: Story = {
           textOrientation={TabItemTextOrientation.VERTICAL}
           textPosition={TabItemTextPosition.LEFT}
         >
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Overview</h3>
             <p>Vertical tabs with vertical text positioned on the left side.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem
           value="details"
@@ -874,10 +885,10 @@ export const VerticalWithVerticalTextLeft: Story = {
           textOrientation={TabItemTextOrientation.VERTICAL}
           textPosition={TabItemTextPosition.LEFT}
         >
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Details</h3>
             <p>Detailed information with left-aligned vertical text.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem
           value="settings"
@@ -885,10 +896,10 @@ export const VerticalWithVerticalTextLeft: Story = {
           textOrientation={TabItemTextOrientation.VERTICAL}
           textPosition={TabItemTextPosition.LEFT}
         >
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Settings</h3>
             <p>Settings with left-aligned vertical text.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
       </>
     ),
@@ -915,10 +926,10 @@ export const VerticalWithVerticalTextRight: Story = {
           textOrientation={TabItemTextOrientation.VERTICAL}
           textPosition={TabItemTextPosition.RIGHT}
         >
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Overview</h3>
             <p>Vertical tabs with vertical text positioned on the right side (default).</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem
           value="details"
@@ -926,10 +937,10 @@ export const VerticalWithVerticalTextRight: Story = {
           textOrientation={TabItemTextOrientation.VERTICAL}
           textPosition={TabItemTextPosition.RIGHT}
         >
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Details</h3>
             <p>Detailed information with right-aligned vertical text.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem
           value="settings"
@@ -937,10 +948,10 @@ export const VerticalWithVerticalTextRight: Story = {
           textOrientation={TabItemTextOrientation.VERTICAL}
           textPosition={TabItemTextPosition.RIGHT}
         >
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Settings</h3>
             <p>Settings with right-aligned vertical text.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
       </>
     ),
@@ -967,10 +978,10 @@ export const VerticalWithVerticalTextAndIcons: Story = {
           textOrientation={TabItemTextOrientation.VERTICAL}
           iconStart={<Icon name="IconExHome" size="md" />}
         >
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Home</h3>
             <p>Welcome to the home page with vertical text and icon!</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem
           value="profile"
@@ -978,10 +989,10 @@ export const VerticalWithVerticalTextAndIcons: Story = {
           textOrientation={TabItemTextOrientation.VERTICAL}
           iconStart={<Icon name="IconExUser" size="md" />}
         >
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Profile</h3>
             <p>User profile information with vertical text and icon.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem
           value="settings"
@@ -989,10 +1000,10 @@ export const VerticalWithVerticalTextAndIcons: Story = {
           textOrientation={TabItemTextOrientation.VERTICAL}
           iconStart={<Icon name="IconExSettings" size="md" />}
         >
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Settings</h3>
             <p>Application settings with vertical text and icon.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
       </>
     ),
@@ -1015,22 +1026,22 @@ export const VerticalTabsOnRight: Story = {
     children: (
       <>
         <TabItem value="overview" label="Overview">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Overview</h3>
             <p>This is the overview content. Tabs are positioned on the right side.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="details" label="Details">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Details</h3>
             <p>Detailed information. Tabs are on the right, content is on the left.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="settings" label="Settings">
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Settings</h3>
             <p>Configuration options. Tabs positioned on the right side.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
       </>
     ),
@@ -1057,26 +1068,26 @@ export const VerticalTabsOnRightWithVerticalText: Story = {
           label="Overview"
           textOrientation={TabItemTextOrientation.VERTICAL}
         >
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Overview</h3>
             <p>Vertical tabs on the right with vertical text orientation.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem value="details" label="Details" textOrientation={TabItemTextOrientation.VERTICAL}>
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Details</h3>
             <p>Detailed information with tabs on the right and vertical text.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
         <TabItem
           value="settings"
           label="Settings"
           textOrientation={TabItemTextOrientation.VERTICAL}
         >
-          <div style={tabsStoriesStyles.contentPadding16}>
+          <TabsStoriesPanelContent>
             <h3>Settings</h3>
             <p>Settings with tabs on the right and vertical text.</p>
-          </div>
+          </TabsStoriesPanelContent>
         </TabItem>
       </>
     ),
@@ -1090,4 +1101,24 @@ export const VerticalTabsOnRightWithVerticalText: Story = {
       },
     },
   },
+};
+
+export const Colors: Story = {
+  name: 'Цвета (color)',
+  render: () => (
+    <TabsStoriesColorsStack>
+      <Tabs defaultValue="a" color="primary" ariaLabel="primary" variant={TabsVariant.UNDERLINE}>
+        <Tabs.Item value="a">primary</Tabs.Item>
+        <Tabs.Item value="b">B</Tabs.Item>
+      </Tabs>
+      <Tabs defaultValue="a" color="success" ariaLabel="success" variant={TabsVariant.UNDERLINE}>
+        <Tabs.Item value="a">success</Tabs.Item>
+        <Tabs.Item value="b">B</Tabs.Item>
+      </Tabs>
+      <Tabs defaultValue="a" color="#9c27b0" ariaLabel="custom" variant={TabsVariant.UNDERLINE}>
+        <Tabs.Item value="a">custom</Tabs.Item>
+        <Tabs.Item value="b">B</Tabs.Item>
+      </Tabs>
+    </TabsStoriesColorsStack>
+  ),
 };

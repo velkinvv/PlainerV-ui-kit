@@ -6,6 +6,7 @@ import {
   InputPaddingHandler,
   InputSizeHandler,
 } from '../../../../handlers/uiHandlers';
+import { getInputFieldWidthCss } from '../../../../handlers/inputFieldLayoutHandlers';
 import { Size } from '../../../../types/sizes';
 
 export const TextAreaWrapper = styled(InputWrapper)`
@@ -72,10 +73,10 @@ export const TextAreaClearButton = styled(ClearButton)`
  */
 export const TextAreaSkeleton = styled.div.withConfig({
   shouldForwardProp: createStyledShouldForwardProp(),
-})<{ fullWidth?: boolean; $rows?: number }>`
+})<{ fullWidth?: boolean; autoWidth?: boolean; $rows?: number }>`
   position: relative;
   overflow: hidden;
-  width: ${({ fullWidth }) => (fullWidth ? '100%' : '335px')};
+  width: ${({ fullWidth, autoWidth }) => getInputFieldWidthCss(fullWidth, autoWidth)};
   max-width: 100%;
   padding: ${InputPaddingHandler(Size.LG)};
   border: 1px solid ${({ theme }) => theme.colors.borderSecondary};

@@ -1,5 +1,5 @@
 import React, { forwardRef, useId, useMemo, useRef } from 'react';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import {
   RadioContainerWrapper,
   RadioContainer,
@@ -21,6 +21,7 @@ import {
   type RadioButtonProps,
 } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
+import { resolveControlAccentColors } from '../../../handlers/controlAccentColorHandlers';
 import { Tooltip } from '../Tooltip/Tooltip';
 import {
   AdditionalLabel,
@@ -126,6 +127,7 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
       rightIcon,
       fullWidth = false,
       status,
+      color = 'success',
       className,
       id: idProp,
       ...props
@@ -134,6 +136,11 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
   ) => {
     /** Подавляет второй click по input после клика по подписи (label → программный click на radio). */
     const suppressNextInputClickRef = useRef(false);
+    const theme = useTheme();
+    const accentColors = useMemo(
+      () => resolveControlAccentColors(theme, color),
+      [color, theme],
+    );
     const stableRadioUid = useId();
     const radioDomId = idProp ?? stableRadioUid;
     const radioFooterErrorIdentifier = useId();
@@ -263,8 +270,16 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
             variant={variant}
             error={error}
             status={status}
+            $checkedAccent={accentColors.checked}
+            $checkedAccentHover={accentColors.checkedHover}
+            $focusRingColor={accentColors.focusRing}
           >
-            <RadioDot checked={checked} size={size} variant={variant} />
+            <RadioDot
+              checked={checked}
+              size={size}
+              variant={variant}
+              $checkedAccent={accentColors.checked}
+            />
           </RadioCircle>
           {shouldShowLabel && (
             <RadioTextContainer data-label-position={labelPosition}>

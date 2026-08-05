@@ -1,6 +1,7 @@
 import styled, { type DefaultTheme } from 'styled-components';
 import type { ProgressProps } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
+import { resolveOnAccentTextColor } from '../../../handlers/onAccentColorHandlers';
 
 /**
  * Осветляет цвет для создания градиента
@@ -36,8 +37,8 @@ const lightenColor = (color: string, amount: number): string => {
       b = parseInt(matches[2], 10);
     }
   } else {
-    // Если цвет не распознан, возвращаем белый
-    return 'rgba(255, 255, 255, 1)';
+    // Нераспознанный формат — возвращаем исходный цвет без осветления
+    return color;
   }
 
   // Осветляем цвет, смешивая с белым
@@ -558,7 +559,7 @@ export const StepperStepCircle = styled.div<{
   }};
   font-weight: 600;
   color: ${({ theme, $completed, $active }) => {
-    if ($completed || $active) return '#ffffff';
+    if ($completed || $active) return resolveOnAccentTextColor(theme);
     return theme.colors.textSecondary;
   }};
   transition: all 0.3s ease;
@@ -604,7 +605,7 @@ export const CircularCheckmark = styled.div<{ $size: number; $animated?: boolean
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${({ theme }) => theme.colors.backgroundSecondary || '#ffffff'};
+  color: ${({ theme }) => theme.colors.onAccent ?? theme.colors.backgroundSecondary};
   z-index: 1;
 
   svg {
@@ -656,7 +657,7 @@ export const CircularInfoCard = styled.div`
   align-items: center;
   gap: ${({ theme }) => theme.progress.spacing.circularInfoCard};
   padding: 16px;
-  background: ${({ theme }) => theme.colors.backgroundSecondary || '#f5f5f5'};
+  background: ${({ theme }) => theme.colors.backgroundSecondary};
   border-radius: 8px;
   min-width: 200px;
 `;
@@ -715,5 +716,87 @@ export const LoadingSpinner = styled.div<{ $size?: number; $color?: string }>`
 export const LinearLoadingSpinnerContainer = styled.div`
   display: flex;
   align-items: center;
+  margin-left: 8px;
+`;
+
+/** Вертикальный список шагов Progress (variant steps) */
+export const ProgressStepsList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+`;
+
+/**
+ * Строка шага.
+ * @property $active - Активный шаг
+ * @property $accentColor - Цвет подсветки активного
+ */
+export const ProgressStepRow = styled.div<{
+  $active: boolean;
+  $accentColor: string;
+  $clickable?: boolean;
+}>`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border-radius: 4px;
+  background-color: ${({ $active, $accentColor }) =>
+    $active ? `color-mix(in srgb, ${$accentColor} 10%, transparent)` : 'transparent'};
+  cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
+`;
+
+/**
+ * Кружок номера / галочки шага.
+ * @property $filled - Залитый (completed / active)
+ * @property $accentColor - Цвет заливки
+ */
+export const ProgressStepBadge = styled.div<{ $filled: boolean; $accentColor: string }>`
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: ${({ theme, $filled, $accentColor }) =>
+    $filled ? $accentColor : theme.colors.progressTrack};
+  color: ${({ theme, $filled }) =>
+    $filled
+      ? (theme.colors.onAccent ?? theme.colors.backgroundSecondary)
+      : theme.colors.textSecondary};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+`;
+
+/**
+ * Подпись шага.
+ * @property $active - Активный
+ * @property $accentColor - Цвет активного текста
+ */
+export const ProgressStepLabel = styled.div<{ $active: boolean; $accentColor: string }>`
+  font-size: 14px;
+  font-weight: ${({ $active }) => ($active ? 600 : 400)};
+  color: ${({ theme, $active, $accentColor }) =>
+    $active ? $accentColor : theme.colors.textSecondary};
+`;
+
+/** Описание / мета шага */
+export const ProgressStepMeta = styled.div`
+  font-size: 12px;
+  color: ${({ theme }) => theme.colors.textTertiary};
+  margin-top: 2px;
+`;
+
+/** Кнопка действия у Progress (пауза / повтор) */
+export const ProgressActionButton = styled.button<{ $accentColor?: string }>`
+  padding: 4px 8px;
+  font-size: 12px;
+  border: 1px solid ${({ theme, $accentColor }) => $accentColor || theme.colors.textSecondary};
+  color: ${({ theme, $accentColor }) => $accentColor || theme.colors.textSecondary};
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
   margin-left: 8px;
 `;

@@ -9,6 +9,7 @@ import {
 describe('tooltipGlassHandlers', () => {
   const colors = {
     info: '#2196f3',
+    onAccent: '#ffffff',
   } as Colors;
 
   const glassContext = {
@@ -36,5 +37,6 @@ describe('tooltipGlassHandlers', () => {
   it('getTooltipSurfaceTokens возвращает непрозрачный info в обычной теме', () => {
     const tokens = getTooltipSurfaceTokens({ mode: ThemeColorScheme.LIGHT, colors });
     expect(tokens.background).toBe('#2196f3');
+    expect(tokens.textColor).toBe('#ffffff');
   });
 });

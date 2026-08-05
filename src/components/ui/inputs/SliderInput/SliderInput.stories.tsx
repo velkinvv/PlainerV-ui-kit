@@ -481,6 +481,40 @@ export const SingleWithIcons: Story = {
   },
 };
 
+export const SingleWithTrackIcons: Story = {
+  name: 'Одиночный: иконки у трека',
+  ...describeStory(
+    '`trackLeftIcon` / `trackRightIcon` и `onTrack*IconClick` — кликабельные слоты у встроенного трека (не полевые leftIcon/rightIcon).',
+  ),
+  render: (args) => {
+    const [sliderValue, setSliderValue] = useState(Number(args.defaultValue ?? 40));
+    return (
+      <SliderInput
+        {...args}
+        value={sliderValue}
+        onChange={setSliderValue}
+        trackLeftIcon={<Icon name="IconExMinus" size={IconSize.MD} />}
+        trackRightIcon={<Icon name="IconPlainerPlus" size={IconSize.MD} />}
+        trackLeftIconAriaLabel="Уменьшить"
+        trackRightIconAriaLabel="Увеличить"
+        onTrackLeftIconClick={() =>
+          setSliderValue((current) => Math.max(Number(args.min ?? 0), current - Number(args.step ?? 1)))
+        }
+        onTrackRightIconClick={() =>
+          setSliderValue((current) => Math.min(Number(args.max ?? 100), current + Number(args.step ?? 1)))
+        }
+      />
+    );
+  },
+  args: {
+    label: 'Шаг кнопками',
+    defaultValue: 40,
+    min: 0,
+    max: 100,
+    step: 5,
+  },
+};
+
 export const SingleLabelsAndExtraText: Story = {
   name: 'Одиночный: additionalLabel и extraText',
   ...describeStory(

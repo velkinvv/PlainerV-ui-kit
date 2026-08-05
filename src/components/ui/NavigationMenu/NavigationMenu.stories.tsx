@@ -49,6 +49,11 @@ const meta: Meta<typeof NavigationMenu> = {
         'В compact вложенность показывать в поповере при hover (true) или не показывать в колонке (false)',
       table: { type: { summary: 'boolean' } },
     },
+    autoExpandNestedOnActive: {
+      description:
+        'Авто-раскрытие аккордеона по activeId в колонке; на collapsed flyout не влияет (по умолчанию true только при !collapsed)',
+      table: { type: { summary: 'boolean' } },
+    },
     activeId: {
       control: false,
       description:
@@ -158,6 +163,79 @@ export const NestedLevels: Story = {
       description: {
         story:
           'Рекурсивный проп **items**; шеврон по умолчанию; родитель подсвечивается, если активен потомок; в компактном режиме подсписки скрыты.',
+      },
+    },
+  },
+};
+
+/**
+ * Collapsed + flyout: activeId у потомка не открывает панель при mount — только hover/клик.
+ */
+export const CollapsedNestedFlyoutNoAutoOpen: Story = {
+  name: 'Collapsed: flyout без авто-open по activeId',
+  args: {
+    collapsed: true,
+    collapsedNestedFlyout: true,
+    'aria-label': 'Компактная навигация с flyout',
+    defaultActiveId: 'leaf-deep',
+    activeAppearance: NavigationMenuActiveAppearance.HIGHLIGHTED,
+  },
+  render: (args) => (
+    <NavigationMenuStoryWithState
+      initialActiveId={initialActiveIdFromStoryArgs(args, 'leaf-deep')}
+      navigationMenuProps={pickNavigationMenuPropsFromStoryArgs(args)}
+    >
+      <>
+        <NavigationMenuItem id="home" label="Главная" icon={<Icon name="IconExHome" size="md" />} />
+        <NavigationMenuItem
+          id="catalog"
+          label="Каталог"
+          icon={<Icon name="IconExFolder" size="md" />}
+          items={[
+            {
+              id: 'group-a',
+              label: 'Группа A',
+              icon: <Icon name="IconExBox1" size="md" />,
+              items: [
+                {
+                  id: 'leaf-deep',
+                  label: 'Глубокий пункт',
+                  icon: <Icon name="IconExDocument" size="md" />,
+                },
+                {
+                  id: 'leaf-a2',
+                  label: 'Ещё пункт',
+                  icon: <Icon name="IconExCheck" size="md" />,
+                },
+              ],
+            },
+            {
+              id: 'group-b',
+              label: 'Группа B',
+              icon: <Icon name="IconExChart" size="md" />,
+              items: [
+                {
+                  id: 'leaf-b1',
+                  label: 'Пункт B1',
+                  icon: <Icon name="IconExUser" size="md" />,
+                },
+              ],
+            },
+          ]}
+        />
+        <NavigationMenuItem
+          id="settings"
+          label="Настройки"
+          icon={<Icon name="IconExSettings" size="md" />}
+        />
+      </>
+    </NavigationMenuStoryWithState>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'После mount flyout **закрыт**, хотя **activeId** — потомок ветки. Ветка подсвечена («содержит active»). Hover / клик открывает панель; L2 с **activeId** подсвечен.',
       },
     },
   },

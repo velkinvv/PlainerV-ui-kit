@@ -220,6 +220,10 @@ const meta: Meta<typeof Select> = {
     helperText: { description: 'Текст под полем' },
     required: { control: 'boolean', description: 'Обязательное поле' },
     fullWidth: { control: 'boolean', description: 'На всю ширину' },
+    autoWidth: {
+      control: 'boolean',
+      description: 'Ширина по содержимому (auto), без фиксированных 335px',
+    },
     readOnly: { control: 'boolean', description: 'Без открытия / disabled' },
     onFocus: {
       action: 'focus',

@@ -99,10 +99,16 @@ type SurfaceProps = {
   $checked: boolean;
   $disabled: boolean;
   $displayAsSquare: boolean;
+  /** Акцент выбранного сегмента (outline) */
+  $accentColor: string;
+  /** Кольцо фокуса */
+  $focusRingColor: string;
 };
 
 /**
  * Визуальная поверхность сегмента.
+ * @property $accentColor - Цвет выбранного outline-сегмента
+ * @property $focusRingColor - Цвет focus-ring
  */
 export const SegmentedControlItemSurface = styled.div.withConfig({
   shouldForwardProp: createStyledShouldForwardProp(),
@@ -128,7 +134,7 @@ export const SegmentedControlItemSurface = styled.div.withConfig({
   user-select: none;
   transition: ${TransitionHandler()};
 
-  ${({ theme, $appearance, $checked }) => {
+  ${({ theme, $appearance, $checked, $accentColor }) => {
     if ($appearance === 'filled') {
       return $checked
         ? css`
@@ -146,9 +152,9 @@ export const SegmentedControlItemSurface = styled.div.withConfig({
 
     return $checked
       ? css`
-          color: ${theme.colors.primary};
-          background: color-mix(in srgb, ${theme.colors.primary} 10%, ${theme.colors.input});
-          border: 1px solid ${theme.colors.primary};
+          color: ${$accentColor};
+          background: color-mix(in srgb, ${$accentColor} 10%, ${theme.colors.input});
+          border: 1px solid ${$accentColor};
           z-index: 1;
         `
       : css`
@@ -171,7 +177,7 @@ export const SegmentedControlItemSurface = styled.div.withConfig({
   }
 
   ${SegmentedControlItemInput}:focus-visible + & {
-    outline: 2px solid ${({ theme }) => theme.colors.primary};
+    outline: 2px solid ${({ $focusRingColor }) => $focusRingColor};
     outline-offset: 2px;
     z-index: 2;
   }

@@ -76,6 +76,8 @@ export const PaginationArrowButton = styled.button<{
   $minW: string;
   $minH: string;
   $radius: string;
+  /** Цвет focus-ring */
+  $focusRingColor: string;
 }>`
   box-sizing: border-box;
   display: inline-flex;
@@ -105,7 +107,7 @@ export const PaginationArrowButton = styled.button<{
   }
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.info};
+    outline: 2px solid ${({ $focusRingColor }) => $focusRingColor};
     outline-offset: 2px;
   }
 `;
@@ -122,6 +124,9 @@ export const PageButton = styled.button<{
   $minH: string;
   $fontSize: string;
   $radius: string;
+  $accentColor: string;
+  $accentHoverColor: string;
+  $focusRingColor: string;
 }>`
   box-sizing: border-box;
   display: inline-flex;
@@ -141,11 +146,11 @@ export const PageButton = styled.button<{
     box-shadow 0.15s ease,
     opacity 0.15s ease;
 
-  ${({ theme, $active, $disabled }) => {
+  ${({ theme, $active, $disabled, $accentColor, $accentHoverColor, $focusRingColor }) => {
     const surfaces = getPaginationSurfacePalette(theme);
     const labelColor = theme.colors.text;
-    const accentFill = theme.colors.info;
-    const accentFillHover = theme.colors.infoHover;
+    const accentFill = $accentColor;
+    const accentFillHover = $accentHoverColor;
     const primaryButtonStyles = getButtonVariant(theme.buttons, ButtonVariant.PRIMARY);
     const labelOnAccent = primaryButtonStyles.hover.color ?? primaryButtonStyles.color;
 
@@ -189,7 +194,7 @@ export const PageButton = styled.button<{
       }
 
       &:focus-visible {
-        outline: 2px solid ${accentFill};
+        outline: 2px solid ${$focusRingColor};
         outline-offset: 2px;
       }
     `;
@@ -208,6 +213,7 @@ export const PaginationCompactCurrent = styled(motion.span)<{
   $minH: string;
   $fontSize: string;
   $radius: string;
+  $accentColor: string;
 }>`
   box-sizing: border-box;
   display: inline-flex;
@@ -222,9 +228,9 @@ export const PaginationCompactCurrent = styled(motion.span)<{
   line-height: 1.2;
   user-select: none;
 
-  ${({ theme }) => {
+  ${({ theme, $accentColor }) => {
     const surfaces = getPaginationSurfacePalette(theme);
-    const accentFill = theme.colors.info;
+    const accentFill = $accentColor;
     const primaryButtonStyles = getButtonVariant(theme.buttons, ButtonVariant.PRIMARY);
 
     return css`

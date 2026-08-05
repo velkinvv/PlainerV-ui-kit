@@ -1,7 +1,9 @@
-import React, { forwardRef, useId } from 'react';
+import React, { forwardRef, useId, useMemo } from 'react';
 import { clsx } from 'clsx';
+import { useTheme } from 'styled-components';
 import type { SegmentedControlItemProps } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
+import { resolveControlAccentColors } from '../../../handlers/controlAccentColorHandlers';
 import { useSegmentedControlContext } from './SegmentedControlContext';
 import {
   SegmentedControlItemIconSlot,
@@ -49,6 +51,13 @@ export const SegmentedControlItem = forwardRef<HTMLInputElement, SegmentedContro
     ref,
   ) => {
     const groupContext = useSegmentedControlContext();
+    const theme = useTheme();
+    const standaloneAccent = useMemo(
+      () => resolveControlAccentColors(theme, 'primary'),
+      [theme],
+    );
+    const accentColor = groupContext?.accentColor ?? standaloneAccent.checked;
+    const focusRingColor = groupContext?.accentFocusRingColor ?? standaloneAccent.focusRing;
     const generatedId = useId();
     const inputId = idProp ?? `segmented-control-item-${generatedId}`;
 
@@ -101,6 +110,8 @@ export const SegmentedControlItem = forwardRef<HTMLInputElement, SegmentedContro
           $checked={Boolean(checked)}
           $disabled={isDisabled}
           $displayAsSquare={displayAsSquare}
+          $accentColor={accentColor}
+          $focusRingColor={focusRingColor}
         >
           {loading ? (
             <SegmentedControlItemSpinner aria-hidden />

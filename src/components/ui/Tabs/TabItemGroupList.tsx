@@ -1,4 +1,5 @@
 import React, { forwardRef, useContext, useMemo } from 'react';
+import { useTheme } from 'styled-components';
 import {
   TabItemGroupListRoot,
   PillSegmentThumb,
@@ -11,6 +12,7 @@ import { isTabsTextSegmentVariant } from '@/handlers/tabsVariantHandlers';
 import { PillSegmentRegistrationContext } from './pillSegmentTrack/PillSegmentRegistrationContext';
 import { usePillSegmentMetrics } from './pillSegmentTrack/usePillSegmentMetrics';
 import { mergeRefs } from '@/handlers/assignRefs';
+import { resolveControlAccentColors } from '@/handlers/controlAccentColorHandlers';
 
 type TabItemGroupListProps = React.ComponentProps<typeof TabItemGroupListRoot>;
 
@@ -27,6 +29,12 @@ export const TabItemGroupList = forwardRef<HTMLDivElement, TabItemGroupListProps
     const { children, $direction, $variant, $filledSegmentTriggers, $scrollable, ...restDomProps } =
       props;
     const tabItemGroupContextValue = useContext(TabItemGroupContext);
+    const theme = useTheme();
+    const fallbackAccent = useMemo(
+      () => resolveControlAccentColors(theme, 'primary').checked,
+      [theme],
+    );
+    const accentColor = tabItemGroupContextValue?.accentColor ?? fallbackAccent;
 
     const activeSegmentValue = tabItemGroupContextValue?.activeTab ?? '';
 
@@ -64,6 +72,7 @@ export const TabItemGroupList = forwardRef<HTMLDivElement, TabItemGroupListProps
             $metrics={metrics}
             $direction={$direction}
             $thickIndicator={Boolean($filledSegmentTriggers)}
+            $accentColor={accentColor}
             aria-hidden
           />
         ) : null}

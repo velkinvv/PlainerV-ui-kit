@@ -1,12 +1,13 @@
-import type { CSSProperties } from 'react';
+import styled from 'styled-components';
 
-export const tabItemStoriesStyles = {
-  contentPadding16: {
-    padding: '16px',
-  } satisfies CSSProperties,
-  iconLabelRow: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-  } satisfies CSSProperties,
-};
+/** Контент панели TabItem в сторис */
+export const TabItemStoriesPanelContent = styled.div`
+  padding: 16px;
+`;
+
+/** Ряд иконка + подпись в label */
+export const TabItemStoriesIconLabelRow = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;

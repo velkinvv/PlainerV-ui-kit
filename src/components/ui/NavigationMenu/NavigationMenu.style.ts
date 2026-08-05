@@ -4,6 +4,7 @@ import { ThemeColorScheme, type ThemeType } from '@/types/theme';
 import { NavigationMenuActiveAppearance, type NavigationMenuItemStatus } from '@/types/ui';
 import { getNavigationMenuItemStatusBackgroundTint } from '@/handlers/navigationMenuItemStatusHandlers';
 import { navigationMenuItemHighlightPulseCss } from '@/handlers/navigationMenuItemHighlightHandlers';
+import { resolveOnAccentTextColor } from '@/handlers/onAccentColorHandlers';
 
 /** Корневой контейнер меню навигации */
 export const NavigationMenuNav = styled.nav`
@@ -117,8 +118,8 @@ const navigationMenuItemSurface = (p: {
   const primary = theme.colors.primary;
   const isDark = theme.mode === ThemeColorScheme.DARK;
 
-  const defaultBg = isDark ? '#1f1f1f' : theme.colors.backgroundSecondary;
-  const hoverBg = isDark ? '#2a2a2a' : '#f5f5f5';
+  const defaultBg = isDark ? theme.colors.backgroundTertiary : theme.colors.backgroundSecondary;
+  const hoverBg = isDark ? theme.colors.backgroundQuaternary : theme.colors.backgroundTertiary;
 
   const statusTintActive = !$disabled && $status != null;
   const baseBg = statusTintActive
@@ -185,7 +186,7 @@ const navigationMenuItemSurface = (p: {
 
     ${!$disabled && $active && $appearance === NavigationMenuActiveAppearance.SOLID
       ? css`
-          color: #ffffff;
+          color: ${resolveOnAccentTextColor(theme)};
           background: ${primary};
 
           &:hover:enabled {

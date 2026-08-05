@@ -1005,6 +1005,27 @@ export const MenuNestedItems: Story = {
   },
 };
 
+/** Collapsed rail: flyout не открывается сам из‑за activeId у потомка */
+export const MenuNestedItemsCollapsedFlyout: Story = {
+  name: 'Меню: вложенность (collapsed, без авто-flyout)',
+  render: () => (
+    <SidemenuStoryWithActiveState
+      initialActiveId="sm-leaf-deep"
+      itemsTemplate={sidemenuNestedItemsTemplate}
+      logo={sidemenuLogoStar}
+      variant={SidemenuVariant.COLLAPSED}
+    />
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Compact + **collapsedNestedFlyout**: после mount панель L2 закрыта при **activeItemId** у потомка; ветка подсвечена; hover открывает flyout с подсвеченным листом.',
+      },
+    },
+  },
+};
+
 /** Tooltip, hint, popover — компактный вид удобнее для подсказок у иконок */
 const sidemenuOverlaysItemsTemplate: SidemenuItem[] = [
   {

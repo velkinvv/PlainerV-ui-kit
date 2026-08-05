@@ -1,6 +1,7 @@
 import { ThemeColorScheme } from '../types/theme';
 import type { Colors } from '../types/theme';
 import { lightAccordionTheme } from '../themes/accordion/light';
+import { mixColorWithTransparent } from './glassColorHandlers';
 import {
   getAccordionGlassSurfaceTokens,
   getAccordionPositionStyles,
@@ -11,6 +12,7 @@ import {
 describe('accordionGlassHandlers', () => {
   const colors = {
     borderSecondary: '#ececec',
+    onAccent: '#ffffff',
   } as Colors;
 
   const glassContext = {
@@ -38,8 +40,8 @@ describe('accordionGlassHandlers', () => {
 
   it('getAccordionGlassSurfaceTokens возвращает полупрозрачный фон', () => {
     const tokens = getAccordionGlassSurfaceTokens(glassContext);
-    expect(tokens.background).toBe('rgba(255, 255, 255, 0.26)');
-    expect(tokens.hoverBackground).toBe('rgba(255, 255, 255, 0.18)');
+    expect(tokens.background).toBe(mixColorWithTransparent('#ffffff', 26));
+    expect(tokens.hoverBackground).toBe(mixColorWithTransparent('#ffffff', 18));
     expect(tokens.dividerBorder).toBe('1px solid #ececec');
   });
 

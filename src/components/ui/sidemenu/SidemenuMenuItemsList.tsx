@@ -21,6 +21,10 @@ export type SidemenuMenuItemsListProps = {
   activeItemId?: string;
   /** collapsed режим NavigationMenu */
   collapsed: boolean;
+  /** Проброс **collapsedNestedFlyout** в NavigationMenu */
+  collapsedNestedFlyout?: boolean;
+  /** Проброс **autoExpandNestedOnActive** в NavigationMenu */
+  autoExpandNestedOnActive?: boolean;
   /** Колбэк: идёт mount/unmount анимация пунктов */
   onPresenceAnimatingChange?: (isAnimating: boolean) => void;
 };
@@ -30,6 +34,8 @@ export type SidemenuMenuItemsListProps = {
  *
  * @param animateItemPresence — включить mount/unmount анимацию пунктов
  * @param onPresenceAnimatingChange — уведомление о старте/завершении presence-анимации
+ * @param collapsedNestedFlyout — flyout вложенности в compact (NavigationMenu)
+ * @param autoExpandNestedOnActive — авто-раскрытие аккордеона по activeId (NavigationMenu)
  */
 export const SidemenuMenuItemsList: React.FC<SidemenuMenuItemsListProps> = ({
   items,
@@ -37,6 +43,8 @@ export const SidemenuMenuItemsList: React.FC<SidemenuMenuItemsListProps> = ({
   onItemClick,
   activeItemId,
   collapsed,
+  collapsedNestedFlyout,
+  autoExpandNestedOnActive,
   onPresenceAnimatingChange,
 }) => {
   const handleNavigationActiveChange = (nextActiveId: string) => {
@@ -63,6 +71,8 @@ export const SidemenuMenuItemsList: React.FC<SidemenuMenuItemsListProps> = ({
       activeId={resolvedActiveId}
       onActiveChange={handleNavigationActiveChange}
       activeAppearance={NavigationMenuActiveAppearance.HIGHLIGHTED}
+      collapsedNestedFlyout={collapsedNestedFlyout}
+      autoExpandNestedOnActive={autoExpandNestedOnActive}
       aria-label="Основная навигация приложения"
       className="ui-sidemenu__navigation"
     >

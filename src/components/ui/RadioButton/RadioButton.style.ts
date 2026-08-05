@@ -95,7 +95,13 @@ export const RadioTextContainer = styled.div<{
  * - Filled вариант: полностью залитый круг при checked
  * - Outline вариант: белый круг с зеленой обводкой при checked
  */
-export const RadioCircle = styled.div<RadioButtonProps>`
+export const RadioCircle = styled.div<
+  RadioButtonProps & {
+    $checkedAccent: string;
+    $checkedAccentHover: string;
+    $focusRingColor: string;
+  }
+>`
   position: relative;
   width: ${({ theme, size = Size.MD }) => {
     // Обрабатываем размеры, которые могут отсутствовать в теме (XS, XL используем MD)
@@ -111,7 +117,7 @@ export const RadioCircle = styled.div<RadioButtonProps>`
     );
   }};
   border: ${({ theme }) => theme.radioButton.settings.borderWidth} solid
-    ${({ theme, checked, disabled, readOnly: _readOnly, variant, error, status }) => {
+    ${({ theme, checked, disabled, variant, error, status, $checkedAccent }) => {
       // Приоритет: error (проп) > status === 'error' > checked > обычное состояние
       if (error) {
         return theme.radioButton.colors.error.border;
@@ -126,33 +132,24 @@ export const RadioCircle = styled.div<RadioButtonProps>`
         return theme.radioButton.colors.status.success.border;
       }
       if (disabled) return theme.radioButton.colors.disabled.border;
-      // Для readOnly состояния используем те же цвета, что и для обычного состояния
-      // Для checked состояния всегда зеленая обводка
       if (checked) {
-        return variant === 'outline'
-          ? theme.radioButton.colors.outline.borderChecked
-          : theme.radioButton.colors.filled.borderChecked;
+        return $checkedAccent;
       }
-      // Для unchecked состояния
       return variant === 'outline'
         ? theme.radioButton.colors.outline.borderUnchecked
         : theme.radioButton.colors.filled.borderUnchecked;
     }};
   border-radius: ${({ theme }) => theme.radioButton.settings.borderRadius};
-  background: ${({ theme, checked, disabled, readOnly: _readOnly, variant }) => {
+  background: ${({ theme, checked, disabled, variant, $checkedAccent }) => {
     if (disabled) {
       return theme.radioButton.colors.disabled.background;
     }
-    // Для readOnly состояния используем те же цвета, что и для обычного состояния
-    // Для filled варианта: полностью заливаем при checked
     if (variant === 'filled' && checked) {
-      return theme.radioButton.colors.filled.checked;
+      return $checkedAccent;
     }
-    // Для outline варианта: фон даже при checked
     if (variant === 'outline') {
       return theme.radioButton.colors.outline.checked;
     }
-    // По умолчанию (filled, unchecked): фон
     return theme.radioButton.colors.filled.unchecked;
   }};
   transition: ${({ theme }) => theme.radioButton.animations.transition};
@@ -162,11 +159,10 @@ export const RadioCircle = styled.div<RadioButtonProps>`
   justify-content: center;
 
   &:hover {
-    border-color: ${({ theme, checked, disabled, readOnly }) => {
+    border-color: ${({ theme, checked, disabled, readOnly, $checkedAccentHover }) => {
       if (disabled || readOnly) return theme.radioButton.colors.disabled.border;
-      // Используем цвет из темы для hover
       if (checked) {
-        return theme.radioButton.colors.hover.borderChecked;
+        return $checkedAccentHover;
       }
       return theme.radioButton.colors.hover.borderUnchecked;
     }};
@@ -180,9 +176,8 @@ export const RadioCircle = styled.div<RadioButtonProps>`
   }
 
   &:focus-within {
-    // Согласно макету: обводка Success/bg (#E9FADC), strokeWeight: 2px, borderRadius: 50px
     outline: ${({ theme }) => theme.radioButton.settings.focusOutlineWidth} solid
-      ${({ theme }) => theme.radioButton.colors.focus.outline};
+      ${({ $focusRingColor }) => `color-mix(in srgb, ${$focusRingColor} 25%, transparent)`};
     outline-offset: ${({ theme }) => theme.radioButton.settings.focusOutlineOffset};
     border-radius: 50px;
   }
@@ -193,7 +188,7 @@ export const RadioCircle = styled.div<RadioButtonProps>`
  * Используется только для outline варианта, когда нужно показать точку в центре
  * Для filled варианта точка не нужна, так как весь круг залит
  */
-export const RadioDot = styled.div<RadioButtonProps>`
+export const RadioDot = styled.div<RadioButtonProps & { $checkedAccent: string }>`
   width: ${({ theme, size = Size.MD }) => {
     const sizeKey = size === Size.XS ? Size.SM : size === Size.XL ? Size.LG : size;
     return theme.radioButton.sizes[sizeKey]?.dotSize || theme.radioButton.sizes[Size.MD].dotSize;
@@ -203,18 +198,15 @@ export const RadioDot = styled.div<RadioButtonProps>`
     return theme.radioButton.sizes[sizeKey]?.dotSize || theme.radioButton.sizes[Size.MD].dotSize;
   }};
   border-radius: ${({ theme }) => theme.radioButton.settings.borderRadius};
-  background: ${({ theme, checked, variant }) => {
-    // Для outline варианта показываем точку в центре при checked
+  background: ${({ checked, variant, $checkedAccent }) => {
     if (variant === 'outline' && checked) {
-      return theme.radioButton.colors.outline.dot;
+      return $checkedAccent;
     }
-    // Для filled варианта точка не нужна
     return 'transparent';
   }};
   transition: ${({ theme }) => theme.radioButton.animations.dotScale};
   will-change: transform, background-color;
   transform: ${({ checked, variant }) => {
-    // Показываем точку только для outline варианта
     if (variant === 'outline' && checked) {
       return 'scale(1)';
     }

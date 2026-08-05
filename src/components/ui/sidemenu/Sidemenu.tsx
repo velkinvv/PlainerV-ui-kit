@@ -88,6 +88,8 @@ const sidemenuPanelMotionTransition = {
  * @param edgeAttached — панель без скругления и тени у края экрана (**min-height: 100vh**)
  * @param horizontalPlacement — левый или правый край экрана
  * @param verticalAlignment — верх / центр / низ (вся панель или только блок пунктов при **edgeAttached**)
+ * @param collapsedNestedFlyout — проброс в NavigationMenu: flyout вложенности в compact
+ * @param autoExpandNestedOnActive — проброс в NavigationMenu: авто-раскрытие аккордеона по activeId
  */
 export const Sidemenu: React.FC<SidemenuProps> = ({
   items,
@@ -102,6 +104,8 @@ export const Sidemenu: React.FC<SidemenuProps> = ({
   activeItemId,
   className,
   onItemClick,
+  collapsedNestedFlyout,
+  autoExpandNestedOnActive,
   expandInteraction: expandInteractionProp,
   expanded: expandedProp,
   defaultExpanded: defaultExpandedProp,
@@ -371,6 +375,8 @@ export const Sidemenu: React.FC<SidemenuProps> = ({
             animateItemPresence={dynamicHeight}
             onItemClick={handleItemClick}
             collapsed={!isFullLayout}
+            collapsedNestedFlyout={collapsedNestedFlyout}
+            autoExpandNestedOnActive={autoExpandNestedOnActive}
             onPresenceAnimatingChange={(isAnimating) => {
               if (!isAnimating) {
                 endSizeAnimation();

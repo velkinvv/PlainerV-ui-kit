@@ -78,11 +78,14 @@ function getToastAccentColor(type: ToastType, isDark: boolean): string {
 }
 
 /**
- * Базовая glass-подложка для нейтральных поверхностей toast.
+ * Базовая glass-подложка для нейтральных поверхностей toast из `onAccent`.
  * @param isDark — тёмная ли базовая палитра
+ * @param onAccent — цвет текста/поверхности на акценте из темы
  */
-function getToastGlassBaseSurface(isDark: boolean): string {
-  return isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(255, 255, 255, 0.26)';
+function getToastGlassBaseSurface(isDark: boolean, onAccent?: string): string {
+  const base = onAccent ?? '#ffffff';
+  const alphaPercent = isDark ? 6 : 26;
+  return `color-mix(in srgb, ${base} ${alphaPercent}%, transparent)`;
 }
 
 /**
@@ -98,11 +101,12 @@ export function getToastGlassSurfaceTokens(
   const bodyColor = isDark ? neutral[300] : grey[600];
   const accentColor = getToastAccentColor(type, isDark);
   const fillAlpha = isDark ? FILL_ALPHA_DARK : FILL_ALPHA_LIGHT;
+  const onAccent = context.colors?.onAccent;
 
   if (type === 'neutral') {
     return {
       accent: accentColor,
-      surface: getToastGlassBaseSurface(isDark),
+      surface: getToastGlassBaseSurface(isDark, onAccent),
       titleColor: isDark ? neutral[200] : grey[800],
       bodyColor,
     };
@@ -137,7 +141,7 @@ export function getToastGlassPillVisualTokens(
   context: ToastThemeContext,
 ): ToastPillVisualTokens {
   const isDark = context.mode === ThemeColorScheme.DARK;
-  const white = '#ffffff';
+  const onAccent = context.colors?.onAccent ?? '#ffffff';
   const cardTokens = getToastGlassSurfaceTokens(type, context);
   const accentColor = getToastAccentColor(type, isDark);
   const dismissIcon = isDark ? neutral[400] : grey[500];
@@ -148,12 +152,12 @@ export function getToastGlassPillVisualTokens(
       case 'success':
         return {
           actionBg: withHexAlpha(success[isDark ? 400 : 500], ACTION_ALPHA),
-          actionText: white,
+          actionText: onAccent,
         };
       case 'error':
         return {
           actionBg: withHexAlpha(danger[isDark ? 400 : 500], ACTION_ALPHA),
-          actionText: white,
+          actionText: onAccent,
         };
       case 'warning':
         return {
@@ -163,13 +167,13 @@ export function getToastGlassPillVisualTokens(
       case 'neutral':
         return {
           actionBg: withHexAlpha(isDark ? neutral[600] : grey[700], ACTION_ALPHA),
-          actionText: white,
+          actionText: onAccent,
         };
       case 'info':
       default:
         return {
           actionBg: withHexAlpha(primary[isDark ? 400 : 500], ACTION_ALPHA),
-          actionText: white,
+          actionText: onAccent,
         };
     }
   };
@@ -177,16 +181,18 @@ export function getToastGlassPillVisualTokens(
   const iconGlowForType = (): string => {
     switch (type) {
       case 'success':
-        return 'rgba(34, 197, 94, 0.38)';
+        return `color-mix(in srgb, ${success[500]} 38%, transparent)`;
       case 'error':
-        return 'rgba(239, 68, 68, 0.38)';
+        return `color-mix(in srgb, ${danger[500]} 38%, transparent)`;
       case 'warning':
-        return 'rgba(234, 179, 8, 0.42)';
+        return `color-mix(in srgb, ${warning[500]} 42%, transparent)`;
       case 'neutral':
-        return isDark ? 'rgba(163, 163, 163, 0.32)' : 'rgba(115, 115, 115, 0.22)';
+        return isDark
+          ? `color-mix(in srgb, ${neutral[400]} 32%, transparent)`
+          : `color-mix(in srgb, ${grey[600]} 22%, transparent)`;
       case 'info':
       default:
-        return 'rgba(33, 150, 243, 0.4)';
+        return `color-mix(in srgb, ${primary[500]} 40%, transparent)`;
     }
   };
 

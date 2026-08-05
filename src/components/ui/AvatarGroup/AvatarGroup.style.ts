@@ -2,6 +2,7 @@ import styled, { css } from 'styled-components';
 import { motion } from 'framer-motion';
 import { AvatarGroupVariant } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
+import { avatarOuterRingBoxShadow, avatarBorderToInsetBoxShadow } from '@/handlers/avatarBorderHandlers';
 
 /**
  * Контейнер группы аватаров
@@ -23,6 +24,29 @@ export const AvatarGroupContainer = styled.div<{
   ${({ variant, size, spacing, theme }) => {
     const avatarSize = theme.avatars.sizes[size || Size.MD];
     const groupTheme = theme.avatarGroups;
+    const resolvedSize = size || Size.MD;
+    const ringColor =
+      groupTheme.avatarBorder?.color || theme.cards.variants.elevated.background;
+    const outerRing = avatarOuterRingBoxShadow(
+      groupTheme.sizes[resolvedSize].borderWidth,
+      ringColor,
+    );
+
+    /** Внешнее кольцо на wrapper — не клипается overflow круга и без разрывов border */
+    const avatarRingStyles = outerRing
+      ? css`
+          border-radius: ${theme.avatars.settings.borderRadius};
+          box-shadow: ${outerRing};
+
+          .ui-avatar {
+            border: none;
+          }
+        `
+      : css`
+          .ui-avatar {
+            border: none;
+          }
+        `;
 
     if (variant === AvatarGroupVariant.STACK) {
       return css`
@@ -34,16 +58,10 @@ export const AvatarGroupContainer = styled.div<{
           display: flex;
           align-items: center;
           justify-content: center;
+          ${avatarRingStyles}
 
           &:first-child {
             margin-left: 0; /* Первый аватар без отступа */
-          }
-
-          /* Добавляем ободок вокруг аватаров в цвет фона карточки */
-          .ui-avatar {
-            border: ${groupTheme.sizes[size || Size.MD].borderWidth} solid
-              ${theme.cards.variants.elevated.background};
-            border-radius: 50%;
           }
 
           /* Увеличиваем z-index для каждого последующего аватара - последний поверх всех */
@@ -86,19 +104,12 @@ export const AvatarGroupContainer = styled.div<{
         gap: ${margin}px;
 
         .ui-avatar-wrapper {
-          /* Убираем лишнюю границу для row варианта */
           width: ${avatarSize.width};
           height: ${avatarSize.height};
           display: flex;
           align-items: center;
           justify-content: center;
-
-          /* Добавляем ободок вокруг аватаров в цвет фона карточки */
-          .ui-avatar {
-            border: ${groupTheme.sizes[size || Size.MD].borderWidth} solid
-              ${theme.cards.variants.elevated.background};
-            border-radius: 50%;
-          }
+          ${avatarRingStyles}
         }
       `;
     } else {
@@ -116,13 +127,7 @@ export const AvatarGroupContainer = styled.div<{
           display: flex;
           align-items: center;
           justify-content: center;
-
-          /* Добавляем ободок вокруг аватаров в цвет фона карточки */
-          .ui-avatar {
-            border: ${groupTheme.sizes[size || Size.MD].borderWidth} solid
-              ${theme.cards.variants.elevated.background};
-            border-radius: 50%;
-          }
+          ${avatarRingStyles}
         }
       `;
     }
@@ -143,15 +148,31 @@ export const AvatarCounter = styled(motion.div)<{
   justify-content: center;
   background: ${({ theme }) => theme.avatarGroups.counter.background};
   color: ${({ theme }) => theme.avatarGroups.counter.color};
-  border: ${({ theme, size = Size.MD }) => theme.avatarGroups.sizes[size].borderWidth} solid
-    ${({ theme }) =>
-      theme.avatarGroups.avatarBorder.color || theme.cards.variants.elevated.background};
+  border: none;
   border-radius: ${({ theme }) => theme.avatarGroups.counter.borderRadius};
   font-family: ${({ theme }) => theme.avatarGroups.counter.fontFamily};
   font-weight: ${({ theme }) => theme.avatarGroups.counter.fontWeight};
   cursor: ${({ theme }) => theme.avatarGroups.counter.cursor};
   transition: ${({ theme }) => theme.avatarGroups.counter.transition};
   flex-shrink: ${({ theme }) => theme.avatarGroups.settings.flexShrink};
+
+  ${({ theme, size = Size.MD }) => {
+    const ringColor =
+      theme.avatarGroups.avatarBorder.color || theme.cards.variants.elevated.background;
+    const outerRing = avatarOuterRingBoxShadow(
+      theme.avatarGroups.sizes[size].borderWidth,
+      ringColor,
+    );
+    const counterBorder = theme.avatarGroups.counter.border;
+    const insetFromCounter = avatarBorderToInsetBoxShadow(counterBorder);
+    const shadows = [outerRing, insetFromCounter].filter(Boolean);
+
+    return shadows.length > 0
+      ? css`
+          box-shadow: ${shadows.join(', ')};
+        `
+      : '';
+  }}
 
   ${({ theme }) => {
     const backdropFilter = theme.avatarGroups.settings.backdropFilter;

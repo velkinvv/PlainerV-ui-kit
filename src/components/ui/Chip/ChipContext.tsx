@@ -20,6 +20,9 @@ export type ChipGroupContextValue = {
   disabled: boolean;
   size?: Size;
   appearance?: ChipAppearance;
+  /** Дефолтный акцент выбранных чипов (CSS-цвет уже зарезолвленный) */
+  accentColor?: string;
+  accentFocusRingColor?: string;
   /**
    * Выбор чипа внутри группы.
    * @param chipValue - Значение чипа

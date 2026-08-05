@@ -1,12 +1,13 @@
 import React from 'react';
+import { useTheme as useStyledTheme } from 'styled-components';
 import * as PlainerIcons from '../../../icons/plainer';
 import * as IconExIcons from '../../../icons/iconex';
 import * as PhosphorIcons from '../../../icons/phosphor/regular';
-import { useTheme } from '../../../themes/ThemeProvider';
 import type { IconProps } from '../../../types/ui';
 import type { IconComponentProps } from '../../../types/icon';
 import { /* iconSizeHandler, */ sizeMap } from '../../../handlers/iconHandlers';
 import { IconSize } from '../../../types/sizes';
+import { IconMissingPlaceholder } from './Icon.style';
 
 /** Тип одной SVG-иконки из наборов plainer / iconex / phosphor */
 type SvgIconComponent = React.ComponentType<IconComponentProps>;
@@ -47,8 +48,8 @@ export const Icon: React.FC<IconProps> = React.memo(
   }) => {
     // const iconSize = iconSizeHandler(size, size);
     const iconSize = sizeMap[size] || sizeMap[IconSize.MD]; // fallback к MD если размер не найден
-    const { mode } = useTheme();
-    const themeColor = color || (mode === 'dark' ? '#f5f5f5' : '#262626');
+    const theme = useStyledTheme();
+    const themeColor = color || theme.colors?.text;
 
     // Функция для безопасного рендеринга иконки
     const renderIcon = React.useCallback(
@@ -109,23 +110,9 @@ export const Icon: React.FC<IconProps> = React.memo(
     // Если иконка не найдена нигде, показываем заглушку
     // console.warn(`Icon "${name}" not found in any variant`);
     return (
-      <div
-        style={{
-          width: iconSize,
-          height: iconSize,
-          backgroundColor: '#f3f4f6',
-          border: '1px dashed #d1d5db',
-          borderRadius: '4px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '12px',
-          color: '#6b7280',
-        }}
-        title={`Icon "${name}" not found`}
-      >
+      <IconMissingPlaceholder $sizePx={iconSize} title={`Icon "${name}" not found`}>
         ?
-      </div>
+      </IconMissingPlaceholder>
     );
   },
   (prevProps, nextProps) => {

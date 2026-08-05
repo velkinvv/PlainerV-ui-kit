@@ -1,9 +1,11 @@
 import React, { forwardRef, useCallback, useId, useMemo, useState } from 'react';
 import { clsx } from 'clsx';
+import { useTheme } from 'styled-components';
 import type { SwitchProps } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
 import { ErrorText } from '../inputs/shared';
 import { getSwitchGeometry } from './handlers';
+import { resolveControlAccentColors } from '../../../handlers/controlAccentColorHandlers';
 import {
   SwitchInput,
   SwitchLabelText,
@@ -16,6 +18,7 @@ import {
 /**
  * Переключатель (Switch): трек с бегунком, подпись, состояния disabled и ошибки.
  * @param props - Пропсы `SwitchProps`.
+ * @param props.color - Пресет темы или CSS-цвет включённого трека (default `success`).
  * @param ref - Ref на скрытый `input` (для форм и фокуса).
  */
 export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
@@ -30,6 +33,7 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
       size = Size.MD,
       error,
       fullWidth = false,
+      color = 'success',
       className,
       id: idProp,
       name,
@@ -37,19 +41,24 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
     },
     ref,
   ) => {
+    const theme = useTheme();
     const reactId = useId();
     const inputId = idProp ?? `switch-${reactId}`;
     const geometry = useMemo(() => getSwitchGeometry(size), [size]);
+    const trackColors = useMemo(
+      () => resolveControlAccentColors(theme, color),
+      [color, theme],
+    );
     const isControlled = checked !== undefined;
     const [internalChecked, setInternalChecked] = useState(() => Boolean(defaultChecked));
     const isOn = isControlled ? Boolean(checked) : internalChecked;
 
     const handleChange = useCallback(
-      (e: React.ChangeEvent<HTMLInputElement>) => {
+      (event: React.ChangeEvent<HTMLInputElement>) => {
         if (!isControlled) {
-          setInternalChecked(e.target.checked);
+          setInternalChecked(event.target.checked);
         }
-        onChange?.(e);
+        onChange?.(event);
       },
       [isControlled, onChange],
     );
@@ -62,8 +71,22 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
       ) : null;
 
     const trackNode = (
-      <SwitchTrack as="span" aria-hidden $checked={isOn} $disabled={disabled} $geometry={geometry}>
-        <SwitchThumb as="span" $checked={isOn} $disabled={disabled} $geometry={geometry} />
+      <SwitchTrack
+        as="span"
+        aria-hidden
+        $checked={isOn}
+        $disabled={disabled}
+        $geometry={geometry}
+        $checkedColor={trackColors.checked}
+        $checkedHoverColor={trackColors.checkedHover}
+      >
+        <SwitchThumb
+          as="span"
+          $checked={isOn}
+          $disabled={disabled}
+          $geometry={geometry}
+          $focusRingColor={trackColors.focusRing}
+        />
       </SwitchTrack>
     );
 

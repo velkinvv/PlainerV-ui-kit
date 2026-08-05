@@ -37,6 +37,7 @@ const expandTransition = {
  * @param expandCompactWidth — ширина компактного режима (px или css)
  * @param expandFullWidth — ширина развёрнутого режима
  * @param collapsedNestedFlyout — при **collapsed** показывать **items** в панели при hover справа
+ * @param autoExpandNestedOnActive — авто-раскрытие аккордеона по activeId (не для collapsed flyout)
  * @param aria-label — рекомендуется для `<nav>`
  * @param className — доп. класс на `<nav>`
  * @param children — только `NavigationMenuItem` / `NavigationMenu.Item`
@@ -61,6 +62,7 @@ export const NavigationMenu: React.FC<NavigationMenuProps> & {
   expandCompactWidth = DEFAULT_EXPAND_COMPACT,
   expandFullWidth = DEFAULT_EXPAND_FULL,
   collapsedNestedFlyout = true,
+  autoExpandNestedOnActive,
 }) => {
   const isControlled = activeIdProp !== undefined;
   const [internalActiveId, setInternalActiveId] = useState<string | null>(defaultActiveId ?? null);
@@ -94,8 +96,16 @@ export const NavigationMenu: React.FC<NavigationMenuProps> & {
       setActiveId,
       activeAppearance,
       collapsedNestedFlyout,
+      autoExpandNestedOnActive,
     }),
-    [expand.effectiveCollapsed, activeId, setActiveId, activeAppearance, collapsedNestedFlyout],
+    [
+      expand.effectiveCollapsed,
+      activeId,
+      setActiveId,
+      activeAppearance,
+      collapsedNestedFlyout,
+      autoExpandNestedOnActive,
+    ],
   );
 
   const navigationInner = (

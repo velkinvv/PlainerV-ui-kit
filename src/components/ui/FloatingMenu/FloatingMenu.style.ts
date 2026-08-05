@@ -1,6 +1,5 @@
 import styled, { css } from 'styled-components';
 import { motion } from 'framer-motion';
-import { ThemeColorScheme } from '@/types/theme';
 import { Size } from '@/types/sizes';
 import { ButtonVariant, FloatingMenuGroupVariant, FloatingMenuOrientation } from '@/types/ui';
 import { BorderRadiusHandler } from '../../../handlers/uiHandlers';
@@ -162,9 +161,7 @@ export const FloatingMenuGroupInner = styled.div<{
       ? css`
           padding: 4px;
           border-radius: ${BorderRadiusHandler(theme.borderRadius)};
-          background: ${theme.mode === ThemeColorScheme.DARK
-            ? 'rgba(255, 255, 255, 0.06)'
-            : '#f0f0f0'};
+          background: ${theme.colors.backgroundTertiary};
         `
       : ''}
 `;
@@ -222,9 +219,7 @@ export const FloatingMenuItemButton = styled.button<{
     background: ${({ theme, $disabled }) =>
       $disabled
         ? 'transparent'
-        : theme.mode === ThemeColorScheme.DARK
-          ? 'rgba(255,255,255,0.08)'
-          : '#f5f5f5'};
+        : `color-mix(in srgb, ${theme.colors.text} 8%, transparent)`};
   }
 
   ${({ $active, $insetGroup, theme }) => {
@@ -247,17 +242,13 @@ export const FloatingMenuItemButton = styled.button<{
   ${({ $active, $insetGroup, theme }) =>
     $active && $insetGroup
       ? css`
-          background: ${theme.mode === ThemeColorScheme.DARK
-            ? theme.colors.backgroundSecondary
-            : '#ffffff'};
+          background: ${theme.colors.backgroundSecondary};
           color: ${theme.colors.info};
           box-shadow: 0 0 0 1px
-            ${theme.mode === ThemeColorScheme.DARK ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.06)'};
+            ${`color-mix(in srgb, ${theme.colors.text} 8%, transparent)`};
 
           &:hover {
-            background: ${theme.mode === ThemeColorScheme.DARK
-              ? theme.colors.backgroundSecondary
-              : '#ffffff'};
+            background: ${theme.colors.backgroundSecondary};
             color: ${theme.colors.infoHover};
           }
         `
@@ -345,8 +336,7 @@ export const FloatingMenuDragHandleRoot = styled.div<{ $orientation: FloatingMen
     $orientation === FloatingMenuOrientation.VERTICAL ? 'margin-bottom: 2px;' : 'margin-right: 2px;'}
 
   &:hover {
-    background: ${({ theme }) =>
-      theme.mode === ThemeColorScheme.DARK ? 'rgba(255,255,255,0.08)' : '#f0f0f0'};
+    background: ${({ theme }) => `color-mix(in srgb, ${theme.colors.text} 8%, transparent)`};
   }
 
   &:active {

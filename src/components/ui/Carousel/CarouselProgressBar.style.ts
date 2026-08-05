@@ -65,16 +65,11 @@ export const CarouselProgressSegment = styled.div`
   height: 3px;
   border-radius: 9999px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.35);
-
   ${({ theme }) => {
     const tokens = getCarouselSurfaceTokens(getProgressThemeContext(theme));
-
-    return tokens.dotsTrackBackground
-      ? css`
-          background: ${tokens.dotsTrackBackground};
-        `
-      : css``;
+    return css`
+      background: ${tokens.dotsTrackBackground};
+    `;
   }}
 `;
 

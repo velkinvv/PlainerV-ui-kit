@@ -40,7 +40,7 @@ import {
 } from '../../../../handlers/floatingOverlayHandlers';
 import { useFloatingOverlayLayer } from '../../../../contexts/FloatingOverlayLayerContext';
 import { useFloatingOverlayPosition } from '../../../../hooks/useFloatingOverlayPosition';
-import { SkeletonEffect, CharacterCounterMotion } from '../shared';
+import { SkeletonEffect, CharacterCounterMotion, InputControlStack } from '../shared';
 import { InputFieldShell } from '../Input/InputFieldShell';
 import {
   ActionButton,
@@ -73,6 +73,7 @@ import {
   TimeSegment,
   TimeSegmentsContainer,
   TimeSeparator,
+  TimeInputPickerChrome,
 } from './TimeInput.style';
 
 export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
@@ -85,6 +86,8 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
       disabled = false,
       readOnly = false,
       size = Size.SM,
+      fullWidth = false,
+      autoWidth = false,
       error,
       success,
       className,
@@ -1404,21 +1407,23 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
             )}
           </div>
         )}
-        {skeleton ? (
-          <SkeletonEffect size={size} fullWidth />
-        ) : (
-          <InputFieldShell
-            focused={isFocused}
-            error={error}
-            success={success}
-            size={size}
-            status={status}
-            fullWidth
-            readOnly={readOnly}
-            prefix={prefix}
-            suffix={suffix}
-            disabled={disabled}
-          >
+        <InputControlStack fullWidth={fullWidth} autoWidth={autoWidth}>
+          {skeleton ? (
+            <SkeletonEffect size={size} fullWidth={fullWidth} autoWidth={autoWidth} />
+          ) : (
+            <InputFieldShell
+              focused={isFocused}
+              error={error}
+              success={success}
+              size={size}
+              status={status}
+              fullWidth={fullWidth}
+              autoWidth={autoWidth}
+              readOnly={readOnly}
+              prefix={prefix}
+              suffix={suffix}
+              disabled={disabled}
+            >
             {showIcon && (
               <IconWrapper size={size}>
                 {isLoading ? (
@@ -1532,6 +1537,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
               />
             );
           })()}
+        </InputControlStack>
       </Container>
     );
 
@@ -1558,9 +1564,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
           }}
         >
           {renderTopPanel && (
-            <div style={{ padding: '16px', borderBottom: '1px solid #e0e0e0' }}>
-              {renderTopPanel()}
-            </div>
+            <TimeInputPickerChrome $edge="bottom">{renderTopPanel()}</TimeInputPickerChrome>
           )}
 
           {range ? (
@@ -1798,9 +1802,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
               </RangeFooter>
 
               {renderBottomPanel && (
-                <div style={{ padding: '16px', borderTop: '1px solid #e0e0e0' }}>
-                  {renderBottomPanel()}
-                </div>
+                <TimeInputPickerChrome $edge="top">{renderBottomPanel()}</TimeInputPickerChrome>
               )}
             </RangeContainer>
           ) : (
@@ -1922,9 +1924,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
               </Footer>
 
               {renderBottomPanel && (
-                <div style={{ padding: '16px', borderTop: '1px solid #e0e0e0' }}>
-                  {renderBottomPanel()}
-                </div>
+                <TimeInputPickerChrome $edge="top">{renderBottomPanel()}</TimeInputPickerChrome>
               )}
             </>
           )}

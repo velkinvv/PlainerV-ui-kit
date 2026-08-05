@@ -1,5 +1,6 @@
 import { ThemeColorScheme } from '../types/theme';
 import { glassDarkTheme, glassLightTheme } from '../themes/themes';
+import { mixColorWithTransparent } from './glassColorHandlers';
 import { getTabsSurfaceTokens, isTabsGlassTheme } from './tabsGlassHandlers';
 
 describe('tabsGlassHandlers', () => {
@@ -8,7 +9,9 @@ describe('tabsGlassHandlers', () => {
     colors: {
       backgroundSecondary: '#ffffff',
       backgroundTertiary: '#f5f5f5',
+      backgroundQuaternary: '#eeeeee',
       borderSecondary: '#e0e0e0',
+      onAccent: '#ffffff',
     },
     boxShadow: { sm: '0 1px 2px rgba(0,0,0,0.08)' },
   };
@@ -28,9 +31,10 @@ describe('tabsGlassHandlers', () => {
 
   it('getTabsSurfaceTokens возвращает более плотный glass-трек', () => {
     const tokens = getTabsSurfaceTokens(glassLightContext);
+    const onAccent = glassLightTheme.colors.onAccent;
 
-    expect(tokens.pillTrackBackground).toBe('rgba(255, 255, 255, 0.34)');
-    expect(tokens.filledTrackBackground).toBe('rgba(255, 255, 255, 0.34)');
+    expect(tokens.pillTrackBackground).toBe(mixColorWithTransparent(onAccent, 34));
+    expect(tokens.filledTrackBackground).toBe(mixColorWithTransparent(onAccent, 34));
     expect(tokens.pillTrackBorder).toContain('solid');
     expect(tokens.backdropFilter).toContain('blur');
   });
@@ -53,8 +57,9 @@ describe('tabsGlassHandlers', () => {
     };
 
     const tokens = getTabsSurfaceTokens(glassDarkContext);
+    const onAccent = glassDarkTheme.colors.onAccent;
 
-    expect(tokens.pillTrackBackground).toBe('rgba(255, 255, 255, 0.1)');
-    expect(tokens.pillThumbBackground).toBe('rgba(255, 255, 255, 0.16)');
+    expect(tokens.pillTrackBackground).toBe(mixColorWithTransparent(onAccent, 10));
+    expect(tokens.pillThumbBackground).toBe(mixColorWithTransparent(onAccent, 16));
   });
 });

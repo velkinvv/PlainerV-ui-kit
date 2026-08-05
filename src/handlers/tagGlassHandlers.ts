@@ -1,6 +1,6 @@
 import type { Colors } from '../types/theme';
 import type { TagColorVariant } from '../types/ui';
-import { withHexAlpha } from './glassColorHandlers';
+import { mixColorWithTransparent, withHexAlpha } from './glassColorHandlers';
 
 /** Тон заливки/обводки тега */
 export type TagTone = {
@@ -52,9 +52,8 @@ export function getGlassTagTone(
   color: TagColorVariant,
   isDark: boolean,
 ): TagTone {
-  const outlineBackground = isDark
-    ? 'rgba(255, 255, 255, 0.06)'
-    : 'rgba(255, 255, 255, 0.26)';
+  const onAccent = theme.colors?.onAccent ?? '#ffffff';
+  const outlineBackground = mixColorWithTransparent(onAccent, isDark ? 6 : 26);
 
   switch (color) {
     case 'neutral':

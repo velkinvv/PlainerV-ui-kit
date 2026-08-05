@@ -9,6 +9,25 @@
 
 ---
 
+## [0.2.8] - 2026-08-05
+
+### Added
+
+- Подготовка релиза **0.2.8** (ветка `v_0.2.8`).
+- **Rating:** варианты icons / bar / faces / dots; precision; readOnly / disabled; colorScale (traffic); Storybook + тесты.
+- **Slider / RangeSlider / SliderInput:** боковые кликабельные иконки у трека (`leftIcon` / `rightIcon` + `on*Click`; у SliderInput — `track*`); **`sideIconsWhenDisabled`**: `disable` | `hide`.
+- **Switch / Checkbox / RadioButton:** проп **`color`** — пресеты `primary` | `success` | `error` | `warning` | `info` или произвольный CSS-цвет (default `success`); общий резолвер `resolveControlAccentColors`.
+- **Slider / RangeSlider / SliderInput, SegmentedControl, Chip / Chips, Pagination, Tabs:** тот же проп **`color`** (defaults: Slider/Pagination — `info`; SegmentedControl/Chip/Tabs — `primary`). У Slider `error`/`success`/`status` перекрывают `color`.
+- **TransferList:** две панели с переносом пунктов; `variant` basic/enhanced; гибридный value API; поиск и HTML5 DnD; темы и `color` для checkbox.
+- **Alert:** inline-уведомление (`severity`, `variant` standard/filled/outlined, `color`, `title` / `Alert.Title`, `icon` / `iconMapping`, `action` / `onClose`); не путать с Toast/Snackbar.
+- **Inputs / Select:** проп **`autoWidth`** (`width: auto` вместо фиксированных 335px); приоритет **`fullWidth` > `autoWidth` > 335px**. Колонка подписей/хелперов (**`InputControlStack`**) у Select, FileInput, SliderInput, TimeInput совпадает с шириной поля. **TimeInput** больше не игнорирует `fullWidth`.
+
+### Fixed
+
+- **NavigationMenu** / **Sidemenu:** в collapsed + **collapsedNestedFlyout** flyout L2 больше не открывается сам из‑за **activeId** у потомка (только hover / клик / **defaultNestedExpanded**). Добавлен проп **autoExpandNestedOnActive** (аккордеон в колонке; на flyout не влияет).
+- **TimeInput:** поле использует переданные **`fullWidth` / `autoWidth`**, а не захардкоженный `fullWidth`.
+---
+
 ## [0.2.7] - 2026-07-09
 
 ### Added

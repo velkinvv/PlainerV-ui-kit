@@ -1,6 +1,7 @@
 import type { ThemeType } from '../types/theme';
 import type { StepperAppearance } from '../types/ui';
 import { neutral } from '../variables/colors/neutral';
+import { mixColorWithTransparent } from './glassColorHandlers';
 import {
   getOverlayPanelGlassBackground,
   isOverlayPanelGlassTheme,
@@ -33,11 +34,6 @@ export interface StepperTextTokens {
   backButton: string;
 }
 
-/** Светлый текст на тёмной панели — не зависит от mode темы */
-const STEPPER_DARK_PANEL_TEXT_PRIMARY = neutral[10];
-const STEPPER_DARK_PANEL_TEXT_SECONDARY = 'rgba(255, 255, 255, 0.72)';
-const STEPPER_DARK_PANEL_TEXT_TERTIARY = 'rgba(255, 255, 255, 0.52)';
-
 /**
  * Проверяет, активна ли glass-тема для степпера.
  * @param context — активная тема styled-components
@@ -56,11 +52,12 @@ export function getStepperTextTokens(
   appearance: StepperAppearance,
 ): StepperTextTokens {
   if (appearance === 'dark') {
+    const onAccent = context.colors?.onAccent ?? neutral[10];
     return {
-      primary: STEPPER_DARK_PANEL_TEXT_PRIMARY,
-      secondary: STEPPER_DARK_PANEL_TEXT_SECONDARY,
-      tertiary: STEPPER_DARK_PANEL_TEXT_TERTIARY,
-      backButton: STEPPER_DARK_PANEL_TEXT_PRIMARY,
+      primary: onAccent,
+      secondary: mixColorWithTransparent(onAccent, 72),
+      tertiary: mixColorWithTransparent(onAccent, 52),
+      backButton: onAccent,
     };
   }
 
@@ -85,7 +82,7 @@ export function getStepperRootSurfaceTokens(
 
   if (isStepperGlassTheme(context)) {
     return {
-      background: getOverlayPanelGlassBackground(context.mode),
+      background: getOverlayPanelGlassBackground(context.mode, context.colors?.onAccent),
       color: textTokens.primary,
       border: `1px solid ${context.colors.borderSecondary}`,
       backdropFilter: overlayPanelBackdropFilterFromTheme(context as ThemeType),

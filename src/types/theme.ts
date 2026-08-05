@@ -315,6 +315,11 @@ export type Colors = {
   tagAccentPink: string;
 
   // Специальные цвета
+  /**
+   * Текст / иконка на залитом акцентном фоне (кнопки primary, filled Alert, SOLID Nav).
+   * Светлая тема — белый elevated; тёмная — светлый текст.
+   */
+  onAccent: string;
   overlay: string; // Наложение
   shadow: string; // Тень
   transparent: string; // Прозрачный
@@ -2302,6 +2307,30 @@ export type RadioButtonTheme = {
 };
 
 /**
+ * Тема компонента Rating.
+ * Размеры слотов и цвета empty/filled/track, traffic-stops для шкалы.
+ */
+export type RatingTheme = {
+  sizes: {
+    [Size.XS]: { iconSize: string; barHeight: string; barWidth: string; dotSize: string; gap: string };
+    [Size.SM]: { iconSize: string; barHeight: string; barWidth: string; dotSize: string; gap: string };
+    [Size.MD]: { iconSize: string; barHeight: string; barWidth: string; dotSize: string; gap: string };
+    [Size.LG]: { iconSize: string; barHeight: string; barWidth: string; dotSize: string; gap: string };
+    [Size.XL]: { iconSize: string; barHeight: string; barWidth: string; dotSize: string; gap: string };
+  };
+  colors: {
+    empty: string;
+    filled: string;
+    hover: string;
+    disabled: string;
+    track: string;
+    label: string;
+  };
+  /** Stops для traffic-шкалы: danger → warning → success */
+  trafficStops: [string, string, string];
+};
+
+/**
  * Материал поверхности для glass-темы (iOS / macOS vibrancy).
  * Когда задан — компоненты применяют backdrop-filter к карточкам, полям ввода и панелям.
  */
@@ -2359,6 +2388,7 @@ export type ThemeType = {
   modals: ModalTheme; // Тема для модальных окон
   progress: ProgressTheme; // Тема для прогресс-баров
   radioButton: RadioButtonTheme; // Тема для радиокнопок
+  ratings: RatingTheme; // Тема для рейтинга
 
   // Шрифты
   fonts: FontFamily; // Семейства шрифтов

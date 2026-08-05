@@ -24,7 +24,9 @@ export const FocusInputLabel = styled.label`
 export const FocusInput = styled.input`
   padding: 8px 12px;
   border-radius: 6px;
-  border: 1px solid #d1d5db;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  background-color: ${({ theme }) => theme.colors.input};
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 export const ButtonsSlotGrid = styled.div`
@@ -58,7 +60,7 @@ export const PortalArea = styled.div`
 
 export const FooterHintText = styled.p`
   margin: 0;
-  color: #6b7280;
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
 export const EndAlignedActions = styled.div`
@@ -79,7 +81,9 @@ export const WarningIconCircle = styled.div`
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background-color: #fef3c7;
+  background-color: ${({ theme }) =>
+    `color-mix(in srgb, ${theme.colors.warning} 28%, ${theme.colors.backgroundSecondary})`};
+  color: ${({ theme }) => theme.colors.warning};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -111,27 +115,33 @@ export const FormFieldLabel = styled.label`
 export const FormInput = styled.input`
   width: 100%;
   padding: 8px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: 6px;
   font-size: 14px;
+  background-color: ${({ theme }) => theme.colors.input};
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 export const FormTextArea = styled.textarea`
   width: 100%;
   padding: 8px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: 6px;
   font-size: 14px;
   min-height: 80px;
   resize: vertical;
+  background-color: ${({ theme }) => theme.colors.input};
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 export const FormSelect = styled.select`
   width: 100%;
   padding: 8px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: 6px;
   font-size: 14px;
+  background-color: ${({ theme }) => theme.colors.input};
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 export const FormActionsRow = styled.div`
@@ -148,7 +158,7 @@ export const SizesButtonsWrap = styled.div`
 `;
 
 export const DashedContainer = styled.div`
-  border: 1px dashed #cbd5f5;
+  border: 1px dashed ${({ theme }) => theme.colors.border};
   padding: 24px;
   border-radius: 12px;
   position: relative;

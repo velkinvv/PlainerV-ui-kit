@@ -79,6 +79,7 @@ export const lightColors: Colors = {
   tagAccentPink: colors.pink[600],
 
   // Специальные цвета
+  onAccent: colors.neutral[10], // Текст на акцентном фоне
   overlay: 'rgba(0, 0, 0, 0.5)', // Наложение
   shadow: 'rgba(0, 0, 0, 0.1)', // Тень
   transparent: 'transparent', // Прозрачный

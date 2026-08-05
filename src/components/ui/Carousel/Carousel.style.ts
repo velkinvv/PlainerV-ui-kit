@@ -450,7 +450,9 @@ export const CarouselDotButton = styled.button<{ $active: boolean }>`
   border-radius: 50%;
   cursor: pointer;
   background: ${({ $active, theme }) =>
-    $active ? theme.colors.primary : 'rgba(255, 255, 255, 0.72)'};
+    $active
+      ? theme.colors.primary
+      : `color-mix(in srgb, ${theme.colors.onAccent} 72%, transparent)`};
   transition:
     transform 0.2s ease,
     background 0.2s ease;

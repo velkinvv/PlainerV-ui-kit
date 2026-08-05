@@ -14,6 +14,7 @@ import { lightHintTheme, darkHintTheme } from './hint';
 import { lightModalTheme, darkModalTheme } from './modal';
 import { lightProgressTheme, darkProgressTheme } from './progress';
 import { lightRadioButtonTheme, darkRadioButtonTheme } from './radioButton';
+import { lightRatingTheme, darkRatingTheme } from './rating';
 import { Size } from '../types/sizes';
 import { mergeTheme } from './mergeTheme';
 import { createGlassThemeOverride } from './glass/createGlassTheme';
@@ -63,6 +64,7 @@ export const lightTheme: ThemeType = {
   modals: lightModalTheme,
   progress: lightProgressTheme,
   radioButton: lightRadioButtonTheme,
+  ratings: lightRatingTheme,
 
   // Шрифты
   fonts: fontFamily,
@@ -116,6 +118,7 @@ export const darkTheme: ThemeType = {
   modals: darkModalTheme,
   progress: darkProgressTheme,
   radioButton: darkRadioButtonTheme,
+  ratings: darkRatingTheme,
 
   // Шрифты
   fonts: fontFamily,

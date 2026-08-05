@@ -53,6 +53,7 @@ import {
   RangeDateLabel,
   RangeDateSeparator,
   RightLabel,
+  DateInputPickerChrome,
 } from './DateInput.style';
 
 export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
@@ -66,6 +67,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
       readOnly = false,
       size = Size.SM,
       fullWidth = false,
+      autoWidth = false,
       error,
       success,
       className,
@@ -1118,9 +1120,9 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
             )}
           </div>
         )}
-        <DateInputFieldStack fullWidth={fullWidth}>
+        <DateInputFieldStack fullWidth={fullWidth} autoWidth={autoWidth}>
           {skeleton ? (
-            <SkeletonEffect size={size} fullWidth />
+            <SkeletonEffect size={size} fullWidth={fullWidth} autoWidth={autoWidth} />
           ) : (
             <InputFieldShell
               focused={isOpen}
@@ -1129,6 +1131,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
               size={size}
               status={status}
               fullWidth={fullWidth}
+              autoWidth={autoWidth}
               readOnly={readOnly}
               prefix={prefix}
               suffix={suffix}
@@ -1266,9 +1269,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
               }}
             >
               {renderTopPanel && (
-                <div style={{ padding: '16px', borderBottom: '1px solid #e0e0e0' }}>
-                  {renderTopPanel()}
-                </div>
+                <DateInputPickerChrome $edge="bottom">{renderTopPanel()}</DateInputPickerChrome>
               )}
 
               <Calendar
@@ -1322,9 +1323,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
               />
 
               {renderBottomPanel && (
-                <div style={{ padding: '16px', borderTop: '1px solid #e0e0e0' }}>
-                  {renderBottomPanel()}
-                </div>
+                <DateInputPickerChrome $edge="top">{renderBottomPanel()}</DateInputPickerChrome>
               )}
             </CalendarPopup>,
             floatingPortalRoot,

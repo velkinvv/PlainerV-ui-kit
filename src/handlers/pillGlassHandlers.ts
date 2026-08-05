@@ -1,6 +1,6 @@
 import type { Colors, PillTheme } from '../types/theme';
 import { ThemeColorScheme } from '../types/theme';
-import { withHexAlpha } from './glassColorHandlers';
+import { mixColorWithTransparent, withHexAlpha } from './glassColorHandlers';
 
 /** Палитра поверхностей Pill для default / hover / selected */
 export type PillSurfacePalette = {
@@ -24,23 +24,19 @@ const SELECTED_FILL_ALPHA_LIGHT = 0.22;
 const SELECTED_FILL_ALPHA_DARK = 0.28;
 
 /**
- * Glass-палитра поверхностей Pill.
+ * Glass-палитра поверхностей Pill из `onAccent`.
  * @param isDark — тёмная ли базовая палитра
  * @param borderSecondary — цвет нейтральной границы из темы
+ * @param onAccent — цвет текста/поверхности на акценте
  */
 function getPillGlassSurfacePalette(
   isDark: boolean,
   borderSecondary: string,
+  onAccent: string,
 ): PillSurfacePalette {
-  const defaultBackground = isDark
-    ? 'rgba(255, 255, 255, 0.06)'
-    : 'rgba(255, 255, 255, 0.26)';
-  const hoverBackground = isDark
-    ? 'rgba(255, 255, 255, 0.10)'
-    : 'rgba(255, 255, 255, 0.18)';
-  const activeBackground = isDark
-    ? 'rgba(255, 255, 255, 0.14)'
-    : 'rgba(255, 255, 255, 0.30)';
+  const defaultBackground = mixColorWithTransparent(onAccent, isDark ? 6 : 26);
+  const hoverBackground = mixColorWithTransparent(onAccent, isDark ? 10 : 18);
+  const activeBackground = mixColorWithTransparent(onAccent, isDark ? 14 : 30);
 
   return {
     background: defaultBackground,
@@ -64,9 +60,10 @@ export function getPillSurfacePalette(theme: {
   pills?: PillTheme;
 }): PillSurfacePalette {
   const isDark = theme.mode === ThemeColorScheme.DARK;
+  const onAccent = theme.colors?.onAccent ?? '#ffffff';
 
   if (theme.pills?.settings?.backdropFilter) {
-    return getPillGlassSurfacePalette(isDark, theme.colors.borderSecondary);
+    return getPillGlassSurfacePalette(isDark, theme.colors.borderSecondary, onAccent);
   }
 
   return {

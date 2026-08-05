@@ -69,6 +69,7 @@ export function createKidsColors(
     tagAccentPink: audience === 'girls' ? accents.primary : '#EC4899',
 
     overlay: palette.overlay,
+    onAccent: isDarkBase ? surfaces.text : surfaces.backgroundSecondary,
     shadow: palette.shadowGlow,
     transparent: 'transparent',
   };

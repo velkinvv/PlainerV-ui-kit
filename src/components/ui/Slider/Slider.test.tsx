@@ -65,6 +65,60 @@ describe('Slider', () => {
     expect(busyRoot).not.toBeNull();
     expect(screen.getByText('Загрузка')).toBeInTheDocument();
   });
+
+  it('боковые иконки: клик вызывает колбэк', () => {
+    const onLeft = jest.fn();
+    const onRight = jest.fn();
+    renderWithTheme(
+      <Slider
+        min={0}
+        max={10}
+        defaultValue={5}
+        leftIcon={<span>L</span>}
+        rightIcon={<span>R</span>}
+        onLeftIconClick={onLeft}
+        onRightIconClick={onRight}
+      />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Действие слева' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Действие справа' }));
+    expect(onLeft).toHaveBeenCalledTimes(1);
+    expect(onRight).toHaveBeenCalledTimes(1);
+  });
+
+  it('боковые иконки: disabled + disable — кнопка не кликабельна', () => {
+    const onLeft = jest.fn();
+    renderWithTheme(
+      <Slider
+        min={0}
+        max={10}
+        defaultValue={5}
+        disabled
+        sideIconsWhenDisabled="disable"
+        leftIcon={<span>L</span>}
+        onLeftIconClick={onLeft}
+      />,
+    );
+    const button = screen.getByRole('button', { name: 'Действие слева' });
+    expect(button).toBeDisabled();
+    fireEvent.click(button);
+    expect(onLeft).not.toHaveBeenCalled();
+  });
+
+  it('боковые иконки: disabled + hide — слот отсутствует', () => {
+    renderWithTheme(
+      <Slider
+        min={0}
+        max={10}
+        defaultValue={5}
+        disabled
+        sideIconsWhenDisabled="hide"
+        leftIcon={<span>L</span>}
+        onLeftIconClick={jest.fn()}
+      />,
+    );
+    expect(screen.queryByRole('button', { name: 'Действие слева' })).not.toBeInTheDocument();
+  });
 });
 
 describe('RangeSlider', () => {

@@ -19,6 +19,7 @@ export type InputFieldShellProps = {
   success?: boolean;
   status?: 'error' | 'success' | 'warning';
   fullWidth?: boolean;
+  autoWidth?: boolean;
   focused?: boolean;
   readOnly?: boolean;
   className?: string;
@@ -43,6 +44,7 @@ export const InputFieldShell: React.FC<InputFieldShellProps> = ({
   success,
   status,
   fullWidth,
+  autoWidth,
   focused,
   readOnly,
   className,
@@ -76,6 +78,7 @@ export const InputFieldShell: React.FC<InputFieldShellProps> = ({
         success={success}
         status={status}
         fullWidth={fullWidth}
+        autoWidth={autoWidth}
         focused={focused}
         readOnly={readOnly}
         className={className}
@@ -93,6 +96,7 @@ export const InputFieldShell: React.FC<InputFieldShellProps> = ({
       success={success}
       status={status}
       fullWidth={fullWidth}
+      autoWidth={autoWidth}
       focused={focused}
       readOnly={readOnly}
       className={className}

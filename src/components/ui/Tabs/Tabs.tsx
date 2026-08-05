@@ -32,6 +32,7 @@ export const Tabs: React.FC<TabsProps> & {
   items,
   filledSegmentTriggers,
   scrollable,
+  color,
 }) => {
   return (
     <TabItemGroup
@@ -47,6 +48,7 @@ export const Tabs: React.FC<TabsProps> & {
       items={items}
       filledSegmentTriggers={filledSegmentTriggers}
       scrollable={scrollable}
+      color={color}
       className={clsx('ui-tabs', className)}
     >
       {children}

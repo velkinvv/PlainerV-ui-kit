@@ -62,6 +62,7 @@ import {
   IconButton,
   LeftLabel,
   RightLabel,
+  DateTimeInputPickerChrome,
 } from './DateTimeInput.style';
 
 /**
@@ -79,6 +80,7 @@ export const DateTimeInput = forwardRef<HTMLInputElement, DateTimeInputProps>(
       readOnly = false,
       size = Size.SM,
       fullWidth = false,
+      autoWidth = false,
       error,
       success,
       className,
@@ -698,9 +700,9 @@ export const DateTimeInput = forwardRef<HTMLInputElement, DateTimeInputProps>(
           </div>
         )}
 
-        <DateInputFieldStack fullWidth={fullWidth}>
+        <DateInputFieldStack fullWidth={fullWidth} autoWidth={autoWidth}>
           {skeleton ? (
-            <SkeletonEffect size={size} fullWidth />
+            <SkeletonEffect size={size} fullWidth={fullWidth} autoWidth={autoWidth} />
           ) : (
             <InputFieldShell
               focused={isOpen}
@@ -709,6 +711,7 @@ export const DateTimeInput = forwardRef<HTMLInputElement, DateTimeInputProps>(
               size={size}
               status={status}
               fullWidth={fullWidth}
+              autoWidth={autoWidth}
               readOnly={readOnly}
               prefix={prefix}
               suffix={suffix}
@@ -833,9 +836,7 @@ export const DateTimeInput = forwardRef<HTMLInputElement, DateTimeInputProps>(
               }}
             >
               {renderTopPanel ? (
-                <div style={{ padding: '16px', borderBottom: '1px solid #e0e0e0' }}>
-                  {renderTopPanel()}
-                </div>
+                <DateTimeInputPickerChrome $edge="bottom">{renderTopPanel()}</DateTimeInputPickerChrome>
               ) : null}
 
               <DateTimePickerBody>
@@ -882,9 +883,7 @@ export const DateTimeInput = forwardRef<HTMLInputElement, DateTimeInputProps>(
               </DateTimePopupFooter>
 
               {renderBottomPanel ? (
-                <div style={{ padding: '16px', borderTop: '1px solid #e0e0e0' }}>
-                  {renderBottomPanel()}
-                </div>
+                <DateTimeInputPickerChrome $edge="top">{renderBottomPanel()}</DateTimeInputPickerChrome>
               ) : null}
             </DateTimePopup>,
             floatingPortalRoot,

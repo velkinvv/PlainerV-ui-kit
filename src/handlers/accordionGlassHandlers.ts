@@ -1,5 +1,6 @@
 import type { AccordionTheme, Colors } from '../types/theme';
 import { ThemeColorScheme } from '../types/theme';
+import { mixColorWithTransparent } from './glassColorHandlers';
 
 /** Позиция элемента в группе аккордеона */
 export type AccordionItemPosition = 'start' | 'center' | 'last';
@@ -39,19 +40,20 @@ export function isAccordionGlassTheme(context: AccordionThemeContext): boolean {
 }
 
 /**
- * Glass-палитра аккордеона — лёгкая прозрачность как у pagination.
+ * Glass-палитра аккордеона — лёгкая прозрачность из `onAccent`.
  * @param context — контекст темы
  */
 export function getAccordionGlassSurfaceTokens(
   context: AccordionThemeContext,
 ): AccordionSurfaceTokens {
   const isDark = context.mode === ThemeColorScheme.DARK;
+  const onAccent = context.colors?.onAccent ?? '#ffffff';
   const dividerBorder = `1px solid ${context.colors.borderSecondary}`;
 
   return {
-    background: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(255, 255, 255, 0.26)',
-    hoverBackground: isDark ? 'rgba(255, 255, 255, 0.10)' : 'rgba(255, 255, 255, 0.18)',
-    disabledBackground: isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(255, 255, 255, 0.14)',
+    background: mixColorWithTransparent(onAccent, isDark ? 6 : 26),
+    hoverBackground: mixColorWithTransparent(onAccent, isDark ? 10 : 18),
+    disabledBackground: mixColorWithTransparent(onAccent, isDark ? 4 : 14),
     textColor: context.accordions.variants.default.color,
     disabledTextColor: context.accordions.variants.disabled.color,
     dividerBorder,

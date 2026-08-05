@@ -1,13 +1,19 @@
 import type { DefaultTheme } from 'styled-components';
 import { ThemeColorScheme } from '../../../types/theme';
 import { Size } from '../../../types/sizes';
+import type { ControlColor } from '../../../types/ui';
+import {
+  resolveControlAccentColors,
+  type ControlAccentColors,
+} from '../../../handlers/controlAccentColorHandlers';
+import { mixColorWithTransparent } from '../../../handlers/glassColorHandlers';
 
 /** Акцент трека и бегунка (согласован с `status` / `error` / `success` у полей) */
 export type SliderAccentKind = 'default' | 'error' | 'success' | 'warning';
 
 /**
  * Фон неактивной «рельсы» слайдера.
- * В тёмной теме — светлая полупрозрачная линия: `progressTrack` (#757575) сливается с карточкой `#424242`.
+ * В тёмной теме — светлая полупрозрачная линия из `onAccent` (иначе `progressTrack` сливается с карточкой).
  *
  * @param theme - Активная тема UI-kit (`ThemeProvider` / styled-components)
  */
@@ -15,10 +21,11 @@ export const resolveSliderTrackRailBackground = (theme: DefaultTheme): string =>
   const tokenTrack = theme.colors?.progressTrack ?? theme.progress?.colors?.track;
 
   if (theme.mode === ThemeColorScheme.DARK) {
-    return 'rgba(255, 255, 255, 0.32)';
+    const onAccent = theme.colors?.onAccent ?? theme.colors?.backgroundSecondary ?? '#ffffff';
+    return mixColorWithTransparent(onAccent, 32);
   }
 
-  return tokenTrack ?? '#e0e0e0';
+  return tokenTrack ?? theme.colors?.border ?? theme.colors?.borderSecondary ?? '#e0e0e0';
 };
 
 /**
@@ -56,6 +63,31 @@ export const resolveSliderAccentKind = (
     return status;
   }
   return 'default';
+};
+
+/**
+ * Цвета заливки трека/бегунка: `status`/`error`/`success` перекрывают `color`.
+ * Без статуса — `color` или default `info`.
+ *
+ * @param theme - Тема
+ * @param accentKind - Итог `resolveSliderAccentKind`
+ * @param color - Проп `color` слайдера
+ */
+export const resolveSliderFillAccentColors = (
+  theme: DefaultTheme,
+  accentKind: SliderAccentKind,
+  color?: ControlColor | string,
+): ControlAccentColors => {
+  if (accentKind === 'error') {
+    return resolveControlAccentColors(theme, 'error');
+  }
+  if (accentKind === 'success') {
+    return resolveControlAccentColors(theme, 'success');
+  }
+  if (accentKind === 'warning') {
+    return resolveControlAccentColors(theme, 'warning');
+  }
+  return resolveControlAccentColors(theme, color ?? 'info');
 };
 
 /**

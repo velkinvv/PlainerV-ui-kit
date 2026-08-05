@@ -13,6 +13,7 @@ import { Hint, HintVariant, type HintPosition } from '../../Hint/Hint';
 import { useFormContext } from '../../../../contexts/FormContext';
 import {
   InputContainer,
+  InputControlStack,
   Label,
   InputWrapper,
   HelperText,
@@ -74,6 +75,7 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
       helperText,
       required = false,
       fullWidth = false,
+      autoWidth = false,
       skeleton = false,
       disabled = false,
       variant = InputVariant.DEFAULT,
@@ -278,6 +280,7 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
       success,
       status: currentStatus,
       fullWidth,
+      autoWidth,
       focused,
       readOnly: false,
       className,
@@ -391,14 +394,16 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
     if (skeleton) {
       return (
         <InputContainer fullWidth={fullWidth} aria-busy="true">
-          {label ? (
-            <Label as="span">
-              {label}
-              {required ? <RequiredIndicator>*</RequiredIndicator> : null}
-            </Label>
-          ) : null}
-          {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
-          <SkeletonEffect size={size} fullWidth={fullWidth} role="presentation" />
+          <InputControlStack fullWidth={fullWidth} autoWidth={autoWidth}>
+            {label ? (
+              <Label as="span">
+                {label}
+                {required ? <RequiredIndicator>*</RequiredIndicator> : null}
+              </Label>
+            ) : null}
+            {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
+            <SkeletonEffect size={size} fullWidth={fullWidth} autoWidth={autoWidth} role="presentation" />
+          </InputControlStack>
         </InputContainer>
       );
     }
@@ -445,21 +450,23 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
 
     return (
       <InputContainer fullWidth={fullWidth}>
-        {label ? (
-          <Label id={captionId}>
-            {label}
-            {required ? <RequiredIndicator>*</RequiredIndicator> : null}
-          </Label>
-        ) : null}
+        <InputControlStack fullWidth={fullWidth} autoWidth={autoWidth}>
+          {label ? (
+            <Label id={captionId}>
+              {label}
+              {required ? <RequiredIndicator>*</RequiredIndicator> : null}
+            </Label>
+          ) : null}
 
-        {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
+          {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
 
-        {wrappedFileField}
+          {wrappedFileField}
 
-        {error ? <ErrorText>{error}</ErrorText> : null}
-        {success ? <SuccessText>Успешно</SuccessText> : null}
-        {helperText && !error && !success ? <HelperText>{helperText}</HelperText> : null}
-        {extraText ? <ExtraText>{extraText}</ExtraText> : null}
+          {error ? <ErrorText>{error}</ErrorText> : null}
+          {success ? <SuccessText>Успешно</SuccessText> : null}
+          {helperText && !error && !success ? <HelperText>{helperText}</HelperText> : null}
+          {extraText ? <ExtraText>{extraText}</ExtraText> : null}
+        </InputControlStack>
       </InputContainer>
     );
   },

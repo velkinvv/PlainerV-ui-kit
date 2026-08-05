@@ -180,6 +180,7 @@ export interface BaseButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEl
  * @property helperText - Вспомогательный текст
  * @property required - Обязательное поле
  * @property fullWidth - Растягивает поле на всю ширину
+ * @property autoWidth - Ширина по содержимому (`auto`), без фиксированных 335px; при одновременном `fullWidth` побеждает `fullWidth`
  * @property displayClearIcon - Показывать кнопку с крестиком очистки значения
  * @property onClearIconClick - Колбэк по клику на очистку (после сброса значения в компоненте)
  * @property clearIconProps - Частичные пропсы `Icon` для кнопки очистки (`displayClearIcon`); мерж поверх имени, `size` и при необходимости `color` по умолчанию в компоненте
@@ -197,6 +198,8 @@ export interface BaseInputProps extends Omit<
   helperText?: string;
   required?: boolean;
   fullWidth?: boolean;
+  /** Ширина по содержимому; игнорируется, если задан `fullWidth` */
+  autoWidth?: boolean;
   displayClearIcon?: boolean;
   onClearIconClick?: () => void;
   /**
@@ -577,6 +580,11 @@ export interface SegmentedControlProps
   children?: React.ReactNode;
   ariaLabel?: string;
   fullWidth?: boolean;
+  /**
+   * Акцент выбранного сегмента (outline) и focus-ring: пресет или CSS-цвет.
+   * Default: `primary`.
+   */
+  color?: ControlColor | string;
 }
 
 /**
@@ -742,6 +750,10 @@ export type MultiInputProps = Omit<
  * @property maxLength - Ограничение длины строки в поле числа и счётчик (как у `Input`).
  * @property displayClearIcon - Очистка: одиночный → `min`, range → `[min, min]`.
  */
+
+/** Поведение боковых иконок слайдера при `disabled`. */
+export type SliderSideIconsWhenDisabled = 'disable' | 'hide';
+
 type SliderInputSharedProps = Omit<
   InputProps,
   | 'value'
@@ -774,6 +786,31 @@ type SliderInputSharedProps = Omit<
   sliderSize?: Size;
   /** Ограничение длины строки в поле числа и счётчик (как у `Input`). */
   maxLength?: number;
+  /** Иконка слева от трека (не путать с полевым `leftIcon`) */
+  trackLeftIcon?: React.ReactNode;
+  /** Иконка справа от трека (не путать с полевым `rightIcon`) */
+  trackRightIcon?: React.ReactNode;
+  /**
+   * Клик по левой track-иконке.
+   * @param event - Событие клика
+   */
+  onTrackLeftIconClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  /**
+   * Клик по правой track-иконке.
+   * @param event - Событие клика
+   */
+  onTrackRightIconClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  /** Поведение track-иконок при `disabled` слайдера */
+  sideIconsWhenDisabled?: SliderSideIconsWhenDisabled;
+  /** `aria-label` левой track-кнопки */
+  trackLeftIconAriaLabel?: string;
+  /** `aria-label` правой track-кнопки */
+  trackRightIconAriaLabel?: string;
+  /**
+   * Цвет активной полосы и бегунка (если нет error/success/status):
+   * пресет или CSS-цвет. Default: `info`.
+   */
+  color?: ControlColor | string;
 };
 
 /**
@@ -824,6 +861,7 @@ export type SliderInputProps = SliderInputSingleProps | SliderInputRangeProps;
  * @property helperText - Вспомогательный текст
  * @property required - Обязательное поле
  * @property fullWidth - Растягивает поле на всю ширину
+ * @property autoWidth - Ширина по содержимому (`auto`); при `fullWidth` игнорируется
  * @property textAlign - Выравнивание текста
  * @property readOnly - Поле только для чтения
  * @property skeleton - Состояние skeleton
@@ -857,6 +895,7 @@ export interface TextAreaProps extends Omit<
   helperText?: string;
   required?: boolean;
   fullWidth?: boolean;
+  autoWidth?: boolean;
   textAlign?: TextAlign;
   readOnly?: boolean;
   skeleton?: boolean;
@@ -1192,6 +1231,11 @@ export interface ChipProps
   /** Максимальная ширина чипа (часто вместе с `tooltipWhenTruncated`) */
   maxWidth?: number | string;
   as?: 'span' | 'button';
+  /**
+   * Акцент выбранного чипа: пресет темы или CSS-цвет. Default: `primary`.
+   * В группе перекрывает дефолт `Chips.color`.
+   */
+  color?: ControlColor | string;
 }
 
 /**
@@ -1203,6 +1247,7 @@ export interface ChipProps
  * @property disabled - Блокировка всей группы
  * @property size - Дефолтный размер для дочерних `Chip`
  * @property appearance - Дефолтный вид для дочерних `Chip`
+ * @property color - Дефолтный акцент выбранных чипов (пресет или CSS)
  * @property children - Элементы `Chip` (при выборе у каждого нужен `value`)
  */
 export interface ChipsProps
@@ -1218,6 +1263,10 @@ export interface ChipsProps
   disabled?: boolean;
   size?: Size;
   appearance?: ChipAppearance;
+  /**
+   * Дефолтный акцент выбранных чипов: пресет или CSS-цвет. Default: `primary`.
+   */
+  color?: ControlColor | string;
   children?: React.ReactNode;
 }
 
@@ -1268,6 +1317,151 @@ export interface ListItemProps
 export interface ListIconProps extends BaseComponentProps {
   name?: IconName;
   color?: string;
+  children?: React.ReactNode;
+}
+
+/** Вариант TransferList: basic (кнопки move-all) или enhanced (select-all + счётчик) */
+export type TransferListVariant = 'basic' | 'enhanced';
+
+/** Сторона панели TransferList */
+export type TransferListSide = 'left' | 'right';
+
+/** Причина изменения панелей TransferList */
+export type TransferListChangeReason = 'move' | 'move-all' | 'dnd' | 'reorder';
+
+/**
+ * Пункт каталога TransferList.
+ * @property value - Уникальный идентификатор
+ * @property label - Подпись
+ * @property disabled - Нельзя выбрать / перетащить
+ * @property description - Доп. текст под подписью
+ */
+export type TransferListItem = {
+  value: string;
+  label: React.ReactNode;
+  disabled?: boolean;
+  description?: React.ReactNode;
+};
+
+/**
+ * Payload `onChange` у TransferList.
+ * @property leftValue - Значения левой панели (порядок)
+ * @property rightValue - Значения правой панели (порядок)
+ * @property reason - Как изменилось состояние
+ */
+export type TransferListChangePayload = {
+  leftValue: string[];
+  rightValue: string[];
+  reason: TransferListChangeReason;
+};
+
+/**
+ * Пропсы TransferList — две панели с переносом пунктов.
+ * @property items - Каталог пунктов
+ * @property value / defaultValue - Правая панель в простом режиме
+ * @property leftValue / rightValue - Явный контроль панелей
+ * @property onChange - Смена состава панелей
+ * @property variant - `basic` | `enhanced`
+ * @property showMoveAll - Кнопки «перенести всё» (только basic)
+ * @property searchable - Поиск в шапках панелей
+ * @property draggable - HTML5 DnD между панелями и reorder
+ * @property color - Акцент checkbox (ControlColor | CSS)
+ */
+export interface TransferListProps extends BaseComponentProps {
+  items: TransferListItem[];
+  value?: string[];
+  defaultValue?: string[];
+  leftValue?: string[];
+  defaultLeftValue?: string[];
+  rightValue?: string[];
+  defaultRightValue?: string[];
+  onChange?: (payload: TransferListChangePayload) => void;
+  variant?: TransferListVariant;
+  showMoveAll?: boolean;
+  searchable?: boolean;
+  draggable?: boolean;
+  leftTitle?: React.ReactNode;
+  rightTitle?: React.ReactNode;
+  leftSearchPlaceholder?: string;
+  rightSearchPlaceholder?: string;
+  leftSearch?: string;
+  rightSearch?: string;
+  onLeftSearchChange?: (query: string) => void;
+  onRightSearchChange?: (query: string) => void;
+  disabled?: boolean;
+  size?: Size;
+  color?: ControlColor | string;
+  fullWidth?: boolean;
+  height?: number | string;
+  /**
+   * Кастомная отрисовка строки.
+   * @param item - Пункт
+   * @param context - checked и сторона панели
+   */
+  renderItem?: (
+    item: TransferListItem,
+    context: { checked: boolean; side: TransferListSide },
+  ) => React.ReactNode;
+  emptyLeftText?: React.ReactNode;
+  emptyRightText?: React.ReactNode;
+  ariaLabel?: string;
+  moveSelectedRightAriaLabel?: string;
+  moveSelectedLeftAriaLabel?: string;
+  moveAllRightAriaLabel?: string;
+  moveAllLeftAriaLabel?: string;
+}
+
+/** Семантика Alert (смысл + дефолтная иконка) */
+export type AlertSeverity = 'success' | 'info' | 'warning' | 'error';
+
+/** Визуальный вариант Alert */
+export type AlertVariant = 'standard' | 'filled' | 'outlined';
+
+/** ARIA-роль корневого Alert */
+export type AlertRole = 'alert' | 'status';
+
+/**
+ * Карта иконок по severity (частичный override).
+ */
+export type AlertIconMapping = Partial<Record<AlertSeverity, React.ReactNode>>;
+
+/**
+ * Пропсы Alert — inline-уведомление в потоке layout.
+ * @property severity - Смысл и дефолтная иконка (default `success`)
+ * @property variant - standard | filled | outlined
+ * @property color - Override палитры (пресет или CSS); иначе = severity
+ * @property title - Заголовок (альтернатива `Alert.Title` в children)
+ * @property children - Текст / контент
+ * @property icon - Кастомная иконка; `false` — скрыть
+ * @property iconMapping - Override иконок по severity
+ * @property action - Слот справа (кнопка и т.п.)
+ * @property onClose - Показать крестик и вызвать при клике
+ * @property closeAriaLabel - Подпись кнопки закрытия
+ * @property role - `alert` (default) | `status`
+ * @property size - Размер типографики / иконок
+ * @property fullWidth - На всю ширину родителя
+ */
+export interface AlertProps extends BaseComponentProps {
+  severity?: AlertSeverity;
+  variant?: AlertVariant;
+  color?: ControlColor | string;
+  title?: React.ReactNode;
+  children?: React.ReactNode;
+  icon?: React.ReactNode | false;
+  iconMapping?: AlertIconMapping;
+  action?: React.ReactNode;
+  onClose?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  closeAriaLabel?: string;
+  role?: AlertRole;
+  size?: Size;
+  fullWidth?: boolean;
+}
+
+/**
+ * Пропсы заголовка Alert.
+ * @property children - Текст заголовка
+ */
+export interface AlertTitleProps extends BaseComponentProps {
   children?: React.ReactNode;
 }
 
@@ -1465,6 +1659,10 @@ export type SliderRangeValue = readonly [number, number];
  * @property required - Обязательное поле (звёздочка у `label`)
  * @property skeleton - Плейсхолдер загрузки вместо трека (`aria-busy` на контейнере с лейблом)
  * @property status - Акцент трека/бегунка и тонкая обводка: `error` | `success` | `warning` (с `error` / `success` как у `Input`)
+ * @property leftIcon / rightIcon - Иконки слева/справа от трека
+ * @property onLeftIconClick / onRightIconClick - Клики по боковым слотам (обёртка-кнопка)
+ * @property sideIconsWhenDisabled - При `disabled`: `'disable'` или `'hide'` (default `'disable'`)
+ * @property leftIconAriaLabel / rightIconAriaLabel - aria-label кнопок слотов
  * Цвет по умолчанию: `theme.colors.info` / `infoHover` (яркий синий UI, как тултип и пагинация).
  */
 export interface SliderBaseProps extends BaseComponentProps {
@@ -1501,6 +1699,11 @@ export interface SliderBaseProps extends BaseComponentProps {
   /** Акцент рамки и заливки трека / бегунков */
   status?: 'error' | 'success' | 'warning';
   /**
+   * Цвет активной полосы и бегунка (если нет `error` / `success` / `status`):
+   * пресет темы или CSS-цвет. Default: `info`.
+   */
+  color?: ControlColor | string;
+  /**
    * Вложение в `SliderInput`: трек у нижней кромки поля, без оболочки `SliderFieldShell`.
    * Геометрия бегунков как у `Slider` / `RangeSlider` (`sliderThumbLeftCalcCss`).
    */
@@ -1511,6 +1714,29 @@ export interface SliderBaseProps extends BaseComponentProps {
   onSliderFocus?: () => void;
   /** Потеря фокуса бегунка. */
   onSliderBlur?: () => void;
+  /** Иконка / контент слева от трека */
+  leftIcon?: ReactNode;
+  /** Иконка / контент справа от трека */
+  rightIcon?: ReactNode;
+  /**
+   * Клик по левому слоту. При наличии слот рендерится как `button`.
+   * @param event - Событие клика по кнопке слота
+   */
+  onLeftIconClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  /**
+   * Клик по правому слоту. При наличии слот рендерится как `button`.
+   * @param event - Событие клика по кнопке слота
+   */
+  onRightIconClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  /**
+   * Поведение боковых иконок при `disabled`.
+   * `'disable'` — кнопки с `on*Click` неактивны; `'hide'` — слоты не рендерятся.
+   */
+  sideIconsWhenDisabled?: SliderSideIconsWhenDisabled;
+  /** `aria-label` левой кнопки (если задан `onLeftIconClick`) */
+  leftIconAriaLabel?: string;
+  /** `aria-label` правой кнопки (если задан `onRightIconClick`) */
+  rightIconAriaLabel?: string;
 }
 
 /**
@@ -2524,6 +2750,11 @@ export interface TabsProps extends BaseComponentProps {
    * (для вертикали задайте **max-height** через **segmentTrackProps.style** или ограничьте высоту родителя).
    */
   scrollable?: boolean;
+  /**
+   * Акцент активной вкладки / индикатора / focus-ring: пресет темы или CSS-цвет.
+   * Default: `primary`.
+   */
+  color?: ControlColor | string;
 }
 
 /**
@@ -2608,6 +2839,12 @@ export interface NavigationMenuProps extends BaseComponentProps {
    * @default true
    */
   collapsedNestedFlyout?: boolean;
+  /**
+   * Авто-раскрытие **аккордеона** ветки в колонке, если **activeId** — потомок этой ветки.
+   * На flyout в compact (**collapsed** + **collapsedNestedFlyout**) не влияет: панель открывается только hover/кликом / **defaultNestedExpanded**.
+   * @default при `undefined` — `true` только когда меню не collapsed
+   */
+  autoExpandNestedOnActive?: boolean;
 }
 
 /**
@@ -2651,7 +2888,9 @@ export interface NavigationMenuItemProps {
   /** Вложенные уровни; id по всему дереву должны быть уникальны */
   items?: NavigationMenuItemProps[];
   /**
-   * Начально раскрыта ли ветка (развёрнутая панель — подсписок в колонке; compact + **collapsedNestedFlyout** — открыт ли flyout при монтировании).
+   * Начально раскрыта ли ветка явно.
+   * В колонке — подсписок открыт; в compact + **collapsedNestedFlyout** — flyout открыт при монтировании.
+   * Без этого флага flyout **не** открывается из‑за **activeId** (только hover/клик).
    */
   defaultNestedExpanded?: boolean;
   /** Конфиг Hint без children — триггер задаётся строкой пункта */
@@ -3772,6 +4011,62 @@ export interface ProgressProps extends BaseComponentProps {
   stepperOrientation?: 'horizontal' | 'vertical';
 }
 
+/** Визуальный вариант Rating */
+export enum RatingVariant {
+  ICONS = 'icons',
+  BAR = 'bar',
+  FACES = 'faces',
+  DOTS = 'dots',
+}
+
+/** Именованная цветовая шкала Rating */
+export enum RatingColorScale {
+  DEFAULT = 'default',
+  TRAFFIC = 'traffic',
+}
+
+/**
+ * Пропсы компонента Rating.
+ * @property variant — icons | bar | faces | dots
+ * @property value — controlled значение (null = пусто)
+ * @property defaultValue — uncontrolled старт
+ * @property onChange — смена значения
+ * @property onHoverChange — preview при наведении
+ * @property max — верх шкалы (по умолчанию 5)
+ * @property precision — шаг (по умолчанию 1)
+ * @property size — Size
+ * @property readOnly — только отображение
+ * @property disabled — блок взаимодействия
+ * @property name — имя radio-группы
+ * @property getLabelText — aria/radio подпись шага
+ * @property showValueLabel — показать число рядом
+ * @property clearable — повторный клик сбрасывает в null
+ * @property icon / emptyIcon — кастом для icons
+ * @property highlightSelectedOnly — faces: только выбранное лицо
+ * @property colorScale — default | traffic | string[] цветов
+ */
+export interface RatingProps extends BaseComponentProps {
+  variant?: RatingVariant | `${RatingVariant}`;
+  value?: number | null;
+  defaultValue?: number | null;
+  onChange?: (value: number | null) => void;
+  onHoverChange?: (value: number | null) => void;
+  max?: number;
+  precision?: number;
+  size?: Size;
+  readOnly?: boolean;
+  disabled?: boolean;
+  name?: string;
+  getLabelText?: (value: number) => string;
+  showValueLabel?: boolean;
+  clearable?: boolean;
+  icon?: React.ReactNode;
+  emptyIcon?: React.ReactNode;
+  highlightSelectedOnly?: boolean;
+  colorScale?: RatingColorScale | `${RatingColorScale}` | string[];
+  'aria-label'?: string;
+}
+
 /**
  * Варианты визуального стиля спиннера
  */
@@ -3903,6 +4198,7 @@ export interface SelectOption {
  * @property helperText - Подсказка под полем
  * @property required - Обязательное поле
  * @property fullWidth - На всю ширину контейнера
+ * @property autoWidth - Ширина по содержимому (`auto`), без фиксированных 335px; при `fullWidth` игнорируется
  * @property readOnly - Блокировка выбора (через `disabled` у `select`, визуально как read-only)
  * @property disabled - Отключено
  * @property skeleton - Скелетон
@@ -3973,6 +4269,11 @@ export interface SelectProps
   helperText?: string;
   required?: boolean;
   fullWidth?: boolean;
+  /**
+   * Ширина по содержимому (`auto`), без фиксированных 335px.
+   * При одновременном `fullWidth` побеждает `fullWidth`.
+   */
+  autoWidth?: boolean;
   /**
    * Встроенный слот в составном `Input` (`prefix` / `suffix`): без label, helper и собственной рамки;
    * рамка и статусы задаёт родительский Input.
@@ -4355,6 +4656,11 @@ export interface PaginationProps extends BaseComponentProps {
   size?: Size;
   disabled?: boolean;
   ariaLabel?: string;
+  /**
+   * Акцент активной страницы и focus-ring: пресет темы или CSS-цвет.
+   * Default: `info`.
+   */
+  color?: ControlColor | string;
 }
 
 /**
@@ -4370,6 +4676,7 @@ export interface PaginationProps extends BaseComponentProps {
  * @property size - Размер чекбокса
  * @property error - Сообщение об ошибке
  * @property indeterminate - Промежуточное состояние (частичный выбор); для DOM `input.indeterminate`
+ * @property color - Акцент checked/indeterminate: пресет (`ControlColor`) или CSS-цвет; default `success`
  */
 export interface CheckboxProps extends BaseComponentProps {
   /** Идентификатор DOM для `input` (иначе задаётся автоматически) */
@@ -4394,6 +4701,11 @@ export interface CheckboxProps extends BaseComponentProps {
   /** Дополнительный текст ниже блока ошибок/подсказок — как `extraText` у Input */
   extraText?: string;
   indeterminate?: boolean;
+  /**
+   * Цвет квадрата во «вкл» / indeterminate: пресет темы или CSS-цвет.
+   * Default: `success`.
+   */
+  color?: ControlColor | string;
 }
 
 /**
@@ -4508,6 +4820,11 @@ export interface RadioButtonProps extends BaseComponentProps {
   rightIcon?: React.ReactNode; // Иконка справа от радиокнопки
   fullWidth?: boolean; // Растягивает радиокнопку на всю доступную ширину
   status?: 'success' | 'error' | 'warning'; // Визуальный статус радиокнопки
+  /**
+   * Цвет круга во «вкл» (если нет `error` / `status`): пресет темы или CSS-цвет.
+   * Default: `success`.
+   */
+  color?: ControlColor | string;
 }
 
 /**
@@ -4861,10 +5178,20 @@ export interface TimeInputProps extends Omit<BaseInputProps, 'value' | 'onChange
  * @property fullWidth - Растянуть строку на ширину контейнера (подпись + трек)
  * @property name - Имя поля для форм
  * @property id - Явный id (иначе генерируется внутри компонента)
+ * @property color - Цвет включённого трека: пресет (`primary` | `success` | `error` | `warning` | `info`) или произвольный CSS-цвет; по умолчанию `success`
  */
+/**
+ * Пресеты акцентного цвета контролов выбора (Switch, Checkbox, RadioButton).
+ * Мапятся на токены темы; `error` → `theme.colors.danger`.
+ */
+export type ControlColor = 'primary' | 'success' | 'error' | 'warning' | 'info';
+
+/** @deprecated Алиас `ControlColor` для обратной совместимости */
+export type SwitchColor = ControlColor;
+
 export interface SwitchProps extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
-  'type' | 'size' | 'role'
+  'type' | 'size' | 'role' | 'color'
 > {
   checked?: boolean;
   defaultChecked?: boolean;
@@ -4874,6 +5201,11 @@ export interface SwitchProps extends Omit<
   size?: Size;
   error?: string;
   fullWidth?: boolean;
+  /**
+   * Цвет трека во «вкл»: пресет темы или CSS-цвет (`#hex`, `rgb()`, …).
+   * Default: `success` (зелёный, как раньше).
+   */
+  color?: ControlColor | string;
 }
 
 /**
@@ -5048,6 +5380,16 @@ export interface SidemenuProps extends BaseComponentProps {
   /** Контролируемый выбранный пункт (id); если не задан — из флага `active` в `items` */
   activeItemId?: string;
   onItemClick?: (item: SidemenuItem) => void;
+  /**
+   * Проброс в {@link NavigationMenu}: flyout вложенности в compact.
+   * @default true (как у NavigationMenu)
+   */
+  collapsedNestedFlyout?: boolean;
+  /**
+   * Проброс в {@link NavigationMenu}: авто-раскрытие аккордеона по activeId в развёрнутой колонке.
+   * На collapsed flyout не влияет.
+   */
+  autoExpandNestedOnActive?: boolean;
   expandInteraction?: NavigationMenuExpandInteraction;
   expanded?: boolean;
   defaultExpanded?: boolean;

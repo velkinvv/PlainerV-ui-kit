@@ -1,7 +1,7 @@
 import type { Colors, PaginationTheme } from '../types/theme';
 import { ThemeColorScheme } from '../types/theme';
 import grey from '../variables/colors/grey';
-import { withHexAlpha } from './glassColorHandlers';
+import { mixColorWithTransparent, withHexAlpha } from './glassColorHandlers';
 
 /** Палитра поверхностей компонента Pagination */
 export type PaginationSurfacePalette = {
@@ -20,20 +20,18 @@ const ACTIVE_PAGE_ALPHA = 0.54;
 const ACTIVE_PAGE_HOVER_ALPHA = 0.64;
 
 /**
- * Glass-палитра пагинации.
+ * Glass-палитра пагинации из `onAccent`.
  * @param isDark — тёмная ли базовая палитра
  * @param borderSecondary — нейтральная граница из темы
+ * @param onAccent — цвет текста/поверхности на акценте
  */
 function getPaginationGlassSurfacePalette(
   isDark: boolean,
   borderSecondary: string,
+  onAccent: string,
 ): PaginationSurfacePalette {
-  const barBackground = isDark
-    ? 'rgba(255, 255, 255, 0.06)'
-    : 'rgba(255, 255, 255, 0.26)';
-  const itemHoverBackground = isDark
-    ? 'rgba(255, 255, 255, 0.10)'
-    : 'rgba(255, 255, 255, 0.18)';
+  const barBackground = mixColorWithTransparent(onAccent, isDark ? 6 : 26);
+  const itemHoverBackground = mixColorWithTransparent(onAccent, isDark ? 10 : 18);
 
   return {
     barBackground,
@@ -44,8 +42,7 @@ function getPaginationGlassSurfacePalette(
       withHexAlpha(accentColor, ACTIVE_PAGE_HOVER_ALPHA),
     activePageRing: (accentColor) =>
       `0 0 0 1px ${withHexAlpha(accentColor, Math.min(ACTIVE_PAGE_ALPHA + 0.12, 1))}`,
-    activePageGlow: (accentColor) =>
-      `0 4px 14px ${withHexAlpha(accentColor, 0.32)}`,
+    activePageGlow: (accentColor) => `0 4px 14px ${withHexAlpha(accentColor, 0.32)}`,
   };
 }
 
@@ -59,9 +56,10 @@ export function getPaginationSurfacePalette(theme: {
   paginations?: PaginationTheme;
 }): PaginationSurfacePalette {
   const isDark = theme.mode === ThemeColorScheme.DARK;
+  const onAccent = theme.colors?.onAccent ?? '#ffffff';
 
   if (theme.paginations?.settings?.backdropFilter) {
-    return getPaginationGlassSurfacePalette(isDark, theme.colors.borderSecondary);
+    return getPaginationGlassSurfacePalette(isDark, theme.colors.borderSecondary, onAccent);
   }
 
   const barBackground = isDark ? grey[800] : theme.colors.backgroundSecondary;
@@ -69,7 +67,9 @@ export function getPaginationSurfacePalette(theme: {
   return {
     barBackground,
     barBorder: 'none',
-    itemHoverBackground: isDark ? 'rgba(255, 255, 255, 0.08)' : '#f5f5f5',
+    itemHoverBackground: isDark
+      ? mixColorWithTransparent(onAccent, 8)
+      : theme.colors.backgroundTertiary,
     activePageBackground: (accentColor) => accentColor,
     activePageHoverBackground: (accentColor) => accentColor,
     activePageRing: (accentColor) =>

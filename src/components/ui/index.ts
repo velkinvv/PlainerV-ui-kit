@@ -59,6 +59,15 @@ export type {
 } from '@/types/ui';
 
 export { List } from './List';
+export { TransferList } from './TransferList';
+export type {
+  TransferListProps,
+  TransferListItem,
+  TransferListChangePayload,
+  TransferListVariant,
+  TransferListSide,
+  TransferListChangeReason,
+} from '@/types/ui';
 export type {
   ListProps,
   ListItemProps,
@@ -217,6 +226,10 @@ export type { AccordionProps } from '@/types/ui';
 
 export { Progress } from './Progress';
 export type { ProgressProps } from '@/types/ui';
+
+export { Rating } from './Rating';
+export type { RatingProps } from '@/types/ui';
+export { RatingVariant, RatingColorScale } from '@/types/ui';
 
 export { Stepper } from './Stepper';
 export type {
@@ -412,6 +425,16 @@ export { Toast, ToastProvider } from './Toast';
 export type { ToastProps } from './Toast';
 export type { ToastType, ToastItem, ToastPlacement, ShowToastOptions } from '@/types/ui';
 export { ToastAppearance } from '@/types/ui';
+
+export { Alert } from './Alert';
+export type {
+  AlertProps,
+  AlertTitleProps,
+  AlertSeverity,
+  AlertVariant,
+  AlertRole,
+  AlertIconMapping,
+} from '@/types/ui';
 
 export { Snackbar, SnackbarProvider } from './Snackbar';
 export type { SnackbarProps } from './Snackbar';

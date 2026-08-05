@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components';
 import { createStyledShouldForwardProp } from '../../../../handlers/styledComponentHandlers';
+import { getInputFieldWidthCss } from '../../../../handlers/inputFieldLayoutHandlers';
 import { InputContainer } from '../shared/InputStyles';
 import type { Size } from '../../../../types/sizes';
 import { InputPaddingHandler } from '../../../../handlers/uiHandlers';
@@ -344,13 +345,20 @@ export const SelectPanelRoot = styled(InputContainer)`
 /**
  * Обёртка триггера + выпадающего меню: ширина и выравнивание без inline-стилей.
  * @property $fullWidth - На всю ширину родителя.
+ * @property $autoWidth - Ширина по содержимому (`auto`), без фиксированных 335px.
  */
-export const SelectDropdownAnchor = styled.div<{ $fullWidth?: boolean }>`
+export const SelectDropdownAnchor = styled.div<{ $fullWidth?: boolean; $autoWidth?: boolean }>`
   position: relative;
+  max-width: 100%;
+  box-sizing: border-box;
+  ${({ $fullWidth, $autoWidth }) =>
+    ($fullWidth || $autoWidth) &&
+    css`
+      width: ${getInputFieldWidthCss($fullWidth, $autoWidth)};
+    `}
   ${({ $fullWidth }) =>
     $fullWidth &&
     css`
-      width: 100%;
       align-self: stretch;
     `}
 

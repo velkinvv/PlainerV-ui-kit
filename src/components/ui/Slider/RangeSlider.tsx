@@ -34,6 +34,7 @@ import {
   pickCloserThumbIndex,
   parseManualSliderNumber,
   resolveSliderAccentKind,
+  resolveSliderFillAccentColors,
   sliderThumbLeftCalcCss,
   getSliderEmbeddedFooterHeightPx,
   getSliderEmbeddedThumbBottomCss,
@@ -52,6 +53,7 @@ import {
 } from './SliderEmbeddedInInput.style';
 import { SliderFieldShell } from './SliderFieldShell';
 import { SliderSkeletonRange } from './SliderSkeleton';
+import { SliderTrackWithSideIcons } from './SliderTrackWithSideIcons';
 
 const defaultFormat = (n: number) => formatSliderNumberRu(n);
 
@@ -92,6 +94,7 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
   required,
   skeleton = false,
   status,
+  color,
   className,
   showManualInputs = false,
   fromInputPlaceholder,
@@ -103,6 +106,13 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
   showScaleRow = true,
   onSliderFocus,
   onSliderBlur,
+  leftIcon,
+  rightIcon,
+  onLeftIconClick,
+  onRightIconClick,
+  sideIconsWhenDisabled = 'disable',
+  leftIconAriaLabel,
+  rightIconAriaLabel,
 }) => {
   const min = minProp;
   const max = Math.max(min, maxProp);
@@ -332,6 +342,11 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
     [error, success, status],
   );
 
+  const fillAccentColors = useMemo(
+    () => resolveSliderFillAccentColors(theme, accentKind, color),
+    [accentKind, color, theme],
+  );
+
   const helperTextStatus = useMemo(() => {
     if (error || success) {
       return undefined;
@@ -373,7 +388,9 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
       type="button"
       id={thumbDomId}
       $thumbPx={thumbPx}
-      $accent={accentKind}
+      $accentColor={fillAccentColors.checked}
+      $accentHoverColor={fillAccentColors.checkedHover}
+      $focusRingColor={fillAccentColors.focusRing}
       $disabled={disabled}
       disabled={disabled}
       style={
@@ -438,7 +455,7 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
               $thumbInsetPx={thumbInsetPx}
               $thumbSizePx={thumbPx}
               $activeHeightPx={track.activeHeightPx}
-              $accent={accentKind}
+              $accentColor={fillAccentColors.checked}
               $fillToEnd={isSliderEmbeddedTrackFilledToEnd(pctHigh)}
               aria-hidden
             />
@@ -466,7 +483,7 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
           $thumbInsetPx={thumbInsetPx}
           $thumbSizePx={thumbPx}
           $activeHeightPx={track.activeHeightPx}
-          $accent={accentKind}
+          $accentColor={fillAccentColors.checked}
           aria-hidden
         />
         {rangeThumbs}
@@ -474,8 +491,23 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
     </SliderTrackRingWrap>
   );
 
+  const trackWithSideIcons = (
+    <SliderTrackWithSideIcons
+      track={trackNode}
+      embedded={embeddedInInput}
+      leftIcon={leftIcon}
+      rightIcon={rightIcon}
+      onLeftIconClick={onLeftIconClick}
+      onRightIconClick={onRightIconClick}
+      disabled={disabled}
+      sideIconsWhenDisabled={sideIconsWhenDisabled}
+      leftIconAriaLabel={leftIconAriaLabel}
+      rightIconAriaLabel={rightIconAriaLabel}
+    />
+  );
+
   const sliderBody = embeddedInInput ? (
-    trackNode
+    trackWithSideIcons
   ) : (
     <SliderRoot
       className={clsx('ui-range-slider', !hasFieldChrome && className)}
@@ -488,7 +520,7 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
           <SliderScaleLabel>{formatMaxLabel(max)}</SliderScaleLabel>
         </SliderScaleRow>
       ) : null}
-      {trackNode}
+      {trackWithSideIcons}
       {showValueLabel ? (
         <SliderValuesRow>
           <SliderValueLabel

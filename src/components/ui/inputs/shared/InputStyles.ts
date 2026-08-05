@@ -30,15 +30,16 @@ export const InputContainer = styled.div.withConfig({
 
 /**
  * Колонка «поле + подписи»: ширина совпадает с `InputWrapper`, чтобы helper и счётчик не уезжали в сторону.
- * @property fullWidth - На всю ширину родителя или фиксированная ширина поля по умолчанию.
+ * @property fullWidth - На всю ширину родителя.
+ * @property autoWidth - Ширина по содержимому (`auto`).
  */
 export const InputControlStack = styled.div.withConfig({
-  shouldForwardProp: createStyledShouldForwardProp(['fullWidth']),
-})<{ fullWidth?: boolean }>`
+  shouldForwardProp: createStyledShouldForwardProp(['fullWidth', 'autoWidth']),
+})<{ fullWidth?: boolean; autoWidth?: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 4px;
-  width: ${({ fullWidth }) => getInputFieldWidthCss(fullWidth)};
+  width: ${({ fullWidth, autoWidth }) => getInputFieldWidthCss(fullWidth, autoWidth)};
   max-width: 100%;
   box-sizing: border-box;
 `;
@@ -97,6 +98,7 @@ const inputWrapperBlockedProps = [
   'error',
   'success',
   'fullWidth',
+  'autoWidth',
   'focused',
   'status',
   'readOnly',
@@ -111,6 +113,7 @@ export const InputWrapper = styled(motion.div).withConfig({
   error?: string;
   success?: boolean;
   fullWidth?: boolean;
+  autoWidth?: boolean;
   focused?: boolean;
   status?: 'error' | 'success' | 'warning';
   readOnly?: boolean;
@@ -141,7 +144,7 @@ export const InputWrapper = styled(motion.div).withConfig({
   border-radius: ${({ theme, $fileSurface }) =>
     $fileSurface ? '10px' : BorderRadiusHandler(theme.borderRadius)};
   transition: ${TransitionHandler()};
-  width: ${({ fullWidth }) => getInputFieldWidthCss(fullWidth)};
+  width: ${({ fullWidth, autoWidth }) => getInputFieldWidthCss(fullWidth, autoWidth)};
   /* В узких контейнерах (Dropdown/Popover с menuWidth) не вылезать за padding — иначе обрезание при overflow:hidden */
   max-width: 100%;
   box-sizing: border-box;
@@ -429,7 +432,8 @@ export const LoadingSpinner = styled.div<{ size?: Size }>`
  * Плейсхолдер загрузки: в режиме `field` совпадает с габаритами `InputWrapper` (ширина, min-height, padding, рамка).
  *
  * @param size — размер поля (`Size`, как у инпута)
- * @param fullWidth — при `true` ширина `100%`, иначе как у обёртки — `335px`
+ * @param fullWidth — при `true` ширина `100%`
+ * @param autoWidth — при `true` (и без fullWidth) ширина `auto`
  * @param $layout — `field` (по умолчанию) или `compact` (короткая полоска под лейбл в skeleton-режиме)
  */
 export const SkeletonEffect = styled.div.withConfig({
@@ -437,6 +441,7 @@ export const SkeletonEffect = styled.div.withConfig({
 })<{
   size?: Size;
   fullWidth?: boolean;
+  autoWidth?: boolean;
   $layout?: 'field' | 'compact';
 }>`
   position: relative;
@@ -452,7 +457,7 @@ export const SkeletonEffect = styled.div.withConfig({
   animation: skeleton-loading 1.5s infinite;
   transition: ${TransitionHandler()};
 
-  ${({ theme, size, fullWidth, $layout }) => {
+  ${({ theme, size, fullWidth, autoWidth, $layout }) => {
     const layout = $layout ?? 'field';
     if (layout === 'compact') {
       return css`
@@ -468,7 +473,7 @@ export const SkeletonEffect = styled.div.withConfig({
     }
     return css`
       box-sizing: border-box;
-      width: ${getInputFieldWidthCss(fullWidth)};
+      width: ${getInputFieldWidthCss(fullWidth, autoWidth)};
       max-width: 100%;
       min-height: ${InputSizeHandler(size ?? theme.defaultInputSize)};
       padding: ${InputPaddingHandler(size ?? theme.defaultInputSize)};

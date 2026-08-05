@@ -5,6 +5,10 @@ import { Size } from '../../../types/sizes';
 import { Card } from '../Card';
 import { Typography } from '../Typography';
 import { DOC_PAGINATION } from '@/components/ui/storyDocs/uiKitDocs';
+import {
+  PaginationStoriesSectionTitle,
+  PaginationStoriesStack,
+} from './Pagination.stories.style';
 
 const meta: Meta<typeof Pagination> = {
   title: 'UI Kit/Navigation/Pagination',
@@ -60,6 +64,11 @@ const meta: Meta<typeof Pagination> = {
     disabled: {
       control: 'boolean',
       table: { type: { summary: 'boolean' } },
+    },
+    color: {
+      control: 'text',
+      description: 'Акцент активной страницы: ControlColor или CSS (default info)',
+      table: { type: { summary: 'ControlColor | string' } },
     },
     ariaLabel: {
       description: 'Подпись `nav` для a11y',
@@ -143,4 +152,24 @@ const ControlledDemo = () => {
 
 export const Controlled: Story = {
   render: () => <ControlledDemo />,
+};
+
+export const Colors: Story = {
+  name: 'Цвета (color)',
+  render: () => (
+    <PaginationStoriesStack>
+      <section>
+        <PaginationStoriesSectionTitle>info (default)</PaginationStoriesSectionTitle>
+        <Pagination totalPages={10} defaultPage={3} color="info" />
+      </section>
+      <section>
+        <PaginationStoriesSectionTitle>success</PaginationStoriesSectionTitle>
+        <Pagination totalPages={10} defaultPage={3} color="success" />
+      </section>
+      <section>
+        <PaginationStoriesSectionTitle>custom</PaginationStoriesSectionTitle>
+        <Pagination totalPages={10} defaultPage={3} color="#9c27b0" />
+      </section>
+    </PaginationStoriesStack>
+  ),
 };

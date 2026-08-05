@@ -1,6 +1,7 @@
 import type { ThemeType } from '../types/theme';
 import { ThemeColorScheme } from '../types/theme';
 import { isGlassColorScheme } from './glassSurfaceHandlers';
+import { mixColorWithTransparent } from './glassColorHandlers';
 
 /** Контекст темы для резолва glass-токенов карусели */
 export type CarouselThemeContext = Pick<ThemeType, 'mode' | 'colors' | 'surfaceMaterial'>;
@@ -42,22 +43,24 @@ export function isCarouselGlassTheme(context: CarouselThemeContext): boolean {
 }
 
 /**
- * Glass-палитра карусели — лёгкая прозрачность как у pagination / accordion.
+ * Glass-палитра карусели — лёгкая прозрачность из `onAccent` / `overlay`.
  * @param context — контекст темы
  */
 export function getCarouselGlassSurfaceTokens(context: CarouselThemeContext): CarouselSurfaceTokens {
   const isDark = context.mode === ThemeColorScheme.DARK;
   const backdropFilter = context.surfaceMaterial?.backdropFilter;
+  const onAccent = context.colors.onAccent ?? context.colors.backgroundSecondary;
+  const overlay = context.colors.overlay;
 
   return {
-    controlBackground: isDark ? 'rgba(255, 255, 255, 0.10)' : 'rgba(255, 255, 255, 0.38)',
-    controlHoverBackground: isDark ? 'rgba(255, 255, 255, 0.16)' : 'rgba(255, 255, 255, 0.52)',
+    controlBackground: mixColorWithTransparent(onAccent, isDark ? 10 : 38),
+    controlHoverBackground: mixColorWithTransparent(onAccent, isDark ? 16 : 52),
     controlBorder: `1px solid ${context.colors.borderSecondary}`,
     controlTextColor: context.colors.text,
-    dotsTrackBackground: isDark ? 'rgba(0, 0, 0, 0.32)' : 'rgba(0, 0, 0, 0.24)',
-    captionBackground: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(255, 255, 255, 0.26)',
+    dotsTrackBackground: mixColorWithTransparent(overlay, isDark ? 64 : 48),
+    captionBackground: mixColorWithTransparent(onAccent, isDark ? 6 : 26),
     captionBorder: `1px solid ${context.colors.borderSecondary}`,
-    thumbnailStripBackground: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(255, 255, 255, 0.22)',
+    thumbnailStripBackground: mixColorWithTransparent(onAccent, isDark ? 6 : 22),
     thumbnailInactiveBorder: context.colors.borderSecondary,
     thumbnailActiveBorder: context.colors.primary,
     shellBorder: `1px solid ${context.colors.borderTertiary}`,
@@ -74,12 +77,14 @@ export function getCarouselSurfaceTokens(context: CarouselThemeContext): Carouse
     return getCarouselGlassSurfaceTokens(context);
   }
 
+  const overlay = context.colors.overlay;
+
   return {
     controlBackground: context.colors.backgroundSecondary,
     controlHoverBackground: context.colors.backgroundTertiary,
     controlBorder: `1px solid ${context.colors.borderSecondary}`,
     controlTextColor: context.colors.text,
-    dotsTrackBackground: 'rgba(0, 0, 0, 0.28)',
+    dotsTrackBackground: mixColorWithTransparent(overlay, 56),
     captionBackground: context.colors.backgroundSecondary,
     captionBorder: `1px solid ${context.colors.borderSecondary}`,
     thumbnailStripBackground: context.colors.backgroundSecondary,

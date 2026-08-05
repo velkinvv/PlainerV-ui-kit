@@ -2,6 +2,7 @@ import styled, { css } from 'styled-components';
 import { motion } from 'framer-motion';
 import { type AvatarProps, AvatarState, AvatarStatus } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
+import { avatarBorderToInsetBoxShadow } from '@/handlers/avatarBorderHandlers';
 
 /** Поля вокруг круга при бейдже сообщений: бейдж остаётся в пределах бокса и не обрезается overflow у предков */
 const MESSAGE_BADGE_BLEED = '8px';
@@ -16,6 +17,7 @@ export const AvatarWrapper = styled.div<{ size?: Size; $hasMessageBadge?: boolea
   display: inline-block;
   overflow: visible;
   box-sizing: border-box;
+  border-radius: ${({ theme }) => theme.avatars.settings.borderRadius};
 
   ${({ theme, size = Size.MD, $hasMessageBadge }) => {
     const dimensions = theme.avatars.sizes[size];
@@ -59,7 +61,8 @@ export const AvatarContainer = styled(motion.div)<AvatarProps>`
   border-radius: ${({ theme }) => theme.avatars.settings.borderRadius};
   overflow: ${({ theme }) => theme.avatars.settings.overflow};
   background: ${({ theme }) => theme.avatars.variants.default.background};
-  border: ${({ theme }) => theme.avatars.variants.default.border || 'none'};
+  /* Обводку рисуем inset-кольцом на ::after — CSS border на круге даёт разрывы по antialiasing */
+  border: none;
   cursor: ${({ cursor, onClick, theme }) =>
     cursor ||
     (onClick ? theme.avatars.settings.cursor.clickable : theme.avatars.settings.cursor.default)};
@@ -67,6 +70,34 @@ export const AvatarContainer = styled(motion.div)<AvatarProps>`
   width: 100%;
   height: 100%;
   user-select: ${({ theme }) => theme.avatars.settings.userSelect};
+
+  ${({ theme }) => {
+    const themeBoxShadow = theme.avatars.variants.default.boxShadow;
+    const insetRing = avatarBorderToInsetBoxShadow(theme.avatars.variants.default.border);
+
+    return css`
+      ${themeBoxShadow
+        ? css`
+            box-shadow: ${themeBoxShadow};
+          `
+        : ''}
+
+      ${insetRing
+        ? css`
+            &::after {
+              content: '';
+              position: absolute;
+              inset: 0;
+              border-radius: inherit;
+              pointer-events: none;
+              box-shadow: ${insetRing};
+              /* Выше контента и оверлея состояния, ниже бейджа статуса вне контейнера */
+              z-index: ${theme.avatars.settings.zIndex.overlay + 1};
+            }
+          `
+        : ''}
+    `;
+  }}
 
   ${({ theme }) => {
     const backdropFilter = theme.avatars.settings.backdropFilter;
@@ -123,6 +154,8 @@ export const AvatarImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: inherit;
+  display: block;
 `;
 
 /**
@@ -135,12 +168,14 @@ export const AvatarFallback = styled.div<{ $backgroundColor?: string }>`
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: inherit;
+  /* Без собственного border: иначе квадратная рамка клипается кругом родителя и даёт «прерывания» */
+  border: none;
   font-family: ${({ theme }) => theme.avatars.settings.fontFamily};
   font-weight: ${({ theme }) => theme.avatars.settings.fontWeight};
   color: ${({ theme }) => theme.avatars.variants.default.color};
   background: ${({ $backgroundColor, theme }) =>
     $backgroundColor || theme.avatars.variants.default.background};
-  border: ${({ theme }) => theme.avatars.variants.default.border || 'none'};
 
   ${({ theme }) => {
     const backdropFilter = theme.avatars.settings.backdropFilter;
@@ -206,34 +241,44 @@ export const StatusIndicator = styled.div<{
   position: absolute;
   border-radius: 50%;
   z-index: ${({ theme }) => theme.avatars.settings.zIndex.status};
-  border: 2px solid ${({ theme }) => theme.colors.background || '#FFFFFF'};
+  border: none;
 
   ${({ status, theme }) => {
     switch (status) {
       case AvatarStatus.ONLINE:
         return css`
           background: ${theme.avatars.statuses.online.background};
-          box-shadow: ${theme.avatars.statuses.online.boxShadow};
+          box-shadow:
+            0 0 0 2px ${theme.colors.background || '#FFFFFF'},
+            ${theme.avatars.statuses.online.boxShadow || 'none'};
         `;
       case AvatarStatus.OFFLINE:
         return css`
           background: ${theme.avatars.statuses.offline.background};
-          box-shadow: ${theme.avatars.statuses.offline.boxShadow};
+          box-shadow:
+            0 0 0 2px ${theme.colors.background || '#FFFFFF'},
+            ${theme.avatars.statuses.offline.boxShadow || 'none'};
         `;
       case AvatarStatus.DANGER:
         return css`
           background: ${theme.avatars.statuses.danger.background};
-          box-shadow: ${theme.avatars.statuses.danger.boxShadow};
+          box-shadow:
+            0 0 0 2px ${theme.colors.background || '#FFFFFF'},
+            ${theme.avatars.statuses.danger.boxShadow || 'none'};
         `;
       case AvatarStatus.WARNING:
         return css`
           background: ${theme.avatars.statuses.warning.background};
-          box-shadow: ${theme.avatars.statuses.warning.boxShadow};
+          box-shadow:
+            0 0 0 2px ${theme.colors.background || '#FFFFFF'},
+            ${theme.avatars.statuses.warning.boxShadow || 'none'};
         `;
       default:
         return css`
           background: ${theme.avatars.statuses.online.background};
-          box-shadow: ${theme.avatars.statuses.online.boxShadow};
+          box-shadow:
+            0 0 0 2px ${theme.colors.background || '#FFFFFF'},
+            ${theme.avatars.statuses.online.boxShadow || 'none'};
         `;
     }
   }}

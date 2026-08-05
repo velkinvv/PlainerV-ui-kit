@@ -1,7 +1,9 @@
 import React, { forwardRef, useCallback, useId, useMemo, useState } from 'react';
 import { clsx } from 'clsx';
+import { useTheme } from 'styled-components';
 import type { SegmentedControlProps } from '../../../types/ui';
 import { Size } from '../../../types/sizes';
+import { resolveControlAccentColors } from '../../../handlers/controlAccentColorHandlers';
 import { SegmentedControlProvider } from './SegmentedControlContext';
 import { SegmentedControlRoot } from './SegmentedControl.style';
 import { SegmentedControlItem } from './SegmentedControlItem';
@@ -29,6 +31,7 @@ type SegmentedControlComponent = React.ForwardRefExoticComponent<
  * @param props.children - Составной API
  * @param props.ariaLabel - Подпись группы
  * @param props.fullWidth - На всю ширину
+ * @param props.color - Акцент выбранного сегмента (default `primary`)
  * @param ref - Ref на fieldset
  */
 const SegmentedControlBase = forwardRef<HTMLFieldSetElement, SegmentedControlProps>(
@@ -45,11 +48,17 @@ const SegmentedControlBase = forwardRef<HTMLFieldSetElement, SegmentedControlPro
       children,
       ariaLabel,
       fullWidth = false,
+      color = 'primary',
       className,
       ...rest
     },
     ref,
   ) => {
+    const theme = useTheme();
+    const accentColors = useMemo(
+      () => resolveControlAccentColors(theme, color),
+      [color, theme],
+    );
     const generatedName = useId();
     const name = nameProp ?? `segmented-control-${generatedName}`;
     const isValueControlled = valueProp !== undefined;
@@ -87,9 +96,13 @@ const SegmentedControlBase = forwardRef<HTMLFieldSetElement, SegmentedControlPro
         name,
         selectedValue,
         isValueControlled,
+        accentColor: accentColors.checked,
+        accentFocusRingColor: accentColors.focusRing,
         onSegmentChange,
       }),
       [
+        accentColors.checked,
+        accentColors.focusRing,
         appearance,
         isValueControlled,
         name,

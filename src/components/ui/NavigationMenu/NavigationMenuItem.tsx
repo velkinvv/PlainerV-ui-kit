@@ -103,8 +103,14 @@ export const NavigationMenuItem = React.forwardRef<
     ref,
   ) => {
     const theme = useTheme();
-    const { collapsed, activeId, setActiveId, activeAppearance, collapsedNestedFlyout } =
-      useNavigationMenuContext();
+    const {
+      collapsed,
+      activeId,
+      setActiveId,
+      activeAppearance,
+      collapsedNestedFlyout,
+      autoExpandNestedOnActive,
+    } = useNavigationMenuContext();
     const depth = useNavigationMenuDepth();
     const nestedGroupId = useId();
     const branchControlId = useId();
@@ -116,6 +122,9 @@ export const NavigationMenuItem = React.forwardRef<
     /** В компактном режиме ветка показывает **items** в поповере справа (не в колонке) */
     const collapsedFlyoutNested = collapsed && collapsedNestedFlyout && hasNestedBranch;
 
+    /** Авто-раскрытие аккордеона в колонке; flyout от activeId не открываем */
+    const shouldAutoExpandNestedOnActive = autoExpandNestedOnActive ?? !collapsed;
+
     const descendantActive =
       hasNestedBranch && navigationMenuSubtreeContainsActiveId(nestedItems, activeId);
     const rowLooksActive = hasNestedBranch ? active || Boolean(descendantActive) : active;
@@ -124,18 +133,31 @@ export const NavigationMenuItem = React.forwardRef<
       if (!hasNestedBranch || nestedItems == null) {
         return false;
       }
-      return defaultNestedExpanded ?? navigationMenuSubtreeContainsActiveId(nestedItems, activeId);
+      if (defaultNestedExpanded === true) {
+        return true;
+      }
+      if (defaultNestedExpanded === false) {
+        return false;
+      }
+      if (!shouldAutoExpandNestedOnActive) {
+        return false;
+      }
+      return navigationMenuSubtreeContainsActiveId(nestedItems, activeId);
     });
 
     useEffect(() => {
       if (!hasNestedBranch || nestedItems == null) {
         return;
       }
+      if (!shouldAutoExpandNestedOnActive) {
+        return;
+      }
       if (navigationMenuSubtreeContainsActiveId(nestedItems, activeId)) {
         setNestedOpen(true);
       }
-    }, [activeId, hasNestedBranch, nestedItems]);
+    }, [activeId, hasNestedBranch, nestedItems, shouldAutoExpandNestedOnActive]);
 
+    /** Flyout: только явный defaultNestedExpanded; activeId не открывает панель */
     const [nestedFlyoutOpen, setNestedFlyoutOpen] = useState(() => {
       if (!nestedItems?.length || skeleton) {
         return false;
@@ -143,9 +165,7 @@ export const NavigationMenuItem = React.forwardRef<
       if (!collapsed || !collapsedNestedFlyout) {
         return false;
       }
-      return Boolean(
-        defaultNestedExpanded ?? navigationMenuSubtreeContainsActiveId(nestedItems, activeId),
-      );
+      return defaultNestedExpanded === true;
     });
 
     const nestedFlyoutCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -180,15 +200,6 @@ export const NavigationMenuItem = React.forwardRef<
         setNestedFlyoutOpen(false);
       }
     }, [collapsed, clearNestedFlyoutCloseTimer]);
-
-    useEffect(() => {
-      if (!collapsedFlyoutNested || nestedItems == null) {
-        return;
-      }
-      if (navigationMenuSubtreeContainsActiveId(nestedItems, activeId)) {
-        setNestedFlyoutOpen(true);
-      }
-    }, [activeId, collapsedFlyoutNested, nestedItems]);
 
     const resolvedTitle = getNavigationMenuItemDisplayTitle(collapsed, label, title);
 
@@ -267,7 +278,7 @@ export const NavigationMenuItem = React.forwardRef<
       title: hint != null || effectiveTooltip != null ? undefined : resolvedTitle,
     };
 
-    const spinnerColor = theme?.colors?.primary ?? '#68d5f8';
+    const spinnerColor = theme?.colors?.primary ?? theme?.colors?.info;
 
     const motionInnerProps = {
       initial: false as const,

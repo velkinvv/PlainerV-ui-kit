@@ -1,3 +1,5 @@
+export * from './controlAccentColorHandlers';
+export * from './onAccentColorHandlers';
 export * from './uiMotion';
 export * from './uiMotionStyleHandlers';
 export * from './iconHandlers';

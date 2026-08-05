@@ -84,6 +84,10 @@ const meta: Meta<typeof Chip> = {
       options: ['span', 'button'],
       description: 'Корневой элемент',
     },
+    color: {
+      control: 'text',
+      description: 'Акцент selected: ControlColor или CSS (default primary)',
+    },
   },
 };
 
@@ -170,6 +174,47 @@ export const Showcase: Story = {
             Всё сразу
           </Chip>
         </ChipStoriesRow>
+      </section>
+    </ChipStoriesStack>
+  ),
+};
+
+export const Colors: Story = {
+  name: 'Цвета (color)',
+  render: () => (
+    <ChipStoriesStack>
+      <section>
+        <ChipStoriesSectionTitle>Пресеты (selected)</ChipStoriesSectionTitle>
+        <ChipStoriesRow>
+          <Chip selected color="primary">
+            primary
+          </Chip>
+          <Chip selected color="success">
+            success
+          </Chip>
+          <Chip selected color="info">
+            info
+          </Chip>
+          <Chip selected color="warning">
+            warning
+          </Chip>
+          <Chip selected color="error">
+            error
+          </Chip>
+          <Chip selected color="#9c27b0">
+            custom
+          </Chip>
+        </ChipStoriesRow>
+      </section>
+      <section>
+        <ChipStoriesSectionTitle>Chips.color → дети</ChipStoriesSectionTitle>
+        <Chips selectionMode="multiple" defaultValue={['a', 'b']} color="success" aria-label="цвета">
+          <Chip value="a">A</Chip>
+          <Chip value="b">B</Chip>
+          <Chip value="c" color="error">
+            C override
+          </Chip>
+        </Chips>
       </section>
     </ChipStoriesStack>
   ),

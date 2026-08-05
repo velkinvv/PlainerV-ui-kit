@@ -3,6 +3,7 @@ import {
   CarouselSlideOverlayPanelGradient,
   CarouselSlideOverlayPanelPlacement,
 } from '../../../types/ui';
+import { mixColorWithTransparent } from '../../../handlers/glassColorHandlers';
 
 /**
  * Слой контентных панелей поверх слайда (ниже зон Carousel.Overlay).
@@ -37,7 +38,7 @@ export const CarouselSlideOverlayPanelRoot = styled.div<{
   padding: 20px 24px;
   box-sizing: border-box;
   pointer-events: none;
-  color: #ffffff;
+  color: ${({ theme }) => theme.colors.onAccent};
   text-align: ${({ $textAlignment }) => $textAlignment};
 
   & > * {
@@ -83,10 +84,12 @@ export const CarouselSlideOverlayPanelRoot = styled.div<{
     `;
   }}
 
-  ${({ $gradient, $placement }) => {
+  ${({ $gradient, $placement, theme }) => {
     if ($gradient === CarouselSlideOverlayPanelGradient.NONE) {
       return '';
     }
+
+    const overlay = theme.colors.overlay;
 
     if ($gradient === CarouselSlideOverlayPanelGradient.FULL) {
       return css`
@@ -95,7 +98,7 @@ export const CarouselSlideOverlayPanelRoot = styled.div<{
           position: absolute;
           inset: 0;
           border-radius: inherit;
-          background: rgba(0, 0, 0, 0.48);
+          background: ${mixColorWithTransparent(overlay, 96)};
           pointer-events: none;
           z-index: -1;
         }
@@ -114,9 +117,9 @@ export const CarouselSlideOverlayPanelRoot = styled.div<{
           border-radius: inherit;
           background: linear-gradient(
             180deg,
-            rgba(0, 0, 0, 0.78) 0%,
-            rgba(0, 0, 0, 0.42) 45%,
-            rgba(0, 0, 0, 0) 100%
+            ${overlay} 0%,
+            ${mixColorWithTransparent(overlay, 50)} 45%,
+            transparent 100%
           );
           pointer-events: none;
           z-index: -1;
@@ -135,9 +138,9 @@ export const CarouselSlideOverlayPanelRoot = styled.div<{
         border-radius: inherit;
         background: linear-gradient(
           0deg,
-          rgba(0, 0, 0, 0.82) 0%,
-          rgba(0, 0, 0, 0.46) 42%,
-          rgba(0, 0, 0, 0) 100%
+          ${overlay} 0%,
+          ${mixColorWithTransparent(overlay, 50)} 42%,
+          transparent 100%
         );
         pointer-events: none;
         z-index: -1;
@@ -160,6 +163,6 @@ export const CarouselSlideOverlayPanelTextRoot = styled.p`
   margin: 0;
   font-size: 0.9375rem;
   line-height: 1.45;
-  color: rgba(255, 255, 255, 0.92);
+  color: ${({ theme }) => mixColorWithTransparent(theme.colors.onAccent, 92)};
   max-width: 42rem;
 `;

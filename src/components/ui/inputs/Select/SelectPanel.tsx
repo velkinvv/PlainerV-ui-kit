@@ -27,6 +27,7 @@ import { useFormContext } from '../../../../contexts/FormContext';
 import {
   Label,
   InputWrapper,
+  InputControlStack,
   HelperText,
   ErrorText,
   SuccessText,
@@ -99,6 +100,7 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
       helperText,
       required = false,
       fullWidth = false,
+      autoWidth = false,
       embeddedInCompositeField = false,
       readOnly = false,
       disabled = false,
@@ -630,14 +632,16 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
     if (skeleton) {
       return (
         <SelectPanelRoot fullWidth={fullWidth} aria-busy="true">
-          {label ? (
-            <Label as="span">
-              {label}
-              {required ? <RequiredIndicator>*</RequiredIndicator> : null}
-            </Label>
-          ) : null}
-          {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
-          <SkeletonEffect size={size} fullWidth={fullWidth} role="presentation" />
+          <InputControlStack fullWidth={fullWidth} autoWidth={autoWidth}>
+            {label ? (
+              <Label as="span">
+                {label}
+                {required ? <RequiredIndicator>*</RequiredIndicator> : null}
+              </Label>
+            ) : null}
+            {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
+            <SkeletonEffect size={size} fullWidth={fullWidth} autoWidth={autoWidth} role="presentation" />
+          </InputControlStack>
         </SelectPanelRoot>
       );
     }
@@ -828,6 +832,7 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
         success={success}
         status={currentStatus}
         fullWidth={fullWidth}
+        autoWidth={autoWidth}
         focused={focused || menuOpen}
         readOnly={readOnly}
         className={className}
@@ -855,11 +860,13 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
       );
 
     const dropdownFullWidth = embeddedInCompositeField || fullWidth;
+    const dropdownAutoWidth = !dropdownFullWidth && autoWidth;
 
     const dropdownBlock = (
       <SelectDropdownAnchor
         ref={containerRef}
         $fullWidth={dropdownFullWidth}
+        $autoWidth={dropdownAutoWidth}
         data-embedded-composite-select={embeddedInCompositeField ? 'true' : undefined}
         data-embedded-composite-select-mode={embeddedInCompositeField ? mode : undefined}
       >
@@ -952,21 +959,23 @@ export const SelectPanel = forwardRef<HTMLSelectElement, SelectProps>(
 
     return (
       <SelectPanelRoot fullWidth={fullWidth}>
-        {label ? (
-          <Label htmlFor={triggerId}>
-            {label}
-            {required ? <RequiredIndicator>*</RequiredIndicator> : null}
-          </Label>
-        ) : null}
+        <InputControlStack fullWidth={fullWidth} autoWidth={autoWidth}>
+          {label ? (
+            <Label htmlFor={triggerId}>
+              {label}
+              {required ? <RequiredIndicator>*</RequiredIndicator> : null}
+            </Label>
+          ) : null}
 
-        {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
+          {additionalLabel ? <AdditionalLabel>{additionalLabel}</AdditionalLabel> : null}
 
-        {dropdownBlock}
+          {dropdownBlock}
 
-        {error ? <ErrorText>{error}</ErrorText> : null}
-        {success ? <SuccessText>Успешно</SuccessText> : null}
-        {helperText && !error && !success ? <HelperText>{helperText}</HelperText> : null}
-        {extraText ? <ExtraText>{extraText}</ExtraText> : null}
+          {error ? <ErrorText>{error}</ErrorText> : null}
+          {success ? <SuccessText>Успешно</SuccessText> : null}
+          {helperText && !error && !success ? <HelperText>{helperText}</HelperText> : null}
+          {extraText ? <ExtraText>{extraText}</ExtraText> : null}
+        </InputControlStack>
 
         {hiddenNative}
       </SelectPanelRoot>

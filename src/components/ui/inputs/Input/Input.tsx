@@ -56,6 +56,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       additionalLabel,
       helperText,
       fullWidth = false,
+      autoWidth = false,
       disabled = false,
       readOnly = false,
       required = false,
@@ -192,7 +193,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             </Label>
           )}
           {additionalLabel && <AdditionalLabel>{additionalLabel}</AdditionalLabel>}
-          <SkeletonEffect size={size} fullWidth={fullWidth} role="presentation" />
+          <SkeletonEffect size={size} fullWidth={fullWidth} autoWidth={autoWidth} role="presentation" />
         </InputContainer>
       );
     }
@@ -212,6 +213,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       success,
       status: currentStatus,
       fullWidth,
+      autoWidth,
       focused,
       readOnly,
       className,
@@ -290,7 +292,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <InputContainer fullWidth={fullWidth}>
-        <InputControlStack fullWidth={fullWidth}>
+        <InputControlStack fullWidth={fullWidth} autoWidth={autoWidth}>
           {label && (
             <Label htmlFor={inputId}>
               {label}

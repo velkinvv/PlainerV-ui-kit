@@ -86,6 +86,10 @@ const meta: Meta<typeof Input> = {
       control: { type: 'boolean' },
       description: 'Полная ширина',
     },
+    autoWidth: {
+      control: { type: 'boolean' },
+      description: 'Ширина по содержимому (auto), без фиксированных 335px',
+    },
     displayClearIcon: {
       control: { type: 'boolean' },
       description: 'Показывать кнопку с крестиком очистки (`onClearIconClick` — сброс у родителя)',

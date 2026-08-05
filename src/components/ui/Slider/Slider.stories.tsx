@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { Slider } from './Slider';
 import { RangeSlider } from './RangeSlider';
 import { Form } from '../Form';
-import { Size } from '../../../types/sizes';
+import { Icon } from '../Icon/Icon';
+import { Size, IconSize } from '../../../types/sizes';
 import {
   SliderStoriesCompact,
   SliderStoriesMedium,
@@ -124,11 +125,72 @@ const meta: Meta<typeof Slider> = {
       options: ['error', 'success', 'warning'],
       table: { type: { summary: "'error' | 'success' | 'warning'" } },
     },
+    color: {
+      control: 'text',
+      description:
+        'Акцент трека (ControlColor / CSS). Default info. Перекрывается error / success / status',
+      table: { type: { summary: 'ControlColor | string' } },
+    },
   },
 };
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+export const SideIcons: Story = {
+  name: 'Боковые иконки у трека',
+  render: () => {
+    const [sliderValue, setSliderValue] = useState(50);
+    return (
+      <SliderStoriesMedium>
+        <Slider
+          fullWidth
+          label="Громкость"
+          min={0}
+          max={100}
+          step={5}
+          value={sliderValue}
+          onChange={setSliderValue}
+          formatValue={formatPercent}
+          formatMinLabel={() => '0'}
+          formatMaxLabel={() => '100'}
+          leftIcon={<Icon name="IconExMinus" size={IconSize.MD} />}
+          rightIcon={<Icon name="IconPlainerPlus" size={IconSize.MD} />}
+          leftIconAriaLabel="Уменьшить"
+          rightIconAriaLabel="Увеличить"
+          onLeftIconClick={() => setSliderValue((current) => Math.max(0, current - 5))}
+          onRightIconClick={() => setSliderValue((current) => Math.min(100, current + 5))}
+        />
+        <Slider
+          fullWidth
+          label="Disabled + hide"
+          disabled
+          sideIconsWhenDisabled="hide"
+          defaultValue={40}
+          leftIcon={<Icon name="IconExMinus" size={IconSize.MD} />}
+          rightIcon={<Icon name="IconPlainerPlus" size={IconSize.MD} />}
+          onLeftIconClick={() => undefined}
+          onRightIconClick={() => undefined}
+          formatMinLabel={() => '0'}
+          formatMaxLabel={() => '100'}
+        />
+        <Slider
+          fullWidth
+          label="Disabled + disable"
+          disabled
+          sideIconsWhenDisabled="disable"
+          defaultValue={40}
+          leftIcon={<Icon name="IconExMinus" size={IconSize.MD} />}
+          rightIcon={<Icon name="IconPlainerPlus" size={IconSize.MD} />}
+          onLeftIconClick={() => undefined}
+          onRightIconClick={() => undefined}
+          formatMinLabel={() => '0'}
+          formatMaxLabel={() => '100'}
+        />
+      </SliderStoriesMedium>
+    );
+  },
+};
 
 export const Single: Story = {
   render: () => {
@@ -601,6 +663,36 @@ export const StatusVariants: Story = {
             formatValue={formatPercent}
             formatMinLabel={() => '0 %'}
             formatMaxLabel={() => '100 %'}
+          />
+        </SliderStoriesSection>
+      </SliderStoriesStack>
+    </SliderStoriesRoot>
+  ),
+};
+
+export const Colors: Story = {
+  name: 'Цвета (color)',
+  render: () => (
+    <SliderStoriesRoot>
+      <SliderStoriesStack>
+        <SliderStoriesSection>
+          <SliderStoriesSectionTitle>info (default)</SliderStoriesSectionTitle>
+          <Slider fullWidth min={0} max={100} defaultValue={40} color="info" />
+        </SliderStoriesSection>
+        <SliderStoriesSection>
+          <SliderStoriesSectionTitle>success</SliderStoriesSectionTitle>
+          <Slider fullWidth min={0} max={100} defaultValue={55} color="success" />
+        </SliderStoriesSection>
+        <SliderStoriesSection>
+          <SliderStoriesSectionTitle>custom + status перекрывает</SliderStoriesSectionTitle>
+          <Slider
+            fullWidth
+            min={0}
+            max={100}
+            defaultValue={70}
+            color="#9c27b0"
+            status="warning"
+            helperText="status=warning важнее color"
           />
         </SliderStoriesSection>
       </SliderStoriesStack>

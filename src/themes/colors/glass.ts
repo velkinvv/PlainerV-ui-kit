@@ -67,6 +67,7 @@ export function createGlassColors(paletteVariant: GlassPaletteVariant): Colors {
     tagAccentPink: isDarkBase ? colors.pink[400] : colors.pink[600],
 
     overlay: glassPalette.overlay,
+    onAccent: colors.neutral[10],
     shadow: isDarkBase ? 'rgba(0, 0, 0, 0.25)' : 'rgba(0, 0, 0, 0.08)',
     transparent: 'transparent',
   };
