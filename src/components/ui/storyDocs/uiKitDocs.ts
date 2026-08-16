@@ -1171,17 +1171,17 @@ export const DOC_STEPPER = `
 ### Назначение
 Пошаговый процесс: **variant** — **compact** (кольцо «текущий/всего», заголовок и подзаголовок) или **linear** (цепочка шагов с соединителями).
 
-**appearance** light | dark; скругления завязаны на **theme.borderRadius**. Для прогресса внутри формы см. **Progress** (`variant="stepper"`).
+**appearance** light | dark; скругления завязаны на **theme.borderRadius**. Для прогресса внутри формы см. **Progress** (\`variant="stepper"\`).
 
-### Linear: узкий контейнер (`titleLayout`)
+### Linear: узкий контейнер (\`titleLayout\`)
 | Значение | Поведение |
 |----------|-----------|
-| **`auto`** (default) | Ширина контейнера Stepper **< 520px** → как `hidden`; иначе `nowrap`. |
-| **`nowrap`** | Одна строка title (desktop / opt-out от auto). |
-| **`wrap`** | Перенос title, до 2 строк (`line-clamp`). |
-| **`hidden`** | Видны кружок + `stepLabel` («Шаг N»); полный title в a11y / `title`-атрибуте. |
+| **\`auto\`** (default) | Ширина контейнера Stepper **< 520px** → как \`hidden\`; иначе \`nowrap\`. |
+| **\`nowrap\`** | Одна строка title (desktop / opt-out от auto). |
+| **\`wrap\`** | Перенос title, до 2 строк (\`line-clamp\`). |
+| **\`hidden\`** | Видны кружок + \`stepLabel\` («Шаг N»); полный title в a11y / \`title\`-атрибуте. |
 
-Ячейки сжимаются (`min-width: 0`); `fullWidth` + ряд `flex: 1`. **compact** — отдельный UX, не обход overflow linear.
+Ячейки сжимаются (\`min-width: 0\`); \`fullWidth\` + ряд \`flex: 1\`. **compact** — отдельный UX, не обход overflow linear.
 `.trim();
 
 

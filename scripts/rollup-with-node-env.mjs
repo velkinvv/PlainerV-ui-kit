@@ -24,12 +24,19 @@ try {
   process.exit(1);
 }
 
+const existingNodeOptions = process.env.NODE_OPTIONS ?? '';
+const nodeOptionsWithHeap = /\bmax-old-space-size\b/.test(existingNodeOptions)
+  ? existingNodeOptions
+  : [existingNodeOptions, '--max-old-space-size=8192'].filter(Boolean).join(' ');
+
 const childProcessResult = spawnSync(process.execPath, [rollupCliPath, '-c', 'rollup.config.mjs'], {
   cwd: packageRootDirectory,
   stdio: 'inherit',
   env: {
     ...process.env,
     NODE_ENV: environmentName,
+    // Production Rollup + typescript plugin на большом UI-kit упирается в дефолтный ~2GB heap.
+    NODE_OPTIONS: nodeOptionsWithHeap,
   },
 });
 
