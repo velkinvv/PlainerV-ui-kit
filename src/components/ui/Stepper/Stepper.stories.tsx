@@ -85,6 +85,13 @@ const meta: Meta<typeof Stepper> = {
       control: 'number',
       table: { type: { summary: 'number' } },
     },
+    titleLayout: {
+      description:
+        'Только linear: nowrap | wrap | hidden | auto (default). auto: контейнер < 520px → hidden',
+      control: { type: 'select' },
+      options: ['auto', 'nowrap', 'wrap', 'hidden'],
+      table: { type: { summary: 'nowrap | wrap | hidden | auto' } },
+    },
   },
 };
 
@@ -207,5 +214,106 @@ export const LinearCustomLabels: Story = {
       onBack={() => undefined}
       fullWidth
     />
+  ),
+};
+
+const registerLikeSteps: StepperLinearStep[] = [
+  { title: 'Роль' },
+  { title: 'Контакты' },
+  { title: 'Реквизиты организации' },
+  { title: 'Согласия' },
+];
+
+/** Узкий контейнер 360px, длинные RU title (auth-карточка) */
+export const LinearNarrow360LongTitles: Story = {
+  name: 'Linear / narrow 360px / 4 long RU titles',
+  render: () => (
+    <div style={stepperStoriesStyles.narrow360}>
+      <Stepper
+        variant="linear"
+        fullWidth
+        appearance="light"
+        activeStepIndex={1}
+        steps={registerLikeSteps}
+        onBack={() => undefined}
+      />
+    </div>
+  ),
+};
+
+/** Узкий контейнер 480px */
+export const LinearNarrow480: Story = {
+  name: 'Linear / narrow 480px / 4 long RU titles',
+  render: () => (
+    <div style={stepperStoriesStyles.narrow480}>
+      <Stepper
+        variant="linear"
+        fullWidth
+        appearance="light"
+        activeStepIndex={1}
+        steps={registerLikeSteps}
+        onBack={() => undefined}
+      />
+    </div>
+  ),
+};
+
+/** 320px: 3 и 5 шагов */
+export const LinearNarrow320ThreeAndFive: Story = {
+  name: 'Linear / narrow 320px / 3 and 5 steps',
+  render: () => (
+    <div style={stepperStoriesStyles.interactiveContainer}>
+      <div style={stepperStoriesStyles.narrow320}>
+        <Stepper
+          variant="linear"
+          fullWidth
+          activeStepIndex={0}
+          steps={registerLikeSteps.slice(0, 3)}
+          onBack={() => undefined}
+        />
+      </div>
+      <div style={stepperStoriesStyles.narrow320}>
+        <Stepper
+          variant="linear"
+          fullWidth
+          activeStepIndex={2}
+          steps={[...registerLikeSteps, { title: 'Подтверждение' }]}
+          onBack={() => undefined}
+        />
+      </div>
+    </div>
+  ),
+};
+
+/** Широкая панель — desktop без регрессии */
+export const LinearWide960: Story = {
+  name: 'Linear / wide 960px',
+  render: () => (
+    <div style={stepperStoriesStyles.wide960}>
+      <Stepper
+        variant="linear"
+        fullWidth
+        activeStepIndex={1}
+        steps={registerLikeSteps}
+        onBack={() => undefined}
+      />
+    </div>
+  ),
+};
+
+/** Явный wrap в узком контейнере */
+export const LinearTitleLayoutWrap: Story = {
+  name: 'Linear / titleLayout=wrap / 360px',
+  render: () => (
+    <div style={stepperStoriesStyles.narrow360}>
+      <Stepper
+        variant="linear"
+        fullWidth
+        titleLayout="wrap"
+        activeStepIndex={0}
+        steps={registerLikeSteps}
+        onBack={() => undefined}
+      />
+    </div>
   ),
 };

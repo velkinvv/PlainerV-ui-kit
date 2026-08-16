@@ -3640,6 +3640,15 @@ export type StepperAppearance = 'light' | 'dark';
 export type StepperVariant = 'compact' | 'linear';
 
 /**
+ * Режим подписей шагов в .
+ * -  — одна строка (desktop).
+ * -  — перенос, до 2 строк.
+ * -  — только кружок + stepLabel; полный title в a11y / title-атрибуте.
+ * -  — при ширине контейнера &lt; 520px как , иначе .
+ */
+export type StepperTitleLayout = 'nowrap' | 'wrap' | 'hidden' | 'auto';
+
+/**
  * Шаг для варианта `Stepper` с `variant="linear"`.
  * @property stepLabel - Подпись над заголовком (по умолчанию «Шаг N»).
  * @property title - Основной текст пункта.
@@ -3684,11 +3693,13 @@ export interface StepperCompactProps extends StepperBaseProps {
  * @property variant - Обязательно `linear`.
  * @property steps - Список шагов.
  * @property activeStepIndex - Индекс активного шага, с 0.
+ * @property titleLayout - Раскладка заголовков; по умолчанию `auto` (узкий контейнер < 520px → hidden).
  */
 export interface StepperLinearProps extends StepperBaseProps {
   variant: 'linear';
   steps: StepperLinearStep[];
   activeStepIndex: number;
+  titleLayout?: StepperTitleLayout;
 }
 
 /**

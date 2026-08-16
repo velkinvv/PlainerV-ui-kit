@@ -2,10 +2,14 @@ import styled, { css } from 'styled-components';
 import { motion } from 'framer-motion';
 import type { StepperAppearance } from '../../../types/ui';
 import type { ThemeType } from '../../../types/theme';
+import type { StepperResolvedTitleLayout } from './handlers';
 import { BorderRadiusHandler } from '../../../handlers/uiHandlers';
 import { createStyledShouldForwardProp } from '../../../handlers/styledComponentHandlers';
 import { neutral } from '../../../variables/colors/neutral';
-import { getStepperRootSurfaceTokens, getStepperTextTokens } from '../../../handlers/stepperGlassHandlers';
+import {
+  getStepperRootSurfaceTokens,
+  getStepperTextTokens,
+} from '../../../handlers/stepperGlassHandlers';
 
 type StepperStyledThemeSlice = Pick<ThemeType, 'mode' | 'colors' | 'surfaceMaterial' | 'dropdowns'>;
 
@@ -32,17 +36,17 @@ export const StepperRoot = styled.nav.withConfig({
   flex-direction: row;
   align-items: center;
   gap: 12px;
+  min-width: 0;
   width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'auto')};
   max-width: 100%;
   box-sizing: border-box;
+  container-type: inline-size;
+  container-name: plainer-stepper;
   padding: 10px 14px;
   border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
 
   ${({ $appearance, theme }) => {
-    const surfaceTokens = getStepperRootSurfaceTokens(
-      getStepperThemeContext(theme),
-      $appearance,
-    );
+    const surfaceTokens = getStepperRootSurfaceTokens(getStepperThemeContext(theme), $appearance);
 
     return css`
       background: ${surfaceTokens.background};
@@ -168,20 +172,51 @@ export const StepperLinearStepsRow = styled.div`
   gap: 0;
 `;
 
-/** Одна ячейка шага: круг + подписи */
-export const StepperLinearStepCell = styled.div`
+/**
+ * Одна ячейка шага: круг + подписи.
+ * @property $titleLayout - Эффективный режим подписей.
+ */
+export const StepperLinearStepCell = styled.div.withConfig({
+  shouldForwardProp: createStyledShouldForwardProp(),
+})<{ $titleLayout: StepperResolvedTitleLayout }>`
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 10px;
-  flex-shrink: 0;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 100%;
+
+  ${({ $titleLayout }) =>
+    $titleLayout === 'hidden'
+      ? css`
+          justify-content: center;
+        `
+      : ''}
 `;
 
-export const StepperLinearTextStack = styled.div`
+/**
+ * Стек подписей шага.
+ * @property $titleLayout - Эффективный режим подписей.
+ */
+export const StepperLinearTextStack = styled.div.withConfig({
+  shouldForwardProp: createStyledShouldForwardProp(),
+})<{ $titleLayout: StepperResolvedTitleLayout }>`
   display: flex;
   flex-direction: column;
   gap: 2px;
   min-width: 0;
+  max-width: 100%;
+
+  ${({ $titleLayout }) =>
+    $titleLayout === 'hidden'
+      ? css`
+          position: relative;
+          flex: 0 1 auto;
+        `
+      : css`
+          flex: 1 1 auto;
+        `}
 `;
 
 /**
@@ -201,18 +236,55 @@ export const StepperLinearStepHint = styled.span.withConfig({
  * Заголовок шага в линейном варианте.
  * @property $appearance - Тема панели.
  * @property $muted - Будущий шаг — чуть приглушённее.
+ * @property $titleLayout - nowrap / wrap / hidden (visually hidden).
  */
 export const StepperLinearStepTitle = styled.span.withConfig({
   shouldForwardProp: createStyledShouldForwardProp(),
-})<{ $appearance: StepperAppearance; $muted?: boolean }>`
+})<{
+  $appearance: StepperAppearance;
+  $muted?: boolean;
+  $titleLayout: StepperResolvedTitleLayout;
+}>`
   font-size: 14px;
   font-weight: 600;
   line-height: 1.25;
-  white-space: nowrap;
+  min-width: 0;
+  max-width: 100%;
   color: ${({ theme, $appearance, $muted }) => {
     const textTokens = getStepperTextTokens(getStepperThemeContext(theme), $appearance);
     return $muted ? textTokens.secondary : textTokens.primary;
   }};
+
+  ${({ $titleLayout }) => {
+    if ($titleLayout === 'wrap') {
+      return css`
+        white-space: normal;
+        overflow-wrap: anywhere;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+      `;
+    }
+    if ($titleLayout === 'hidden') {
+      return css`
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      `;
+    }
+    return css`
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    `;
+  }}
 `;
 
 /**

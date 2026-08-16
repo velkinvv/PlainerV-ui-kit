@@ -9,6 +9,27 @@
 
 ---
 
+## [0.2.9] - 2026-08-16
+
+### Added
+
+- Подготовка релиза **0.2.9** (ветка `v_0.2.9`).
+- **Stepper (linear):** проп **`titleLayout`** (`nowrap` | `wrap` | `hidden` | `auto`); `auto` при ширине контейнера < 520px скрывает title (a11y сохраняется). Storybook: narrow 320/360/480 и wide 960.
+
+### Fixed
+
+- **Stepper (linear):** overflow в узких контейнерах (≤480px): ячейки сжимаются (`min-width: 0`), убран жёсткий nowrap-only как единственный режим.
+
+### Changed
+
+- **Stepper (linear):** default `titleLayout="auto"` — на узкой ширине title визуально скрыт (opt-out: `titleLayout="nowrap"`).
+
+### Added (документация)
+
+- Документация **v0.2.9** на сайте; обновлены README, CHANGELOG, индекс версий.
+
+---
+
 ## [0.2.8] - 2026-08-05
 
 ### Added

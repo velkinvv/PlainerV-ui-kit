@@ -5,8 +5,11 @@ import {
   getCircleProgressStrokeDashoffset,
   getCompactRingProgressFraction,
   getLinearStepCircleVisual,
+  getStepperStepAccessibleTitle,
   isLinearConnectorCompleted,
+  resolveEffectiveStepperTitleLayout,
   resolveStepperAppearance,
+  STEPPER_LINEAR_NARROW_CONTAINER_MAX_PX,
 } from './handlers';
 
 describe('Stepper handlers', () => {
@@ -73,6 +76,40 @@ describe('Stepper handlers', () => {
     it('завершён если сегмент до активного', () => {
       expect(isLinearConnectorCompleted(0, 2)).toBe(true);
       expect(isLinearConnectorCompleted(1, 1)).toBe(false);
+    });
+  });
+
+  describe('resolveEffectiveStepperTitleLayout', () => {
+    it('auto ниже порога → hidden', () => {
+      expect(resolveEffectiveStepperTitleLayout('auto', 360)).toBe('hidden');
+      expect(resolveEffectiveStepperTitleLayout(undefined, 519)).toBe('hidden');
+    });
+
+    it('auto на пороге и выше → nowrap', () => {
+      expect(
+        resolveEffectiveStepperTitleLayout('auto', STEPPER_LINEAR_NARROW_CONTAINER_MAX_PX),
+      ).toBe('nowrap');
+      expect(resolveEffectiveStepperTitleLayout('auto', 960)).toBe('nowrap');
+    });
+
+    it('auto при неизвестной ширине → nowrap (SSR / до измерения)', () => {
+      expect(resolveEffectiveStepperTitleLayout('auto', null)).toBe('nowrap');
+    });
+
+    it('явные режимы не зависят от ширины', () => {
+      expect(resolveEffectiveStepperTitleLayout('wrap', 960)).toBe('wrap');
+      expect(resolveEffectiveStepperTitleLayout('hidden', 960)).toBe('hidden');
+      expect(resolveEffectiveStepperTitleLayout('nowrap', 200)).toBe('nowrap');
+    });
+  });
+
+  describe('getStepperStepAccessibleTitle', () => {
+    it('возвращает строку title', () => {
+      expect(getStepperStepAccessibleTitle('Реквизиты организации')).toBe('Реквизиты организации');
+    });
+
+    it('для не-строки возвращает undefined', () => {
+      expect(getStepperStepAccessibleTitle(null)).toBeUndefined();
     });
   });
 });

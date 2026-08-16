@@ -1,5 +1,43 @@
-import type { StepperAppearance } from '../../../types/ui';
+import type { ReactNode } from 'react';
+import type { StepperAppearance, StepperTitleLayout } from '../../../types/ui';
 import { ThemeColorScheme } from '../../../types/theme';
+
+/** Порог ширины контейнера (px): ниже — auto → hidden */
+export const STEPPER_LINEAR_NARROW_CONTAINER_MAX_PX = 520;
+
+/** Эффективный режим title после резолва `auto` */
+export type StepperResolvedTitleLayout = 'nowrap' | 'wrap' | 'hidden';
+
+/**
+ * Эффективный режим title для linear Stepper.
+ * @param titleLayout - Проп или undefined (= auto).
+ * @param containerWidthPx - Ширина корня nav в px; null до измерения.
+ */
+export const resolveEffectiveStepperTitleLayout = (
+  titleLayout: StepperTitleLayout | undefined,
+  containerWidthPx: number | null,
+): StepperResolvedTitleLayout => {
+  const normalizedLayout = titleLayout ?? 'auto';
+  if (
+    normalizedLayout === 'nowrap' ||
+    normalizedLayout === 'wrap' ||
+    normalizedLayout === 'hidden'
+  ) {
+    return normalizedLayout;
+  }
+  if (containerWidthPx == null) {
+    return 'nowrap';
+  }
+  return containerWidthPx < STEPPER_LINEAR_NARROW_CONTAINER_MAX_PX ? 'hidden' : 'nowrap';
+};
+
+/**
+ * Строковый title для a11y / native title attribute.
+ * @param title - ReactNode шага.
+ */
+export const getStepperStepAccessibleTitle = (title: ReactNode): string | undefined => {
+  return typeof title === 'string' ? title : undefined;
+};
 
 /**
  * Итоговый вид панели: из пропа или из режима темы приложения.
