@@ -1,7 +1,7 @@
-import React, { forwardRef, useMemo } from 'react';
+import React, { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import { useTheme } from 'styled-components';
 import { ThemeColorScheme, type ThemeType } from '../../../types/theme';
-import type { StepperProps, StepperLinearStep } from '../../../types/ui';
+import type { StepperProps, StepperLinearStep, StepperTitleLayout } from '../../../types/ui';
 import { Icon } from '../Icon/Icon';
 import { IconSize } from '../../../types/sizes';
 import { ValueMotion } from '../ValueMotion';
@@ -27,7 +27,9 @@ import {
   getCircleProgressStrokeDashoffset,
   getCompactRingProgressFraction,
   getLinearStepCircleVisual,
+  getStepperStepAccessibleTitle,
   isLinearConnectorCompleted,
+  resolveEffectiveStepperTitleLayout,
   resolveStepperAppearance,
 } from './handlers';
 
@@ -76,6 +78,7 @@ export const Stepper = forwardRef<HTMLElement, StepperProps>((props, ref) => {
       backLabel={backLabel}
       steps={props.steps}
       activeStepIndex={props.activeStepIndex}
+      titleLayout={props.titleLayout}
       onBack={props.onBack}
       className={props.className}
       fullWidth={props.fullWidth}
@@ -203,58 +206,106 @@ const StepperLinearView = forwardRef<
   InnerAppearanceProps & {
     steps: StepperLinearStep[];
     activeStepIndex: number;
+    titleLayout?: StepperTitleLayout;
   }
->(({ appearance, backLabel, onBack, className, fullWidth, steps, activeStepIndex }, ref) => {
-  const active = clampStepperActiveIndex(activeStepIndex, steps.length);
+>(
+  (
+    { appearance, backLabel, onBack, className, fullWidth, steps, activeStepIndex, titleLayout },
+    ref,
+  ) => {
+    const active = clampStepperActiveIndex(activeStepIndex, steps.length);
+    const rootRef = useRef<HTMLElement | null>(null);
+    const [containerWidthPx, setContainerWidthPx] = useState<number | null>(null);
 
-  return (
-    <StepperRoot
-      ref={ref as React.Ref<HTMLElement>}
-      $appearance={appearance}
-      $fullWidth={fullWidth}
-      className={className}
-      aria-label="Шаги процесса"
-    >
-      {onBack ? (
-        <StepperBackButton
-          type="button"
-          $appearance={appearance}
-          aria-label={backLabel}
-          onClick={onBack}
-        >
-          <Icon name="IconPlainerArrowLeft" size={IconSize.SM} color="currentColor" />
-        </StepperBackButton>
-      ) : null}
-      <StepperLinearStepsRow>
-        {steps.map((step, index) => {
-          const visual = getLinearStepCircleVisual(index, active);
-          const hint = step.stepLabel ?? `Шаг ${index + 1}`;
-          const isMuted = index > active;
-          const showConnector = index < steps.length - 1;
-          const connectorDone = isLinearConnectorCompleted(index, active);
+    /**
+     * Сливает внешний ref с локальным для ResizeObserver.
+     * @param node - Корневой nav.
+     */
+    const setMergedRef = (node: HTMLElement | null) => {
+      rootRef.current = node;
+      if (typeof ref === 'function') {
+        ref(node);
+      } else if (ref) {
+        (ref as React.MutableRefObject<HTMLElement | null>).current = node;
+      }
+    };
 
-          return (
-            <React.Fragment key={index}>
-              <StepperLinearStepCell>
-                <StepperLinearCircle $visual={visual} $appearance={appearance}>
-                  {index + 1}
-                </StepperLinearCircle>
-                <StepperLinearTextStack>
-                  <StepperLinearStepHint $appearance={appearance}>{hint}</StepperLinearStepHint>
-                  <StepperLinearStepTitle $appearance={appearance} $muted={isMuted}>
-                    {step.title}
-                  </StepperLinearStepTitle>
-                </StepperLinearTextStack>
-              </StepperLinearStepCell>
-              {showConnector ? (
-                <StepperLinearConnector $completed={connectorDone} $appearance={appearance} />
-              ) : null}
-            </React.Fragment>
-          );
-        })}
-      </StepperLinearStepsRow>
-    </StepperRoot>
-  );
-});
+    useEffect(() => {
+      const element = rootRef.current;
+      if (!element || typeof ResizeObserver === 'undefined') {
+        return undefined;
+      }
+      const resizeObserver = new ResizeObserver((entries) => {
+        const entry = entries[0];
+        const width = entry?.contentRect?.width;
+        if (typeof width === 'number') {
+          setContainerWidthPx(width);
+        }
+      });
+      resizeObserver.observe(element);
+      setContainerWidthPx(element.getBoundingClientRect().width);
+      return () => {
+        resizeObserver.disconnect();
+      };
+    }, []);
+
+    const resolvedTitleLayout = resolveEffectiveStepperTitleLayout(titleLayout, containerWidthPx);
+
+    return (
+      <StepperRoot
+        ref={setMergedRef}
+        $appearance={appearance}
+        $fullWidth={fullWidth}
+        className={className}
+        aria-label="Шаги процесса"
+        data-title-layout={resolvedTitleLayout}
+      >
+        {onBack ? (
+          <StepperBackButton
+            type="button"
+            $appearance={appearance}
+            aria-label={backLabel}
+            onClick={onBack}
+          >
+            <Icon name="IconPlainerArrowLeft" size={IconSize.SM} color="currentColor" />
+          </StepperBackButton>
+        ) : null}
+        <StepperLinearStepsRow>
+          {steps.map((step, index) => {
+            const visual = getLinearStepCircleVisual(index, active);
+            const hint = step.stepLabel ?? `Шаг ${index + 1}`;
+            const isMuted = index > active;
+            const showConnector = index < steps.length - 1;
+            const connectorDone = isLinearConnectorCompleted(index, active);
+            const accessibleTitle = getStepperStepAccessibleTitle(step.title);
+
+            return (
+              <React.Fragment key={index}>
+                <StepperLinearStepCell $titleLayout={resolvedTitleLayout} title={accessibleTitle}>
+                  <StepperLinearCircle $visual={visual} $appearance={appearance}>
+                    {index + 1}
+                  </StepperLinearCircle>
+                  <StepperLinearTextStack $titleLayout={resolvedTitleLayout}>
+                    <StepperLinearStepHint $appearance={appearance}>{hint}</StepperLinearStepHint>
+                    <StepperLinearStepTitle
+                      $appearance={appearance}
+                      $muted={isMuted}
+                      $titleLayout={resolvedTitleLayout}
+                    >
+                      {step.title}
+                    </StepperLinearStepTitle>
+                  </StepperLinearTextStack>
+                </StepperLinearStepCell>
+                {showConnector ? (
+                  <StepperLinearConnector $completed={connectorDone} $appearance={appearance} />
+                ) : null}
+              </React.Fragment>
+            );
+          })}
+        </StepperLinearStepsRow>
+      </StepperRoot>
+    );
+  },
+);
 
 StepperLinearView.displayName = 'StepperLinearView';
