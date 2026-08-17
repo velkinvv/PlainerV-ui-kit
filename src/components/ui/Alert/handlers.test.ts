@@ -1,9 +1,12 @@
 import {
   getAlertDefaultIconName,
+  resolveAlertActionPlacement,
   resolveAlertCloseHitAreaPx,
   resolveAlertIconNode,
   resolveAlertPaletteKey,
   resolveAlertSurfaceTokens,
+  shouldRenderAlertBottomAction,
+  shouldRenderAlertEndAction,
   shouldUseAlertDefaultIconName,
 } from './handlers';
 import type { DefaultTheme } from 'styled-components';
@@ -78,5 +81,36 @@ describe('Alert handlers', () => {
     expect(resolveAlertCloseHitAreaPx(Size.SM)).toBe(28);
     expect(resolveAlertCloseHitAreaPx(Size.MD)).toBe(32);
     expect(resolveAlertCloseHitAreaPx(Size.XL)).toBe(40);
+  });
+});
+
+describe('resolveAlertActionPlacement', () => {
+  it('default и неизвестное → end', () => {
+    expect(resolveAlertActionPlacement()).toBe('end');
+    expect(resolveAlertActionPlacement(undefined)).toBe('end');
+    expect(resolveAlertActionPlacement('end')).toBe('end');
+  });
+
+  it('bottom только при явном значении', () => {
+    expect(resolveAlertActionPlacement('bottom')).toBe('bottom');
+  });
+});
+
+describe('shouldRenderAlertEndAction / shouldRenderAlertBottomAction', () => {
+  const actionNode = 'Отменить';
+
+  it('без action слоты пустые', () => {
+    expect(shouldRenderAlertEndAction(undefined, 'end')).toBe(false);
+    expect(shouldRenderAlertBottomAction(undefined, 'bottom')).toBe(false);
+  });
+
+  it('end кладёт action в правый слот', () => {
+    expect(shouldRenderAlertEndAction(actionNode, 'end')).toBe(true);
+    expect(shouldRenderAlertBottomAction(actionNode, 'end')).toBe(false);
+  });
+
+  it('bottom кладёт action под текст', () => {
+    expect(shouldRenderAlertEndAction(actionNode, 'bottom')).toBe(false);
+    expect(shouldRenderAlertBottomAction(actionNode, 'bottom')).toBe(true);
   });
 });

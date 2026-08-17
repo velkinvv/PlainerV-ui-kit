@@ -65,21 +65,53 @@ export const AlertBody = styled.div<{ $fontSize: string }>`
   color: inherit;
 `;
 
+/** Колонка заголовка, текста и нижнего action. */
+export const AlertMainColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1 1 auto;
+  min-width: 0;
+`;
+
+type AlertTrailingSlotStyleProps = {
+  $alignSelf: 'center' | 'flex-start';
+};
+
+/**
+ * Правый кластер: end-action и/или крестик.
+ * @property $alignSelf - `center` при end; `flex-start` при bottom (крестик сверху)
+ */
+export const AlertTrailingSlot = styled.div.withConfig({
+  shouldForwardProp: createStyledShouldForwardProp(),
+})<AlertTrailingSlotStyleProps>`
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+  margin-inline-start: auto;
+  align-self: ${({ $alignSelf }) => $alignSelf};
+`;
+
+/**
+ * Нижний слот action: под колонкой текста, вправо.
+ */
+export const AlertActionBottomSlot = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+`;
+
 export const AlertTitleRoot = styled.div<{ $titleColor: string; $fontSize: string }>`
   margin: 0;
   font-size: ${({ $fontSize }) => $fontSize};
   font-weight: 600;
   line-height: 1.35;
   color: ${({ $titleColor }) => $titleColor};
-`;
-
-export const AlertActionSlot = styled.div`
-  display: inline-flex;
-  flex: 0 0 auto;
-  align-items: center;
-  gap: 4px;
-  margin-left: auto;
-  align-self: center;
 `;
 
 /**

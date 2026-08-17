@@ -9,6 +9,25 @@
 
 ---
 
+## [0.3.0] - 2026-08-17
+
+### Added
+
+- Подготовка релиза **0.3.0** (ветка `v_0.3.0`).
+- **Alert:** проп **`actionPlacement`** (`end` | `bottom`); `bottom` — кнопки под колонкой текста, выравнивание вправо.
+- **FloatButton:** плавающая кнопка (`shape` circle/square, `variant`/`color` из темы), **FloatButton.Group** (веер click/hover, `items` + `triggerItem`), **FloatButton.BackTop** (порог скролла, опциональное кольцо прогресса, якорь viewport или `getContainer`).
+- **Layout:** каркас страницы (**Layout.Header** / **Sidebar** / **Content** / **Footer**), collapse и брейкпоинт сайдбара, overlay, sticky, `scrollMode` page|content.
+
+### Changed
+
+- **Alert:** `action` больше не скрывает крестик `onClose`; оба слота можно показать вместе.
+
+### Added (документация)
+
+- Документация **v0.3.0** на сайте; обновлены README, CHANGELOG, индекс версий.
+
+---
+
 ## [0.2.9] - 2026-08-16
 
 ### Added

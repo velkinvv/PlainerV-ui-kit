@@ -436,6 +436,27 @@ export type {
   AlertIconMapping,
 } from '@/types/ui';
 
+export { FloatButton, FloatButtonGroup, FloatButtonBackTop } from './FloatButton';
+export type {
+  FloatButtonProps,
+  FloatButtonGroupProps,
+  FloatButtonBackTopProps,
+  FloatButtonItem,
+  FloatButtonShape,
+  FloatButtonPlacement,
+} from '@/types/ui';
+
+export { Layout } from './Layout';
+export type {
+  LayoutProps,
+  LayoutHeaderProps,
+  LayoutFooterProps,
+  LayoutContentProps,
+  LayoutSidebarProps,
+  LayoutScrollMode,
+  LayoutSidebarPlacement,
+} from '@/types/ui';
+
 export { Snackbar, SnackbarProvider } from './Snackbar';
 export type { SnackbarProps } from './Snackbar';
 export type { SnackbarItem, SnackbarPlacement, ShowSnackbarOptions } from '@/types/ui';

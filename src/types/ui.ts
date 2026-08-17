@@ -1425,6 +1425,9 @@ export type AlertRole = 'alert' | 'status';
  */
 export type AlertIconMapping = Partial<Record<AlertSeverity, React.ReactNode>>;
 
+/** Расположение слота `action` у Alert. */
+export type AlertActionPlacement = 'end' | 'bottom';
+
 /**
  * Пропсы Alert — inline-уведомление в потоке layout.
  * @property severity - Смысл и дефолтная иконка (default `success`)
@@ -1434,8 +1437,9 @@ export type AlertIconMapping = Partial<Record<AlertSeverity, React.ReactNode>>;
  * @property children - Текст / контент
  * @property icon - Кастомная иконка; `false` — скрыть
  * @property iconMapping - Override иконок по severity
- * @property action - Слот справа (кнопка и т.п.)
- * @property onClose - Показать крестик и вызвать при клике
+ * @property action - Слот действия (кнопки и т.п.)
+ * @property actionPlacement - `end` (справа, default) | `bottom` (под текстом, вправо)
+ * @property onClose - Крестик справа; можно вместе с `action`
  * @property closeAriaLabel - Подпись кнопки закрытия
  * @property role - `alert` (default) | `status`
  * @property size - Размер типографики / иконок
@@ -1450,6 +1454,7 @@ export interface AlertProps extends BaseComponentProps {
   icon?: React.ReactNode | false;
   iconMapping?: AlertIconMapping;
   action?: React.ReactNode;
+  actionPlacement?: AlertActionPlacement;
   onClose?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   closeAriaLabel?: string;
   role?: AlertRole;
@@ -1463,6 +1468,204 @@ export interface AlertProps extends BaseComponentProps {
  */
 export interface AlertTitleProps extends BaseComponentProps {
   children?: React.ReactNode;
+}
+
+/** Форма плавающей кнопки. */
+export type FloatButtonShape = 'circle' | 'square';
+
+/** Угол якоря FloatButton (логические стороны, RTL-корректно). */
+export type FloatButtonPlacement = 'bottom-end' | 'bottom-start' | 'top-end' | 'top-start';
+
+/** Направление веера группы. */
+export type FloatButtonExpandPlacement = 'top' | 'bottom' | 'start' | 'end';
+
+/** Как открывается веер группы. */
+export type FloatButtonGroupTrigger = 'click' | 'hover';
+
+/**
+ * Пункт веера / описание кнопки в `items`.
+ * @property id - Стабильный ключ
+ * @property icon - Иконка
+ * @property label - Подпись на кнопке
+ * @property ariaLabel - Accessible name, если нет label
+ * @property tooltip - Подсказка
+ * @property badge - Badge: узел, число или `true` (точка)
+ * @property href - Рендер ссылкой
+ * @property disabled - Отключить
+ * @property onClick - Клик
+ */
+export type FloatButtonItem = {
+  id: string;
+  icon: React.ReactNode;
+  label?: React.ReactNode;
+  ariaLabel?: string;
+  tooltip?: React.ReactNode;
+  badge?: React.ReactNode | number | true;
+  href?: string;
+  disabled?: boolean;
+  onClick?: (event: React.MouseEvent<HTMLElement>) => void;
+};
+
+/** Триггер группы: те же поля, что у пункта, `id` необязателен. */
+export type FloatButtonTriggerItem = Omit<FloatButtonItem, 'id'> & { id?: string };
+
+/**
+ * Пропсы плавающей кнопки.
+ * @property icon - Иконка
+ * @property label - Подпись рядом с иконкой
+ * @property shape - circle (default) | square
+ * @property variant - Вариант кнопки из темы
+ * @property color - Override палитры
+ * @property size - Размер
+ * @property tooltip - Подсказка
+ * @property badge - Badge: узел, число или `true` (точка)
+ * @property href - Рендер ссылкой
+ * @property target - target ссылки
+ * @property backTop - Режим прокрутки наверх
+ * @property placement - Угол viewport/контейнера
+ * @property getContainer - Якорь контейнера
+ * @property insetPx - Отступ от края
+ * @property zIndex - Слой
+ * @property inGroup - Служебный: пункт внутри Group (не позиционировать fixed)
+ * @property showProgress - Кольцо прогресса (вместе с backTop)
+ * @property visibilityHeight - Порог показа BackTop
+ * @property duration - Длительность скролла наверх
+ * @property getScrollContainer - Узел/окно прокрутки
+ */
+export interface FloatButtonProps extends BaseComponentProps {
+  icon?: React.ReactNode;
+  label?: React.ReactNode;
+  shape?: FloatButtonShape;
+  variant?: ButtonVariant;
+  color?: ControlColor | string;
+  size?: Size;
+  tooltip?: React.ReactNode;
+  badge?: React.ReactNode | number | true;
+  href?: string;
+  target?: string;
+  disabled?: boolean;
+  onClick?: (event: React.MouseEvent<HTMLElement>) => void;
+  backTop?: boolean;
+  placement?: FloatButtonPlacement;
+  getContainer?: () => HTMLElement | null;
+  insetPx?: number;
+  zIndex?: number;
+  inGroup?: boolean;
+  showProgress?: boolean;
+  visibilityHeight?: number;
+  duration?: number;
+  getScrollContainer?: () => HTMLElement | Window;
+  'aria-label'?: string;
+}
+
+/**
+ * Пропсы группы плавающих кнопок.
+ * @property children - Пункты: последний — триггер
+ * @property items - Действия веера (если нет children)
+ * @property triggerItem - Главная кнопка при `items`
+ * @property trigger - click | hover
+ * @property expandPlacement - Направление веера
+ */
+export interface FloatButtonGroupProps extends BaseComponentProps {
+  children?: React.ReactNode;
+  items?: FloatButtonItem[];
+  triggerItem?: FloatButtonTriggerItem;
+  trigger?: FloatButtonGroupTrigger;
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  expandPlacement?: FloatButtonExpandPlacement;
+  shape?: FloatButtonShape;
+  variant?: ButtonVariant;
+  color?: ControlColor | string;
+  size?: Size;
+  placement?: FloatButtonPlacement;
+  getContainer?: () => HTMLElement | null;
+  insetPx?: number;
+  zIndex?: number;
+  'aria-label'?: string;
+}
+
+/**
+ * Пропсы кнопки «наверх».
+ */
+export interface FloatButtonBackTopProps extends Omit<FloatButtonProps, 'backTop'> {
+  visibilityHeight?: number;
+  duration?: number;
+  showProgress?: boolean;
+  getScrollContainer?: () => HTMLElement | Window;
+}
+
+/** Режим скролла каркаса: страница или область Content. */
+export type LayoutScrollMode = 'page' | 'content';
+
+/** Логическая сторона боковой колонки. */
+export type LayoutSidebarPlacement = 'start' | 'end';
+
+/** Ключ брейкпоинта сайдбара (как у Grid). */
+export type LayoutSidebarBreakpoint = 'sm' | 'md' | 'lg' | 'xl';
+
+/** Кто инициировал свертывание сайдбара. */
+export type LayoutSidebarCollapseReason = 'trigger' | 'breakpoint';
+
+/**
+ * Пропсы корня каркаса страницы.
+ * @property hasSidebar - Принудительно ряд, если Sidebar не прямой child
+ * @property scrollMode - page (окно) или content (скролл у Content)
+ * @property minHeight - CSS min-height корня
+ */
+export interface LayoutProps extends BaseComponentProps {
+  hasSidebar?: boolean;
+  scrollMode?: LayoutScrollMode;
+  minHeight?: string | number;
+}
+
+/**
+ * Пропсы шапки каркаса.
+ * @property sticky - position sticky у верхнего края
+ */
+export interface LayoutHeaderProps extends BaseComponentProps {
+  sticky?: boolean;
+}
+
+/**
+ * Пропсы подвала каркаса.
+ */
+export interface LayoutFooterProps extends BaseComponentProps {}
+
+/**
+ * Пропсы основной области каркаса.
+ */
+export interface LayoutContentProps extends BaseComponentProps {}
+
+/**
+ * Пропсы боковой колонки каркаса.
+ * @property width - Развёрнутая ширина (px или CSS)
+ * @property collapsedWidth - Ширина в collapsed; 0 — триггер у края
+ * @property collapsed - Контролируемое состояние
+ * @property defaultCollapsed - Начальное состояние
+ * @property onCollapsedChange - (collapsed, reason) => void
+ * @property collapsible - Показать триггер
+ * @property trigger - Кастомный триггер; null — скрыть
+ * @property placement - start | end
+ * @property overlay - Развёрнутый вне потока
+ * @property sticky - CSS sticky
+ * @property breakpoint - Свернуть ниже порога окна
+ * @property onBreakpointChange - (isBelow) => void
+ */
+export interface LayoutSidebarProps extends BaseComponentProps {
+  width?: number | string;
+  collapsedWidth?: number | string;
+  collapsed?: boolean;
+  defaultCollapsed?: boolean;
+  onCollapsedChange?: (collapsed: boolean, reason: LayoutSidebarCollapseReason) => void;
+  collapsible?: boolean;
+  trigger?: React.ReactNode | null;
+  placement?: LayoutSidebarPlacement;
+  overlay?: boolean;
+  sticky?: boolean;
+  breakpoint?: LayoutSidebarBreakpoint;
+  onBreakpointChange?: (isBelow: boolean) => void;
 }
 
 /** Режим выбора строк дерева */
