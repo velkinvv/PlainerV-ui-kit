@@ -6,20 +6,25 @@ import { IconSize, Size } from '../../../types/sizes';
 import { Icon } from '../Icon/Icon';
 import {
   getAlertDefaultIconName,
+  resolveAlertActionPlacement,
   resolveAlertCloseHitAreaPx,
   resolveAlertIconNode,
   resolveAlertIconSizePx,
   resolveAlertPaletteKey,
   resolveAlertSurfaceTokens,
+  shouldRenderAlertBottomAction,
+  shouldRenderAlertEndAction,
   shouldUseAlertDefaultIconName,
 } from './handlers';
 import {
-  AlertActionSlot,
+  AlertActionBottomSlot,
   AlertBody,
   AlertCloseButton,
   AlertIconSlot,
+  AlertMainColumn,
   AlertRoot,
   AlertTitleRoot,
+  AlertTrailingSlot,
   getAlertGeometry,
 } from './Alert.style';
 import { AlertTitle } from './AlertTitle';
@@ -58,7 +63,8 @@ const resolveCloseIconSize = (size: Size): IconSize => {
  * @param props.icon - Кастом / `false` чтобы скрыть
  * @param props.iconMapping - Override иконок по severity
  * @param props.action - Слот действия
- * @param props.onClose - Крестик закрытия
+ * @param props.actionPlacement - `end` справа (default) | `bottom` под текстом
+ * @param props.onClose - Крестик закрытия (всегда справа)
  * @param props.role - alert | status
  */
 const AlertBase: React.FC<AlertProps> = ({
@@ -70,6 +76,7 @@ const AlertBase: React.FC<AlertProps> = ({
   icon,
   iconMapping,
   action,
+  actionPlacement,
   onClose,
   closeAriaLabel = 'Закрыть',
   role = 'alert',
@@ -93,10 +100,12 @@ const AlertBase: React.FC<AlertProps> = ({
   const iconAccent = variant === 'filled' ? surface.text : surface.accent;
   const titleColor = surface.title;
 
-  const resolvedAction =
-    action != null ? (
-      action
-    ) : onClose ? (
+  const resolvedActionPlacement = resolveAlertActionPlacement(actionPlacement);
+  const showEndAction = shouldRenderAlertEndAction(action, resolvedActionPlacement);
+  const showBottomAction = shouldRenderAlertBottomAction(action, resolvedActionPlacement);
+
+  const closeButton =
+    onClose != null ? (
       <AlertCloseButton
         type="button"
         aria-label={closeAriaLabel}
@@ -108,12 +117,15 @@ const AlertBase: React.FC<AlertProps> = ({
       </AlertCloseButton>
     ) : null;
 
+  const showTrailingSlot = showEndAction || closeButton != null;
+
   return (
     <AlertRoot
       className={clsx('ui-alert', className)}
       role={role}
       data-severity={severity}
       data-variant={variant}
+      data-action-placement={resolvedActionPlacement}
       $fullWidth={fullWidth}
       $background={surface.background}
       $border={surface.border}
@@ -135,20 +147,28 @@ const AlertBase: React.FC<AlertProps> = ({
         </AlertIconSlot>
       ) : null}
 
-      <AlertTitleProvider
-        value={{ titleColor, fontSize: geometry.titleFontSize }}
-      >
-        <AlertBody $fontSize={geometry.fontSize}>
-          {title != null && title !== false ? (
-            <AlertTitleRoot $titleColor={titleColor} $fontSize={geometry.titleFontSize}>
-              {title}
-            </AlertTitleRoot>
+      <AlertTitleProvider value={{ titleColor, fontSize: geometry.titleFontSize }}>
+        <AlertMainColumn>
+          <AlertBody $fontSize={geometry.fontSize}>
+            {title != null && title !== false ? (
+              <AlertTitleRoot $titleColor={titleColor} $fontSize={geometry.titleFontSize}>
+                {title}
+              </AlertTitleRoot>
+            ) : null}
+            {children != null && children !== false ? children : null}
+          </AlertBody>
+          {showBottomAction ? (
+            <AlertActionBottomSlot data-alert-action="bottom">{action}</AlertActionBottomSlot>
           ) : null}
-          {children != null && children !== false ? children : null}
-        </AlertBody>
+        </AlertMainColumn>
       </AlertTitleProvider>
 
-      {resolvedAction != null ? <AlertActionSlot>{resolvedAction}</AlertActionSlot> : null}
+      {showTrailingSlot ? (
+        <AlertTrailingSlot $alignSelf={showBottomAction ? 'flex-start' : 'center'}>
+          {showEndAction ? action : null}
+          {closeButton}
+        </AlertTrailingSlot>
+      ) : null}
     </AlertRoot>
   );
 };

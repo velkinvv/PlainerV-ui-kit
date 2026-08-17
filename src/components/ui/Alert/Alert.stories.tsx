@@ -34,6 +34,10 @@ const meta: Meta<typeof Alert> = {
     size: { control: 'select', options: Object.values(Size) },
     fullWidth: { control: 'boolean' },
     role: { control: 'radio', options: ['alert', 'status'] },
+    actionPlacement: {
+      control: 'radio',
+      options: ['end', 'bottom'],
+    },
   },
 };
 
@@ -146,6 +150,67 @@ export const WithAlertTitle: Story = {
     <Alert severity="error" fullWidth onClose={() => undefined}>
       <Alert.Title>Ошибка загрузки</Alert.Title>
       Не удалось получить данные. Попробуйте позже.
+    </Alert>
+  ),
+};
+
+export const ActionEndWithClose: Story = {
+  name: 'actionPlacement end + close',
+  render: () => (
+    <Alert
+      severity="success"
+      fullWidth
+      onClose={() => undefined}
+      action={
+        <Button variant={ButtonVariant.GHOST} size={Size.SM}>
+          Отменить
+        </Button>
+      }
+    >
+      Кнопка справа и крестик в одном ряду.
+    </Alert>
+  ),
+};
+
+export const ActionBottomWithClose: Story = {
+  name: 'actionPlacement bottom + close',
+  render: () => (
+    <Alert
+      severity="warning"
+      fullWidth
+      actionPlacement="bottom"
+      onClose={() => undefined}
+      title="Подтвердите действие"
+      action={
+        <>
+          <Button variant={ButtonVariant.GHOST} size={Size.SM}>
+            Отмена
+          </Button>
+          <Button variant={ButtonVariant.PRIMARY} size={Size.SM}>
+            Подтвердить
+          </Button>
+        </>
+      }
+    >
+      Кнопки под текстом вправо, крестик справа сверху.
+    </Alert>
+  ),
+};
+
+export const ActionBottomWithoutClose: Story = {
+  name: 'actionPlacement bottom без close',
+  render: () => (
+    <Alert
+      severity="info"
+      fullWidth
+      actionPlacement="bottom"
+      action={
+        <Button variant={ButtonVariant.GHOST} size={Size.SM}>
+          Подробнее
+        </Button>
+      }
+    >
+      Только нижний action, без крестика.
     </Alert>
   ),
 };

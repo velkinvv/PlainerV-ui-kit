@@ -60,7 +60,7 @@ describe('Alert', () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('action вместо дефолтного close', () => {
+  it('action и onClose рендерятся вместе', () => {
     wrap(
       <Alert
         severity="success"
@@ -75,7 +75,43 @@ describe('Alert', () => {
       </Alert>,
     );
     expect(screen.getByText('Отменить')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Закрыть' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Закрыть' })).toBeInTheDocument();
+  });
+
+  it('default data-action-placement=end', () => {
+    wrap(<Alert severity="info">Текст</Alert>);
+    expect(screen.getByRole('alert')).toHaveAttribute('data-action-placement', 'end');
+  });
+
+  it('actionPlacement=bottom ставит атрибут и не прячет close', () => {
+    wrap(
+      <Alert
+        severity="warning"
+        actionPlacement="bottom"
+        onClose={() => undefined}
+        action={
+          <Button variant={ButtonVariant.GHOST} size={Size.SM}>
+            Подтвердить
+          </Button>
+        }
+      >
+        Длинный текст
+      </Alert>,
+    );
+    const alertRoot = screen.getByRole('alert');
+    expect(alertRoot).toHaveAttribute('data-action-placement', 'bottom');
+    expect(screen.getByText('Подтвердить')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Закрыть' })).toBeInTheDocument();
+  });
+
+  it('bottom без action не рисует нижний слот, close остаётся', () => {
+    wrap(
+      <Alert severity="info" actionPlacement="bottom" onClose={() => undefined}>
+        Только close
+      </Alert>,
+    );
+    expect(screen.getByRole('button', { name: 'Закрыть' })).toBeInTheDocument();
+    expect(screen.getByRole('alert').querySelector('[data-alert-action="bottom"]')).toBeNull();
   });
 
   it('Alert.Title в children', () => {

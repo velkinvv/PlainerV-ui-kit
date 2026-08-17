@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import type { DefaultTheme } from 'styled-components';
 import type { IconName } from '../../../icons';
 import type {
+  AlertActionPlacement,
   AlertIconMapping,
   AlertSeverity,
   AlertVariant,
@@ -182,3 +183,32 @@ export const resolveAlertCloseHitAreaPx = (size: Size): number => {
       return 32;
   }
 };
+
+/**
+ * Резолв расположения action: default `end`.
+ * @param actionPlacement - Проп Alert
+ */
+export const resolveAlertActionPlacement = (
+  actionPlacement?: AlertActionPlacement,
+): AlertActionPlacement => (actionPlacement === 'bottom' ? 'bottom' : 'end');
+
+/**
+ * Нужен ли правый слот для `action`.
+ * @param action - Слот действия
+ * @param actionPlacement - Уже резолвнутый placement
+ */
+export const shouldRenderAlertEndAction = (
+  action: ReactNode | undefined,
+  actionPlacement: AlertActionPlacement,
+): boolean => action != null && actionPlacement === 'end';
+
+/**
+ * Нужен ли нижний слот для `action`.
+ * @param action - Слот действия
+ * @param actionPlacement - Уже резолвнутый placement
+ */
+export const shouldRenderAlertBottomAction = (
+  action: ReactNode | undefined,
+  actionPlacement: AlertActionPlacement,
+): boolean => action != null && actionPlacement === 'bottom';
+

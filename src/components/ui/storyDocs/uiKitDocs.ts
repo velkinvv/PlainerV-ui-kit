@@ -1427,6 +1427,41 @@ export const DOC_GRID_ITEM = `
 Ячейка: позиция (**column**, **row**), span (**columnSpan**, **rowSpan**), **justifySelf**, **alignSelf**, размеры.
 `.trim();
 
+/** @see LayoutProps, LayoutSidebarProps */
+export const DOC_LAYOUT = `
+### Назначение
+**Layout** — каркас страницы: шапка, боковая колонка, контент, подвал. Составной API: **Layout.Header**, **Layout.Sidebar**, **Layout.Content**, **Layout.Footer**. Вложенные Layout собирают схемы «шапка + тело».
+
+Не путать с **Sidemenu** (навигация внутри колонки) и **Grid** (CSS Grid). В **Layout.Sidebar** кладут Sidemenu или любой узел. На странице — один **Content** (\`<main>\`).
+
+### Layout
+| Проп | Зачем |
+|------|--------|
+| \`hasSidebar\` | Принудительно ряд, если Sidebar не прямой child |
+| \`scrollMode\` | \`page\` (скролл окна/родителя) \\| \`content\` (скролл у Content) |
+| \`minHeight\` | min-height корня (default \`100%\`) |
+
+### Layout.Header / Footer / Content
+| Слот | Зачем |
+|------|--------|
+| **Header** | \`<header>\`; \`sticky\` — липкий верх, \`zIndex.header\` |
+| **Footer** | \`<footer>\` |
+| **Content** | \`<main>\`, \`flex: 1\` |
+
+### Layout.Sidebar
+| Проп | Зачем |
+|------|--------|
+| \`width\` / \`collapsedWidth\` | Ширины; \`collapsedWidth={0}\` — триггер у края |
+| \`collapsed\` / \`defaultCollapsed\` / \`onCollapsedChange\` | Контроль; reason \`trigger\` \\| \`breakpoint\` |
+| \`collapsible\` / \`trigger\` | Триггер снизу; \`null\` скрывает |
+| \`placement\` | \`start\` \\| \`end\` |
+| \`overlay\` | Развёрнутый поверх контента, контент не сжимается |
+| \`sticky\` | CSS sticky |
+| \`breakpoint\` | \`sm\` \\| \`md\` \\| \`lg\` \\| \`xl\` — свернуть ниже порога окна |
+
+Storybook: **UI Kit → Layout → Layout**.
+`.trim();
+
 export const DOC_TYPOGRAPHY = `
 ### Назначение
 Типографика по дизайн-системе: **variant** (h1–h6, body, caption, …), цвет текста, выравнивание, семантический тег через полиморфный рендер.
@@ -1607,10 +1642,56 @@ export const DOC_ALERT = `
 | \`title\` / **Alert.Title** | Заголовок |
 | \`icon\` | Кастом или \`false\` (скрыть) |
 | \`iconMapping\` | Частичный override иконок по severity |
-| \`action\` / \`onClose\` | Слот действия или крестик |
+| \`action\` | Слот кнопок; вместе с \`onClose\` |
+| \`actionPlacement\` | \`end\` (справа, default) \\| \`bottom\` (под текстом, вправо) |
+| \`onClose\` | Крестик всегда справа сверху |
 | \`role\` | \`alert\` (default) или \`status\` |
 
 Storybook: **UI Kit → Feedback → Alert**.
+`.trim();
+
+/** @see FloatButtonProps, FloatButtonGroupProps, FloatButtonBackTopProps */
+export const DOC_FLOAT_BUTTON = `
+### Назначение
+**FloatButton** — плавающая кнопка глобального действия в углу viewport или внутри контейнера. Составной API: **FloatButton.Group** (веер действий) и **FloatButton.BackTop** (прокрутка наверх).
+
+Не путать с **FloatingMenu** (панель инструментов у края экрана / draggable) и **ActionBar** (тулбар в потоке layout).
+
+### Якорь
+По умолчанию портал в \`document.body\`, \`position: fixed\`, угол \`bottom-end\`, отступ 24px, \`zIndex\` 1100. \`getContainer()\` переключает якорь на контейнер (\`position: absolute\`).
+
+### FloatButton
+| Проп | Зачем |
+|------|--------|
+| \`icon\` / \`label\` | Иконка и опциональная подпись |
+| \`shape\` | \`circle\` (default) \\| \`square\` |
+| \`variant\` / \`color\` | Как у кнопок: токены темы, override палитры |
+| \`tooltip\` / \`badge\` | Подсказка; badge — узел, число или \`true\` (точка) |
+| \`href\` | Рендер ссылкой |
+| \`placement\` | \`bottom-end\` \\| \`bottom-start\` \\| \`top-end\` \\| \`top-start\` |
+| \`getContainer\` | Якорь-контейнер вместо viewport |
+| \`insetPx\` / \`zIndex\` | Отступ от края и слой |
+| \`backTop\` | Режим «наверх» на корне |
+| \`aria-label\` | Обязателен, если нет \`label\` |
+
+### FloatButton.Group
+| Проп | Зачем |
+|------|--------|
+| \`children\` | Пункты; **последний** — триггер |
+| \`items\` + \`triggerItem\` | Описание веера, если нет children |
+| \`trigger\` | \`click\` (default) \\| \`hover\` |
+| \`expandPlacement\` | Направление веера: \`top\` \\| \`bottom\` \\| \`start\` \\| \`end\` |
+| \`open\` / \`defaultOpen\` / \`onOpenChange\` | Контроль открытия |
+
+### FloatButton.BackTop
+| Проп | Зачем |
+|------|--------|
+| \`visibilityHeight\` | Порог показа (default 400) |
+| \`duration\` | Длительность скролла (default 450; при reduced-motion — 0) |
+| \`showProgress\` | Кольцо прогресса прокрутки |
+| \`getScrollContainer\` | Цель прокрутки (окно или элемент) |
+
+Storybook: **UI Kit → Buttons → FloatButton**.
 `.trim();
 
 export const DOC_THEME_SHOWCASE = `
