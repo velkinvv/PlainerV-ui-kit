@@ -17,7 +17,7 @@ import {
 export const FloatButtonStoriesLocalAnchor: React.FC<{
   children: (getContainer: () => HTMLElement | null) => React.ReactNode;
 }> = ({ children }) => {
-  const boxRef = useRef<HTMLSectionElement | null>(null);
+  const boxRef = useRef<HTMLElement | null>(null);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export const FloatButtonStoriesLocalAnchor: React.FC<{
  * Демо якоря внутри прокручиваемого контейнера.
  */
 export const FloatButtonInContainerDemo: React.FC = () => {
-  const containerRef = useRef<HTMLSectionElement | null>(null);
+  const containerRef = useRef<HTMLElement | null>(null);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
@@ -64,7 +64,7 @@ export const FloatButtonInContainerDemo: React.FC = () => {
  * Демо BackTop с кольцом прогресса внутри прокручиваемого блока.
  */
 export const FloatButtonBackTopProgressDemo: React.FC = () => {
-  const containerRef = useRef<HTMLSectionElement | null>(null);
+  const containerRef = useRef<HTMLElement | null>(null);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
