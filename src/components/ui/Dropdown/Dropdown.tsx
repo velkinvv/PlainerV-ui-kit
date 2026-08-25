@@ -47,6 +47,7 @@ import {
   getDropdownItemSearchHaystackParts,
 } from '../../../handlers/dropdownSearchMatchHandlers';
 import {
+  getFloatingOverlayPlacementStyle,
   resolveFloatingOverlayPortalRoot,
   resolveFloatingOverlayZIndex,
 } from '../../../handlers/floatingOverlayHandlers';
@@ -249,14 +250,17 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       }
     }, [disabled, isOpen, handleOpenChange]);
 
-    // Инициализация при defaultOpen
-    useEffect(() => {
-      if (defaultOpen && isOpen && !disabled) {
-        const newPosition = calculatePosition();
-        setPosition(newPosition);
-        setShouldRender(true);
+    // Инициализация при defaultOpen покрывается layout-эффектом ниже
+
+    // Позиция до первой отрисовки панели — иначе fixed-меню стартует с (0, 0)
+    useLayoutEffect(() => {
+      if (!isOpen || disabled) {
+        setShouldRender(false);
+        return;
       }
-    }, [defaultOpen, isOpen, disabled, calculatePosition]);
+      setPosition(calculatePosition());
+      setShouldRender(true);
+    }, [isOpen, disabled, calculatePosition]);
 
     // Закрыть dropdown при клике вне его
     useEffect(() => {
@@ -274,19 +278,12 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
 
       if (isOpen) {
         document.addEventListener('mousedown', handleClickOutside);
-        // Сначала вычисляем позицию
-        const newPosition = calculatePosition();
-        setPosition(newPosition);
-        // Затем разрешаем рендер
-        setShouldRender(true);
-      } else {
-        setShouldRender(false);
       }
 
       return () => {
         document.removeEventListener('mousedown', handleClickOutside);
       };
-    }, [isOpen, calculatePosition, handleOpenChange, onClickOutside]);
+    }, [isOpen, handleOpenChange, onClickOutside]);
 
     useLayoutEffect(() => {
       if (!isOpen || !shouldRender) return;
@@ -882,7 +879,14 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
         $inline={inline}
         $menuDensity={menuDensity}
         $overlayZIndex={floatingOverlayZIndex}
-        style={dropContainerStyle}
+        style={{
+          ...dropContainerStyle,
+          ...getFloatingOverlayPlacementStyle({
+            position,
+            isPositionReady: shouldRender && isOpen,
+            zIndex: floatingOverlayZIndex,
+          }),
+        }}
         onScrollCapture={onMenuScroll || onMenuLoadMore ? handleMenuScrollCapture : undefined}
         {...dropdownContentFocusProps}
       >

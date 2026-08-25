@@ -44,3 +44,46 @@ export function resolveFloatingOverlayPortalRoot(
 
   return document.body;
 }
+
+/**
+ * Можно ли показать портальную панель: открыта и координаты уже измерены.
+ * @param isOpen - панель открыта
+ * @param hasMeasuredPosition - `updatePosition` уже записал координаты якоря
+ */
+export function isFloatingOverlayPlacementReady(
+  isOpen: boolean,
+  hasMeasuredPosition: boolean,
+): boolean {
+  return isOpen && hasMeasuredPosition;
+}
+
+export type FloatingOverlayPlacementStyle = {
+  left: number;
+  top: number;
+  visibility: 'visible' | 'hidden';
+  pointerEvents: 'auto' | 'none';
+  zIndex?: number;
+};
+
+/**
+ * Стили портальной панели: скрыта, пока нет измерения, чтобы не стартовать с (0, 0) и не анимировать left/top.
+ * @param options.position - координаты относительно viewport
+ * @param options.isPositionReady - измерение уже выполнено
+ * @param options.zIndex - слой панели
+ */
+export function getFloatingOverlayPlacementStyle(options: {
+  position: { x: number; y: number };
+  isPositionReady: boolean;
+  zIndex?: number;
+}): FloatingOverlayPlacementStyle {
+  const { position, isPositionReady, zIndex } = options;
+
+  return {
+    left: position.x,
+    top: position.y,
+    visibility: isPositionReady ? 'visible' : 'hidden',
+    pointerEvents: isPositionReady ? 'auto' : 'none',
+    ...(zIndex === undefined ? {} : { zIndex }),
+  };
+}
+

@@ -40,6 +40,7 @@ export function useFloatingOverlayPosition({
   boundaryRef,
 }: UseFloatingOverlayPositionParameters) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [hasMeasuredPosition, setHasMeasuredPosition] = useState(false);
 
   const updatePosition = useCallback(() => {
     const anchorElement = anchorRef.current;
@@ -56,11 +57,18 @@ export function useFloatingOverlayPosition({
       preferredPlacement,
     });
 
-    setPosition(nextPosition);
+    setPosition((previousPosition) => {
+      if (previousPosition.x === nextPosition.x && previousPosition.y === nextPosition.y) {
+        return previousPosition;
+      }
+      return nextPosition;
+    });
+    setHasMeasuredPosition(true);
   }, [anchorRef, overlayRef, inline, boundaryRef, offset, positioningMode, preferredPlacement]);
 
   useLayoutEffect(() => {
     if (!isOpen) {
+      setHasMeasuredPosition(false);
       return;
     }
 
@@ -111,5 +119,5 @@ export function useFloatingOverlayPosition({
     return () => resizeObserver.disconnect();
   }, [isOpen, overlayRef, updatePosition]);
 
-  return { position, updatePosition };
+  return { position, isPositionReady: isOpen && hasMeasuredPosition, updatePosition };
 }

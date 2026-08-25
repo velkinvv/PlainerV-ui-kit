@@ -41,6 +41,7 @@ import { Hint, HintPosition, HintVariant } from '../../Hint/Hint';
 import {
   resolveFloatingOverlayPortalRoot,
   resolveFloatingOverlayZIndex,
+  getFloatingOverlayPlacementStyle,
 } from '../../../../handlers/floatingOverlayHandlers';
 import { useFloatingOverlayLayer } from '../../../../contexts/FloatingOverlayLayerContext';
 import { useFloatingOverlayPosition } from '../../../../hooks/useFloatingOverlayPosition';
@@ -260,12 +261,13 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
       undefined,
       floatingOverlayLayer.portalRoot,
     );
-    const { position: timePickerPopupPosition } = useFloatingOverlayPosition({
-      isOpen,
-      anchorRef: containerRef,
-      overlayRef: timePickerPopupRef,
-      positioningMode: 'autoFlip',
-    });
+    const { position: timePickerPopupPosition, isPositionReady: isTimePickerPopupPositionReady } =
+      useFloatingOverlayPosition({
+        isOpen,
+        anchorRef: containerRef,
+        overlayRef: timePickerPopupRef,
+        positioningMode: 'autoFlip',
+      });
 
     // Обработчик кликов вне компонента
     useEffect(() => {
@@ -1570,9 +1572,11 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
           ref={timePickerPopupRef}
           $portaled
           style={{
-            left: timePickerPopupPosition.x,
-            top: timePickerPopupPosition.y,
-            zIndex: floatingOverlayZIndex,
+            ...getFloatingOverlayPlacementStyle({
+              position: timePickerPopupPosition,
+              isPositionReady: isTimePickerPopupPositionReady,
+              zIndex: floatingOverlayZIndex,
+            }),
             ...(range
               ? {
                   minWidth: showSeconds ? '800px' : '600px',

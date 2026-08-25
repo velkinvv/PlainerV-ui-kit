@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTheme } from 'styled-components';
 
@@ -8,18 +8,17 @@ import { Size } from '@/types/sizes';
 import type { PopoverProps } from '@/types/ui';
 
 import {
-  calculateDropdownPosition,
-  findScrollableParents,
   handleClickOutsideEvent,
   isClickInsideDropdown,
-  removeScrollListeners,
 } from '../Dropdown/handlers';
 import { PopoverSurface } from './Popover.style';
 import {
   resolveFloatingOverlayPortalRoot,
   resolveFloatingOverlayZIndex,
+  getFloatingOverlayPlacementStyle,
 } from '../../../handlers/floatingOverlayHandlers';
 import { useFloatingOverlayLayer } from '../../../contexts/FloatingOverlayLayerContext';
+import { useFloatingOverlayPosition } from '../../../hooks/useFloatingOverlayPosition';
 
 /**
  * Всплывающая панель с произвольным содержимым у триггера.
@@ -97,74 +96,20 @@ export const Popover: React.FC<PopoverProps> = ({
     [isControlled, onOpenChange],
   );
 
-  const updatePosition = useCallback(() => {
-    const triggerElement = rootRef.current;
-    const menuElement = surfaceRef.current;
-    if (!triggerElement || !menuElement) {
-      return;
-    }
-    const boundary = inline ? (boundaryElement ?? triggerElement) : undefined;
-    const next = calculateDropdownPosition({
-      triggerElement,
-      menuElement,
-      boundaryElement: boundary,
-      offset,
-      mode: positioningMode,
+  const overlayBoundaryRef = useRef<HTMLElement | null>(null);
+  overlayBoundaryRef.current = boundaryElement ?? null;
+
+  const { position: overlayPosition, isPositionReady: isOverlayPositionReady } =
+    useFloatingOverlayPosition({
+      isOpen,
+      anchorRef: rootRef,
+      overlayRef: surfaceRef,
+      positioningMode,
       preferredPlacement,
+      offset,
+      inline,
+      boundaryRef: overlayBoundaryRef,
     });
-    menuElement.style.left = `${next.x}px`;
-    menuElement.style.top = `${next.y}px`;
-  }, [inline, boundaryElement, offset, positioningMode, preferredPlacement]);
-
-  useLayoutEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-    updatePosition();
-    const frameId = requestAnimationFrame(() => {
-      updatePosition();
-    });
-    return () => cancelAnimationFrame(frameId);
-  }, [isOpen, updatePosition, children]);
-
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-    const onScrollOrResize = () => {
-      updatePosition();
-    };
-    window.addEventListener('scroll', onScrollOrResize, true);
-    window.addEventListener('resize', onScrollOrResize);
-    document.addEventListener('scroll', onScrollOrResize, true);
-
-    const scrollableElements = findScrollableParents(rootRef.current);
-    scrollableElements.forEach((element) => {
-      if (element instanceof HTMLElement) {
-        element.addEventListener('scroll', onScrollOrResize, true);
-      }
-    });
-
-    return () => {
-      window.removeEventListener('scroll', onScrollOrResize, true);
-      window.removeEventListener('resize', onScrollOrResize);
-      document.removeEventListener('scroll', onScrollOrResize, true);
-      removeScrollListeners(scrollableElements, onScrollOrResize);
-    };
-  }, [isOpen, updatePosition]);
-
-  useEffect(() => {
-    if (!isOpen || !surfaceRef.current || typeof ResizeObserver === 'undefined') {
-      return;
-    }
-
-    const resizeObserver = new ResizeObserver(() => {
-      updatePosition();
-    });
-
-    resizeObserver.observe(surfaceRef.current);
-    return () => resizeObserver.disconnect();
-  }, [isOpen, updatePosition]);
 
   useEffect(() => {
     if (!isOpen || !closeOnEscape) {
@@ -241,6 +186,11 @@ export const Popover: React.FC<PopoverProps> = ({
       $contentWidth={contentWidth}
       $contentMaxHeight={contentMaxHeight}
       $overlayZIndex={floatingOverlayZIndex}
+      style={getFloatingOverlayPlacementStyle({
+        position: overlayPosition,
+        isPositionReady: isOverlayPositionReady,
+        zIndex: floatingOverlayZIndex,
+      })}
     >
       {children}
     </PopoverSurface>

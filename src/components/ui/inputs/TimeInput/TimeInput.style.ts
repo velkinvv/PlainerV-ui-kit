@@ -220,11 +220,18 @@ export const TimePickerPopup = styled.div.withConfig({
   border: 2px solid ${({ theme }) => theme.colors.borderSecondary};
   border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
   box-shadow: ${({ theme }) => overlayPanelBoxShadowFromTheme(theme)};
-  opacity: ${({ isOpen }) => (isOpen ? 1 : 0)};
-  visibility: ${({ isOpen }) => (isOpen ? 'visible' : 'hidden')};
-  transform: ${({ isOpen, $portaled }) =>
-    $portaled ? 'none' : isOpen ? 'translateY(0)' : 'translateY(-10px)'};
-  transition: ${TransitionHandler()};
+  ${({ $portaled, isOpen }) =>
+    $portaled
+      ? css`
+          transform: none;
+          transition: none;
+        `
+      : css`
+          opacity: ${isOpen ? 1 : 0};
+          visibility: ${isOpen ? 'visible' : 'hidden'};
+          transform: ${isOpen ? 'translateY(0)' : 'translateY(-10px)'};
+          transition: ${TransitionHandler()};
+        `}
   margin-top: ${({ $portaled }) => ($portaled ? '0' : '4px')};
   min-width: ${({ showSeconds }) => (showSeconds ? '300px' : '280px')};
 `;

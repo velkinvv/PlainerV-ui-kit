@@ -37,6 +37,7 @@ import { Hint, HintPosition, HintVariant } from '../../Hint/Hint';
 import {
   resolveFloatingOverlayPortalRoot,
   resolveFloatingOverlayZIndex,
+  getFloatingOverlayPlacementStyle,
 } from '../../../../handlers/floatingOverlayHandlers';
 import { useFloatingOverlayLayer } from '../../../../contexts/FloatingOverlayLayerContext';
 import { useFloatingOverlayPosition } from '../../../../hooks/useFloatingOverlayPosition';
@@ -192,12 +193,13 @@ export const DateTimeInput = forwardRef<HTMLInputElement, DateTimeInputProps>(
       undefined,
       floatingOverlayLayer.portalRoot,
     );
-    const { position: popupPosition } = useFloatingOverlayPosition({
-      isOpen,
-      anchorRef: containerRef,
-      overlayRef: popupRef,
-      positioningMode: 'autoFlip',
-    });
+    const { position: popupPosition, isPositionReady: isPopupPositionReady } =
+      useFloatingOverlayPosition({
+        isOpen,
+        anchorRef: containerRef,
+        overlayRef: popupRef,
+        positioningMode: 'autoFlip',
+      });
 
     const timeFormat = showSeconds ? 'HH:mm:ss' : 'HH:mm';
 
@@ -840,11 +842,11 @@ export const DateTimeInput = forwardRef<HTMLInputElement, DateTimeInputProps>(
               $range={range}
               $showSeconds={showSeconds}
               $portaled
-              style={{
-                left: popupPosition.x,
-                top: popupPosition.y,
+              style={getFloatingOverlayPlacementStyle({
+                position: popupPosition,
+                isPositionReady: isPopupPositionReady,
                 zIndex: floatingOverlayZIndex,
-              }}
+              })}
             >
               {renderTopPanel ? (
                 <DateTimeInputPickerChrome $edge="bottom">{renderTopPanel()}</DateTimeInputPickerChrome>

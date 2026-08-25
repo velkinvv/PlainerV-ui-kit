@@ -30,6 +30,7 @@ import { Hint, HintPosition, HintVariant } from '../../Hint/Hint';
 import {
   resolveFloatingOverlayPortalRoot,
   resolveFloatingOverlayZIndex,
+  getFloatingOverlayPlacementStyle,
 } from '../../../../handlers/floatingOverlayHandlers';
 import { useFloatingOverlayLayer } from '../../../../contexts/FloatingOverlayLayerContext';
 import { useFloatingOverlayPosition } from '../../../../hooks/useFloatingOverlayPosition';
@@ -183,12 +184,13 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
       undefined,
       floatingOverlayLayer.portalRoot,
     );
-    const { position: calendarPopupPosition } = useFloatingOverlayPosition({
-      isOpen,
-      anchorRef: containerRef,
-      overlayRef: calendarPopupRef,
-      positioningMode: 'autoFlip',
-    });
+    const { position: calendarPopupPosition, isPositionReady: isCalendarPopupPositionReady } =
+      useFloatingOverlayPosition({
+        isOpen,
+        anchorRef: containerRef,
+        overlayRef: calendarPopupRef,
+        positioningMode: 'autoFlip',
+      });
 
     // Refs для сегментов даты (отдельные для каждого picker в range режиме)
     const startDayRef = useRef<HTMLSpanElement>(null);
@@ -1274,11 +1276,11 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
               size={size}
               $calendarFullWidth={calendarFullWidth}
               $portaled
-              style={{
-                left: calendarPopupPosition.x,
-                top: calendarPopupPosition.y,
+              style={getFloatingOverlayPlacementStyle({
+                position: calendarPopupPosition,
+                isPositionReady: isCalendarPopupPositionReady,
                 zIndex: floatingOverlayZIndex,
-              }}
+              })}
             >
               {renderTopPanel && (
                 <DateInputPickerChrome $edge="bottom">{renderTopPanel()}</DateInputPickerChrome>
