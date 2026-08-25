@@ -1,4 +1,4 @@
-﻿import React, { forwardRef, useState, useRef, useEffect, useCallback } from 'react';
+﻿import React, { forwardRef, useState, useRef, useEffect, useCallback, useId } from 'react';
 import { createPortal } from 'react-dom';
 import { clsx } from 'clsx';
 import { useTheme } from 'styled-components';
@@ -30,6 +30,10 @@ import {
   type TimePickerDraftTimes,
 } from '../../../../handlers/timeInputPickerHandlers';
 import { getClearIconSizeForInputField } from '../../../../handlers/iconHandlers';
+import {
+  isFloatingInputLabel,
+  shouldReserveFloatingInputCaptionSpace,
+} from '../../../../handlers/inputFieldCaptionHandlers';
 import { Size, IconSize } from '../../../../types/sizes';
 import { Icon } from '../../Icon/Icon';
 import { Tooltip } from '../../Tooltip/Tooltip';
@@ -37,10 +41,11 @@ import { Hint, HintPosition, HintVariant } from '../../Hint/Hint';
 import {
   resolveFloatingOverlayPortalRoot,
   resolveFloatingOverlayZIndex,
+  getFloatingOverlayPlacementStyle,
 } from '../../../../handlers/floatingOverlayHandlers';
 import { useFloatingOverlayLayer } from '../../../../contexts/FloatingOverlayLayerContext';
 import { useFloatingOverlayPosition } from '../../../../hooks/useFloatingOverlayPosition';
-import { SkeletonEffect, CharacterCounterMotion, InputControlStack } from '../shared';
+import { SkeletonEffect, CharacterCounterMotion, InputControlStack, InputFieldCaption } from '../shared';
 import { InputFieldShell } from '../Input/InputFieldShell';
 import {
   ActionButton,
@@ -50,7 +55,6 @@ import {
   Footer,
   IconButton,
   IconWrapper,
-  LeftLabel,
   LoadingSpinner,
   RangeContainer,
   RangeFooter,
@@ -63,7 +67,6 @@ import {
   RangeTimeLabel,
   RangeTimeSeparator,
   RegularTimeInput,
-  RightLabel,
   TimeColumn,
   TimeColumnContent,
   TimeColumnLabel,
@@ -129,12 +132,21 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
       onPickerChange,
       modifyPickerValue,
       deferPickerCommit,
+      required,
+      labelVariant,
       ...props
     },
     ref,
   ) => {
     const shouldDeferPickerCommit =
       deferPickerCommit ?? Boolean(onPickerChange || modifyPickerValue);
+    const timeInputId = useId();
+    const useFloatingCaption = isFloatingInputLabel(labelVariant);
+    const hasFieldCaption = Boolean(label || additionalLabel);
+    const reserveFloatingCaptionPadding = shouldReserveFloatingInputCaptionSpace(
+      labelVariant,
+      hasFieldCaption,
+    );
 
     const [isOpen, setIsOpen] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
@@ -249,12 +261,13 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
       undefined,
       floatingOverlayLayer.portalRoot,
     );
-    const { position: timePickerPopupPosition } = useFloatingOverlayPosition({
-      isOpen,
-      anchorRef: containerRef,
-      overlayRef: timePickerPopupRef,
-      positioningMode: 'autoFlip',
-    });
+    const { position: timePickerPopupPosition, isPositionReady: isTimePickerPopupPositionReady } =
+      useFloatingOverlayPosition({
+        isOpen,
+        anchorRef: containerRef,
+        overlayRef: timePickerPopupRef,
+        positioningMode: 'autoFlip',
+      });
 
     // Обработчик кликов вне компонента
     useEffect(() => {
@@ -1385,29 +1398,34 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
         className={clsx('ui-time-input', className)}
         disabled={disabled}
         error={!!error}
+        $floatingCaption={reserveFloatingCaptionPadding}
+        data-input-caption-padding={reserveFloatingCaptionPadding ? 'floating' : undefined}
       >
-        {(label || additionalLabel) && (
-          <div
-            style={{
-              position: 'relative',
-              marginBottom: '4px',
-              width: '100%',
-              height: '20px', // Фиксированная высота для контейнера
-            }}
-          >
-            {label && (
-              <LeftLabel focused={isFocused} disabled={disabled} error={!!error} size={size}>
-                {label}
-              </LeftLabel>
-            )}
-            {additionalLabel && (
-              <RightLabel focused={isFocused} disabled={disabled} error={!!error} size={size}>
-                {additionalLabel}
-              </RightLabel>
-            )}
-          </div>
-        )}
+        {useFloatingCaption ? (
+          <InputFieldCaption
+            label={label}
+            additionalLabel={additionalLabel}
+            labelVariant={labelVariant}
+            focused={isFocused}
+            disabled={disabled}
+            error={!!error}
+            size={size}
+          />
+        ) : null}
         <InputControlStack fullWidth={fullWidth} autoWidth={autoWidth}>
+          {useFloatingCaption ? null : (
+            <InputFieldCaption
+              label={label}
+              additionalLabel={additionalLabel}
+              labelVariant={labelVariant}
+              htmlFor={segmented ? undefined : timeInputId}
+              required={required}
+              focused={isFocused}
+              disabled={disabled}
+              error={!!error}
+              size={size}
+            />
+          )}
           {skeleton ? (
             <SkeletonEffect size={size} fullWidth={fullWidth} autoWidth={autoWidth} />
           ) : (
@@ -1459,6 +1477,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
               // Обычный режим ввода времени
               <RegularTimeInput
                 ref={ref}
+                id={timeInputId}
                 type="text"
                 value={inputValue || getRegularInputValue()}
                 onChange={handleRegularInputChange}
@@ -1467,6 +1486,7 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
                 onBlur={handleRegularInputBlur}
                 onClick={handleRegularInputClick}
                 disabled={disabled}
+                required={required}
                 placeholder={placeholder || (range ? 'HH:mm — HH:mm' : 'HH:mm')}
                 $inputSize={size}
                 hasIcon={showIcon}
@@ -1552,9 +1572,11 @@ export const TimeInput = forwardRef<HTMLInputElement, TimeInputProps>(
           ref={timePickerPopupRef}
           $portaled
           style={{
-            left: timePickerPopupPosition.x,
-            top: timePickerPopupPosition.y,
-            zIndex: floatingOverlayZIndex,
+            ...getFloatingOverlayPlacementStyle({
+              position: timePickerPopupPosition,
+              isPositionReady: isTimePickerPopupPositionReady,
+              zIndex: floatingOverlayZIndex,
+            }),
             ...(range
               ? {
                   minWidth: showSeconds ? '800px' : '600px',

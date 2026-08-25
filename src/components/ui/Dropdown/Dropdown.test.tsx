@@ -118,4 +118,35 @@ describe('Dropdown', () => {
 
     expect(screen.getByText('Пункт 2')).toBeInTheDocument();
   });
+
+  it('при первом открытии ставит меню под триггер, а не в левый верхний угол', () => {
+    const triggerRect = {
+      x: 80,
+      y: 120,
+      left: 80,
+      top: 120,
+      right: 200,
+      bottom: 160,
+      width: 120,
+      height: 40,
+      toJSON: () => ({}),
+    } as DOMRect;
+
+    const getBoundingClientRectSpy = jest
+      .spyOn(HTMLElement.prototype, 'getBoundingClientRect')
+      .mockReturnValue(triggerRect);
+
+    renderWithTheme(
+      <Dropdown trigger={<Button>Открыть меню</Button>} items={items} onSelect={jest.fn()} />,
+    );
+
+    fireEvent.click(screen.getByText('Открыть меню'));
+
+    const menu = screen.getByRole('menu');
+    const dropdownPanel = menu.parentElement;
+    expect(dropdownPanel).toHaveStyle({ left: '80px', top: '164px' });
+    expect(dropdownPanel).toHaveStyle({ visibility: 'visible' });
+
+    getBoundingClientRectSpy.mockRestore();
+  });
 });

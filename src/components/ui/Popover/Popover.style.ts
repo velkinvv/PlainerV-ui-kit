@@ -10,7 +10,7 @@ import {
 import { overlayPanelBoxShadowFromTheme, overlayPanelBackgroundFromTheme, overlayPanelBackdropFilterFromTheme } from '../../../handlers/overlayPanelShadowHandlers';
 import {
   buildSurfaceRevealAnimationCss,
-  buildSurfaceTransitionCss,
+  buildFloatingOverlayMotionTransitionCss,
 } from '../../../handlers/uiMotionStyleHandlers';
 
 /** Пропсы плавающей поверхности `Popover` (токены из темы как у выпадающего меню) */
@@ -99,8 +99,9 @@ export const PopoverSurface = styled.div<PopoverSurfaceStyledProps>`
           `
         : ''}
       transform: ${animations.openAnimation.transform};
-      ${buildSurfaceTransitionCss(
-        `${animations.openAnimation.duration} ${animations.openAnimation.easing}`,
+      ${buildFloatingOverlayMotionTransitionCss(
+        animations.openAnimation.duration,
+        animations.openAnimation.easing,
       )}
     `;
   }}

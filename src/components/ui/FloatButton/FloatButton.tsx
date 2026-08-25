@@ -3,13 +3,14 @@ import { createPortal } from 'react-dom';
 import { clsx } from 'clsx';
 import { useTheme } from 'styled-components';
 import {
+  BadgeVariant,
   ButtonVariant,
   type FloatButtonBackTopProps,
   type FloatButtonGroupProps,
   type FloatButtonProps,
 } from '../../../types/ui';
 import { IconSize, Size } from '../../../types/sizes';
-import { Badge, BadgeVariant } from '../Badge/Badge';
+import { Badge } from '../Badge/Badge';
 import { Tooltip } from '../Tooltip/Tooltip';
 import { useUiMotionPresets } from '../../../hooks/useUiMotion';
 import {

@@ -9,6 +9,7 @@ import {
 } from '@/types/ui';
 import { Size } from '@/types/sizes';
 import { useFloatingOverlayPosition } from '@/hooks/useFloatingOverlayPosition';
+import { getFloatingOverlayPlacementStyle } from '@/handlers/floatingOverlayHandlers';
 import { Tooltip } from '../Tooltip/Tooltip';
 import { useFloatingMenuGroupContext, useFloatingMenuRootContext } from './FloatingMenuContext';
 import {
@@ -51,7 +52,8 @@ export const FloatingMenuGroupItem: React.FC<FloatingMenuGroupItemProps> = ({
   const hasMenu = Boolean(dropdownContent);
   const isOpen = openDropdownId === itemId;
 
-  const { position: panelPosition } = useFloatingOverlayPosition({
+  const { position: panelPosition, isPositionReady: isPanelPositionReady } =
+    useFloatingOverlayPosition({
     isOpen,
     anchorRef: buttonRef,
     overlayRef: panelRef,
@@ -209,7 +211,10 @@ export const FloatingMenuGroupItem: React.FC<FloatingMenuGroupItemProps> = ({
         ref={panelRef}
         className="ui-floating-menu-dropdown-panel"
         $zIndex={zIndex + 2}
-        style={{ top: panelPosition.y, left: panelPosition.x }}
+        style={getFloatingOverlayPlacementStyle({
+          position: panelPosition,
+          isPositionReady: isPanelPositionReady,
+        })}
         data-floating-menu-dropdown-panel
         onMouseEnter={() => {
           if (dropdownTrigger === FloatingMenuDropdownTrigger.HOVER) {

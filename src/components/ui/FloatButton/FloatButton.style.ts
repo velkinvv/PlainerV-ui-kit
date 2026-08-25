@@ -80,7 +80,7 @@ export const FloatButtonSurface = styled(motion.button).withConfig({
   border: ${({ $border }) => $border};
   background: ${({ $background }) => $background};
   color: ${({ $color }) => $color};
-  box-shadow: ${({ theme }) => theme.shadow};
+  box-shadow: ${({ theme }) => theme.boxShadow?.md ?? theme.colors?.shadow ?? 'none'};
   border-radius: ${({ $shape, $hasLabel, $sizePx, theme }) => {
     if ($shape === 'circle') {
       return $hasLabel ? `${$sizePx / 2}px` : '50%';
@@ -128,7 +128,7 @@ export const FloatButtonLinkSurface = styled(motion.a).withConfig({
   border: ${({ $border }) => $border};
   background: ${({ $background }) => $background};
   color: ${({ $color }) => $color};
-  box-shadow: ${({ theme }) => theme.shadow};
+  box-shadow: ${({ theme }) => theme.boxShadow?.md ?? theme.colors?.shadow ?? 'none'};
   border-radius: ${({ $shape, $hasLabel, $sizePx, theme }) => {
     if ($shape === 'circle') {
       return $hasLabel ? `${$sizePx / 2}px` : '50%';

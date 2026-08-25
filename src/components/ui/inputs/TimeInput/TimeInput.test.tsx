@@ -2,7 +2,9 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { TimeInput } from './TimeInput';
+import { Input } from '../Input/Input';
 import { ThemeProvider } from '../../../../themes/ThemeProvider';
+import { Size } from '../../../../types/sizes';
 
 /**
  * Рендер с ThemeProvider приложения: Icon и др. используют `useTheme` из ThemeProvider.tsx.
@@ -174,5 +176,54 @@ describe('TimeInput', () => {
     const errorMessage = 'Invalid time format';
     renderWithTheme(<TimeInput {...defaultProps} error={errorMessage} />);
     expect(screen.getByText(errorMessage)).toBeInTheDocument();
+  });
+
+  it('без label не резервирует padding-top на корне', () => {
+    renderWithTheme(<TimeInput {...defaultProps} size={Size.MD} />);
+
+    expect(document.querySelector('.ui-time-input')).not.toHaveAttribute(
+      'data-input-caption-padding',
+      'floating',
+    );
+  });
+
+  it('цвет и типографика лейбла совпадают с Input', () => {
+    renderWithTheme(
+      <>
+        <Input label="Email" size={Size.MD} />
+        <TimeInput {...defaultProps} label="Время начала" size={Size.MD} />
+      </>,
+    );
+
+    expect(screen.getByText('Время начала').className).toBe(screen.getByText('Email').className);
+  });
+
+  it('field-лейбл не добавляет padding-top: 10px на корень', () => {
+    renderWithTheme(<TimeInput {...defaultProps} label="Время начала" size={Size.MD} />);
+
+    expect(document.querySelector('.ui-time-input')).not.toHaveAttribute(
+      'data-input-caption-padding',
+      'floating',
+    );
+  });
+
+  it('floating без label не резервирует padding-top', () => {
+    renderWithTheme(<TimeInput {...defaultProps} labelVariant="floating" size={Size.MD} />);
+
+    expect(document.querySelector('.ui-time-input')).not.toHaveAttribute(
+      'data-input-caption-padding',
+      'floating',
+    );
+  });
+
+  it('floating с label резервирует padding-top на корне', () => {
+    renderWithTheme(
+      <TimeInput {...defaultProps} label="Время" labelVariant="floating" size={Size.MD} />,
+    );
+
+    expect(document.querySelector('.ui-time-input')).toHaveAttribute(
+      'data-input-caption-padding',
+      'floating',
+    );
   });
 });

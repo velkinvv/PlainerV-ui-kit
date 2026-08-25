@@ -66,6 +66,23 @@ export const buildSurfaceTransitionCss = (transitionValue: string) => css`
 `;
 
 /**
+ * Строка CSS `transition` для всплывающей панели без `left`/`top`.
+ * @param duration - длительность, например `0.2s`
+ * @param easing - функция плавности
+ */
+export const getFloatingOverlayMotionTransitionValue = (duration: string, easing: string) =>
+  `opacity ${duration} ${easing}, visibility ${duration} ${easing}, transform ${duration} ${easing}`;
+
+/**
+ * Transition всплывающей панели: только появление, без left/top — иначе первое открытие
+ * анимирует панель из (0, 0) к якорю.
+ * @param duration - длительность, например `0.2s`
+ * @param easing - функция плавности
+ */
+export const buildFloatingOverlayMotionTransitionCss = (duration: string, easing: string) =>
+  buildSurfaceTransitionCss(getFloatingOverlayMotionTransitionValue(duration, easing));
+
+/**
  * Reveal-анимация surface-элемента (opacity + scale) с отключением в reduced motion.
  * @param animationName - keyframes-анимация
  * @param duration - длительность reveal

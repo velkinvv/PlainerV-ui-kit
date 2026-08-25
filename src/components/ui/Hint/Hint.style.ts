@@ -240,7 +240,11 @@ export const HintContent = styled.div<{
         return buildSurfaceTransitionCss('none');
       default:
         return css`
-          ${buildSurfaceTransitionCss(theme.hints.animations.transition)}
+          ${buildSurfaceTransitionCss(
+            `opacity ${durationMs} ${theme.hints.animations.easing},
+             visibility ${durationMs} ${theme.hints.animations.easing},
+             transform ${durationMs} ${theme.hints.animations.easing}`,
+          )}
         `;
     }
   }}

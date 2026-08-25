@@ -7,7 +7,7 @@
 ### Контейнеры
 
 - `InputContainer` - основной контейнер для инпута
-- `InputContainerWithPadding` - контейнер с отступом сверху (для DateInput, DateTimeInput)
+- `InputContainerWithPadding` - устаревший контейнер с постоянным `padding-top: 10px` (DateInput больше не использует)
 
 ### Лейблы
 

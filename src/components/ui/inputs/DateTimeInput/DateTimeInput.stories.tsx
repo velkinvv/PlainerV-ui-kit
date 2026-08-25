@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import { fn } from '@storybook/test';
 import { DateTimeInput, DateTimeInputRange } from './DateTimeInput';
+import { Input } from '../Input/Input';
+import { Select } from '../Select/Select';
 import { Size } from '../../../../types/sizes';
 import type { DateTimeRange, DateTimePickerDraftContext } from '../../../../types/ui';
 import { DOC_DATE_TIME_INPUT } from '@/components/ui/storyDocs/uiKitDocs';
@@ -77,6 +79,12 @@ const meta: Meta<typeof DateTimeInput> = {
       description:
         'Отложить запись в поле до «Применить» / «OK». По умолчанию `true`, если задан `onPickerChange` или `modifyPickerValue`.',
     },
+    labelVariant: {
+      control: { type: 'select' },
+      options: ['field', 'floating'],
+      description:
+        'Режим лейбла: `field` (по умолчанию, как Input/Select) или `floating` (прежний absolute-ряд)',
+    },
   },
   args: {
     onChange: fn(),
@@ -97,6 +105,52 @@ export const WithLabel: Story = {
   args: {
     label: 'Дата и время события',
     placeholder: 'Выберите дату и время',
+  },
+};
+
+export const LabelParityWithInput: Story = {
+  render: () => (
+    <div style={inputFieldStoriesStyles.formGridThreeColumns}>
+      <Input label="Email" fullWidth size={Size.MD} />
+      <Select
+        label="Город"
+        fullWidth
+        size={Size.MD}
+        options={[{ value: 'msk', label: 'Москва' }]}
+      />
+      <DateTimeInput label="Дата и время" fullWidth size={Size.MD} />
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Дефолтный `label` DateTimeInput совпадает с Input / Select: токены `typography.label`, без `padding-top: 10px` на корне.',
+      },
+    },
+  },
+};
+
+export const ControlAlignWithoutOwnLabel: Story = {
+  render: () => (
+    <div style={inputFieldStoriesStyles.formGridThreeColumns}>
+      <Input fullWidth size={Size.MD} placeholder="Email" />
+      <Select
+        fullWidth
+        size={Size.MD}
+        placeholder="Город"
+        options={[{ value: 'msk', label: 'Москва' }]}
+      />
+      <DateTimeInput fullWidth size={Size.MD} placeholder="Дата и время" />
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Без `label` корень DateTimeInput не резервирует `padding-top: 10px` — верх рамки на одной линии с Input / Select.',
+      },
+    },
   },
 };
 

@@ -10,7 +10,7 @@ import {
 import { overlayPanelBoxShadowFromTheme, overlayPanelBackgroundFromTheme, overlayPanelBackdropFilterFromTheme } from '../../../handlers/overlayPanelShadowHandlers';
 import {
   buildHoverPressMotionCss,
-  buildSurfaceTransitionCss,
+  buildFloatingOverlayMotionTransitionCss,
 } from '../../../handlers/uiMotionStyleHandlers';
 
 /**
@@ -115,8 +115,9 @@ export const DropdownContent = styled.div<{
   }};
   ${({ theme }) => {
     const animations = getDropdownAnimations(theme.dropdowns);
-    return buildSurfaceTransitionCss(
-      `${animations.openAnimation.duration} ${animations.openAnimation.easing}`,
+    return buildFloatingOverlayMotionTransitionCss(
+      animations.openAnimation.duration,
+      animations.openAnimation.easing,
     );
   }}
 

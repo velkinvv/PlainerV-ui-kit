@@ -46,6 +46,8 @@ export {
 
 export { CharacterCounterMotion } from './CharacterCounterMotion';
 export type { CharacterCounterMotionProps } from './CharacterCounterMotion';
+export { InputFieldCaption } from './InputFieldCaption';
+export type { InputFieldCaptionProps } from './InputFieldCaption';
 
 // Общие хелперы поведения для Input/TextArea
 export {

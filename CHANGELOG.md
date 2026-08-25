@@ -9,6 +9,28 @@
 
 ---
 
+## [0.3.1] - 2026-08-25
+
+### Added
+
+- Подготовка релиза **0.3.1** (ветка `v_0.3.1`).
+- **DateInput / TimeInput / DateTimeInput:** проп **`labelVariant`** (`field` | `floating`).
+
+### Changed
+
+- **DateInput / TimeInput / DateTimeInput:** дефолтный **`label`** паритетен с **Input / Select** (`typography.label`, `colors.text`, поток документа). Прежний floating-лейбл — `labelVariant="floating"`. **`additionalLabel`** в режиме `field` — под основным лейблом, как у Input.
+
+### Fixed
+
+- **DateInput / TimeInput / DateTimeInput:** `padding-top: 10px` больше не висит на корне всегда. Резерв только при `labelVariant="floating"` и переданном `label` / `additionalLabel`. Без лейбла и в режиме `field` верх рамки совпадает с Input / Select в одной grid-строке.
+
+### Added (документация)
+
+- Документация **v0.3.1** на сайте; обновлены README, CHANGELOG, индекс версий.
+- Breaking: дефолтный лейбл DateInput больше не floating; миграция — `labelVariant="floating"`.
+
+---
+
 ## [0.3.0] - 2026-08-17
 
 ### Added

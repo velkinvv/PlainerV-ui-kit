@@ -44,6 +44,11 @@ export const InputControlStack = styled.div.withConfig({
   box-sizing: border-box;
 `;
 
+/**
+ * Устаревший контейнер с постоянным `padding-top: 10px`.
+ * DateInput / DateTimeInput / TimeInput больше его не используют: резерв только в режиме
+ * `labelVariant="floating"` при наличии `label` / `additionalLabel`.
+ */
 export const InputContainerWithPadding = styled.div.withConfig({
   shouldForwardProp: createStyledShouldForwardProp(['disabled', 'error']),
 })<{ disabled?: boolean; error?: boolean }>`

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { createStyledShouldForwardProp } from '../../../../handlers/styledComponentHandlers';
 import { overlayPanelBoxShadowFromTheme, overlayPanelSurfaceCss } from '../../../../handlers/overlayPanelShadowHandlers';
 import { BorderRadiusHandler, TransitionHandler } from '../../../../handlers/uiHandlers';
@@ -6,6 +6,7 @@ import { Size } from '../../../../types/sizes';
 
 export {
   DateInputFieldStack,
+  DateInputRoot,
   LeftLabel,
   RightLabel,
   ErrorMessage,
@@ -40,11 +41,18 @@ export const DateTimePopup = styled.div.withConfig({
   border: 2px solid ${({ theme }) => theme.colors.borderSecondary};
   border-radius: ${({ theme }) => BorderRadiusHandler(theme.borderRadius)};
   box-shadow: ${({ theme }) => overlayPanelBoxShadowFromTheme(theme)};
-  opacity: ${({ isOpen }) => (isOpen ? 1 : 0)};
-  visibility: ${({ isOpen }) => (isOpen ? 'visible' : 'hidden')};
-  transform: ${({ isOpen, $portaled }) =>
-    $portaled ? 'none' : isOpen ? 'translateY(0)' : 'translateY(-10px)'};
-  transition: ${TransitionHandler()};
+  ${({ $portaled, isOpen }) =>
+    $portaled
+      ? css`
+          transform: none;
+          transition: none;
+        `
+      : css`
+          opacity: ${isOpen ? 1 : 0};
+          visibility: ${isOpen ? 'visible' : 'hidden'};
+          transform: ${isOpen ? 'translateY(0)' : 'translateY(-10px)'};
+          transition: ${TransitionHandler()};
+        `}
   margin-top: ${({ $portaled }) => ($portaled ? '0' : '4px')};
   padding: 16px;
   min-width: ${({ $range, $showSeconds }) => {

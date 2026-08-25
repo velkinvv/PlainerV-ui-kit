@@ -5175,6 +5175,11 @@ export interface DateTimeInputProps extends Omit<BaseInputProps, 'value' | 'onCh
    * По умолчанию `true`, если задан `onPickerChange` или `modifyPickerValue`.
    */
   deferPickerCommit?: boolean;
+  /**
+   * Режим `label`. По умолчанию `field` — как у `Input` / `Select` (без `padding-top: 10px` на корне).
+   * `floating` — прежний absolute-лейбл; `padding-top: 10px` только при `label` / `additionalLabel`.
+   */
+  labelVariant?: InputLabelVariant;
 }
 
 /**
@@ -5240,6 +5245,14 @@ export interface DateTimePickerDraftContext {
 }
 
 /**
+ * Режим подписи поля ввода.
+ * `field` — обычный лейбл в потоке документа, как у `Input` / `Select`, без `padding-top: 10px` на корне.
+ * `floating` — абсолютный лейбл в ряду фиксированной высоты; `padding-top: 10px` только если
+ * передан `label` или `additionalLabel`.
+ */
+export type InputLabelVariant = 'field' | 'floating';
+
+/**
  * Пропсы поля даты (`DateInput`).
  * Крестик очистки: `displayClearIcon`, `onClearIconClick`, `clearIconProps` из `BaseInputProps`.
  * Составное поле (InputEx): `prefix`, `suffix` — те же слоты, что у `Input` (см. `InputFieldShell`).
@@ -5296,6 +5309,13 @@ export interface DatePickerProps extends Omit<BaseInputProps, 'value' | 'onChang
    * По умолчанию `true`, если задан `onPickerChange` или `modifyPickerValue`.
    */
   deferPickerCommit?: boolean;
+  /**
+   * Режим `label`. По умолчанию `field` — те же токены и геометрия, что у `Input` / `Select`
+   * (без `padding-top: 10px` на корне).
+   * `floating` сохраняет прежний absolute-лейбл; резерв `padding-top: 10px` только при
+   * переданном `label` / `additionalLabel`.
+   */
+  labelVariant?: InputLabelVariant;
 }
 
 /**
@@ -5377,6 +5397,11 @@ export interface TimeInputProps extends Omit<BaseInputProps, 'value' | 'onChange
    * По умолчанию `true`, если задан `onPickerChange` или `modifyPickerValue`.
    */
   deferPickerCommit?: boolean;
+  /**
+   * Режим `label`. По умолчанию `field` — как у `Input` / `Select` (без `padding-top: 10px` на корне).
+   * `floating` — прежний absolute-лейбл; `padding-top: 10px` только при `label` / `additionalLabel`.
+   */
+  labelVariant?: InputLabelVariant;
 }
 
 /**

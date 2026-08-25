@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { fn } from '@storybook/test';
 import { DateInput } from './DateInput';
+import { Input } from '../Input/Input';
+import { Select } from '../Select/Select';
 import { Size, IconSize } from '../../../../types/sizes';
 import type { DatePickerDraftContext, DateTimeRange } from '../../../../types/ui';
 import { Icon } from '../../Icon/Icon';
@@ -42,6 +44,12 @@ const meta: Meta<typeof DateInput> = {
     label: {
       control: 'text',
       description: 'Текстовая метка',
+    },
+    labelVariant: {
+      control: { type: 'select' },
+      options: ['field', 'floating'],
+      description:
+        'Режим лейбла: `field` (по умолчанию, как Input/Select) или `floating` (прежний absolute-ряд)',
     },
     placeholder: {
       control: 'text',
@@ -162,6 +170,52 @@ export const Default: Story = {
   args: {
     label: 'Выберите дату',
     placeholder: 'Выберите дату',
+  },
+};
+
+export const LabelParityWithInput: Story = {
+  render: () => (
+    <div style={dateInputStoriesStyles.formGridThreeColumns}>
+      <Input label="Email" fullWidth size={Size.MD} />
+      <Select
+        label="Город"
+        fullWidth
+        size={Size.MD}
+        options={[{ value: 'msk', label: 'Москва' }]}
+      />
+      <DateInput label="Дата рождения" format="YYYY-MM-DD" fullWidth size={Size.MD} />
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Дефолтный `label` DateInput совпадает с Input: токены `typography.label`, `colors.text`, поток документа, без `padding-top: 10px` на корне. Старое поведение — `labelVariant="floating"`.',
+      },
+    },
+  },
+};
+
+export const ControlAlignWithoutOwnLabel: Story = {
+  render: () => (
+    <div style={dateInputStoriesStyles.formGridThreeColumns}>
+      <Input fullWidth size={Size.MD} placeholder="Email" />
+      <Select
+        fullWidth
+        size={Size.MD}
+        placeholder="Город"
+        options={[{ value: 'msk', label: 'Москва' }]}
+      />
+      <DateInput format="YYYY-MM-DD" fullWidth size={Size.MD} placeholder="Дата рождения" />
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Без `label` корень DateInput не резервирует `padding-top: 10px` — верх рамки на одной линии с Input / Select.',
+      },
+    },
   },
 };
 
@@ -2479,7 +2533,7 @@ export const AdditionalLabelDemo: Story = {
           <h4 style={dateInputStoriesStyles.heading14}>Дополнительные метки для дат:</h4>
           <ul style={dateInputStoriesStyles.list12}>
             <li>
-              <strong>additionalLabel</strong> отображается справа и помогает уточнить формат ввода
+              <strong>additionalLabel</strong> отображается под основным label (как у Input)
               даты
             </li>
             <li>Предоставляет контекстную информацию о назначении поля</li>
