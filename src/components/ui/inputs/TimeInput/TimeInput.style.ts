@@ -1,4 +1,4 @@
-﻿import styled from 'styled-components';
+﻿import styled, { css } from 'styled-components';
 import { createStyledShouldForwardProp } from '../../../../handlers/styledComponentHandlers';
 import { overlayPanelBoxShadowFromTheme, overlayPanelSurfaceCss } from '../../../../handlers/overlayPanelShadowHandlers';
 import {
@@ -12,12 +12,19 @@ import { Button } from '../../buttons/Button';
 
 /** Стилизованные части `TimeInput` (вёрстка и тема), логика — в `TimeInput.tsx`. */
 export const Container = styled.div.withConfig({
-  shouldForwardProp: createStyledShouldForwardProp(),
-})<{ disabled?: boolean; error?: boolean }>`
+  shouldForwardProp: createStyledShouldForwardProp(['disabled', 'error', '$floatingCaption']),
+})<{ disabled?: boolean; error?: boolean; $floatingCaption?: boolean }>`
   position: relative;
   width: 100%;
-  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
-  padding-top: 10px;
+  opacity: ${({ disabled, $floatingCaption }) => (disabled && $floatingCaption ? 0.5 : 1)};
+  ${({ $floatingCaption }) =>
+    $floatingCaption
+      ? css`
+          padding-top: 10px;
+        `
+      : css`
+          padding-top: 0;
+        `}
 `;
 
 export const LoadingSpinner = styled.div<{ size?: Size }>`
@@ -119,48 +126,6 @@ export const IconWrapper = styled.div.withConfig({
   }};
   ${({ $marginLeftAuto }) => ($marginLeftAuto ? 'margin-left: auto;' : '')}
 `;
-export const AbsoluteLabel = styled.label.withConfig({
-  shouldForwardProp: createStyledShouldForwardProp(),
-})<{
-  focused: boolean;
-  disabled?: boolean;
-  error?: boolean;
-  size?: Size;
-}>`
-  position: absolute !important;
-  top: 0 !important;
-  margin: 0 !important;
-  background: none !important;
-  padding: 0 !important;
-  color: ${({ theme, focused, error, disabled }) => {
-    if (disabled) return theme.colors.textDisabled;
-    if (error) return theme.colors.danger;
-    if (focused) return theme.colors.primary;
-    return theme.colors.textSecondary;
-  }};
-  transition: ${TransitionHandler()};
-`;
-
-export const LeftLabel = styled(AbsoluteLabel)`
-  left: 0 !important;
-  font-size: ${({ size }) => {
-    switch (size) {
-      case Size.SM:
-        return '12px';
-      case Size.LG:
-        return '14px';
-      default:
-        return '12px';
-    }
-  }};
-`;
-
-export const RightLabel = styled(AbsoluteLabel)`
-  right: 0 !important;
-  font-size: 12px;
-  opacity: 0.7;
-`;
-
 export const IconButton = styled.button`
   background: none;
   border: none;

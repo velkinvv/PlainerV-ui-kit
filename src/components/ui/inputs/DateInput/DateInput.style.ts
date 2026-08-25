@@ -1,51 +1,46 @@
-﻿import styled from 'styled-components';
+﻿import styled, { css } from 'styled-components';
 import { createStyledShouldForwardProp } from '../../../../handlers/styledComponentHandlers';
 import { overlayPanelBoxShadowFromTheme, overlayPanelSurfaceCss } from '../../../../handlers/overlayPanelShadowHandlers';
 import { getInputFieldWidthCss } from '../../../../handlers/inputFieldLayoutHandlers';
 import { BorderRadiusHandler, TransitionHandler } from '../../../../handlers/uiHandlers';
 import { Size } from '../../../../types/sizes';
 
-/** Стилизованные части `DateInput` (вёрстка и тема), логика — в `DateInput.tsx`. */
-export const AbsoluteLabel = styled.label.withConfig({
-  shouldForwardProp: createStyledShouldForwardProp(),
+export {
+  FloatingFieldLabel as AbsoluteLabel,
+  FloatingLeftLabel as LeftLabel,
+  FloatingRightLabel as RightLabel,
+} from '../shared/InputFieldCaption.style';
+
+/** Корень DateInput: relative для попапа; padding-top: 10px только у floating с лейблом. */
+export const DateInputRoot = styled.div.withConfig({
+  shouldForwardProp: createStyledShouldForwardProp([
+    'fullWidth',
+    'disabled',
+    'error',
+    '$floatingCaption',
+  ]),
 })<{
-  focused: boolean;
+  fullWidth?: boolean;
   disabled?: boolean;
   error?: boolean;
-  size?: Size;
+  $floatingCaption?: boolean;
 }>`
-  position: absolute !important;
-  top: 0 !important;
-  margin: 0 !important;
-  background: none !important;
-  padding: 0 !important;
-  color: ${({ theme, focused, error, disabled }) => {
-    if (disabled) return theme.colors.textDisabled;
-    if (error) return theme.colors.danger;
-    if (focused) return theme.colors.primary;
-    return theme.colors.textSecondary;
-  }};
-  transition: ${TransitionHandler()};
-`;
-
-export const LeftLabel = styled(AbsoluteLabel)`
-  left: 0 !important;
-  font-size: ${({ size }) => {
-    switch (size) {
-      case Size.SM:
-        return '12px';
-      case Size.LG:
-        return '14px';
-      default:
-        return '12px';
-    }
-  }};
-`;
-
-export const RightLabel = styled(AbsoluteLabel)`
-  right: 0 !important;
-  font-size: 12px;
-  opacity: 0.7;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
+  align-items: ${({ fullWidth }) => (fullWidth ? 'stretch' : 'flex-start')};
+  opacity: ${({ disabled, $floatingCaption }) => (disabled && $floatingCaption ? 0.5 : 1)};
+  ${({ $floatingCaption }) =>
+    $floatingCaption
+      ? css`
+          gap: 0;
+          padding-top: 10px;
+        `
+      : css`
+          gap: 4px;
+          padding-top: 0;
+        `}
 `;
 
 export const ErrorMessage = styled.div<{ size?: Size }>`

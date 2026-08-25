@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useRef, useEffect, useCallback } from 'react';
+import React, { forwardRef, useState, useRef, useEffect, useCallback, useId } from 'react';
 import { createPortal } from 'react-dom';
 import { clsx } from 'clsx';
 import { useTheme } from 'styled-components';
@@ -24,6 +24,10 @@ import {
 } from '../../../../handlers/dateTimeInputPickerHandlers';
 import { getCurrentTime } from '../TimeInput/handlers';
 import { getClearIconSizeForInputField } from '../../../../handlers/iconHandlers';
+import {
+  isFloatingInputLabel,
+  shouldReserveFloatingInputCaptionSpace,
+} from '../../../../handlers/inputFieldCaptionHandlers';
 import { Size, IconSize } from '../../../../types/sizes';
 import { Calendar } from '../../Calendar/Calendar';
 import { Button } from '../../buttons/Button/Button';
@@ -37,17 +41,17 @@ import {
 import { useFloatingOverlayLayer } from '../../../../contexts/FloatingOverlayLayerContext';
 import { useFloatingOverlayPosition } from '../../../../hooks/useFloatingOverlayPosition';
 import {
-  InputContainerWithPadding,
+  InputControlStack,
   LoadingSpinner,
   SkeletonEffect,
   StyledInput,
   IconWrapper,
   CharacterCounterMotion,
+  InputFieldCaption,
 } from '../shared';
 import { InputFieldShell } from '../Input/InputFieldShell';
 import { TimePickerColumns } from '../shared/TimePickerColumns';
 import {
-  DateInputFieldStack,
   DateTimeCalendarColumn,
   DateTimePickerBody,
   DateTimePopup,
@@ -60,9 +64,8 @@ import {
   ErrorMessage,
   ExtraText,
   IconButton,
-  LeftLabel,
-  RightLabel,
   DateTimeInputPickerChrome,
+  DateInputRoot,
 } from './DateTimeInput.style';
 
 /**
@@ -129,12 +132,21 @@ export const DateTimeInput = forwardRef<HTMLInputElement, DateTimeInputProps>(
       onPickerChange,
       modifyPickerValue,
       deferPickerCommit,
+      required,
+      labelVariant,
       ...props
     },
     ref,
   ) => {
     const shouldDeferPickerCommit =
       deferPickerCommit ?? Boolean(onPickerChange || modifyPickerValue);
+    const dateTimeInputId = useId();
+    const hasFieldCaption = Boolean(label || additionalLabel);
+    const useFloatingCaption = isFloatingInputLabel(labelVariant);
+    const reserveFloatingCaptionPadding = shouldReserveFloatingInputCaptionSpace(
+      labelVariant,
+      hasFieldCaption,
+    );
 
     const [isOpen, setIsOpen] = useState(false);
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -671,36 +683,33 @@ export const DateTimeInput = forwardRef<HTMLInputElement, DateTimeInputProps>(
       </DateTimeTimeSection>
     );
 
-    const dateTimeInputContent = (
-      <InputContainerWithPadding
-        ref={containerRef}
+    const fieldCaption = (
+      <InputFieldCaption
+        label={label}
+        additionalLabel={additionalLabel}
+        labelVariant={labelVariant}
+        htmlFor={dateTimeInputId}
+        required={required}
+        focused={isOpen}
         disabled={disabled}
         error={!!error}
+        size={size}
+      />
+    );
+
+    const dateTimeInputContent = (
+      <DateInputRoot
+        ref={containerRef}
+        fullWidth={fullWidth}
+        disabled={disabled}
+        error={!!error}
+        $floatingCaption={reserveFloatingCaptionPadding}
+        data-input-caption-padding={reserveFloatingCaptionPadding ? 'floating' : undefined}
         className={clsx('ui-date-time-input', className)}
       >
-        {(label || additionalLabel) && (
-          <div
-            style={{
-              position: 'relative',
-              marginBottom: '4px',
-              width: '100%',
-              height: '20px',
-            }}
-          >
-            {label ? (
-              <LeftLabel focused={isOpen} disabled={disabled} error={!!error} size={size}>
-                {label}
-              </LeftLabel>
-            ) : null}
-            {additionalLabel ? (
-              <RightLabel focused={isOpen} disabled={disabled} error={!!error} size={size}>
-                {additionalLabel}
-              </RightLabel>
-            ) : null}
-          </div>
-        )}
-
-        <DateInputFieldStack fullWidth={fullWidth} autoWidth={autoWidth}>
+        {useFloatingCaption ? fieldCaption : null}
+        <InputControlStack fullWidth={fullWidth} autoWidth={autoWidth}>
+          {useFloatingCaption ? null : fieldCaption}
           {skeleton ? (
             <SkeletonEffect size={size} fullWidth={fullWidth} autoWidth={autoWidth} />
           ) : (
@@ -742,12 +751,14 @@ export const DateTimeInput = forwardRef<HTMLInputElement, DateTimeInputProps>(
 
               <StyledInput
                 ref={ref || inputRef}
+                id={dateTimeInputId}
                 type="text"
                 value={inputValue}
                 onChange={handleInputChange}
                 onKeyDown={handleInputKeyDown}
                 disabled={disabled}
                 readOnly={readOnly}
+                required={required}
                 placeholder={placeholder || (range ? 'ДД.ММ.ГГГГ ЧЧ:ММ — ДД.ММ.ГГГГ ЧЧ:ММ' : 'Выберите дату и время')}
                 textAlign={textAlign}
                 onSelect={
@@ -814,8 +825,8 @@ export const DateTimeInput = forwardRef<HTMLInputElement, DateTimeInputProps>(
                 );
               })()
             : null}
-        </DateInputFieldStack>
-      </InputContainerWithPadding>
+        </InputControlStack>
+      </DateInputRoot>
     );
 
     const popupPortal =

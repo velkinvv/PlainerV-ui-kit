@@ -253,6 +253,14 @@ export const DOC_DATE_INPUT = `
 
 Поддерживаются **\`prefix\`** и **\`suffix\`** (как у **Input**, общая рамка **InputFieldShell**).
 
+### Лейбл
+
+По умолчанию **\`label\`** — как у **Input** / **Select**: токены \`theme.typography.label\`, цвет \`theme.colors.text\`, обычный поток документа (поля в одной grid-строке выравниваются).
+
+**\`labelVariant\`:** \`field\` (default) | \`floating\`. \`floating\` — прежний absolute-лейбл в ряду 20px (\`textSecondary\`, фиксированный \`font-size\`). \`padding-top: 10px\` на корне только в этом режиме и только если передан \`label\` / \`additionalLabel\`.
+
+**Миграция с 0.3.0:** если нужен старый визуал, задайте \`labelVariant="floating"\`. **\`additionalLabel\`** в режиме \`field\` рендерится под основным лейблом (как у Input), а не справа в том же ряду. Костыль \`.ui-date-picker { padding-top: 0; }\` больше не нужен.
+
 Полный список пропсов — **DateInput** / **DatePickerProps** в \`types/ui.ts\`.
 `.trim();
 
@@ -277,6 +285,8 @@ export const DOC_TIME_INPUT = `
 **Поведение:** как у **DateInput** — в диапазоне коммит через «Применить»; с колбэками в одиночном режиме — кнопка **OK**; \`modifyPickerValue\` вызывается до \`onPickerChange\`.
 
 **\`prefix\`**, **\`suffix\`** — как у **Input** (\`InputFieldShell\`).
+
+**\`label\`** по умолчанию как у **Input** (\`labelVariant="field"\`). Прежний floating — \`labelVariant="floating"\`. \`padding-top: 10px\` только в floating при наличии лейбла.
 
 См. **TimeInputProps** в \`types/ui.ts\`.
 `.trim();
@@ -306,6 +316,8 @@ export const DOC_DATE_TIME_INPUT = `
 - **DateTimeInput** — дата и время вместе; для диапазона — календарь диапазона + два блока выбора времени.
 
 **\`prefix\`**, **\`suffix\`**, очистка, подсказки — как у других полей через **InputFieldShell**.
+
+**\`label\`** по умолчанию как у **Input** (\`labelVariant="field"\`). Прежний floating — \`labelVariant="floating"\`. \`padding-top: 10px\` только в floating при наличии лейбла.
 
 Полный список пропсов — **DateTimeInputProps** в \`types/ui.ts\`. Для диапазона можно использовать **DateTimeInputRange** (алиас с \`range: true\`).
 `.trim();

@@ -148,6 +148,14 @@ export const inputFieldStoriesStyles = {
     gap: '8px',
   } satisfies CSSProperties,
 
+  /** Три поля в ряд — проверка выравнивания лейблов и рамок DateInput с Input. */
+  formGridThreeColumns: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr 1fr',
+    gap: '16px',
+    alignItems: 'start',
+  } satisfies CSSProperties,
+
   /** Горизонтальный ряд с переносом и шагом 8px (группа кнопок у формы). */
   rowWrapGap8: {
     display: 'flex',

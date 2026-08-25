@@ -1,6 +1,8 @@
 ﻿import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import { TimeInput } from './TimeInput';
+import { Input } from '../Input/Input';
+import { Select } from '../Select/Select';
 import { Size, IconSize } from '../../../../types/sizes';
 import { Icon } from '../../Icon/Icon';
 import { DOC_TIME_INPUT } from '@/components/ui/storyDocs/uiKitDocs';
@@ -130,6 +132,12 @@ const meta: Meta<typeof TimeInput> = {
       control: { type: 'text' },
       description: 'Дополнительное имя поля формы',
     },
+    labelVariant: {
+      control: { type: 'select' },
+      options: ['field', 'floating'],
+      description:
+        'Режим лейбла: `field` (по умолчанию, как Input/Select) или `floating` (прежний absolute-ряд)',
+    },
     onPickerChange: {
       action: 'pickerChange',
       description:
@@ -181,6 +189,52 @@ export const WithLabel: Story = {
     label: 'Время начала',
     placeholder: 'Выберите время',
     onChange: (value) => console.log('Time changed:', value),
+  },
+};
+
+export const LabelParityWithInput: Story = {
+  render: () => (
+    <div style={timeInputStoriesStyles.formGridThreeColumns}>
+      <Input label="Email" fullWidth size={Size.MD} />
+      <Select
+        label="Город"
+        fullWidth
+        size={Size.MD}
+        options={[{ value: 'msk', label: 'Москва' }]}
+      />
+      <TimeInput label="Время начала" fullWidth size={Size.MD} />
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Дефолтный `label` TimeInput совпадает с Input / Select: токены `typography.label`, без `padding-top: 10px` на корне.',
+      },
+    },
+  },
+};
+
+export const ControlAlignWithoutOwnLabel: Story = {
+  render: () => (
+    <div style={timeInputStoriesStyles.formGridThreeColumns}>
+      <Input fullWidth size={Size.MD} placeholder="Email" />
+      <Select
+        fullWidth
+        size={Size.MD}
+        placeholder="Город"
+        options={[{ value: 'msk', label: 'Москва' }]}
+      />
+      <TimeInput fullWidth size={Size.MD} placeholder="Время начала" />
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Без `label` корень TimeInput не резервирует `padding-top: 10px` — верх рамки на одной линии с Input / Select.',
+      },
+    },
   },
 };
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { DateInput } from './DateInput';
+import { Input } from '../Input/Input';
 import { Size } from '../../../../types/sizes';
 import { ThemeProvider } from '../../../../themes/ThemeProvider';
 
@@ -356,6 +357,95 @@ describe('DateInput', () => {
     await waitFor(() => {
       expect(screen.getByText('март 2024 г.')).toBeInTheDocument();
     });
+  });
+
+  it('по умолчанию лейбл в потоке документа, без 20px-обёртки', () => {
+    renderWithTheme(<DateInput {...defaultProps} size={Size.MD} />);
+
+    const fieldLabel = screen.getByText('Test Date');
+    expect(fieldLabel.closest('[data-input-label-variant="floating"]')).toBeNull();
+  });
+
+  it('цвет и типографика лейбла совпадают с Input', () => {
+    renderWithTheme(
+      <>
+        <Input label="Email" size={Size.MD} />
+        <DateInput label="Дата рождения" onChange={jest.fn()} size={Size.MD} />
+      </>,
+    );
+
+    expect(screen.getByText('Дата рождения').className).toBe(screen.getByText('Email').className);
+  });
+
+  it('при error и disabled цвет лейбла остаётся как у Input', () => {
+    renderWithTheme(
+      <>
+        <Input label="Email" size={Size.MD} error="Обязательное поле" disabled />
+        <DateInput
+          label="Дата рождения"
+          onChange={jest.fn()}
+          size={Size.MD}
+          error="Обязательное поле"
+          disabled
+        />
+      </>,
+    );
+
+    expect(screen.getByText('Дата рождения').className).toBe(screen.getByText('Email').className);
+  });
+
+  it('labelVariant="floating" сохраняет absolute-лейбл в 20px-ряде', () => {
+    renderWithTheme(<DateInput {...defaultProps} labelVariant="floating" />);
+
+    const fieldLabel = screen.getByText('Test Date');
+    expect(fieldLabel.closest('[data-input-label-variant="floating"]')).not.toBeNull();
+  });
+
+  it('без label не резервирует padding-top на корне', () => {
+    renderWithTheme(<DateInput onChange={jest.fn()} size={Size.MD} />);
+
+    expect(document.querySelector('.ui-date-picker')).not.toHaveAttribute(
+      'data-input-caption-padding',
+      'floating',
+    );
+  });
+
+  it('field-лейбл не добавляет padding-top: 10px на корень', () => {
+    renderWithTheme(<DateInput {...defaultProps} size={Size.MD} />);
+
+    expect(document.querySelector('.ui-date-picker')).not.toHaveAttribute(
+      'data-input-caption-padding',
+      'floating',
+    );
+  });
+
+  it('floating без label не резервирует padding-top', () => {
+    renderWithTheme(<DateInput onChange={jest.fn()} labelVariant="floating" size={Size.MD} />);
+
+    expect(document.querySelector('.ui-date-picker')).not.toHaveAttribute(
+      'data-input-caption-padding',
+      'floating',
+    );
+  });
+
+  it('floating с label резервирует padding-top на корне', () => {
+    renderWithTheme(<DateInput {...defaultProps} labelVariant="floating" />);
+
+    expect(document.querySelector('.ui-date-picker')).toHaveAttribute(
+      'data-input-caption-padding',
+      'floating',
+    );
+  });
+
+  it('floating с additionalLabel без label тоже резервирует padding-top', () => {
+    renderWithTheme(
+      <DateInput onChange={jest.fn()} additionalLabel="необязательно" labelVariant="floating" />,
+    );
+
+    expect(document.querySelector('.ui-date-picker')).toHaveAttribute(
+      'data-input-caption-padding',
+      'floating',
+    );
   });
 
   it('supports different date formats', () => {

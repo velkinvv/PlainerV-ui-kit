@@ -6,6 +6,7 @@ import { Size } from '../../../../types/sizes';
 
 export {
   DateInputFieldStack,
+  DateInputRoot,
   LeftLabel,
   RightLabel,
   ErrorMessage,

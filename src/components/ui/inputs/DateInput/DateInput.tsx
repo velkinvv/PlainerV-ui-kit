@@ -1,4 +1,4 @@
-﻿import React, { forwardRef, useState, useRef, useEffect, useCallback } from 'react';
+﻿import React, { forwardRef, useState, useRef, useEffect, useCallback, useId } from 'react';
 import { createPortal } from 'react-dom';
 import { clsx } from 'clsx';
 import { useTheme } from 'styled-components';
@@ -17,6 +17,10 @@ import {
   type DatePickerDraftPhase,
 } from '../../../../handlers/dateInputPickerHandlers';
 import { getClearIconSizeForInputField } from '../../../../handlers/iconHandlers';
+import {
+  isFloatingInputLabel,
+  shouldReserveFloatingInputCaptionSpace,
+} from '../../../../handlers/inputFieldCaptionHandlers';
 import { Size, IconSize } from '../../../../types/sizes';
 import { Calendar } from '../../Calendar/Calendar';
 import { Button } from '../../buttons/Button/Button';
@@ -30,30 +34,29 @@ import {
 import { useFloatingOverlayLayer } from '../../../../contexts/FloatingOverlayLayerContext';
 import { useFloatingOverlayPosition } from '../../../../hooks/useFloatingOverlayPosition';
 import {
-  InputContainerWithPadding,
+  InputControlStack,
   LoadingSpinner,
   SkeletonEffect,
   StyledInput,
   IconWrapper,
   CharacterCounterMotion,
+  InputFieldCaption,
 } from '../shared';
 import { InputFieldShell } from '../Input/InputFieldShell';
 import {
   CalendarPopup,
-  DateInputFieldStack,
   DateSegment,
   DateSegmentsContainer,
   DateSeparator,
   ErrorMessage,
   ExtraText,
   IconButton,
-  LeftLabel,
   RangeDateContainer,
   RangeDateGroup,
   RangeDateLabel,
   RangeDateSeparator,
-  RightLabel,
   DateInputPickerChrome,
+  DateInputRoot,
 } from './DateInput.style';
 
 export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
@@ -110,12 +113,21 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
       onPickerChange,
       modifyPickerValue,
       deferPickerCommit,
+      required,
+      labelVariant,
       ...props
     },
     ref,
   ) => {
     const shouldDeferPickerCommit =
       deferPickerCommit ?? Boolean(onPickerChange || modifyPickerValue);
+    const dateInputId = useId();
+    const hasFieldCaption = Boolean(label || additionalLabel);
+    const useFloatingCaption = isFloatingInputLabel(labelVariant);
+    const reserveFloatingCaptionPadding = shouldReserveFloatingInputCaptionSpace(
+      labelVariant,
+      hasFieldCaption,
+    );
 
     const [isOpen, setIsOpen] = useState(false);
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -1092,35 +1104,33 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
       };
     }, []);
 
-    const dateInputContent = (
-      <InputContainerWithPadding
-        ref={containerRef}
+    const fieldCaption = (
+      <InputFieldCaption
+        label={label}
+        additionalLabel={additionalLabel}
+        labelVariant={labelVariant}
+        htmlFor={segmented ? undefined : dateInputId}
+        required={required}
+        focused={isOpen}
         disabled={disabled}
         error={!!error}
+        size={size}
+      />
+    );
+
+    const dateInputContent = (
+      <DateInputRoot
+        ref={containerRef}
+        fullWidth={fullWidth}
+        disabled={disabled}
+        error={!!error}
+        $floatingCaption={reserveFloatingCaptionPadding}
+        data-input-caption-padding={reserveFloatingCaptionPadding ? 'floating' : undefined}
         className={clsx('ui-date-picker', className)}
       >
-        {(label || additionalLabel) && (
-          <div
-            style={{
-              position: 'relative',
-              marginBottom: '4px',
-              width: '100%',
-              height: '20px', // Фиксированная высота для контейнера
-            }}
-          >
-            {label && (
-              <LeftLabel focused={isOpen} disabled={disabled} error={!!error} size={size}>
-                {label}
-              </LeftLabel>
-            )}
-            {additionalLabel && (
-              <RightLabel focused={isOpen} disabled={disabled} error={!!error} size={size}>
-                {additionalLabel}
-              </RightLabel>
-            )}
-          </div>
-        )}
-        <DateInputFieldStack fullWidth={fullWidth} autoWidth={autoWidth}>
+        {useFloatingCaption ? fieldCaption : null}
+        <InputControlStack fullWidth={fullWidth} autoWidth={autoWidth}>
+          {useFloatingCaption ? null : fieldCaption}
           {skeleton ? (
             <SkeletonEffect size={size} fullWidth={fullWidth} autoWidth={autoWidth} />
           ) : (
@@ -1172,6 +1182,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
                 // Обычный режим ввода даты
                 <StyledInput
                   ref={ref || inputRef}
+                  id={dateInputId}
                   type="text"
                   value={inputValue}
                   onChange={handleInputChange}
@@ -1181,6 +1192,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
                   onClick={handleInputClick}
                   disabled={disabled}
                   readOnly={readOnly}
+                  required={required}
                   placeholder={placeholder || 'Выберите дату'}
                   textAlign={textAlign}
                   onSelect={
@@ -1249,8 +1261,8 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
                 />
               );
             })()}
-        </DateInputFieldStack>
-      </InputContainerWithPadding>
+        </InputControlStack>
+      </DateInputRoot>
     );
 
     const calendarPopupPortal =
