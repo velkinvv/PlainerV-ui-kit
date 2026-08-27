@@ -75,12 +75,16 @@ function TableCellInner<ColumnColorKey extends string = string>(
     ? { ...style, backgroundColor: resolvedColumnColor }
     : style;
 
+  // Маркер горизонтального разделителя на ячейке (Jest мокает styled-components без CSS-классов)
+  const rowDividerKind = isFooter ? undefined : isHead ? 'head' : 'body';
+
   return (
     <TableCellBase
       ref={ref}
       as={Comp}
       className={clsx(className)}
       style={mergedStyle}
+      data-plainer-table-row-divider={rowDividerKind}
       scope={isHead ? (scope ?? (colSpan == null || colSpan === 1 ? 'col' : undefined)) : scope}
       colSpan={colSpan}
       rowSpan={rowSpan}

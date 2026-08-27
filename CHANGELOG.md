@@ -9,6 +9,40 @@
 
 ---
 
+## [0.3.3] - 2026-08-27
+
+### Added
+
+- Подготовка релиза **0.3.3** (ветка `v_0.3.3`).
+- **DateInput:** проп **`precision`** (`day` | `month` | `year` | `monthYear` | `week`). Режимы без дня открывают список месяцев, годов и/или недель вместо календаря; `onChange` отдаёт `YYYY-MM`, `YYYY` или `YYYY-MM-W2`. **`weekOfMonthMode`:** `calendar` (по умолчанию, недели с понедельника) или `chunks` (1–7, 8–14, …).
+
+### Changed
+
+- **Button / IconButton / SegmentedControl / ButtonGroup / Calendar:** высота контролов совпадает с Input того же `size` (`InputSizeHandler`); радиус рамки берётся из `theme.borderRadius`, как у полей. `SegmentedControl` по умолчанию использует `theme.defaultInputSize`.
+
+### Added (документация)
+
+- Документация **v0.3.3** на сайте; обновлены README, CHANGELOG, индекс версий.
+
+---
+
+## [0.3.2] - 2026-08-27
+
+### Added
+
+- Подготовка релиза **0.3.2** (ветка `v_0.3.2`).
+
+### Fixed
+
+- Всплывающие панели (**DateInput**, **Dropdown**, **Select**, **Popover**, **FloatingMenu**) при первом открытии появляются сразу под якорем, без вылета из левого верхнего угла (`left`/`top` больше не анимируются из `(0, 0)`).
+- **DataGrid / Table:** при `stickyHeader` горизонтальные разделители строк рисуются на ячейках (`td`/`th`), а не на `tr` — линии больше не пропадают из‑за `border-collapse: separate`. Нижняя граница шапки берёт `theme.tables.header.borderBottom`, чтобы при `tableHeaderVariant="card"` шапка не слилась с первой строкой. Смещение второй sticky-строки `thead` измеряется по высоте `headerToolbar`, а не хардкодится как 48px.
+
+### Added (документация)
+
+- Документация **v0.3.2** на сайте; обновлены README, CHANGELOG, индекс версий.
+
+---
+
 ## [0.3.1] - 2026-08-25
 
 ### Added

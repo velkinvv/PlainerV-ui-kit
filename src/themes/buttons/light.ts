@@ -1,6 +1,7 @@
 import type { ButtonTheme } from '../../types/theme';
 import { Size } from '../../types/sizes';
 import { themeRadiusBySize } from '../radiusScale';
+import { InputSizeHandler } from '../../handlers/uiHandlers';
 import { fontFamily } from '../fonts';
 import { primary } from '../../variables/colors/primary';
 import { success } from '../../variables/colors/success';
@@ -16,35 +17,35 @@ export const lightButtonTheme: ButtonTheme = {
   // Размеры кнопок
   sizes: {
     [Size.XS]: {
-      minHeight: '28px',
+      minHeight: InputSizeHandler(Size.XS),
       padding: '6px 8px',
       fontSize: '12px',
       borderRadius: themeRadiusBySize[Size.XS],
       gap: '6px',
     },
     [Size.SM]: {
-      minHeight: '32px',
+      minHeight: InputSizeHandler(Size.SM),
       padding: '8px 12px',
       fontSize: '14px',
       borderRadius: themeRadiusBySize[Size.SM],
       gap: '8px',
     },
     [Size.MD]: {
-      minHeight: '36px',
+      minHeight: InputSizeHandler(Size.MD),
       padding: '10px 18px',
       fontSize: '14px',
       borderRadius: themeRadiusBySize[Size.MD],
       gap: '8px',
     },
     [Size.LG]: {
-      minHeight: '40px',
+      minHeight: InputSizeHandler(Size.LG),
       padding: '12px 20px',
       fontSize: '16px',
       borderRadius: themeRadiusBySize[Size.LG],
       gap: '8px',
     },
     [Size.XL]: {
-      minHeight: '64px',
+      minHeight: InputSizeHandler(Size.XL),
       padding: '16px 28px',
       fontSize: '20px',
       borderRadius: themeRadiusBySize[Size.XL],

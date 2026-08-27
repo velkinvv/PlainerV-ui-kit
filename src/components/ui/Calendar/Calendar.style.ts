@@ -1,6 +1,10 @@
 import styled, { css } from 'styled-components';
 import { overlayPanelBoxShadowFromTheme, overlayPanelSurfaceCss } from '../../../handlers/overlayPanelShadowHandlers';
 import { BorderRadiusHandler } from '../../../handlers/uiHandlers';
+import {
+  resolveControlBorderRadius,
+  resolveControlMinHeight,
+} from '../../../handlers/controlChromeHandlers';
 import { createStyledShouldForwardProp } from '../../../handlers/styledComponentHandlers';
 import { Size } from '../../../types/sizes';
 
@@ -101,22 +105,27 @@ export const CalendarSplitMonthYearRow = styled.div`
 `;
 
 /**
- * Кнопка «месяц год» с шевроном.
+ * Кнопка «месяц год» с шевроном — геометрия как у Input.
  * @property $open - Выпадающий список открыт (поворот шеврона).
  * @property $disabled - Заблокирована.
+ * @property $size - Размер календаря (высота как у поля ввода).
  */
 export const CalendarMonthTrigger = styled.button.withConfig({
   shouldForwardProp: createStyledShouldForwardProp(),
-})<{ $open?: boolean; $disabled?: boolean }>`
+})<{ $open?: boolean; $disabled?: boolean; $size?: Size }>`
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  box-sizing: border-box;
+  width: 100%;
   max-width: 100%;
-  padding: 6px 10px;
+  min-height: ${({ $size }) => resolveControlMinHeight($size ?? Size.MD)};
+  padding: 6px 12px;
   margin: 0;
-  border: 1px solid transparent;
-  border-radius: 9999px;
-  background: transparent;
+  border: 1px solid
+    ${({ theme, $open }) => ($open ? theme.colors.primary : theme.colors.borderSecondary)};
+  border-radius: ${({ theme }) => resolveControlBorderRadius(theme.borderRadius)};
+  background: ${({ theme }) => theme.colors.input};
   cursor: pointer;
   font: inherit;
   font-weight: 600;
@@ -133,7 +142,6 @@ export const CalendarMonthTrigger = styled.button.withConfig({
     $open &&
     css`
       background: ${theme.colors.backgroundSecondary};
-      border-color: ${theme.colors.borderSecondary};
     `}
 
   &:focus-visible {
@@ -184,22 +192,26 @@ export const CalendarNavGroup = styled.div`
 `;
 
 /**
- * Стрелка переключения месяца.
+ * Стрелка переключения месяца — квадрат той же высоты, что Input.
  * @property $disabled - Неактивна.
+ * @property $size - Размер календаря.
  */
 export const CalendarNavButton = styled.button.withConfig({
   shouldForwardProp: createStyledShouldForwardProp(),
-})<{ $disabled?: boolean }>`
+})<{ $disabled?: boolean; $size?: Size }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  box-sizing: border-box;
+  width: ${({ $size }) => resolveControlMinHeight($size ?? Size.MD)};
+  height: ${({ $size }) => resolveControlMinHeight($size ?? Size.MD)};
+  min-width: ${({ $size }) => resolveControlMinHeight($size ?? Size.MD)};
+  min-height: ${({ $size }) => resolveControlMinHeight($size ?? Size.MD)};
   margin: 0;
   padding: 0;
-  border: none;
-  border-radius: 8px;
-  background: transparent;
+  border: 1px solid ${({ theme }) => theme.colors.borderSecondary};
+  border-radius: ${({ theme }) => resolveControlBorderRadius(theme.borderRadius)};
+  background: ${({ theme }) => theme.colors.input};
   color: ${({ theme, $disabled }) =>
     $disabled ? theme.colors.textTertiary : theme.colors.textSecondary};
   cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};

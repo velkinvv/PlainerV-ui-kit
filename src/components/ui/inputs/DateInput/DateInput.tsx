@@ -1,14 +1,9 @@
-﻿import React, { forwardRef, useState, useRef, useEffect, useCallback, useId } from 'react';
+﻿import React, { forwardRef, useState, useRef, useEffect, useCallback, useId, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { clsx } from 'clsx';
 import { useTheme } from 'styled-components';
 import { ButtonVariant, TooltipPosition, type DatePickerProps } from '../../../../types/ui';
-import {
-  parseDate,
-  formatDateForDisplay,
-  toISODateString,
-  getWeekdayNames,
-} from '../../../../handlers/dateHandlers';
+import { formatDateForDisplay, getWeekdayNames } from '../../../../handlers/dateHandlers';
 import {
   computeRangeDatesAfterDayClick,
   datePickerDraftDatesFromValue,
@@ -16,6 +11,27 @@ import {
   type DatePickerDraftDates,
   type DatePickerDraftPhase,
 } from '../../../../handlers/dateInputPickerHandlers';
+import {
+  doesFormatUseNamedMonth,
+  formatDateByPrecision,
+  formatDateInputByPrecision,
+  formatPeriodForDisplay,
+  getDateInputVisibleSegments,
+  getNeighborDateSegment,
+  isCompleteDateStringByPrecision,
+  isMonthPeriodDisabled,
+  isPeriodPrecision,
+  isYearPeriodDisabled,
+  parseMonthInputValue,
+  parsePrecisionValue,
+  resolveDateInputFormat,
+  type DateInputSegment,
+} from '../../../../handlers/dateInputPrecisionHandlers';
+import {
+  getMonthWeekByNumber,
+  getWeekOfMonthFromDate,
+  isWeekPeriodDisabled,
+} from '../../../../handlers/dateInputWeekHandlers';
 import { getClearIconSizeForInputField } from '../../../../handlers/iconHandlers';
 import {
   isFloatingInputLabel,
@@ -23,6 +39,7 @@ import {
 } from '../../../../handlers/inputFieldCaptionHandlers';
 import { Size, IconSize } from '../../../../types/sizes';
 import { Calendar } from '../../Calendar/Calendar';
+import { DateInputPeriodPicker } from './DateInputPeriodPicker';
 import { Button } from '../../buttons/Button/Button';
 import { Icon } from '../../Icon/Icon';
 import { Tooltip } from '../../Tooltip/Tooltip';
@@ -105,7 +122,9 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
       disabledMonths = [],
       disabledYears = [],
       segmented = false, // По умолчанию используем обычный input
-      format = 'DD.MM.YYYY', // Формат отображения даты по умолчанию
+      format: formatProp,
+      precision = 'day',
+      weekOfMonthMode = 'calendar',
       showDateRollers = false,
       calendarMonthYearLayout = 'combined',
       calendarFullWidth = false,
@@ -122,6 +141,8 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
   ) => {
     const shouldDeferPickerCommit =
       deferPickerCommit ?? Boolean(onPickerChange || modifyPickerValue);
+    const format = resolveDateInputFormat(formatProp, precision);
+    const weekOptions = useMemo(() => ({ weekOfMonthMode }), [weekOfMonthMode]);
     const dateInputId = useId();
     const hasFieldCaption = Boolean(label || additionalLabel);
     const useFloatingCaption = isFloatingInputLabel(labelVariant);
@@ -137,7 +158,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
     // Инициализируем состояния в зависимости от режима и типа value
     const [selectedDate, setSelectedDate] = useState<Date | null>(() => {
       if (!range && typeof value === 'string' && value) {
-        const result = parseDate(value);
+        const result = parsePrecisionValue(value, precision, { weekOfMonthMode });
         return result.isValid ? result.date : null;
       }
       return null;
@@ -145,7 +166,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
 
     const [rangeStart, setRangeStart] = useState<Date | null>(() => {
       if (range && typeof value === 'object' && value?.start) {
-        const result = parseDate(value.start);
+        const result = parsePrecisionValue(value.start, precision, { weekOfMonthMode });
         return result.isValid ? result.date : null;
       }
       return null;
@@ -153,7 +174,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
 
     const [rangeEnd, setRangeEnd] = useState<Date | null>(() => {
       if (range && typeof value === 'object' && value?.end) {
-        const result = parseDate(value.end);
+        const result = parsePrecisionValue(value.end, precision, { weekOfMonthMode });
         return result.isValid ? result.date : null;
       }
       return null;
@@ -161,7 +182,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
     const [tempRangeEnd, setTempRangeEnd] = useState<Date | null>(null);
 
     // Состояния для сегментированного ввода даты
-    const [activeSegment, setActiveSegment] = useState<'day' | 'month' | 'year' | null>(null);
+    const [activeSegment, setActiveSegment] = useState<DateInputSegment | null>(null);
     const [activePicker, setActivePicker] = useState<'start' | 'end'>('start');
 
     // Состояния для ввода с клавиатуры
@@ -169,7 +190,8 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
       day: string;
       month: string;
       year: string;
-    }>({ day: '', month: '', year: '' });
+      week: string;
+    }>({ day: '', month: '', year: '', week: '' });
 
     const inputRef = useRef<HTMLInputElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -196,9 +218,11 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
     const startDayRef = useRef<HTMLSpanElement>(null);
     const startMonthRef = useRef<HTMLSpanElement>(null);
     const startYearRef = useRef<HTMLSpanElement>(null);
+    const startWeekRef = useRef<HTMLSpanElement>(null);
     const endDayRef = useRef<HTMLSpanElement>(null);
     const endMonthRef = useRef<HTMLSpanElement>(null);
     const endYearRef = useRef<HTMLSpanElement>(null);
+    const endWeekRef = useRef<HTMLSpanElement>(null);
 
     const handleFocus = () => {
       // Убираем автоматическое открытие календаря при фокусе
@@ -236,78 +260,13 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
       // setIsOpen(!isOpen);
     };
 
-    // Функция для автоматического форматирования ввода даты
+    // Маска и полнота строки зависят от точности (день / месяц / год)
     const formatDateInput = (value: string): string => {
-      // Удаляем все нецифровые символы
-      const digits = value.replace(/\D/g, '');
-
-      // Если нет цифр, возвращаем пустую строку
-      if (!digits) return '';
-
-      // Ограничиваем количество цифр (максимум 8 для DD.MM.YYYY)
-      const limitedDigits = digits.slice(0, 8);
-
-      // Форматируем в зависимости от количества цифр
-      if (limitedDigits.length <= 2) {
-        // Только день: "12"
-        return limitedDigits;
-      } else if (limitedDigits.length <= 4) {
-        // День и месяц: "12.34"
-        return `${limitedDigits.slice(0, 2)}.${limitedDigits.slice(2)}`;
-      } else {
-        // День, месяц и год: "12.34.5678"
-        return `${limitedDigits.slice(0, 2)}.${limitedDigits.slice(2, 4)}.${limitedDigits.slice(4)}`;
-      }
+      return formatDateInputByPrecision(value, precision, format);
     };
 
-    // Функция для проверки, выглядит ли строка как полная дата
     const isCompleteDateString = (value: string): boolean => {
-      const trimmed = value.trim();
-
-      // Если строка слишком короткая, не парсим
-      if (trimmed.length < 10) {
-        // Минимум "01.01.2000" = 10 символов
-        return false;
-      }
-
-      // Проверяем наличие разделителей даты
-      const hasDateSeparators = /[.\-/]/.test(trimmed);
-      if (!hasDateSeparators) {
-        return false;
-      }
-
-      // Проверяем, что строка содержит ровно 2 разделителя (для полной даты)
-      const separatorCount = (trimmed.match(/[.\-/]/g) || []).length;
-      if (separatorCount !== 2) {
-        return false;
-      }
-
-      // Проверяем, что есть достаточно цифр для даты (минимум 8 цифр для DD.MM.YYYY)
-      const digitCount = (trimmed.match(/\d/g) || []).length;
-      if (digitCount < 8) {
-        return false;
-      }
-
-      // Дополнительная проверка: строка должна содержать ровно 3 части (день, месяц, год)
-      const parts = trimmed.split(/[.\-/]/);
-      if (parts.length !== 3) {
-        return false;
-      }
-
-      // Проверяем, что все части содержат цифры и не пустые
-      for (const part of parts) {
-        if (!part.trim() || !/^\d+$/.test(part.trim())) {
-          return false;
-        }
-      }
-
-      // Проверяем, что год содержит минимум 4 цифры (полный год)
-      const yearPart = parts[2].trim();
-      if (yearPart.length < 4) {
-        return false;
-      }
-
-      return true;
+      return isCompleteDateStringByPrecision(value, precision, format);
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -355,8 +314,8 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
             const startDateStr = rangeMatch[1].trim();
             const endDateStr = rangeMatch[2].trim();
 
-            const startResult = parseDate(startDateStr);
-            const endResult = parseDate(endDateStr);
+            const startResult = parsePrecisionValue(startDateStr, precision, weekOptions);
+            const endResult = parsePrecisionValue(endDateStr, precision, weekOptions);
 
             if (startResult.isValid && endResult.isValid && startResult.date && endResult.date) {
               setRangeStart(startResult.date);
@@ -366,7 +325,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
             }
           } else {
             // Одиночная дата в range режиме
-            const parsedResult = parseDate(formattedValue);
+            const parsedResult = parsePrecisionValue(formattedValue, precision, weekOptions);
             if (parsedResult.isValid && parsedResult.date) {
               setRangeStart(parsedResult.date);
               setCurrentDate(parsedResult.date); // Обновляем текущий месяц в календаре
@@ -376,12 +335,12 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
           }
         } else {
           // Одиночная дата в обычном режиме
-          const parsedResult = parseDate(formattedValue);
+          const parsedResult = parsePrecisionValue(formattedValue, precision, weekOptions);
           if (parsedResult.isValid && parsedResult.date) {
             setSelectedDate(parsedResult.date);
             setCurrentDate(parsedResult.date); // Обновляем текущий месяц в календаре
             if (onChange) {
-              onChange(toISODateString(parsedResult.date));
+              onChange(formatDateByPrecision(parsedResult.date, precision, weekOptions));
             }
           }
         }
@@ -410,8 +369,8 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
             const startDateStr = rangeMatch[1].trim();
             const endDateStr = rangeMatch[2].trim();
 
-            const startResult = parseDate(startDateStr);
-            const endResult = parseDate(endDateStr);
+            const startResult = parsePrecisionValue(startDateStr, precision, weekOptions);
+            const endResult = parsePrecisionValue(endDateStr, precision, weekOptions);
 
             if (startResult.isValid && endResult.isValid && startResult.date && endResult.date) {
               setRangeStart(startResult.date);
@@ -420,14 +379,14 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
               setCurrentDate(startResult.date); // Обновляем текущий месяц в календаре на начало диапазона
               if (onChange) {
                 onChange({
-                  start: toISODateString(startResult.date),
-                  end: toISODateString(endResult.date),
+                  start: formatDateByPrecision(startResult.date, precision, weekOptions),
+                  end: formatDateByPrecision(endResult.date, precision, weekOptions),
                 });
               }
             }
           } else {
             // Одиночная дата в range режиме
-            const parsedResult = parseDate(inputValue);
+            const parsedResult = parsePrecisionValue(inputValue, precision, weekOptions);
             if (parsedResult.isValid && parsedResult.date) {
               setRangeStart(parsedResult.date);
               setCurrentDate(parsedResult.date); // Обновляем текущий месяц в календаре
@@ -437,12 +396,12 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
           }
         } else {
           // Одиночная дата в обычном режиме
-          const parsedResult = parseDate(inputValue);
+          const parsedResult = parsePrecisionValue(inputValue, precision, weekOptions);
           if (parsedResult.isValid && parsedResult.date) {
             setSelectedDate(parsedResult.date);
             setCurrentDate(parsedResult.date); // Обновляем текущий месяц в календаре
             if (onChange) {
-              onChange(toISODateString(parsedResult.date));
+              onChange(formatDateByPrecision(parsedResult.date, precision, weekOptions));
             }
           }
         }
@@ -451,12 +410,15 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
     };
 
     const formatDate = useCallback(
-      (date: Date | null) => formatDateForDisplay(date, format),
-      [format],
+      (date: Date | null) => formatPeriodForDisplay(date, format, precision, weekOptions),
+      [format, precision, weekOptions],
     );
 
     const syncDraftFromValue = useCallback(() => {
-      const draftDates = datePickerDraftDatesFromValue(value, range);
+      const draftDates = datePickerDraftDatesFromValue(value, range, {
+        precision,
+        weekOfMonthMode,
+      });
 
       if (!range) {
         setSelectedDate(draftDates.selectedDate);
@@ -472,7 +434,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
         setCurrentDate(draftDates.rangeStart);
       }
       setTempRangeEnd(null);
-    }, [range, value]);
+    }, [range, value, precision, weekOfMonthMode]);
 
     /**
      * Обновляет черновик пикера с учётом `modifyPickerValue` / `onPickerChange`.
@@ -490,6 +452,8 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
           draftDates: nextDraftDates,
           range,
           format,
+          precision,
+          weekOfMonthMode,
           phase,
           modifyPickerValue,
           onPickerChange,
@@ -509,8 +473,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
           setTempRangeEnd(null);
         }
 
-        const shouldUpdateInputPreview =
-          options?.updateInputPreview ?? !shouldDeferPickerCommit;
+        const shouldUpdateInputPreview = options?.updateInputPreview ?? !shouldDeferPickerCommit;
 
         if (shouldUpdateInputPreview) {
           if (!range) {
@@ -531,6 +494,8 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
       [
         range,
         format,
+        precision,
+        weekOfMonthMode,
         modifyPickerValue,
         onPickerChange,
         shouldDeferPickerCommit,
@@ -579,29 +544,18 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
           setInputValue('');
         }
       }
-    }, [
-      selectedDate,
-      rangeStart,
-      rangeEnd,
-      range,
-      formatDate,
-      shouldDeferPickerCommit,
-      isOpen,
-    ]);
+    }, [selectedDate, rangeStart, rangeEnd, range, formatDate, shouldDeferPickerCommit, isOpen]);
 
     const handleDayClick = (date: Date) => {
       if (!range) {
         if (shouldDeferPickerCommit) {
-          applyPickerDraftUpdate(
-            { selectedDate: date, rangeStart: null, rangeEnd: null },
-            'pick',
-          );
+          applyPickerDraftUpdate({ selectedDate: date, rangeStart: null, rangeEnd: null }, 'pick');
           return;
         }
 
         setSelectedDate(date);
         setInputValue(formatDate(date));
-        onChange?.(toISODateString(date));
+        onChange?.(formatDateByPrecision(date, precision, weekOptions));
         setIsOpen(false);
         return;
       }
@@ -636,7 +590,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
 
         setSelectedDate(pickedDate);
         setInputValue(formatDate(pickedDate));
-        onChange?.(toISODateString(pickedDate));
+        onChange?.(formatDateByPrecision(pickedDate, precision, weekOptions));
         setCurrentDate(pickedDate);
         return;
       }
@@ -658,8 +612,8 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
 
         if (resolvedDates.rangeStart && resolvedDates.rangeEnd) {
           onChange?.({
-            start: toISODateString(resolvedDates.rangeStart),
-            end: toISODateString(resolvedDates.rangeEnd),
+            start: formatDateByPrecision(resolvedDates.rangeStart, precision, weekOptions),
+            end: formatDateByPrecision(resolvedDates.rangeEnd, precision, weekOptions),
           });
         }
       } else if (selectedDate) {
@@ -670,7 +624,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
         );
 
         if (resolvedDates.selectedDate) {
-          onChange?.(toISODateString(resolvedDates.selectedDate));
+          onChange?.(formatDateByPrecision(resolvedDates.selectedDate, precision, weekOptions));
         }
       }
 
@@ -678,11 +632,9 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
     };
 
     const handleClear = () => {
-      applyPickerDraftUpdate(
-        { selectedDate: null, rangeStart: null, rangeEnd: null },
-        'clear',
-        { updateInputPreview: true },
-      );
+      applyPickerDraftUpdate({ selectedDate: null, rangeStart: null, rangeEnd: null }, 'clear', {
+        updateInputPreview: true,
+      });
 
       if (!range) {
         onChange?.('');
@@ -694,22 +646,19 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
     };
 
     // Обработчики для сегментированного ввода даты
-    const handleSegmentClick = (
-      segment: 'day' | 'month' | 'year',
-      pickerType?: 'start' | 'end',
-    ) => {
+    const handleSegmentClick = (segment: DateInputSegment, pickerType?: 'start' | 'end') => {
       if (disabled) return;
       setActiveSegment(segment);
       if (range && pickerType) {
         setActivePicker(pickerType);
       }
       // Очищаем буфер при клике на новый сегмент
-      setInputBuffer({ day: '', month: '', year: '' });
+      setInputBuffer({ day: '', month: '', year: '', week: '' });
     };
 
     // Функция для валидации и применения введенного значения
     const applyInputValue = (
-      segment: 'day' | 'month' | 'year',
+      segment: DateInputSegment,
       value: string,
       pickerType?: 'start' | 'end',
     ) => {
@@ -738,9 +687,9 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
           break;
         }
         case 'month': {
-          const month = parseInt(value);
-          if (month >= 1 && month <= 12) {
-            newDate.setMonth(month - 1);
+          const monthIndex = parseMonthInputValue(value);
+          if (monthIndex !== null) {
+            newDate.setMonth(monthIndex);
           } else {
             isValid = false;
           }
@@ -755,9 +704,47 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
           }
           break;
         }
+        case 'week': {
+          const weekNumber = Number.parseInt(value, 10);
+          const week = getMonthWeekByNumber(
+            newDate.getFullYear(),
+            newDate.getMonth(),
+            weekNumber,
+            weekOptions,
+          );
+          if (week) {
+            newDate.setTime(week.startDate.getTime());
+          } else {
+            isValid = false;
+          }
+          break;
+        }
       }
 
-      if (isValid && !isDateDisabled(newDate)) {
+      const selectedWeek = getWeekOfMonthFromDate(newDate, weekOptions);
+      const isPeriodDisabled =
+        precision === 'year'
+          ? isYearPeriodDisabled(newDate.getFullYear(), {
+              minDate,
+              maxDate,
+              isDateDisabled,
+            })
+          : precision === 'month' || precision === 'monthYear'
+            ? isMonthPeriodDisabled(newDate.getFullYear(), newDate.getMonth(), {
+                minDate,
+                maxDate,
+                isDateDisabled,
+              })
+            : precision === 'week'
+              ? !selectedWeek ||
+                isWeekPeriodDisabled(selectedWeek, {
+                  minDate,
+                  maxDate,
+                  isDateDisabled,
+                })
+              : isDateDisabled(newDate);
+
+      if (isValid && !isPeriodDisabled) {
         // Применяем изменения
         if (range) {
           if (actualPickerType === 'start') {
@@ -769,7 +756,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
         } else {
           setSelectedDate(newDate);
           if (onChange) {
-            onChange(toISODateString(newDate));
+            onChange(formatDateByPrecision(newDate, precision, weekOptions));
           }
         }
         setCurrentDate(newDate);
@@ -778,7 +765,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
 
     const handleSegmentKeyDown = (
       e: React.KeyboardEvent,
-      segment: 'day' | 'month' | 'year',
+      segment: DateInputSegment,
       pickerType?: 'start' | 'end',
     ) => {
       if (disabled) return;
@@ -807,7 +794,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
         newBuffer[segment] += e.key;
 
         // Ограничиваем длину буфера
-        const maxLength = segment === 'year' ? 4 : 2;
+        const maxLength = segment === 'year' ? 4 : segment === 'week' ? 1 : 2;
         if (newBuffer[segment].length > maxLength) {
           newBuffer[segment] = e.key; // Заменяем на новую цифру
         }
@@ -818,15 +805,10 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
         if (newBuffer[segment].length === maxLength) {
           applyInputValue(segment, newBuffer[segment], pickerType);
 
-          // Переходим к следующему сегменту
-          if (segment === 'day') {
-            setActiveSegment('month');
-            setTimeout(() => focusSegment('month', pickerType), 0);
-          } else if (segment === 'month') {
-            setActiveSegment('year');
-            setTimeout(() => focusSegment('year', pickerType), 0);
-          } else if (segment === 'year') {
-            setActiveSegment(null);
+          const nextSegment = getNeighborDateSegment(segment, 'next', precision);
+          setActiveSegment(nextSegment);
+          if (nextSegment) {
+            setTimeout(() => focusSegment(nextSegment, pickerType), 0);
           }
         }
         return;
@@ -841,13 +823,10 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
         if (newBuffer[segment].length > 0) {
           newBuffer[segment] = newBuffer[segment].slice(0, -1);
         } else {
-          // Если буфер пустой, переходим к предыдущему сегменту
-          if (segment === 'month') {
-            setActiveSegment('day');
-            setTimeout(() => focusSegment('day', pickerType), 0);
-          } else if (segment === 'year') {
-            setActiveSegment('month');
-            setTimeout(() => focusSegment('month', pickerType), 0);
+          const previousSegment = getNeighborDateSegment(segment, 'previous', precision);
+          if (previousSegment) {
+            setActiveSegment(previousSegment);
+            setTimeout(() => focusSegment(previousSegment, pickerType), 0);
           }
         }
 
@@ -863,6 +842,17 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
             newDate.setDate(newDate.getDate() + 1);
           } else if (segment === 'month') {
             newDate.setMonth(newDate.getMonth() + 1);
+          } else if (segment === 'week') {
+            const currentWeek = getWeekOfMonthFromDate(newDate, weekOptions);
+            const nextWeek = getMonthWeekByNumber(
+              newDate.getFullYear(),
+              newDate.getMonth(),
+              (currentWeek?.weekNumber ?? 1) + 1,
+              weekOptions,
+            );
+            if (nextWeek) {
+              newDate.setTime(nextWeek.startDate.getTime());
+            }
           } else {
             newDate.setFullYear(newDate.getFullYear() + 1);
           }
@@ -873,36 +863,39 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
             newDate.setDate(newDate.getDate() - 1);
           } else if (segment === 'month') {
             newDate.setMonth(newDate.getMonth() - 1);
+          } else if (segment === 'week') {
+            const currentWeek = getWeekOfMonthFromDate(newDate, weekOptions);
+            const previousWeek = getMonthWeekByNumber(
+              newDate.getFullYear(),
+              newDate.getMonth(),
+              (currentWeek?.weekNumber ?? 1) - 1,
+              weekOptions,
+            );
+            if (previousWeek) {
+              newDate.setTime(previousWeek.startDate.getTime());
+            }
           } else {
             newDate.setFullYear(newDate.getFullYear() - 1);
           }
           break;
         case 'Tab':
           e.preventDefault();
-          if (e.shiftKey) {
-            // Переход к предыдущему сегменту
-            if (segment === 'month') {
-              setActiveSegment('day');
-              setTimeout(() => focusSegment('day', pickerType), 0);
-            } else if (segment === 'year') {
-              setActiveSegment('month');
-              setTimeout(() => focusSegment('month', pickerType), 0);
-            }
-          } else {
-            // Переход к следующему сегменту
-            if (segment === 'day') {
-              setActiveSegment('month');
-              setTimeout(() => focusSegment('month', pickerType), 0);
-            } else if (segment === 'month') {
-              setActiveSegment('year');
-              setTimeout(() => focusSegment('year', pickerType), 0);
+          {
+            const tabSegment = getNeighborDateSegment(
+              segment,
+              e.shiftKey ? 'previous' : 'next',
+              precision,
+            );
+            if (tabSegment) {
+              setActiveSegment(tabSegment);
+              setTimeout(() => focusSegment(tabSegment, pickerType), 0);
             }
           }
           return;
         case 'Escape':
           e.preventDefault();
           setActiveSegment(null);
-          setInputBuffer({ day: '', month: '', year: '' });
+          setInputBuffer({ day: '', month: '', year: '', week: '' });
           return;
         case 'Enter':
           e.preventDefault();
@@ -911,7 +904,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
             applyInputValue(segment, inputBuffer[segment], pickerType);
           }
           setActiveSegment(null);
-          setInputBuffer({ day: '', month: '', year: '' });
+          setInputBuffer({ day: '', month: '', year: '', week: '' });
           return;
         default:
           return;
@@ -929,7 +922,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
         } else {
           setSelectedDate(newDate);
           if (onChange) {
-            onChange(toISODateString(newDate));
+            onChange(formatDateByPrecision(newDate, precision, weekOptions));
           }
         }
         setCurrentDate(newDate);
@@ -937,23 +930,18 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
     };
 
     // Функция для установки фокуса на сегмент
-    const focusSegment = (segment: 'day' | 'month' | 'year', pickerType?: 'start' | 'end') => {
-      let ref: React.RefObject<HTMLSpanElement | null> | null = null;
+    const focusSegment = (segment: DateInputSegment, pickerType?: 'start' | 'end') => {
+      const useEndRefs = pickerType === 'end';
+      const segmentRefs = {
+        day: useEndRefs ? endDayRef : startDayRef,
+        month: useEndRefs ? endMonthRef : startMonthRef,
+        year: useEndRefs ? endYearRef : startYearRef,
+        week: useEndRefs ? endWeekRef : startWeekRef,
+      };
+      const segmentRef = segmentRefs[segment];
 
-      if (range && pickerType) {
-        if (pickerType === 'start') {
-          ref =
-            segment === 'day' ? startDayRef : segment === 'month' ? startMonthRef : startYearRef;
-        } else {
-          ref = segment === 'day' ? endDayRef : segment === 'month' ? endMonthRef : endYearRef;
-        }
-      } else {
-        // Для single режима используем start refs
-        ref = segment === 'day' ? startDayRef : segment === 'month' ? startMonthRef : startYearRef;
-      }
-
-      if (ref?.current) {
-        ref.current.focus();
+      if (segmentRef?.current) {
+        segmentRef.current.focus();
       }
     };
 
@@ -989,9 +977,11 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
     // Функции для рендера сегментированных дат
     const renderDateSegments = (date: Date | null, pickerType?: 'start' | 'end') => {
       const isActivePicker = !range || (range && pickerType === activePicker);
+      const visibleSegments = getDateInputVisibleSegments(precision);
+      const segmentSeparator = doesFormatUseNamedMonth(format) ? '\u00A0' : '.';
 
       // Получаем значения для отображения (либо из буфера, либо из даты)
-      const getDisplayValue = (segment: 'day' | 'month' | 'year'): string => {
+      const getDisplayValue = (segment: DateInputSegment): string => {
         if (isActivePicker && activeSegment === segment && inputBuffer[segment]) {
           return inputBuffer[segment];
         }
@@ -1000,59 +990,58 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
           switch (segment) {
             case 'day':
               return date.getDate().toString().padStart(2, '0');
+            case 'week':
+              return String(getWeekOfMonthFromDate(date, weekOptions)?.weekNumber ?? '');
             case 'month':
+              if (doesFormatUseNamedMonth(format)) {
+                return formatDateForDisplay(date, /MMMM/.test(format) ? 'MMMM' : 'MMM');
+              }
               return (date.getMonth() + 1).toString().padStart(2, '0');
             case 'year':
               return date.getFullYear().toString();
           }
         }
 
-        return segment === 'year' ? '----' : '--';
+        if (segment === 'year') {
+          return '----';
+        }
+
+        if (segment === 'month' && doesFormatUseNamedMonth(format)) {
+          return '------';
+        }
+
+        return segment === 'week' ? '-' : '--';
+      };
+
+      const segmentRefs = {
+        day: pickerType === 'start' ? startDayRef : endDayRef,
+        month: pickerType === 'start' ? startMonthRef : endMonthRef,
+        year: pickerType === 'start' ? startYearRef : endYearRef,
+        week: pickerType === 'start' ? startWeekRef : endWeekRef,
       };
 
       return (
         <DateSegmentsContainer size={size} textAlign={textAlign}>
-          <DateSegment
-            ref={pickerType === 'start' ? startDayRef : endDayRef}
-            isActive={activeSegment === 'day' && isActivePicker}
-            size={size}
-            disabled={disabled}
-            onClick={() => handleSegmentClick('day', pickerType)}
-            onKeyDown={(keyboardEvent: React.KeyboardEvent) =>
-              handleSegmentKeyDown(keyboardEvent, 'day', pickerType)
-            }
-            tabIndex={0}
-          >
-            {getDisplayValue('day')}
-          </DateSegment>
-          <DateSeparator size={size}>.</DateSeparator>
-          <DateSegment
-            ref={pickerType === 'start' ? startMonthRef : endMonthRef}
-            isActive={activeSegment === 'month' && isActivePicker}
-            size={size}
-            disabled={disabled}
-            onClick={() => handleSegmentClick('month', pickerType)}
-            onKeyDown={(keyboardEvent: React.KeyboardEvent) =>
-              handleSegmentKeyDown(keyboardEvent, 'month', pickerType)
-            }
-            tabIndex={0}
-          >
-            {getDisplayValue('month')}
-          </DateSegment>
-          <DateSeparator size={size}>.</DateSeparator>
-          <DateSegment
-            ref={pickerType === 'start' ? startYearRef : endYearRef}
-            isActive={activeSegment === 'year' && isActivePicker}
-            size={size}
-            disabled={disabled}
-            onClick={() => handleSegmentClick('year', pickerType)}
-            onKeyDown={(keyboardEvent: React.KeyboardEvent) =>
-              handleSegmentKeyDown(keyboardEvent, 'year', pickerType)
-            }
-            tabIndex={0}
-          >
-            {getDisplayValue('year')}
-          </DateSegment>
+          {visibleSegments.map((segment, segmentIndex) => (
+            <React.Fragment key={segment}>
+              {segmentIndex > 0 ? (
+                <DateSeparator size={size}>{segmentSeparator}</DateSeparator>
+              ) : null}
+              <DateSegment
+                ref={segmentRefs[segment]}
+                isActive={activeSegment === segment && isActivePicker}
+                size={size}
+                disabled={disabled}
+                onClick={() => handleSegmentClick(segment, pickerType)}
+                onKeyDown={(keyboardEvent: React.KeyboardEvent) =>
+                  handleSegmentKeyDown(keyboardEvent, segment, pickerType)
+                }
+                tabIndex={0}
+              >
+                {getDisplayValue(segment)}
+              </DateSegment>
+            </React.Fragment>
+          ))}
         </DateSegmentsContainer>
       );
     };
@@ -1076,16 +1065,13 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
 
     // Очищаем буфер при изменении даты
     useEffect(() => {
-      setInputBuffer({ day: '', month: '', year: '' });
+      setInputBuffer({ day: '', month: '', year: '', week: '' });
     }, [selectedDate, rangeStart, rangeEnd]);
 
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
         const target = event.target as Node;
-        if (
-          containerRef.current?.contains(target) ||
-          calendarPopupRef.current?.contains(target)
-        ) {
+        if (containerRef.current?.contains(target) || calendarPopupRef.current?.contains(target)) {
           return;
         }
         setIsOpen(false);
@@ -1286,55 +1272,98 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
                 <DateInputPickerChrome $edge="bottom">{renderTopPanel()}</DateInputPickerChrome>
               )}
 
-              <Calendar
-                embedded
-                showTitle={false}
-                visibleMonth={currentDate}
-                onVisibleMonthChange={(monthStart) => setCurrentDate(monthStart)}
-                locale="ru-RU"
-                weekStartsOn={1}
-                headerMode="monthYear"
-                showMonthPicker
-                monthYearLayout={calendarMonthYearLayout}
-                showDateRollers={showDateRollers}
-                onRollersDateChange={handleCalendarRollersDate}
-                size={size}
-                disabled={disabled}
-                minDate={minDate}
-                maxDate={maxDate}
-                isDateDisabled={isDateDisabled}
-                selectionMode={range ? 'range' : 'single'}
-                {...(!range ? { value: selectedDate } : {})}
-                rangeStart={range ? rangeStart : null}
-                rangeEnd={range ? rangeEnd : null}
-                rangeHoverDate={range ? tempRangeEnd : null}
-                onSelectDate={handleDayClick}
-                onDayMouseEnter={handleDayMouseEnter}
-                onDayMouseLeave={handleDayMouseLeave}
-                weekdays={getWeekdayNames()}
-                footer={
-                  <>
-                    <Button
-                      variant={ButtonVariant.SECONDARY}
-                      size={size}
-                      type="button"
-                      onClick={handleClear}
-                    >
-                      Очистить
-                    </Button>
-                    {range || shouldDeferPickerCommit ? (
+              {isPeriodPrecision(precision) ? (
+                <DateInputPeriodPicker
+                  precision={precision}
+                  weekOfMonthMode={weekOfMonthMode}
+                  locale="ru-RU"
+                  size={size}
+                  disabled={disabled}
+                  minDate={minDate}
+                  maxDate={maxDate}
+                  isDateDisabled={isDateDisabled}
+                  selectionMode={range ? 'range' : 'single'}
+                  selectedDate={range ? null : selectedDate}
+                  rangeStart={range ? rangeStart : null}
+                  rangeEnd={range ? rangeEnd : null}
+                  rangeHoverDate={range ? tempRangeEnd : null}
+                  onSelectDate={handleDayClick}
+                  onItemMouseEnter={handleDayMouseEnter}
+                  onItemMouseLeave={handleDayMouseLeave}
+                  footer={
+                    <>
                       <Button
-                        variant={ButtonVariant.PRIMARY}
+                        variant={ButtonVariant.SECONDARY}
                         size={size}
                         type="button"
-                        onClick={handleApply}
+                        onClick={handleClear}
                       >
-                        {range ? 'Применить' : 'OK'}
+                        Очистить
                       </Button>
-                    ) : null}
-                  </>
-                }
-              />
+                      {range || shouldDeferPickerCommit ? (
+                        <Button
+                          variant={ButtonVariant.PRIMARY}
+                          size={size}
+                          type="button"
+                          onClick={handleApply}
+                        >
+                          {range ? 'Применить' : 'OK'}
+                        </Button>
+                      ) : null}
+                    </>
+                  }
+                />
+              ) : (
+                <Calendar
+                  embedded
+                  showTitle={false}
+                  visibleMonth={currentDate}
+                  onVisibleMonthChange={(monthStart) => setCurrentDate(monthStart)}
+                  locale="ru-RU"
+                  weekStartsOn={1}
+                  headerMode="monthYear"
+                  showMonthPicker
+                  monthYearLayout={calendarMonthYearLayout}
+                  showDateRollers={showDateRollers}
+                  onRollersDateChange={handleCalendarRollersDate}
+                  size={size}
+                  disabled={disabled}
+                  minDate={minDate}
+                  maxDate={maxDate}
+                  isDateDisabled={isDateDisabled}
+                  selectionMode={range ? 'range' : 'single'}
+                  {...(!range ? { value: selectedDate } : {})}
+                  rangeStart={range ? rangeStart : null}
+                  rangeEnd={range ? rangeEnd : null}
+                  rangeHoverDate={range ? tempRangeEnd : null}
+                  onSelectDate={handleDayClick}
+                  onDayMouseEnter={handleDayMouseEnter}
+                  onDayMouseLeave={handleDayMouseLeave}
+                  weekdays={getWeekdayNames()}
+                  footer={
+                    <>
+                      <Button
+                        variant={ButtonVariant.SECONDARY}
+                        size={size}
+                        type="button"
+                        onClick={handleClear}
+                      >
+                        Очистить
+                      </Button>
+                      {range || shouldDeferPickerCommit ? (
+                        <Button
+                          variant={ButtonVariant.PRIMARY}
+                          size={size}
+                          type="button"
+                          onClick={handleApply}
+                        >
+                          {range ? 'Применить' : 'OK'}
+                        </Button>
+                      ) : null}
+                    </>
+                  }
+                />
+              )}
 
               {renderBottomPanel && (
                 <DateInputPickerChrome $edge="top">{renderBottomPanel()}</DateInputPickerChrome>

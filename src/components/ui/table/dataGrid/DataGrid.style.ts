@@ -1,13 +1,14 @@
 ﻿import styled, { css } from 'styled-components';
 import type { DataGridColumnFilterIconPosition } from '@/types/ui';
 import { tableBorderRadiusFromCssVar } from '../basicTable/tableThemeRadiusHandlers';
+import { DEFAULT_STICKY_THEAD_SECOND_ROW_OFFSET } from '../basicTable/tableRowDividerHandlers';
 import { buildReducedMotionTransitionDurationCss } from '../../../../handlers/uiMotionStyleHandlers';
 
 /**
- * Смещение второй строки липкой шапки вниз от первой (строка `headerToolbar`).
- * Должно совпадать с фактической высотой первой строки `thead` (примерно min-height слота + отступы).
+ * Запасное смещение второй строки липкой шапки, пока высота `headerToolbar` не измерена.
+ * Совпадает с {@link DEFAULT_STICKY_THEAD_SECOND_ROW_OFFSET}.
  */
-export const DATA_GRID_HEADER_TOOLBAR_STICKY_TOP_OFFSET = '48px';
+export const DATA_GRID_HEADER_TOOLBAR_STICKY_TOP_OFFSET = DEFAULT_STICKY_THEAD_SECOND_ROW_OFFSET;
 
 /** Контейнер таблицы с возможностью наложения оверлея загрузки */
 export const DataGridRoot = styled.div`

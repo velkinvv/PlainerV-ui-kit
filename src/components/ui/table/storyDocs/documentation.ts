@@ -58,7 +58,7 @@ export const TABLE_KIT_DOC = `
 
 | Проп | Тип | Зачем |
 |------|-----|--------|
-| \`stickyHeader\` | \`boolean\` | Липкая шапка. **Без** \`scrollAreaMaxHeight\` — \`position: sticky\` у \`th\` внутри общего scroll-предка. **С** \`scrollAreaMaxHeight\` на \`TableContainerScroll\` — split-layout (шапка снаружи скролла строк); на \`Table\` не задавайте \`sticky\` вручную — достаточно пары с scroll-обёрткой. |
+| \`stickyHeader\` | \`boolean\` | Липкая шапка. **Без** \`scrollAreaMaxHeight\` — \`position: sticky\` у \`th\` внутри общего scroll-предка. **С** \`scrollAreaMaxHeight\` на \`TableContainerScroll\` — split-layout (шапка снаружи скролла строк); на \`Table\` не задавайте \`sticky\` вручную — достаточно пары с scroll-обёрткой. Горизонтальные линии строк — на ячейках (\`td\`/\`th\`), потому что при sticky таблица на \`border-collapse: separate\` и границы \`tr\` не рисуются. |
 | \`size\` | \`'sm' | 'md'\` | Плотность отступов ячеек (\`md\` по умолчанию). |
 | \`striped\` | \`boolean\` | По умолчанию **\`false\`**: фон строк \`tbody\` как у карточки, без чередования. **\`true\`** — зебра (см. сторис **PlainBody** без пропа и **Basic** с \`striped\`). |
 | \`columnDividers\` | \`boolean\` | Тонкая вертикальная линия между колонками (\`border-inline-end\` у всех ячеек строки, кроме последней). По умолчанию \`true\`; \`false\` — без разделителей. |
@@ -311,7 +311,7 @@ export const DATAGRID_DOC = `
 
 | Проп | Зачем |
 |------|--------|
-| \`stickyHeader\` | Липкая шапка (по умолчанию **true**; \`false\` — шапка прокручивается вместе с телом). С \`scrollAreaMaxHeight\` шапка **вне** вертикального скролла строк (split-layout). |
+| \`stickyHeader\` | Липкая шапка (по умолчанию **true**; \`false\` — шапка прокручивается вместе с телом). С \`scrollAreaMaxHeight\` шапка **вне** вертикального скролла строк (split-layout). Горизонтальные линии строк рисуются на **ячейках** (\`td\`/\`th\`), чтобы они не пропадали при \`border-collapse: separate\` (нужен для sticky в Chromium/WebKit). |
 | \`scrollAreaMaxHeight\` | Макс. высота зоны **строк** (число — px, или \`'320px'\`, \`'50vh'\`). Прокидывается в \`TableContainerScroll\`. Вместе со \`stickyHeader\` — split-layout: шапка и \`headerToolbar\` фиксированы, скролл у \`tbody\`. |
 | \`horizontalScroll\` | Горизонтальный скролл (по умолчанию **true**). \`false\` — \`table-layout: auto\`, колонки по ширине карточки. При \`true\` и ресайзе колонок — \`table-layout: fixed\`. В split-layout горизонтальная полоса только у тела; шапка следует за \`scrollLeft\`. |
 | \`tableHeaderVariant\` | \`default\` — серый фон шапки из темы; \`card\` — фон карточки (обычно белый). Панель \`headerToolbar\` того же цвета. |
@@ -447,6 +447,8 @@ export const DATAGRID_DOC = `
 | **Панель: обновление и сброс фильтров** (\`HeaderToolbarBuiltinActions\`) | \`refetch\`, \`onResetFilters\`, \`hasActiveFilters\` — встроенные кнопки без ручной сборки \`headerToolbar\`. |
 | **Пустое состояние** (\`EmptyState\`) | \`rows={[]}\` или без \`rows\`: шапка на месте, в теле — иконка лупы и текст. |
 | **Панель иконок: шапка как у карточки** (\`HeaderToolbarCardSurface\`) | \`tableHeaderVariant="card"\` — белый (shell) фон шапки и панели. |
+| **Sticky + card + sm** (\`StickyCardHeaderSm\`) | Липкая шапка, белый фон шапки, \`size="sm"\`, без \`scrollAreaMaxHeight\`: линия шапка → первая строка и разделители тела на ячейках. |
+| **Sticky + card + sm + toolbar** (\`StickyCardHeaderSmToolbar\`) | То же + \`refetch\` / \`onResetFilters\`; смещение второй sticky-строки по высоте toolbar. |
 | **ColumnFilterInHeader** | \`headerName\` с фильтром (\`ColumnFilterPanel\`); дублирует **Table › Column filters › DataGridWithTextFilterInHeader**. |
 | **BuiltinColumnFilterIcon** | \`filterable\` у колонки + \`onColumnFilterClick\`; панель фильтра под таблицей. |
 | **Иконка фильтра: позиция в заголовке** | \`columns[].filterIconPosition\`: \`leading\`, \`inlineTitle\`, \`trailing\` (по умолчанию). |

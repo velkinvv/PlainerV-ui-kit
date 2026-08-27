@@ -22,7 +22,7 @@ type SegmentedControlComponent = React.ForwardRefExoticComponent<
  * Сегментированный контрол: single/multiple выбор, outline/filled, options или Item.
  *
  * @param props.appearance - outline | filled
- * @param props.size - Размер сегментов
+ * @param props.size - Размер сегментов (по умолчанию `theme.defaultInputSize`, как у Input)
  * @param props.selectionMode - single | multiple
  * @param props.value / defaultValue - Controlled / uncontrolled
  * @param props.onChange - Смена значения
@@ -38,7 +38,7 @@ const SegmentedControlBase = forwardRef<HTMLFieldSetElement, SegmentedControlPro
   (
     {
       appearance = 'outline',
-      size = Size.MD,
+      size: sizeProp,
       selectionMode = 'single',
       value: valueProp,
       defaultValue,
@@ -66,7 +66,11 @@ const SegmentedControlBase = forwardRef<HTMLFieldSetElement, SegmentedControlPro
       defaultValue,
     );
     const selectedValue = isValueControlled ? valueProp : uncontrolledValue;
-    const geometry = useMemo(() => getSegmentedControlGeometry(size), [size]);
+    const size = sizeProp ?? theme.defaultInputSize ?? Size.SM;
+    const geometry = useMemo(
+      () => getSegmentedControlGeometry(size, theme.borderRadius),
+      [size, theme.borderRadius],
+    );
 
     const onSegmentChange = useCallback(
       (

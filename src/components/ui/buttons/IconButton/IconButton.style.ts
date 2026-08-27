@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 import { motion } from 'framer-motion';
 import { ButtonVariant, type IconButtonProps } from '../../../../types/ui';
 import { Size } from '../../../../types/sizes';
-import { getButtonSize } from '../../../../handlers/buttonThemeHandlers';
+import { resolveControlBorderRadius, resolveControlMinHeight } from '../../../../handlers/controlChromeHandlers';
 import { createStyledShouldForwardProp } from '../../../../handlers/styledComponentHandlers';
 
 const iconButtonStyleConfig = {
@@ -44,39 +44,40 @@ export const StyledIconButton = styled(motion.button).withConfig(
   gap: 0;
   line-height: 0;
 
-  /* Размеры кнопки */
+  /* Размеры кнопки: квадрат со стороной как min-height Input того же size */
   ${({ size = Size.MD }) => {
+    const boxSize = resolveControlMinHeight(size);
     switch (size) {
       case Size.SM:
         return css`
-          width: 32px;
-          height: 32px;
-          min-width: 32px;
-          min-height: 32px;
+          width: ${boxSize};
+          height: ${boxSize};
+          min-width: ${boxSize};
+          min-height: ${boxSize};
           font-size: 12px;
         `;
       case Size.MD:
         return css`
-          width: 40px;
-          height: 40px;
-          min-width: 40px;
-          min-height: 40px;
+          width: ${boxSize};
+          height: ${boxSize};
+          min-width: ${boxSize};
+          min-height: ${boxSize};
           font-size: 14px;
         `;
       case Size.LG:
         return css`
-          width: 48px;
-          height: 48px;
-          min-width: 48px;
-          min-height: 48px;
+          width: ${boxSize};
+          height: ${boxSize};
+          min-width: ${boxSize};
+          min-height: ${boxSize};
           font-size: 16px;
         `;
       default:
         return css`
-          width: 40px;
-          height: 40px;
-          min-width: 40px;
-          min-height: 40px;
+          width: ${boxSize};
+          height: ${boxSize};
+          min-width: ${boxSize};
+          min-height: ${boxSize};
           font-size: 14px;
         `;
     }
@@ -89,7 +90,7 @@ export const StyledIconButton = styled(motion.button).withConfig(
           border-radius: 50%;
         `
       : css`
-          border-radius: ${getButtonSize(theme?.buttons, size).borderRadius};
+          border-radius: ${resolveControlBorderRadius(theme.borderRadius)};
         `}
 
   /* Растягивание на всю ширину */

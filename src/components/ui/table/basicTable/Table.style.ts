@@ -28,6 +28,7 @@ import {
   PLAINER_TABLE_BODY_SCROLLBAR_GUTTER_CSS_VAR,
   type TableBodyScrollHost,
 } from './tableBodyScrollHandlers';
+import { resolveTableCellBottomBorder } from './tableRowDividerHandlers';
 import type { TablePaginationToolbarAlign, TableShellVariant, TableSize } from '@/types/ui';
 
 const defaultTableSurfaceBackgrounds = normalizeTableSurfaceBackgrounds();
@@ -389,8 +390,6 @@ export const StyledTr = styled.tr<{
   }) =>
     $section === 'body' &&
     css`
-      border-bottom: 1px solid ${theme.tables.body.rowBorder};
-
       ${$selected &&
       css`
         background: ${resolveTableSurfaceBackgroundColor(
@@ -476,12 +475,15 @@ export const TableCellBase = styled('td').withConfig({
     css`
       min-height: ${tableHeadFootCellMinHeight($size)};
     `}
-  border-bottom: ${({ $isHead, theme, $activeSortColumn }) =>
-    $isHead
-      ? $activeSortColumn
-        ? theme.tables.cell.headActiveSortBorderBottom
-        : theme.tables.cell.headBorderBottom
-      : 'none'};
+  /* Разделитель на ячейке: при sticky + border-collapse: separate границы tr не рисуются. */
+  border-bottom: ${({ $isHead, $isFooter, theme, $activeSortColumn }) =>
+    $isFooter
+      ? 'none'
+      : resolveTableCellBottomBorder({
+          isHead: $isHead,
+          isActiveSortColumn: Boolean($isHead && $activeSortColumn),
+          theme,
+        })};
 
   ${({ $columnDividers, theme }) =>
     $columnDividers &&
