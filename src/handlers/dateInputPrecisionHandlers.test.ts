@@ -154,6 +154,11 @@ describe('dateInputPrecisionHandlers', () => {
 
     it('для названного месяца принимает «август 2026»', () => {
       expect(isCompleteDateStringByPrecision('август 2026', 'monthYear', 'MMMM YYYY')).toBe(true);
+      expect(isCompleteDateStringByPrecision('август  2026', 'monthYear', 'MMMM YYYY')).toBe(true);
+    });
+
+    it('не считает полным название месяца без пробела перед годом', () => {
+      expect(isCompleteDateStringByPrecision('август2026', 'monthYear', 'MMMM YYYY')).toBe(false);
     });
   });
 

@@ -412,6 +412,51 @@ export const isCompleteFullDateString = (value: string): boolean => {
 };
 
 /**
+ * Проверяет, что строка состоит ровно из четырёх цифр.
+ * @param value - Фрагмент строки
+ */
+const isFourDigitYear = (value: string): boolean => {
+  if (value.length !== 4) {
+    return false;
+  }
+
+  for (let digitIndex = 0; digitIndex < 4; digitIndex += 1) {
+    const digitCharacter = value[digitIndex];
+    if (!digitCharacter || digitCharacter < '0' || digitCharacter > '9') {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+/**
+ * Отделяет название месяца и год в конце строки без regex с backtracking.
+ * Ожидает вид «август 2026»: год — последние 4 символа, перед ним пробел.
+ * @param value - Строка поля
+ */
+const splitNamedMonthAndYear = (
+  value: string,
+): { monthPart: string; yearPart: string } | null => {
+  if (value.length < 6) {
+    return null;
+  }
+
+  const yearPart = value.slice(-4);
+  if (!isFourDigitYear(yearPart)) {
+    return null;
+  }
+
+  const beforeYear = value.slice(0, -4);
+  const monthPart = beforeYear.trimEnd();
+  if (!monthPart || monthPart.length === beforeYear.length) {
+    return null;
+  }
+
+  return { monthPart, yearPart };
+};
+
+/**
  * Строка достаточно полная, чтобы парсить значение по точности.
  * @param value - Текст поля
  * @param precision - Точность DateInput
@@ -432,7 +477,7 @@ export const isCompleteDateStringByPrecision = (
   }
 
   if (precision === 'year') {
-    return /^\d{4}$/.test(trimmedValue);
+    return isFourDigitYear(trimmedValue);
   }
 
   if (precision === 'week') {
@@ -451,8 +496,8 @@ export const isCompleteDateStringByPrecision = (
   }
 
   if (doesFormatUseNamedMonth(format) || /[а-яёa-z]/i.test(trimmedValue)) {
-    const namedWithYear = /^(.+?)\s+(\d{4})$/.exec(trimmedValue);
-    if (namedWithYear?.[1] && parseMonthInputValue(namedWithYear[1]) !== null) {
+    const namedWithYear = splitNamedMonthAndYear(trimmedValue);
+    if (namedWithYear?.monthPart && parseMonthInputValue(namedWithYear.monthPart) !== null) {
       return true;
     }
 
