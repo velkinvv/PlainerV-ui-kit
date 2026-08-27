@@ -4,18 +4,6 @@ import { Size, IconSize } from '../types/sizes';
 import type { ColorTheme, ThemeColorScheme } from '../types/theme';
 // import { getColor } from '../themes/theme';
 
-// Хендлеры для размеров кнопок согласно Figma макету
-export const ButtonSizeHandler = (size: Size = Size.MD): string => {
-  const sizeMap: Record<Size, string> = {
-    [Size.XS]: '28px', // xs в макете
-    [Size.SM]: '32px', // sm в макете
-    [Size.MD]: '36px', // md в макете
-    [Size.LG]: '40px', // lg в макете
-    [Size.XL]: '64px', // дополнительный размер
-  };
-  return sizeMap[size];
-};
-
 export const ButtonPaddingHandler = (size: Size = Size.MD): string => {
   const paddingMap: Record<Size, string> = {
     [Size.XS]: '6px 8px', // xs: 6px 8px
@@ -71,6 +59,14 @@ export const InputSizeHandler = (size: Size = Size.MD): string => {
     [Size.XL]: '70px',
   };
   return sizeMap[size];
+};
+
+/**
+ * Высота кнопки: та же шкала, что у Input / Select (`InputSizeHandler`).
+ * @param size - Размер из дизайн-системы
+ */
+export const ButtonSizeHandler = (size: Size = Size.MD): string => {
+  return InputSizeHandler(size);
 };
 
 export const InputPaddingHandler = (size: Size = Size.MD): string => {

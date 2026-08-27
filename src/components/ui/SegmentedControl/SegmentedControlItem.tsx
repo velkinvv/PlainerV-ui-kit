@@ -63,8 +63,8 @@ export const SegmentedControlItem = forwardRef<HTMLInputElement, SegmentedContro
 
     const selectionMode = groupContext?.selectionMode ?? 'single';
     const appearance = groupContext?.appearance ?? 'outline';
-    const size = groupContext?.size ?? Size.MD;
-    const geometry = getSegmentedControlGeometry(size);
+    const size = groupContext?.size ?? theme.defaultInputSize ?? Size.SM;
+    const geometry = getSegmentedControlGeometry(size, theme.borderRadius);
     const inputType = getSegmentedInputType(selectionMode);
 
     const isInsideGroup = groupContext != null;

@@ -268,12 +268,7 @@ export type { PillProps, PillStatus } from '@/types/ui';
 export type { PillGeometry } from './Pill';
 
 export { Chip, Chips } from './Chip';
-export type {
-  ChipProps,
-  ChipsProps,
-  ChipAppearance,
-  ChipsSelectionMode,
-} from '@/types/ui';
+export type { ChipProps, ChipsProps, ChipAppearance, ChipsSelectionMode } from '@/types/ui';
 export type { ChipGeometry } from './Chip';
 
 export { Slider, RangeSlider } from './Slider';
@@ -470,6 +465,8 @@ export { DateTimeInput, DateTimeInputRange } from './inputs/DateTimeInput';
 export type {
   DateTimeRange,
   DatePickerProps as DateInputProps,
+  DateInputPrecision,
+  WeekOfMonthMode,
   TimeInputProps,
   DateTimeInputProps,
   DateTimeInputRangeProps,

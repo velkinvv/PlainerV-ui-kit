@@ -525,6 +525,7 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
             minDate={minDate}
             maxDate={maxDate}
             disabled={disabled}
+            size={size}
           />
         ) : (
           <CalendarToolbar>
@@ -535,6 +536,7 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
                     <CalendarMonthTrigger
                       type="button"
                       $open={monthMenuOpen}
+                      $size={size}
                       disabled={disabled}
                       aria-haspopup="listbox"
                       aria-expanded={monthMenuOpen}
@@ -571,6 +573,7 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
                 type="button"
                 aria-label="Предыдущий месяц"
                 $disabled={disabled || prevNavDisabled}
+                $size={size}
                 disabled={disabled || prevNavDisabled}
                 onClick={goPrevMonth}
               >
@@ -580,6 +583,7 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
                 type="button"
                 aria-label="Следующий месяц"
                 $disabled={disabled || nextNavDisabled}
+                $size={size}
                 disabled={disabled || nextNavDisabled}
                 onClick={goNextMonth}
               >

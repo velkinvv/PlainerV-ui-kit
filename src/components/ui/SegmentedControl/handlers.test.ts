@@ -9,9 +9,11 @@ import {
 
 describe('SegmentedControl handlers', () => {
   it('getSegmentedControlGeometry', () => {
-    expect(getSegmentedControlGeometry(Size.SM).minHeight).toBe('28px');
-    expect(getSegmentedControlGeometry(Size.MD).minHeight).toBe('36px');
-    expect(getSegmentedControlGeometry(Size.LG).minHeight).toBe('44px');
+    expect(getSegmentedControlGeometry(Size.SM).minHeight).toBe('45px');
+    expect(getSegmentedControlGeometry(Size.MD).minHeight).toBe('50px');
+    expect(getSegmentedControlGeometry(Size.LG).minHeight).toBe('60px');
+    expect(getSegmentedControlGeometry(Size.SM, Size.MD).outerRadius).toBe('8px');
+    expect(getSegmentedControlGeometry(Size.SM, Size.LG).outerRadius).toBe('10px');
   });
 
   it('normalizeSegmentedValueToArray', () => {

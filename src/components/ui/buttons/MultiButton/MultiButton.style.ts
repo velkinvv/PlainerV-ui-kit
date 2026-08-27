@@ -1,14 +1,15 @@
 import styled from 'styled-components';
 import { createStyledShouldForwardProp } from '../../../../handlers/styledComponentHandlers';
 import { getButtonSize } from '../../../../handlers/buttonThemeHandlers';
+import { resolveControlBorderRadius } from '../../../../handlers/controlChromeHandlers';
 import type { Size } from '../../../../types/sizes';
 import { getMultiButtonChevronPadding } from './handlers';
 
 /**
  * Корневая обёртка split-кнопки (склеенная пара).
- * Высота сегментов выравнивается через stretch; радиусы — из темы кнопок.
+ * Высота сегментов как у Button/Input того же size; радиус — `theme.borderRadius`.
  *
- * @property $size - Размер для радиуса и отступов шеврона
+ * @property $size - Размер для высоты и отступов шеврона
  * @property $disabled - Блокировка всего блока
  */
 export const MultiButtonRoot = styled.div.withConfig({
@@ -19,7 +20,7 @@ export const MultiButtonRoot = styled.div.withConfig({
   align-items: stretch;
   vertical-align: middle;
   box-sizing: border-box;
-  border-radius: ${({ theme, $size }) => getButtonSize(theme.buttons, $size).borderRadius};
+  border-radius: ${({ theme }) => resolveControlBorderRadius(theme.borderRadius)};
   opacity: ${({ $disabled }) => ($disabled ? 0.72 : 1)};
 
   & > .ui-multi-button__main,
@@ -44,10 +45,10 @@ export const MultiButtonRoot = styled.div.withConfig({
   & > .ui-multi-button__main {
     border-top-right-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
-    border-top-left-radius: ${({ theme, $size }) =>
-      getButtonSize(theme.buttons, $size).borderRadius} !important;
-    border-bottom-left-radius: ${({ theme, $size }) =>
-      getButtonSize(theme.buttons, $size).borderRadius} !important;
+    border-top-left-radius: ${({ theme }) =>
+      resolveControlBorderRadius(theme.borderRadius)} !important;
+    border-bottom-left-radius: ${({ theme }) =>
+      resolveControlBorderRadius(theme.borderRadius)} !important;
   }
 
   /*
@@ -75,10 +76,10 @@ export const MultiButtonRoot = styled.div.withConfig({
     border-left-width: 0;
     border-top-left-radius: 0 !important;
     border-bottom-left-radius: 0 !important;
-    border-top-right-radius: ${({ theme, $size }) =>
-      getButtonSize(theme.buttons, $size).borderRadius} !important;
-    border-bottom-right-radius: ${({ theme, $size }) =>
-      getButtonSize(theme.buttons, $size).borderRadius} !important;
+    border-top-right-radius: ${({ theme }) =>
+      resolveControlBorderRadius(theme.borderRadius)} !important;
+    border-bottom-right-radius: ${({ theme }) =>
+      resolveControlBorderRadius(theme.borderRadius)} !important;
     padding: ${({ theme, $size }) =>
       getMultiButtonChevronPadding(getButtonSize(theme.buttons, $size).padding, $size)};
     min-width: ${({ theme, $size }) => getButtonSize(theme.buttons, $size).minHeight};

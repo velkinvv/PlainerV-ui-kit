@@ -33,11 +33,13 @@ export type CalendarMonthYearSplitProps = {
   minDate?: Date;
   maxDate?: Date;
   disabled?: boolean;
+  /** Размер календаря — высота триггеров и стрелок как у Input */
+  size?: Size;
 };
 
 /**
  * Шапка календаря: два выпадающих списка «месяц» и «год» + стрелки (макет Figma «триггеры»).
- * @param props - Видимый месяц, колбэки навигации и границы дат.
+ * @param props - Видимый месяц, колбэки навигации, границы дат и размер контролов шапки.
  */
 export const CalendarMonthYearSplit: React.FC<CalendarMonthYearSplitProps> = ({
   visibleMonth,
@@ -50,6 +52,7 @@ export const CalendarMonthYearSplit: React.FC<CalendarMonthYearSplitProps> = ({
   minDate,
   maxDate,
   disabled = false,
+  size = Size.MD,
 }) => {
   const [monthMenuOpen, setMonthMenuOpen] = useState(false);
   const [yearMenuOpen, setYearMenuOpen] = useState(false);
@@ -116,6 +119,7 @@ export const CalendarMonthYearSplit: React.FC<CalendarMonthYearSplitProps> = ({
               <CalendarMonthTrigger
                 type="button"
                 $open={monthMenuOpen}
+                $size={size}
                 disabled={disabled}
                 aria-haspopup="listbox"
                 aria-expanded={monthMenuOpen}
@@ -148,6 +152,7 @@ export const CalendarMonthYearSplit: React.FC<CalendarMonthYearSplitProps> = ({
               <CalendarMonthTrigger
                 type="button"
                 $open={yearMenuOpen}
+                $size={size}
                 disabled={disabled}
                 aria-haspopup="listbox"
                 aria-expanded={yearMenuOpen}
@@ -178,6 +183,7 @@ export const CalendarMonthYearSplit: React.FC<CalendarMonthYearSplitProps> = ({
           type="button"
           aria-label="Предыдущий месяц"
           $disabled={disabled || prevNavDisabled}
+          $size={size}
           disabled={disabled || prevNavDisabled}
           onClick={onPrevMonth}
         >
@@ -187,6 +193,7 @@ export const CalendarMonthYearSplit: React.FC<CalendarMonthYearSplitProps> = ({
           type="button"
           aria-label="Следующий месяц"
           $disabled={disabled || nextNavDisabled}
+          $size={size}
           disabled={disabled || nextNavDisabled}
           onClick={onNextMonth}
         >

@@ -9,6 +9,7 @@ import {
   getButtonAnimations,
   getButtonSettings,
 } from '../../../../handlers/buttonThemeHandlers';
+import { resolveControlBorderRadius } from '../../../../handlers/controlChromeHandlers';
 
 const motionButtonBlockedProps = [
   'variant',
@@ -64,7 +65,8 @@ const sharedButtonCss = css<ButtonProps>`
       min-height: ${buttonSize.minHeight};
       padding: ${buttonSize.padding};
       gap: ${buttonSize.gap};
-      border-radius: ${buttonSize.borderRadius};
+      /* Радиус как у Input: глобальный theme.borderRadius, не per-size шкалы кнопок. */
+      border-radius: ${resolveControlBorderRadius(theme.borderRadius)};
       font-size: ${buttonSize.fontSize};
 
       /* Минимальная ширина для XL размера */

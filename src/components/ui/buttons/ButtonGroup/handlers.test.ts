@@ -1,11 +1,18 @@
 import { Size } from '../../../../types/sizes';
 import { getButtonGroupAttachedOuterRadius } from './handlers';
+import { BorderRadiusHandler } from '../../../../handlers/uiHandlers';
 
 describe('ButtonGroup handlers', () => {
-  it('segment: радиус зависит от размера', () => {
-    expect(getButtonGroupAttachedOuterRadius(Size.SM, 'segment')).toBe('4px');
-    expect(getButtonGroupAttachedOuterRadius(Size.MD, 'segment')).toBe('8px');
-    expect(getButtonGroupAttachedOuterRadius(Size.LG, 'segment')).toBe('12px');
+  it('segment: радиус из theme.borderRadius, не из отдельной шкалы size', () => {
+    expect(getButtonGroupAttachedOuterRadius(Size.SM, 'segment', Size.MD)).toBe(
+      BorderRadiusHandler(Size.MD),
+    );
+    expect(getButtonGroupAttachedOuterRadius(Size.LG, 'segment', Size.MD)).toBe(
+      BorderRadiusHandler(Size.MD),
+    );
+    expect(getButtonGroupAttachedOuterRadius(Size.SM, 'segment', Size.LG)).toBe(
+      BorderRadiusHandler(Size.LG),
+    );
   });
 
   it('pill: капсула', () => {

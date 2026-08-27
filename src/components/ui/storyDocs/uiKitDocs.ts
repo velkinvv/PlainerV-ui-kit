@@ -213,7 +213,21 @@ export const DOC_DATE_INPUT = `
 ### Значение
 При \`range: false\` — строка даты в формате поля (\`format\`, по умолчанию \`DD.MM.YYYY\`). При \`range: true\` — \`{ start: string; end: string }\`.
 
-Строки в \`value\` / \`onChange\` — в формате **YYYY-MM-DD** (ISO-дата без времени).
+Строки в \`value\` / \`onChange\` — в формате **YYYY-MM-DD** (ISO-дата без времени) при \`precision="day"\` (по умолчанию).
+
+**\`precision\`:** \`day\` | \`month\` | \`year\` | \`monthYear\` | \`week\`. Без дня пикер — список месяцев, годов и/или недель, без сетки календаря.
+
+| \`precision\` | \`onChange\` | Поле без \`format\` | Пикер |
+|------|----------|------|------|
+| \`day\` | \`YYYY-MM-DD\` | \`DD.MM.YYYY\` | календарь |
+| \`month\` | \`YYYY-MM\` | \`MM.YYYY\` | 12 месяцев |
+| \`year\` | \`YYYY\` | \`YYYY\` | список годов |
+| \`monthYear\` | \`YYYY-MM\` | \`MM.YYYY\` | месяцы и годы |
+| \`week\` | \`YYYY-MM-W2\` | \`W.MM.YYYY\` (\`2.08.2026\`) | недели + месяц + год |
+
+**\`weekOfMonthMode\`** (только \`precision="week"\`): \`calendar\` (по умолчанию) — календарные недели с понедельника; \`chunks\` — 1–7, 8–14, 15–21, 22–28, 29–конец месяца. Это недели **месяца**, не ISO-недели года.
+
+\`format\` влияет только на отображение и разбор ввода: \`MMMM YYYY\` → «август 2026», в API всё равно \`2026-08\`. Для недели токен \`W\` — номер недели месяца (\`Wo\` — «2-я»). Ввод принимает и \`08\`, и «август». \`minDate\` / \`maxDate\` / \`disabledMonths\` / \`disabledYears\` работают как раньше; месяц, год или неделя серые, только если период целиком вне диапазона.
 
 ### Черновик пикера (до применения в поле)
 
@@ -1195,7 +1209,6 @@ export const DOC_STEPPER = `
 
 Ячейки сжимаются (\`min-width: 0\`); \`fullWidth\` + ряд \`flex: 1\`. **compact** — отдельный UX, не обход overflow linear.
 `.trim();
-
 
 /** @see CalendarProps */
 export const DOC_CALENDAR = `

@@ -146,6 +146,16 @@ const parseCustomDateFormats = (input: string): dayjs.Dayjs | null => {
     'YYYY-MM-DD',
     'YYYY.MM.DD',
     'YYYY/MM/DD',
+    // Месяц и год без дня
+    'YYYY-MM',
+    'MM.YYYY',
+    'MM-YYYY',
+    'MM/YYYY',
+    'MMMM YYYY',
+    'MMM YYYY',
+    'MMMM',
+    'MMM',
+    'YYYY',
   ];
 
   for (const format of formats) {

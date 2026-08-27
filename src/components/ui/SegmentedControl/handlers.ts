@@ -1,5 +1,7 @@
 import { Size } from '../../../types/sizes';
 import type { SegmentedControlSelectionMode } from '../../../types/ui';
+import { InputFontSizeHandler } from '../../../handlers/uiHandlers';
+import { resolveControlMinHeight } from '../../../handlers/controlChromeHandlers';
 import { getButtonGroupAttachedOuterRadius } from '../buttons/ButtonGroup/handlers';
 
 /** Геометрия сегмента */
@@ -17,38 +19,43 @@ export type SegmentedControlGeometry = {
 };
 
 /**
- * Геометрия сегментов по размеру.
+ * Геометрия сегментов: высота как у Input того же size, радиус из `theme.borderRadius`.
  * @param size - Размер из дизайн-системы
+ * @param themeBorderRadius - `theme.borderRadius`
  */
-export const getSegmentedControlGeometry = (size: Size = Size.MD): SegmentedControlGeometry => {
-  const outerRadius = getButtonGroupAttachedOuterRadius(size, 'segment');
+export const getSegmentedControlGeometry = (
+  size: Size = Size.MD,
+  themeBorderRadius: Size = Size.MD,
+): SegmentedControlGeometry => {
+  const outerRadius = getButtonGroupAttachedOuterRadius(size, 'segment', themeBorderRadius);
+  const minHeight = resolveControlMinHeight(size);
   switch (size) {
     case Size.XS:
     case Size.SM:
       return {
-        minHeight: '28px',
+        minHeight,
         paddingInline: '10px',
-        fontSize: '12px',
+        fontSize: InputFontSizeHandler(size),
         outerRadius,
-        squareSize: '28px',
+        squareSize: minHeight,
       };
     case Size.LG:
     case Size.XL:
       return {
-        minHeight: '44px',
+        minHeight,
         paddingInline: '18px',
-        fontSize: '16px',
+        fontSize: InputFontSizeHandler(size),
         outerRadius,
-        squareSize: '44px',
+        squareSize: minHeight,
       };
     case Size.MD:
     default:
       return {
-        minHeight: '36px',
+        minHeight,
         paddingInline: '14px',
-        fontSize: '14px',
+        fontSize: InputFontSizeHandler(size),
         outerRadius,
-        squareSize: '36px',
+        squareSize: minHeight,
       };
   }
 };

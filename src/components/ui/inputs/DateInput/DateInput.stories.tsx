@@ -110,6 +110,26 @@ const meta: Meta<typeof DateInput> = {
       control: { type: 'boolean' },
       description: 'Растянуть выпадающий календарь на ширину поля ввода',
     },
+    precision: {
+      control: { type: 'select' },
+      options: ['day', 'month', 'year', 'monthYear', 'week'],
+      description:
+        'Точность: `day` — календарь; `month` / `monthYear` — `YYYY-MM`; `year` — `YYYY`; `week` — неделя месяца (`YYYY-MM-W2`)',
+      table: {
+        type: { summary: "'day' | 'month' | 'year' | 'monthYear' | 'week'" },
+        defaultValue: { summary: 'day' },
+      },
+    },
+    weekOfMonthMode: {
+      control: { type: 'select' },
+      options: ['calendar', 'chunks'],
+      description:
+        'Нумерация недель при `precision="week"`: `calendar` — с понедельника, `chunks` — 1–7, 8–14, …',
+      table: {
+        type: { summary: "'calendar' | 'chunks'" },
+        defaultValue: { summary: 'calendar' },
+      },
+    },
     displayCharacterCounter: {
       control: { type: 'boolean' },
       description: 'Показывать счетчик символов при наличии maxLength',
@@ -232,6 +252,97 @@ export const RangeMode: Story = {
     range: true,
     label: 'Диапазон дат',
     placeholder: 'Выберите диапазон дат',
+  },
+};
+
+export const PrecisionMonthYearAndNames: Story = {
+  name: 'Precision: месяц / год / названия',
+  render: () => {
+    const [monthValue, setMonthValue] = useState('2026-08');
+    const [yearValue, setYearValue] = useState('2026');
+    const [monthYearValue, setMonthYearValue] = useState('2026-08');
+    const [namedMonthValue, setNamedMonthValue] = useState('2026-08');
+
+    return (
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
+        <DateInput
+          label="Только месяц"
+          precision="month"
+          value={monthValue}
+          onChange={(nextValue) => setMonthValue(nextValue as string)}
+          helperText="onChange: YYYY-MM, в поле по умолчанию MM.YYYY"
+        />
+        <DateInput
+          label="Только год"
+          precision="year"
+          value={yearValue}
+          onChange={(nextValue) => setYearValue(nextValue as string)}
+          helperText="onChange: YYYY"
+        />
+        <DateInput
+          label="Месяц и год"
+          precision="monthYear"
+          value={monthYearValue}
+          onChange={(nextValue) => setMonthYearValue(nextValue as string)}
+          minDate={new Date(2024, 0, 1)}
+          maxDate={new Date(2027, 11, 31)}
+          disabledMonths={[0]}
+          helperText="Список месяцев и годов; январь отключён"
+        />
+        <DateInput
+          label="Название месяца"
+          precision="monthYear"
+          format="MMMM YYYY"
+          value={namedMonthValue}
+          onChange={(nextValue) => setNamedMonthValue(nextValue as string)}
+          helperText="В поле «август 2026», в API по-прежнему 2026-08"
+        />
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`precision` меняет пикер (списки вместо сетки дней) и каноническую строку `onChange`. `format` отвечает только за отображение: без него — цифры, `MMMM YYYY` — «август 2026».',
+      },
+    },
+  },
+};
+
+export const PrecisionWeek: Story = {
+  name: 'Precision: неделя месяца',
+  render: () => {
+    const [calendarWeekValue, setCalendarWeekValue] = useState('2026-08-W2');
+    const [chunksWeekValue, setChunksWeekValue] = useState('2026-08-W2');
+
+    return (
+      <div style={dateInputStoriesStyles.columnGap16Width400}>
+        <DateInput
+          label="Календарные недели"
+          precision="week"
+          value={calendarWeekValue}
+          onChange={(nextValue) => setCalendarWeekValue(nextValue as string)}
+          helperText="По умолчанию: с понедельника. API: YYYY-MM-W2"
+        />
+        <DateInput
+          label="Семёрки от 1-го числа"
+          precision="week"
+          weekOfMonthMode="chunks"
+          value={chunksWeekValue}
+          onChange={(nextValue) => setChunksWeekValue(nextValue as string)}
+          helperText="1–7, 8–14, 15–21, 22–28, 29–31"
+        />
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`precision="week"` выбирает неделю месяца, не ISO-неделю года. `weekOfMonthMode="calendar"` (дефолт) — недели с понедельника; `chunks` — фиксированные семёрки от 1-го.',
+      },
+    },
   },
 };
 
@@ -2533,8 +2644,7 @@ export const AdditionalLabelDemo: Story = {
           <h4 style={dateInputStoriesStyles.heading14}>Дополнительные метки для дат:</h4>
           <ul style={dateInputStoriesStyles.list12}>
             <li>
-              <strong>additionalLabel</strong> отображается под основным label (как у Input)
-              даты
+              <strong>additionalLabel</strong> отображается под основным label (как у Input) даты
             </li>
             <li>Предоставляет контекстную информацию о назначении поля</li>
             <li>Улучшает пользовательский опыт при работе с формами</li>

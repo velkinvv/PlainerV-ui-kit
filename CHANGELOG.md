@@ -9,6 +9,23 @@
 
 ---
 
+## [0.3.3] - 2026-08-27
+
+### Added
+
+- Подготовка релиза **0.3.3** (ветка `v_0.3.3`).
+- **DateInput:** проп **`precision`** (`day` | `month` | `year` | `monthYear` | `week`). Режимы без дня открывают список месяцев, годов и/или недель вместо календаря; `onChange` отдаёт `YYYY-MM`, `YYYY` или `YYYY-MM-W2`. **`weekOfMonthMode`:** `calendar` (по умолчанию, недели с понедельника) или `chunks` (1–7, 8–14, …).
+
+### Changed
+
+- **Button / IconButton / SegmentedControl / ButtonGroup / Calendar:** высота контролов совпадает с Input того же `size` (`InputSizeHandler`); радиус рамки берётся из `theme.borderRadius`, как у полей. `SegmentedControl` по умолчанию использует `theme.defaultInputSize`.
+
+### Added (документация)
+
+- Документация **v0.3.3** на сайте; обновлены README, CHANGELOG, индекс версий.
+
+---
+
 ## [0.3.2] - 2026-08-27
 
 ### Added

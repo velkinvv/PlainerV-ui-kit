@@ -498,10 +498,7 @@ export interface MultiButtonProps
    * @param value - Значение пункта
    * @param event - Событие клика
    */
-  onSelectItem?: (
-    value?: DropdownMenuItemValue,
-    event?: React.MouseEvent<HTMLElement>,
-  ) => void;
+  onSelectItem?: (value?: DropdownMenuItemValue, event?: React.MouseEvent<HTMLElement>) => void;
   selected?: DropdownMenuItemValue | DropdownMenuItemValue[];
   value?: DropdownMenuItemValue | DropdownMenuItemValue[];
   appearance?: MultiButtonAppearance;
@@ -571,10 +568,7 @@ export interface SegmentedControlProps
    * @param nextValue - Для single — строка; для multiple — массив
    * @param event - Событие изменения input
    */
-  onChange?: (
-    nextValue: string | string[],
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => void;
+  onChange?: (nextValue: string | string[], event: React.ChangeEvent<HTMLInputElement>) => void;
   name?: string;
   options?: SegmentedControlOption[];
   children?: React.ReactNode;
@@ -1251,7 +1245,9 @@ export interface ChipProps
  * @property children - Элементы `Chip` (при выборе у каждого нужен `value`)
  */
 export interface ChipsProps
-  extends BaseComponentProps, Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> {
+  extends
+    BaseComponentProps,
+    Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> {
   selectionMode?: ChipsSelectionMode;
   value?: string | string[];
   defaultValue?: string | string[];
@@ -2671,11 +2667,10 @@ export interface DropMenuRenderContentProps {
  * @property onVisibilityChange - Смена видимости
  * @property defaultOpen - Начальная открытость в uncontrolled-режиме
  */
-export interface DropMenuProps
-  extends Omit<
-    DropdownProps,
-    'isMenuOpen' | 'onMenuOpenChange' | 'trigger' | 'children'
-  > {
+export interface DropMenuProps extends Omit<
+  DropdownProps,
+  'isMenuOpen' | 'onMenuOpenChange' | 'trigger' | 'children'
+> {
   /**
    * Кастомный триггер. Получает ref, состояние меню и обработчики.
    * @param options - См. {@link DropMenuRenderContentProps}
@@ -2690,10 +2685,7 @@ export interface DropMenuProps
    * @param value - Значение пункта
    * @param event - Событие клика
    */
-  onSelectItem?: (
-    value?: DropdownMenuItemValue,
-    event?: React.MouseEvent<HTMLElement>,
-  ) => void;
+  onSelectItem?: (value?: DropdownMenuItemValue, event?: React.MouseEvent<HTMLElement>) => void;
   /** Controlled видимость выпадающего меню */
   isVisible?: boolean;
   /**
@@ -5253,6 +5245,23 @@ export interface DateTimePickerDraftContext {
 export type InputLabelVariant = 'field' | 'floating';
 
 /**
+ * Точность значения и пикера `DateInput`.
+ * - `day` — календарь с днями, `onChange` отдаёт `YYYY-MM-DD`
+ * - `month` — список месяцев, `onChange` отдаёт `YYYY-MM`
+ * - `year` — список годов, `onChange` отдаёт `YYYY`
+ * - `monthYear` — списки месяца и года, `onChange` отдаёт `YYYY-MM`
+ * - `week` — недели выбранного месяца, `onChange` отдаёт `YYYY-MM-W2`
+ */
+export type DateInputPrecision = 'day' | 'month' | 'year' | 'monthYear' | 'week';
+
+/**
+ * Как нумеровать недели внутри месяца (`precision="week"`).
+ * - `calendar` — календарные недели с понедельника (по умолчанию)
+ * - `chunks` — фиксированные семёрки от 1-го числа (1–7, 8–14, …)
+ */
+export type WeekOfMonthMode = 'calendar' | 'chunks';
+
+/**
  * Пропсы поля даты (`DateInput`).
  * Крестик очистки: `displayClearIcon`, `onClearIconClick`, `clearIconProps` из `BaseInputProps`.
  * Составное поле (InputEx): `prefix`, `suffix` — те же слоты, что у `Input` (см. `InputFieldShell`).
@@ -5267,6 +5276,16 @@ export interface DatePickerProps extends Omit<BaseInputProps, 'value' | 'onChang
   onChange?: (value: string | DateTimeRange) => void;
   /** Размер поля (в `DateInput` по умолчанию `Size.SM`) */
   size?: Size;
+  /**
+   * Точность выбора. По умолчанию `day` — полный календарь.
+   * `month` / `year` / `monthYear` / `week` убирают сетку дней и меняют строку `onChange`.
+   */
+  precision?: DateInputPrecision;
+  /**
+   * Нумерация недель при `precision="week"`.
+   * По умолчанию `calendar` — недели с понедельника; `chunks` — 1–7, 8–14, …
+   */
+  weekOfMonthMode?: WeekOfMonthMode;
   range?: boolean; // Определяет режим работы: false = single, true = range
   minDate?: Date;
   maxDate?: Date;

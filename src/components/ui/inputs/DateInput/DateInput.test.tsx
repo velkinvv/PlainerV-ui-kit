@@ -462,4 +462,172 @@ describe('DateInput', () => {
       expect(input).toHaveValue(expected);
     });
   });
+
+  it('в режиме month показывает YYYY-MM как MM.YYYY', () => {
+    renderWithTheme(<DateInput {...defaultProps} precision="month" value="2026-08" />);
+    expect(screen.getByDisplayValue('08.2026')).toBeInTheDocument();
+  });
+
+  it('в режиме year показывает YYYY', () => {
+    renderWithTheme(<DateInput {...defaultProps} precision="year" value="2026" />);
+    expect(screen.getByDisplayValue('2026')).toBeInTheDocument();
+  });
+
+  it('в режиме monthYear с MMMM показывает название месяца', () => {
+    renderWithTheme(
+      <DateInput {...defaultProps} precision="monthYear" format="MMMM YYYY" value="2026-08" />,
+    );
+
+    expect(screen.getByDisplayValue(/август 2026/i)).toBeInTheDocument();
+  });
+
+  it('пикер месяца не показывает сетку дней и отдаёт YYYY-MM', async () => {
+    const onChange = jest.fn();
+    renderWithTheme(
+      <DateInput {...defaultProps} precision="month" value="2026-01" onChange={onChange} />,
+    );
+
+    const iconButton = screen.getByTestId('icon-IconPlainerCalendar-XS').parentElement;
+    fireEvent.click(iconButton!);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('date-input-period-picker')).toBeInTheDocument();
+    });
+
+    expect(screen.queryByText('Пн')).not.toBeInTheDocument();
+    expect(screen.getByTestId('date-input-period-month-7')).toBeEnabled();
+
+    fireEvent.click(screen.getByTestId('date-input-period-month-7'));
+
+    expect(onChange).toHaveBeenCalledWith('2026-08');
+  });
+
+  it('пикер года отдаёт YYYY и не вызывает onChange на отключённом годе', async () => {
+    const onChange = jest.fn();
+    renderWithTheme(
+      <DateInput
+        {...defaultProps}
+        precision="year"
+        value="2026"
+        disabledYears={[2024]}
+        onChange={onChange}
+      />,
+    );
+
+    const iconButton = screen.getByTestId('icon-IconPlainerCalendar-XS').parentElement;
+    fireEvent.click(iconButton!);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('date-input-period-year-2025')).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId('date-input-period-year-2024')).toBeDisabled();
+    fireEvent.click(screen.getByTestId('date-input-period-year-2024'));
+    expect(onChange).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByTestId('date-input-period-year-2025'));
+    expect(onChange).toHaveBeenCalledWith('2025');
+  });
+
+  it('пикер monthYear показывает списки месяцев и годов', async () => {
+    renderWithTheme(<DateInput {...defaultProps} precision="monthYear" value="2026-08" />);
+
+    const iconButton = screen.getByTestId('icon-IconPlainerCalendar-XS').parentElement;
+    fireEvent.click(iconButton!);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('date-input-period-month-0')).toBeInTheDocument();
+      expect(screen.getByTestId('date-input-period-year-2026')).toBeInTheDocument();
+    });
+  });
+
+  it('в monthYear клик по году не коммитит, месяц берёт выбранный год', async () => {
+    const onChange = jest.fn();
+    renderWithTheme(
+      <DateInput
+        {...defaultProps}
+        precision="monthYear"
+        value="2026-08"
+        minDate={new Date(2024, 0, 1)}
+        maxDate={new Date(2027, 11, 31)}
+        onChange={onChange}
+      />,
+    );
+
+    const iconButton = screen.getByTestId('icon-IconPlainerCalendar-XS').parentElement;
+    fireEvent.click(iconButton!);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('date-input-period-year-2025')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByTestId('date-input-period-year-2025'));
+    expect(onChange).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByTestId('date-input-period-month-0'));
+    expect(onChange).toHaveBeenCalledWith('2025-01');
+  });
+
+  it('не отключает месяц, если minDate внутри этого месяца', async () => {
+    renderWithTheme(
+      <DateInput
+        {...defaultProps}
+        precision="month"
+        value="2026-08"
+        minDate={new Date(2026, 7, 15)}
+      />,
+    );
+
+    const iconButton = screen.getByTestId('icon-IconPlainerCalendar-XS').parentElement;
+    fireEvent.click(iconButton!);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('date-input-period-month-7')).toBeEnabled();
+    });
+
+    expect(screen.getByTestId('date-input-period-month-6')).toBeDisabled();
+  });
+
+  it('в режиме week показывает W.MM.YYYY и отдаёт YYYY-MM-Wn', async () => {
+    const onChange = jest.fn();
+    renderWithTheme(
+      <DateInput {...defaultProps} precision="week" value="2026-08-W2" onChange={onChange} />,
+    );
+
+    expect(screen.getByDisplayValue('2.08.2026')).toBeInTheDocument();
+
+    const iconButton = screen.getByTestId('icon-IconPlainerCalendar-XS').parentElement;
+    fireEvent.click(iconButton!);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('date-input-period-week-1')).toBeInTheDocument();
+      expect(screen.getByTestId('date-input-period-month-7')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByTestId('date-input-period-week-1'));
+    expect(onChange).toHaveBeenCalledWith('2026-08-W1');
+  });
+
+  it('weekOfMonthMode=chunks иначе нумерует недели', async () => {
+    const onChange = jest.fn();
+    renderWithTheme(
+      <DateInput
+        {...defaultProps}
+        precision="week"
+        weekOfMonthMode="chunks"
+        value="2026-08-W1"
+        onChange={onChange}
+      />,
+    );
+
+    const iconButton = screen.getByTestId('icon-IconPlainerCalendar-XS').parentElement;
+    fireEvent.click(iconButton!);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('date-input-period-week-2')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByTestId('date-input-period-week-2'));
+    expect(onChange).toHaveBeenCalledWith('2026-08-W2');
+  });
 });

@@ -1,5 +1,11 @@
-import { parseDate, toISODateString } from './dateHandlers';
-import type { DatePickerDraftContext, DatePickerDraftPhase, DateTimeRange } from '../types/ui';
+import { formatDateByPrecision, parsePrecisionValue } from './dateInputPrecisionHandlers';
+import type {
+  DateInputPrecision,
+  DatePickerDraftContext,
+  DatePickerDraftPhase,
+  DateTimeRange,
+  WeekOfMonthMode,
+} from '../types/ui';
 
 export type { DatePickerDraftContext, DatePickerDraftPhase };
 
@@ -17,18 +23,24 @@ export interface DatePickerDraftDates {
  * Преобразует черновик пикера в значение API (`onChange` / колбэки).
  * @param draftDates — даты черновика
  * @param range — режим диапазона
+ * @param precision — точность значения (`day` по умолчанию)
+ * @param weekOfMonthMode — нумерация недель при `precision="week"`
  */
 export function buildDatePickerDraftValue(
   draftDates: DatePickerDraftDates,
   range: boolean,
+  precision: DateInputPrecision = 'day',
+  weekOfMonthMode: WeekOfMonthMode = 'calendar',
 ): string | DateTimeRange {
+  const weekOptions = { weekOfMonthMode };
+
   if (!range) {
-    return toISODateString(draftDates.selectedDate);
+    return formatDateByPrecision(draftDates.selectedDate, precision, weekOptions);
   }
 
   return {
-    start: toISODateString(draftDates.rangeStart),
-    end: toISODateString(draftDates.rangeEnd),
+    start: formatDateByPrecision(draftDates.rangeStart, precision, weekOptions),
+    end: formatDateByPrecision(draftDates.rangeEnd, precision, weekOptions),
   };
 }
 
@@ -36,17 +48,23 @@ export function buildDatePickerDraftValue(
  * Парсит значение черновика обратно в даты пикера.
  * @param draft — строка или диапазон в формате `onChange`
  * @param range — режим диапазона
+ * @param options.precision — точность значения
+ * @param options.weekOfMonthMode — нумерация недель
  */
 export function parseDatePickerDraftValue(
   draft: string | DateTimeRange,
   range: boolean,
+  options: { precision?: DateInputPrecision; weekOfMonthMode?: WeekOfMonthMode } = {},
 ): DatePickerDraftDates {
+  const precision = options.precision ?? 'day';
+  const weekOfMonthMode = options.weekOfMonthMode ?? 'calendar';
+
   if (!range) {
     if (typeof draft !== 'string') {
       return { selectedDate: null, rangeStart: null, rangeEnd: null };
     }
 
-    const parsedResult = parseDate(draft);
+    const parsedResult = parsePrecisionValue(draft, precision, { weekOfMonthMode });
     return {
       selectedDate: parsedResult.isValid ? parsedResult.date : null,
       rangeStart: null,
@@ -58,8 +76,8 @@ export function parseDatePickerDraftValue(
     return { selectedDate: null, rangeStart: null, rangeEnd: null };
   }
 
-  const startResult = parseDate(draft.start);
-  const endResult = parseDate(draft.end);
+  const startResult = parsePrecisionValue(draft.start, precision, { weekOfMonthMode });
+  const endResult = parsePrecisionValue(draft.end, precision, { weekOfMonthMode });
 
   return {
     selectedDate: null,
@@ -112,6 +130,10 @@ export interface ResolveDatePickerDraftOptions {
   range: boolean;
   /** Формат поля */
   format: string;
+  /** Точность значения API */
+  precision?: DateInputPrecision;
+  /** Нумерация недель при `precision="week"` */
+  weekOfMonthMode?: WeekOfMonthMode;
   /** Фаза изменения */
   phase: DatePickerDraftPhase;
   /** Модификатор черновика; верните новое значение или `undefined`, чтобы оставить как есть */
@@ -136,7 +158,12 @@ export function resolveDatePickerDraft(
     format: options.format,
   };
 
-  let draftValue = buildDatePickerDraftValue(options.draftDates, options.range);
+  let draftValue = buildDatePickerDraftValue(
+    options.draftDates,
+    options.range,
+    options.precision ?? 'day',
+    options.weekOfMonthMode ?? 'calendar',
+  );
 
   if (options.modifyPickerValue) {
     const modifiedDraft = options.modifyPickerValue(draftValue, context);
@@ -147,21 +174,30 @@ export function resolveDatePickerDraft(
 
   options.onPickerChange?.(draftValue, context);
 
-  return parseDatePickerDraftValue(draftValue, options.range);
+  return parseDatePickerDraftValue(draftValue, options.range, {
+    precision: options.precision,
+    weekOfMonthMode: options.weekOfMonthMode,
+  });
 }
 
 /**
  * Синхронизирует черновик пикера из контролируемого `value`.
  * @param value — значение поля
  * @param range — режим диапазона
+ * @param options.precision — точность значения
+ * @param options.weekOfMonthMode — нумерация недель
  */
 export function datePickerDraftDatesFromValue(
   value: string | DateTimeRange | undefined,
   range: boolean,
+  options: { precision?: DateInputPrecision; weekOfMonthMode?: WeekOfMonthMode } = {},
 ): DatePickerDraftDates {
+  const precision = options.precision ?? 'day';
+  const weekOfMonthMode = options.weekOfMonthMode ?? 'calendar';
+
   if (!range) {
     if (typeof value === 'string' && value) {
-      const parsedResult = parseDate(value);
+      const parsedResult = parsePrecisionValue(value, precision, { weekOfMonthMode });
       return {
         selectedDate: parsedResult.isValid ? parsedResult.date : null,
         rangeStart: null,
@@ -173,8 +209,8 @@ export function datePickerDraftDatesFromValue(
   }
 
   if (typeof value === 'object' && value) {
-    const startResult = parseDate(value.start);
-    const endResult = parseDate(value.end);
+    const startResult = parsePrecisionValue(value.start, precision, { weekOfMonthMode });
+    const endResult = parsePrecisionValue(value.end, precision, { weekOfMonthMode });
 
     return {
       selectedDate: null,
