@@ -72,7 +72,6 @@ import {
   DataGridRowDragHandle,
   DataGridColumnResizeHandle,
   DataGridHeaderToolbarInner,
-  DATA_GRID_HEADER_TOOLBAR_STICKY_TOP_OFFSET,
 } from './DataGrid.style';
 import { DataGridColumnHeaderContent } from './DataGridColumnHeaderContent';
 import {
@@ -94,6 +93,7 @@ import {
 } from './dataGridDataStatusHandlers';
 import { convertDataGridColumnsToExportColumns } from './excelExport/dataGridExcelExportColumnHandlers';
 import { DataGridExcelExportButton } from './excelExport/DataGridExcelExportButton';
+import { useStickyTheadSecondRowTopOffset } from '../basicTable/useStickyTheadSecondRowTopOffset';
 
 /**
  * Готовая таблица с колонками и строками из пропсов (композиция `Table*` + выбор + пагинация + сортировка).
@@ -522,6 +522,7 @@ export function DataGrid<
   } | null>(null);
   const columnResizeLiveWidthRef = useRef(0);
   const columnResizeBlockColDragRef = useRef(false);
+  const headerToolbarRowRef = useRef<HTMLTableRowElement>(null);
 
   useEffect(() => {
     if (!enableColumnDrag || !showColumnResizeUi) {
@@ -901,13 +902,17 @@ export function DataGrid<
     headerToolbar,
   ]);
 
+  const stickySecondRowTopOffset = useStickyTheadSecondRowTopOffset({
+    enabled: Boolean(stickyHeader && showHeaderToolbar),
+    firstHeadRowRef: headerToolbarRowRef,
+  });
+
   /** Второй ряд липкой шапки (заголовки колонок) смещается ниже строки `headerToolbar`. */
   const rootStyleWithStickyToolbar =
     stickyHeader && showHeaderToolbar
       ? ({
           ...style,
-          ['--plainer-sticky-thead-second-row-top' as string]:
-            DATA_GRID_HEADER_TOOLBAR_STICKY_TOP_OFFSET,
+          ['--plainer-sticky-thead-second-row-top' as string]: stickySecondRowTopOffset,
         } as React.CSSProperties)
       : style;
 
@@ -958,7 +963,10 @@ export function DataGrid<
           >
             <TableHead>
               {showHeaderToolbar ? (
-                <TableRow {...{ [PLAINER_TABLE_HEADER_TOOLBAR_ROW_ATTRIBUTE]: true }}>
+                <TableRow
+                  ref={headerToolbarRowRef}
+                  {...{ [PLAINER_TABLE_HEADER_TOOLBAR_ROW_ATTRIBUTE]: true }}
+                >
                   <TableCell
                     colSpan={colCount}
                     padding="none"

@@ -1655,6 +1655,75 @@ export const HeaderToolbarCardSurface: Story = {
 };
 
 /**
+ * Липкая шапка + card + sm: разделитель шапка → первая строка и линии между строками без внутреннего скролла.
+ */
+export const StickyCardHeaderSm: Story = {
+  name: 'Sticky + card + sm',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`stickyHeader` (дефолт), `tableHeaderVariant="card"`, `size="sm"`, несколько строк без `scrollAreaMaxHeight`. Между шапкой и первой записью — та же явная линия, что между строками тела (`border-bottom` на ячейках, не на `tr`).',
+      },
+    },
+  },
+  render: () => (
+    <DataGridStoryBlock>
+      <DataGridStoryHint>
+        Без внутреннего скролла: шапка не должна «съедать» первую строку, линия под заголовками колонок
+        читается на белом фоне `card`.
+      </DataGridStoryHint>
+      <DataGrid<DataGridStoryDemoRow>
+        tableId="story-data-grid-sticky-card-sm"
+        columns={demoColumns}
+        rows={TABLE_STORY_DEMO_ROWS.slice(0, 6)}
+        totalRows={6}
+        stickyHeader
+        tableHeaderVariant="card"
+        size={Size.SM}
+        striped={false}
+      />
+    </DataGridStoryBlock>
+  ),
+};
+
+/**
+ * Тот же сценарий Klassar: card + sm + встроенный toolbar (refetch / сброс фильтров).
+ */
+export const StickyCardHeaderSmToolbar: Story = {
+  name: 'Sticky + card + sm + toolbar',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Как списки в Klassar: `stickyHeader` + `tableHeaderVariant="card"` + `size="sm"` + `refetch` / `onResetFilters`. Вторая sticky-строка `thead` смещается на **измеренную** высоту toolbar, не на жёсткие 48px.',
+      },
+    },
+  },
+  render: () => (
+    <DataGridStoryBlock>
+      <DataGridStoryHint>
+        Панель `headerToolbar` и заголовки колонок липнут отдельно; первая запись остаётся под шапкой с
+        видимым разделителем.
+      </DataGridStoryHint>
+      <DataGrid<DataGridStoryDemoRow>
+        tableId="story-data-grid-sticky-card-sm-toolbar"
+        columns={demoColumns}
+        rows={TABLE_STORY_DEMO_ROWS.slice(0, 8)}
+        totalRows={8}
+        stickyHeader
+        tableHeaderVariant="card"
+        size={Size.SM}
+        striped={false}
+        hasActiveFilters
+        onResetFilters={fn()}
+        refetch={fn()}
+      />
+    </DataGridStoryBlock>
+  ),
+};
+
+/**
  * Фильтр в шапке колонки: тот же сценарий, что **Table › Column filters › DataGridWithTextFilterInHeader** (точка входа из корня DataGrid).
  */
 export const ColumnFilterInHeader: Story = {
