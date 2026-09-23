@@ -202,6 +202,30 @@ describe('DateInput', () => {
     });
   });
 
+  it('не закрывает day-пикер после выбора года в split month/year', async () => {
+    renderWithTheme(<DateInput {...defaultProps} value="2026-08-22" />);
+
+    const iconButton = screen.getByTestId('icon-IconPlainerCalendar-XS').parentElement;
+    fireEvent.click(iconButton!);
+
+    await waitFor(() => {
+      expect(screen.getByText('Очистить')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: '2026' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('2025')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getAllByText('2025').at(-1)!);
+
+    await waitFor(() => {
+      expect(screen.getByText('Очистить')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: '2025' })).toBeInTheDocument();
+    });
+  });
+
   it('shows clear button', async () => {
     renderWithTheme(<DateInput {...defaultProps} />);
 
@@ -563,9 +587,11 @@ describe('DateInput', () => {
 
     fireEvent.click(screen.getByTestId('date-input-period-year-2025'));
     expect(onChange).not.toHaveBeenCalled();
+    expect(screen.getByTestId('date-input-period-picker')).toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId('date-input-period-month-0'));
     expect(onChange).toHaveBeenCalledWith('2025-01');
+    expect(screen.getByTestId('date-input-period-picker')).toBeInTheDocument();
   });
 
   it('не отключает месяц, если minDate внутри этого месяца', async () => {

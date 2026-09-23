@@ -6,7 +6,7 @@
 
 Современная библиотека UI компонентов с поддержкой темизации и TypeScript.
 
-**Текущая версия:** `0.3.3` · ветка [`v_0.3.3`](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.3.3) · React 18+/19 · styled-components 6.x
+**Текущая версия:** `0.3.4` · ветка [`v_0.3.4`](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.3.4) · React 18+/19 · styled-components 6.x
 
 ## 🚀 Возможности
 
@@ -19,6 +19,16 @@
 - **📚 Storybook** - Интерактивная документация и playground
 - **⚡ Vite** - Плагин `plainervVite()` из `@velkinvv/plainerv/vite` (dedupe, без prebundle кита)
 
+## 📚 Правило для Storybook-историй
+
+Чтобы истории оставались поддерживаемыми и быстрыми в пересборке:
+
+- один `*.stories.tsx` файл — **не более 500 строк**;
+- вместо «одной большой» истории делим сценарии на поднаборы (`Basic`, `States`, `Validation`, `Async` и т. п.);
+- общие данные, хелперы и стили выносим в соседние файлы (`*.stories.data.ts`, `*.stories.helpers.ts`, `*.stories.styles.ts`).
+
+Если файл приближается к лимиту, дробление делаем сразу, без ожидания отдельного рефакторинга.
+
 ## 📦 Установка
 
 Пакет объявляет **peer dependencies** — одна копия React, styled-components и Framer Motion в приложении (без дублей runtime).
@@ -26,7 +36,7 @@
 ```bash
 npm i @velkinvv/plainerv react react-dom styled-components framer-motion
 # или конкретная версия кита:
-npm i @velkinvv/plainerv@0.3.3 react react-dom styled-components framer-motion
+npm i @velkinvv/plainerv@0.3.4 react react-dom styled-components framer-motion
 ```
 
 | Пакет | Диапазон (peer) |

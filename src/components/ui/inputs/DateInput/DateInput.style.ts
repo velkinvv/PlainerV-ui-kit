@@ -156,7 +156,8 @@ export const CalendarPopup = styled.div.withConfig({
         `}
   margin-top: ${({ $portaled }) => ($portaled ? '0' : '4px')};
   padding: 16px;
-  min-width: 280px;
+  /* Увеличенная ширина, чтобы month/year в split-layout стабильно помещались с отступом */
+  min-width: 380px;
 `;
 
 // Стилизованные компоненты для сегментированного ввода даты

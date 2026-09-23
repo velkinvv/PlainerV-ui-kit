@@ -20,7 +20,7 @@ export const DateInputPeriodPickerRoot = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
-  min-width: 280px;
+  min-width: 340px;
 `;
 
 /** Подпись группы (месяцы / годы) */

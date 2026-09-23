@@ -29,8 +29,11 @@ export const withStorybookUiKitTheme: Decorator = (Story, context) => {
   writeStorybookThemeAxes(axes);
 
   return (
+    /**
+     * Без `key`: `ThemeProvider` меняет тему через `initialThemeMode` и собственный store,
+     * поэтому `key` только пересоздавал поддерево на каждом переключении оси темы.
+     */
     <ThemeProvider
-      key={`storybook-ui-kit-theme-${resolvedTheme}-${plainervTheme?.themeOverrides ? 'brand' : 'default'}`}
       initialThemeMode={plainervTheme?.initialThemeMode ?? initialThemeMode}
       storageKey="storybook-theme"
       themeOverrides={plainervTheme?.themeOverrides}

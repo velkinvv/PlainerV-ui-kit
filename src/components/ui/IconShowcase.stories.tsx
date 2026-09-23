@@ -1,8 +1,6 @@
 ﻿import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Icon } from './Icon/Icon';
-import * as PlainerIconsModule from '../../icons/plainer';
-import * as IconExIconsModule from '../../icons/iconex';
 import { Hint } from './Hint/Hint';
 import { IconSize } from '../../types/sizes';
 import { sizeMap } from '../../handlers/iconHandlers';
@@ -19,16 +17,93 @@ import {
   iconStoriesStyles,
 } from './Icon/Icon.stories.styles';
 
-// Функция для получения реально существующих иконок
-const getExistingIcons = () => {
-  // Получаем иконки Plainer (сохраняем полные имена)
-  const plainerIcons = Object.keys(PlainerIconsModule).filter((name) => name.length > 0);
-
-  // Получаем иконки IconEx (сохраняем полные имена)
-  const iconexIcons = Object.keys(IconExIconsModule).filter((name) => name.length > 0);
-
-  return { plainerIcons, iconexIcons };
+type IconCatalog = {
+  plainerIcons: string[];
+  iconexIcons: string[];
+  isLoading: boolean;
 };
+
+let plainerIconNamesCache: string[] | null = null;
+let iconexIconNamesCache: string[] | null = null;
+
+const getIconNamesFromModule = (iconModule: Record<string, unknown>): string[] =>
+  Object.keys(iconModule).filter((name) => name.length > 0);
+
+const loadPlainerIconNames = async () => {
+  if (plainerIconNamesCache) {
+    return plainerIconNamesCache;
+  }
+
+  const iconModule = await import('../../icons/plainer');
+  plainerIconNamesCache = getIconNamesFromModule(iconModule);
+
+  return plainerIconNamesCache;
+};
+
+const loadIconExIconNames = async () => {
+  if (iconexIconNamesCache) {
+    return iconexIconNamesCache;
+  }
+
+  const iconModule = await import('../../icons/iconex');
+  iconexIconNamesCache = getIconNamesFromModule(iconModule);
+
+  return iconexIconNamesCache;
+};
+
+const useIconCatalog = (variant: IconVariant | 'all'): IconCatalog => {
+  const [catalog, setCatalog] = React.useState<IconCatalog>({
+    plainerIcons: [],
+    iconexIcons: [],
+    isLoading: true,
+  });
+
+  React.useEffect(() => {
+    let isCancelled = false;
+
+    const loadCatalog = async () => {
+      setCatalog((previousCatalog) => ({ ...previousCatalog, isLoading: true }));
+
+      if (variant === 'plainer') {
+        const plainerIcons = await loadPlainerIconNames();
+        if (!isCancelled) {
+          setCatalog({ plainerIcons, iconexIcons: [], isLoading: false });
+        }
+        return;
+      }
+
+      if (variant === 'iconEx') {
+        const iconexIcons = await loadIconExIconNames();
+        if (!isCancelled) {
+          setCatalog({ plainerIcons: [], iconexIcons, isLoading: false });
+        }
+        return;
+      }
+
+      const [plainerIcons, iconexIcons] = await Promise.all([
+        loadPlainerIconNames(),
+        loadIconExIconNames(),
+      ]);
+
+      if (!isCancelled) {
+        setCatalog({ plainerIcons, iconexIcons, isLoading: false });
+      }
+    };
+
+    void loadCatalog();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [variant]);
+
+  return catalog;
+};
+
+const LazyIcon = React.lazy(async () => {
+  const iconModule = await import('./Icon/Icon');
+  return { default: iconModule.Icon };
+});
 
 // Функция для определения варианта иконки
 const getIconVariant = (name: string): IconVariant => {
@@ -57,7 +132,6 @@ const meta: Meta<typeof Icon> = {
       },
     },
   },
-  tags: ['autodocs'],
 };
 
 export default meta;
@@ -70,8 +144,10 @@ export const AllIcons: Story = {
     const [selectedVariant, setSelectedVariant] = React.useState<IconVariant | 'all'>('all');
     const [selectedSize, setSelectedSize] = React.useState<IconSize>(IconSize.MD);
     const [copiedIcon, setCopiedIcon] = React.useState<string | null>(null);
+    const [currentPage, setCurrentPage] = React.useState(1);
 
-    const { plainerIcons, iconexIcons } = React.useMemo(() => getExistingIcons(), []);
+    const iconsPerPage = 120;
+    const { plainerIcons, iconexIcons, isLoading } = useIconCatalog(selectedVariant);
 
     // Функция для копирования кода иконки
     const copyIconCode = React.useCallback((code: string) => {
@@ -119,6 +195,21 @@ export const AllIcons: Story = {
     const filteredIcons = (allIcons || []).filter((name: IconName) =>
       String(name).toLowerCase().includes(searchTerm.toLowerCase()),
     );
+
+    const totalPages = Math.max(1, Math.ceil(filteredIcons.length / iconsPerPage));
+    const safeCurrentPage = Math.min(currentPage, totalPages);
+    const pageStartIndex = (safeCurrentPage - 1) * iconsPerPage;
+    const paginatedIcons = filteredIcons.slice(pageStartIndex, pageStartIndex + iconsPerPage);
+
+    React.useEffect(() => {
+      setCurrentPage(1);
+    }, [searchTerm, selectedVariant]);
+
+    React.useEffect(() => {
+      if (currentPage > totalPages) {
+        setCurrentPage(totalPages);
+      }
+    }, [currentPage, totalPages]);
 
     // Вычисляем высоту блока на основе размера иконки
     const iconSize = sizeMap[selectedSize] || sizeMap[IconSize.MD];
@@ -187,34 +278,67 @@ export const AllIcons: Story = {
               Plainer: {plainerIcons.length} | IconEx: {iconexIcons.length}
             </div>
           )}
+          <div style={iconStoriesStyles.statsMeta}>
+            {isLoading
+              ? 'Загрузка иконок...'
+              : `Страница ${safeCurrentPage} из ${totalPages} · показано ${paginatedIcons.length} шт.`}
+          </div>
         </div>
 
         {/* Единый блок со всеми иконками */}
-        <div
-          className="icon-stories-scroll"
-          style={buildIconStoriesScrollableGridStyle(iconHeight, maxHeight)}
+        <React.Suspense
+          fallback={<div style={iconStoriesStyles.statsPanel}>Загрузка компонента иконок...</div>}
         >
-          {(filteredIcons || []).map((iconName: IconName) => {
-            const variant = selectedVariant === 'all' ? getIconVariant(iconName) : selectedVariant;
+          <div
+            className="icon-stories-scroll"
+            style={buildIconStoriesScrollableGridStyle(iconHeight, maxHeight)}
+          >
+            {(paginatedIcons || []).map((iconName: IconName) => {
+              const variant = selectedVariant === 'all' ? getIconVariant(iconName) : selectedVariant;
 
-            return (
-              <Hint key={iconName} content={hintContent(iconName, variant, selectedSize)}>
-                <div
-                  style={buildCenteredIconPreviewCardStyle(iconHeight)}
-                  onMouseEnter={handleIconStoryCardMouseEnter}
-                  onMouseLeave={handleIconStoryCardMouseLeave}
-                >
-                  <Icon
-                    name={iconName}
-                    size={selectedSize}
-                    // variant={variant}
-                  />
-                  <div style={iconStoriesStyles.iconVariantLabel}>{variant}</div>
-                </div>
-              </Hint>
-            );
-          })}
-        </div>
+              return (
+                <Hint key={iconName} content={hintContent(iconName, variant, selectedSize)}>
+                  <div
+                    style={buildCenteredIconPreviewCardStyle(iconHeight)}
+                    onMouseEnter={handleIconStoryCardMouseEnter}
+                    onMouseLeave={handleIconStoryCardMouseLeave}
+                  >
+                    <LazyIcon
+                      name={iconName}
+                      size={selectedSize}
+                      variant={variant}
+                    />
+                    <div style={iconStoriesStyles.iconVariantLabel}>{variant}</div>
+                  </div>
+                </Hint>
+              );
+            })}
+          </div>
+        </React.Suspense>
+
+        {totalPages > 1 && (
+          <div style={iconStoriesStyles.controlsRowEnd}>
+            <button
+              type="button"
+              onClick={() => setCurrentPage((previousPage) => Math.max(1, previousPage - 1))}
+              disabled={safeCurrentPage <= 1 || isLoading}
+            >
+              Назад
+            </button>
+            <span style={iconStoriesStyles.controlLabel}>
+              Страница {safeCurrentPage} / {totalPages}
+            </span>
+            <button
+              type="button"
+              onClick={() =>
+                setCurrentPage((previousPage) => Math.min(totalPages, previousPage + 1))
+              }
+              disabled={safeCurrentPage >= totalPages || isLoading}
+            >
+              Вперёд
+            </button>
+          </div>
+        )}
       </div>
     );
   },

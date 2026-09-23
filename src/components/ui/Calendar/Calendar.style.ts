@@ -90,7 +90,8 @@ export const CalendarToolbar = styled.div`
 
 /** Обёртка триггера месяца + выпадающего списка */
 export const CalendarMonthDropdownWrap = styled.div`
-  flex: 1;
+  /* Равные доли в строке: триггеры не выдавливают друг друга */
+  flex: 1 1 0;
   min-width: 0;
   display: flex;
 `;
@@ -102,6 +103,7 @@ export const CalendarSplitMonthYearRow = styled.div`
   gap: 8px;
   min-width: 0;
   align-items: stretch;
+  flex-wrap: nowrap;
 `;
 
 /**
@@ -119,6 +121,8 @@ export const CalendarMonthTrigger = styled.button.withConfig({
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
+  /* Без этого flex-элемент не сжимается ниже min-content и наползает на соседний триггер */
+  min-width: 0;
   min-height: ${({ $size }) => resolveControlMinHeight($size ?? Size.MD)};
   padding: 6px 12px;
   margin: 0;
@@ -275,6 +279,27 @@ export const CalendarFooter = styled.div`
   margin-top: 12px;
   padding-top: 12px;
   border-top: 1px solid ${({ theme }) => theme.colors.borderSecondary};
+`;
+
+/**
+ * Кнопки подвала пикера: делят строку поровну, поэтому одинаковая ширина
+ * задаётся раскладкой, а не пикселями в инлайн-стилях.
+ */
+export const CalendarFooterActions = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+
+  & > * {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  & > *:only-child {
+    flex: 0 0 auto;
+  }
 `;
 
 /**

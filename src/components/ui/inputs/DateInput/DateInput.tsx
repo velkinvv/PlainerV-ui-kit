@@ -39,6 +39,7 @@ import {
 } from '../../../../handlers/inputFieldCaptionHandlers';
 import { Size, IconSize } from '../../../../types/sizes';
 import { Calendar } from '../../Calendar/Calendar';
+import { CalendarFooterActions } from '../../Calendar/Calendar.style';
 import { DateInputPeriodPicker } from './DateInputPeriodPicker';
 import { Button } from '../../buttons/Button/Button';
 import { Icon } from '../../Icon/Icon';
@@ -126,7 +127,7 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
       precision = 'day',
       weekOfMonthMode = 'calendar',
       showDateRollers = false,
-      calendarMonthYearLayout = 'combined',
+      calendarMonthYearLayout = 'split',
       calendarFullWidth = false,
       prefix,
       suffix,
@@ -231,7 +232,11 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
     const handleBlur = () => {
       // Не закрываем сразу, чтобы можно было кликнуть на календарь
       setTimeout(() => {
-        if (!containerRef.current?.contains(document.activeElement)) {
+        const activeElement = document.activeElement;
+        const isInsideInput = containerRef.current?.contains(activeElement);
+        const isInsidePopup = calendarPopupRef.current?.contains(activeElement);
+
+        if (!isInsideInput && !isInsidePopup) {
           setIsOpen(false);
         }
       }, 150);
@@ -1291,10 +1296,10 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
                   onItemMouseEnter={handleDayMouseEnter}
                   onItemMouseLeave={handleDayMouseLeave}
                   footer={
-                    <>
+                    <CalendarFooterActions>
                       <Button
                         variant={ButtonVariant.SECONDARY}
-                        size={size}
+                        size={Size.XS}
                         type="button"
                         onClick={handleClear}
                       >
@@ -1303,19 +1308,20 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
                       {range || shouldDeferPickerCommit ? (
                         <Button
                           variant={ButtonVariant.PRIMARY}
-                          size={size}
+                          size={Size.XS}
                           type="button"
                           onClick={handleApply}
                         >
                           {range ? 'Применить' : 'OK'}
                         </Button>
                       ) : null}
-                    </>
+                    </CalendarFooterActions>
                   }
                 />
               ) : (
                 <Calendar
                   embedded
+                  fullWidth
                   showTitle={false}
                   visibleMonth={currentDate}
                   onVisibleMonthChange={(monthStart) => setCurrentDate(monthStart)}
@@ -1341,10 +1347,10 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
                   onDayMouseLeave={handleDayMouseLeave}
                   weekdays={getWeekdayNames()}
                   footer={
-                    <>
+                    <CalendarFooterActions>
                       <Button
                         variant={ButtonVariant.SECONDARY}
-                        size={size}
+                        size={Size.XS}
                         type="button"
                         onClick={handleClear}
                       >
@@ -1353,14 +1359,14 @@ export const DateInput = forwardRef<HTMLInputElement, DatePickerProps>(
                       {range || shouldDeferPickerCommit ? (
                         <Button
                           variant={ButtonVariant.PRIMARY}
-                          size={size}
+                          size={Size.XS}
                           type="button"
                           onClick={handleApply}
                         >
                           {range ? 'Применить' : 'OK'}
                         </Button>
                       ) : null}
-                    </>
+                    </CalendarFooterActions>
                   }
                 />
               )}

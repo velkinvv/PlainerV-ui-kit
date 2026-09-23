@@ -44,7 +44,6 @@ const meta: Meta<typeof CustomThemePreview> = {
       },
     },
   },
-  tags: ['autodocs'],
 };
 
 export default meta;

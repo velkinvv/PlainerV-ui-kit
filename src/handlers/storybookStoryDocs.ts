@@ -55,6 +55,64 @@ export const describeStory = (description: string, usageCode?: string) => ({
 });
 
 /**
+ * Разбор исходника сторис кэшируется: Storybook передаёт один и тот же текст в transform
+ * на каждый рендер docs-блока, а извлечение блока экспорта и секции `render` — регулярки
+ * по всему файлу. Ключ кэша — сам исходник, значение `null` означает «в этом файле нет».
+ */
+type ParsedStorySource = {
+  exportBlocks: Map<string, string | null>;
+  renderSections: Map<string, string | null>;
+};
+
+const parsedStorySourceCache = new Map<string, ParsedStorySource>();
+
+/** Кэш не должен расти бесконечно: держим разбор недавно открытых сторис. */
+const PARSED_STORY_SOURCE_CACHE_LIMIT = 50;
+
+/**
+ * @param generatedSource - Исходник модуля сторис из Storybook.
+ * @returns Кэш разбора для этого исходника.
+ */
+const getParsedStorySource = (generatedSource: string): ParsedStorySource => {
+  const cached = parsedStorySourceCache.get(generatedSource);
+  if (cached) {
+    return cached;
+  }
+
+  if (parsedStorySourceCache.size >= PARSED_STORY_SOURCE_CACHE_LIMIT) {
+    const oldestKey = parsedStorySourceCache.keys().next().value;
+    if (oldestKey !== undefined) {
+      parsedStorySourceCache.delete(oldestKey);
+    }
+  }
+
+  const parsed: ParsedStorySource = { exportBlocks: new Map(), renderSections: new Map() };
+  parsedStorySourceCache.set(generatedSource, parsed);
+  return parsed;
+};
+
+/**
+ * @param cache - Кэш разбора конкретного исходника.
+ * @param exportName - Имя экспорта-сторис.
+ * @param compute - Разбор при промахе кэша.
+ * @returns Найденный фрагмент или undefined.
+ */
+const readCachedFragment = (
+  cache: Map<string, string | null>,
+  exportName: string,
+  compute: () => string | null | undefined,
+): string | undefined => {
+  const cached = cache.get(exportName);
+  if (cached !== undefined) {
+    return cached ?? undefined;
+  }
+
+  const computed = compute() ?? null;
+  cache.set(exportName, computed);
+  return computed ?? undefined;
+};
+
+/**
  * Slug сторис из `id` (`with-helper-text`) в имя экспорта (`WithHelperText`).
  * @param storySlug - Последний сегмент `context.id` после `--`.
  */
@@ -123,12 +181,17 @@ export const getStoryDocsSourceCode = (generatedSource: string, context: StoryCo
   const storyArgs = context.args as Record<string, unknown> | undefined;
 
   const exportName = resolveStoryExportName(context, generatedSource);
+  const parsedSource = getParsedStorySource(generatedSource);
   let scopedSource = exportName
-    ? (extractStoryExportBlock(generatedSource, exportName) ?? generatedSource)
+    ? (readCachedFragment(parsedSource.exportBlocks, exportName, () =>
+        extractStoryExportBlock(generatedSource, exportName),
+      ) ?? generatedSource)
     : generatedSource;
 
   if (exportName && !/render\s*:/.test(scopedSource)) {
-    const renderSection = extractRenderSectionFromExport(generatedSource, exportName);
+    const renderSection = readCachedFragment(parsedSource.renderSections, exportName, () =>
+      extractRenderSectionFromExport(generatedSource, exportName),
+    );
     if (renderSection) {
       scopedSource = renderSection;
     }

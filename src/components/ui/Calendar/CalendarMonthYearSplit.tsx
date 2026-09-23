@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import type { DropdownMenuItemProps, DropdownMenuItemValue } from '../../../types/ui';
 import { Size, IconSize } from '../../../types/sizes';
 import { Icon } from '../Icon/Icon';
@@ -56,6 +56,11 @@ export const CalendarMonthYearSplit: React.FC<CalendarMonthYearSplitProps> = ({
 }) => {
   const [monthMenuOpen, setMonthMenuOpen] = useState(false);
   const [yearMenuOpen, setYearMenuOpen] = useState(false);
+  const monthTriggerRef = useRef<HTMLButtonElement>(null);
+  const yearTriggerRef = useRef<HTMLButtonElement>(null);
+
+  // Для DateInput: поля «месяц/год» всегда в самом компактном размере
+  const monthYearControlSize = Size.XS;
 
   const year = visibleMonth.getFullYear();
   const month = visibleMonth.getMonth();
@@ -90,6 +95,11 @@ export const CalendarMonthYearSplit: React.FC<CalendarMonthYearSplitProps> = ({
         return;
       }
       onVisibleMonthChange(startOfMonth(new Date(year, mi, 1)));
+
+      // Не даём DateInput схлопнуться по blur: возвращаем фокус в триггер внутри попапа.
+      requestAnimationFrame(() => {
+        monthTriggerRef.current?.focus();
+      });
     },
     [onVisibleMonthChange, year],
   );
@@ -104,6 +114,11 @@ export const CalendarMonthYearSplit: React.FC<CalendarMonthYearSplitProps> = ({
         return;
       }
       onVisibleMonthChange(startOfMonth(new Date(yi, month, 1)));
+
+      // Не даём DateInput схлопнуться по blur: возвращаем фокус в триггер внутри попапа.
+      requestAnimationFrame(() => {
+        yearTriggerRef.current?.focus();
+      });
     },
     [month, onVisibleMonthChange],
   );
@@ -117,9 +132,10 @@ export const CalendarMonthYearSplit: React.FC<CalendarMonthYearSplitProps> = ({
           <Dropdown
             trigger={
               <CalendarMonthTrigger
+                ref={monthTriggerRef}
                 type="button"
                 $open={monthMenuOpen}
-                $size={size}
+                $size={monthYearControlSize}
                 disabled={disabled}
                 aria-haspopup="listbox"
                 aria-expanded={monthMenuOpen}
@@ -128,7 +144,7 @@ export const CalendarMonthYearSplit: React.FC<CalendarMonthYearSplitProps> = ({
                   {monthLabelFmt.format(new Date(year, month, 1))}
                 </CalendarMonthTriggerLabel>
                 <CalendarChevronFlip $open={monthMenuOpen} aria-hidden>
-                  <Icon name="IconPlainerChevronDown" size={IconSize.MD} color="currentColor" />
+                  <Icon name="IconPlainerChevronDown" size={IconSize.SM} color="currentColor" />
                 </CalendarChevronFlip>
               </CalendarMonthTrigger>
             }
@@ -136,13 +152,14 @@ export const CalendarMonthYearSplit: React.FC<CalendarMonthYearSplitProps> = ({
             value={String(month)}
             onSelect={handleMonthSelect}
             disabled={disabled}
-            size={Size.SM}
+            size={monthYearControlSize}
             menuDensity="compact"
             searchable={false}
             menuMaxHeight={240}
             isMenuOpen={monthMenuOpen}
             onMenuOpenChange={setMonthMenuOpen}
             disableAutoFocus
+            inline
             positioningMode="autoFlip"
           />
         </CalendarMonthDropdownWrap>
@@ -150,16 +167,17 @@ export const CalendarMonthYearSplit: React.FC<CalendarMonthYearSplitProps> = ({
           <Dropdown
             trigger={
               <CalendarMonthTrigger
+                ref={yearTriggerRef}
                 type="button"
                 $open={yearMenuOpen}
-                $size={size}
+                $size={monthYearControlSize}
                 disabled={disabled}
                 aria-haspopup="listbox"
                 aria-expanded={yearMenuOpen}
               >
                 <CalendarMonthTriggerLabel>{String(year)}</CalendarMonthTriggerLabel>
                 <CalendarChevronFlip $open={yearMenuOpen} aria-hidden>
-                  <Icon name="IconPlainerChevronDown" size={IconSize.MD} color="currentColor" />
+                  <Icon name="IconPlainerChevronDown" size={IconSize.SM} color="currentColor" />
                 </CalendarChevronFlip>
               </CalendarMonthTrigger>
             }
@@ -167,13 +185,14 @@ export const CalendarMonthYearSplit: React.FC<CalendarMonthYearSplitProps> = ({
             value={String(year)}
             onSelect={handleYearSelect}
             disabled={disabled}
-            size={Size.SM}
+            size={monthYearControlSize}
             menuDensity="compact"
             searchable={false}
             menuMaxHeight={240}
             isMenuOpen={yearMenuOpen}
             onMenuOpenChange={setYearMenuOpen}
             disableAutoFocus
+            inline
             positioningMode="autoFlip"
           />
         </CalendarMonthDropdownWrap>
