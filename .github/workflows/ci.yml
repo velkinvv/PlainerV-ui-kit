@@ -18,6 +18,8 @@ jobs:
       - run: npm ci
       - run: npm run lint:check
       - run: npm run format:check
+      - run: npm run docs:dsl:generate
+      - run: npm run docs:dsl:lint
 
   type-check:
     runs-on: ubuntu-latest

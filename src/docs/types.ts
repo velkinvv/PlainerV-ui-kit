@@ -1,3 +1,5 @@
+import type { ReactElement } from 'react';
+
 export type DocsPlatform = 'web' | 'mobile';
 
 export type DocsStatus = 'stable' | 'beta' | 'deprecated';
@@ -31,8 +33,8 @@ export interface ComponentDocsExample {
   id: string;
   title: string;
   description?: string;
-  code: string;
-  render: () => JSX.Element;
+  code?: string;
+  render: () => ReactElement;
   showCode?: boolean;
   themes?: ExampleThemeAxis[];
   layout?: ExampleLayout;
@@ -43,7 +45,7 @@ export interface ComponentDocsVariantCase {
   title: string;
   description?: string;
   code?: string;
-  render: () => JSX.Element;
+  render: () => ReactElement;
 }
 
 export interface ComponentDocsVariantGroup {

@@ -1,3 +1,5 @@
+import { extractCodeFromRenderText } from './storybookRenderSnippet.mjs';
+
 /**
  * Извлечение примеров использования компонента из исходника CSF-сторис (render/return).
  */
@@ -20,87 +22,12 @@ export const extractUseStateDeclarationsFromStorySource = (source: string): stri
 };
 
 /**
- * Извлекает JSX из `return (...)` внутри render-функции.
- * @param source - Фрагмент исходника одной сторис.
+ * Извлекает JSX из render/return через общий модуль,
+ * который используется и в DSL-генераторе, и в Storybook Docs.
  */
-/**
- * Извлекает содержимое скобок после `prefix` (return или стрелочная функция).
- * @param source - Исходник сторис.
- * @param prefix - Начало совпадения, после которого идёт `(`.
- */
-const extractParenthesizedBlockAfter = (source: string, prefix: RegExp): string | null => {
-  const match = source.match(prefix);
-  if (!match || match.index === undefined) {
-    return null;
-  }
-
-  let index = match.index + match[0].length;
-  let depth = 1;
-
-  while (index < source.length && depth > 0) {
-    const character = source[index];
-    if (character === '(') {
-      depth += 1;
-    } else if (character === ')') {
-      depth -= 1;
-    }
-    index += 1;
-  }
-
-  if (depth !== 0) {
-    return null;
-  }
-
-  return source.slice(match.index + match[0].length, index - 1).trim();
-};
-
-/**
- * Извлекает JSX после `return` без скобок: `return <Foo />`.
- * @param source - Фрагмент исходника сторис.
- */
-const extractReturnJsxWithoutParens = (source: string): string | null => {
-  const match = source.match(/return\s+(<[\s\S]+?);/);
-  return match?.[1]?.trim() ?? null;
-};
-
-/**
- * JSX сразу после стрелочного render: `render: () => <Foo />` (без скобок вокруг корня).
- * @param source - Фрагмент исходника сторис.
- */
-const extractArrowRenderJsx = (source: string): string | null => {
-  const match = source.match(/render\s*:\s*\([^)]*\)\s*=>\s*(<[\s\S]+)/);
-  if (!match?.[1]) {
-    return null;
-  }
-
-  let fragment = match[1].trim();
-  if (fragment.startsWith('(')) {
-    return null;
-  }
-
-  const cutAtCommaParams = fragment.search(/,\s*\n\s*(?:parameters|decorators|args|name)\s*:/);
-  if (cutAtCommaParams !== -1) {
-    fragment = fragment.slice(0, cutAtCommaParams).trim();
-  }
-
-  if (fragment.endsWith(',')) {
-    fragment = fragment.slice(0, -1).trim();
-  }
-
-  return fragment.length > 0 ? fragment : null;
-};
-
 export const extractReturnJsxFromStorySource = (source: string): string | null => {
-  return (
-    extractParenthesizedBlockAfter(source, /return\s*\(/) ??
-    extractParenthesizedBlockAfter(source, /render\s*:\s*\(\)\s*=>\s*\(/) ??
-    extractParenthesizedBlockAfter(source, /render\s*:\s*\([^)]*\)\s*=>\s*\(/) ??
-    /** Storybook Docs иногда передаёт только тело сторис без `render:` */
-    extractParenthesizedBlockAfter(source, /^\s*\(\)\s*=>\s*\(/m) ??
-    extractParenthesizedBlockAfter(source, /^\s*\([^)]*\)\s*=>\s*\(/m) ??
-    extractArrowRenderJsx(source) ??
-    extractReturnJsxWithoutParens(source)
-  );
+  const extracted = extractCodeFromRenderText(source).trim();
+  return extracted.length > 0 ? extracted : null;
 };
 
 /**

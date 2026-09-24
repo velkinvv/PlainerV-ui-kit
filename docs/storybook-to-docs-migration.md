@@ -225,28 +225,28 @@ Storybook почти неработоспособен: долгий старт, 
 
 Структура файла `web/src/components/ui/<Comp>/<Comp>.docs.tsx`:
 
-- [ ] Метаданные: `name`, `group` (раздел в доке), `platform` (`web`; поле остаётся в типах, но `mobile` пока не используется), `since` (версия появления), `status` (`stable` / `beta` / `deprecated`), `description` (markdown-строка)
-- [ ] `examples`: массив, каждый элемент — `id`, `title`, `description`, `code` (строка сниппета), `render` (функция, возвращающая JSX), `showCode` (флаг), `themes` (какие оси темы показывать), `layout` (`inline` / `block` / `grid`)
-- [ ] `variants`: сетка вариантов — быстрый способ показать все состояния одного компонента без ручной вёрстки
-- [ ] `props`: ссылка на автогенерацию из TypeScript или ручные дополнения и исключения
-- [ ] `a11y`: заметки по доступности, роли, обязательные атрибуты
-- [ ] `related`: связанные компоненты для перекрёстных ссылок
-- [ ] `since` и `deprecated`: используются для пометок в версионированной документации
+- [x] Метаданные: `name`, `group` (раздел в доке), `platform` (`web`; поле остаётся в типах, но `mobile` пока не используется), `since` (версия появления), `status` (`stable` / `beta` / `deprecated`), `description` (markdown-строка) — тип `ComponentDocsMeta`
+- [x] `examples`: массив, каждый элемент — `id`, `title`, `description`, `code` (строка сниппета), `render` (функция, возвращающая JSX), `showCode` (флаг), `themes` (какие оси темы показывать), `layout` (`inline` / `block` / `grid`) — тип `ComponentDocsExample`, `code` объявлен опциональным: если он не задан, генератор подставляет нормализованный текст `render`
+- [x] `variants`: сетка вариантов — быстрый способ показать все состояния одного компонента без ручной вёрстки — типы `ComponentDocsVariantGroup` / `ComponentDocsVariantCase`, задействованы в пилотных описаниях (`Alert`, `Badge`, `Drawer`)
+- [x] `props`: ссылка на автогенерацию из TypeScript или ручные дополнения и исключения — тип `ComponentDocsPropsSource` (`autogen` / `manual` / `merge`, `include` / `exclude` / `manual`)
+- [x] `a11y`: заметки по доступности, роли, обязательные атрибуты — тип `ComponentDocsA11y` (`roles`, `requiredAttributes`, `keyboard`, `notes`)
+- [x] `related`: связанные компоненты для перекрёстных ссылок — тип `ComponentDocsRelated` (`name`, `href`, `reason`)
+- [x] `since` и `deprecated`: используются для пометок в версионированной документации — `meta.since`, `meta.status`, `meta.deprecated`
 
 Задачи:
 
 - [x] Создать `web/src/docs/types.ts` — типы описания компонента и примеров (создан файл `web/src/docs/types.ts`)
 - [x] Создать `web/src/docs/defineComponentDocs.ts` — типизированная обёртка над объектом описания; в рантайме возвращает объект как есть, типобезопасность даёт редакторская поддержка (создан файл `web/src/docs/defineComponentDocs.ts`)
 - [x] Написать правила формата: что допустимо на верхнем уровне, что запрещено (вычисляемые ключи, условные ветки, импорт хелперов в объявлении примеров) (зафиксировано в `web/src/docs/dslRules.ts`)
-- [ ] Реализовать ESLint-правило или линтер-скрипт, который валидирует форму `*.docs.tsx` и сообщает о нарушениях
-- [ ] Реализовать извлечение сниппетов: если `code` не задан явно, брать исходный текст `render` и очищать от внутренних обёрток — переиспользовать логику `web/src/handlers/storybookStoryDocs.ts`
-- [ ] Описать пилотные компоненты: `Button`, `Alert`, `Badge` (простые, без сложных состояний)
-- [ ] Описать `Input`, `Select` (формы, состояния, валидация)
-- [ ] Описать `Modal`, `Drawer` (порталы, фокус, оверлеи)
-- [ ] Описать `DataGrid`, `DateInput` (тяжёлые, генерация, локализация)
-- [ ] Обеспечить совместимость со Storybook на время миграции: из `*.docs.tsx` генерировать CSF-объект, чтобы привычный воркфлоу разработки не менялся
-- [ ] Создать генератор `web/scripts/docs-to-csf.mjs` — превращает описание в стори с корректными `id` и `tags`
-- [ ] Проверить на пилоте, что Storybook рендерит сгенерированные стори без отличий от рукописных
+- [x] Реализовать ESLint-правило или линтер-скрипт, который валидирует форму `*.docs.tsx` и сообщает о нарушениях — линтер-скрипт `web/scripts/validate-docs-dsl.mjs` (`npm run docs:dsl:lint`): проверяет обязательные поля `meta`, форму `examples` / `variants` / `render`; текущий прогон — 9 файлов, ошибок нет
+- [x] Реализовать извлечение сниппетов: если `code` не задан явно, брать исходный текст `render` и очищать от внутренних обёрток — реализовано в `extractCodeFromRenderText` внутри генератора `web/scripts/docs-to-csf.mjs`; логика `web/src/handlers/storybookStoryDocs.ts` пока не переиспользована (своя нормализация), сведение в общий модуль — задача фазы 6
+- [x] Описать пилотные компоненты: `Button`, `Alert`, `Badge` (простые, без сложных состояний) — `Button.docs.tsx`, `Alert.docs.tsx`, `Badge.docs.tsx`
+- [x] Описать `Input`, `Select` (формы, состояния, валидация) — `Input.docs.tsx`, `Select.docs.tsx`
+- [x] Описать `Modal`, `Drawer` (порталы, фокус, оверлеи) — `Modal.docs.tsx`, `Drawer.docs.tsx`
+- [x] Описать `DataGrid`, `DateInput` (тяжёлые, генерация, локализация) — `DataGrid.docs.tsx`, `DateInput.docs.tsx`
+- [x] Обеспечить совместимость со Storybook на время миграции: из `*.docs.tsx` генерировать CSF-объект, чтобы привычный воркфлоу разработки не менялся — генератор создаёт `*.generated.stories.tsx` с `tags: ['autodocs', 'dsl-generated']`. Имя выбрано под индексатор Storybook: вариант `*.stories.generated.tsx` glob подхватывал, но `storyIndexers` его не знал (`No matching indexer found`), поэтому файлы переименованы
+- [x] Создать генератор `web/scripts/docs-to-csf.mjs` — превращает описание в стори с корректными `id` и `tags` (`npm run docs:dsl:generate`, 9 файлов)
+- [x] Проверить на пилоте, что Storybook рендерит сгенерированные стори без отличий от рукописных — **технически проверено**: `npm run build-storybook` собирается, девять `*.generated.stories.tsx` присутствуют в `storybook-static/index.json` в разделе `UI Kit (DSL)/*`. Генератор переносит в CSF `layout`, `themes`, `showCode`, `props`, `a11y`, `related`, `meta.deprecated`: `layout` мапится в `parameters.layout` (`inline → centered`, `block → padded`, `grid → fullscreen`), исходные DSL-поля сохраняются в `parameters.dsl` на уровне meta/story. Оговорка: полного визуального паритета нет — пока это перенос метаданных, а не полная отрисовка `props/a11y/related` в отдельных Storybook-блоках (см. хвосты в разделе 11)
 
 Критерий выхода: девять пилотных компонентов описаны в DSL, Storybook показывает их истории из генерации, есть типы, валидатор и извлечение сниппетов.
 
@@ -547,10 +547,27 @@ Storybook почти неработоспособен: долгий старт, 
 
 Фаза 3 — DSL:
 
-- [ ] типы и `defineComponentDocs` готовы
-- [ ] валидатор формата работает
-- [ ] девять пилотных компонентов описаны
-- [ ] генерация CSF из DSL проверена
+- [x] типы и `defineComponentDocs` готовы
+- [x] валидатор формата работает (`npm run docs:dsl:lint` — 9 файлов, ошибок нет)
+- [x] валидатор усилен: ловит коллизии story id между `examples` и `variants` (по итоговому `groupId-itemId`), проверяет допустимые значения `meta.platform` / `meta.status` / `examples[*].layout` / `examples[*].themes`, проверяет `examples[*].showCode` (boolean-литерал) и форму `meta.deprecated` (`since`, `reason`, `replacement`), валидирует структуру `variants[*].items` (id/title/render/code)
+- [x] девять пилотных компонентов описаны (`Button`, `Alert`, `Badge`, `Input`, `Select`, `Modal`, `Drawer`, `DataGrid`, `DateInput`)
+- [x] генерация CSF из DSL проверена (`npm run docs:dsl:generate` — 9 файлов `*.generated.stories.tsx`, `npm run type-check` проходит)
+- [x] генератор удаляет осиротевшие `*.generated.stories.tsx` при удалении `*.docs.tsx`
+- [x] презентация DSL-метаданных в Storybook Docs улучшена: `props/a11y/related/deprecated` добавляются в `docs.description.component` как markdown-секции
+- [x] Storybook собирается с DSL-историями: `npm run build-storybook` — `✓ built in 32.37s`, ошибок индексации нет, `UI Kit (DSL)/*` присутствует в `storybook-static/index.json`
+- [x] Конфликт `title` с рукописными снят разведением namespace: рукописные остались на `UI Kit/<Group>/<Name>` (id вида `ui-kit-feedback-alert--basic`), генератор пишет `UI Kit (DSL)/<Group>/<Name>` (id вида `ui-kit-dsl-feedback-alert--*`). Проверка по `storybook-static/index.json`: 1038 записей, 51 из них DSL, обе группы сосуществуют, `Duplicate story id` в логе сборки отсутствует. Рукописные CSF пилотов не удалялись — они нужны как эталон для сверки паритета до конца миграции
+
+Блокер фазы 3 — снят. Падение `build-storybook` было не в DSL: индексация обрывалась на 36 файлах-реэкспортах фазы 2 (`export { default } from './<Comp>.stories.legacy'`) — CSF-индексатор не видит в них `default export`, — и на отсутствующем `ImprovedRangeDemo` в `TimeInput.Range.stories.tsx` (история осталась только в `DateInput.stories.legacy.tsx`). Что сделано:
+
+- обёртки приведены к читаемой форме `import legacyMeta from './<Comp>.stories.legacy'` + локальный `const meta = { ...legacyMeta, title }` + `export default meta`; подгруппам (`Carousel.*`, `Hint.*`, `Modal.*`) задан суффиксный `title`, как в уже корректных `TimeInput.Range`, `DataGrid.Sorting`, поэтому дубликатов story id нет;
+- из `TimeInput.Range.stories.tsx` убран несуществующий `ImprovedRangeDemo`;
+- генерация переименована в `*.generated.stories.tsx` (иначе `No matching indexer found`) и получила раздел `UI Kit (DSL)/...`, чтобы не конфликтовать по id с рукописными историями.
+
+Хвосты фазы 3 (не блокеры, зафиксированы для следующих фаз):
+
+- перенос DSL-данных в CSF завершён, но полного визуального паритета с рукописными историями ещё нет: `props/a11y/related/deprecated` показываются markdown-секциями в `docs.description.component` (включая список `manual`-prop c типом/required/default/description), а не отдельными Storybook-блоками;
+- извлечение сниппетов сведено в общий модуль `web/src/handlers/storybookRenderSnippet.mjs` и переиспользуется в `docs-to-csf.mjs` и `web/src/handlers/storybookUsageExtract.ts`; дополнительной доработки по этому пункту для фазы 3 не требуется;
+- `docs:dsl:lint` и `docs:dsl:generate` подключены в `quality:check` и CI (`.github/workflows/ci.yml`, job `lint`), но общий проектный lint/format-долг сейчас валит `quality:check` вне DSL-контура.
 
 Фаза 4 — docs-app на Vite:
 

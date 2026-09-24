@@ -45,9 +45,16 @@ export const DSL_RULES: DslRule[] = [
       'Идентификаторы variants[*].id и variants[*].items[*].id должны быть уникальны внутри компонента.',
   },
   {
-    id: 'example-code-required',
+    id: 'example-render-required',
     level: 'error',
-    description: 'Для каждого example обязателен непустой code и render.',
+    description:
+      'Для каждого example обязателен render; code может быть пропущен и извлекается из render генератором.',
+  },
+  {
+    id: 'meta-required-fields',
+    level: 'error',
+    description:
+      'meta должен содержать name, group, platform, since, status и description строковыми литералами.',
   },
   {
     id: 'no-helper-imports-for-schema',

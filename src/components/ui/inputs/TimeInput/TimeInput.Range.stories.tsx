@@ -1,7 +1,6 @@
 import type { Meta } from '@storybook/react';
 import { TimeInput } from './TimeInput';
 import legacyMeta, {
-  ImprovedRangeDemo,
   KeyboardRangeInput,
   Range,
   RangeBottomPanelDemo,
@@ -27,7 +26,6 @@ const meta: Meta<typeof TimeInput> = {
 export default meta;
 
 export {
-  ImprovedRangeDemo,
   KeyboardRangeInput,
   Range,
   RangeBottomPanelDemo,
