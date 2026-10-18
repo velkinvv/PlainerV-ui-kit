@@ -1,0 +1,71 @@
+﻿---
+title: Components Input Select
+description: Reference for Input Select
+---
+
+# Input + Select
+
+Examples for forms and filters.
+
+## Input
+
+```tsx
+import { Input } from '@velkinvv/plainerv';
+
+type EmailFieldProps = {
+  emailValue: string;
+  emailErrorText?: string;
+  onEmailChange: (nextEmailValue: string) => void;
+};
+
+export function EmailField({
+  emailValue,
+  emailErrorText,
+  onEmailChange,
+}: EmailFieldProps) {
+  return (
+    <Input
+      label="Email"
+      value={emailValue}
+      onChange={(event) => onEmailChange(event.target.value)}
+      error={emailErrorText}
+      helperText="Use work email"
+    />
+  );
+}
+```
+
+## Select
+
+```tsx
+import { Select } from '@velkinvv/plainerv';
+
+const statusOptions = [
+  { label: 'Backlog', value: 'backlog' },
+  { label: 'In Progress', value: 'in_progress' },
+  { label: 'Done', value: 'done' },
+];
+
+export function StatusSelect() {
+  return (
+    <Select
+      label="Status"
+      mode="select"
+      options={statusOptions}
+      onSelectedChange={(nextStatusValue) => {
+        if (typeof nextStatusValue === 'string') {
+          console.log(nextStatusValue);
+        }
+      }}
+    />
+  );
+}
+```
+
+## See also
+
+- [Button](/docs/en/web/v_0.1/components-button)
+- [Forms + Validation](/docs/en/web/v_0.1/forms-validation)
+
+
+

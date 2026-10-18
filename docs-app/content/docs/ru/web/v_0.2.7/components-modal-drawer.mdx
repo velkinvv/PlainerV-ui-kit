@@ -1,0 +1,119 @@
+---
+title: Modal + Drawer
+description: Диалоги и выдвижные панели для v0.2.7
+---
+
+# Modal + Drawer
+
+Эти компоненты закрывают сценарии фокусного взаимодействия: подтверждения, формы и контекстные панели.
+
+## Интерактивные примеры
+
+<ModalDrawerInteractiveExamples />
+
+## Modal
+
+`Modal` подходит для подтверждений и коротких форм, когда пользователь должен завершить действие до возврата в основной контент.
+
+### Пример
+
+```tsx
+import { Button, Modal } from '@velkinvv/plainerv';
+
+type RemoveDialogProps = {
+  isDialogOpen: boolean;
+  onDialogClose: () => void;
+  onConfirmRemove: () => void;
+};
+
+export function RemoveDialog({
+  isDialogOpen,
+  onDialogClose,
+  onConfirmRemove,
+}: RemoveDialogProps) {
+  return (
+    <Modal
+      isOpen={isDialogOpen}
+      onClose={onDialogClose}
+      title="Удалить проект?"
+      description="Действие нельзя отменить."
+    >
+      <Button variant="danger" onClick={onConfirmRemove}>
+        Удалить
+      </Button>
+    </Modal>
+  );
+}
+```
+
+### Основные входные параметры Modal
+
+- `isOpen: boolean` — флаг открытия модального окна;
+- `onClose: () => void` — обработчик закрытия (оверлей, Esc, кнопка закрытия);
+- `title?: string` — заголовок окна;
+- `description?: string` — текстовое описание;
+- `content?: React.ReactNode` — отдельный блок контента;
+- `buttons?: ModalButtonProps[]` — конфигурация action-кнопок модального окна;
+- `children?: React.ReactNode` — произвольное содержимое внутри окна;
+- `container?: Element | null` — контейнер портала;
+- `mobile?: boolean` — мобильный режим отображения;
+- `overlayClassName?: string` — CSS-класс подложки;
+- `overlayVariant?: 'default' | 'blur' | 'dark' | 'frosted'` — стиль подложки;
+- `overlayStyle?: React.CSSProperties` — инлайн-стили подложки;
+- `initialFocusRef?: React.RefObject<HTMLElement>` — элемент для фокуса при открытии;
+- `animationPreset?: 'default' | 'fade' | 'slideUp'` — предустановленная анимация.
+
+## Drawer
+
+`Drawer` лучше использовать для длинных форм и панелей, которые должны сохранять контекст текущего экрана.
+
+### Пример
+
+```tsx
+import { Drawer } from '@velkinvv/plainerv';
+
+type SettingsDrawerProps = {
+  isDrawerOpen: boolean;
+  onDrawerClose: () => void;
+};
+
+export function SettingsDrawer({
+  isDrawerOpen,
+  onDrawerClose,
+}: SettingsDrawerProps) {
+  return (
+    <Drawer
+      isOpen={isDrawerOpen}
+      onClose={onDrawerClose}
+      placement="right"
+      title="Настройки проекта"
+    >
+      <p>Здесь размещаются настройки проекта и участники.</p>
+    </Drawer>
+  );
+}
+```
+
+### Основные входные параметры Drawer
+
+- `isOpen: boolean` — состояние открытия панели;
+- `onClose: () => void` — обработчик закрытия панели;
+- `placement?: 'left' | 'right' | 'top' | 'bottom'` — сторона появления;
+- `title?: string` — заголовок панели;
+- `children?: React.ReactNode` — содержимое панели;
+- `showCloseButton?: boolean` — показывать кнопку закрытия в заголовке;
+- `width?: string | number` — ширина (для `left`/`right`);
+- `height?: string | number` — высота (для `top`/`bottom`);
+- `container?: Element | null` — контейнер портала;
+- `overlayClassName?: string` — CSS-класс подложки панели;
+- `overlayVariant?: 'default' | 'blur' | 'dark' | 'frosted'` — вариант подложки;
+- `overlayStyle?: React.CSSProperties` — инлайн-стили подложки;
+- `closeOnOverlayClick?: boolean` — закрывать панель при клике по подложке;
+- `closeOnEscape?: boolean` — закрывать панель по Esc;
+- `closeOnEscapeKeyDown?: boolean` — обрабатывать keydown по Esc;
+- `closeOnOutsideClick?: boolean` — закрывать при клике вне панели;
+- `initialFocusRef?: React.RefObject<HTMLElement>` — элемент для первичного фокуса;
+- `initialFocusSelector?: string` — CSS-селектор для первичного фокуса;
+- `headerSlot?: React.ReactNode` — кастомный блок заголовка;
+- `unmountOnClose?: boolean` — размонтировать панель после закрытия;
+- `lazy?: boolean` — монтировать панель только после первого открытия.

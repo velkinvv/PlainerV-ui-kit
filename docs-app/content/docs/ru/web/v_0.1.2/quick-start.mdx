@@ -1,0 +1,62 @@
+---
+title: Quick Start
+description: Быстрый старт по подключению @velkinvv/plainerv в Web-проект
+---
+
+# Quick Start
+
+Эта страница — короткий старт для `v0.1.2`, чтобы быстро подключить библиотеку и получить рабочий UI.
+
+## 1) Установка
+
+```bash
+npm i @velkinvv/plainerv
+```
+
+## 2) Подключение темы в корне приложения
+
+```tsx
+import { ThemeProvider } from '@velkinvv/plainerv';
+
+type ApplicationRootProps = {
+  children: React.ReactNode;
+};
+
+export function ApplicationRoot({ children }: ApplicationRootProps) {
+  return <ThemeProvider>{children}</ThemeProvider>;
+}
+```
+
+## 3) Первый рабочий экран
+
+```tsx
+import { Button, Card, Input } from '@velkinvv/plainerv';
+
+export function QuickStartDemo() {
+  return (
+    <Card>
+      <Input label="Email" placeholder="team@plainerv.dev" />
+      <Button variant="primary">Сохранить</Button>
+    </Card>
+  );
+}
+```
+
+## Входные параметры ключевых компонентов
+
+- `ThemeProvider.children: React.ReactNode` — дерево приложения внутри темы;
+- `Input.label?: React.ReactNode` — подпись поля;
+- `Input.placeholder?: string` — текст-подсказка в пустом состоянии;
+- `Button.variant?: ButtonVariant` — визуальный вариант кнопки;
+- `Button.children?: React.ReactNode` — содержимое кнопки.
+
+## Дальше
+
+- если нужен контроль темы и переключение режимов — см. `Theming`;
+- по API компонентов — см. страницы `Button`, `Input + Select`, `Table + DataGrid`.
+
+## См. также
+
+- [Theming](/docs/web/v_0.1.2/theming)
+- [Button](/docs/web/v_0.1.2/components-button)
+- [Input + Select](/docs/web/v_0.1.2/components-input-select)

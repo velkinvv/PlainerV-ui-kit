@@ -1,0 +1,515 @@
+﻿---
+title: Examples
+description: Reference for Examples
+---
+
+# EXAMPLES
+
+> Source: [`EXAMPLES.md`](https://github.com/velkinvv/PlainerV-react-native-ui-kit/blob/v_0.1.0/EXAMPLES.md)
+
+> Platform: **Mobile**
+> Version: **v0.1.0**
+
+---
+
+# Examples of using @plainerV/ui-native
+
+## Basic example
+
+```typescript
+import React, { useState } from 'react';
+import { View, ScrollView } from 'react-native';
+import { Button, Input, Typography, ThemeProvider } from '@plainerV/ui-native';
+import { ButtonVariant, Size } from '@plainerV/ui-core';
+import { lightButtonTheme, lightColors } from '@plainerV/ui-themes';
+
+function App() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const theme = {
+    mode: 'LIGHT',
+    colors: lightColors,
+    buttons: lightButtonTheme,
+  };
+
+  return (
+    <ThemeProvider initialTheme={theme}>
+      <ScrollView style={{ padding: 20 }}>
+        <Typography variant="h1" style={{ marginBottom: 20 }}>
+          Welcome        </Typography>
+
+        <Input
+          label="Email"
+          placeholder="Enter email"
+          value={email}
+          onChangeText={setEmail}
+          size={Size.MD}
+        />
+
+        <Input
+          label="Password"
+          placeholder="Enter your password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          size={Size.MD}
+        />
+
+        <Button
+          variant={ButtonVariant.PRIMARY}
+          size={Size.LG}
+          fullWidth
+          onPress={() => console.log('Entrance')}
+          style={{ marginTop: 20 }}
+        >
+          Login        </Button>
+      </ScrollView>
+    </ThemeProvider>
+  );
+}
+```
+
+## Form with validation
+
+```typescript
+import React, { useState } from 'react';
+import { View } from 'react-native';
+import { Button, Input, Typography, ThemeProvider } from '@plainerV/ui-native';
+import { ButtonVariant, Size } from '@plainerV/ui-core';
+
+function LoginForm() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState({ email: '', password: '' });
+  const [loading, setLoading] = useState(false);
+
+  const validate = () => {
+    const newErrors = { email: '', password: '' };
+
+    if (!email) {
+      newErrors.email = 'Email required';
+    } else if (!email.includes('@')) {
+      newErrors.email = 'Invalid email format';
+    }
+
+    if (!password) {
+      newErrors.password = 'Password required';
+    } else if (password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters';
+    }
+
+    setErrors(newErrors);
+    return !newErrors.email && !newErrors.password;
+  };
+
+  const handleSubmit = async () => {
+    if (validate()) {
+      setLoading(true);
+      // Login logic      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+    }
+  };
+
+  return (
+    <View style={{ padding: 20 }}>
+      <Typography variant="h2" style={{ marginBottom: 30 }}>
+        Login      </Typography>
+
+      <Input
+        label="Email"
+        placeholder="Enter email"
+        value={email}
+        onChangeText={setEmail}
+        error={errors.email}
+        required
+        size={Size.MD}
+      />
+
+      <Input
+        label="Password"
+        placeholder="Enter your password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+        error={errors.password}
+        helperText="Minimum 8 characters"
+        required
+        size={Size.MD}
+      />
+
+      <Button
+        variant={ButtonVariant.PRIMARY}
+        size={Size.LG}
+        fullWidth
+        loading={loading}
+        onPress={handleSubmit}
+        style={{ marginTop: 20 }}
+      >
+        Login      </Button>
+    </View>
+  );
+}
+```
+
+## Using different button options
+
+```typescript
+import { View } from 'react-native';
+import { Button, ButtonVariant, Size } from '@plainerV/ui-native';
+
+function ButtonsExample() {
+  return (
+    <View style={{ gap: 16, padding: 20 }}>
+      <Button variant={ButtonVariant.PRIMARY} size={Size.MD}>
+        Primary
+      </Button>
+
+      <Button variant={ButtonVariant.SECONDARY} size={Size.MD}>
+        Secondary
+      </Button>
+
+      <Button variant={ButtonVariant.OUTLINE} size={Size.MD}>
+        Outline
+      </Button>
+
+      <Button variant={ButtonVariant.DANGER} size={Size.MD}>
+        Danger
+      </Button>
+
+      <Button variant={ButtonVariant.SUCCESS} size={Size.MD}>
+        Success
+      </Button>
+
+      <Button variant={ButtonVariant.GHOST} size={Size.MD}>
+        Ghost
+      </Button>
+
+      <Button variant={ButtonVariant.LINE} size={Size.MD}>
+        Line
+      </Button>
+    </View>
+  );
+}
+```
+
+## Typography
+
+```typescript
+import { View } from 'react-native';
+import { Typography } from '@plainerV/ui-native';
+
+function TypographyExample() {
+  return (
+    <View style={{ padding: 20 }}>
+      <Typography variant="h1">Heading 1</Typography>
+      <Typography variant="h2">Heading 2</Typography>
+      <Typography variant="h3">Heading 3</Typography>
+      <Typography variant="h4">Heading 4</Typography>
+      <Typography variant="h5">Heading 5</Typography>
+      <Typography variant="h6">Heading 6</Typography>
+
+      <Typography variant="body" style={{ marginTop: 20 }}>
+        Basic reading text. This is the standard text size for body content.      </Typography>
+
+      <Typography variant="caption" style={{ marginTop: 10 }}>
+        Signature or additional information      </Typography>
+
+      <Typography
+        variant="h2"
+        color="#3B82F6"
+        align="center"
+        style={{ marginTop: 20 }}
+      >
+        Custom header      </Typography>
+    </View>
+  );
+}
+```
+
+## Card
+
+```typescript
+import { View } from 'react-native';
+import { Card, Typography, CardVariant, Size } from '@plainerV/ui-native';
+
+function CardExample() {
+  return (
+    <View style={{ padding: 20, gap: 16 }}>
+      {/* Elevated card*/}
+      <Card variant={CardVariant.ELEVATED}>
+        <Typography variant="h3">Card title</Typography>
+        <Typography variant="body" style={{ marginTop: 8 }}>
+          Contents of card with shadow        </Typography>
+      </Card>
+
+      {/* Outlined card*/}
+      <Card variant={CardVariant.OUTLINED}>
+        <Typography variant="h3">Card with outline</Typography>
+        <Typography variant="body" style={{ marginTop: 8 }}>
+          Card with border        </Typography>
+      </Card>
+
+      {/* Clickable card*/}
+      <Card
+        variant={CardVariant.ELEVATED}
+        clickable
+        hoverable
+        onPress={() => console.log('Card clicked')}
+      >
+        <Typography variant="h3">Clickable card</Typography>
+        <Typography variant="body" style={{ marginTop: 8 }}>
+          Click on me        </Typography>
+      </Card>
+
+      {/* Different sizes*/}
+      <Card size={Size.SM} padding={Size.XS}>
+        Small card      </Card>
+
+      <Card size={Size.LG} padding={Size.XL}>
+        Large card with large spaces      </Card>
+    </View>
+  );
+}
+```
+
+## Badge
+
+```typescript
+import { View } from 'react-native';
+import { Badge, BadgeVariant, Size } from '@plainerV/ui-native';
+
+function BadgeExample() {
+  return (
+    <View style={{ padding: 20, gap: 16, flexDirection: 'row', flexWrap: 'wrap' }}>
+      {/* Various options*/}
+      <Badge variant={BadgeVariant.DEFAULT}>5</Badge>
+      <Badge variant={BadgeVariant.DEFAULT_MAIN}>New</Badge>
+      <Badge variant={BadgeVariant.DEFAULT_SUCCESS}>Success</Badge>
+      <Badge variant={BadgeVariant.OUTLINE}>Stroke</Badge>
+
+      {/* Dimensions*/}
+      <Badge size={Size.XS} variant={BadgeVariant.DEFAULT}>XS</Badge>
+      <Badge size={Size.SM} variant={BadgeVariant.DEFAULT}>SM</Badge>
+      <Badge size={Size.MD} variant={BadgeVariant.DEFAULT}>MD</Badge>
+      <Badge size={Size.LG} variant={BadgeVariant.DEFAULT}>LG</Badge>
+
+      {/* Dot badges*/}
+      <Badge isDot variant={BadgeVariant.DEFAULT} size={Size.SM} />
+      <Badge isDot variant={BadgeVariant.DEFAULT_SUCCESS} size={Size.MD} />
+
+      {/* Automatic formatting*/}
+      <Badge variant={BadgeVariant.DEFAULT}>15</Badge> {/* Will show "9+" */}
+      <Badge variant={BadgeVariant.DEFAULT}>99</Badge> {/* Will show "9+" */}
+
+      {/* Clickable badge*/}
+      <Badge
+        variant={BadgeVariant.DEFAULT_MAIN}
+        onPress={() => console.log('Badge clicked')}
+      >
+        Click      </Badge>
+    </View>
+  );
+}
+```
+
+## Switch theme
+
+```typescript
+import React, { useState } from 'react';
+import { View } from 'react-native';
+import { Button, ThemeProvider, useTheme, ThemeMode } from '@plainerV/ui-native';
+import { lightButtonTheme, lightColors, darkButtonTheme, darkColors } from '@plainerV/ui-themes';
+
+function App() {
+  const [isDark, setIsDark] = useState(false);
+
+  const theme = {
+    mode: isDark ? ThemeMode.DARK : ThemeMode.LIGHT,
+    colors: isDark ? darkColors : lightColors,
+    buttons: isDark ? darkButtonTheme : lightButtonTheme,
+  };
+
+  return (
+    <ThemeProvider initialTheme={theme}>
+      <View style={{ flex: 1, padding: 20 }}>
+        <ThemeToggleButton isDark={isDark} onToggle={() => setIsDark(!isDark)} />
+        {/* Other components*/}
+      </View>
+    </ThemeProvider>
+  );
+}
+
+function ThemeToggleButton({ isDark, onToggle }: { isDark: boolean; onToggle: () => void }) {
+  const { toggle } = useTheme();
+
+  return (
+    <Button
+      variant={isDark ? ButtonVariant.SECONDARY : ButtonVariant.PRIMARY}
+      onPress={() => {
+        toggle();
+        onToggle();
+      }}
+    >
+      {isDark ? 'Light theme' : 'Dark theme'}
+    </Button>
+  );
+}
+```
+
+## Complex form example
+
+```typescript
+import React, { useState } from 'react';
+import { View, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { Button, Input, Typography, ThemeProvider } from '@plainerV/ui-native';
+import { ButtonVariant, Size } from '@plainerV/ui-core';
+import { lightButtonTheme, lightColors } from '@plainerV/ui-themes';
+
+function RegistrationForm() {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    password: '',
+    confirmPassword: '',
+  });
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const handleChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    // Clearing the error when changing    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.firstName) newErrors.firstName = 'Name required';
+    if (!formData.lastName) newErrors.lastName = 'Last name required';
+    if (!formData.email) {
+      newErrors.email = 'Email required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Invalid email format';
+    }
+    if (!formData.password) {
+      newErrors.password = 'Password required';
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters';
+    }
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords don't match';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = () => {
+    if (validate()) {
+      console.log('Form submitted', formData);
+    }
+  };
+
+  const theme = {
+    mode: 'LIGHT',
+    colors: lightColors,
+    buttons: lightButtonTheme,
+  };
+
+  return (
+    <ThemeProvider initialTheme={theme}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 20 }}>
+          <Typography variant="h1" style={{ marginBottom: 30 }}>
+            Registration          </Typography>
+
+          <Input
+            label="Name"
+            placeholder="Enter name"
+            value={formData.firstName}
+            onChangeText={value => handleChange('firstName', value)}
+            error={errors.firstName}
+            required
+            size={Size.MD}
+          />
+
+          <Input
+            label="Surname"
+            placeholder="Enter last name"
+            value={formData.lastName}
+            onChangeText={value => handleChange('lastName', value)}
+            error={errors.lastName}
+            required
+            size={Size.MD}
+          />
+
+          <Input
+            label="Email"
+            placeholder="Enter email"
+            value={formData.email}
+            onChangeText={value => handleChange('email', value)}
+            error={errors.email}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            required
+            size={Size.MD}
+          />
+
+          <Input
+            label="Telephone"
+            placeholder="+7 (999) 999-99-99"
+            value={formData.phone}
+            onChangeText={value => handleChange('phone', value)}
+            keyboardType="phone-pad"
+            size={Size.MD}
+          />
+
+          <Input
+            label="Password"
+            placeholder="Enter your password"
+            value={formData.password}
+            onChangeText={value => handleChange('password', value)}
+            error={errors.password}
+            secureTextEntry
+            helperText="Minimum 8 characters"
+            required
+            size={Size.MD}
+          />
+
+          <Input
+            label="Confirm your password"
+            placeholder="Repeat password"
+            value={formData.confirmPassword}
+            onChangeText={value => handleChange('confirmPassword', value)}
+            error={errors.confirmPassword}
+            secureTextEntry
+            required
+            size={Size.MD}
+          />
+
+          <Button
+            variant={ButtonVariant.PRIMARY}
+            size={Size.LG}
+            fullWidth
+            onPress={handleSubmit}
+            style={{ marginTop: 20 }}
+          >
+            Register          </Button>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </ThemeProvider>
+  );
+}
+```
+
+
+
+

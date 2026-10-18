@@ -1,0 +1,82 @@
+---
+title: Button + Input
+description: Базовые сценарии использования Button и Input в mobile v0.1.0
+---
+
+# Button + Input
+
+Страница с двумя самыми частыми компонентами UI: `Button` и `Input`.
+
+## Input с контролируемым значением
+
+```tsx
+import React, { useState } from 'react';
+import { Input } from '@plainerV/ui-native';
+import { Size } from '@plainerV/ui-core';
+
+export function EmailInputField() {
+  const [emailValue, setEmailValue] = useState('');
+
+  return (
+    <Input
+      label="Email"
+      value={emailValue}
+      onChangeText={setEmailValue}
+      placeholder="Введите email"
+      size={Size.MD}
+    />
+  );
+}
+```
+
+## Button со статусом загрузки
+
+```tsx
+import React, { useState } from 'react';
+import { Button } from '@plainerV/ui-native';
+import { ButtonVariant, Size } from '@plainerV/ui-core';
+
+export function SaveButton() {
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSavePress = () => {
+    setIsSaving(true);
+    setTimeout(() => setIsSaving(false), 1200);
+  };
+
+  return (
+    <Button
+      variant={ButtonVariant.PRIMARY}
+      size={Size.LG}
+      loading={isSaving}
+      onPress={handleSavePress}
+    >
+      Сохранить изменения
+    </Button>
+  );
+}
+```
+
+## Основные входные параметры
+
+### Input
+
+- `value?: string` — текущее значение поля;
+- `onChangeText?: (nextValue: string) => void` — обработчик изменения текста;
+- `error?: string` — сообщение об ошибке;
+- `helperText?: string` — вспомогательный текст;
+- `size?: Size` — размер поля.
+
+### Button
+
+- `variant?: ButtonVariant` — визуальный вариант кнопки;
+- `size?: Size` — размер кнопки;
+- `loading?: boolean` — состояние загрузки;
+- `disabled?: boolean` — состояние блокировки;
+- `onPress?: () => void` — обработчик нажатия.
+
+## См. также
+
+- [Quick Start](/docs/mobile/v_0.1.0/quick-start)
+- [Forms + Validation](/docs/mobile/v_0.1.0/forms-validation)
+- [Card + Typography](/docs/mobile/v_0.1.0/components-card-typography)

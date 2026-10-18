@@ -1,0 +1,196 @@
+name: Docs Deploy
+
+# Публикация документации на свой сервер.
+# Секреты выкладки отдельные от публикации пакета: NPM_TOKEN здесь не используется,
+# нужны только DOCS_DEPLOY_* (SSH-доступ) и переменные репозитория DOCS_SITE_URL /
+# DOCS_HEALTHCHECK_URL.
+#
+# Требуемые секреты (Settings → Secrets and variables → Actions):
+#   DOCS_DEPLOY_HOST        — хост сервера
+#   DOCS_DEPLOY_USER        — пользователь для rsync/ssh
+#   DOCS_DEPLOY_PATH        — корень выкладки (внутри появятся releases/ и current)
+#   DOCS_DEPLOY_SSH_KEY     — приватный ключ (без пароля)
+#   DOCS_DEPLOY_KNOWN_HOSTS — содержимое known_hosts для сервера (рекомендуется)
+# Переменные репозитория:
+#   DOCS_SITE_URL           — домен без /docs, например https://docs.example.com: prerender сам
+#                             добавляет префикс /docs к canonical, hreflang, sitemap и og:image
+#   DOCS_HEALTHCHECK_URL    — конкретная страница документации (например
+#                             https://docs.example.com/docs/ru/web/v_0.3.4/components/button/).
+#                             Указывать /docs/ нельзя: там meta-refresh, маркера
+#                             data-prerendered нет, и проверка уводила бы деплой в откат.
+#   DOCS_DEPLOY_PORT        — порт SSH, по умолчанию 22
+#
+# Конфигурация nginx под раскладку releases/ + current — web/deploy/nginx/docs.conf.
+
+# Публикация запускается завершением workflow "Release" — semantic-release в нём
+# публикует пакет и ставит релизный тег, — либо вручную через workflow_dispatch.
+# Push в main документацию не публикует: сборка на каждый коммит уже проверяется
+# в ci.yml, а деплой и на push main, и на релиз делал бы двойную работу ради
+# одного релиза. Push тега отдельным триггером тоже не нужен: тег ставит сам
+# Release, и деплой запускался бы дважды — по тегу и по завершении Release.
+on:
+  workflow_run:
+    workflows: ['Release']
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Действие'
+        required: true
+        default: deploy
+        type: choice
+        options:
+          - deploy
+          - rollback
+      release:
+        description: 'Для отката: имя релиза (пусто — предыдущий из .previous-release)'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-deploy
+  cancel-in-progress: false
+
+env:
+  DOCS_SITE_URL: ${{ vars.DOCS_SITE_URL }}
+
+jobs:
+  build:
+    if: |
+      (github.event_name != 'workflow_dispatch' || inputs.action == 'deploy') &&
+      (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # workflow_run запускается на вершине ветки по умолчанию, а не на коммите
+          # события: semantic-release к этому моменту уже закоммитил версию
+          # и поставил тег, поэтому нужен свежий main с тегами.
+          ref: ${{ github.event.workflow_run.head_branch || github.ref }}
+          fetch-depth: 0
+          fetch-tags: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Проверить DOCS_SITE_URL
+        run: |
+          set -euo pipefail
+          if [ -z "${DOCS_SITE_URL:-}" ]; then
+            echo "::error::Переменная репозитория DOCS_SITE_URL не задана. Без неё в сборку не попадут canonical, hreflang, sitemap.xml и og:url, а проверка префикса это не заметит."
+            exit 1
+          fi
+      - run: npm ci --workspaces=false
+      - run: npm ci --prefix docs-app
+      - run: npm run docs:manifest
+      - run: npm run docs:manifest:check
+      - run: npm run docs:build
+      - run: npm run docs:prefix:check
+      - uses: actions/upload-artifact@v4
+        with:
+          name: docs-dist
+          path: docs-app/dist
+          retention-days: 7
+          if-no-files-found: error
+
+  deploy:
+    needs: build
+    if: |
+      always() && (
+        needs.build.result == 'success' ||
+        (github.event_name == 'workflow_dispatch' && inputs.action == 'rollback')
+      )
+    runs-on: ubuntu-latest
+    environment:
+      name: docs-production
+      url: ${{ vars.DOCS_SITE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_branch || github.ref }}
+          fetch-depth: 0
+          fetch-tags: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Скачать собранную статику
+        if: github.event_name != 'workflow_dispatch' || inputs.action == 'deploy'
+        uses: actions/download-artifact@v4
+        with:
+          name: docs-dist
+          path: docs-app/dist
+
+      - name: Подготовить SSH-доступ
+        env:
+          DOCS_DEPLOY_SSH_KEY: ${{ secrets.DOCS_DEPLOY_SSH_KEY }}
+          DOCS_DEPLOY_KNOWN_HOSTS: ${{ secrets.DOCS_DEPLOY_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          install -m 700 -d "$HOME/.ssh"
+          printf '%s\n' "$DOCS_DEPLOY_SSH_KEY" > "$HOME/.ssh/docs_deploy"
+          chmod 600 "$HOME/.ssh/docs_deploy"
+
+          if [ -n "${DOCS_DEPLOY_KNOWN_HOSTS:-}" ]; then
+            printf '%s\n' "$DOCS_DEPLOY_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+            chmod 600 "$HOME/.ssh/known_hosts"
+          else
+            echo "::warning::DOCS_DEPLOY_KNOWN_HOSTS не задан — ключ хоста принимается при первом подключении."
+            echo "DOCS_DEPLOY_ACCEPT_NEW_HOST_KEY=1" >> "$GITHUB_ENV"
+          fi
+
+      - name: Вычислить имя релиза
+        id: release
+        if: github.event_name != 'workflow_dispatch' || inputs.action == 'deploy'
+        run: |
+          set -euo pipefail
+          # Версию ставит semantic-release в Release: он коммитит обновлённый
+          # package.json и тегает коммит. Если тега на текущем коммите нет
+          # (ручной деплой без релиза), берём версию из package.json.
+          tag="$(git describe --tags --exact-match 2>/dev/null || true)"
+          if [ -n "$tag" ]; then
+            base="${tag#v}"
+          else
+            base="$(node -p "require('./package.json').version")"
+          fi
+          echo "id=${base}-$(git rev-parse --short=7 HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Выложить документацию
+        if: github.event_name != 'workflow_dispatch' || inputs.action == 'deploy'
+        env:
+          DOCS_DEPLOY_HOST: ${{ secrets.DOCS_DEPLOY_HOST }}
+          DOCS_DEPLOY_USER: ${{ secrets.DOCS_DEPLOY_USER }}
+          DOCS_DEPLOY_PATH: ${{ secrets.DOCS_DEPLOY_PATH }}
+          DOCS_DEPLOY_PORT: ${{ vars.DOCS_DEPLOY_PORT || '22' }}
+          DOCS_DIST_DIR: docs-app/dist
+          DEPLOY_RELEASE_ID: ${{ steps.release.outputs.id }}
+          DOCS_HEALTHCHECK_URL: ${{ vars.DOCS_HEALTHCHECK_URL }}
+          DOCS_HEALTHCHECK_MARKER: 'data-prerendered'
+        run: bash scripts/deploy-docs.sh deploy
+
+      - name: Откатить документацию
+        if: github.event_name == 'workflow_dispatch' && inputs.action == 'rollback'
+        env:
+          DOCS_DEPLOY_HOST: ${{ secrets.DOCS_DEPLOY_HOST }}
+          DOCS_DEPLOY_USER: ${{ secrets.DOCS_DEPLOY_USER }}
+          DOCS_DEPLOY_PATH: ${{ secrets.DOCS_DEPLOY_PATH }}
+          DOCS_DEPLOY_PORT: ${{ vars.DOCS_DEPLOY_PORT || '22' }}
+          DOCS_DEPLOY_ROLLBACK_TO: ${{ inputs.release }}
+          DOCS_HEALTHCHECK_URL: ${{ vars.DOCS_HEALTHCHECK_URL }}
+          DOCS_HEALTHCHECK_MARKER: 'data-prerendered'
+        run: bash scripts/deploy-docs.sh rollback
+
+      - name: Итог
+        if: always()
+        run: |
+          {
+            echo "### Документация: ${{ github.event_name == 'workflow_dispatch' && inputs.action == 'rollback' && 'откат' || 'деплой' }}"
+            echo
+            echo "- Статус: \`${{ job.status }}\`"
+            echo "- Релиз: \`${{ steps.release.outputs.id || inputs.release || 'предыдущий' }}\`"
+            echo "- Коммит: \`${{ github.event.workflow_run.head_sha || github.sha }}\`"
+            echo "- Сайт: ${{ vars.DOCS_SITE_URL || 'не задан DOCS_SITE_URL' }}"
+          } >> "$GITHUB_STEP_SUMMARY"

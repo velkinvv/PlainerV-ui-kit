@@ -1,0 +1,121 @@
+﻿---
+title: Components Modal Drawer
+description: Reference for Modal Drawer
+---
+
+# Modal + Drawer
+
+These components cover the focus interaction scenarios: confirmations, forms, and contextual panels.
+
+## Interactive examples
+
+<ModalDrawerInteractiveExamples />
+
+## Modal
+
+`Modal` is suitable for confirmations and short forms where the user must complete an action before returning to the main content.
+
+### Example
+
+```tsx
+import { Button, Modal } from '@velkinvv/plainerv';
+
+type RemoveDialogProps = {
+  isDialogOpen: boolean;
+  onDialogClose: () => void;
+  onConfirmRemove: () => void;
+};
+
+export function RemoveDialog({
+  isDialogOpen,
+  onDialogClose,
+  onConfirmRemove,
+}: RemoveDialogProps) {
+  return (
+    <Modal
+      isOpen={isDialogOpen}
+      onClose={onDialogClose}
+      title="Delete the project?"
+      description="The action cannot be undone."
+    >
+      <Button variant="danger" onClick={onConfirmRemove}>
+        Delete      </Button>
+    </Modal>
+  );
+}
+```
+
+### Main input parameters Modal
+
+- `isOpen: boolean` — flag for opening a modal window;
+- `onClose: () => void` — close handler (overlay, Esc, close button);
+- `title?: string` — window title;
+- `description?: string` — text description;
+- `content?: React.ReactNode` - a separate content block;
+- `buttons?: ModalButtonProps[]` — configuration of action buttons of the modal window;
+- `children?: React.ReactNode` - arbitrary content inside the window;
+- `container?: Element | null` — portal container;
+- `mobile?: boolean` — mobile display mode;
+- `overlayClassName?: string` — CSS class of the underlay;
+- `overlayVariant?: 'default' | 'blur' | 'dark' | 'frosted' — background style;
+- `overlayStyle?: React.CSSProperties` — inline styles of the underlay;
+- `initialFocusRef?: React.RefObject<HTMLElement>` - element to focus on when opened;
+- `animationPreset?: 'default' | 'fade' | 'slideUp'` - preset animation.
+
+## Drawer
+
+`Drawer` is best used for long forms and panels that need to preserve the context of the current screen.
+
+### Example
+
+```tsx
+import { Drawer } from '@velkinvv/plainerv';
+
+type SettingsDrawerProps = {
+  isDrawerOpen: boolean;
+  onDrawerClose: () => void;
+};
+
+export function SettingsDrawer({
+  isDrawerOpen,
+  onDrawerClose,
+}: SettingsDrawerProps) {
+  return (
+    <Drawer
+      isOpen={isDrawerOpen}
+      onClose={onDrawerClose}
+      placement="right"
+      title="Project Settings"
+    >
+      <p>Project settings and participants are located here.</p>
+    </Drawer>
+  );
+}
+```
+
+### Main input parameters Drawer
+
+- `isOpen: boolean` — panel opening state;
+- `onClose: () => void` — panel closing handler;
+- `placement?: 'left' | 'right' | 'top' | 'bottom' — appearance side;
+- `title?: string` — panel title;
+- `children?: React.ReactNode` — panel contents;
+- `showCloseButton?: boolean` — show the close button in the header;
+- `width?: string | number` — width (for `left`/`right`);
+- `height?: string | number` — height (for `top`/`bottom`);
+- `container?: Element | null` — portal container;
+- `overlayClassName?: string` — CSS class of the panel underlay;
+- `overlayVariant?: 'default' | 'blur' | 'dark' | 'frosted'` — substrate option;
+- `overlayStyle?: React.CSSProperties` — inline styles of the underlay;
+- `closeOnOverlayClick?: boolean` — close the panel when you click on the background;
+- `closeOnEscape?: boolean` — close the panel using Esc;
+- `closeOnEscapeKeyDown?: boolean` — process keydown by Esc;
+- `closeOnOutsideClick?: boolean` — close when clicked outside the panel;
+- `initialFocusRef?: React.RefObject<HTMLElement>` - element for primary focus;
+- `initialFocusSelector?: string` — CSS selector for primary focus;
+- `headerSlot?: React.ReactNode` - custom header block;
+- `unmountOnClose?: boolean` — unmount the panel after closing;
+- `lazy?: boolean` — mount the panel only after the first opening.
+
+
+

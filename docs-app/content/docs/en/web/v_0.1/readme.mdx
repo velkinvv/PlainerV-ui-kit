@@ -1,0 +1,334 @@
+﻿---
+title: Readme
+description: Reference for Readme
+---
+
+# README
+
+> Source: [`README.md`](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.1/README.md)
+
+> Platform: **Web**
+> Version: **v0.1**
+
+---
+
+# @velkinvv/plainerv
+
+![npm version](https://img.shields.io/npm/v/@velkinvv/plainerv)
+![license](https://img.shields.io/npm/l/@velkinvv/plainerv)
+![npm downloads](https://img.shields.io/npm/dm/@velkinvv/plainerv)
+
+Modern library of UI components with support for theming and TypeScript.
+
+## 🚀 Opportunities
+
+- **🎨 Full theming** - Supports light and dark themes with automatic switching
+- **🎯 TypeScript** - Full typing of all components and props
+- **📱 Adaptive design** - Components adapted to all devices
+- **⚡ Performance** - Optimized components with minimal bundle
+- **🎭 Animations** - Smooth animations with Framer Motion
+- **🔧 Customization** - Flexible customization through props and themes
+- **📚 Storybook** - Interactive documentation and playground
+
+## 📦 Installation
+
+```bash
+npm i @velkinvv/plainerv
+```
+
+## 📦 Import styles and fonts
+
+For the library to work correctly, you need to import styles:
+
+```tsx
+// Import styles (includes fonts)import '@velkinvv/plainerv/styles';
+// orimport '@velkinvv/plainerv/dist/styles.css';
+```
+
+Fonts are automatically included when importing styles.
+
+## 🎨 Theming
+
+The library supports full theming with automatic switching between light and dark themes:
+
+```tsx
+import { ThemeProvider, useTheme, ThemeToggle } from '@velkinvv/plainerv';
+
+function App() {
+  return (
+    <ThemeProvider>
+      <div>
+        <ThemeToggle />
+        <YourApp />
+      </div>
+    </ThemeProvider>
+  );
+}
+```
+
+### Using Themes in Components
+
+```tsx
+import { useTheme } from '@velkinvv/plainerv';
+
+function MyComponent() {
+  const { mode, toggle } = useTheme();
+
+  return (
+    <div>
+      <p>Current topic:{mode}</p>
+      <button onClick={toggle}>Switch topic</button>
+    </div>
+  );
+}
+```
+
+## 🎯 Components
+
+### Main UI components
+
+- **Button** - Buttons with different options and states
+- **Input** - Input fields with validation and various types
+- **Card** - Cards for content
+- **Modal** - Modal windows
+- **Icon** - Icons (Lucide React + Plainer icons)
+- **ThemeToggle** - Theme switch
+
+### Forms
+
+- **Form** - Components for working with forms
+- **Checkbox** - Checkboxes
+- **Radio** - Radio buttons
+- **DateInput** - Date input fields
+- **TimeInput** - Time input fields
+
+### Navigation
+
+- **Sidemenu** - Side navigation bar
+- **Tabs** - Tabs
+- **Dropdown** - Dropdown menus
+
+### Data display
+
+- **Badge** - Badges and tags
+- **Avatar** - User avatars
+- **Progress** - Progress indicators
+- **Spinner** - Loading spinners
+- **Skeleton** - Loading skeletons
+
+### Feedback
+
+- **Tooltip** - Hints
+- **Hint** - Advanced hints
+- **Modal** - Modal windows
+- **Accordion** - Accordions
+
+## 🎨 Icons
+
+The library supports several icon sets:
+
+### Lucide React icons
+
+```tsx
+import { Icon } from '@velkinvv/plainerv';
+
+<Icon name="Home" size={24} variant="lucide" />
+<Icon name="Settings" size={24} variant="lucide" />
+```
+
+### Plainer icons
+
+```tsx
+import { Icon } from '@velkinvv/plainerv';
+
+<Icon name="IconPlus" size={24} variant="plainer" />
+<Icon name="IconClose" size={24} variant="plainer" />
+<Icon name="IconSearch" size={24} variant="plainer" />
+```
+
+## 🎭 Animations
+
+All components use Framer Motion for smooth animations:
+
+```tsx
+import { Button } from '@velkinvv/plainerv';
+
+<Button
+  variant="primary"
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+>
+  Animated button</Button>
+```
+
+## 📚 Storybook
+
+Launch Storybook for interactive documentation:
+
+```bash
+cd web
+npm run storybook
+```
+
+## 🎨 Design system
+
+### Colors
+
+- **Primary**: #68d5f8 (primary color)
+- **Secondary**: #6c757d (secondary color)
+- **Success**: #10b981 (success)
+- **Danger**: #ef4444 (error)
+- **Warning**: #f59e0b (warning)
+- **Info**: #3b82f6 (information)
+
+### Typography
+
+- **Font**: Montserrat
+- **Dimensions**: 12px, 14px, 16px, 18px, 20px, 24px, 32px
+- **Weight**: 400 (regular), 500 (medium), 600 (semibold), 700 (bold)
+
+### Dimensions
+
+- **Spacing**: 4px, 8px, 12px, 16px, 20px, 24px, 32px, 48px
+- **Border Radius**: 4px, 6px, 8px, 12px, 16px, 24px, 50%
+
+### Shadows
+
+- **Small**: 0 1px 2px rgba(0, 0, 0, 0.05)
+- **Medium**: 0 4px 6px rgba(0, 0, 0, 0.1)
+- **Large**: 0 10px 15px rgba(0, 0, 0, 0.1)
+
+## 🔧 Development
+
+### Installation dependencies
+
+```bash
+cd web
+npm install
+```
+
+### Assembly
+
+```bash
+npm run build
+```
+
+### Testing
+
+```bash
+npm run test
+```
+
+### Linting
+
+```bash
+npm run lint
+```
+
+## 📝 Examples of use
+
+### Simple form
+
+```tsx
+import { Input, Button, Card } from '@velkinvv/plainerv';
+
+function LoginForm() {
+  return (
+    <Card>
+      <Input
+        label="Email"
+        type="email"
+        placeholder="Enter email"
+        required
+      />
+      <Input
+        label="Password"
+        type="password"
+        placeholder="Enter your password"
+        required
+      />
+      <Button variant="primary" fullWidth>
+        Login      </Button>
+    </Card>
+  );
+}
+```
+
+### Navigation with Sidemenu
+
+```tsx
+import { Sidemenu, ThemeToggle } from '@velkinvv/plainerv';
+
+function AppLayout() {
+  const sidemenuItems = [
+    { id: 'home', label: 'Home', icon: 'Home', active: true },
+    { id: 'profile', label: 'Profile', icon: 'User' },
+    { id: 'settings', label: 'Settings', icon: 'Settings' },
+  ];
+
+  return (
+    <div style={{ display: 'flex' }}>
+      <Sidemenu items={sidemenuItems} />
+      <main>
+        <header>
+          <ThemeToggle />
+        </header>
+        <YourContent />
+      </main>
+    </div>
+  );
+}
+```
+
+## 🌳 Tree-shaking
+
+The library supports tree-shaking thanks to the `sideEffects: false` setting. This means that by importing only the required components, unused code will be excluded from the final bundle.
+
+```tsx
+// ✅ Good - only Button is imported`nimport { Button } from '@velkinvv/plainerv';
+
+// ❌ Bad - the entire package is imported`nimport * as UI from '@velkinvv/plainerv';
+```
+
+## 📊 Bundle size
+
+To analyze the bundle size use:
+
+```bash
+npm run analyze
+```
+
+This will create a file `dist/stats.html` with a visualization of the bundle size.
+
+### Current dimensions (approximate)
+
+- **ESM format**: ~XXX KB (gzipped: ~XXX KB)
+- **CJS format**: ~XXX KB (gzipped: ~XXX KB)
+
+*Dimensions will be updated after first assembly*
+
+## 🤝 Contributing
+
+We welcome contributions to the development of the library! Please read the [Contributing Guide](CONTRIBUTING.md) before submitting a PR.
+
+## 📝 License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+## 👤 Author
+
+**VelkinVV**
+
+- Email: velkinvv@mail.ru
+- GitHub: [@velkinvv](https://github.com/velkinvv)
+
+## 🔗 Links
+
+- [Documentation](https://github.com/velkinvv/PlainerV-ui-kit#readme)
+- [Issues](https://github.com/velkinvv/PlainerV-ui-kit/issues)
+- [Changelog](CHANGELOG.md)
+
+
+
+
+

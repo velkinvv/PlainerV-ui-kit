@@ -1,0 +1,10 @@
+{
+  "version": "v_0.3.4",
+  "component": "modal",
+  "exampleId": "basic-opened",
+  "title": "Открытое окно",
+  "description": "Минимальный пример открытого модального окна.",
+  "code": "<Modal isOpen onClose={() => undefined} title=\"Подтверждение\" description=\"Вы уверены?\" />",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:30.050Z"
+}

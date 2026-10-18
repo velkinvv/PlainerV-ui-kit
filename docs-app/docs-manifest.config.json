@@ -1,0 +1,8 @@
+{
+  "docsRoot": "../src/components/ui",
+  "outputJson": "./src/generated/docs-manifest.json",
+  "outputTs": "./src/generated/docs-manifest.ts",
+  "llmsTxt": "./public/llms.txt",
+  "llmsFullTxt": "./public/llms-full.txt",
+  "componentBaseRoute": "/components"
+}

@@ -1,0 +1,67 @@
+﻿---
+title: Components Toast Snackbar
+description: Reference for Toast Snackbar
+---
+
+# Toast + Snackbar
+
+## Provider setup
+
+```tsx
+import { SnackbarProvider, ThemeProvider, ToastProvider } from '@velkinvv/plainerv';
+
+type NotificationsRootProps = {
+  children: React.ReactNode;
+};
+
+export function NotificationsRoot({ children }: NotificationsRootProps) {
+  return (
+    <ThemeProvider>
+      <ToastProvider placement="top-right">
+        <SnackbarProvider placement="bottom-center">{children}</SnackbarProvider>
+      </ToastProvider>
+    </ThemeProvider>
+  );
+}
+```
+
+## Usage
+
+```tsx
+import { Button, useSnackbar, useToast } from '@velkinvv/plainerv';
+
+export function NotificationsDemo() {
+  const { showToast } = useToast();
+  const { showSnackbar } = useSnackbar();
+
+  return (
+    <section>
+      <Button onClick={() => showToast('Saved', 'success', 'Ready')}>Toast</Button>
+      <Button onClick={() => showSnackbar('Saved')}>Snackbar</Button>
+    </section>
+  );
+}
+```
+
+## Main input parameters
+
+### ToastProvider / SnackbarProvider
+
+- `ToastProvider.placement?: ToastPlacement` — toast stack position;
+- `SnackbarProvider.placement?: SnackbarPlacement` — snackbar stack position;
+- `children?: React.ReactNode` - application tree.
+
+### useToast / useSnackbar
+
+- `showToast(message, type?, title?, duration?, options?)` — call toast;
+- `showSnackbar(message, options?)` — calling snackbar;
+- `options?.duration?: number` — display duration;
+- `options?.actionLabel?: string` — action signature for snackbar/toast.
+
+## See also
+
+- [Forms + Validation](/docs/en/web/v_0.1/forms-validation)
+- [Modal](/docs/en/web/v_0.1/components-modal)
+
+
+

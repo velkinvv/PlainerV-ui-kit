@@ -1,0 +1,81 @@
+---
+title: Chip + List
+description: Чипы и типографические списки в версии v0.2.8
+---
+
+# Chip + List
+
+Компоненты отображения: компактные капсулы (**Chip** / **Chips**) и типографические списки (**List**).
+
+Интерактив — в Storybook: **UI Kit → Data Display → Chip**, **UI Kit → Data Display → List**.
+
+## Chip
+
+`Chip` — атом: текст, иконки, badge, удаление. `Chips` — группа с выбором (`none` / `single` / `multiple`).
+
+```tsx
+import { Chip, Chips } from '@velkinvv/plainerv';
+
+export function FiltersChipsDemo() {
+  return (
+    <Chips selectionMode="multiple" defaultValue={['react']} aria-label="Стек">
+      <Chip value="react">React</Chip>
+      <Chip value="vue">Vue</Chip>
+      <Chip value="svelte" onClose={() => undefined}>
+        Svelte
+      </Chip>
+    </Chips>
+  );
+}
+```
+
+### Основные входные параметры Chip
+
+- `children?: React.ReactNode` — текст / контент;
+- `size?: Size` — `SM` | `MD` (по умолчанию `SM`);
+- `appearance?: ChipAppearance` — `filled` | `outline`;
+- `selected?: boolean` — выбранное состояние;
+- `disabled?: boolean` — блокировка;
+- `leftIcon?` / `rightIcon?: React.ReactNode` — иконки (`rightIcon` скрывается при `onClose`);
+- `badge?: number` — число справа (`0` не показывается);
+- `onClose?: (event) => void` — крестик удаления;
+- `value?: string` — идентификатор в группе `Chips`;
+- `tooltipWhenTruncated?: boolean`, `maxWidth?: number | string` — ellipsis + tooltip.
+
+### Chips
+
+- `selectionMode?: 'none' | 'single' | 'multiple'`;
+- `value` / `defaultValue` / `onChange` — controlled / uncontrolled;
+- `size`, `appearance`, `disabled` — дефолты и блокировка группы.
+
+**Отличия:** `Tag` — семантические палитры; `Pill` — переключатель с индикатором. В **Select** / **MultiInput** удаляемые значения рендерятся атомом **Chip**.
+
+## List
+
+Единый компонент для `ol` / `ul` с маркерами и вложенностью.
+
+```tsx
+import { List } from '@velkinvv/plainerv';
+
+export function StepsListDemo() {
+  return (
+    <List variant="ordered" markerStyle="numbers" gap={12}>
+      <List.Item>
+        Раздел
+        <List variant="ordered" markerStyle="lower-letters">
+          <List.Item>Подпункт</List.Item>
+        </List>
+      </List.Item>
+      <List.Item>Второй раздел</List.Item>
+    </List>
+  );
+}
+```
+
+### Основные входные параметры List
+
+- `variant?: 'ordered' | 'unordered'` — семантика списка;
+- `markerStyle?` — ordered: `numbers` | `lower-letters` | `upper-letters`; unordered: `bullet` | `virgule` | `icon`;
+- `size?: Size` — `SM` | `MD`;
+- `gap?: number | string` — расстояние между пунктами;
+- `List.Item` — пункт; `List.Icon` — маркер при `markerStyle="icon"`.

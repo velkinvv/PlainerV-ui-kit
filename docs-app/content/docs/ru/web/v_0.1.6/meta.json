@@ -1,0 +1,29 @@
+{
+  "title": "v0.1.6",
+  "defaultOpen": true,
+  "pages": [
+    "group-overview",
+    "components-catalog",
+    "quick-start",
+    "vite",
+    "readme",
+    "changelog",
+    "group-inputs",
+    "components-input-select",
+    "components-select-advanced",
+    "components-date-calendar",
+    "components-form",
+    "group-data-display",
+    "components-table-datagrid",
+    "group-feedback",
+    "components-toast-snackbar",
+    "group-surfaces",
+    "components-button",
+    "components-modal-drawer",
+    "group-navigation",
+    "components-tabs-pagination",
+    "components-floating-menu",
+    "group-utils",
+    "theming"
+  ]
+}

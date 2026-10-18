@@ -1,0 +1,10 @@
+{
+  "version": "v_0.3.4",
+  "component": "input",
+  "exampleId": "error-state",
+  "title": "Ошибка валидации",
+  "description": "Показ статуса ошибки и текста подсказки.",
+  "code": "<Input label=\"Email\" value=\"bad-mail\" error=\"Некорректный формат\" fullWidth readOnly />",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:24.718Z"
+}

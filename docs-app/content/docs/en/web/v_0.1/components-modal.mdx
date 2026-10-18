@@ -1,0 +1,46 @@
+﻿---
+title: Components Modal
+description: Reference for Modal
+---
+
+# Modal
+
+Use `Modal` to confirm actions and short forms.
+
+```tsx
+import { Button, Modal } from '@velkinvv/plainerv';
+
+type RemoveModalProps = {
+  isModalOpen: boolean;
+  onModalClose: () => void;
+};
+
+export function RemoveModal({ isModalOpen, onModalClose }: RemoveModalProps) {
+  return (
+    <Modal
+      isOpen={isModalOpen}
+      onClose={onModalClose}
+      title="Delete entry?"
+      description="This action cannot be undone."
+    >
+      <Button variant="danger">Delete</Button>
+    </Modal>
+  );
+}
+```
+
+## Main input parameters
+
+- `isOpen: boolean` — window opening state;
+- `onClose: () => void` — closing handler;
+- `title?: string` — window title;
+- `description?: string` — explanatory text;
+- `children?: React.ReactNode` - content of the modal window.
+
+## See also
+
+- [Forms + Validation](/docs/en/web/v_0.1/forms-validation)
+- [Toast + Snackbar](/docs/en/web/v_0.1/components-toast-snackbar)
+
+
+

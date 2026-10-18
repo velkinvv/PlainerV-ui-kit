@@ -1,0 +1,62 @@
+---
+title: Form
+description: Работа с Form и связанными полями в версии v0.2.4
+---
+
+# Form
+
+`Form` в `@velkinvv/plainerv` используется как общий контекст для полей и единая точка отправки данных.
+
+## Интерактивные примеры
+
+<FormInteractiveExamples />
+
+## Базовый пример
+
+```tsx
+import { Button, Form, Input, TextArea } from '@velkinvv/plainerv';
+
+type CreateProjectFormProps = {
+  onSubmitProjectForm: (event: React.FormEvent<HTMLFormElement>) => void;
+};
+
+export function CreateProjectForm({
+  onSubmitProjectForm,
+}: CreateProjectFormProps) {
+  return (
+    <Form formId="create-project-form" formName="createProject" onSubmit={onSubmitProjectForm}>
+      <Input name="projectName" label="Название проекта" placeholder="PlainerV Docs" />
+      <TextArea
+        name="projectDescription"
+        label="Описание"
+        placeholder="Кратко опишите задачу проекта"
+      />
+      <Button type="submit" variant="primary">
+        Создать проект
+      </Button>
+    </Form>
+  );
+}
+```
+
+## Основные входные параметры
+
+- `onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void` — обработчик отправки формы;
+- `children: React.ReactNode` — поля и кнопки внутри формы;
+- `formId?: string` — идентификатор формы для связки с полями;
+- `formName?: string` — имя формы;
+- `formProps?: React.FormHTMLAttributes<HTMLFormElement>` — дополнительные HTML-атрибуты тега `form`.
+- `className?: string` — CSS-класс контейнера формы;
+- `formProps.method?: 'get' | 'post'` — HTTP-метод отправки формы;
+- `formProps.autoComplete?: string` — режим автозаполнения браузером;
+- `formProps.noValidate?: boolean` — отключение нативной валидации браузера;
+- `formProps.action?: string` — endpoint для отправки формы в нативном HTML-сценарии.
+
+## Валидация и ошибки
+
+Валидацию удобно держать в контейнере формы, а в поля передавать:
+
+- `isInvalid` — флаг невалидного состояния;
+- `error` — текст ошибки под полем;
+- `helperText` — подсказку, если ошибки нет;
+- `status` — семантический статус поля (`error` / `success` / `warning`).

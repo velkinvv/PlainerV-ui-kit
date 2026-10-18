@@ -1,0 +1,132 @@
+﻿---
+title: CHANGELOG
+description: Web (v0.2.2) — синхронизировано из CHANGELOG.md
+---
+
+# CHANGELOG
+
+> Источник: [CHANGELOG.md](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.2.2/web/CHANGELOG.md)
+
+> Платформа: **Web**  
+> Версия: **v0.2.2**
+
+---
+
+# Changelog
+
+Все значимые изменения в этом проекте будут документироваться в этом файле.
+
+Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.0.0/),
+и этот проект придерживается [Semantic Versioning](https://semver.org/lang/ru/).
+
+## [Unreleased]
+
+---
+
+## [0.2.2] - 2026-05-26
+
+### Added
+
+- **Storybook:** обновлён **Theme Showcase**, интеграция с UI-kit и демонстрация тёмной темы.
+- **Тесты:** конфигурация **Jest** для **npm workspaces** (корневой `package.json` + `web`).
+
+### Changed
+
+- **Темизация:** доработана тёмная тема и визуальные токены в сторис **Theming**.
+
+### Fixed
+
+- **ESLint** и падения unit-тестов после обновления окружения.
+
+### Added (документация)
+
+- Документация **v0.2.2** на сайте; обновлены README, CHANGELOG, индекс версий.
+
+---
+
+## [0.2.1] - 2026-05-26
+
+### Added
+
+- **Темизация:** каталог N тем (`defineThemeCatalog`, `themeMode`, `ThemeSelector`), `ThemeColorScheme` / `ThemeMode`, `mergeTheme`, `useMergeTheme`; [Theming](/docs/web/v_0.2.2/theming).
+- **DataGrid — сторис:** широкие колонки и панель иконок; **Input:** `InputFieldShell`, `InputComposite`.
+- **Storybook:** `storybookStoryDocs`, `storybookUsageExtract`.
+
+### Changed
+
+- **Input** и производные: единая раскладка через **`InputFieldShell`**.
+- **DataGrid / Table:** синхронизация шапки через **`scrollLeft`**; **`headerToolbar`** вне прокручиваемой шапки.
+
+### Fixed
+
+- **DataGrid / Table:** рывки заголовков при горизонтальном скролле; **`headerToolbar`** не обрезается.
+
+### Added (документация)
+
+- Документация **v0.2.1**; **theming.mdx**, справочник, README.
+
+---
+
+## [0.2.0] - 2026-05-19
+
+### Added
+
+- Компонент **Tabs**: объединены сценарии вкладок с панелями и сегментированного переключателя (бывший **Switcher**); тип **TabsSegmentOption**, истории **Tabs/Segments**, обновлены **DOC_TABS** и README.
+- Поле **`columns[].format`** у **DataGrid** и тип **`TableCellFormat`**: декларативное отображение ячеек. Хелперы **`formatTableCellValue`**, **`formatTableCellExportCellValue`**, **`TableCellFormatted`**. Скрипты **`npm run react-doctor`** / **`react-doctor:strict`**.
+- **DataGrid — выгрузка в Excel (`.xls`)**: проп **`excelExport`**, SpreadsheetML без внешних библиотек; ширины колонок, текст и цвета из **`format`** / **`render`** / **`exportValueGetter`**. Пустое состояние, **refetch** и сброс фильтров в **`headerToolbar`**.
+- **Modal:** иконки статуса в шапке.
+- **SliderInput — режим `range`:** диапазон «от / до» (как **DateInput**); типы **`SliderInputSingleProps`**, **`SliderInputRangeProps`**; Storybook и [SliderInput](/docs/web/v_0.2.2/components-slider-input).
+
+### Changed
+
+- **Tabs** (**breaking**): варианты **pill**, **minimal**, **line**, **underline**; проп **filledSegmentTriggers**; убран **Tabs.List**.
+- **DataGrid** / **Table**: **split-layout** при **`scrollAreaMaxHeight`** и липкой шапке; **`stickyHeader`** и **`horizontalScroll`** по умолчанию у **DataGrid**; **`horizontalScroll`** у **TableContainerScroll**.
+- Скругления таблицы из **`theme.tables.borderRadius`** (`--plainer-table-border-radius`).
+- **Глобальные стили скроллбаров** в **`GlobalStyles`**.
+
+### Fixed
+
+- **SliderInput / Slider (embedded):** заливка трека у нижней кромки **Input** (одиночный `min`, сегмент в **range**).
+
+### Added (документация)
+
+- Документация **v0.2.0** на сайте; README, CHANGELOG, **components-slider-input.mdx**, справочник, **group-inputs**.
+
+---
+
+## [0.1.9] - 2026-05-18
+
+### Fixed
+
+- **`createStyledShouldForwardProp`:** совместимость со **styled-components 6** (`target` вместо `defaultValidatorFn`).
+- **Сборка Windows / workspaces:** Rollup через **`rollup-with-node-env.mjs`** (без `cross-env` в PATH).
+- **`prepare`:** husky через **`install-husky.mjs`**.
+- **`publish:npm`:** **`ensure-dev-dependencies.mjs`** при `NODE_ENV=production`.
+
+### Added
+
+- Документация **v0.1.9**; обновлены README и CHANGELOG.
+
+---
+
+## [0.1.8] - 2026-05-17
+
+### Fixed
+
+- **`@velkinvv/plainerv/vite`:** реэкспорт `./plainervVite.js` для Node ESM (`vite.config.ts`, Windows).
+- **`plainervVite()`:** `dedupe` и `optimizeDeps.include` для **framer-motion**.
+- **Стили:** экспорт `./dist/styles.css` как алиас.
+- **Next.js App Router:** `use client` в `dist/index.esm.js`.
+
+### Added
+
+- README: **Webpack / CRA**, **Next.js**; уточнён импорт стилей.
+- **`verify-package.mjs`:** ESM в `dist/vite`, `use client`, `exports`.
+
+### Changed
+
+- Peer **vite:** `^5 || ^6 || ^7`.
+
+---
+
+**Примечание:** Полная история версий — в [CHANGELOG.md](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.2.2/web/CHANGELOG.md) репозитория.

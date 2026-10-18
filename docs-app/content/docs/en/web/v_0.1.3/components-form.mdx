@@ -1,0 +1,64 @@
+﻿---
+title: Components Form
+description: Reference for Form
+---
+
+# Form
+
+The `Form` in `@velkinvv/plainerv` is used as a common context for the fields and a single point for submitting data.
+
+## Interactive examples
+
+<FormInteractiveExamples />
+
+## Basic example
+
+```tsx
+import { Button, Form, Input, TextArea } from '@velkinvv/plainerv';
+
+type CreateProjectFormProps = {
+  onSubmitProjectForm: (event: React.FormEvent<HTMLFormElement>) => void;
+};
+
+export function CreateProjectForm({
+  onSubmitProjectForm,
+}: CreateProjectFormProps) {
+  return (
+    <Form formId="create-project-form" formName="createProject" onSubmit={onSubmitProjectForm}>
+      <Input name="projectName" label="Project name" placeholder="PlainerV Docs" />
+      <TextArea
+        name="projectDescription"
+        label="Description"
+        placeholder="Briefly describe the project objective"
+      />
+      <Button type="submit" variant="primary">
+        Create a project      </Button>
+    </Form>
+  );
+}
+```
+
+## Main input parameters
+
+- `onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void` — form submission handler;
+- `children: React.ReactNode` - fields and buttons inside the form;
+- `formId?: string` — form identifier for linking with fields;
+- `formName?: string` — form name;
+- `formProps?: React.FormHTMLAttributes<HTMLFormElement>` - additional HTML attributes of the `form` tag.
+- `className?: string` — CSS class of the form container;
+- `formProps.method?: 'get' | 'post'` — HTTP method for submitting the form;
+- `formProps.autoComplete?: string` — browser autocomplete mode;
+- `formProps.noValidate?: boolean` - disable native browser validation;
+- `formProps.action?: string` - endpoint for submitting the form in a native HTML form.
+
+## Validation and errors
+
+It is convenient to keep the validation in the form container and pass it to the fields:
+
+- `isInvalid` — invalid state flag;
+- `error` — error text under the field;
+- `helperText` — a hint if there is no error;
+- `status` — semantic status of the field (`error` / `success` / `warning`).
+
+
+

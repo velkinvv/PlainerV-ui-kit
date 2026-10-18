@@ -1,0 +1,106 @@
+﻿---
+title: Installation
+description: Reference for Installation
+---
+
+# INSTALLATION
+
+> Source: [`INSTALLATION.md`](https://github.com/velkinvv/PlainerV-react-native-ui-kit/blob/v_0.1.0/INSTALLATION.md)
+
+> Platform: **Mobile**
+> Version: **v0.1.0**
+
+---
+
+# Installation and configuration instructions
+
+## 📋 Prerequisites
+
+- Node.js >= 16.0.0
+- npm >= 8.0.0
+- React Native CLI (for developing React Native components)
+
+## 🚀 Installation
+
+### 1. Installation dependencies
+
+```bash
+cd mobile
+npm install
+```
+
+### 2. Setting up workspace
+
+The project uses npm workspaces. All packages will be installed automatically.
+
+### 3. Building packages
+
+```bash
+# Build all packagesnpm run build
+
+# Or building a specific packagenpm run build:themes
+npm run build:core
+npm run build:native
+```
+
+## 📦 Package structure
+
+### @plainerV/ui-themes
+Common themes and types. Does not require additional dependencies.
+
+### @plainerV/ui-core
+General business logic. Depends on:
+- `@plainerV/ui-themes`
+- `dayjs`
+
+### @plainerV/ui-native
+React Native components. Depends on:
+- `@plainerV/ui-themes`
+- `@plainerV/ui-core`
+- `react-native`
+- `react-native-reanimated`
+- `react-native-gesture-handler`
+- `@react-native-async-storage/async-storage`
+- `styled-components`
+
+## 🔧 Development
+
+### Development mode with watch
+
+```bash
+npm run dev
+```
+
+### Type checking
+
+```bash
+npm run type-check
+```
+
+### Linting
+
+```bash
+npm run lint
+```
+
+### Tests
+
+```bash
+npm run test
+```
+
+## 📝 Next steps
+
+1. Finish creating the ui-themes package (copy themes from web)
+2. Finish creating the ui-core package (copy handlers from web)
+3. Start creating components in ui-native
+
+## ⚠️ Important notes
+
+- All packages use the workspace protocol for local dependencies
+- When a dependent package changes, you need to rebuild the dependent packages
+- To work with React Native components, you need to configure the React Native environment
+
+
+
+

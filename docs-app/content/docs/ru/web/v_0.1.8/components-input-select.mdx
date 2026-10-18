@@ -1,0 +1,138 @@
+﻿---
+title: Input + Select
+description: Базовые примеры форм с Input и Select для v0.1.8
+---
+
+# Input + Select
+
+Ниже стартовые примеры полей ввода и выбора для форм.
+
+## Интерактивные примеры
+
+<InputSelectInteractiveExamples />
+
+## Простой Input
+
+```tsx
+import { Input } from '@velkinvv/plainerv';
+
+export function InputDemo() {
+  return (
+    <Input
+      label="Название проекта"
+      placeholder="Введите название"
+      helperText="Это поле будет видно в интерфейсе команды"
+    />
+  );
+}
+```
+
+## Input с валидацией
+
+```tsx
+import { Input } from '@velkinvv/plainerv';
+
+type EmailFieldProps = {
+  emailValue: string;
+  emailErrorText?: string;
+  onEmailChange: (nextEmailValue: string) => void;
+};
+
+export function EmailField({
+  emailValue,
+  emailErrorText,
+  onEmailChange,
+}: EmailFieldProps) {
+  return (
+    <Input
+      label="Рабочий email"
+      value={emailValue}
+      onChange={(event) => onEmailChange(event.target.value)}
+      error={emailErrorText}
+      status={emailErrorText ? 'error' : undefined}
+    />
+  );
+}
+```
+
+## Select в режиме `select`
+
+```tsx
+import { Select } from '@velkinvv/plainerv';
+
+const statusOptions = [
+  { label: 'Backlog', value: 'backlog' },
+  { label: 'In Progress', value: 'in_progress' },
+  { label: 'Done', value: 'done' },
+];
+
+export function StatusSelect() {
+  return (
+    <Select
+      label="Статус задачи"
+      mode="select"
+      options={statusOptions}
+      placeholder="Выберите статус"
+      onSelectedChange={(nextStatusValue) => {
+        if (typeof nextStatusValue === 'string') {
+          console.log('Выбранный статус:', nextStatusValue);
+        }
+      }}
+    />
+  );
+}
+```
+
+## Основные входные параметры
+
+### Input
+
+- `label?: React.ReactNode` — подпись поля ввода;
+- `placeholder?: string` — подсказка в пустом поле;
+- `value?: string` — контролируемое значение поля;
+- `defaultValue?: string` — начальное значение в неконтролируемом режиме;
+- `onChange?: React.ChangeEventHandler<HTMLInputElement>` — обработчик изменения;
+- `name?: string` — имя поля в форме;
+- `type?: string` — нативный тип инпута (`text`, `email`, `password` и другие);
+- `disabled?: boolean` — блокировка редактирования;
+- `required?: boolean` — обязательность поля;
+- `error?: string` — текст ошибки;
+- `helperText?: string` — вспомогательный текст под полем;
+- `status?: 'error' | 'success' | 'warning'` — статус оформления поля;
+- `variant?: TextInputVariant` — вариант отображения поля;
+- `size?: Size` — размер поля;
+- `leftIcon?: React.ReactNode` — иконка слева от значения;
+- `rightIcon?: React.ReactNode` — иконка справа от значения.
+
+### Select
+
+- `mode?: 'native' | 'select' | 'searchSelect'` — режим работы компонента;
+- `options: SelectOption[]` — список опций;
+- `value?: string | string[]` — выбранные значения;
+- `defaultValue?: string | string[]` — начальное выбранное значение;
+- `onSelectedChange?: (nextValue: string | string[]) => void` — основной обработчик выбора;
+- `placeholder?: string` — текст при пустом выборе;
+- `label?: React.ReactNode` — подпись поля;
+- `name?: string` — имя поля формы;
+- `disabled?: boolean` — блокировка выбора;
+- `searchable?: boolean` — включение поиска в панельных режимах;
+- `multiple?: boolean` — включение мультивыбора;
+- `error?: string` — текст ошибки;
+- `helperText?: string` — вспомогательный текст;
+- `status?: 'error' | 'success' | 'warning'` — статус оформления;
+- `searchPlaceholder?: string` — placeholder для поля поиска;
+- `searchValue?: string` — контролируемая строка поиска;
+- `onSearch?: (query: string, searchFormat?: SearchFormat) => void` — обработчик ввода поиска;
+- `clearInputValueAfterSelect?: boolean` — очищать строку поиска после выбора опции;
+- `clearIconProps?: Partial<IconProps>` — настройка иконки очистки;
+- `dropdownVariant?: 'default' | 'elevated' | 'outlined'` — оформление выпадающей панели;
+- `menuMaxHeight?: string | number` — максимальная высота списка;
+- `virtualScroll?: DropdownVirtualScrollConfig` — параметры виртуального скролла;
+- `renderTopPanel?: (props) => React.ReactNode` — кастомная верхняя панель меню;
+- `renderBottomPanel?: (props) => React.ReactNode` — кастомная нижняя панель меню.
+
+## См. также
+
+- [Quick Start](/docs/web/v_0.1.8/quick-start)
+- [Button](/docs/web/v_0.1.8/components-button)
+- [Form](/docs/web/v_0.1.8/components-form)

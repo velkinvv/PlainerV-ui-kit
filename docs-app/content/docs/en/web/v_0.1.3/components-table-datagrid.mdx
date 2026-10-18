@@ -1,0 +1,41 @@
+﻿---
+title: Components Table Datagrid
+description: Reference for Table Datagrid
+---
+
+# Table + DataGrid
+
+For tabular scenarios, a project typically uses two levels:
+
+- `Table` - simple, static and predictable output;
+- `DataGrid` - interactive cases: sorting, working with a large set of data, advanced interaction.
+
+## When to use Table
+
+Use `Table` if:
+
+- there is little data;
+- no need for complex interactive scenarios;
+- simple support and predictable layout are important.
+
+## When to use DataGrid
+
+Use `DataGrid` if:
+
+- there is filtering, sorting, pagination;
+- the data set is large and a fast UX is needed;
+- development is planned towards “mini-analytics” inside the screen.
+
+## Practical start
+
+1. Start with `Table` for MVP.
+2. As requirements grow, move to `DataGrid` for specific screens.
+3. For both tables, adhere to the same data format and clear field names.
+
+## What to add next to the documentation
+
+- API props `Table`;
+- API props `DataGrid`;
+- examples with sorting, filtering and server-side pagination.
+
+

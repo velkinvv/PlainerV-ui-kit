@@ -1,0 +1,63 @@
+---
+title: Theming
+description: Reference for Theming
+---
+
+# Theming
+
+In `v0.1.3` the theme is managed through the `ThemeProvider` and the `useTheme` hook.
+
+## Basic connection
+
+```tsx
+import { ThemeProvider } from '@velkinvv/plainerv';
+
+type ThemeRootProps = {
+  children: React.ReactNode;
+};
+
+export function ThemeRoot({ children }: ThemeRootProps) {
+  return <ThemeProvider>{children}</ThemeProvider>;
+}
+```
+
+## Switch theme
+
+```tsx
+import { Button, useTheme } from '@velkinvv/plainerv';
+
+export function ThemeSwitcherPanel() {
+  const { mode, setMode, toggle } = useTheme();
+
+  return (
+    <section>
+      <p>Current mode:{mode}</p>
+      <Button variant="secondary" onClick={toggle}>
+        Switch topic      </Button>
+      <Button variant="ghost" onClick={() => setMode(mode)}>
+        Set current mode explicitly      </Button>
+    </section>
+  );
+}
+```
+
+## Parameters and return values
+
+- `ThemeProvider.children: React.ReactNode` - tree of components that have access to the theme;
+- `useTheme().mode` — current theme mode;
+- `useTheme().setMode(nextMode)` - explicit mode assignment;
+- `useTheme().toggle()` - switching between modes.
+
+## Practical recommendations
+
+- keep `ThemeProvider` as high in the tree as possible, usually in `App` or `layout`;
+- all UI components of the library must be rendered inside the provider;
+- for Storybook/docs, wrap all demo components in `ThemeProvider` to see real tokens.
+
+## See also
+
+- [Quick Start](/docs/en/web/v_0.1.3/quick-start)
+- [Button](/docs/en/web/v_0.1.3/components-button)
+
+
+

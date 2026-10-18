@@ -1,0 +1,51 @@
+﻿---
+title: Quick Start
+description: Reference for Quick Start
+---
+
+# Quick Start
+
+A short start for connecting `@velkinvv/plainerv` in version `v0.1`.
+
+## Installation
+
+```bash
+npm i @velkinvv/plainerv
+```
+
+## Connecting a theme
+
+```tsx
+import { ThemeProvider } from '@velkinvv/plainerv';
+
+type ApplicationRootProps = {
+  children: React.ReactNode;
+};
+
+export function ApplicationRoot({ children }: ApplicationRootProps) {
+  return <ThemeProvider>{children}</ThemeProvider>;
+}
+```
+
+## First screen
+
+```tsx
+import { Button, Input } from '@velkinvv/plainerv';
+
+export function FirstScreen() {
+  return (
+    <section>
+      <Input label="Email" placeholder="team@plainerv.dev" />
+      <Button variant="primary">Continue</Button>
+    </section>
+  );
+}
+```
+
+## See also
+
+- [Theming](/docs/en/web/v_0.1/theming)
+- [Button](/docs/en/web/v_0.1/components-button)
+
+
+

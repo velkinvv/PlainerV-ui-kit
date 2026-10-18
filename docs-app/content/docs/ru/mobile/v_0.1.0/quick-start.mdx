@@ -1,0 +1,82 @@
+---
+title: Quick Start
+description: Быстрый старт для @plainerV/ui-native в версии v0.1.0
+---
+
+# Quick Start
+
+Короткий старт для подключения `@plainerV/ui-native` в React Native проекте.
+
+## 1) Установка пакетов
+
+```bash
+npm install @plainerV/ui-native @plainerV/ui-themes @plainerV/ui-core
+```
+
+## 2) Подключение темы
+
+```tsx
+import React from 'react';
+import { ThemeProvider } from '@plainerV/ui-native';
+import { lightColors, lightButtonTheme } from '@plainerV/ui-themes';
+
+type MobileApplicationRootProps = {
+  children: React.ReactNode;
+};
+
+const lightMobileTheme = {
+  mode: 'LIGHT',
+  colors: lightColors,
+  buttons: lightButtonTheme,
+};
+
+export function MobileApplicationRoot({
+  children,
+}: MobileApplicationRootProps) {
+  return <ThemeProvider initialTheme={lightMobileTheme}>{children}</ThemeProvider>;
+}
+```
+
+## 3) Первый экран
+
+```tsx
+import React, { useState } from 'react';
+import { View } from 'react-native';
+import { Button, Input, Typography } from '@plainerV/ui-native';
+import { ButtonVariant, Size } from '@plainerV/ui-core';
+
+export function WelcomeScreen() {
+  const [emailValue, setEmailValue] = useState('');
+
+  return (
+    <View>
+      <Typography variant="h2">Добро пожаловать</Typography>
+      <Input
+        label="Email"
+        value={emailValue}
+        onChangeText={setEmailValue}
+        placeholder="team@plainerv.dev"
+        size={Size.MD}
+      />
+      <Button variant={ButtonVariant.PRIMARY} onPress={() => {}}>
+        Продолжить
+      </Button>
+    </View>
+  );
+}
+```
+
+## Основные входные параметры
+
+- `ThemeProvider.initialTheme` — стартовая тема приложения;
+- `ThemeProvider.children: React.ReactNode` — дерево приложения внутри темы;
+- `Input.value?: string` — контролируемое значение поля;
+- `Input.onChangeText?: (nextValue: string) => void` — обработчик изменения текста;
+- `Button.variant?: ButtonVariant` — визуальный вариант кнопки;
+- `Button.onPress?: () => void` — обработчик нажатия.
+
+## См. также
+
+- [Architecture](/docs/mobile/v_0.1.0/architecture)
+- [Theming](/docs/mobile/v_0.1.0/theming)
+- [Button + Input](/docs/mobile/v_0.1.0/components-button-input)

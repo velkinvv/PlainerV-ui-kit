@@ -1,0 +1,90 @@
+name: Docs Version Snapshots
+
+# Снятие превью примеров версии — шаг подготовки релиза.
+#
+# Запускается вручную ПЕРЕД сменой актуальной версии в docs-versioning.config.json:
+# пока версия живая, примеры рендерятся живым китом, и скрипт сохраняет их
+# превью. После смены версии эти PNG — единственный способ показать, «как было».
+#
+# Артефакт workflow: version-snapshots-<версия>. Готовый каталог кладётся в
+# `docs-app/public/version-snapshots/<версия>/` и коммитится в репозиторий
+# отдельным PR — workflow не пишет в main сам.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Версия, для которой снимаются превью (например v_0.3.4)'
+        required: true
+        type: string
+      locale:
+        description: 'Локаль (пусто — первая из docs-versioning.config.json)'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  snapshots:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci --workspaces=false
+      - run: npm ci --prefix docs-app
+      - run: npm run content:manifest --prefix docs-app
+      - run: npm run build --prefix docs-app
+
+      - name: Поднять preview
+        run: |
+          set -euo pipefail
+          npm run preview --prefix docs-app > /tmp/docs-preview.log 2>&1 &
+          for attempt in $(seq 1 60); do
+            if curl -fsS http://localhost:6500/docs/ > /dev/null; then
+              echo "preview готов (попытка ${attempt})"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "::error::preview не поднялся за 120 секунд"
+          cat /tmp/docs-preview.log
+          exit 1
+
+      - name: Снять превью
+        env:
+          LOCALE: ${{ inputs.locale }}
+        run: |
+          set -euo pipefail
+          args=(--version "${{ inputs.version }}" --url http://localhost:6500/docs)
+          if [ -n "${LOCALE:-}" ]; then
+            args+=(--locale "$LOCALE")
+          fi
+          npm run docs:version:snapshots --prefix docs-app -- "${args[@]}"
+
+      - name: Проверить артефакты
+        run: |
+          set -euo pipefail
+          directory="docs-app/public/version-snapshots/${{ inputs.version }}"
+          if [ ! -f "$directory/index.json" ]; then
+            echo "::error::Нет index.json в $directory"
+            exit 1
+          fi
+          count="$(find "$directory" -name '*.png' | wc -l)"
+          echo "Снято превью: $count"
+          if [ "$count" -eq 0 ]; then
+            echo "::error::Ни одного PNG не снято"
+            exit 1
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: version-snapshots-${{ inputs.version }}
+          path: docs-app/public/version-snapshots/${{ inputs.version }}
+          retention-days: 30
+          if-no-files-found: error

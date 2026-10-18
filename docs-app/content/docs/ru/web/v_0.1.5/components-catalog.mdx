@@ -1,0 +1,295 @@
+﻿---
+title: Справочник компонентов
+description: Полный перечень публичного API @velkinvv/plainerv для v0.1.5
+---
+
+# Справочник компонентов (v0.1.5)
+
+Ниже перечислены **все сущности**, реэкспортируемые из entrypoint пакета `@velkinvv/plainerv` (см. `src/components/ui/index.ts`, `src/hooks/index.ts`, `src/handlers/index.ts`). Типы и перечисления — из `@velkinvv/plainerv` (модуль `types/ui`, `types/theme` и др.).
+
+Детальные сценарии и интерактив — в **Storybook** (`cd web && npm run storybook`). Темы и токены — раздел [Theming](/docs/web/v_0.1.5/theming).
+
+---
+
+## Кнопки и ссылки
+
+| Экспорт | Назначение |
+|--------|------------|
+| `Button` | Основная кнопка действия (`ButtonVariant`, `Size`, иконки, `href` как ссылка). |
+| `ButtonGroup` | Группа кнопок: ориентация, `attached`, режим переключателя. |
+| `IconButton` | Кнопка только с иконкой. |
+| `Link`, `LinkMode` | Ссылка: текстовая или в виде кнопки (`mode`). |
+
+```tsx
+import { Button, ButtonGroup, IconButton, Link, LinkMode } from '@velkinvv/plainerv';
+```
+
+---
+
+## Ввод и формы
+
+| Экспорт | Назначение |
+|--------|------------|
+| `Input` | Однострочное поле, маски, ошибки, счётчик, tooltip/hint. |
+| `TextArea` | Многострочный ввод. |
+| `FileInput` | Загрузка файлов (`FileInputLayout`). |
+| `Select` | Выпадающий/нативный выбор (`SelectOption`, режимы `select` / `searchSelect` / `native`). |
+| `MultiInput` | Несколько значений в одном поле (токены/чипы). |
+| `SliderInput` | Числовой ввод со слайдером. |
+| `Form`, `HiddenUsernameField` | Обёртка формы и скрытое поле для менеджеров паролей. |
+| `DateInput` | Дата (и диапазон). |
+| `TimeInput` | Время (и диапазон). |
+| `Checkbox`, `CheckboxGroup` | Чекбоксы и группа. |
+| `Switch` | Переключатель. |
+| `RadioButton`, `RadioButtonGroup` | Радиокнопки и группа опций. |
+
+```tsx
+import {
+  Input,
+  TextArea,
+  FileInput,
+  Select,
+  MultiInput,
+  SliderInput,
+  Form,
+  DateInput,
+  TimeInput,
+  Checkbox,
+  CheckboxGroup,
+  Switch,
+  RadioButton,
+  RadioButtonGroup,
+} from '@velkinvv/plainerv';
+```
+
+---
+
+## Поверхности, сетка и всплывающие слои
+
+| Экспорт | Назначение |
+|--------|------------|
+| `Card` | Карточка контента. |
+| `Modal` | Модальное окно (портал, оверлей, фокус). |
+| `Drawer`, `DrawerPlacement` | Выдвижная панель. |
+| `Sheet`, `SheetPlacement` | Нижний/боковой «лист» (общий контракт с Drawer). |
+| `Grid`, `GridItem`, `GridMode` | CSS Grid (`GridProps`, `GridBreakpoint`, `GridItemProps`). |
+| `Dropdown` | Выпадающая панель с триггером. |
+| `Popover`, `PopoverVariant` | Панель произвольного контента у триггера (в т.ч. `inline`). |
+
+```tsx
+import {
+  Card,
+  Modal,
+  Drawer,
+  Sheet,
+  Grid,
+  GridItem,
+  GridMode,
+  Dropdown,
+  Popover,
+} from '@velkinvv/plainerv';
+```
+
+---
+
+## Навигация и структура
+
+| Экспорт | Назначение |
+|--------|------------|
+| `Sidemenu` | Боковое меню приложения. |
+| `NavigationMenu`, `NavigationMenuItem`, `NavigationMenuContext`, `useNavigationMenuContext`, `getNavigationMenuItemDisplayTitle` | Древовидная навигация (не путать с `Menu`). |
+| `Menu`, `MenuItem` | Меню действий `role="menu"`. |
+| `FloatingMenu`, `FloatingMenuGroup`, `FloatingMenuGroupItem`, `FloatingMenuDivider`, `FloatingMenuDragHandle` | Плавающая панель инструментов. |
+| `FloatingMenuPlacement`, `FloatingMenuGroupVariant`, `FloatingMenuDropdownTrigger`, `FloatingMenuDragSource` | Типы/константы для FloatingMenu. |
+| `Tabs`, `TabItem`, `TabsVariant` | Вкладки: **pill**, **minimal**, **line**, **underline**; проп **filledSegmentTriggers** для заливки текстовых сегментов. |
+| `Breadcrumb` | «Хлебные крошки». |
+| `Stepper` | Пошаговый процесс (`compact` / `linear`). |
+| `Pagination` | Нумерация страниц вне таблицы. |
+| `Accordion` | Раскрывающиеся секции. |
+
+Выпадающие панели **`Dropdown`** описаны в разделе «Поверхности»; они используются в календаре, фильтрах таблицы и т.д.
+
+```tsx
+import {
+  Sidemenu,
+  NavigationMenu,
+  NavigationMenuItem,
+  Menu,
+  MenuItem,
+  FloatingMenu,
+  FloatingMenuGroup,
+  FloatingMenuGroupItem,
+  FloatingMenuDivider,
+  FloatingMenuDragHandle,
+  Tabs,
+  TabItem,
+  Breadcrumb,
+  Stepper,
+  Pagination,
+  Accordion,
+} from '@velkinvv/plainerv';
+```
+
+---
+
+## Отображение данных
+
+| Экспорт | Назначение |
+|--------|------------|
+| `Badge` | Метка/счётчик. |
+| `Tag` | Тег с палитрой и `TagAppearance`. |
+| `Pill`, `PillStatus` | Чип с индикатором. |
+| `Avatar` | Аватар. |
+| `AvatarGroup` | Группа аватаров. |
+| `Progress` | Линейный/круговой прогресс и сценарии stepper. |
+| `Spinner` | Индикатор загрузки. |
+| `Skeleton` | Плейсхолдеры. |
+| `Divider` | Разделитель. |
+| `Slider`, `RangeSlider` | Одно значение или диапазон на шкале. |
+| `Calendar` | Календарь (сетка месяца, выбор, роллеры). |
+| `DateRollerPicker` | Выбор даты роллерами. |
+| `Icon` | Иконки наборов (в т.ч. Lucide / Plainer). |
+| `ThemeToggle` | Переключатель темы. |
+
+```tsx
+import {
+  Badge,
+  Tag,
+  Pill,
+  Avatar,
+  AvatarGroup,
+  Progress,
+  Spinner,
+  Skeleton,
+  Divider,
+  Slider,
+  RangeSlider,
+  Calendar,
+  DateRollerPicker,
+  Icon,
+  ThemeToggle,
+} from '@velkinvv/plainerv';
+```
+
+---
+
+## Таблицы и DataGrid
+
+| Экспорт | Назначение |
+|--------|------------|
+| `TableContainer`, `TableContainerScroll` | Обычная таблица: контейнер и скролл (`scrollAreaMaxHeight`, липкая шапка). |
+| `Table`, `TableHead`, `TableBody`, `TableFooter`, `TableRow`, `TableCell` | Структура таблицы. |
+| `TableCellFormatted` | Ячейка с декларативным `format` без DataGrid. |
+| `TablePagination` | Пагинация под таблицей (размер страницы и т.д.). |
+| `TableSortLabel`, `TableSortChevronIcon` | Сортировка в шапке. |
+| `getTableTotalPages`, `clampTablePageZeroBased`, `toggleTableSortDirection`, `getSortChevronTones`, `getTableSortChevronColor`, `parseTablePageJumpInput` | Утилиты таблицы. |
+| `DataGrid` | Таблица с колонками, пагинацией, сортировкой, раскрытием строк, drag колонок/строк; у колонки — `format: TableCellFormat` или `render`. |
+| `formatTableCellValue`, `TABLE_CELL_MASK_*` | Форматирование ячеек (телефон, дата, ссылка, валюта и др.) — реэкспорт из handlers. |
+| Вспомогательные функции DataGrid | `applyDataGridColDragGhostPreview`, `applyDataGridRowDragGhostPreview`, `sliceRowsForPagination`, `getDataGridCellValue`, `reorderByIndex`, `toIdSet`, `resolveDataGridExpandedRowDataStatus`, `normalizeDataGridSortModel`, `resolveNextDataGridSortModel`, `getDataGridSortCriterionIndexForField`, константы drag-preview и переходов. |
+| `ColumnFilterPanel` | Панель фильтра колонки (слот под поля, Применить/Очистить). |
+
+Также экспортируются типы: `TableContainerProps`, `TableProps`, `DataGridProps`, `DataGridColumn`, … и CSS-переменная/хелпер заголовка (см. `CHANGELOG` и сторис **Table** / **DataGrid**).
+
+```tsx
+import {
+  TableContainer,
+  TableContainerScroll,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  TablePagination,
+  TableSortLabel,
+  DataGrid,
+  ColumnFilterPanel,
+} from '@velkinvv/plainerv';
+```
+
+---
+
+## Обратная связь
+
+| Экспорт | Назначение |
+|--------|------------|
+| `Tooltip` | Краткая подсказка по ховеру/фокусу. |
+| `Hint`, `HintPosition`, `HintVariant` | Расширенная подсказка рядом с контентом. |
+| `Toast`, `ToastProvider`, `ToastAppearance` | Стек toast-уведомлений. |
+| `Snackbar`, `SnackbarProvider` | Полосы snackbar. |
+
+Провайдеры и хуки: **`useToast`**, **`useSnackbar`** (см. также реэкспорт типов `ToastType`, `ShowToastOptions`, `SnackbarPlacement`, …).
+
+```tsx
+import {
+  Tooltip,
+  Hint,
+  Toast,
+  ToastProvider,
+  Snackbar,
+  SnackbarProvider,
+  useToast,
+  useSnackbar,
+} from '@velkinvv/plainerv';
+```
+
+---
+
+## Хуки (кроме toast/snackbar)
+
+| Экспорт | Назначение |
+|--------|------------|
+| `useModal` | Состояние модалки. |
+| `useLocalStorage` | Значение в `localStorage`. |
+| `useDebounce` | Дебаунс значения/колбэка. |
+| `useClickOutside` | Клик вне элемента. |
+| `useKeyPress` | Нажатия клавиш. |
+| `useMediaQuery` | Медиа-выражения. |
+| `useScrollPosition` | Позиция скролла. |
+| `useWindowSize`, `useScreenSize`, `useAvailableSize`, `useIsDesktop`, `DESKTOP_MIN_INNER_WIDTH_PX` | Размер окна и порог «десктоп». |
+| `useNavigationMenuExpand` | Раскрытие веток `NavigationMenu`. |
+| `useUiMotionPresets` | Пресеты анимаций UI. |
+
+```tsx
+import {
+  useModal,
+  useLocalStorage,
+  useDebounce,
+  useClickOutside,
+  useKeyPress,
+  useMediaQuery,
+  useScrollPosition,
+  useWindowSize,
+  useIsDesktop,
+  useNavigationMenuExpand,
+  useUiMotionPresets,
+} from '@velkinvv/plainerv';
+```
+
+---
+
+## Обработчики и утилиты (реэкспорт)
+
+Из `@velkinvv/plainerv` также доступны модули **handlers** (например `dateHandlers`, `timeHandlers`, `linkHandlers`, `tableCellFormat`, `formatTableCellValue`, `tableSelectionHandlers`, `dropdownSearchMatchHandlers`, motion/navigation helpers и др.) — см. `src/handlers/index.ts` и Storybook-сторис в каталоге **Handlers**.
+
+Для styled-components в своих обёртках:
+
+- **`createStyledShouldForwardProp`** — `shouldForwardProp` с фильтром `$…` и кастомных пропов;
+- **`omitMotionConflictingDomHandlers`** — перед spread на `motion.button` / `motion.a`.
+
+---
+
+## Темы, стили, типы
+
+- `ThemeProvider`, `useTheme`, `lightTheme`, `darkTheme`
+- `GlobalStyles`
+- Реэкспорт типов из `types/theme`, `types/ui`, `types/sizes`, `types/icon`
+- CSS variables из пакета (`variables`)
+
+---
+
+## Где читать дальше
+
+- [README](/docs/web/v_0.1.5/readme) — установка, темизация, примеры
+- [Quick Start](/docs/web/v_0.1.5/quick-start)
+- [Changelog](/docs/web/v_0.1.5/changelog)
+- Тематические разделы: [Inputs](/docs/web/v_0.1.5/group-inputs), [Data display](/docs/web/v_0.1.5/group-data-display), [Feedback](/docs/web/v_0.1.5/group-feedback), [Surfaces](/docs/web/v_0.1.5/group-surfaces), [Navigation](/docs/web/v_0.1.5/group-navigation), [Utils](/docs/web/v_0.1.5/group-utils)

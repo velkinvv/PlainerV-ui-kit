@@ -1,0 +1,47 @@
+﻿---
+title: Forms Validation
+description: Reference for Forms Validation
+---
+
+# Forms + Validation
+
+Recommended scenario: controlled fields, centralized validation function, separate error state.
+
+```tsx
+import { Button, Input } from '@velkinvv/plainerv';
+
+type LoginErrorsState = {
+  emailErrorText: string;
+  passwordErrorText: string;
+};
+
+export function LoginForm() {
+  // Example states omitted for brevity  const errorsState: LoginErrorsState = {
+    emailErrorText: '',
+    passwordErrorText: '',
+  };
+
+  return (
+    <section>
+      <Input label="Email" error={errorsState.emailErrorText} />
+      <Input label="Password" error={errorsState.passwordErrorText} />
+      <Button variant="primary">Login</Button>
+    </section>
+  );
+}
+```
+
+## Main input parameters
+
+- `Input.error?: string` — field error text;
+- `Input.helperText?: string` — hint for the user;
+- `Button.variant?: ButtonVariant` — submit button option;
+- `Button.onClick?: React.MouseEventHandler` - form submission handler.
+
+## See also
+
+- [Input + Select](/docs/en/web/v_0.1/components-input-select)
+- [Toast + Snackbar](/docs/en/web/v_0.1/components-toast-snackbar)
+
+
+

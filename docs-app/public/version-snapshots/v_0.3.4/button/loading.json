@@ -1,0 +1,10 @@
+{
+  "version": "v_0.3.4",
+  "component": "button",
+  "exampleId": "loading",
+  "title": "Состояние загрузки",
+  "description": "Кнопка в loading-состоянии блокирует повторный клик.",
+  "code": "<Button loading size={Size.MD}>Сохранить</Button>",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:15.129Z"
+}

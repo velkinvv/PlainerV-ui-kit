@@ -1,0 +1,64 @@
+---
+title: Toast + Snackbar
+description: Компоненты уведомлений в версии v0.1
+---
+
+# Toast + Snackbar
+
+## Подключение провайдеров
+
+```tsx
+import { SnackbarProvider, ThemeProvider, ToastProvider } from '@velkinvv/plainerv';
+
+type NotificationsRootProps = {
+  children: React.ReactNode;
+};
+
+export function NotificationsRoot({ children }: NotificationsRootProps) {
+  return (
+    <ThemeProvider>
+      <ToastProvider placement="top-right">
+        <SnackbarProvider placement="bottom-center">{children}</SnackbarProvider>
+      </ToastProvider>
+    </ThemeProvider>
+  );
+}
+```
+
+## Использование
+
+```tsx
+import { Button, useSnackbar, useToast } from '@velkinvv/plainerv';
+
+export function NotificationsDemo() {
+  const { showToast } = useToast();
+  const { showSnackbar } = useSnackbar();
+
+  return (
+    <section>
+      <Button onClick={() => showToast('Сохранено', 'success', 'Готово')}>Toast</Button>
+      <Button onClick={() => showSnackbar('Сохранено')}>Snackbar</Button>
+    </section>
+  );
+}
+```
+
+## Основные входные параметры
+
+### ToastProvider / SnackbarProvider
+
+- `ToastProvider.placement?: ToastPlacement` — положение стека toast;
+- `SnackbarProvider.placement?: SnackbarPlacement` — положение стека snackbar;
+- `children?: React.ReactNode` — дерево приложения.
+
+### useToast / useSnackbar
+
+- `showToast(message, type?, title?, duration?, options?)` — вызов toast;
+- `showSnackbar(message, options?)` — вызов snackbar;
+- `options?.duration?: number` — длительность показа;
+- `options?.actionLabel?: string` — подпись действия у snackbar/toast.
+
+## См. также
+
+- [Forms + Validation](/docs/web/v_0.1/forms-validation)
+- [Modal](/docs/web/v_0.1/components-modal)

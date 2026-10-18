@@ -1,0 +1,47 @@
+---
+title: Tabs
+description: Организация контента по вкладкам в mobile v0.1.0
+---
+
+# Tabs
+
+`Tabs` применяйте для разделения связанного контента внутри одного экрана.
+
+## Базовый пример
+
+```tsx
+import React from 'react';
+import { Tabs } from '@plainerV/ui-native';
+
+type ProfileTabsProps = {
+  defaultActiveTabValue: string;
+  onTabChange: (activeTabValue: string) => void;
+};
+
+export function ProfileTabs({
+  defaultActiveTabValue,
+  onTabChange,
+}: ProfileTabsProps) {
+  return (
+    <Tabs defaultActiveTab={defaultActiveTabValue} onChange={onTabChange}>
+      <Tabs.List>
+        <Tabs.Item value="profile" label="Профиль" />
+        <Tabs.Item value="security" label="Безопасность" />
+        <Tabs.Item value="notifications" label="Уведомления" />
+      </Tabs.List>
+    </Tabs>
+  );
+}
+```
+
+## Основные входные параметры
+
+- `defaultActiveTab?: string` — стартовая активная вкладка;
+- `onChange?: (activeTabValue: string) => void` — обработчик переключения;
+- `direction?: 'horizontal' | 'vertical'` — направление вкладок;
+- `variant?: string` — визуальный вариант отображения.
+
+## См. также
+
+- [Card + Typography](/docs/mobile/v_0.1.0/components-card-typography)
+- [Button + Input](/docs/mobile/v_0.1.0/components-button-input)

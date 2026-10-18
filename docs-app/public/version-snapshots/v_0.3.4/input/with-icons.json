@@ -1,0 +1,10 @@
+{
+  "version": "v_0.3.4",
+  "component": "input",
+  "exampleId": "with-icons",
+  "title": "С иконками",
+  "description": "Префикс и суффикс через leftIcon/rightIcon.",
+  "code": "<Input label=\"Поиск\" leftIcon={<Icon name=\"IconExSearch\" size={IconSize.MD} />} rightIcon={<Icon name=\"IconPlainerClose\" size={IconSize.MD} />} value=\"PlainerV\" readOnly />",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:25.059Z"
+}

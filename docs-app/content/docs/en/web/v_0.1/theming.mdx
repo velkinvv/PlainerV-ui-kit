@@ -1,0 +1,40 @@
+﻿---
+title: Theming
+description: Reference for Theming
+---
+
+# Theming
+
+The theme is managed through `ThemeProvider` and `useTheme`.
+
+## Example
+
+```tsx
+import { Button, useTheme } from '@velkinvv/plainerv';
+
+export function ThemeControls() {
+  const { mode, toggle } = useTheme();
+
+  return (
+    <section>
+      <p>Current mode:{mode}</p>
+      <Button variant="secondary" onClick={toggle}>
+        Switch topic      </Button>
+    </section>
+  );
+}
+```
+
+## Parameters and values
+
+- `ThemeProvider.children: React.ReactNode` - tree of components inside the theme;
+- `useTheme().mode` — current mode;
+- `useTheme().toggle()` - mode switching.
+
+## See also
+
+- [Quick Start](/docs/en/web/v_0.1/quick-start)
+- [Input + Select](/docs/en/web/v_0.1/components-input-select)
+
+
+

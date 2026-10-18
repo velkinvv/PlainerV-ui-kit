@@ -1,0 +1,22 @@
+{
+  "title": "v0.1",
+  "defaultOpen": true,
+  "pages": [
+    "group-overview",
+    "quick-start",
+    "readme",
+    "changelog",
+    "group-inputs",
+    "components-input-select",
+    "forms-validation",
+    "group-feedback",
+    "components-toast-snackbar",
+    "group-surfaces",
+    "components-button",
+    "components-modal",
+    "group-navigation",
+    "components-tabs-pagination",
+    "group-utils",
+    "theming"
+  ]
+}

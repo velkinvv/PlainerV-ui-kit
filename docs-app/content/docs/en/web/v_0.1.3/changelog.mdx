@@ -1,0 +1,77 @@
+---
+title: Changelog
+description: Reference for Changelog
+---
+
+# CHANGELOG
+
+> Source: [`CHANGELOG.md`](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.1.3/CHANGELOG.md)
+
+> Platform: **Web**
+> Version: **v0.1.3**
+
+---
+
+# Changelog
+
+All significant changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/ru/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/lang/ru/).
+
+## [Unreleased]
+
+### Added
+- Initial version of the UI component library
+- Components: Button, ButtonGroup, Input, Modal, Dropdown, Card, Badge, Spinner, Skeleton, Divider, Checkbox, RadioButton, Switch, Progress, Avatar, Tooltip, Toast, Snackbar, Pagination, Tabs, Accordion, Menu, FloatingMenu
+- Support dark and light theme
+- TypeScript typing for all components
+- Hooks: useModal, useToast, useSnackbar, useDebounce, useLocalStorage, useClickOutside, useKeyPress, useMediaQuery, useScrollPosition, useWindowSize
+- Handlers: dateHandlers, timeHandlers, buttonThemeHandlers
+- Configured assembly via Rollup (ESM and CJS formats)
+- Configured PostCSS to handle styles
+- Configured copying fonts to dist
+- Added basic tests for components and hooks
+- Adjusted coverage threshold (60%)
+- Support tree-shaking via sideEffects: false
+
+### Changed
+- Version changed from 1.0.0 to 0.1.0 (pre-release)
+
+### Fixed
+- Removed duplicate files (handlers/handlers, hooks/hooks, icons/icons)
+- Updated paths to fonts to work in the npm package
+
+### Security
+
+---
+
+## [0.1.3] - 2026-05-04
+
+### Changed
+
+- `Table`: sticky header and vertical scroll via `scrollAreaMaxHeight` on `TableContainerScroll`, header background CSS variable `--plainer-table-header-background`.
+- `DataGrid`: `scrollAreaMaxHeight`, `tableHeaderVariant` / `tableHeaderBackground`, unified `headerToolbar` panel background with column headers.
+
+### Added
+
+- Helper `resolveDataGridTableHeaderBackground`, export `PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR` from the table primitives.
+
+---
+
+## [0.1.0] - 2025-01-XX
+
+### Added
+- Initial version of the library
+- Basic project structure
+- UI components
+- Theming system
+- TypeScript support
+
+---
+
+**Note:** Dates will be automatically updated when using semantic-release.
+
+
+
+

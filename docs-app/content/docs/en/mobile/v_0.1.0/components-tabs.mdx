@@ -1,0 +1,50 @@
+﻿---
+title: Components Tabs
+description: Reference for Tabs
+---
+
+# Tabs
+
+Use `Tabs` to separate related content within one screen.
+
+## Basic example
+
+```tsx
+import React from 'react';
+import { Tabs } from '@plainerV/ui-native';
+
+type ProfileTabsProps = {
+  defaultActiveTabValue: string;
+  onTabChange: (activeTabValue: string) => void;
+};
+
+export function ProfileTabs({
+  defaultActiveTabValue,
+  onTabChange,
+}: ProfileTabsProps) {
+  return (
+    <Tabs defaultActiveTab={defaultActiveTabValue} onChange={onTabChange}>
+      <Tabs.List>
+        <Tabs.Item value="profile" label="Profile" />
+        <Tabs.Item value="security" label="Safety" />
+        <Tabs.Item value="notifications" label="Notifications" />
+      </Tabs.List>
+    </Tabs>
+  );
+}
+```
+
+## Main input parameters
+
+- `defaultActiveTab?: string` — starting active tab;
+- `onChange?: (activeTabValue: string) => void` — switch handler;
+- `direction?: 'horizontal' | 'vertical'` — direction of tabs;
+- `variant?: string` - visual display option.
+
+## See also
+
+- [Card + Typography](/docs/en/mobile/v_0.1.0/components-card-typography)
+- [Button + Input](/docs/en/mobile/v_0.1.0/components-button-input)
+
+
+

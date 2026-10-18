@@ -4,6 +4,9 @@
   "description": "Современная библиотека UI компонентов с поддержкой темизации и TypeScript",
   "readme": "README.md",
   "private": false,
+  "workspaces": [
+    "docs-app"
+  ],
   "publishConfig": {
     "access": "public"
   },
@@ -60,6 +63,15 @@
     "react-doctor:strict": "npx --yes react-doctor@latest . --verbose",
     "docs:dsl:lint": "node ./scripts/validate-docs-dsl.mjs",
     "docs:dsl:generate": "node ./scripts/docs-to-csf.mjs",
+    "docs:manifest": "node ./docs-app/scripts/build-docs-manifest.mjs",
+    "docs:manifest:check": "npm run --prefix docs-app manifest:check",
+    "docs:sync:github-docs": "npm run --prefix docs-app sync:github-docs",
+    "docs:dev": "npm run --prefix docs-app dev",
+    "docs:build": "npm run --prefix docs-app build",
+    "docs:prefix:check": "npm run --prefix docs-app prefix:check",
+    "docs:preview": "npm run --prefix docs-app preview",
+    "docs:deploy": "node ./scripts/run-deploy.mjs deploy",
+    "docs:rollback": "node ./scripts/run-deploy.mjs rollback",
     "quality:check": "npm run type-check && npm run lint:check && npm run format:check && npm run docs:dsl:generate && npm run docs:dsl:lint",
     "quality:fix": "npm run fix-all && npm run type-check",
     "prepack": "npm run build",

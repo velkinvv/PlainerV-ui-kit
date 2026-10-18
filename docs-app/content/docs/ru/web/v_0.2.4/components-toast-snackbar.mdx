@@ -1,0 +1,105 @@
+---
+title: Toast + Snackbar
+description: Уведомления приложения в версии v0.2.4
+---
+
+# Toast + Snackbar
+
+`Toast` и `Snackbar` закрывают два разных UX-сценария:
+
+- `Toast` — заметные уведомления (успех, ошибка, предупреждение, информация);
+- `Snackbar` — компактные сообщения о результате действия.
+
+## Интерактивные примеры
+
+<ToastSnackbarInteractiveExamples />
+
+## Подключение провайдеров
+
+```tsx
+import { SnackbarProvider, ThemeProvider, ToastProvider } from '@velkinvv/plainerv';
+
+type NotificationsRootProps = {
+  children: React.ReactNode;
+};
+
+export function NotificationsRoot({ children }: NotificationsRootProps) {
+  return (
+    <ThemeProvider>
+      <ToastProvider placement="top-right">
+        <SnackbarProvider placement="bottom-center">{children}</SnackbarProvider>
+      </ToastProvider>
+    </ThemeProvider>
+  );
+}
+```
+
+## Основные входные параметры
+
+### Провайдеры
+
+- `ToastProvider.placement?: string` — позиция тостов на экране;
+- `ToastProvider.defaultAppearance?: ToastAppearance` — внешний вид тоста по умолчанию (`card` / `pill`);
+- `SnackbarProvider.placement?: string` — позиция снэкбаров;
+- `children: React.ReactNode` — дерево приложения, где уведомления доступны через хуки.
+
+## Показ Toast
+
+```tsx
+import { Button, useToast } from '@velkinvv/plainerv';
+
+export function SaveWithToastButton() {
+  const { showToast } = useToast();
+
+  const handleSaveSuccess = () => {
+    showToast(
+      'Новая конфигурация применена ко всем участникам проекта.',
+      'success',
+      'Изменения сохранены',
+      3200,
+    );
+  };
+
+  return <Button onClick={handleSaveSuccess}>Сохранить</Button>;
+}
+```
+
+### Входные параметры `showToast`
+
+- `message: string` — основной текст уведомления;
+- `type?: 'success' | 'error' | 'warning' | 'info' | 'neutral'` — визуальный тип;
+- `title?: string` — заголовок карточки;
+- `duration?: number` — длительность показа в миллисекундах;
+- `options?.appearance?: 'card' | 'pill'` — режим отображения тоста;
+- `options?.actionLabel?: string` — подпись кнопки действия;
+- `options?.onAction?: () => void` — обработчик кнопки действия.
+
+## Показ Snackbar
+
+```tsx
+import { Button, useSnackbar } from '@velkinvv/plainerv';
+
+export function ArchiveWithSnackbarButton() {
+  const { showSnackbar } = useSnackbar();
+
+  const handleArchive = () => {
+    showSnackbar('Проект отправлен в архив', {
+      duration: 2400,
+    });
+  };
+
+  return <Button variant="secondary" onClick={handleArchive}>Архивировать</Button>;
+}
+```
+
+### Входные параметры `showSnackbar`
+
+- `message: string` — текст сообщения;
+- `options?.duration?: number` — длительность показа в миллисекундах;
+- `options?.actionLabel?: string` — подпись кнопки действия;
+- `options?.onAction?: () => void` — обработчик кнопки действия.
+
+## См. также
+
+- [Forms + Validation](/docs/web/v_0.2.4/components-form)
+- [Modal + Drawer](/docs/web/v_0.2.4/components-modal-drawer)

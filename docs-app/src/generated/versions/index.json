@@ -1,0 +1,18 @@
+{
+  "versions": [
+    {
+      "id": "v_0.3.3",
+      "packageVersion": "0.3.3",
+      "source": "npm:@velkinvv/plainerv@0.3.3",
+      "generatedAt": "2026-10-18T22:20:53.764Z",
+      "components": 8
+    },
+    {
+      "id": "v_0.3.4",
+      "packageVersion": "0.3.4",
+      "source": "local:dist/index.d.ts",
+      "generatedAt": "2026-10-18T22:20:25.505Z",
+      "components": 9
+    }
+  ]
+}

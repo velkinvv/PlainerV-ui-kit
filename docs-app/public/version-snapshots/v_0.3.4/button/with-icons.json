@@ -1,0 +1,10 @@
+{
+  "version": "v_0.3.4",
+  "component": "button",
+  "exampleId": "with-icons",
+  "title": "С иконками",
+  "description": "Кнопка с иконкой в начале и конце текста.",
+  "code": "<Button iconStart={<Icon name=\"IconExHome\" size={IconSize.MD} />} iconEnd={<Icon name=\"IconPlainerArrowRight\" size={IconSize.MD} />}>Открыть</Button>",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:14.752Z"
+}

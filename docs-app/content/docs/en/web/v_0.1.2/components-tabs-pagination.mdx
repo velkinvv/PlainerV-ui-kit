@@ -1,0 +1,104 @@
+﻿---
+title: Components Tabs Pagination
+description: Reference for Tabs Pagination
+---
+
+# Tabs + Pagination
+
+The page describes two common navigation scenarios: switching content within the screen (`Tabs`) and navigating through pages of data (`Pagination`).
+
+## Interactive examples
+
+<TabsPaginationInteractiveExamples />
+
+## Tabs
+
+`Tabs` are useful when you need to break related content into logical tabs.
+
+### Example
+
+```tsx
+import { TabItem, Tabs } from '@velkinvv/plainerv';
+
+type ProfileTabsProps = {
+  defaultActiveTabValue: string;
+  onTabChange: (nextTabValue: string) => void;
+};
+
+export function ProfileTabs({
+  defaultActiveTabValue,
+  onTabChange,
+}: ProfileTabsProps) {
+  return (
+    <Tabs defaultActiveTab={defaultActiveTabValue} onChange={onTabChange}>
+      <Tabs.List>
+        <TabItem value="profile" label="Profile">
+          Profile section        </TabItem>
+        <TabItem value="security" label="Safety">
+          Security section        </TabItem>
+        <TabItem value="notifications" label="Notifications">
+          Notifications section        </TabItem>
+      </Tabs.List>
+    </Tabs>
+  );
+}
+```
+
+## Main input parameters
+
+### Tabs
+
+- `defaultActiveTab?: string` — initial active tab;
+- `onChange?: (activeTabValue: string) => void` — tab switch handler;
+- `direction?: TabsDirection` — direction of tabs (`horizontal`/`vertical`);
+- `tabsPosition?: TabsVerticalPosition` — position of the list of tabs in the vertical direction;
+- `variant?: TabsVariant` — tab design option;
+- `className?: string` — CSS class of the Tabs wrapper;
+- `children: React.ReactNode` - a list of `TabItem` inside `Tabs.List`.
+
+## Pagination
+
+Use `Pagination` for lists, tables and grids where you need an explicit transition between pages.
+
+### Example
+
+```tsx
+import { Pagination } from '@velkinvv/plainerv';
+
+type UsersPaginationProps = {
+  currentPageNumber: number;
+  onPageNumberChange: (nextPageNumber: number) => void;
+};
+
+export function UsersPagination({
+  currentPageNumber,
+  onPageNumberChange,
+}: UsersPaginationProps) {
+  return (
+    <Pagination
+      totalPages={24}
+      page={currentPageNumber}
+      onPageChange={onPageNumberChange}
+      siblingCount={1}
+      showPrevNext
+      ariaLabel="Pagination of user list"
+    />
+  );
+}
+```
+
+### Pagination
+
+- `totalPages: number` — total number of pages;
+- `page?: number` — current page in controlled mode;
+- `defaultPage?: number` — start page in uncontrolled mode;
+- `onPageChange?: (nextPageNumber: number) => void` — page change callback;
+- `siblingCount?: number` — the number of neighboring pages around the active one;
+- `showPrevNext?: boolean` — displays the back/forward buttons;
+- `variant?: 'default' | 'compact'` — page list display mode;
+- `disabled?: boolean` — blocking pagination control;
+- `size?: 'sm' | 'md' | 'lg'` — size of pagination buttons;
+- `ariaLabel?: string` - accessibility label.
+
+
+

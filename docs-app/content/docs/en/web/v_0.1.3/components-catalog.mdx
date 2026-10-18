@@ -1,0 +1,116 @@
+---
+title: Components reference
+description: Full public API surface of @velkinvv/plainerv for v0.1.3
+---
+
+# Components reference (v0.1.3)
+
+All symbols below are re-exported from `@velkinvv/plainerv` (see `src/components/ui/index.ts`, `src/hooks/index.ts`, `src/handlers/index.ts`). Types and enums come from the same package (`types/ui`, `types/theme`, etc.).
+
+For interactive examples run **Storybook** (`cd web && npm run storybook`). Theming: [Theming](/docs/en/web/v_0.1.3/theming).
+
+---
+
+## Buttons and links
+
+| Export | Role |
+|--------|------|
+| `Button` | Primary action control (`ButtonVariant`, `Size`, icons, `href` link mode). |
+| `ButtonGroup` | Grouped buttons (`attached`, toggle mode). |
+| `IconButton` | Icon-only button. |
+| `Link`, `LinkMode` | Text or button-styled anchor. |
+
+```tsx
+import { Button, ButtonGroup, IconButton, Link, LinkMode } from '@velkinvv/plainerv';
+```
+
+---
+
+## Inputs and forms
+
+| Export | Role |
+|--------|------|
+| `Input` | Single-line field. |
+| `TextArea` | Multiline field. |
+| `FileInput` | File upload. |
+| `Select` | Select / search / native modes. |
+| `Form`, `HiddenUsernameField` | Form wrapper and hidden username hint. |
+| `DateInput`, `TimeInput` | Date and time (incl. ranges). |
+| `Checkbox`, `CheckboxGroup` | Checkboxes. |
+| `Switch` | Toggle. |
+| `RadioButton`, `RadioButtonGroup` | Radio controls. |
+
+---
+
+## Surfaces, layout, overlays
+
+| Export | Role |
+|--------|------|
+| `Card` | Content card. |
+| `Modal` | Modal dialog. |
+| `Drawer`, `DrawerPlacement` | Slide-over panel. |
+| `Sheet`, `SheetPlacement` | Bottom/side sheet (same props family as Drawer). |
+| `Grid`, `GridItem`, `GridMode` | CSS Grid helpers. |
+| `Dropdown` | Dropdown shell with trigger + panel. |
+| `Popover`, `PopoverVariant` | Generic anchored panel (incl. `inline`). |
+
+---
+
+## Navigation
+
+| Export | Role |
+|--------|------|
+| `Sidemenu` | Application sidebar. |
+| `NavigationMenu`, `NavigationMenuItem`, `NavigationMenuContext`, `useNavigationMenuContext`, `getNavigationMenuItemDisplayTitle` | Tree navigation. |
+| `Menu`, `MenuItem` | Action menu (`role="menu"`). |
+| `FloatingMenu`, `FloatingMenuGroup`, `FloatingMenuGroupItem`, `FloatingMenuDivider`, `FloatingMenuDragHandle` | Floating tool dock. |
+| `Tabs`, `TabItem`, `TabsVariant` | Tabs: **pill**, **minimal**, **line**, **underline**; **filledSegmentTriggers** for filled text segments. |
+| `Breadcrumb` | Breadcrumbs. |
+| `Stepper` | Step flow (`compact` / `linear`). |
+| `Pagination` | Page control (standalone). |
+| `Accordion` | Collapsible sections. |
+
+---
+
+## Data display
+
+`Badge`, `Tag`, `Pill`, `Avatar`, `AvatarGroup`, `Progress`, `Spinner`, `Skeleton`, `Divider`, `Slider`, `RangeSlider`, `Calendar`, `DateRollerPicker`, `Icon`, `ThemeToggle`.
+
+---
+
+## Table and DataGrid
+
+`TableContainer`, `TableContainerScroll`, `Table`, `TableHead`, `TableBody`, `TableFooter`, `TableRow`, `TableCell`, `TablePagination`, `TableSortLabel`, `TableSortChevronIcon`, table helpers (`getTableTotalPages`, `clampTablePageZeroBased`, …), `DataGrid`, `ColumnFilterPanel`, and DataGrid helpers (sort model, drag preview, `sliceRowsForPagination`, …).
+
+---
+
+## Feedback
+
+`Tooltip`, `Hint`, `Toast`, `ToastProvider`, `Snackbar`, `SnackbarProvider`, plus **`useToast`** and **`useSnackbar`** (and related types).
+
+---
+
+## Other hooks
+
+`useModal`, `useLocalStorage`, `useDebounce`, `useClickOutside`, `useKeyPress`, `useMediaQuery`, `useScrollPosition`, `useWindowSize`, `useScreenSize`, `useAvailableSize`, `useIsDesktop`, `DESKTOP_MIN_INNER_WIDTH_PX`, `useNavigationMenuExpand`, `useUiMotionPresets`.
+
+---
+
+## Handlers
+
+Re-exported utilities under `handlers` (dates, times, links, table selection, dropdown helpers, motion helpers, etc.) — see `src/handlers/index.ts` and Storybook **Handlers** stories.
+
+---
+
+## Themes, styles, types
+
+`ThemeProvider`, `useTheme`, `lightTheme`, `darkTheme`, `GlobalStyles`, re-exports from `types/*`, CSS variables bundle.
+
+---
+
+## See also
+
+- [README](/docs/en/web/v_0.1.3/readme)
+- [Quick Start](/docs/en/web/v_0.1.3/quick-start)
+- [Changelog](/docs/en/web/v_0.1.3/changelog)
+- [Inputs](/docs/en/web/v_0.1.3/group-inputs), [Data display](/docs/en/web/v_0.1.3/group-data-display), [Feedback](/docs/en/web/v_0.1.3/group-feedback), [Surfaces](/docs/en/web/v_0.1.3/group-surfaces), [Navigation](/docs/en/web/v_0.1.3/group-navigation), [Utils](/docs/en/web/v_0.1.3/group-utils)

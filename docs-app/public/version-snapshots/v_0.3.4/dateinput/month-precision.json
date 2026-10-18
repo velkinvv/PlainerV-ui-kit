@@ -1,0 +1,10 @@
+{
+  "version": "v_0.3.4",
+  "component": "dateinput",
+  "exampleId": "month-precision",
+  "title": "Точность month",
+  "description": "Режим выбора месяца с форматом YYYY-MM.",
+  "code": "<DateInput precision=\"month\" value=\"2026-08\" onChange={() => undefined} size={Size.MD} />",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:22.978Z"
+}

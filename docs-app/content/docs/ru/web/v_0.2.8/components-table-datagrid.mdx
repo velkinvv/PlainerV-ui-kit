@@ -1,0 +1,174 @@
+---
+title: Table + DataGrid
+description: Основы отображения табличных данных в v0.2.8
+---
+
+# Table + DataGrid
+
+Для табличных сценариев в проекте обычно используют два уровня:
+
+- **`Table`** — простой, статичный и предсказуемый вывод;
+- **`DataGrid`** — интерактивные кейсы: сортировка, пагинация, раскрытие строк, drag колонок/строк, декларативное форматирование ячеек, **выгрузка в Excel**.
+
+## Когда использовать Table
+
+Используйте `Table`, если:
+
+- данных немного;
+- не нужны сложные интерактивные сценарии;
+- важна простая поддержка и предсказуемая вёрстка.
+
+Для форматирования значения без DataGrid — компонент **`TableCellFormatted`** или хелпер **`formatTableCellValue`** из пакета.
+
+## Когда использовать DataGrid
+
+Используйте `DataGrid`, если:
+
+- есть фильтрация, сортировка, пагинация;
+- набор данных большой и нужен быстрый UX;
+- нужны колонки с **`format`** (`TableCellFormat`: ссылки, маски, числа, даты, `mailto:` и т.д.) или кастомный **`render`**;
+- нужна **выгрузка в Excel** с сервера постранично.
+
+### Пример колонок с format
+
+```tsx
+import { DataGrid, type DataGridColumn } from '@velkinvv/plainerv';
+
+type Row = { id: string; phone: string; title: string };
+
+const columns: DataGridColumn<Row>[] = [
+  { field: 'phone', headerName: 'Телефон', format: { type: 'phone', country: 'RU' } },
+  {
+    field: 'id',
+    headerName: 'Открыть',
+    valueGetter: (row) => row.title,
+    format: { type: 'link', href: '/items/{id}' },
+  },
+];
+
+<DataGrid rows={rows} columns={columns} getRowId={(row) => row.id} />;
+```
+
+## Выгрузка в Excel
+
+Встроенная кнопка в **`headerToolbar`** (первая строка `thead` над заголовками колонок). Включается пропом **`excelExport`**. Файл — **`.xls`** (SpreadsheetML), **без** exceljs и других тяжёлых зависимостей.
+
+### Минимальный пример
+
+```tsx
+<DataGrid<Row>
+  tableId="orders"
+  columns={columns}
+  rows={pageRows}
+  totalRows={totalFromServer}
+  paginationModel={paginationModel}
+  onPaginationChange={setPaginationModel}
+  paginationMode="server"
+  excelExport={{
+    dataFetcher: async (skip, take, signal) => {
+      const { items } = await api.fetchOrders({ skip, take, signal });
+      return items;
+    },
+    fileName: 'Заказы.xls',
+  }}
+/>
+```
+
+Кнопка появляется, если задан **`dataFetcher`**. По клику — модалка: **начальная** и **конечная** страница (нумерация с 1), прогресс загрузки, отмена.
+
+### Ширина колонок
+
+Берётся из **`columns[].width`** (пиксели). Можно переопределить список через **`excelExport.columns`** или исключить поля через **`ignoreFields`**.
+
+### Текст в ячейках (не сырой код статуса)
+
+Приоритет при формировании значения для файла:
+
+1. **`columns[].exportValueGetter`** — строка или `{ text, style? }`
+2. **`columns[].format`** — те же подписи, что в таблице (`enum`, даты, маски…)
+3. **`columns[].render`** — текст из React-дерева (`children`, `label`, …)
+4. Сырое значение поля
+
+Для колонки со статусом предпочтительно **`format: { type: 'enum', options: [...] }`** с русскими `label`.
+
+### Цвета ячейки и текста
+
+Тип **`DataGridExcelExportCellStyle`**: `textColor`, `backgroundColor`, `bold` (цвета `#RRGGBB` или `rgb()`).
+
+**Вариант A — `exportStyle` у enum:**
+
+```tsx
+{
+  field: 'status',
+  headerName: 'Статус',
+  format: {
+    type: 'enum',
+    options: [
+      {
+        value: 'active',
+        label: 'Активен',
+        exportStyle: { textColor: '#1B5E20', backgroundColor: '#E8F5E9' },
+      },
+      {
+        value: 'error',
+        label: 'Ошибка',
+        exportStyle: { textColor: '#B71C1C', backgroundColor: '#FFEBEE' },
+      },
+    ],
+  },
+}
+```
+
+**Вариант B — `exportValueGetter`:**
+
+```tsx
+exportValueGetter: (row) => ({
+  text: translateStatus(row.statusCode),
+  style: { textColor: '#1B5E20', backgroundColor: '#E8F5E9' },
+}),
+```
+
+**Вариант C — `exportCellStyle`:**
+
+```tsx
+exportCellStyle: (row) => statusStyleMap[row.statusCode],
+```
+
+**Вариант D — автоматически:** если в `render` используются **Tag** (`colorVariant`) или **Pill** (`status` / `data-status`), пресеты цветов подставятся сами (при наличии русского текста в `children`).
+
+### Поля `excelExport`
+
+| Поле | Назначение |
+|------|------------|
+| `dataFetcher(skip, take, signal?)` | Загрузка порций данных |
+| `fileName`, `sheetName` | Имя файла и листа |
+| `pageSize` | Размер страницы выгрузки (иначе из `paginationModel`) |
+| `columns`, `ignoreFields` | Явные колонки / исключения |
+| `mapRowData` | Свой плоский объект строки (без автоформатирования колонок) |
+| `texts` | Тексты модалки и кнопки |
+| `onSuccess`, `onError` | Колбэки |
+| `disabled` | Скрыть кнопку |
+
+### Экспорты из пакета
+
+`buildDataGridExcelExportSpreadsheet`, `downloadDataGridExcelSpreadsheetFile`, `resolveDataGridExportCellValue`, `formatTableCellExportCellValue`, `convertDataGridColumnsToExportColumns`, типы `DataGridExcelExportConfig`, `DataGridExcelExportCellStyle`, …
+
+Сторис Storybook: **DataGrid › ExcelExport**.
+
+## Скролл и шапка
+
+- **`TableContainerScroll`**: `scrollAreaMaxHeight`, липкая шапка, CSS-переменная **`--plainer-table-header-background`**.
+- **`DataGrid`**: `scrollAreaMaxHeight`, `tableHeaderVariant`, `tableHeaderBackground`, единый фон `headerToolbar` со шапкой.
+
+## Практический старт
+
+1. Начните с `Table` для MVP.
+2. По мере роста требований переходите на `DataGrid` для конкретных экранов.
+3. Для однотипного отображения ячеек предпочитайте **`columns[].format`** вместо дублирования `render`.
+4. Для выгрузки больших таблиц — **`excelExport.dataFetcher`** и `enum` с `exportStyle` для статусов.
+
+## См. также
+
+- [Справочник компонентов](/docs/web/v_0.2.8/components-catalog) — полный список экспортов таблицы и DataGrid
+- [Changelog](/docs/web/v_0.2.8/changelog) — **0.2.0**: split-layout скролла, Excel, **SliderInput range**
+- Storybook: **Components/Data Display/Table**, **Components/Data Display/DataGrid**

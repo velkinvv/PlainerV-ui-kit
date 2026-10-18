@@ -1,0 +1,107 @@
+---
+title: Quick Start
+description: Быстрый старт по подключению @velkinvv/plainerv в Web-проект
+---
+
+# Quick Start
+
+Эта страница — короткий старт для `v0.3.3`, чтобы быстро подключить библиотеку и получить рабочий UI.
+
+> При сборке кита из исходников: если в окружении задан `NODE_ENV=production`, выполните `npm ci --include=dev` (иначе dev-зависимости, в том числе Rollup, не установятся).
+
+## 1) Установка
+
+Пакет объявляет **peer dependencies** — установите кит вместе с React, styled-components и Framer Motion:
+
+```bash
+npm i @velkinvv/plainerv@0.3.3 react react-dom styled-components framer-motion
+```
+
+| Пакет | Peer |
+| --- | --- |
+| `react`, `react-dom` | `^18.0.0 \|\| ^19.0.0` |
+| `styled-components` | `^6.1.0` |
+| `framer-motion` | `^11.0.0` |
+
+## 2) Vite (если используете)
+
+Подключите плагин из `@velkinvv/plainerv/vite`, чтобы не получить две копии `styled-components` и ошибку `o2 is not a function`:
+
+```ts
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
+import { plainervVite } from '@velkinvv/plainerv/vite';
+
+export default defineConfig({
+  plugins: [react(), plainervVite()],
+});
+```
+
+Подробности — на странице [Vite](/docs/web/v_0.3.3/vite).
+
+## 3) Стили и шрифты
+
+Подключите CSS пакета **до** или вместе с первым рендером компонентов:
+
+```tsx
+import '@velkinvv/plainerv/styles';
+```
+
+Алиас: `@velkinvv/plainerv/dist/styles.css`. Webpack / Next.js — [Интеграции](/docs/web/v_0.3.3/integrations).
+
+## 4) Подключение темы в корне приложения
+
+```tsx
+import { ThemeProvider, ThemeToggle } from '@velkinvv/plainerv';
+
+type ApplicationRootProps = {
+  children: React.ReactNode;
+};
+
+export function ApplicationRoot({ children }: ApplicationRootProps) {
+  return (
+    <ThemeProvider>
+      <ThemeToggle />
+      {children}
+    </ThemeProvider>
+  );
+}
+```
+
+Несколько кастомных тем (бренд, «океан» и т.д.) — каталог через `defineThemeCatalog` и `ThemeSelector`: [Theming](/docs/web/v_0.3.3/theming).
+
+## 5) Первый рабочий экран
+
+```tsx
+import { Button, Card, Input } from '@velkinvv/plainerv';
+
+export function QuickStartDemo() {
+  return (
+    <Card>
+      <Input label="Email" placeholder="team@plainerv.dev" />
+      <Button variant="primary">Сохранить</Button>
+    </Card>
+  );
+}
+```
+
+## Входные параметры ключевых компонентов
+
+- `ThemeProvider.children: React.ReactNode` — дерево приложения внутри темы;
+- `Input.label?: React.ReactNode` — подпись поля;
+- `Input.placeholder?: string` — текст-подсказка в пустом состоянии;
+- `Button.variant?: ButtonVariant` — визуальный вариант кнопки;
+- `Button.children?: React.ReactNode` — содержимое кнопки.
+
+## Дальше
+
+- Vite — [Vite](/docs/web/v_0.3.3/vite);
+- тема — [Theming](/docs/web/v_0.3.3/theming);
+- API — `Button`, `Input + Select`, `Table + DataGrid`.
+
+## См. также
+
+- [Vite](/docs/web/v_0.3.3/vite)
+- [Theming](/docs/web/v_0.3.3/theming)
+- [Button](/docs/web/v_0.3.3/components-button)
+- [Input + Select](/docs/web/v_0.3.3/components-input-select)

@@ -1,0 +1,46 @@
+﻿---
+title: Architecture
+description: Reference for Architecture
+---
+
+# Architecture
+
+The mobile part consists of three packages that separate the theme, business logic and UI.
+
+## Packages
+
+- `@plainerV/ui-themes` — theme, tokens, color schemes;
+- `@plainerV/ui-core` - types, enumerations, general logic;
+- `@plainerV/ui-native` — React Native components.
+
+## Dependencies between packages
+
+- `ui-themes` does not depend on `ui-native`;
+- `ui-core` uses `ui-themes`;
+- `ui-native` uses `ui-core` and `ui-themes`.
+
+## Layer Best Practices
+
+- place components and screen styles in a separate feature module;
+- move form validation to separate helpers or handlers;
+- use enums and types from `ui-core` as a single source of truth for props.
+
+## When to change layer
+
+- change `ui-themes` if you need to change design tokens;
+- change `ui-core` if a common type/logic is required, reused in web and native;
+- change `ui-native` if you need the behavior/visual of a specific RN component.
+
+## Main input parameters
+
+- `ThemeProvider.initialTheme` — object of the starting theme for the mobile tree;
+- enums from `@plainerV/ui-core` (`ButtonVariant`, `Size` and others) - a single props contract;
+- types from `@plainerV/ui-themes` - a unified typing of tokens for web/mobile.
+
+## See also
+
+- [Quick Start](/docs/en/mobile/v_0.1.0/quick-start)
+- [Theming](/docs/en/mobile/v_0.1.0/theming)
+
+
+

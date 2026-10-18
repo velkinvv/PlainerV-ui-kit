@@ -1,0 +1,10 @@
+{
+  "version": "v_0.3.4",
+  "component": "alert",
+  "exampleId": "basic-success",
+  "title": "Базовый success",
+  "description": "Минимальная конфигурация уведомления.",
+  "code": "<Alert severity=\"success\" title=\"Успешно\">Операция выполнена.</Alert>",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:20.057Z"
+}

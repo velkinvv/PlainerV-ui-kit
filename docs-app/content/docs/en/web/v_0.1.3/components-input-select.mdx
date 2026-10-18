@@ -1,0 +1,141 @@
+---
+title: Components Input Select
+description: Reference for Input Select
+---
+
+# Input + Select
+
+Below are starting examples of input and selection fields for forms.
+
+## Interactive examples
+
+<InputSelectInteractiveExamples />
+
+## Simple Input
+
+```tsx
+import { Input } from '@velkinvv/plainerv';
+
+export function InputDemo() {
+  return (
+    <Input
+      label="Project name"
+      placeholder="Enter a name"
+      helperText="This field will be visible in the command interface"
+    />
+  );
+}
+```
+
+## Input with validation
+
+```tsx
+import { Input } from '@velkinvv/plainerv';
+
+type EmailFieldProps = {
+  emailValue: string;
+  emailErrorText?: string;
+  onEmailChange: (nextEmailValue: string) => void;
+};
+
+export function EmailField({
+  emailValue,
+  emailErrorText,
+  onEmailChange,
+}: EmailFieldProps) {
+  return (
+    <Input
+      label="Work email"
+      value={emailValue}
+      onChange={(event) => onEmailChange(event.target.value)}
+      error={emailErrorText}
+      status={emailErrorText ? 'error' : undefined}
+    />
+  );
+}
+```
+
+## Select in `select` mode
+
+```tsx
+import { Select } from '@velkinvv/plainerv';
+
+const statusOptions = [
+  { label: 'Backlog', value: 'backlog' },
+  { label: 'In Progress', value: 'in_progress' },
+  { label: 'Done', value: 'done' },
+];
+
+export function StatusSelect() {
+  return (
+    <Select
+      label="Task status"
+      mode="select"
+      options={statusOptions}
+      placeholder="Select status"
+      onSelectedChange={(nextStatusValue) => {
+        if (typeof nextStatusValue === 'string') {
+          console.log('Selected status:', nextStatusValue);
+        }
+      }}
+    />
+  );
+}
+```
+
+## Main input parameters
+
+### Input
+
+- `label?: React.ReactNode` — input field label;
+- `placeholder?: string` — hint in an empty field;
+- `value?: string` — controlled field value;
+- `defaultValue?: string` — initial value in uncontrolled mode;
+- `onChange?: React.ChangeEventHandler<HTMLInputElement>` - change handler;
+- `name?: string` — name of the field in the form;
+- `type?: string` — native input type (`text`, `email`, `password` and others);
+- `disabled?: boolean` — block editing;
+- `required?: boolean` — field required;
+- `error?: string` — error text;
+- `helperText?: string` — helper text under the field;
+- `status?: 'error' | 'success' | 'warning'` — field registration status;
+- `variant?: TextInputVariant` — field display option;
+- `size?: Size` — field size;
+- `leftIcon?: React.ReactNode` - icon to the left of the value;
+- `rightIcon?: React.ReactNode` - the icon to the right of the value.
+
+### Select
+
+- `mode?: 'native' | 'select' | 'searchSelect'` — component operation mode;
+- `options: SelectOption[]` — list of options;
+- `value?: string | string[]` — selected values;
+- `defaultValue?: string | string[]` — initial selected value;
+- `onSelectedChange?: (nextValue: string | string[]) => void` — main selection handler;
+- `placeholder?: string` — text for empty selection;
+- `label?: React.ReactNode` — field label;
+- `name?: string` — name of the form field;
+- `disabled?: boolean` — selection blocking;
+- `searchable?: boolean` — enable search in panel modes;
+- `multiple?: boolean` — enable multi-selection;
+- `error?: string` — error text;
+- `helperText?: string` — helper text;
+- `status?: 'error' | 'success' | 'warning'` — registration status;
+- `searchPlaceholder?: string` — placeholder for the search field;
+- `searchValue?: string` — controlled search string;
+- `onSearch?: (query: string, searchFormat?: SearchFormat) => void` — search input handler;
+- `clearInputValueAfterSelect?: boolean` — clear the search string after selecting an option;
+- `clearIconProps?: Partial<IconProps>` — setting the clear icon;
+- `dropdownVariant?: 'default' | 'elevated' | 'outlined'` — design of the drop-down panel;
+- `menuMaxHeight?: string | number` — maximum height of the list;
+- `virtualScroll?: DropdownVirtualScrollConfig` - virtual scroll parameters;
+- `renderTopPanel?: (props) => React.ReactNode` - custom top menu panel;
+- `renderBottomPanel?: (props) => React.ReactNode` - custom bottom menu panel.
+
+## See also
+
+- [Quick Start](/docs/en/web/v_0.1.3/quick-start)
+- [Button](/docs/en/web/v_0.1.3/components-button)
+- [Form](/docs/en/web/v_0.1.3/components-form)
+
+
+

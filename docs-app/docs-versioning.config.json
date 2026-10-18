@@ -1,0 +1,202 @@
+{
+  "platforms": [
+    {
+      "id": "web",
+      "label": "Web",
+      "repository": {
+        "owner": "velkinvv",
+        "name": "PlainerV-ui-kit"
+      },
+      "defaultVersionId": "v_0.3.4",
+      "versions": [
+        {
+          "id": "v_0.3.4",
+          "label": "v0.3.4",
+          "live": true,
+          "gitReference": "v_0.3.4",
+          "sourceFiles": ["README.md", "CHANGELOG.md"]
+        },
+        {
+          "id": "v_0.3.3",
+          "label": "v0.3.3",
+          "live": false,
+          "gitReference": "v_0.3.3",
+          "sourceFiles": ["README.md", "CHANGELOG.md"]
+        },
+        {
+          "id": "v_0.3.2",
+          "label": "v0.3.2",
+          "live": false,
+          "gitReference": "v_0.3.2",
+          "sourceFiles": ["README.md", "CHANGELOG.md"]
+        },
+        {
+          "id": "v_0.3.1",
+          "label": "v0.3.1",
+          "live": false,
+          "gitReference": "v_0.3.1",
+          "sourceFiles": ["README.md", "CHANGELOG.md"]
+        },
+        {
+          "id": "v_0.3.0",
+          "label": "v0.3.0",
+          "live": false,
+          "gitReference": "v_0.3.0",
+          "sourceFiles": ["README.md", "CHANGELOG.md"]
+        },
+        {
+          "id": "v_0.2.9",
+          "label": "v0.2.9",
+          "live": false,
+          "gitReference": "v_0.2.9",
+          "sourceFiles": ["README.md", "CHANGELOG.md"]
+        },
+        {
+          "id": "v_0.2.8",
+          "label": "v0.2.8",
+          "live": false,
+          "gitReference": "v_0.2.8",
+          "sourceFiles": ["README.md", "CHANGELOG.md"]
+        },
+        {
+          "id": "v_0.2.7",
+          "label": "v0.2.7",
+          "live": false,
+          "gitReference": "v_0.2.7",
+          "sourceFiles": ["README.md", "CHANGELOG.md"]
+        },
+        {
+          "id": "v_0.2.6",
+          "label": "v0.2.6",
+          "live": false,
+          "gitReference": "v_0.2.6",
+          "sourceFiles": ["README.md", "CHANGELOG.md"]
+        },
+        {
+          "id": "v_0.2.5",
+          "label": "v0.2.5",
+          "live": false,
+          "gitReference": "v_0.2.5",
+          "sourceFiles": ["README.md", "CHANGELOG.md"]
+        },
+        {
+          "id": "v_0.2.4",
+          "label": "v0.2.4",
+          "live": false,
+          "gitReference": "v_0.2.4",
+          "sourceFiles": ["README.md", "CHANGELOG.md"]
+        },
+        {
+          "id": "v_0.2.3",
+          "label": "v0.2.3",
+          "live": false,
+          "gitReference": "v_0.2.3",
+          "sourceFiles": ["README.md", "CHANGELOG.md"]
+        },
+        {
+          "id": "v_0.2.2",
+          "label": "v0.2.2",
+          "live": false,
+          "gitReference": "v_0.2.2",
+          "sourceFiles": ["README.md", "CHANGELOG.md"]
+        },
+        {
+          "id": "v_0.2.1",
+          "label": "v0.2.1",
+          "live": false,
+          "gitReference": "v_0.2.1",
+          "sourceFiles": ["README.md", "CHANGELOG.md"]
+        },
+        {
+          "id": "v_0.2.0",
+          "label": "v0.2.0",
+          "live": false,
+          "gitReference": "v_0.2.0",
+          "sourceFiles": ["README.md", "CHANGELOG.md"]
+        },
+        {
+          "id": "v_0.1.9",
+          "label": "v0.1.9",
+          "live": false,
+          "gitReference": "v_0.1.9",
+          "sourceFiles": ["README.md", "CHANGELOG.md"]
+        },
+        {
+          "id": "v_0.1.8",
+          "label": "v0.1.8",
+          "live": false,
+          "gitReference": "v_0.1.8",
+          "sourceFiles": ["README.md", "CHANGELOG.md"]
+        },
+        {
+          "id": "v_0.1.7",
+          "label": "v0.1.7",
+          "live": false,
+          "gitReference": "v_0.1.7",
+          "sourceFiles": ["README.md", "CHANGELOG.md"]
+        },
+        {
+          "id": "v_0.1.6",
+          "label": "v0.1.6",
+          "live": false,
+          "gitReference": "v_0.1.6",
+          "sourceFiles": ["README.md", "CHANGELOG.md"]
+        },
+        {
+          "id": "v_0.1.5",
+          "label": "v0.1.5",
+          "live": false,
+          "gitReference": "v_0.1.5",
+          "sourceFiles": ["README.md", "CHANGELOG.md"]
+        },
+        {
+          "id": "v_0.1.3",
+          "label": "v0.1.3",
+          "live": false,
+          "gitReference": "v_0.1.3",
+          "sourceFiles": ["README.md", "CHANGELOG.md"]
+        },
+        {
+          "id": "v_0.1.2",
+          "label": "v0.1.2",
+          "live": false,
+          "gitReference": "v_0.1.2",
+          "sourceFiles": ["README.md", "CHANGELOG.md"]
+        },
+        {
+          "id": "v_0.1",
+          "label": "v0.1",
+          "live": false,
+          "gitReference": "v_0.1",
+          "sourceFiles": ["README.md", "CHANGELOG.md"]
+        },
+        {
+          "id": "v2",
+          "label": "v2 (legacy)",
+          "live": false,
+          "gitReference": "v2",
+          "sourceFiles": ["src/components/ui/Button/Button.tsx", "src/components/ui/inputs/Input/Input.tsx"]
+        },
+        {
+          "id": "v1",
+          "label": "v1 (legacy)",
+          "live": false,
+          "gitReference": "v1",
+          "sourceFiles": ["src/components/ui/Button/Button.tsx", "src/components/ui/inputs/Input/Input.tsx"]
+        }
+      ]
+    }
+  ],
+  "locales": [
+    {
+      "id": "ru",
+      "label": "Русский",
+      "default": true
+    },
+    {
+      "id": "en",
+      "label": "English",
+      "default": false
+    }
+  ]
+}

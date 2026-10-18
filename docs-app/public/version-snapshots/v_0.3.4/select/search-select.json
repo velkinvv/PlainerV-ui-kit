@@ -1,0 +1,10 @@
+{
+  "version": "v_0.3.4",
+  "component": "select",
+  "exampleId": "search-select",
+  "title": "SearchSelect",
+  "description": "Режим поиска в поле-триггере.",
+  "code": "<Select mode=\"searchSelect\" label=\"Город\" options={languageOptions} placeholder=\"Начните ввод\" />",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:27.110Z"
+}

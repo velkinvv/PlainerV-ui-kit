@@ -1,0 +1,27 @@
+{
+  "title": "v0.1.0",
+  "defaultOpen": true,
+  "pages": [
+    "group-overview",
+    "quick-start",
+    "readme",
+    "installation",
+    "examples",
+    "group-layout",
+    "architecture",
+    "group-inputs",
+    "components-button-input",
+    "forms-validation",
+    "group-data-display",
+    "components-card-typography",
+    "components-list",
+    "group-surfaces",
+    "components-modal",
+    "group-navigation",
+    "components-tabs",
+    "group-feedback",
+    "components-toast",
+    "group-utils",
+    "theming"
+  ]
+}

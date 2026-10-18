@@ -1,0 +1,197 @@
+---
+title: SliderInput
+description: Числовое поле со встроенным слайдером и режимом диапазона (range) в v0.2.2
+---
+
+# SliderInput
+
+**SliderInput** — поле в оболочке **Input** со встроенным **Slider** (одно значение) или **RangeSlider** (диапазон «от / до»). Подходит для фильтров, форм настроек и сценариев, где нужен и точный ввод числа, и перетаскивание по шкале.
+
+Интерактивные примеры — в Storybook: **UI Kit → Inputs → SliderInput**.
+
+## Импорт и типы
+
+```tsx
+import {
+  SliderInput,
+  type SliderInputProps,
+  type SliderInputSingleProps,
+  type SliderInputRangeProps,
+} from '@velkinvv/plainerv';
+```
+
+| Тип | Когда использовать |
+|-----|-------------------|
+| `SliderInputSingleProps` | `range` не задан или `false` — одно число |
+| `SliderInputRangeProps` | `range={true}` — пара `[от, до]` |
+| `SliderInputProps` | Union обоих режимов (дискриминатор — `range`) |
+
+Паттерн **`range`** такой же, как у **DateInput** / **TimeInput**: один проп переключает тип `value` и `onChange`.
+
+## Одиночное значение
+
+```tsx
+import { useState } from 'react';
+import { SliderInput } from '@velkinvv/plainerv';
+
+type VolumeSliderProps = {
+  volumeLevel?: number;
+  onVolumeLevelChange?: (nextVolumeLevel: number) => void;
+};
+
+export function VolumeSlider({
+  volumeLevel,
+  onVolumeLevelChange,
+}: VolumeSliderProps) {
+  const [internalLevel, setInternalLevel] = useState(42);
+
+  const isControlled = volumeLevel !== undefined;
+  const currentLevel = isControlled ? volumeLevel : internalLevel;
+  const handleLevelChange = onVolumeLevelChange ?? setInternalLevel;
+
+  return (
+    <SliderInput
+      label="Громкость"
+      min={0}
+      max={100}
+      step={1}
+      value={currentLevel}
+      onChange={handleLevelChange}
+      helperText="Перетащите бегунок или введите число"
+      displayClearIcon
+      fullWidth
+    />
+  );
+}
+```
+
+### Основные пропсы (одиночный режим)
+
+| Проп | Тип | Описание |
+|------|-----|----------|
+| `value` | `number` | Контролируемое значение |
+| `defaultValue` | `number` | Начальное значение |
+| `onChange` | `(value: number) => void` | После изменения слайдера или поля |
+| `min`, `max`, `step` | `number` | Шкала (по умолчанию `0`, `100`, `1`) |
+| `name` | `string` | Скрытое поле для отправки формы |
+| `showNumberField` | `boolean` | Поле ввода числа (по умолчанию `true`) |
+| `showScaleLabels` | `boolean` | Подписи min/max под рамкой |
+| `showValueLabel` | `boolean` | Подпись под бегунком, если поле числа скрыто |
+| `numberPlaceholder` | `string` | Плейсхолдер поля числа |
+| `formatValue` | `(n: number) => string` | Формат отображения (как у **Slider**) |
+| `sliderSize` | `Size` | Размер трека/бегунка; по умолчанию = `size` поля |
+| `displayClearIcon` | `boolean` | Сброс к `min` |
+
+Наследуются все пропсы **Input**: `label`, `helperText`, `error`, `success`, `status`, `disabled`, `readOnly`, `required`, `skeleton`, `isLoading`, иконки, `variant` и др.
+
+## Диапазон (`range={true}`)
+
+```tsx
+import { useState } from 'react';
+import { SliderInput } from '@velkinvv/plainerv';
+
+type PriceRangeFilterProps = {
+  priceBounds?: readonly [number, number];
+  onPriceBoundsChange?: (nextPriceBounds: readonly [number, number]) => void;
+};
+
+export function PriceRangeFilter({
+  priceBounds,
+  onPriceBoundsChange,
+}: PriceRangeFilterProps) {
+  const [internalBounds, setInternalBounds] = useState<readonly [number, number]>([
+    10_000, 60_000,
+  ]);
+
+  const isControlled = priceBounds !== undefined;
+  const currentBounds = isControlled ? priceBounds : internalBounds;
+  const handleBoundsChange = onPriceBoundsChange ?? setInternalBounds;
+
+  return (
+    <SliderInput
+      label="Цена"
+      range
+      min={0}
+      max={100_000}
+      step={1_000}
+      value={currentBounds}
+      onChange={handleBoundsChange}
+      rangeFromLabel="От:"
+      rangeToLabel="До:"
+      displayClearIcon
+      fullWidth
+      helperText="Два бегунка и поля «от» / «до»"
+    />
+  );
+}
+```
+
+### Основные пропсы (range)
+
+| Проп | Тип | Описание |
+|------|-----|----------|
+| `range` | `true` | Обязательный флаг режима диапазона |
+| `value` | `readonly [number, number]` | Контролируемая пара |
+| `defaultValue` | `readonly [number, number]` | Начальная пара |
+| `onChange` | `(value: readonly [number, number]) => void` | Новая упорядоченная пара |
+| `nameFrom`, `nameTo` | `string` | Скрытые поля формы для «от» и «до» |
+| `rangeFromLabel`, `rangeToLabel` | `ReactNode` | Подписи перед полями (по умолчанию «От:» / «До:») |
+| `numberFromPlaceholder`, `numberToPlaceholder` | `string` | Плейсхолдеры полей |
+
+Очистка (**`displayClearIcon`**) сбрасывает пару к **`[min, min]`**.
+
+Вёрстка range: две половины сетки «от» и «до», разделитель «—» по центру, общий встроенный трек с двумя бегунками.
+
+## Шкала и форматирование
+
+```tsx
+const formatRub = (value: number) =>
+  `${new Intl.NumberFormat('ru-RU').format(value)} ₽`;
+
+<SliderInput
+  label="Бюджет"
+  min={0}
+  max={2_000_000}
+  step={50_000}
+  defaultValue={750_000}
+  formatValue={formatRub}
+  formatMinLabel={() => '0 ₽'}
+  formatMaxLabel={() => '2 млн ₽'}
+  fullWidth
+/>;
+```
+
+Дополнительно: **`trackRailHeightPx`**, **`trackActiveHeightPx`** — явная толщина линий трека; **`numberFieldWidth`** — ширина колонки числа.
+
+## Компактный режим (без полей числа)
+
+```tsx
+<SliderInput
+  label="Заполненность"
+  showNumberField={false}
+  showValueLabel
+  formatValue={(value) => `${value} %`}
+  defaultValue={65}
+  min={0}
+  max={100}
+  fullWidth
+/>
+```
+
+## Состояния
+
+Поведение как у **Input** и встроенного **Slider**:
+
+- **`error`** / **`success`** / **`status`** (`error` | `success` | `warning`) — цвет активного сегмента трека и обводки
+- **`disabled`**, **`readOnly`**, **`required`**
+- **`skeleton`**, **`isLoading`**
+
+## Связанные компоненты
+
+| Компонент | Зачем |
+|-----------|--------|
+| **Slider**, **RangeSlider** | Слайдер без оболочки Input (только трек) |
+| **DateInput**, **TimeInput** | Тот же паттерн `range`, другой тип значения |
+| **Input** | Общая оболочка, маски и состояния поля |
+
+См. также: [Inputs](/docs/web/v_0.2.2/group-inputs), [Справочник компонентов](/docs/web/v_0.2.2/components-catalog).

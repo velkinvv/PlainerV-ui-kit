@@ -1,0 +1,110 @@
+---
+title: Button
+description: Основные сценарии использования Button в версии v0.2.9
+---
+
+# Button
+
+`Button` — базовый компонент действий. Ниже минимальный набор рабочих сценариев для `v0.2.9`.
+
+## Интерактивные примеры
+
+Используйте панель ниже, чтобы проверить поведение кнопки с разными пропсами в реальном времени.
+
+<ButtonInteractiveExamples />
+
+## Базовые варианты
+
+```tsx
+import { Button } from '@velkinvv/plainerv';
+
+export function ButtonVariantsDemo() {
+  return (
+    <section>
+      <Button variant="primary">Primary</Button>
+      <Button variant="secondary">Secondary</Button>
+      <Button variant="ghost">Ghost</Button>
+      <Button variant="danger">Danger</Button>
+    </section>
+  );
+}
+```
+
+## Размеры
+
+```tsx
+import { Button } from '@velkinvv/plainerv';
+
+export function ButtonSizesDemo() {
+  return (
+    <section>
+      <Button size="sm">Small</Button>
+      <Button size="md">Medium</Button>
+      <Button size="lg">Large</Button>
+    </section>
+  );
+}
+```
+
+## Состояния
+
+```tsx
+import { Button } from '@velkinvv/plainerv';
+
+export function ButtonStatesDemo() {
+  return (
+    <section>
+      <Button loading>Загрузка</Button>
+      <Button disabled>Отключена</Button>
+      <Button fullWidth>На всю ширину контейнера</Button>
+    </section>
+  );
+}
+```
+
+## Основные входные параметры
+
+- `variant?: ButtonVariant` — визуальный стиль кнопки (`primary`, `secondary`, `ghost`, `danger` и другие);
+- `size?: Size` — размер кнопки;
+- `loading?: boolean` — состояние загрузки;
+- `disabled?: boolean` — блокировка взаимодействия;
+- `fullWidth?: boolean` — растяжение на ширину контейнера;
+- `iconStart?: React.ReactNode` — иконка в начале кнопки;
+- `iconEnd?: React.ReactNode` — иконка в конце кнопки.
+
+## Полное описание пропсов Button
+
+### Специфичные для Button
+
+- `variant?: ButtonVariant` — вариант визуального оформления;
+- `size?: Size` — размер кнопки;
+- `iconStart?: React.ReactNode` — иконка слева от текста;
+- `iconEnd?: React.ReactNode` — иконка справа от текста;
+- `showTooltip?: boolean` — включение tooltip для кнопки;
+- `tooltipText?: string` — текст tooltip;
+- `href?: string` — если задано, кнопка рендерится как `<a>`;
+- `target?: React.HTMLAttributeAnchorTarget` — цель перехода при `href`;
+- `rel?: string` — значение `rel` для ссылки;
+- `download?: string | boolean` — атрибут скачивания для ссылки.
+
+### Базовые пропсы кнопки (BaseButtonProps)
+
+- `loading?: boolean` — состояние загрузки;
+- `disabled?: boolean` — блокировка взаимодействия;
+- `fullWidth?: boolean` — растягивание на ширину контейнера;
+- `rounded?: boolean` — скруглённая форма кнопки.
+
+### Нативные HTML-пропсы
+
+`Button` расширяет `React.ButtonHTMLAttributes<HTMLButtonElement>`, поэтому поддерживает стандартные атрибуты:
+
+- `type?: 'button' | 'submit' | 'reset'`
+- `onClick?: React.MouseEventHandler<HTMLButtonElement>`
+- `aria-*`, `data-*`, `name`, `value`, `tabIndex` и другие стандартные поля.
+
+## См. также
+
+- [DropMenu + MultiButton](/docs/web/v_0.2.9/components-drop-menu-multi-button) — split-кнопка и выпадающее меню
+- [SegmentedControl + Pulse](/docs/web/v_0.2.9/components-segmented-pulse) — сегментированный контрол
+- [Quick Start](/docs/web/v_0.2.9/quick-start)
+- [Input + Select](/docs/web/v_0.2.9/components-input-select)

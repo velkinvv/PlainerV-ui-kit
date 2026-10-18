@@ -1,0 +1,52 @@
+﻿---
+title: Components Modal
+description: Reference for Modal
+---
+
+# Modal
+
+`Modal` is used for confirmations and scenarios where you need to focus the user on one action.
+
+## Basic example
+
+```tsx
+import React, { useState } from 'react';
+import { Button, Modal, Typography } from '@plainerV/ui-native';
+import { ButtonVariant } from '@plainerV/ui-core';
+
+export function RemoveProjectModalExample() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  return (
+    <>
+      <Button variant={ButtonVariant.DANGER} onPress={() => setIsModalOpen(true)}>
+        Delete project      </Button>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Delete the project?"
+        description="This action cannot be undone."
+      >
+        <Typography variant="body">Confirm deletion of the project.</Typography>
+      </Modal>
+    </>
+  );
+}
+```
+
+## Main input parameters
+
+- `isOpen: boolean` — the state of opening the modal window;
+- `onClose: () => void` — closing handler;
+- `title?: string` — title;
+- `description?: string` — description;
+- `children?: React.ReactNode` - content of the modal window.
+
+## See also
+
+- [Forms + Validation](/docs/en/mobile/v_0.1.0/forms-validation)
+- [Toast](/docs/en/mobile/v_0.1.0/components-toast)
+
+
+

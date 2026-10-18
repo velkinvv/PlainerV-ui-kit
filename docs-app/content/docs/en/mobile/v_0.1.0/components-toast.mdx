@@ -1,0 +1,44 @@
+﻿---
+title: Components Toast
+description: Reference for Toast
+---
+
+# Toast
+
+`Toast` use for short feedback after user actions.
+
+## Basic example
+
+```tsx
+import React from 'react';
+import { Button, useToast } from '@plainerV/ui-native';
+import { ButtonVariant } from '@plainerV/ui-core';
+
+export function SaveWithToastButton() {
+  const { showToast } = useToast();
+
+  const handleSavePress = () => {
+    showToast('Changelog saved', 'success', 'Ready');
+  };
+
+  return (
+    <Button variant={ButtonVariant.PRIMARY} onPress={handleSavePress}>
+      Save    </Button>
+  );
+}
+```
+
+## Main input parameters
+
+- `message: string` — the main text of the notification;
+- `type?: 'success' | 'error' | 'warning' | 'info' | 'neutral'` — notification type;
+- `title?: string` — title;
+- `duration?: number` — display duration in milliseconds.
+
+## See also
+
+- [Forms + Validation](/docs/en/mobile/v_0.1.0/forms-validation)
+- [Modal](/docs/en/mobile/v_0.1.0/components-modal)
+
+
+

@@ -1,0 +1,88 @@
+---
+title: SegmentedControl + Pulse
+description: Сегментированный контрол и статусная точка в версии v0.2.7
+---
+
+# SegmentedControl + Pulse
+
+**SegmentedControl** — склеенная группа сегментов (single / multiple). **Pulse** — статусная точка с волной (онлайн / активность).
+
+Интерактив — Storybook: **UI Kit → Buttons → SegmentedControl**, **UI Kit → Feedback → Pulse**.
+
+## SegmentedControl
+
+```tsx
+import { SegmentedControl } from '@velkinvv/plainerv';
+
+export function ViewModeControl() {
+  return (
+    <SegmentedControl
+      appearance="outline"
+      defaultValue="list"
+      ariaLabel="Вид"
+      onChange={(nextValue) => console.log(nextValue)}
+    >
+      <SegmentedControl.Item value="list">Список</SegmentedControl.Item>
+      <SegmentedControl.Item value="grid">Сетка</SegmentedControl.Item>
+      <SegmentedControl.Item value="table">Таблица</SegmentedControl.Item>
+    </SegmentedControl>
+  );
+}
+```
+
+Data-driven режим:
+
+```tsx
+import { SegmentedControl } from '@velkinvv/plainerv';
+
+export function PeriodControl() {
+  return (
+    <SegmentedControl
+      ariaLabel="Период"
+      defaultValue="day"
+      options={[
+        { value: 'day', label: 'День' },
+        { value: 'week', label: 'Неделя' },
+        { value: 'month', label: 'Месяц', disabled: true },
+      ]}
+    />
+  );
+}
+```
+
+### Основные входные параметры
+
+- `appearance?: 'outline' | 'filled'`;
+- `size?: Size` — `SM` | `MD` | `LG`;
+- `selectionMode?: 'single' | 'multiple'`;
+- `value` / `defaultValue` / `onChange` — controlled / uncontrolled;
+- `options?: SegmentedControlOption[]` — приоритет над children, если непустой;
+- `children` — составной API через `SegmentedControl.Item`;
+- `ariaLabel?`, `fullWidth?`, `name?`.
+
+У сегмента / option: `leftIcon` / `rightIcon`, `loading`, `disabled`, `displayAsSquare`.
+
+**Отличия:** `ButtonGroup` (`selectable`) — группа обычных кнопок; `Tabs` — навигация по панелям.
+
+## Pulse
+
+```tsx
+import { Pulse } from '@velkinvv/plainerv';
+
+export function OnlinePulse() {
+  return (
+    <section>
+      <Pulse status="success" size="md" />
+      <Pulse customColors={{ background: '#7c3aed' }} size="lg" />
+    </section>
+  );
+}
+```
+
+### Основные входные параметры
+
+- `size?: Size` — `SM` | `MD` | `LG` (диаметр точки);
+- `status?: PulseStatus` — `info` | `success` | `warning` | `danger`;
+- `customColors?: { background?: string }` — перекрывает `status`.
+
+По умолчанию `aria-hidden`. При `prefers-reduced-motion` волна отключается. Не путать со **Spinner** (загрузка процесса).

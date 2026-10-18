@@ -1,0 +1,43 @@
+---
+title: Modal
+description: Модальные окна в версии v0.1
+---
+
+# Modal
+
+`Modal` используйте для подтверждения действий и коротких форм.
+
+```tsx
+import { Button, Modal } from '@velkinvv/plainerv';
+
+type RemoveModalProps = {
+  isModalOpen: boolean;
+  onModalClose: () => void;
+};
+
+export function RemoveModal({ isModalOpen, onModalClose }: RemoveModalProps) {
+  return (
+    <Modal
+      isOpen={isModalOpen}
+      onClose={onModalClose}
+      title="Удалить запись?"
+      description="Это действие нельзя отменить."
+    >
+      <Button variant="danger">Удалить</Button>
+    </Modal>
+  );
+}
+```
+
+## Основные входные параметры
+
+- `isOpen: boolean` — состояние открытия окна;
+- `onClose: () => void` — обработчик закрытия;
+- `title?: string` — заголовок окна;
+- `description?: string` — поясняющий текст;
+- `children?: React.ReactNode` — контент модального окна.
+
+## См. также
+
+- [Forms + Validation](/docs/web/v_0.1/forms-validation)
+- [Toast + Snackbar](/docs/web/v_0.1/components-toast-snackbar)

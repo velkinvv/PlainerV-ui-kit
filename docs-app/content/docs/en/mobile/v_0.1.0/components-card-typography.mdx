@@ -1,0 +1,49 @@
+﻿---
+title: Components Card Typography
+description: Reference for Card Typography
+---
+
+# Card + Typography
+
+`Card` and `Typography` are the basic combination for list screens, dashboards and entity details.
+
+## Example cards
+
+```tsx
+import React from 'react';
+import { Card, Typography } from '@plainerV/ui-native';
+import { CardVariant } from '@plainerV/ui-core';
+
+export function ProjectSummaryCard() {
+  return (
+    <Card variant={CardVariant.ELEVATED}>
+      <Typography variant="h3">PlainerV Mobile</Typography>
+      <Typography variant="body">Brief description of the status of the mobile platform.</Typography>
+    </Card>
+  );
+}
+```
+
+## Main input parameters
+
+### Card
+
+- `variant?: CardVariant` — visual version of the card;
+- `clickable?: boolean` - interactive mode;
+- `hoverable?: boolean` — hover effect (if applicable in the environment);
+- `onPress?: () => void` — press handler.
+
+### Typography
+
+- `variant?: string` — text variant (`h1...h6`, `body`, `caption`);
+- `color?: string` — text color;
+- `align?: 'left' | 'center' | 'right'` — alignment;
+- `children: React.ReactNode` - content.
+
+## See also
+
+- [Button + Input](/docs/en/mobile/v_0.1.0/components-button-input)
+- [Tabs](/docs/en/mobile/v_0.1.0/components-tabs)
+
+
+

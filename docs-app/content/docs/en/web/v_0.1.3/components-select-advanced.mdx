@@ -1,0 +1,88 @@
+﻿---
+title: Components Select Advanced
+description: Reference for Select Advanced
+---
+
+# Select Advanced
+
+The `Select` component has two main modes: `select` (custom panel) and `native` (browser native list).
+
+## `select` mode
+
+Suitable for search, multi-select and advanced UX.
+
+```tsx
+import { Select } from '@velkinvv/plainerv';
+
+const assigneeOptions = [
+  { label: 'Anna Petrova', value: 'anna_petrova' },
+  { label: 'Ivan Smirnov', value: 'ivan_smirnov' },
+  { label: 'Mira Lee', value: 'mira_lee' },
+];
+
+type AssigneeSelectProps = {
+  selectedAssigneeValue?: string;
+  onAssigneeChange: (nextAssigneeValue: string) => void;
+};
+
+export function AssigneeSelect({
+  selectedAssigneeValue,
+  onAssigneeChange,
+}: AssigneeSelectProps) {
+  return (
+    <Select
+      label="Executor"
+      mode="select"
+      placeholder="Select artist"
+      options={assigneeOptions}
+      value={selectedAssigneeValue}
+      onSelectedChange={(nextValue) => {
+        if (typeof nextValue === 'string') {
+          onAssigneeChange(nextValue);
+        }
+      }}
+      searchable
+    />
+  );
+}
+```
+
+## `native` mode
+
+Suitable when you need the most native control and predictable behavior on devices.
+
+```tsx
+import { Select } from '@velkinvv/plainerv';
+
+const priorityOptions = [
+  { label: 'Low', value: 'low' },
+  { label: 'Medium', value: 'medium' },
+  { label: 'High', value: 'high' },
+];
+
+export function PriorityNativeSelect() {
+  return (
+    <Select
+      label="Priority"
+      mode="native"
+      options={priorityOptions}
+      defaultValue="medium"
+    />
+  );
+}
+```
+
+## Main input parameters
+
+- `mode: 'select' | 'native'` — component rendering mode;
+- `options: Array<{ label: string; value: string }>` — set of options;
+- `value?: string | string[]` — current selected value;
+- `defaultValue?: string | string[]` — starting value in uncontrolled mode;
+- `onSelectedChange?: (nextValue: string | string[]) => void` — handler for changing selected values;
+- `onValueChange?: (nextValue: string | string[]) => void` - convenient callback for changing the value;
+- `searchable?: boolean` - enables search in `select` mode;
+- `mode?: 'native' | 'select' | 'searchSelect'` — component rendering mode;
+- `multiple?: boolean` - enables multi-selection.
+
+
+

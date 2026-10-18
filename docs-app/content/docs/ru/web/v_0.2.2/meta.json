@@ -1,0 +1,31 @@
+﻿{
+  "title": "v0.2.2",
+  "defaultOpen": true,
+  "pages": [
+    "group-overview",
+    "components-catalog",
+    "quick-start",
+    "vite",
+    "integrations",
+    "readme",
+    "changelog",
+    "group-inputs",
+    "components-input-select",
+    "components-select-advanced",
+    "components-date-calendar",
+    "components-slider-input",
+    "components-form",
+    "group-data-display",
+    "components-table-datagrid",
+    "group-feedback",
+    "components-toast-snackbar",
+    "group-surfaces",
+    "components-button",
+    "components-modal-drawer",
+    "group-navigation",
+    "components-tabs-pagination",
+    "components-floating-menu",
+    "group-utils",
+    "theming"
+  ]
+}

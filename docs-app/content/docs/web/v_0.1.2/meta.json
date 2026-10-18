@@ -1,0 +1,20 @@
+{
+  "title": "v0.1.2",
+  "defaultOpen": true,
+  "pages": [
+    "quick-start",
+    "theming",
+    "components-button",
+    "components-input-select",
+    "components-table-datagrid",
+    "components-tabs-pagination",
+    "components-modal-drawer",
+    "components-toast-snackbar",
+    "components-form",
+    "components-select-advanced",
+    "components-date-calendar",
+    "components-floating-menu",
+    "readme",
+    "changelog"
+  ]
+}

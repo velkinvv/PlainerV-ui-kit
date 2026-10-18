@@ -1,0 +1,66 @@
+﻿---
+title: Table + DataGrid
+description: Основы отображения табличных данных в v0.1.7
+---
+
+# Table + DataGrid
+
+Для табличных сценариев в проекте обычно используют два уровня:
+
+- **`Table`** — простой, статичный и предсказуемый вывод;
+- **`DataGrid`** — интерактивные кейсы: сортировка, пагинация, раскрытие строк, drag колонок/строк, декларативное форматирование ячеек.
+
+## Когда использовать Table
+
+Используйте `Table`, если:
+
+- данных немного;
+- не нужны сложные интерактивные сценарии;
+- важна простая поддержка и предсказуемая вёрстка.
+
+Для форматирования значения без DataGrid — компонент **`TableCellFormatted`** или хелпер **`formatTableCellValue`** из пакета.
+
+## Когда использовать DataGrid
+
+Используйте `DataGrid`, если:
+
+- есть фильтрация, сортировка, пагинация;
+- набор данных большой и нужен быстрый UX;
+- нужны колонки с **`format`** (`TableCellFormat`: ссылки, маски, числа, даты, `mailto:` и т.д.) или кастомный **`render`**.
+
+### Пример колонок с format
+
+```tsx
+import { DataGrid, type DataGridColumn } from '@velkinvv/plainerv';
+
+type Row = { id: string; phone: string; title: string };
+
+const columns: DataGridColumn<Row>[] = [
+  { field: 'phone', headerName: 'Телефон', format: { type: 'phone', country: 'RU' } },
+  {
+    field: 'id',
+    headerName: 'Открыть',
+    valueGetter: (row) => row.title,
+    format: { type: 'link', href: '/items/{id}' },
+  },
+];
+
+<DataGrid rows={rows} columns={columns} getRowId={(row) => row.id} />;
+```
+
+## Скролл и шапка
+
+- **`TableContainerScroll`**: `scrollAreaMaxHeight`, липкая шапка, CSS-переменная **`--plainer-table-header-background`**.
+- **`DataGrid`**: `scrollAreaMaxHeight`, `tableHeaderVariant`, `tableHeaderBackground`, единый фон `headerToolbar` со шапкой.
+
+## Практический старт
+
+1. Начните с `Table` для MVP.
+2. По мере роста требований переходите на `DataGrid` для конкретных экранов.
+3. Для однотипного отображения ячеек предпочитайте **`columns[].format`** вместо дублирования `render`.
+
+## См. также
+
+- [Справочник компонентов](/docs/web/v_0.1.7/components-catalog) — полный список экспортов таблицы и DataGrid
+- [Changelog](/docs/web/v_0.1.7/changelog)
+- Storybook: **Components/Data Display/Table**, **Components/Data Display/DataGrid**

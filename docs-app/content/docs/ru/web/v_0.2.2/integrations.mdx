@@ -1,0 +1,63 @@
+﻿---
+title: Интеграции
+description: Webpack, Next.js и импорт стилей для @velkinvv/plainerv v0.2.2
+---
+
+# Интеграции (Webpack, Next.js, стили)
+
+## Импорт стилей
+
+```tsx
+import '@velkinvv/plainerv/styles';
+```
+
+Алиас (тот же файл): `import '@velkinvv/plainerv/dist/styles.css'`.
+
+Не импортируйте произвольные пути внутри `node_modules` — только экспорты из `package.json`.
+
+## Webpack / CRA
+
+Две копии `react` или `styled-components` дают `Invalid hook call` или ошибки styled-components (аналогично Vite `o2 is not a function`).
+
+```js
+const path = require('path');
+
+module.exports = {
+  resolve: {
+    alias: {
+      react: path.resolve('./node_modules/react'),
+      'react-dom': path.resolve('./node_modules/react-dom'),
+      'styled-components': path.resolve('./node_modules/styled-components'),
+      'framer-motion': path.resolve('./node_modules/framer-motion'),
+    },
+  },
+};
+```
+
+При **pnpm** в monorepo настройте hoisting для `react` и `styled-components`, если кит резолвится в дубликат.
+
+## Next.js (App Router)
+
+- ESM entry кита помечен **`use client`** — импортируйте UI из client-компонентов приложения.
+- В `next.config`:
+
+```js
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  transpilePackages: ['@velkinvv/plainerv'],
+};
+
+module.exports = nextConfig;
+```
+
+- Для SSR со **styled-components** — [registry в документации Next](https://nextjs.org/docs/app/building-your-application/styling/css-in-js).
+- Корень приложения: **`ThemeProvider`**, при Toast/Snackbar — [провайдеры](/docs/web/v_0.2.2/components-toast-snackbar).
+
+## Vite
+
+См. отдельную страницу [Vite](/docs/web/v_0.2.2/vite) и плагин **`plainervVite()`**.
+
+## См. также
+
+- [Quick Start](/docs/web/v_0.2.2/quick-start)
+- [Changelog](/docs/web/v_0.2.2/changelog)

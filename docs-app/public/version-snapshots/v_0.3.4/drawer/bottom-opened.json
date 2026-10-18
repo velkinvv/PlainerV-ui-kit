@@ -1,0 +1,10 @@
+{
+  "version": "v_0.3.4",
+  "component": "drawer",
+  "exampleId": "bottom-opened",
+  "title": "Открыт снизу",
+  "description": "Drawer внизу с ограничением по высоте.",
+  "code": "<Drawer isOpen onClose={() => undefined} placement=\"bottom\" height=\"40vh\" title=\"История\">Контент</Drawer>",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:28.649Z"
+}

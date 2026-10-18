@@ -1,0 +1,10 @@
+{
+  "version": "v_0.3.4",
+  "component": "drawer",
+  "exampleId": "right-opened",
+  "title": "Открыт справа",
+  "description": "Базовый drawer, закреплённый справа.",
+  "code": "<Drawer isOpen onClose={() => undefined} placement=\"right\" title=\"Фильтры\">Контент панели</Drawer>",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:28.295Z"
+}

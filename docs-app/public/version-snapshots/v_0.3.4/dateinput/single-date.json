@@ -1,0 +1,10 @@
+{
+  "version": "v_0.3.4",
+  "component": "dateinput",
+  "exampleId": "single-date",
+  "title": "Одиночная дата",
+  "description": "Базовый сценарий выбора одной даты.",
+  "code": "<DateInput label=\"Дата\" value=\"2026-08-15\" onChange={() => undefined} />",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:22.293Z"
+}

@@ -1,0 +1,116 @@
+﻿---
+title: Forms Validation
+description: Reference for Forms Validation
+---
+
+# Forms + Validation
+
+Recommended approach for forms:
+
+- keep field values ​​in local `state`;
+- move validation into a separate function;
+- store errors separately by field.
+
+## Example login form
+
+```tsx
+import React, { useState } from 'react';
+import { View } from 'react-native';
+import { Button, Input, Typography } from '@plainerV/ui-native';
+import { ButtonVariant, Size } from '@plainerV/ui-core';
+
+type LoginErrorsState = {
+  emailErrorText: string;
+  passwordErrorText: string;
+};
+
+export function LoginForm() {
+  const [emailValue, setEmailValue] = useState('');
+  const [passwordValue, setPasswordValue] = useState('');
+  const [errorsState, setErrorsState] = useState<LoginErrorsState>({
+    emailErrorText: '',
+    passwordErrorText: '',
+  });
+
+  const validateFormValues = (): boolean => {
+    const nextErrorsState: LoginErrorsState = {
+      emailErrorText: '',
+      passwordErrorText: '',
+    };
+
+    if (!emailValue) {
+      nextErrorsState.emailErrorText = 'Email required';
+    } else if (!emailValue.includes('@')) {
+      nextErrorsState.emailErrorText = 'Incorrect email';
+    }
+
+    if (!passwordValue) {
+      nextErrorsState.passwordErrorText = 'Password required';
+    } else if (passwordValue.length < 8) {
+      nextErrorsState.passwordErrorText = 'Minimum 8 characters';
+    }
+
+    setErrorsState(nextErrorsState);
+
+    return !nextErrorsState.emailErrorText && !nextErrorsState.passwordErrorText;
+  };
+
+  const handleSubmitPress = () => {
+    const isFormValid = validateFormValues();
+    if (isFormValid) {
+      console.log('The form is valid, send the request');
+    }
+  };
+
+  return (
+    <View>
+      <Typography variant="h3">Entrance</Typography>
+
+      <Input
+        label="Email"
+        value={emailValue}
+        onChangeText={setEmailValue}
+        error={errorsState.emailErrorText}
+        size={Size.MD}
+      />
+
+      <Input
+        label="Password"
+        value={passwordValue}
+        onChangeText={setPasswordValue}
+        error={errorsState.passwordErrorText}
+        helperText="Minimum 8 characters"
+        secureTextEntry
+        size={Size.MD}
+      />
+
+      <Button variant={ButtonVariant.PRIMARY} onPress={handleSubmitPress}>
+        Login      </Button>
+    </View>
+  );
+}
+```
+
+## What to check before submitting the form
+
+- required fields are filled in;
+- value formats are valid;
+- errors are shown next to the corresponding field;
+- the send button is blocked when resending.
+
+## Main input parameters
+
+- `Input.value?: string` — current field value;
+- `Input.onChangeText?: (nextValue: string) => void` — text change handler;
+- `Input.error?: string` — field error message;
+- `Input.helperText?: string` — helper text;
+- `Button.variant?: ButtonVariant` — submit button option;
+- `Button.onPress?: () => void` - form submission handler.
+
+## See also
+
+- [Button + Input](/docs/en/mobile/v_0.1.0/components-button-input)
+- [Toast](/docs/en/mobile/v_0.1.0/components-toast)
+
+
+

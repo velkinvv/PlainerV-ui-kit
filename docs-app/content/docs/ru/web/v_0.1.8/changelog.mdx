@@ -1,0 +1,140 @@
+﻿---
+title: CHANGELOG
+description: Web (v0.1.8) — синхронизировано из CHANGELOG.md
+---
+
+# CHANGELOG
+
+> Источник: [CHANGELOG.md](https://github.com/velkinvv/PlainerV-ui-kit/blob/v_0.1.8/CHANGELOG.md)
+
+> Платформа: **Web**  
+> Версия: **v0.1.8**
+
+---
+
+# Changelog
+
+Все значимые изменения в этом проекте будут документироваться в этом файле.
+
+Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.0.0/),
+и этот проект придерживается [Semantic Versioning](https://semver.org/lang/ru/).
+
+## [Unreleased]
+
+### Added
+
+- Компонент **Tabs**: объединены сценарии вкладок с панелями и сегментированного переключателя (бывший **Switcher**).
+- Поле **`columns[].format`** у **DataGrid**, **`formatTableCellValue`**, **`TableCellFormatted`**.
+
+### Changed
+
+- **Tabs** (**breaking**): варианты **pill**, **minimal**, **line**, **underline**; проп **filledSegmentTriggers**; убран **Tabs.List**.
+
+---
+
+## [0.1.8] - 2026-05-17
+
+### Fixed
+
+- **`@velkinvv/plainerv/vite`:** реэкспорт `./plainervVite.js` для Node ESM (`vite.config.ts`, Windows).
+- **`plainervVite()`:** `dedupe` и `optimizeDeps.include` для **framer-motion**.
+- **Стили:** экспорт `./dist/styles.css` как алиас.
+- **Next.js App Router:** `use client` в `dist/index.esm.js`.
+
+### Added
+
+- README: **Webpack / CRA**, **Next.js**; уточнён импорт стилей.
+- **`verify-package.mjs`:** ESM в `dist/vite`, `use client`, `exports`.
+
+### Changed
+
+- Peer **vite:** `^5 || ^6 || ^7`.
+
+---
+
+## [0.1.7] - 2026-05-17
+
+### Fixed
+
+- **npm:** README в tarball (`"readme"`, `.npmignore`).
+
+### Added
+
+- **`@velkinvv/plainerv/vite`**, **`plainervVite()`**, **`NullableRefObject`**.
+
+### Changed
+
+- **Peer:** `styled-components`, `framer-motion`; в dependencies — `clsx`, `dayjs`.
+- Документация Vite (prebundle, `o2 is not a function`).
+
+### Fixed
+
+- Предупреждения TypeScript при сборке Rollup (React 19).
+
+---
+
+## [0.1.6] - 2026-05-16
+
+### Fixed
+
+- Устранены все предупреждения ESLint (`lint:fix-all`, 0 warnings).
+- Исправлены типы `DragEvent` в **DataGrid** (handle, ячейки, строки).
+- Типизация **Hint** (`HintPosition`, очистка таймеров), **Progress** (`DefaultTheme`).
+
+### Added
+
+- Хелпер **`noopHandler`** для пустых колбэков в stories и тестах.
+
+### Changed
+
+- Версия пакета: **0.1.6**.
+
+---
+
+## [0.1.5] - 2026-05-16
+
+### Fixed
+
+- Устранены все предупреждения TypeScript при сборке Rollup (`TS2769`, `TS7006`).
+- Добавлен хелпер `createStyledShouldForwardProp`, удалён конфликтующий `@types/styled-components`.
+- Исправлен casing папки `table`, типы `TabItem` для React 19, типизация обработчиков событий в компонентах.
+
+### Changed
+
+- Версия пакета: **0.1.5**.
+
+---
+
+## [0.1.4] - 2026-05-13
+
+### Changed
+
+- Версия пакета: подготовка релиза 0.1.4.
+
+---
+
+## [0.1.3] - 2026-05-04
+
+### Changed
+
+- Таблица (`Table`): липкая шапка и вертикальный скролл через `scrollAreaMaxHeight` у `TableContainerScroll`, CSS-переменная фона шапки `--plainer-table-header-background`.
+- DataGrid: `scrollAreaMaxHeight`, `tableHeaderVariant` / `tableHeaderBackground`, единый фон панели `headerToolbar` со шапкой колонок.
+
+### Added
+
+- Хелпер `resolveDataGridTableHeaderBackground`, экспорт `PLAINER_TABLE_HEADER_BACKGROUND_CSS_VAR` из примитива таблицы.
+
+---
+
+## [0.1.0] - 2025-01-XX
+
+### Added
+- Начальная версия библиотеки
+- Базовая структура проекта
+- Компоненты UI
+- Система темизации
+- TypeScript поддержка
+
+---
+
+**Примечание:** Даты будут автоматически обновляться при использовании semantic-release.

@@ -1,0 +1,10 @@
+{
+  "version": "v_0.3.4",
+  "component": "input",
+  "exampleId": "default",
+  "title": "Базовое поле",
+  "description": "Минимальный сценарий для ввода строки.",
+  "code": "<Input label=\"Email\" placeholder=\"name@example.com\" fullWidth />",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:24.375Z"
+}

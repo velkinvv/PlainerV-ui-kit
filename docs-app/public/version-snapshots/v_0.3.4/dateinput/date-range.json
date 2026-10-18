@@ -1,0 +1,10 @@
+{
+  "version": "v_0.3.4",
+  "component": "dateinput",
+  "exampleId": "date-range",
+  "title": "Диапазон дат",
+  "description": "Range-режим с объектом start/end.",
+  "code": "<DateInput range value={{ start: \"2026-08-10\", end: \"2026-08-15\" }} onChange={() => undefined} />",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:22.636Z"
+}

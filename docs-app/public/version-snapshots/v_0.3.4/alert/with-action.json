@@ -1,0 +1,10 @@
+{
+  "version": "v_0.3.4",
+  "component": "alert",
+  "exampleId": "with-action",
+  "title": "Со slot action",
+  "description": "Кнопка действия в Alert для быстрых сценариев undo/retry.",
+  "code": "<Alert severity=\"info\" action={<Button variant={ButtonVariant.GHOST} size={Size.SM}>Подробнее</Button>}>Найдено обновление.</Alert>",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:20.763Z"
+}

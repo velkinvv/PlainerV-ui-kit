@@ -3,10 +3,13 @@
 ![npm version](https://img.shields.io/npm/v/@velkinvv/plainerv)
 ![license](https://img.shields.io/npm/l/@velkinvv/plainerv)
 ![npm downloads](https://img.shields.io/npm/dm/@velkinvv/plainerv)
+[![docs deploy](https://github.com/velkinvv/PlainerV-ui-kit/actions/workflows/docs-deploy.yml/badge.svg)](https://github.com/velkinvv/PlainerV-ui-kit/actions/workflows/docs-deploy.yml)
 
 Современная библиотека UI компонентов с поддержкой темизации и TypeScript.
 
 **Текущая версия:** `0.3.4` · ветка [`v_0.3.4`](https://github.com/velkinvv/PlainerV-ui-kit/tree/v_0.3.4) · React 18+/19 · styled-components 6.x
+
+**Документация:** собирается из `web/docs-app` (SSG, пререндер каждого маршрута) и публикуется workflow `docs-deploy` после публикации пакета; адрес появится здесь после первой выкладки.
 
 ## 🚀 Возможности
 

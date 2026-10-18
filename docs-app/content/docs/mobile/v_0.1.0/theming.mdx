@@ -1,0 +1,60 @@
+---
+title: Theming
+description: Работа с темой и useTheme в mobile версии v0.1.0
+---
+
+# Theming
+
+Тема в `@plainerV/ui-native` задаётся через `ThemeProvider` и переключается через `useTheme`.
+
+## Базовое подключение
+
+```tsx
+import React from 'react';
+import { ThemeProvider } from '@plainerV/ui-native';
+import { lightButtonTheme, lightColors } from '@plainerV/ui-themes';
+
+type NativeThemeRootProps = {
+  children: React.ReactNode;
+};
+
+const initialLightTheme = {
+  mode: 'LIGHT',
+  colors: lightColors,
+  buttons: lightButtonTheme,
+};
+
+export function NativeThemeRoot({ children }: NativeThemeRootProps) {
+  return <ThemeProvider initialTheme={initialLightTheme}>{children}</ThemeProvider>;
+}
+```
+
+## Переключение темы
+
+```tsx
+import React from 'react';
+import { Button, useTheme } from '@plainerV/ui-native';
+import { ButtonVariant } from '@plainerV/ui-core';
+
+export function ThemeSwitcherButton() {
+  const { toggle } = useTheme();
+
+  return (
+    <Button variant={ButtonVariant.SECONDARY} onPress={toggle}>
+      Переключить тему
+    </Button>
+  );
+}
+```
+
+## Основные входные параметры
+
+- `ThemeProvider.initialTheme` — стартовая тема приложения;
+- `ThemeProvider.children` — дерево компонентов;
+- `useTheme().toggle()` — переключение между режимами;
+- `useTheme().mode` — текущий режим темы.
+
+## См. также
+
+- [Quick Start](/docs/mobile/v_0.1.0/quick-start)
+- [Button + Input](/docs/mobile/v_0.1.0/components-button-input)

@@ -1,0 +1,108 @@
+---
+title: Components Toast Snackbar
+description: Reference for Toast Snackbar
+---
+
+# Toast + Snackbar
+
+`Toast` and `Snackbar` cover two different UX scenarios:
+
+- `Toast` - noticeable notifications (success, error, warning, information);
+- `Snackbar` - compact messages about the result of an action.
+
+## Interactive examples
+
+<ToastSnackbarInteractiveExamples />
+
+## Provider setup
+
+```tsx
+import { SnackbarProvider, ThemeProvider, ToastProvider } from '@velkinvv/plainerv';
+
+type NotificationsRootProps = {
+  children: React.ReactNode;
+};
+
+export function NotificationsRoot({ children }: NotificationsRootProps) {
+  return (
+    <ThemeProvider>
+      <ToastProvider placement="top-right">
+        <SnackbarProvider placement="bottom-center">{children}</SnackbarProvider>
+      </ToastProvider>
+    </ThemeProvider>
+  );
+}
+```
+
+## Main input parameters
+
+### Providers
+
+- `ToastProvider.placement?: string` — position of toasts on the screen;
+- `ToastProvider.defaultAppearance?: ToastAppearance` - default toast appearance (`card` / `pill`);
+- `SnackbarProvider.placement?: string` — position of snackbars;
+- `children: React.ReactNode` - application tree where notifications are available via hooks.
+
+## Show Toast
+
+```tsx
+import { Button, useToast } from '@velkinvv/plainerv';
+
+export function SaveWithToastButton() {
+  const { showToast } = useToast();
+
+  const handleSaveSuccess = () => {
+    showToast(
+      'The new configuration is applied to all project participants.',
+      'success',
+      'Changelog saved',
+      3200,
+    );
+  };
+
+  return <Button onClick={handleSaveSuccess}>Save</Button>;
+}
+```
+
+### Parameters of `showToast`
+
+- `message: string` — the main text of the notification;
+- `type?: 'success' | 'error' | 'warning' | 'info' | 'neutral'` — visual type;
+- `title?: string` — card title;
+- `duration?: number` — display duration in milliseconds;
+- `options?.appearance?: 'card' | 'pill'` — toast display mode;
+- `options?.actionLabel?: string` — action button label;
+- `options?.onAction?: () => void` — action button handler.
+
+## Show Snackbar
+
+```tsx
+import { Button, useSnackbar } from '@velkinvv/plainerv';
+
+export function ArchiveWithSnackbarButton() {
+  const { showSnackbar } = useSnackbar();
+
+  const handleArchive = () => {
+    showSnackbar('The project has been archived', {
+      duration: 2400,
+    });
+  };
+
+  return <Button variant="secondary" onClick={handleArchive}>Archive</Button>;
+}
+```
+
+### Parameters of `showSnackbar`
+
+- `message: string` — message text;
+- `options?.duration?: number` — display duration in milliseconds;
+- `options?.actionLabel?: string` — action button label;
+- `options?.onAction?: () => void` — action button handler.
+
+## See also
+
+- [Forms + Validation](/docs/en/web/v_0.1.3/components-form)
+- [Modal + Drawer](/docs/en/web/v_0.1.3/components-modal-drawer)
+
+
+

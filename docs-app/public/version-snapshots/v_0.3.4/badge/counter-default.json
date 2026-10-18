@@ -1,0 +1,10 @@
+{
+  "version": "v_0.3.4",
+  "component": "badge",
+  "exampleId": "counter-default",
+  "title": "Счётчик",
+  "description": "Обычный бейдж с числом.",
+  "code": "<Badge variant={BadgeVariant.DEFAULT}>3</Badge>",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:16.295Z"
+}

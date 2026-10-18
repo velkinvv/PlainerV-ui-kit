@@ -1,0 +1,48 @@
+---
+title: Quick Start
+description: Быстрый старт для Web UI в версии v0.1
+---
+
+# Quick Start
+
+Короткий старт для подключения `@velkinvv/plainerv` в версии `v0.1`.
+
+## Установка
+
+```bash
+npm i @velkinvv/plainerv
+```
+
+## Подключение темы
+
+```tsx
+import { ThemeProvider } from '@velkinvv/plainerv';
+
+type ApplicationRootProps = {
+  children: React.ReactNode;
+};
+
+export function ApplicationRoot({ children }: ApplicationRootProps) {
+  return <ThemeProvider>{children}</ThemeProvider>;
+}
+```
+
+## Первый экран
+
+```tsx
+import { Button, Input } from '@velkinvv/plainerv';
+
+export function FirstScreen() {
+  return (
+    <section>
+      <Input label="Email" placeholder="team@plainerv.dev" />
+      <Button variant="primary">Продолжить</Button>
+    </section>
+  );
+}
+```
+
+## См. также
+
+- [Theming](/docs/web/v_0.1/theming)
+- [Button](/docs/web/v_0.1/components-button)

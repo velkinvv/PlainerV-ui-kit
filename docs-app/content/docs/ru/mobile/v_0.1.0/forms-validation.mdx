@@ -1,0 +1,114 @@
+---
+title: Forms + Validation
+description: Практический сценарий формы с валидацией в mobile v0.1.0
+---
+
+# Forms + Validation
+
+Рекомендуемый подход для форм:
+
+- держать значения полей в локальном `state`;
+- выносить валидацию в отдельную функцию;
+- отдельно хранить ошибки по полям.
+
+## Пример формы входа
+
+```tsx
+import React, { useState } from 'react';
+import { View } from 'react-native';
+import { Button, Input, Typography } from '@plainerV/ui-native';
+import { ButtonVariant, Size } from '@plainerV/ui-core';
+
+type LoginErrorsState = {
+  emailErrorText: string;
+  passwordErrorText: string;
+};
+
+export function LoginForm() {
+  const [emailValue, setEmailValue] = useState('');
+  const [passwordValue, setPasswordValue] = useState('');
+  const [errorsState, setErrorsState] = useState<LoginErrorsState>({
+    emailErrorText: '',
+    passwordErrorText: '',
+  });
+
+  const validateFormValues = (): boolean => {
+    const nextErrorsState: LoginErrorsState = {
+      emailErrorText: '',
+      passwordErrorText: '',
+    };
+
+    if (!emailValue) {
+      nextErrorsState.emailErrorText = 'Email обязателен';
+    } else if (!emailValue.includes('@')) {
+      nextErrorsState.emailErrorText = 'Некорректный email';
+    }
+
+    if (!passwordValue) {
+      nextErrorsState.passwordErrorText = 'Пароль обязателен';
+    } else if (passwordValue.length < 8) {
+      nextErrorsState.passwordErrorText = 'Минимум 8 символов';
+    }
+
+    setErrorsState(nextErrorsState);
+
+    return !nextErrorsState.emailErrorText && !nextErrorsState.passwordErrorText;
+  };
+
+  const handleSubmitPress = () => {
+    const isFormValid = validateFormValues();
+    if (isFormValid) {
+      console.log('Форма валидна, отправляем запрос');
+    }
+  };
+
+  return (
+    <View>
+      <Typography variant="h3">Вход</Typography>
+
+      <Input
+        label="Email"
+        value={emailValue}
+        onChangeText={setEmailValue}
+        error={errorsState.emailErrorText}
+        size={Size.MD}
+      />
+
+      <Input
+        label="Пароль"
+        value={passwordValue}
+        onChangeText={setPasswordValue}
+        error={errorsState.passwordErrorText}
+        helperText="Минимум 8 символов"
+        secureTextEntry
+        size={Size.MD}
+      />
+
+      <Button variant={ButtonVariant.PRIMARY} onPress={handleSubmitPress}>
+        Войти
+      </Button>
+    </View>
+  );
+}
+```
+
+## Что проверить перед отправкой формы
+
+- обязательные поля заполнены;
+- форматы значений валидны;
+- ошибки показываются рядом с соответствующим полем;
+- кнопка отправки блокируется при повторной отправке.
+
+## Основные входные параметры
+
+- `Input.value?: string` — текущее значение поля;
+- `Input.onChangeText?: (nextValue: string) => void` — обработчик изменения текста;
+- `Input.error?: string` — сообщение об ошибке поля;
+- `Input.helperText?: string` — вспомогательный текст;
+- `Button.variant?: ButtonVariant` — вариант кнопки отправки;
+- `Button.onPress?: () => void` — обработчик отправки формы.
+
+## См. также
+
+- [Button + Input](/docs/mobile/v_0.1.0/components-button-input)
+- [Toast](/docs/mobile/v_0.1.0/components-toast)

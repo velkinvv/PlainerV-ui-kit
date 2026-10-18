@@ -1,0 +1,10 @@
+{
+  "version": "v_0.3.4",
+  "component": "modal",
+  "exampleId": "status-variant",
+  "title": "Статус danger",
+  "description": "Вариант модалки с визуальным статусом danger.",
+  "code": "<Modal isOpen onClose={() => undefined} title=\"Внимание\" modalVariant=\"danger\" />",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:30.749Z"
+}

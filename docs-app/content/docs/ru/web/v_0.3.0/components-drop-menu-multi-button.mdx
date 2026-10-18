@@ -1,0 +1,84 @@
+---
+title: DropMenu + MultiButton
+description: Выпадающее меню и split-кнопка в версии v0.3.0
+---
+
+# DropMenu + MultiButton
+
+**DropMenu** — фасад над **Dropdown** с удобными алиасами и гибким триггером. **MultiButton** — split-кнопка (основное действие + шеврон с меню на **DropMenu**).
+
+Интерактив — Storybook: **UI Kit → Navigation → DropMenu**, **UI Kit → Buttons → MultiButton**.
+
+## DropMenu
+
+```tsx
+import { DropMenu } from '@velkinvv/plainerv';
+
+const actionItems = [
+  { value: 'edit', label: 'Редактировать' },
+  { value: 'delete', label: 'Удалить', tone: 'danger' as const },
+];
+
+export function ActionsDropMenu() {
+  return (
+    <DropMenu
+      items={actionItems}
+      buttonProps={{ children: 'Действия' }}
+      onSelectItem={(nextValue) => {
+        console.log('Выбрано:', nextValue);
+      }}
+    />
+  );
+}
+```
+
+### Триггер (приоритет)
+
+1. `renderContentProp(options)` — кастомный триггер (`buttonRef`, `menuState`, `handleClick`, `handleKeyDown`, `statusIcon`, `disabled`);
+2. `trigger` — как у `Dropdown`;
+3. дефолтная `Button` из `buttonProps` + шеврон.
+
+### Алиасы
+
+- `isVisible` / `onVisibilityChange` ↔ `isMenuOpen` / `onMenuOpenChange`;
+- `selected` — fallback для `value`;
+- `onSelectItem` — канонический выбор (`onSelect` тоже вызывается, если передан).
+
+Остальные пропсы меню — как у **Dropdown** (`items`, `searchable`, `multiSelection`, `loading`, панели и т.д.).
+
+## MultiButton
+
+```tsx
+import { MultiButton } from '@velkinvv/plainerv';
+
+const saveMenuItems = [
+  { value: 'draft', label: 'Сохранить черновик' },
+  { value: 'template', label: 'Сохранить как шаблон' },
+];
+
+export function SaveMultiButton() {
+  return (
+    <MultiButton
+      appearance="primary"
+      items={saveMenuItems}
+      onMainButtonClick={() => console.log('Сохранить')}
+      onSelectItem={(nextValue) => console.log('Меню:', nextValue)}
+    >
+      Сохранить
+    </MultiButton>
+  );
+}
+```
+
+### Основные входные параметры MultiButton
+
+- `children?: React.ReactNode` — подпись основной кнопки;
+- `onMainButtonClick?: (event) => void` — клик по main (меню не открывает);
+- `items`, `onSelectItem`, `selected` / `value` — пункты и выбор в меню;
+- `appearance?: 'primary' | 'secondary' | 'outline'`;
+- `size?: Size` — `SM` | `MD` | `LG`;
+- `disabled?: boolean` — блокирует main и меню;
+- `disabledMainButton?: boolean` — блокирует только main;
+- `skeleton?: boolean` — скелетон пары кнопок;
+- `isVisible` / `onVisibilityChange` — controlled видимость меню;
+- `menuWidth`, `menuMaxHeight` — размеры панели.

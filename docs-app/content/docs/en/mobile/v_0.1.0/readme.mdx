@@ -1,0 +1,98 @@
+﻿---
+title: Readme
+description: Reference for Readme
+---
+
+# README
+
+> Source: [`README.md`](https://github.com/velkinvv/PlainerV-react-native-ui-kit/blob/v_0.1.0/README.md)
+
+> Platform: **Mobile**
+> Version: **v0.1.0**
+
+---
+
+# @plainerV/mobile
+
+React Native version UI Kit @plainerV/ui with all styles and functionality preserved.
+
+## 📦 Project structure
+
+```
+mobile/
+├── packages/
+│   ├── ui-themes/     # Common Themes and Types│   ├── ui-core/       # General business logic│   └── ui-native/     # React Native components├── package.json
+└── README.md
+```
+
+## 🚀 Installation
+
+```bash
+cd mobile
+npm install
+```
+
+## 📚 Packages
+
+### @plainerV/ui-themes
+Common themes (light/dark) and types used by both web and native versions.
+
+### @plainerV/ui-core
+General business logic: handlers, utilities, types.
+
+### @plainerV/ui-native
+React Native components with adapted styles and animations.
+
+## 🔧 Development
+
+```bash
+# Build all packagesnpm run build
+
+# Building a specific packagenpm run build:themes
+npm run build:core
+npm run build:native
+
+# Development
+npm run dev
+
+# Type checkingnpm run type-check
+
+# Lintingnpm run lint
+
+# Testsnpm run test
+```
+
+## 📖 Use
+
+```typescript
+import { Button, Input, ThemeProvider } from '@plainerV/ui-native';
+import { lightTheme, darkTheme } from '@plainerV/ui-themes';
+
+function App() {
+  return (
+    <ThemeProvider theme={lightTheme}>
+      <Button variant="primary">Press me</Button>
+      <Input label="Email" placeholder="Enter email" />
+    </ThemeProvider>
+  );
+}
+```
+
+## 🔗 Related projects
+
+- [@plainerV/ui](../web/) - Web version UI Kit
+
+## 👤 Author
+
+**VelkinVV**
+
+- Email: velkinvv@mail.ru
+- GitHub: [@velkinvv](https://github.com/velkinvv)
+
+## 📄 License
+
+MIT
+
+
+
+

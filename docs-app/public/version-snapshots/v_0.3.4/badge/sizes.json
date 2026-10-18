@@ -1,0 +1,10 @@
+{
+  "version": "v_0.3.4",
+  "component": "badge",
+  "exampleId": "sizes",
+  "title": "Размеры",
+  "description": "Размеры от XS до LG для текстового бейджа.",
+  "code": "<><Badge size={Size.XS}>XS</Badge><Badge size={Size.SM}>SM</Badge><Badge size={Size.MD}>MD</Badge><Badge size={Size.LG}>LG</Badge></>",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:16.983Z"
+}

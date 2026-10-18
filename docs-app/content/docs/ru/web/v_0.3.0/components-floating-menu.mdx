@@ -1,0 +1,60 @@
+---
+title: FloatingMenu
+description: Плавающее меню инструментов в версии v0.3.0
+---
+
+# FloatingMenu
+
+`FloatingMenu` подходит для быстрых действий поверх рабочей области: редакторы, доски, визуальные конструкторы.
+
+## Базовый пример
+
+```tsx
+import { FloatingMenu } from '@velkinvv/plainerv';
+
+type BoardFloatingMenuProps = {
+  isCommentsActive: boolean;
+  onToggleComments: () => void;
+  onOpenCommandPalette: () => void;
+};
+
+export function BoardFloatingMenu({
+  isCommentsActive,
+  onToggleComments,
+  onOpenCommandPalette,
+}: BoardFloatingMenuProps) {
+  return (
+    <FloatingMenu placement="bottom-center" draggable aria-label="Плавающее меню редактора">
+      <FloatingMenu.Group>
+        <FloatingMenu.GroupItem
+          icon={<span>💬</span>}
+          aria-label="Комментарии"
+          active={isCommentsActive}
+          onClick={onToggleComments}
+        />
+        <FloatingMenu.GroupItem
+          icon={<span>⌘</span>}
+          aria-label="Команды"
+          onClick={onOpenCommandPalette}
+        />
+      </FloatingMenu.Group>
+    </FloatingMenu>
+  );
+}
+```
+
+## Основные входные параметры
+
+- `'aria-label': string` — обязательная подпись для доступности (`role="toolbar"`);
+- `placement?: FloatingMenuPlacement` — позиция меню в пределах экрана;
+- `draggable?: boolean` — разрешение перетаскивания меню;
+- `dragSource?: FloatingMenuDragSource` — область начала перетаскивания;
+- `children?: React.ReactNode` — группы и элементы меню.
+
+### FloatingMenu.GroupItem
+
+- `icon: React.ReactNode` — иконка действия;
+- `'aria-label': string` — подпись кнопки действия для доступности;
+- `active?: boolean` — активное состояние пункта;
+- `onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void` — обработчик выбора пункта;
+- `tooltip?: React.ReactNode` — подсказка при наведении.

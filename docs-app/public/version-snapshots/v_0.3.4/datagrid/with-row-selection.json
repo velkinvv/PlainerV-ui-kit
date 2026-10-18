@@ -1,0 +1,10 @@
+{
+  "version": "v_0.3.4",
+  "component": "datagrid",
+  "exampleId": "with-row-selection",
+  "title": "Выбор строк",
+  "description": "Показывает колонку выбора и множественный выбор.",
+  "code": "<DataGrid tableId=\"employees-grid-selection\" columns={employeeColumns} rows={employeeRows} totalRows={employeeRows.length} displayRowSelectionColumn multiselect />",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:18.639Z"
+}

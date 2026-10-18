@@ -1,0 +1,111 @@
+﻿---
+title: Components Button
+description: Reference for Button
+---
+
+# Button
+
+`Button` is the basic action component. Below is the minimum set of working scripts for `v0.1.2`.
+
+## Interactive examples
+
+Use the panel below to test the behavior of the button with different props in real time.
+
+<ButtonInteractiveExamples />
+
+## Basic options
+
+```tsx
+import { Button } from '@velkinvv/plainerv';
+
+export function ButtonVariantsDemo() {
+  return (
+    <section>
+      <Button variant="primary">Primary</Button>
+      <Button variant="secondary">Secondary</Button>
+      <Button variant="ghost">Ghost</Button>
+      <Button variant="danger">Danger</Button>
+    </section>
+  );
+}
+```
+
+## Dimensions
+
+```tsx
+import { Button } from '@velkinvv/plainerv';
+
+export function ButtonSizesDemo() {
+  return (
+    <section>
+      <Button size="sm">Small</Button>
+      <Button size="md">Medium</Button>
+      <Button size="lg">Large</Button>
+    </section>
+  );
+}
+```
+
+## States
+
+```tsx
+import { Button } from '@velkinvv/plainerv';
+
+export function ButtonStatesDemo() {
+  return (
+    <section>
+      <Button loading>Loading</Button>
+      <Button disabled>Disabled</Button>
+      <Button fullWidth>Full container width</Button>
+    </section>
+  );
+}
+```
+
+## Main input parameters
+
+- `variant?: ButtonVariant` — visual style of the button (`primary`, `secondary`, `ghost`, `danger` and others);
+- `size?: Size` — button size;
+- `loading?: boolean` — loading state;
+- `disabled?: boolean` — blocking interaction;
+- `fullWidth?: boolean` — stretching to the width of the container;
+- `iconStart?: React.ReactNode` — icon at the beginning of the button;
+- `iconEnd?: React.ReactNode` - the icon at the end of the button.
+
+## Full description of Button props
+
+### Button-specific
+
+- `variant?: ButtonVariant` — visual design option;
+- `size?: Size` — button size;
+- `iconStart?: React.ReactNode` — icon to the left of the text;
+- `iconEnd?: React.ReactNode` — icon to the right of the text;
+- `showTooltip?: boolean` — enable tooltip for the button;
+- `tooltipText?: string` — tooltip text;
+- `href?: string` - if set, the button is rendered as `<a>`;
+- `target?: React.HTMLAttributeAnchorTarget` - transition target for `href`;
+- `rel?: string` — the `rel` value for the link;
+- `download?: string | boolean` — download attribute for the link.
+
+### Basic button props (BaseButtonProps)
+
+- `loading?: boolean` — loading state;
+- `disabled?: boolean` — blocking interaction;
+- `fullWidth?: boolean` — stretching to the width of the container;
+- `rounded?: boolean` — rounded shape of the button.
+
+### Native HTML props
+
+`Button` extends `React.ButtonHTMLAttributes<HTMLButtonElement>` so it supports standard attributes:
+
+- `type?: 'button' | 'submit' | 'reset'`
+- `onClick?: React.MouseEventHandler<HTMLButtonElement>`
+- `aria-*`, `data-*`, `name`, `value`, `tabIndex` and other standard fields.
+
+## See also
+
+- [Quick Start](/docs/en/web/v_0.1.2/quick-start)
+- [Input + Select](/docs/en/web/v_0.1.2/components-input-select)
+
+
+

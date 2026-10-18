@@ -1,0 +1,39 @@
+﻿---
+title: Components Button
+description: Reference for Button
+---
+
+# Button
+
+Basic examples of using `Button`.
+
+```tsx
+import { Button } from '@velkinvv/plainerv';
+
+export function ButtonDemo() {
+  return (
+    <section>
+      <Button variant="primary">Primary</Button>
+      <Button variant="secondary">Secondary</Button>
+      <Button variant="danger">Danger</Button>
+      <Button loading>Loading</Button>
+    </section>
+  );
+}
+```
+
+## Main input parameters
+
+- `variant?: ButtonVariant` — button style;
+- `size?: Size` - size;
+- `loading?: boolean` — loading state;
+- `disabled?: boolean` — blocking;
+- `onClick?: React.MouseEventHandler` - click handler.
+
+## See also
+
+- [Input + Select](/docs/en/web/v_0.1/components-input-select)
+- [Forms + Validation](/docs/en/web/v_0.1/forms-validation)
+
+
+

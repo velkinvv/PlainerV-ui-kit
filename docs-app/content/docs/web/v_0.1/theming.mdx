@@ -1,0 +1,38 @@
+---
+title: Theming
+description: ThemeProvider и useTheme в версии v0.1
+---
+
+# Theming
+
+Тема управляется через `ThemeProvider` и `useTheme`.
+
+## Пример
+
+```tsx
+import { Button, useTheme } from '@velkinvv/plainerv';
+
+export function ThemeControls() {
+  const { mode, toggle } = useTheme();
+
+  return (
+    <section>
+      <p>Текущий режим: {mode}</p>
+      <Button variant="secondary" onClick={toggle}>
+        Переключить тему
+      </Button>
+    </section>
+  );
+}
+```
+
+## Входные параметры и значения
+
+- `ThemeProvider.children: React.ReactNode` — дерево компонентов внутри темы;
+- `useTheme().mode` — текущий режим;
+- `useTheme().toggle()` — переключение режима.
+
+## См. также
+
+- [Quick Start](/docs/web/v_0.1/quick-start)
+- [Input + Select](/docs/web/v_0.1/components-input-select)

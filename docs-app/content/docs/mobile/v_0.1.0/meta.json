@@ -1,0 +1,19 @@
+{
+  "title": "v0.1.0",
+  "defaultOpen": true,
+  "pages": [
+    "quick-start",
+    "architecture",
+    "theming",
+    "components-button-input",
+    "forms-validation",
+    "components-card-typography",
+    "components-modal",
+    "components-tabs",
+    "components-toast",
+    "readme",
+    "installation",
+    "examples",
+    "components-list"
+  ]
+}

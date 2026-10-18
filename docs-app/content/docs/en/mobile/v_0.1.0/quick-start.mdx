@@ -1,0 +1,84 @@
+﻿---
+title: Quick Start
+description: Reference for Quick Start
+---
+
+# Quick Start
+
+A short start for connecting `@plainerV/ui-native` in a React Native project.
+
+## 1) Installation of packages
+
+```bash
+npm install @plainerV/ui-native @plainerV/ui-themes @plainerV/ui-core
+```
+
+## 2) Connecting a theme
+
+```tsx
+import React from 'react';
+import { ThemeProvider } from '@plainerV/ui-native';
+import { lightColors, lightButtonTheme } from '@plainerV/ui-themes';
+
+type MobileApplicationRootProps = {
+  children: React.ReactNode;
+};
+
+const lightMobileTheme = {
+  mode: 'LIGHT',
+  colors: lightColors,
+  buttons: lightButtonTheme,
+};
+
+export function MobileApplicationRoot({
+  children,
+}: MobileApplicationRootProps) {
+  return <ThemeProvider initialTheme={lightMobileTheme}>{children}</ThemeProvider>;
+}
+```
+
+## 3) First screen
+
+```tsx
+import React, { useState } from 'react';
+import { View } from 'react-native';
+import { Button, Input, Typography } from '@plainerV/ui-native';
+import { ButtonVariant, Size } from '@plainerV/ui-core';
+
+export function WelcomeScreen() {
+  const [emailValue, setEmailValue] = useState('');
+
+  return (
+    <View>
+      <Typography variant="h2">Welcome</Typography>
+      <Input
+        label="Email"
+        value={emailValue}
+        onChangeText={setEmailValue}
+        placeholder="team@plainerv.dev"
+        size={Size.MD}
+      />
+      <Button variant={ButtonVariant.PRIMARY} onPress={() => {}}>
+        Continue      </Button>
+    </View>
+  );
+}
+```
+
+## Main input parameters
+
+- `ThemeProvider.initialTheme` — the starting theme of the application;
+- `ThemeProvider.children: React.ReactNode` - application tree within the theme;
+- `Input.value?: string` — controlled field value;
+- `Input.onChangeText?: (nextValue: string) => void` — text change handler;
+- `Button.variant?: ButtonVariant` — visual variant of the button;
+- `Button.onPress?: () => void` — click handler.
+
+## See also
+
+- [Architecture](/docs/en/mobile/v_0.1.0/architecture)
+- [Theming](/docs/en/mobile/v_0.1.0/theming)
+- [Button + Input](/docs/en/mobile/v_0.1.0/components-button-input)
+
+
+

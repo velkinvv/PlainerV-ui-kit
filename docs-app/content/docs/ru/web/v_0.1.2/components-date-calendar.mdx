@@ -1,0 +1,80 @@
+---
+title: DateInput + Calendar
+description: Компоненты выбора даты и календарь в версии v0.1.2
+---
+
+# DateInput + Calendar
+
+Эти компоненты покрывают сценарии выбора даты как в простых формах, так и в планировщиках.
+
+## DateInput
+
+```tsx
+import { DateInput } from '@velkinvv/plainerv';
+
+type DeadlineDateInputProps = {
+  deadlineDateValue?: string | { start: string; end: string };
+  onDeadlineDateChange: (
+    nextDeadlineDateValue: string | { start: string; end: string },
+  ) => void;
+};
+
+export function DeadlineDateInput({
+  deadlineDateValue,
+  onDeadlineDateChange,
+}: DeadlineDateInputProps) {
+  return (
+    <DateInput
+      label="Дедлайн"
+      value={deadlineDateValue}
+      onChange={onDeadlineDateChange}
+      placeholder="Выберите дату"
+    />
+  );
+}
+```
+
+## Основные входные параметры
+
+### DateInput
+
+- `value?: string | DateTimeRange` — выбранная дата или диапазон;
+- `onChange?: (nextDeadlineDateValue: string | DateTimeRange) => void` — обработчик изменения даты/диапазона;
+- `label?: string` — подпись поля;
+- `placeholder?: string` — текст-подсказка в пустом состоянии.
+
+## Calendar
+
+```tsx
+import { Calendar } from '@velkinvv/plainerv';
+
+type ReleaseCalendarProps = {
+  selectedReleaseDate?: Date;
+  onReleaseDateSelect: (nextReleaseDateValue: Date) => void;
+};
+
+export function ReleaseCalendar({
+  selectedReleaseDate,
+  onReleaseDateSelect,
+}: ReleaseCalendarProps) {
+  return (
+    <Calendar
+      value={selectedReleaseDate}
+      onChange={onReleaseDateSelect}
+      locale="ru"
+      weekStartsOn={1}
+      minDate={new Date('2026-01-01')}
+      maxDate={new Date('2026-12-31')}
+    />
+  );
+}
+```
+
+### Calendar
+
+- `value?: Date | null` — выбранная дата;
+- `onChange?: (nextReleaseDateValue: Date) => void` — обработчик выбора даты;
+- `locale?: string` — локаль отображения названий;
+- `weekStartsOn?: 0 | 1` — день начала недели;
+- `minDate?: Date` — минимально доступная дата;
+- `maxDate?: Date` — максимально доступная дата.

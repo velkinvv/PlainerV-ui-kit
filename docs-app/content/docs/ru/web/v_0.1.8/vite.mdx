@@ -1,0 +1,86 @@
+﻿---
+title: Vite
+description: Peer-зависимости, плагин plainervVite и ошибка o2 is not a function при prebundle
+---
+
+# Vite
+
+Страница для приложений на [Vite](https://vite.dev): как подключить **@velkinvv/plainerv** без второй копии `styled-components`.
+
+## Peer dependencies
+
+Кит не бандлит React, styled-components и Framer Motion — они должны быть **одной** копией в приложении:
+
+```bash
+npm i @velkinvv/plainerv react react-dom styled-components framer-motion
+```
+
+| Пакет | Диапазон (peer) |
+| --- | --- |
+| `react`, `react-dom` | `^18.0.0 \|\| ^19.0.0` |
+| `styled-components` | `^6.1.0` |
+| `framer-motion` | `^11.0.0` |
+| `vite` (опционально) | `^5.0.0 \|\| ^6.0.0 \|\| ^7.0.0` |
+
+`clsx` и `dayjs` устанавливаются транзитивно с пакетом кита.
+
+## Плагин `plainervVite()` (рекомендуется)
+
+Подпуть **`@velkinvv/plainerv/vite`** — одна функция, настройка `resolve.dedupe` и `optimizeDeps`:
+
+```ts
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
+import { plainervVite } from '@velkinvv/plainerv/vite';
+
+export default defineConfig({
+  plugins: [react(), plainervVite()],
+});
+```
+
+Плагин задаёт:
+
+- `resolve.dedupe: ['react', 'react-dom', 'styled-components', 'framer-motion']`;
+- `optimizeDeps.include: ['styled-components', 'framer-motion']`;
+- `optimizeDeps.exclude: ['@velkinvv/plainerv']`.
+
+Подключайте из **`vite.config.ts`** (ESM), не из `vite.config.cjs` с `require()`. Реэкспорт в `dist/vite/index.js` — с суффиксом `./plainervVite.js` (Node ESM на Windows).
+
+## Ошибка `o2 is not a function`
+
+Типичный симптом при **двух** инстанциях `styled-components` в dev:
+
+1. Vite пребандлит `@velkinvv/plainerv` в `optimizeDeps`;
+2. в рантайме живут ESM из `dist/index.esm.js` кита **и** отдельный prebundle-чанк `styled-components`;
+3. `shouldForwardProp` в minified-коде (`Le` в `dist`) вызывает `defaultValidatorFn` из **другой** копии → `o2 is not a function`.
+
+**Перенос** `shouldForwardProp` или хелпера `createStyledShouldForwardProp` в другой модуль **не лечит** проблему: ломается связка «код из dist + отдельный чанк styled-components».
+
+**Исправление:** `optimizeDeps.exclude` для кита и/или `resolve.dedupe` — см. плагин выше или ручную настройку ниже.
+
+> **Не путать** с пропом **`items`** у **Tabs** (миграция API 0.1.5) — это отдельная тема, не ошибка styled-components.
+
+## Ручная настройка (без плагина)
+
+```ts
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  resolve: {
+    dedupe: ['react', 'react-dom', 'styled-components', 'framer-motion'],
+  },
+  optimizeDeps: {
+    include: ['styled-components', 'framer-motion'],
+    exclude: ['@velkinvv/plainerv'],
+  },
+});
+```
+
+В `package.json` кита **нет** поля, которое Vite читает автоматически — только документация или плагин.
+
+## См. также
+
+- [Интеграции](/docs/web/v_0.1.8/integrations) — Webpack, Next.js, стили
+- [Quick Start](/docs/web/v_0.1.8/quick-start)
+- [README](/docs/web/v_0.1.8/readme)
+- [Tabs + Pagination](/docs/web/v_0.1.8/components-tabs-pagination) — проп `items`

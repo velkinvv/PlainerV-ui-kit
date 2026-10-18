@@ -1,0 +1,62 @@
+---
+title: Theming
+description: Работа с ThemeProvider и useTheme в версии v0.1.6
+---
+
+# Theming
+
+В `v0.1.6` тема управляется через `ThemeProvider` и хук `useTheme`.
+
+## Базовое подключение
+
+```tsx
+import { ThemeProvider } from '@velkinvv/plainerv';
+
+type ThemeRootProps = {
+  children: React.ReactNode;
+};
+
+export function ThemeRoot({ children }: ThemeRootProps) {
+  return <ThemeProvider>{children}</ThemeProvider>;
+}
+```
+
+## Переключение темы
+
+```tsx
+import { Button, useTheme } from '@velkinvv/plainerv';
+
+export function ThemeSwitcherPanel() {
+  const { mode, setMode, toggle } = useTheme();
+
+  return (
+    <section>
+      <p>Текущий режим: {mode}</p>
+      <Button variant="secondary" onClick={toggle}>
+        Переключить тему
+      </Button>
+      <Button variant="ghost" onClick={() => setMode(mode)}>
+        Установить текущий режим явно
+      </Button>
+    </section>
+  );
+}
+```
+
+## Входные параметры и возвращаемые значения
+
+- `ThemeProvider.children: React.ReactNode` — дерево компонентов, которым доступна тема;
+- `useTheme().mode` — текущий режим темы;
+- `useTheme().setMode(nextMode)` — принудительная установка режима;
+- `useTheme().toggle()` — переключение между режимами.
+
+## Практические рекомендации
+
+- держите `ThemeProvider` максимально высоко в дереве, обычно в `App` или в `layout`;
+- все UI-компоненты библиотеки должны рендериться внутри провайдера;
+- для Storybook/доков оборачивайте все демо-компоненты в `ThemeProvider`, чтобы видеть реальные токены.
+
+## См. также
+
+- [Quick Start](/docs/web/v_0.1.6/quick-start)
+- [Button](/docs/web/v_0.1.6/components-button)

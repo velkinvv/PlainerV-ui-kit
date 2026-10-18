@@ -1,0 +1,58 @@
+---
+title: Tabs + Pagination
+description: Навигационные компоненты в версии v0.1
+---
+
+# Tabs + Pagination
+
+## Tabs
+
+```tsx
+import { TabItem, Tabs } from '@velkinvv/plainerv';
+
+export function ProfileTabs() {
+  return (
+    <Tabs defaultActiveTab="profile">
+      <Tabs.List>
+        <TabItem value="profile" label="Профиль">
+          Контент профиля
+        </TabItem>
+        <TabItem value="security" label="Безопасность">
+          Контент безопасности
+        </TabItem>
+      </Tabs.List>
+    </Tabs>
+  );
+}
+```
+
+## Pagination
+
+```tsx
+import { Pagination } from '@velkinvv/plainerv';
+
+export function ListPagination() {
+  return <Pagination totalPages={12} defaultPage={1} showPrevNext />;
+}
+```
+
+## Основные входные параметры
+
+### Tabs
+
+- `defaultActiveTab?: string` — стартовая активная вкладка;
+- `onChange?: (activeTabValue: string) => void` — обработчик смены вкладки;
+- `direction?: TabsDirection` — направление вкладок;
+- `variant?: TabsVariant` — визуальный вариант.
+
+### Pagination
+
+- `totalPages: number` — общее количество страниц;
+- `page?: number` — текущая страница в контролируемом режиме;
+- `defaultPage?: number` — начальная страница;
+- `onPageChange?: (page: number) => void` — обработчик смены страницы;
+- `showPrevNext?: boolean` — кнопки назад/вперёд.
+
+## См. также
+
+- [Input + Select](/docs/web/v_0.1/components-input-select)

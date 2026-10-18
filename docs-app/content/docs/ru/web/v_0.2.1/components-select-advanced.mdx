@@ -1,0 +1,85 @@
+﻿---
+title: Select Advanced
+description: Режимы select/native, поиск и мультивыбор для Select в v0.2.1
+---
+
+# Select Advanced
+
+Компонент `Select` имеет два основных режима: `select` (кастомная панель) и `native` (нативный список браузера).
+
+## Режим `select`
+
+Подходит для поиска, мультивыбора и расширенного UX.
+
+```tsx
+import { Select } from '@velkinvv/plainerv';
+
+const assigneeOptions = [
+  { label: 'Anna Petrova', value: 'anna_petrova' },
+  { label: 'Ivan Smirnov', value: 'ivan_smirnov' },
+  { label: 'Mira Lee', value: 'mira_lee' },
+];
+
+type AssigneeSelectProps = {
+  selectedAssigneeValue?: string;
+  onAssigneeChange: (nextAssigneeValue: string) => void;
+};
+
+export function AssigneeSelect({
+  selectedAssigneeValue,
+  onAssigneeChange,
+}: AssigneeSelectProps) {
+  return (
+    <Select
+      label="Исполнитель"
+      mode="select"
+      placeholder="Выберите исполнителя"
+      options={assigneeOptions}
+      value={selectedAssigneeValue}
+      onSelectedChange={(nextValue) => {
+        if (typeof nextValue === 'string') {
+          onAssigneeChange(nextValue);
+        }
+      }}
+      searchable
+    />
+  );
+}
+```
+
+## Режим `native`
+
+Подходит, когда нужен максимально нативный контроль и предсказуемое поведение на устройствах.
+
+```tsx
+import { Select } from '@velkinvv/plainerv';
+
+const priorityOptions = [
+  { label: 'Low', value: 'low' },
+  { label: 'Medium', value: 'medium' },
+  { label: 'High', value: 'high' },
+];
+
+export function PriorityNativeSelect() {
+  return (
+    <Select
+      label="Приоритет"
+      mode="native"
+      options={priorityOptions}
+      defaultValue="medium"
+    />
+  );
+}
+```
+
+## Основные входные параметры
+
+- `mode: 'select' | 'native'` — режим рендера компонента;
+- `options: Array<{ label: string; value: string }>` — набор опций;
+- `value?: string | string[]` — текущее выбранное значение;
+- `defaultValue?: string | string[]` — стартовое значение в неконтролируемом режиме;
+- `onSelectedChange?: (nextValue: string | string[]) => void` — обработчик изменения выбранных значений;
+- `onValueChange?: (nextValue: string | string[]) => void` — удобный колбэк смены значения;
+- `searchable?: boolean` — включает поиск в режиме `select`;
+- `mode?: 'native' | 'select' | 'searchSelect'` — режим рендера компонента;
+- `multiple?: boolean` — включает мультивыбор.

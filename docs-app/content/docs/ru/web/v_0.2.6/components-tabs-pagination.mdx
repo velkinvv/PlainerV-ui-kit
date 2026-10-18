@@ -1,0 +1,122 @@
+﻿---
+title: Tabs + Pagination
+description: Навигационные компоненты Tabs и Pagination в версии v0.2.6
+---
+
+# Tabs + Pagination
+
+Страница описывает два частых навигационных сценария: переключение контента внутри экрана (`Tabs`) и переход по страницам данных (`Pagination`).
+
+## Интерактивные примеры
+
+<TabsPaginationInteractiveExamples />
+
+## Tabs
+
+`Tabs` удобны, когда нужно разбить связанный контент на логические вкладки.
+
+### Пример
+
+```tsx
+import { TabItem, Tabs } from '@velkinvv/plainerv';
+
+type ProfileTabsProps = {
+  defaultActiveTabValue: string;
+  onTabChange: (nextTabValue: string) => void;
+};
+
+export function ProfileTabs({
+  defaultActiveTabValue,
+  onTabChange,
+}: ProfileTabsProps) {
+  return (
+    <Tabs
+      defaultActiveTab={defaultActiveTabValue}
+      onChange={onTabChange}
+      ariaLabel="Разделы профиля"
+    >
+      <TabItem value="profile" label="Профиль">
+        Раздел профиля
+      </TabItem>
+      <TabItem value="security" label="Безопасность">
+        Раздел безопасности
+      </TabItem>
+      <TabItem value="notifications" label="Уведомления">
+        Раздел уведомлений
+      </TabItem>
+    </Tabs>
+  );
+}
+```
+
+Список вкладок можно задать пропом **`items`** (`TabsItemDefinition[]`) — он имеет приоритет над **`children`**. Это миграция API **0.1.5+**, не связана с ошибкой Vite `o2 is not a function` (две копии `styled-components` — см. [Vite](/docs/web/v_0.2.6/vite)).
+
+### Варианты оформления (`TabsVariant`)
+
+- **`pill`** — скруглённый трек с подложкой («капля» под активным сегментом).
+- **`minimal`** — только текст и скользящая полоска **primary**, без серой базовой линии.
+- **`line`** — то же + серая линия **borderSecondary** на всю ширину или высоту трека; опционально **`filledSegmentTriggers`** — заливка активного сегмента **primary**, фон трека **backgroundSecondary**, индикатор толще (**2px**).
+- **`underline`** — серая линия только под фактическим рядом триггеров.
+
+Если **`variant`** не указан: горизонтально по умолчанию **`pill`**, вертикально — **`minimal`**.
+
+## Основные входные параметры
+
+### Tabs
+
+- `defaultActiveTab?: string` — начальная активная вкладка (алиасы см. `defaultValue`);
+- `defaultValue?: string` — то же, что `defaultActiveTab`;
+- `value?: string` — активная вкладка в контролируемом режиме;
+- `onChange?: (activeTabValue: string) => void` — обработчик переключения вкладки;
+- `direction?: TabsDirection` — направление табов (`horizontal`/`vertical`);
+- `tabsPosition?: TabsVerticalPosition` — позиция списка табов при вертикальном направлении;
+- `variant?: TabsVariant` — **pill** \| **minimal** \| **line** \| **underline**;
+- `filledSegmentTriggers?: boolean` — для **minimal** / **line** / **underline**: «залитые» сегменты и фон трека;
+- `ariaLabel?: string` — доступное имя группы (**role="group"**), рекомендуется для сегментов без подписей у контента;
+- `items?: TabsItemDefinition[]` — вкладки из данных (при непустом массиве **`children`** для списка не используется);
+- `segmentTrackProps?: HTMLAttributes` — **className**, **style** и др. для внутреннего трека (добавляется класс **`ui-tabs-list`**);
+- `children?: React.ReactNode` — **`TabItem`** / **`Tabs.Item`** (прямые потомки **`Tabs`**, без **`Tabs.List`**).
+
+## Pagination
+
+`Pagination` применяйте для списков, таблиц и гридов, где нужен явный переход между страницами.
+
+### Пример
+
+```tsx
+import { Pagination } from '@velkinvv/plainerv';
+
+type UsersPaginationProps = {
+  currentPageNumber: number;
+  onPageNumberChange: (nextPageNumber: number) => void;
+};
+
+export function UsersPagination({
+  currentPageNumber,
+  onPageNumberChange,
+}: UsersPaginationProps) {
+  return (
+    <Pagination
+      totalPages={24}
+      page={currentPageNumber}
+      onPageChange={onPageNumberChange}
+      siblingCount={1}
+      showPrevNext
+      ariaLabel="Пагинация списка пользователей"
+    />
+  );
+}
+```
+
+### Pagination
+
+- `totalPages: number` — общее количество страниц;
+- `page?: number` — текущая страница в контролируемом режиме;
+- `defaultPage?: number` — стартовая страница в неконтролируемом режиме;
+- `onPageChange?: (nextPageNumber: number) => void` — коллбэк смены страницы;
+- `siblingCount?: number` — количество соседних страниц вокруг активной;
+- `showPrevNext?: boolean` — отображение кнопок "назад/вперёд";
+- `variant?: 'default' | 'compact'` — режим отображения списка страниц;
+- `disabled?: boolean` — блокировка управления пагинацией;
+- `size?: 'sm' | 'md' | 'lg'` — размер кнопок пагинации;
+- `ariaLabel?: string` — подпись для доступности.

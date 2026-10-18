@@ -1,0 +1,45 @@
+---
+title: Forms + Validation
+description: Практический шаблон формы с валидацией для v0.1
+---
+
+# Forms + Validation
+
+Рекомендуемый сценарий: контролируемые поля, централизованная функция проверки, отдельное состояние ошибок.
+
+```tsx
+import { Button, Input } from '@velkinvv/plainerv';
+
+type LoginErrorsState = {
+  emailErrorText: string;
+  passwordErrorText: string;
+};
+
+export function LoginForm() {
+  // Пример состояния опущен для краткости
+  const errorsState: LoginErrorsState = {
+    emailErrorText: '',
+    passwordErrorText: '',
+  };
+
+  return (
+    <section>
+      <Input label="Email" error={errorsState.emailErrorText} />
+      <Input label="Пароль" error={errorsState.passwordErrorText} />
+      <Button variant="primary">Войти</Button>
+    </section>
+  );
+}
+```
+
+## Основные входные параметры
+
+- `Input.error?: string` — текст ошибки поля;
+- `Input.helperText?: string` — подсказка для пользователя;
+- `Button.variant?: ButtonVariant` — вариант кнопки отправки;
+- `Button.onClick?: React.MouseEventHandler` — обработчик отправки формы.
+
+## См. также
+
+- [Input + Select](/docs/web/v_0.1/components-input-select)
+- [Toast + Snackbar](/docs/web/v_0.1/components-toast-snackbar)

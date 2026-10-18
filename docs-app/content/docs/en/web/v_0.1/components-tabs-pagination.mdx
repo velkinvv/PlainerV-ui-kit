@@ -1,0 +1,59 @@
+﻿---
+title: Components Tabs Pagination
+description: Reference for Tabs Pagination
+---
+
+# Tabs + Pagination
+
+## Tabs
+
+```tsx
+import { TabItem, Tabs } from '@velkinvv/plainerv';
+
+export function ProfileTabs() {
+  return (
+    <Tabs defaultActiveTab="profile">
+      <Tabs.List>
+        <TabItem value="profile" label="Profile">
+          Profile Content        </TabItem>
+        <TabItem value="security" label="Safety">
+          Security Content        </TabItem>
+      </Tabs.List>
+    </Tabs>
+  );
+}
+```
+
+## Pagination
+
+```tsx
+import { Pagination } from '@velkinvv/plainerv';
+
+export function ListPagination() {
+  return <Pagination totalPages={12} defaultPage={1} showPrevNext />;
+}
+```
+
+## Main input parameters
+
+### Tabs
+
+- `defaultActiveTab?: string` — starting active tab;
+- `onChange?: (activeTabValue: string) => void` — tab change handler;
+- `direction?: TabsDirection` — direction of tabs;
+- `variant?: TabsVariant` - visual option.
+
+### Pagination
+
+- `totalPages: number` — total number of pages;
+- `page?: number` — current page in controlled mode;
+- `defaultPage?: number` — initial page;
+- `onPageChange?: (page: number) => void` — page change handler;
+- `showPrevNext?: boolean` — back/forward buttons.
+
+## See also
+
+- [Input + Select](/docs/en/web/v_0.1/components-input-select)
+
+
+

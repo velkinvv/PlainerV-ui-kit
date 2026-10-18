@@ -1,0 +1,104 @@
+---
+title: Tabs + Pagination
+description: Навигационные компоненты Tabs и Pagination в версии v0.1.2
+---
+
+# Tabs + Pagination
+
+Страница описывает два частых навигационных сценария: переключение контента внутри экрана (`Tabs`) и переход по страницам данных (`Pagination`).
+
+## Интерактивные примеры
+
+<TabsPaginationInteractiveExamples />
+
+## Tabs
+
+`Tabs` удобны, когда нужно разбить связанный контент на логические вкладки.
+
+### Пример
+
+```tsx
+import { TabItem, Tabs } from '@velkinvv/plainerv';
+
+type ProfileTabsProps = {
+  defaultActiveTabValue: string;
+  onTabChange: (nextTabValue: string) => void;
+};
+
+export function ProfileTabs({
+  defaultActiveTabValue,
+  onTabChange,
+}: ProfileTabsProps) {
+  return (
+    <Tabs defaultActiveTab={defaultActiveTabValue} onChange={onTabChange}>
+      <Tabs.List>
+        <TabItem value="profile" label="Профиль">
+          Раздел профиля
+        </TabItem>
+        <TabItem value="security" label="Безопасность">
+          Раздел безопасности
+        </TabItem>
+        <TabItem value="notifications" label="Уведомления">
+          Раздел уведомлений
+        </TabItem>
+      </Tabs.List>
+    </Tabs>
+  );
+}
+```
+
+## Основные входные параметры
+
+### Tabs
+
+- `defaultActiveTab?: string` — начальная активная вкладка;
+- `onChange?: (activeTabValue: string) => void` — обработчик переключения вкладки;
+- `direction?: TabsDirection` — направление табов (`horizontal`/`vertical`);
+- `tabsPosition?: TabsVerticalPosition` — позиция списка табов при вертикальном направлении;
+- `variant?: TabsVariant` — вариант оформления табов;
+- `className?: string` — CSS-класс обёртки Tabs;
+- `children: React.ReactNode` — список `TabItem` внутри `Tabs.List`.
+
+## Pagination
+
+`Pagination` применяйте для списков, таблиц и гридов, где нужен явный переход между страницами.
+
+### Пример
+
+```tsx
+import { Pagination } from '@velkinvv/plainerv';
+
+type UsersPaginationProps = {
+  currentPageNumber: number;
+  onPageNumberChange: (nextPageNumber: number) => void;
+};
+
+export function UsersPagination({
+  currentPageNumber,
+  onPageNumberChange,
+}: UsersPaginationProps) {
+  return (
+    <Pagination
+      totalPages={24}
+      page={currentPageNumber}
+      onPageChange={onPageNumberChange}
+      siblingCount={1}
+      showPrevNext
+      ariaLabel="Пагинация списка пользователей"
+    />
+  );
+}
+```
+
+### Pagination
+
+- `totalPages: number` — общее количество страниц;
+- `page?: number` — текущая страница в контролируемом режиме;
+- `defaultPage?: number` — стартовая страница в неконтролируемом режиме;
+- `onPageChange?: (nextPageNumber: number) => void` — коллбэк смены страницы;
+- `siblingCount?: number` — количество соседних страниц вокруг активной;
+- `showPrevNext?: boolean` — отображение кнопок "назад/вперёд";
+- `variant?: 'default' | 'compact'` — режим отображения списка страниц;
+- `disabled?: boolean` — блокировка управления пагинацией;
+- `size?: 'sm' | 'md' | 'lg'` — размер кнопок пагинации;
+- `ariaLabel?: string` — подпись для доступности.

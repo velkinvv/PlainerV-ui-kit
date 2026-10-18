@@ -1,0 +1,46 @@
+---
+title: Card + Typography
+description: Базовые паттерны отображения контента в mobile v0.1.0
+---
+
+# Card + Typography
+
+`Card` и `Typography` — базовая связка для экранов списка, дашбордов и деталей сущности.
+
+## Пример карточки
+
+```tsx
+import React from 'react';
+import { Card, Typography } from '@plainerV/ui-native';
+import { CardVariant } from '@plainerV/ui-core';
+
+export function ProjectSummaryCard() {
+  return (
+    <Card variant={CardVariant.ELEVATED}>
+      <Typography variant="h3">PlainerV Mobile</Typography>
+      <Typography variant="body">Краткое описание статуса мобильной платформы.</Typography>
+    </Card>
+  );
+}
+```
+
+## Основные входные параметры
+
+### Card
+
+- `variant?: CardVariant` — визуальный вариант карточки;
+- `clickable?: boolean` — интерактивный режим;
+- `hoverable?: boolean` — hover-эффект (если применим в среде);
+- `onPress?: () => void` — обработчик нажатия.
+
+### Typography
+
+- `variant?: string` — вариант текста (`h1...h6`, `body`, `caption`);
+- `color?: string` — цвет текста;
+- `align?: 'left' | 'center' | 'right'` — выравнивание;
+- `children: React.ReactNode` — содержимое.
+
+## См. также
+
+- [Button + Input](/docs/mobile/v_0.1.0/components-button-input)
+- [Tabs](/docs/mobile/v_0.1.0/components-tabs)

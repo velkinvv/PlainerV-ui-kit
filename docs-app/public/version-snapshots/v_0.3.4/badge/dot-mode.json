@@ -1,0 +1,10 @@
+{
+  "version": "v_0.3.4",
+  "component": "badge",
+  "exampleId": "dot-mode",
+  "title": "Dot-режим",
+  "description": "Точка без текстового содержимого.",
+  "code": "<Badge variant={BadgeVariant.DEFAULT_MAIN} isDot />",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:16.648Z"
+}

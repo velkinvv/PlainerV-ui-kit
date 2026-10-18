@@ -1,0 +1,125 @@
+﻿---
+title: Components Tabs Pagination
+description: Reference for Tabs Pagination
+---
+
+# Tabs + Pagination
+
+The page describes two common navigation scenarios: switching content within the screen (`Tabs`) and navigating through pages of data (`Pagination`).
+
+## Interactive examples
+
+<TabsPaginationInteractiveExamples />
+
+## Tabs
+
+`Tabs` are useful when you need to break related content into logical tabs.
+
+### Example
+
+```tsx
+import { TabItem, Tabs } from '@velkinvv/plainerv';
+
+type ProfileTabsProps = {
+  defaultActiveTabValue: string;
+  onTabChange: (nextTabValue: string) => void;
+};
+
+export function ProfileTabs({
+  defaultActiveTabValue,
+  onTabChange,
+}: ProfileTabsProps) {
+  return (
+    <Tabs
+      defaultActiveTab={defaultActiveTabValue}
+      onChange={onTabChange}
+      ariaLabel="Profile sections"
+    >
+      <TabItem value="profile" label="Profile">
+        Profile section
+      </TabItem>
+      <TabItem value="security" label="Security">
+        Security section
+      </TabItem>
+      <TabItem value="notifications" label="Notifications">
+        Notifications section
+      </TabItem>
+    </Tabs>
+  );
+}
+```
+
+You can also pass an **`items`** array (`TabsItemDefinition[]`) — it takes precedence over **`children`** for building the tab list.
+
+### Appearance (`TabsVariant`)
+
+- **`pill`** — rounded track with an animated thumb under the active segment.
+- **`minimal`** — labels and a sliding **primary** indicator only; no gray baseline.
+- **`line`** — same plus a full-width/full-height **borderSecondary** baseline; optional **`filledSegmentTriggers`** adds filled segments (**primary** active), **backgroundSecondary** track, and a **2px** indicator.
+- **`underline`** — gray baseline only spans the tab triggers row/column.
+
+If **`variant`** is omitted: horizontal defaults to **`pill`**, vertical to **`minimal`**.
+
+## Main input parameters
+
+### Tabs
+
+- `defaultActiveTab?: string` — initial active tab (see also `defaultValue`);
+- `defaultValue?: string` — same as `defaultActiveTab`;
+- `value?: string` — controlled active tab;
+- `onChange?: (activeTabValue: string) => void` — tab change handler;
+- `direction?: TabsDirection` — tab direction (`horizontal`/`vertical`);
+- `tabsPosition?: TabsVerticalPosition` — tab strip position when vertical;
+- `variant?: TabsVariant` — **pill** \| **minimal** \| **line** \| **underline**;
+- `filledSegmentTriggers?: boolean` — for **minimal** / **line** / **underline**: filled segment chrome;
+- `ariaLabel?: string` — accessible group name (**role="group"**), recommended for segment-only UIs;
+- `items?: TabsItemDefinition[]` — tabs from data (when non-empty, **`children`** are not used for the list);
+- `segmentTrackProps?: HTMLAttributes` — **className**, **style**, etc. for the inner track (**`ui-tabs-list`** is appended);
+- `children?: React.ReactNode` — **`TabItem`** / **`Tabs.Item`** as direct children of **`Tabs`** (no **`Tabs.List`**).
+
+## Pagination
+
+Use `Pagination` for lists, tables and grids where you need an explicit transition between pages.
+
+### Example
+
+```tsx
+import { Pagination } from '@velkinvv/plainerv';
+
+type UsersPaginationProps = {
+  currentPageNumber: number;
+  onPageNumberChange: (nextPageNumber: number) => void;
+};
+
+export function UsersPagination({
+  currentPageNumber,
+  onPageNumberChange,
+}: UsersPaginationProps) {
+  return (
+    <Pagination
+      totalPages={24}
+      page={currentPageNumber}
+      onPageChange={onPageNumberChange}
+      siblingCount={1}
+      showPrevNext
+      ariaLabel="Pagination of user list"
+    />
+  );
+}
+```
+
+### Pagination
+
+- `totalPages: number` — total number of pages;
+- `page?: number` — current page in controlled mode;
+- `defaultPage?: number` — start page in uncontrolled mode;
+- `onPageChange?: (nextPageNumber: number) => void` — page change callback;
+- `siblingCount?: number` — the number of neighboring pages around the active one;
+- `showPrevNext?: boolean` — displays the back/forward buttons;
+- `variant?: 'default' | 'compact'` — page list display mode;
+- `disabled?: boolean` — blocking pagination control;
+- `size?: 'sm' | 'md' | 'lg'` — size of pagination buttons;
+- `ariaLabel?: string` - accessibility label.
+
+
+

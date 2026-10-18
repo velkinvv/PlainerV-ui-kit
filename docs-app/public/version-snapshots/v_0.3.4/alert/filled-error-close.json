@@ -1,0 +1,10 @@
+{
+  "version": "v_0.3.4",
+  "component": "alert",
+  "exampleId": "filled-error-close",
+  "title": "Filled + close",
+  "description": "Вариант filled с кнопкой закрытия.",
+  "code": "<Alert severity=\"error\" variant=\"filled\" onClose={() => undefined}>Ошибка сохранения.</Alert>",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:20.402Z"
+}

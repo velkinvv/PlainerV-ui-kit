@@ -1,0 +1,10 @@
+{
+  "version": "v_0.3.4",
+  "component": "select",
+  "exampleId": "single-default",
+  "title": "Одиночный выбор",
+  "description": "Базовый select с опциями и placeholder.",
+  "code": "<Select label=\"Язык\" options={languageOptions} placeholder=\"Выберите язык\" />",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:26.411Z"
+}

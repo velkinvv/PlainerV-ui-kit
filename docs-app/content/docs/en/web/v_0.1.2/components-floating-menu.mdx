@@ -1,0 +1,63 @@
+﻿---
+title: Components Floating Menu
+description: Reference for Floating Menu
+---
+
+# FloatingMenu
+
+`FloatingMenu` is suitable for quick actions on top of the workspace: editors, boards, visual designers.
+
+## Basic example
+
+```tsx
+import { FloatingMenu } from '@velkinvv/plainerv';
+
+type BoardFloatingMenuProps = {
+  isCommentsActive: boolean;
+  onToggleComments: () => void;
+  onOpenCommandPalette: () => void;
+};
+
+export function BoardFloatingMenu({
+  isCommentsActive,
+  onToggleComments,
+  onOpenCommandPalette,
+}: BoardFloatingMenuProps) {
+  return (
+    <FloatingMenu placement="bottom-center" draggable aria-label="Editor floating menu">
+      <FloatingMenu.Group>
+        <FloatingMenu.GroupItem
+          icon={<span>💬</span>}
+          aria-label="Comments"
+          active={isCommentsActive}
+          onClick={onToggleComments}
+        />
+        <FloatingMenu.GroupItem
+          icon={<span>⌘</span>}
+          aria-label="Teams"
+          onClick={onOpenCommandPalette}
+        />
+      </FloatingMenu.Group>
+    </FloatingMenu>
+  );
+}
+```
+
+## Main input parameters
+
+- `'aria-label': string` - required signature for accessibility (`role="toolbar"`);
+- `placement?: FloatingMenuPlacement` — menu position within the screen;
+- `draggable?: boolean` — permission to drag the menu;
+- `dragSource?: FloatingMenuDragSource` — dragging start area;
+- `children?: React.ReactNode` - groups and menu items.
+
+### FloatingMenu.GroupItem
+
+- `icon: React.ReactNode` — action icon;
+- `'aria-label': string` — action button label for accessibility;
+- `active?: boolean` — active state of the item;
+- `onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void` — item selection handler;
+- `tooltip?: React.ReactNode` - hover tooltip.
+
+
+

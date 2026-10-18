@@ -1,0 +1,10 @@
+{
+  "version": "v_0.3.4",
+  "component": "modal",
+  "exampleId": "with-buttons",
+  "title": "С кнопками действий",
+  "description": "Кнопки задаются через массив buttons.",
+  "code": "<Modal isOpen onClose={() => undefined} title=\"Удаление\" buttons={[{ label: \"Отмена\", variant: ButtonVariant.OUTLINE, onClick: () => undefined }, { label: \"Удалить\", variant: ButtonVariant.DANGER, onClick: () => undefined }]} />",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:30.399Z"
+}

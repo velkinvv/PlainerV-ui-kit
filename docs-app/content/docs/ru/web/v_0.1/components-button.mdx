@@ -1,0 +1,36 @@
+---
+title: Button
+description: Основные сценарии Button в версии v0.1
+---
+
+# Button
+
+Базовые примеры использования `Button`.
+
+```tsx
+import { Button } from '@velkinvv/plainerv';
+
+export function ButtonDemo() {
+  return (
+    <section>
+      <Button variant="primary">Primary</Button>
+      <Button variant="secondary">Secondary</Button>
+      <Button variant="danger">Danger</Button>
+      <Button loading>Loading</Button>
+    </section>
+  );
+}
+```
+
+## Основные входные параметры
+
+- `variant?: ButtonVariant` — стиль кнопки;
+- `size?: Size` — размер;
+- `loading?: boolean` — состояние загрузки;
+- `disabled?: boolean` — блокировка;
+- `onClick?: React.MouseEventHandler` — обработчик клика.
+
+## См. также
+
+- [Input + Select](/docs/web/v_0.1/components-input-select)
+- [Forms + Validation](/docs/web/v_0.1/forms-validation)

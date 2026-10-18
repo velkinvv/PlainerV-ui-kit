@@ -1,0 +1,343 @@
+---
+title: Theming
+description: Каталог тем, ThemeVariant, ThemeColorScheme, mergeTheme и ThemeProvider в v0.2.8
+---
+
+# Theming
+
+Библиотека поддерживает:
+
+- **встроенные** варианты оформления (`standard`, `glass`, `kidsBoys`, `kidsGirls`) в **светлом** и **тёмном** исполнении;
+- **произвольное число** кастомных тем (бренд, «океан», «полночь» и т.д.);
+- **type-safe** переключение без строковых литералов в коде.
+
+## Три понятия: ThemeVariant, ThemeColorScheme и ThemeMode
+
+| | **ThemeVariant** | **ThemeColorScheme** | **ThemeMode** |
+|--|------------------|----------------------|---------------|
+| Назначение | **Вариант оформления** (standard, glass, …) | **Палитра** токенов (светлая / тёмная основа) | **Id активной темы** в каталоге |
+| Примеры | `standard`, `glass`, `kidsBoys`, `kidsGirls` | `LIGHT`, `DARK` | `light`, `glassDark`, `kidsBoysLight`, `ocean` |
+| Переключение | `setThemeVariant(ThemeVariant.kidsBoys)` | `setColorScheme(ThemeColorScheme.DARK)` | `setThemeMode(appThemes.themeMode.ocean)` |
+| В styled-components | — | `theme.mode === ThemeColorScheme.DARK` | — |
+
+### Как это связано
+
+Встроенные темы — это **две оси**, а не четыре независимых id:
+
+```
+ThemeVariant (standard | glass | kidsBoys | kidsGirls)  ×  ThemeColorScheme (light | dark)  →  ThemeMode
+```
+
+| variant ↓ / palette → | light | dark |
+|-----------------------|-------|------|
+| **standard** | `light` | `dark` |
+| **glass** | `glassLight` | `glassDark` |
+| **kidsBoys** | `kidsBoysLight` | `kidsBoysDark` |
+| **kidsGirls** | `kidsGirlsLight` | `kidsGirlsDark` |
+
+Id `light`, `dark`, `glassLight`, `glassDark`, `kidsBoysLight`, `kidsBoysDark`, `kidsGirlsLight`, `kidsGirlsDark` сохранены для Storybook. Legacy `kidsLight` / `kidsDark` и `ThemeVariant.kids` указывают на тему для мальчиков.
+
+**Не путайте:** `setThemeMode(ThemeMode.dark)` всегда выбирает **стандартную** тёмную тему. Чтобы переключить только палитру, сохранив kids или glass — используйте `setColorScheme`. Для точного выбора кастомной темы — `setThemeMode`.
+
+## Детские темы (kidsBoys / kidsGirls, 8–11 лет)
+
+Две детские темы с разными палитрами:
+
+| Вариант | Аудитория | Акценты |
+|---------|-----------|---------|
+| `ThemeVariant.kidsBoys` | мальчики | синий, голубой, лайм, оранжевый |
+| `ThemeVariant.kidsGirls` | девочки | розовый, фиолетовый, персиковый |
+
+Обе темы включают:
+
+- мягкие скругления кнопок и карточек;
+- декоративный градиентный фон страницы (`pageBackground`);
+- светлую и тёмную палитру (`kidsBoysLight` / `kidsBoysDark`, `kidsGirlsLight` / `kidsGirlsDark`).
+
+```tsx
+import { ThemeVariant, ThemeColorScheme, useTheme } from '@velkinvv/plainerv';
+
+function KidsAppControls() {
+  const { setThemeVariant, setColorScheme } = useTheme();
+
+  return (
+    <>
+      <button type="button" onClick={() => setThemeVariant(ThemeVariant.kidsBoys)}>
+        Для мальчиков
+      </button>
+      <button type="button" onClick={() => setThemeVariant(ThemeVariant.kidsGirls)}>
+        Для девочек
+      </button>
+      <button type="button" onClick={() => setColorScheme(ThemeColorScheme.DARK)}>
+        Тёмная палитра
+      </button>
+    </>
+  );
+}
+```
+
+> **Legacy:** `ThemeVariant.kids` автоматически мигрирует в `kidsBoys`. Id `kidsLight` / `kidsDark` — алиасы на `kidsBoysLight` / `kidsBoysDark`.
+
+## Быстрый старт (standard / glass / kidsBoys / kidsGirls + light / dark)
+
+```tsx
+import {
+  ThemeProvider,
+  ThemeToggle,
+  ThemeVariantSelector,
+  useTheme,
+} from '@velkinvv/plainerv';
+
+export function App() {
+  return (
+    <ThemeProvider>
+      <ThemeVariantSelector />
+      <ThemeToggle />
+      <YourApp />
+    </ThemeProvider>
+  );
+}
+```
+
+```tsx
+import {
+  ThemeColorScheme,
+  ThemeVariant,
+  useTheme,
+} from '@velkinvv/plainerv';
+
+function ThemeStatus() {
+  const { themeVariant, colorScheme, setThemeVariant, setColorScheme } = useTheme();
+
+  return (
+    <p>
+      Вариант: {themeVariant}, палитра: {colorScheme}
+      <button type="button" onClick={() => setThemeVariant(ThemeVariant.glass)}>
+        Стекло
+      </button>
+      <button type="button" onClick={() => setColorScheme(ThemeColorScheme.DARK)}>
+        Тёмная
+      </button>
+    </p>
+  );
+}
+```
+
+## Каталог из N тем: `defineThemeCatalog`
+
+```tsx
+import {
+  ThemeProvider,
+  ThemeSelector,
+  defineThemeCatalog,
+  ThemeColorScheme,
+  ThemeMode,
+  useTheme,
+} from '@velkinvv/plainerv';
+
+const appThemes = defineThemeCatalog([
+  { id: 'light', label: 'Светлая', baseMode: ThemeColorScheme.LIGHT },
+  {
+    id: 'ocean',
+    label: 'Океан',
+    baseMode: ThemeColorScheme.LIGHT,
+    override: { colors: { primary: '#0284C7', primaryHover: '#0369A1' } },
+  },
+  {
+    id: 'forest',
+    label: 'Лес',
+    baseMode: ThemeColorScheme.LIGHT,
+    override: { colors: { primary: '#059669' } },
+  },
+  { id: 'dark', label: 'Тёмная', baseMode: ThemeColorScheme.DARK },
+  {
+    id: 'midnight',
+    label: 'Полночь',
+    baseMode: ThemeColorScheme.DARK,
+    override: { colors: { primary: '#8B5CF6', background: '#0F172A' } },
+  },
+] as const);
+
+type AppThemeMode = (typeof appThemes.themeModes)[number];
+// 'light' | 'ocean' | 'forest' | 'dark' | 'midnight'
+
+export function App({ children }: { children: React.ReactNode }) {
+  return (
+    <ThemeProvider<AppThemeMode>
+      themes={appThemes.catalog}
+      defaultThemeMode={appThemes.themeMode.light}
+    >
+      <ThemeSelector label="Тема оформления" />
+      {children}
+    </ThemeProvider>
+  );
+}
+```
+
+### Type-safe: `themeMode.ocean`
+
+```tsx
+const { setThemeMode } = useTheme<AppThemeMode>();
+
+setThemeMode(appThemes.themeMode.ocean); // ✅
+setThemeMode(ThemeMode.light);          // ✅ встроенные
+
+// setThemeMode(appThemes.themeMode.oceen); // ❌ ошибка TypeScript
+```
+
+## API `useTheme`
+
+```tsx
+function ThemeControls() {
+  const {
+    themeMode,
+    setThemeMode,
+    themeVariant,
+    themeVariants,
+    setThemeVariant,
+    colorScheme,
+    setColorScheme,
+    themeModes,
+    themes,
+    cycleTheme,
+    isDarkColorScheme,
+  } = useTheme<AppThemeMode>();
+
+  return (
+    <>
+      <button type="button" onClick={() => setThemeMode(appThemes.themeMode.ocean)}>
+        Океан
+      </button>
+      <button type="button" onClick={cycleTheme}>
+        Следующая
+      </button>
+    </>
+  );
+}
+```
+
+| Поле | Описание |
+|------|----------|
+| `themeMode` / `setThemeMode` | Активная тема (id из каталога) |
+| `themeVariant` / `setThemeVariant` | Вариант оформления (`standard`, `glass`); `undefined` для кастомных тем |
+| `themeVariants` | Доступные варианты в текущем каталоге |
+| `colorScheme` / `setColorScheme` | Палитра (`LIGHT` / `DARK`); сохраняет variant |
+| `themeModes` | Список id (`readonly`) |
+| `themes` | `{ name, label, colorScheme, variant? }[]` для UI |
+| `isDarkColorScheme` | Удобная проверка тёмной палитры |
+| `cycleTheme()` | Следующая тема по кругу |
+| `getThemeByMode(id)` | Полный объект темы из каталога |
+
+Устаревшие алиасы (совместимость): `themeName`, `themeId`, `mode`, `setMode`, `toggle`.
+
+## Сохранение в localStorage
+
+| Ключ | Значение |
+|------|----------|
+| `plainerv-theme-variant` | `standard` или `glass` |
+| `plainerv-color-scheme` | `light` или `dark` |
+| `plainerv-theme-id` | Legacy id (`light`, `glassDark`, …) |
+
+При первом запуске после обновления старый `plainerv-theme-id` автоматически разбирается на две оси.
+
+## Кастомизация без полного каталога
+
+Переопределения встроенных `light` / `dark`:
+
+```tsx
+<ThemeProvider
+  themeOverrides={{
+    light: { colors: { primary: '#7C3AED' } },
+    dark: { colors: { primary: '#A78BFA' } },
+  }}
+>
+  {children}
+</ThemeProvider>
+```
+
+Готовые объекты тем:
+
+```tsx
+import { mergeTheme, lightTheme } from '@velkinvv/plainerv';
+
+<ThemeProvider
+  customThemes={{
+    light: mergeTheme(lightTheme, { colors: { primary: '#0D9488' } }),
+  }}
+/>
+```
+
+`customThemes` имеет приоритет над `themeOverrides` для соответствующего id.
+
+## `mergeTheme` и `useMergeTheme`
+
+Глубокое слияние: недостающие токены подставляются из базовой темы.
+
+```tsx
+import { mergeTheme, lightTheme, useMergeTheme } from '@velkinvv/plainerv';
+
+const brandLight = mergeTheme(lightTheme, {
+  colors: { primary: '#0D9488' },
+});
+
+// внутри ThemeProvider — база из активной или указанной темы каталога
+const extended = useMergeTheme(
+  { colors: { border: '#94A3B8' } },
+  { themeMode: appThemes.themeMode.ocean },
+);
+```
+
+## `ThemeProvider` — параметры
+
+| Параметр | Описание |
+|----------|----------|
+| `themes` | Каталог `{ [id]: { theme?, override?, baseMode?, variant?, label? } }` |
+| `defaultThemeMode` | Id по умолчанию (`light`) |
+| `initialThemeMode` | Id при SSR / первом рендере |
+| `storageKey` | Ключ legacy id в `localStorage` (по умолчанию `plainerv-theme-id`) |
+| `themeOverrides` | Legacy: override для `light` / `dark` |
+| `customThemes` | Legacy: готовые `light` / `dark` |
+| `initialMode` | Legacy: `ThemeColorScheme` → первая тема с этой палитрой |
+| `applyGlobalStyles` | Глобальные стили кита (по умолчанию `true`) |
+
+## UI-компоненты
+
+| Компонент | Когда использовать |
+|-----------|-------------------|
+| **ThemeVariantSelector** | Переключение standard / glass / kidsBoys / kidsGirls (сохраняет палитру) |
+| **ThemeToggle** | Переключение light ↔ dark (сохраняет variant) |
+| **ThemeSelector** | Select для 3+ кастомных id в каталоге |
+
+Рекомендуемая пара для встроенных тем: **ThemeVariantSelector** + **ThemeToggle**.
+
+## Экспорты пакета
+
+- `ThemeProvider`, `useTheme`, `ThemeToggle`, `ThemeVariantSelector`, `ThemeSelector`
+- `defineThemeCatalog`, `mergeTheme`, `useMergeTheme`
+- `ThemeMode`, `ThemeVariant`, `ThemeColorScheme`, `lightTheme`, `darkTheme`, `glassLightTheme`, `glassDarkTheme`, `kidsBoysLightTheme`, `kidsBoysDarkTheme`, `kidsGirlsLightTheme`, `kidsGirlsDarkTheme`
+- `resolveBuiltinThemeMode`, `parseThemeModeToAxes`, `themeVariantLabels`
+- типы: `ThemeOverride`, `ThemeCatalog`, `DefinedThemeCatalog`, …
+
+## Storybook
+
+Toolbar: **два переключателя** — **Тема** (`standard` / `glass` / `kidsBoys` / `kidsGirls`) и **Цвет** (`light` / `dark`).
+
+- **UI Kit → Theming → Custom theme** — `themeOverrides`, `mergeTheme`, `useMergeTheme`
+- **UI Kit → Theming → ThemeVariantSelector** — standard / glass / kidsBoys / kidsGirls + ThemeToggle
+- **UI Kit → Theming → ThemeSelector** — каталог из 5 тем
+
+Запуск: `cd web && npm run storybook`.
+
+## Практические рекомендации
+
+- один `ThemeProvider` на приложение;
+- для встроенных тем используйте `setThemeVariant` + `setColorScheme`, а не прямой `setThemeMode(ThemeMode.glassDark)`;
+- для брендинга добавляйте темы в каталог с полем `variant`, не вкладывайте провайдеры;
+- в styled-components проверяйте **палитру** (`ThemeColorScheme`), переключайте **вариант** и **палитру** через новый API;
+- объект override в `useMergeTheme` лучше мемоизировать (`useMemo`).
+
+## См. также
+
+- [Quick Start](/docs/web/v_0.2.8/quick-start)
+- [README](/docs/web/v_0.2.8/readme)
+- [Button](/docs/web/v_0.2.8/components-button)

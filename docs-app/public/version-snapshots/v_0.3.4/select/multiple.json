@@ -1,0 +1,10 @@
+{
+  "version": "v_0.3.4",
+  "component": "select",
+  "exampleId": "multiple",
+  "title": "Множественный выбор",
+  "description": "Multiple-режим с набором выбранных значений.",
+  "code": "<Select label=\"Языки\" options={languageOptions} multiple defaultValue={[\"ru\", \"en\"]} />",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:26.755Z"
+}

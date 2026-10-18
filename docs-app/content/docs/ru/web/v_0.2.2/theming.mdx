@@ -1,0 +1,250 @@
+﻿---
+title: Theming
+description: Каталог тем, ThemeMode, ThemeColorScheme, mergeTheme и ThemeProvider в v0.2.2
+---
+
+# Theming
+
+Библиотека поддерживает:
+
+- **встроенные** темы `light` / `dark`;
+- **произвольное число** кастомных тем (бренд, «океан», «полночь» и т.д.);
+- **type-safe** переключение без строковых литералов в коде.
+
+## Два понятия: ThemeMode и ThemeColorScheme
+
+| | **ThemeMode** | **ThemeColorScheme** |
+|--|---------------|----------------------|
+| Назначение | **Id активной темы** в каталоге | **Палитра** токенов (светлая / тёмная основа) |
+| Примеры | `light`, `ocean`, `midnight` | `LIGHT`, `DARK` |
+| Переключение | `setThemeMode(appThemes.themeMode.ocean)` | Не переключают напрямую (берётся из темы) |
+| В styled-components | — | `theme.mode === ThemeColorScheme.DARK` |
+
+**Не путайте:** `setMode(ThemeColorScheme.DARK)` выбирает **первую** тёмную тему в каталоге, а не конкретную `midnight`. Для точного выбора — `setThemeMode`.
+
+## Быстрый старт (light / dark)
+
+```tsx
+import { ThemeProvider, ThemeToggle, useTheme } from '@velkinvv/plainerv';
+
+export function App() {
+  return (
+    <ThemeProvider>
+      <ThemeToggle />
+      <YourApp />
+    </ThemeProvider>
+  );
+}
+```
+
+```tsx
+import { ThemeMode, useTheme } from '@velkinvv/plainerv';
+
+function ThemeStatus() {
+  const { themeMode, colorScheme, setThemeMode } = useTheme();
+
+  return (
+    <p>
+      Тема: {themeMode}, палитра: {colorScheme}
+      <button type="button" onClick={() => setThemeMode(ThemeMode.dark)}>
+        Тёмная
+      </button>
+    </p>
+  );
+}
+```
+
+## Каталог из N тем: `defineThemeCatalog`
+
+```tsx
+import {
+  ThemeProvider,
+  ThemeSelector,
+  defineThemeCatalog,
+  ThemeColorScheme,
+  ThemeMode,
+  useTheme,
+} from '@velkinvv/plainerv';
+
+const appThemes = defineThemeCatalog([
+  { id: 'light', label: 'Светлая', baseMode: ThemeColorScheme.LIGHT },
+  {
+    id: 'ocean',
+    label: 'Океан',
+    baseMode: ThemeColorScheme.LIGHT,
+    override: { colors: { primary: '#0284C7', primaryHover: '#0369A1' } },
+  },
+  {
+    id: 'forest',
+    label: 'Лес',
+    baseMode: ThemeColorScheme.LIGHT,
+    override: { colors: { primary: '#059669' } },
+  },
+  { id: 'dark', label: 'Тёмная', baseMode: ThemeColorScheme.DARK },
+  {
+    id: 'midnight',
+    label: 'Полночь',
+    baseMode: ThemeColorScheme.DARK,
+    override: { colors: { primary: '#8B5CF6', background: '#0F172A' } },
+  },
+] as const);
+
+type AppThemeMode = (typeof appThemes.themeModes)[number];
+// 'light' | 'ocean' | 'forest' | 'dark' | 'midnight'
+
+export function App({ children }: { children: React.ReactNode }) {
+  return (
+    <ThemeProvider<AppThemeMode>
+      themes={appThemes.catalog}
+      defaultThemeMode={appThemes.themeMode.light}
+    >
+      <ThemeSelector label="Тема оформления" />
+      {children}
+    </ThemeProvider>
+  );
+}
+```
+
+### Type-safe: `themeMode.ocean`
+
+```tsx
+const { setThemeMode } = useTheme<AppThemeMode>();
+
+setThemeMode(appThemes.themeMode.ocean); // ✅
+setThemeMode(ThemeMode.light);          // ✅ встроенные
+
+// setThemeMode(appThemes.themeMode.oceen); // ❌ ошибка TypeScript
+```
+
+## API `useTheme`
+
+```tsx
+function ThemeControls() {
+  const {
+    themeMode,
+    setThemeMode,
+    themeModes,
+    themes,
+    cycleTheme,
+    colorScheme,
+    isDarkColorScheme,
+  } = useTheme<AppThemeMode>();
+
+  return (
+    <>
+      <button type="button" onClick={() => setThemeMode(appThemes.themeMode.ocean)}>
+        Океан
+      </button>
+      <button type="button" onClick={cycleTheme}>
+        Следующая
+      </button>
+    </>
+  );
+}
+```
+
+| Поле | Описание |
+|------|----------|
+| `themeMode` / `setThemeMode` | Активная тема (только id из каталога) |
+| `themeModes` | Список id (`readonly`) |
+| `themes` | `{ name, label, colorScheme }[]` для UI |
+| `colorScheme` | `ThemeColorScheme.LIGHT` или `DARK` |
+| `isDarkColorScheme` | Удобная проверка тёмной палитры |
+| `cycleTheme()` | Следующая тема по кругу |
+| `getThemeByMode(id)` | Полный объект темы из каталога |
+
+Устаревшие алиасы (совместимость): `themeName`, `themeId`, `mode`, `setMode`, `toggle`.
+
+## Кастомизация без полного каталога
+
+Переопределения встроенных `light` / `dark`:
+
+```tsx
+<ThemeProvider
+  themeOverrides={{
+    light: { colors: { primary: '#7C3AED' } },
+    dark: { colors: { primary: '#A78BFA' } },
+  }}
+>
+  {children}
+</ThemeProvider>
+```
+
+Готовые объекты тем:
+
+```tsx
+import { mergeTheme, lightTheme } from '@velkinvv/plainerv';
+
+<ThemeProvider
+  customThemes={{
+    light: mergeTheme(lightTheme, { colors: { primary: '#0D9488' } }),
+  }}
+/>
+```
+
+`customThemes` имеет приоритет над `themeOverrides` для соответствующего id.
+
+## `mergeTheme` и `useMergeTheme`
+
+Глубокое слияние: недостающие токены подставляются из базовой темы.
+
+```tsx
+import { mergeTheme, lightTheme, useMergeTheme } from '@velkinvv/plainerv';
+
+const brandLight = mergeTheme(lightTheme, {
+  colors: { primary: '#0D9488' },
+});
+
+// внутри ThemeProvider — база из активной или указанной темы каталога
+const extended = useMergeTheme(
+  { colors: { border: '#94A3B8' } },
+  { themeMode: appThemes.themeMode.ocean },
+);
+```
+
+## `ThemeProvider` — параметры
+
+| Параметр | Описание |
+|----------|----------|
+| `themes` | Каталог `{ [id]: { theme?, override?, baseMode?, label? } }` |
+| `defaultThemeMode` | Id по умолчанию (`light`) |
+| `initialThemeMode` | Id при SSR / первом рендере |
+| `storageKey` | Ключ `localStorage` (по умолчанию `plainerv-theme-id`) |
+| `themeOverrides` | Legacy: override для `light` / `dark` |
+| `customThemes` | Legacy: готовые `light` / `dark` |
+| `initialMode` | Legacy: `ThemeColorScheme` → первая тема с этой палитрой |
+| `applyGlobalStyles` | Глобальные стили кита (по умолчанию `true`) |
+
+## UI-компоненты
+
+| Компонент | Когда использовать |
+|-----------|-------------------|
+| **ThemeToggle** | Пара `ThemeMode.light` ↔ `ThemeMode.dark` в каталоге |
+| **ThemeSelector** | Select для 3+ тем |
+
+## Экспорты пакета
+
+- `ThemeProvider`, `useTheme`, `ThemeToggle`, `ThemeSelector`
+- `defineThemeCatalog`, `mergeTheme`, `useMergeTheme`
+- `ThemeMode`, `ThemeColorScheme`, `lightTheme`, `darkTheme`
+- типы: `ThemeOverride`, `ThemeCatalog`, `DefinedThemeCatalog`, …
+
+## Storybook
+
+- **UI Kit → Theming → Custom theme** — `themeOverrides`, `mergeTheme`, `useMergeTheme`
+- **UI Kit → Theming → ThemeSelector** — каталог из 5 тем
+
+Запуск: `cd web && npm run storybook`.
+
+## Практические рекомендации
+
+- один `ThemeProvider` на приложение;
+- для брендинга добавляйте темы в каталог, не вкладывайте провайдеры;
+- в styled-components проверяйте **палитру** (`ThemeColorScheme`), переключайте **тему** (`setThemeMode`);
+- объект override в `useMergeTheme` лучше мемоизировать (`useMemo`).
+
+## См. также
+
+- [Quick Start](/docs/web/v_0.2.2/quick-start)
+- [README](/docs/web/v_0.2.2/readme)
+- [Button](/docs/web/v_0.2.2/components-button)

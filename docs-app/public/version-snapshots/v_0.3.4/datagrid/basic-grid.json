@@ -1,0 +1,10 @@
+{
+  "version": "v_0.3.4",
+  "component": "datagrid",
+  "exampleId": "basic-grid",
+  "title": "Базовая таблица",
+  "description": "Минимальный grid с колонками и строками.",
+  "code": "<DataGrid tableId=\"employees-grid\" columns={employeeColumns} rows={employeeRows} totalRows={employeeRows.length} size={Size.MD} />",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:18.298Z"
+}

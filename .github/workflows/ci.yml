@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-      - run: npm ci
+      - run: npm ci --workspaces=false
       - run: npm run lint:check
       - run: npm run format:check
       - run: npm run docs:dsl:generate
@@ -29,7 +29,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-      - run: npm ci
+      - run: npm ci --workspaces=false
       - run: npm run type-check
 
   test:
@@ -40,7 +40,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-      - run: npm ci
+      - run: npm ci --workspaces=false
       - run: npm run test:coverage
       - uses: codecov/codecov-action@v4
         with:
@@ -55,9 +55,36 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-      - run: npm ci
+      - run: npm ci --workspaces=false
       - run: npm run build
       - uses: actions/upload-artifact@v4
         with:
           name: dist
           path: dist
+
+  docs-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci --workspaces=false
+      - run: npm ci --prefix docs-app
+      - run: time npm run docs:manifest
+      - run: npm run docs:manifest:check
+      - run: time npm run docs:build
+      - run: npm run docs:prefix:check
+      - name: Lighthouse performance budgets
+        run: |
+          npm run --prefix docs-app preview -- --host 127.0.0.1 > /tmp/docs-preview.log 2>&1 &
+          preview_pid=$!
+          trap 'kill "$preview_pid" 2>/dev/null || true; wait "$preview_pid" 2>/dev/null || true' EXIT
+          curl --retry 30 --retry-connrefused --retry-delay 1 --retry-max-time 30 \
+            --fail --silent http://127.0.0.1:6500/docs/ -o /dev/null
+          npm run --prefix docs-app lhci
+      - uses: actions/upload-artifact@v4
+        with:
+          name: docs-dist
+          path: docs-app/dist

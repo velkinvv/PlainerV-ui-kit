@@ -1,0 +1,132 @@
+{
+  "version": "v_0.3.4",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:31.079Z",
+  "entries": [
+    {
+      "component": "button",
+      "exampleId": "primary",
+      "title": "Primary"
+    },
+    {
+      "component": "button",
+      "exampleId": "with-icons",
+      "title": "С иконками"
+    },
+    {
+      "component": "button",
+      "exampleId": "loading",
+      "title": "Состояние загрузки"
+    },
+    {
+      "component": "badge",
+      "exampleId": "counter-default",
+      "title": "Счётчик"
+    },
+    {
+      "component": "badge",
+      "exampleId": "dot-mode",
+      "title": "Dot-режим"
+    },
+    {
+      "component": "badge",
+      "exampleId": "sizes",
+      "title": "Размеры"
+    },
+    {
+      "component": "datagrid",
+      "exampleId": "basic-grid",
+      "title": "Базовая таблица"
+    },
+    {
+      "component": "datagrid",
+      "exampleId": "with-row-selection",
+      "title": "Выбор строк"
+    },
+    {
+      "component": "alert",
+      "exampleId": "basic-success",
+      "title": "Базовый success"
+    },
+    {
+      "component": "alert",
+      "exampleId": "filled-error-close",
+      "title": "Filled + close"
+    },
+    {
+      "component": "alert",
+      "exampleId": "with-action",
+      "title": "Со slot action"
+    },
+    {
+      "component": "dateinput",
+      "exampleId": "single-date",
+      "title": "Одиночная дата"
+    },
+    {
+      "component": "dateinput",
+      "exampleId": "date-range",
+      "title": "Диапазон дат"
+    },
+    {
+      "component": "dateinput",
+      "exampleId": "month-precision",
+      "title": "Точность month"
+    },
+    {
+      "component": "input",
+      "exampleId": "default",
+      "title": "Базовое поле"
+    },
+    {
+      "component": "input",
+      "exampleId": "error-state",
+      "title": "Ошибка валидации"
+    },
+    {
+      "component": "input",
+      "exampleId": "with-icons",
+      "title": "С иконками"
+    },
+    {
+      "component": "select",
+      "exampleId": "single-default",
+      "title": "Одиночный выбор"
+    },
+    {
+      "component": "select",
+      "exampleId": "multiple",
+      "title": "Множественный выбор"
+    },
+    {
+      "component": "select",
+      "exampleId": "search-select",
+      "title": "SearchSelect"
+    },
+    {
+      "component": "drawer",
+      "exampleId": "right-opened",
+      "title": "Открыт справа"
+    },
+    {
+      "component": "drawer",
+      "exampleId": "bottom-opened",
+      "title": "Открыт снизу"
+    },
+    {
+      "component": "modal",
+      "exampleId": "basic-opened",
+      "title": "Открытое окно"
+    },
+    {
+      "component": "modal",
+      "exampleId": "with-buttons",
+      "title": "С кнопками действий"
+    },
+    {
+      "component": "modal",
+      "exampleId": "status-variant",
+      "title": "Статус danger"
+    }
+  ]
+}

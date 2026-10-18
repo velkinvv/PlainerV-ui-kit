@@ -1,0 +1,10 @@
+{
+  "version": "v_0.3.4",
+  "component": "button",
+  "exampleId": "primary",
+  "title": "Primary",
+  "description": "Базовый сценарий подтверждающего действия.",
+  "code": "<Button variant={ButtonVariant.PRIMARY}>Сохранить</Button>",
+  "locale": "ru",
+  "capturedAt": "2026-10-18T22:44:14.396Z"
+}

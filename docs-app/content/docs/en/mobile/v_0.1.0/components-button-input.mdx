@@ -1,0 +1,84 @@
+﻿---
+title: Components Button Input
+description: Reference for Button Input
+---
+
+# Button + Input
+
+A page with the two most common UI components: `Button` and `Input`.
+
+## Input with controlled value
+
+```tsx
+import React, { useState } from 'react';
+import { Input } from '@plainerV/ui-native';
+import { Size } from '@plainerV/ui-core';
+
+export function EmailInputField() {
+  const [emailValue, setEmailValue] = useState('');
+
+  return (
+    <Input
+      label="Email"
+      value={emailValue}
+      onChangeText={setEmailValue}
+      placeholder="Enter email"
+      size={Size.MD}
+    />
+  );
+}
+```
+
+## Button with loading status
+
+```tsx
+import React, { useState } from 'react';
+import { Button } from '@plainerV/ui-native';
+import { ButtonVariant, Size } from '@plainerV/ui-core';
+
+export function SaveButton() {
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSavePress = () => {
+    setIsSaving(true);
+    setTimeout(() => setIsSaving(false), 1200);
+  };
+
+  return (
+    <Button
+      variant={ButtonVariant.PRIMARY}
+      size={Size.LG}
+      loading={isSaving}
+      onPress={handleSavePress}
+    >
+      Save changes    </Button>
+  );
+}
+```
+
+## Main input parameters
+
+### Input
+
+- `value?: string` — current field value;
+- `onChangeText?: (nextValue: string) => void` — text change handler;
+- `error?: string` — error message;
+- `helperText?: string` — helper text;
+- `size?: Size` - field size.
+
+### Button
+
+- `variant?: ButtonVariant` — visual variant of the button;
+- `size?: Size` — button size;
+- `loading?: boolean` — loading state;
+- `disabled?: boolean` — blocking state;
+- `onPress?: () => void` — press handler.
+
+## See also
+
+- [Quick Start](/docs/en/mobile/v_0.1.0/quick-start)
+- [Forms + Validation](/docs/en/mobile/v_0.1.0/forms-validation)
+- [Card + Typography](/docs/en/mobile/v_0.1.0/components-card-typography)
+
+
+

@@ -1,0 +1,83 @@
+﻿---
+title: Components Date Calendar
+description: Reference for Date Calendar
+---
+
+# DateInput + Calendar
+
+These components cover date selection scenarios in both simple forms and planners.
+
+## DateInput
+
+```tsx
+import { DateInput } from '@velkinvv/plainerv';
+
+type DeadlineDateInputProps = {
+  deadlineDateValue?: string | { start: string; end: string };
+  onDeadlineDateChange: (
+    nextDeadlineDateValue: string | { start: string; end: string },
+  ) => void;
+};
+
+export function DeadlineDateInput({
+  deadlineDateValue,
+  onDeadlineDateChange,
+}: DeadlineDateInputProps) {
+  return (
+    <DateInput
+      label="Deadline"
+      value={deadlineDateValue}
+      onChange={onDeadlineDateChange}
+      placeholder="Select date"
+    />
+  );
+}
+```
+
+## Main input parameters
+
+### DateInput
+
+- `value?: string | DateTimeRange` - selected date or range;
+- `onChange?: (nextDeadlineDateValue: string | DateTimeRange) => void` — date/range change handler;
+- `label?: string` — field label;
+- `placeholder?: string` — tooltip text in empty state.
+
+## Calendar
+
+```tsx
+import { Calendar } from '@velkinvv/plainerv';
+
+type ReleaseCalendarProps = {
+  selectedReleaseDate?: Date;
+  onReleaseDateSelect: (nextReleaseDateValue: Date) => void;
+};
+
+export function ReleaseCalendar({
+  selectedReleaseDate,
+  onReleaseDateSelect,
+}: ReleaseCalendarProps) {
+  return (
+    <Calendar
+      value={selectedReleaseDate}
+      onChange={onReleaseDateSelect}
+      locale="ru"
+      weekStartsOn={1}
+      minDate={new Date('2026-01-01')}
+      maxDate={new Date('2026-12-31')}
+    />
+  );
+}
+```
+
+### Calendar
+
+- `value?: Date | null` — selected date;
+- `onChange?: (nextReleaseDateValue: Date) => void` — date selection handler;
+- `locale?: string` — locale for displaying names;
+- `weekStartsOn?: 0 | 1` — day of the beginning of the week;
+- `minDate?: Date` — minimum available date;
+- `maxDate?: Date` - maximum available date.
+
+
+

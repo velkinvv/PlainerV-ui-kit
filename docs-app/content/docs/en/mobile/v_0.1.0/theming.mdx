@@ -1,0 +1,62 @@
+﻿---
+title: Theming
+description: Reference for Theming
+---
+
+# Theming
+
+The theme in `@plainerV/ui-native` is set via `ThemeProvider` and switched via `useTheme`.
+
+## Basic connection
+
+```tsx
+import React from 'react';
+import { ThemeProvider } from '@plainerV/ui-native';
+import { lightButtonTheme, lightColors } from '@plainerV/ui-themes';
+
+type NativeThemeRootProps = {
+  children: React.ReactNode;
+};
+
+const initialLightTheme = {
+  mode: 'LIGHT',
+  colors: lightColors,
+  buttons: lightButtonTheme,
+};
+
+export function NativeThemeRoot({ children }: NativeThemeRootProps) {
+  return <ThemeProvider initialTheme={initialLightTheme}>{children}</ThemeProvider>;
+}
+```
+
+## Switch theme
+
+```tsx
+import React from 'react';
+import { Button, useTheme } from '@plainerV/ui-native';
+import { ButtonVariant } from '@plainerV/ui-core';
+
+export function ThemeSwitcherButton() {
+  const { toggle } = useTheme();
+
+  return (
+    <Button variant={ButtonVariant.SECONDARY} onPress={toggle}>
+      Switch topic    </Button>
+  );
+}
+```
+
+## Main input parameters
+
+- `ThemeProvider.initialTheme` — the starting theme of the application;
+- `ThemeProvider.children` — component tree;
+- `useTheme().toggle()` - switching between modes;
+- `useTheme().mode` — current theme mode.
+
+## See also
+
+- [Quick Start](/docs/en/mobile/v_0.1.0/quick-start)
+- [Button + Input](/docs/en/mobile/v_0.1.0/components-button-input)
+
+
+
