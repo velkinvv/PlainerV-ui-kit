@@ -1,4 +1,4 @@
-import { lazy, Suspense, type ComponentType, useEffect, useState } from 'react';
+import { lazy, Suspense, type ComponentType, useEffect, useMemo, useState } from 'react';
 import {
   Button,
   ButtonVariant,
@@ -472,8 +472,6 @@ const GuidePage = () => {
   const routeState = resolveRouteState(params);
   const [toc, setToc] = useState<Array<{ id: string; text: string; level: number }>>([]);
   const [activeHeadingId, setActiveHeadingId] = useState<string>('');
-  const [GuideContent, setGuideContent] = useState<ComponentType | null>(null);
-  const [guideLoadFailed, setGuideLoadFailed] = useState(false);
 
   const guides = selectGuides(routeState.locale, routeState.platform, routeState.version);
   const guideSlug = params.slug ?? '';
@@ -482,37 +480,23 @@ const GuidePage = () => {
   const previousGuide = guideIndex > 0 ? guides[guideIndex - 1] : null;
   const nextGuide = guideIndex >= 0 && guideIndex < guides.length - 1 ? guides[guideIndex + 1] : null;
 
-  useEffect(() => {
+  // Контент грузим через `lazy`, а не в `useEffect`: пререндер идёт потоковым
+  // рендером с `onAllReady`, и только Suspense-граница даёт ему дождаться
+  // MDX-чанка. С эффектом руководства навсегда оставались пустым SPA-шаблоном.
+  const GuideContent = useMemo(() => {
     if (!routeState.isValid || !guide) {
-      setGuideContent(null);
-      setGuideLoadFailed(false);
-      return;
+      return null;
     }
 
     const loader = resolveMdxModuleLoader(routeState.locale, routeState.version, guide.slug);
     if (!loader) {
-      setGuideContent(null);
-      setGuideLoadFailed(true);
-      return;
+      return null;
     }
 
-    let active = true;
-    setGuideLoadFailed(false);
-
-    loader()
-      .then((module) => {
-        if (!active) return;
-        setGuideContent(() => module.default ?? null);
-      })
-      .catch(() => {
-        if (!active) return;
-        setGuideContent(null);
-        setGuideLoadFailed(true);
-      });
-
-    return () => {
-      active = false;
-    };
+    return lazy(async () => {
+      const module = await loader();
+      return { default: module.default ?? (() => null) };
+    });
   }, [routeState.isValid, routeState.locale, routeState.version, guide]);
 
   useEffect(() => {
@@ -581,7 +565,7 @@ const GuidePage = () => {
     return <Navigate to={`/${defaultLocale}/${defaultPlatform}/${defaultVersion}`} replace />;
   }
 
-  if (!guide || guideLoadFailed) {
+  if (!guide || !GuideContent) {
     return <Navigate to={`/${routeState.locale}/${routeState.platform}/${routeState.version}`} replace />;
   }
 
@@ -615,10 +599,12 @@ const GuidePage = () => {
         />
 
         <article className="docs-guide-content">
-          {GuideContent ? <GuideContent /> : <p>Загрузка руководства…</p>}
+          <Suspense fallback={<p>Загрузка руководства…</p>}>
+            <GuideContent />
+          </Suspense>
         </article>
 
-        {GuideContent && toc.length > 0 ? (
+        {toc.length > 0 ? (
           <section className="docs-guide-toc" aria-label="Оглавление">
             <h2>Оглавление</h2>
             <ul>

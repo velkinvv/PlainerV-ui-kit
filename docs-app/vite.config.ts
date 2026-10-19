@@ -6,6 +6,7 @@ import rehypeShiki from '@shikijs/rehype';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeSlug from 'rehype-slug';
 import remarkGfm from 'remark-gfm';
+import remarkFrontmatter from 'remark-frontmatter';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, type Plugin, type PluginOption } from 'vite';
 
@@ -49,7 +50,7 @@ export default defineConfig(({ command, mode }) => {
         // Без этого MDX не читает компоненты из MDXProvider, и legacy-теги
         // архивных руководств (`<ButtonInteractiveExamples />`) роняли страницу.
         providerImportSource: '@mdx-js/react',
-        remarkPlugins: [remarkGfm],
+        remarkPlugins: [remarkFrontmatter, remarkGfm],
         rehypePlugins: [
           rehypeSlug,
           rehypeAutolinkHeadings,
@@ -85,6 +86,7 @@ export default defineConfig(({ command, mode }) => {
         'styled-components',
         'react-router-dom',
         'react-live',
+        '@mdx-js/react',
       ],
       alias: useSourceAlias
         ? [

@@ -34,6 +34,8 @@ try {
   });
   console.log('[docs-manifest] artifacts are fresh');
 } catch {
-  console.error('[docs-manifest] artifacts are stale. Run: npm run docs:manifest');
+  console.error(
+    '[docs-manifest] artifacts are stale: перегенерированные файлы отличаются от закоммиченных. Run: npm run content:manifest и закоммитьте изменения',
+  );
   process.exit(1);
 }

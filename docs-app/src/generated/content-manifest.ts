@@ -1,5 +1,5 @@
 export const contentManifest = {
-  "generatedAt": "2026-10-18T23:06:21.675Z",
+  "generatedAt": "2026-10-19T07:47:24.796Z",
   "guides": [
     {
       "locale": "en",

@@ -270,6 +270,7 @@ const resolveSsrEntry = async () => {
 const main = async () => {
   const versioning = await readJson(path.join(appRoot, 'docs-versioning.config.json'));
   const manifest = await readJson(path.join(appRoot, 'src/generated/docs-manifest.json'));
+  const contentManifest = await readJson(path.join(appRoot, 'src/generated/content-manifest.json'));
 
   if (!siteUrl) {
     console.warn(
@@ -299,7 +300,16 @@ const main = async () => {
     // Кит лежит в соседнем `web/node_modules`, поэтому одну и ту же копию
     // React нужно принудительно выбирать для всего графа.
     resolve: {
-      dedupe: ['react', 'react-dom', 'styled-components'],
+      dedupe: [
+      'react',
+      'react-dom',
+      'react/jsx-runtime',
+      'react/jsx-dev-runtime',
+      'styled-components',
+      'react-router-dom',
+      'react-live',
+      '@mdx-js/react',
+    ],
     },
     build: {
       ssr: 'src/entry-server.tsx',
@@ -389,6 +399,31 @@ const main = async () => {
           }),
         });
       }
+
+      for (const guide of contentManifest.guides) {
+        if (
+          guide.locale !== locale.id ||
+          guide.platform !== platform.id ||
+          guide.version !== version.id
+        ) {
+          continue;
+        }
+
+        routes.push({
+          path: `${basePath}/guides/${guide.slug}`,
+          title: `${guide.title} — PlainerV Docs`,
+          description:
+            guide.description || `Руководство «${guide.title}» в документации UI-кита PlainerV.`,
+          alternates: buildAlternates(version.id, `/guides/${guide.slug}`),
+          robots: version.isCurrent ? 'index, follow' : 'noindex, follow',
+          canonicalPath: version.isCurrent
+            ? undefined
+            : `${currentBasePath}/guides/${guide.slug}`,
+          inSitemap: version.isCurrent,
+          rootAttributes: buildSearchAttributes(version, locale),
+          localeId: locale.id,
+        });
+      }
     }
   }
 
@@ -396,10 +431,17 @@ const main = async () => {
     .filter((route) => route.inSitemap)
     .map((route) => `${publicBase}${route.path}`);
 
+  const routesWithSsrErrors = [];
+
   for (const route of routes) {
-    const { html, styles } = renderRoute(route.path);
-    // OG-картинки нужны только индексируемым страницам: архивные версии и так
-    // закрыты noindex, а их сотни — генерация заметно удлиняет сборку.
+    const { html, styles, errors } = await renderRoute(route.path);
+
+    if (errors.length > 0) {
+      routesWithSsrErrors.push({ path: route.path, messages: errors });
+    }
+
+    // OG-картинка нужна каждой пререндеренной странице: `check-docs-prefix`
+    // требует `og:image` на всех маршрутах, включая архивные версии.
     const ogImagePath = await writeOgImage(route, ogFont);
     const headTags = buildHeadTags({
       title: route.title,
@@ -519,6 +561,15 @@ const main = async () => {
     .join(', ');
 
   const archivedCount = routes.filter((route) => !route.inSitemap).length;
+
+  if (routesWithSsrErrors.length > 0) {
+    console.warn(
+      `[WARN] Страниц с ошибками SSR: ${routesWithSsrErrors.length}. Первые: ${routesWithSsrErrors
+        .slice(0, 3)
+        .map((item) => `${item.path} (${item.messages[0] ?? 'без текста'})`)
+        .join('; ')}`,
+    );
+  }
 
   console.log(
     `[OK] Prerender завершён: ${routes.length} страниц (${routes.length - archivedCount} индексируемых${
