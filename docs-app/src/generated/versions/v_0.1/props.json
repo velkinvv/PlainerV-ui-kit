@@ -1,0 +1,737 @@
+{
+  "version": "v_0.1",
+  "packageVersion": "0.1.0",
+  "source": "npm:@velkinvv/plainerv@0.1.0",
+  "generatedAt": "2026-10-19T09:01:56.796Z",
+  "components": {
+    "button": {
+      "name": "Button",
+      "items": [
+        {
+          "name": "variant",
+          "type": "ButtonVariant",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "size",
+          "type": "Size",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "iconStart",
+          "type": "React.ReactNode",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "iconEnd",
+          "type": "React.ReactNode",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "showTooltip",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "tooltipText",
+          "type": "string",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "loading",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "fullWidth",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "rounded",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        }
+      ]
+    },
+    "badge": {
+      "name": "Badge",
+      "items": [
+        {
+          "name": "variant",
+          "type": "BadgeVariant",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "size",
+          "type": "Size",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "isDot",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "rounded",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "onClick",
+          "type": "() => void",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "children",
+          "type": "React.ReactNode",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        }
+      ]
+    },
+    "input": {
+      "name": "Input",
+      "items": [
+        {
+          "name": "variant",
+          "type": "InputVariant",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "size",
+          "type": "Size",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "leftIcon",
+          "type": "React.ReactNode",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "rightIcon",
+          "type": "React.ReactNode",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "onClear",
+          "type": "() => void",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "showClearButton",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "status",
+          "type": "\"error\" | \"success\" | \"warning\"",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "error",
+          "type": "string",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "success",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "helperText",
+          "type": "string",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "required",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "fullWidth",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "clearIcon",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "onClearIconClick",
+          "type": "() => void",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "textAlign",
+          "type": "TextAlign",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "readOnly",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "isLoading",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "handleInput",
+          "type": "(value: string, cursorPosition: number) => { value: string; cursorPosition: number; }",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "disableCopying",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "extraText",
+          "type": "string",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "tooltip",
+          "type": "React.ReactNode",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "tooltipType",
+          "type": "\"tooltip\" | \"hint\"",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "tooltipPosition",
+          "type": "\"left\" | \"right\" | \"top\" | \"bottom\"",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "displayCharacterCounter",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "ignoreMaskCharacters",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "characterCounterVisibilityThreshold",
+          "type": "number",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "additionalLabel",
+          "type": "string",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        }
+      ]
+    },
+    "select": {
+      "name": "Select",
+      "items": [
+        {
+          "name": "options",
+          "type": "{ value: string; label: string; disabled?: boolean; }[]",
+          "required": true,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "onChange",
+          "type": "(value: string) => void",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "placeholder",
+          "type": "string",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "error",
+          "type": "string",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "size",
+          "type": "Size",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "children",
+          "type": "React.ReactNode",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        }
+      ]
+    },
+    "modal": {
+      "name": "Modal",
+      "items": [
+        {
+          "name": "isOpen",
+          "type": "boolean",
+          "required": true,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "onClose",
+          "type": "() => void",
+          "required": true,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "content",
+          "type": "React.ReactNode",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "buttons",
+          "type": "ModalButtonProps[]",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "container",
+          "type": "Element",
+          "required": false,
+          "defaultValue": "",
+          "description": "Контейнер, в котором происходит размещение модального окна (по умолчанию document.body)",
+          "deprecated": false
+        },
+        {
+          "name": "mobile",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "",
+          "description": "Переключение мобильной версии модального окна",
+          "deprecated": false
+        },
+        {
+          "name": "overlayClassName",
+          "type": "string",
+          "required": false,
+          "defaultValue": "",
+          "description": "Класс для подложки модального окна",
+          "deprecated": false
+        },
+        {
+          "name": "overlayVariant",
+          "type": "\"default\" | \"blur\" | \"dark\" | \"frosted\"",
+          "required": false,
+          "defaultValue": "",
+          "description": "Вариант подложки модального окна",
+          "deprecated": false
+        },
+        {
+          "name": "overlayStyle",
+          "type": "React.CSSProperties",
+          "required": false,
+          "defaultValue": "",
+          "description": "Inline-стили для подложки",
+          "deprecated": false
+        },
+        {
+          "name": "initialFocusRef",
+          "type": "React.RefObject<HTMLElement>",
+          "required": false,
+          "defaultValue": "",
+          "description": "Элемент, который должен получить фокус при открытии модального окна",
+          "deprecated": false
+        },
+        {
+          "name": "animationPreset",
+          "type": "\"default\" | \"fade\" | \"slideUp\"",
+          "required": false,
+          "defaultValue": "",
+          "description": "Предустановленный пресет анимации",
+          "deprecated": false
+        },
+        {
+          "name": "animationConfig",
+          "type": "{ overlay?: { initial?: Target; animate?: Target; exit?: Target; }; modal?: { initial?: Target; animate?: Target; exit?: Target; transition?: Transition; }; }",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "headerIcon",
+          "type": "React.ReactNode",
+          "required": false,
+          "defaultValue": "",
+          "description": "Иконка слева от заголовка",
+          "deprecated": false
+        },
+        {
+          "name": "contentIcon",
+          "type": "React.ReactNode",
+          "required": false,
+          "defaultValue": "",
+          "description": "Иконка в области контента",
+          "deprecated": false
+        },
+        {
+          "name": "buttonsIcon",
+          "type": "React.ReactNode",
+          "required": false,
+          "defaultValue": "",
+          "description": "Иконка в контейнере кнопок",
+          "deprecated": false
+        },
+        {
+          "name": "headerSlot",
+          "type": "React.ReactNode",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "footerSlot",
+          "type": "React.ReactNode",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "buttonsSlot",
+          "type": "React.ReactNode",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "portalTargetId",
+          "type": "string",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "portalZIndex",
+          "type": "number",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "modalVariant",
+          "type": "\"success\" | \"default\" | \"danger\" | \"info\"",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "initialFocusSelector",
+          "type": "string",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "size",
+          "type": "ModalSize",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "closeOnOverlayClick",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "closeOnEscape",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "closeOnEscapeKeyDown",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "closeOnOutsideClick",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "overlayStyledCss",
+          "type": "string",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "showCloseButton",
+          "type": "boolean",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "children",
+          "type": "React.ReactNode",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "defaultValue": "",
+          "description": "",
+          "deprecated": false
+        }
+      ]
+    }
+  }
+}

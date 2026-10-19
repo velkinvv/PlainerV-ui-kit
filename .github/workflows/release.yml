@@ -23,3 +23,44 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+  docs-snapshots:
+    needs: release
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm ci --prefix docs-app
+      - name: Текущая live-версия документации
+        id: live
+        run: |
+          LIVE=$(node -e "const c=require('./docs-app/docs-versioning.config.json');const v=c.platforms[0].versions.find((item)=>item.live);if(!v){process.exit(1)};console.log(v.id)")
+          echo "version=$LIVE" >> "$GITHUB_OUTPUT"
+          echo "Снимаем превью для $LIVE, пока она ещё рендерится живьём." >> "$GITHUB_STEP_SUMMARY"
+      - run: npm run content:manifest --prefix docs-app
+      - run: npm run build --prefix docs-app
+      - name: Поднять статический сервер
+        run: |
+          npm run preview --prefix docs-app &
+          for attempt in $(seq 1 60); do
+            if curl -fsS http://localhost:6500/docs/ >/dev/null 2>&1; then exit 0; fi
+            sleep 1
+          done
+          echo "Сервер не поднялся" >&2
+          exit 1
+      - name: Снять превью примеров
+        run: |
+          npm run docs:version:snapshots --prefix docs-app -- \
+            --version "${{ steps.live.outputs.version }}" \
+            --url http://localhost:6500/docs \
+            --force
+      - uses: actions/upload-artifact@v4
+        with:
+          name: version-snapshots-${{ steps.live.outputs.version }}
+          path: docs-app/public/version-snapshots/${{ steps.live.outputs.version }}
+          retention-days: 90

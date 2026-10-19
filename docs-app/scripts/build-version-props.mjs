@@ -158,7 +158,6 @@ const resolvePropsType = (checker, declarationNodes, componentName) => {
     return checker.getTypeAtLocation(propsNode.name);
   }
 
-  console.log(`[props] ${componentName}: тип пропсов не найден в декларациях`);
   return null;
 };
 
@@ -210,20 +209,29 @@ const extractPropsFromTypesFile = (typesFilePath, components) => {
 
   const checker = program.getTypeChecker();
   const result = {};
+  const missing = [];
   const rootDirectory = path.dirname(typesFilePath);
 
   for (const component of components) {
     const declarationNodes = findDeclarationNodes(program, rootDirectory, component.name);
     const propsType = resolvePropsType(checker, declarationNodes, component.name);
-    if (!propsType) continue;
+    if (!propsType) {
+      missing.push(component.name);
+      continue;
+    }
 
     const items = mapPropsFromType(checker, propsType, rootDirectory);
-    if (items.length === 0) continue;
+    if (items.length === 0) {
+      missing.push(component.name);
+      continue;
+    }
 
     result[component.slug] = { name: component.name, items };
   }
 
-  return result;
+  // В старых версиях компонентов меньше: отсутствие типа — ожидаемое
+  // состояние, поэтому список уходит наверх и печатается одной строкой.
+  return { extracted: result, missing };
 };
 
 const packPublishedPackage = async (packageVersion) => {
@@ -266,6 +274,28 @@ const packPublishedPackage = async (packageVersion) => {
   } catch (error) {
     await fs.rm(temporaryDirectory, { recursive: true, force: true });
     throw error;
+  }
+};
+
+/**
+ * Есть ли такая версия в реестре. Legacy-id вроде `v1`/`v2` объявлены в
+ * конфиге документации, но пакета с такой версией никогда не существовало:
+ * `npm pack` на них падает без внятной причины, поэтому спрашиваем `npm view`.
+ */
+const isPublishedVersion = async (packageVersion) => {
+  try {
+    const { stdout } = await execFileAsync(
+      process.platform === 'win32' ? 'npm.cmd' : 'npm',
+      ['view', `${PACKAGE_NAME}@${packageVersion}`, 'version', '--silent'],
+      {
+        maxBuffer: 1024 * 1024,
+        shell: process.platform === 'win32',
+      },
+    );
+
+    return stdout.trim().length > 0;
+  } catch {
+    return false;
   }
 };
 
@@ -334,6 +364,7 @@ const main = async () => {
   let generated = 0;
   let reused = 0;
   const failures = [];
+  const unpublished = [];
 
   for (const version of targets) {
     const packageVersion = toPackageVersion(version.id);
@@ -350,6 +381,13 @@ const main = async () => {
     }
 
     const isCurrentPackage = packageVersion === packageJson.version;
+
+    if (!isCurrentPackage && !(await isPublishedVersion(packageVersion))) {
+      unpublished.push(version.id);
+      console.log(`[props] ${version.id}: версия ${packageVersion} не опубликована в npm — пропуск`);
+      continue;
+    }
+
     let temporaryDirectory = null;
 
     try {
@@ -366,7 +404,7 @@ const main = async () => {
         source = `npm:${PACKAGE_NAME}@${packageVersion}`;
       }
 
-      const extracted = extractPropsFromTypesFile(typesFilePath, components);
+      const { extracted, missing } = extractPropsFromTypesFile(typesFilePath, components);
       const componentCount = Object.keys(extracted).length;
 
       if (componentCount === 0) {
@@ -381,11 +419,24 @@ const main = async () => {
         components: extracted,
       });
 
-      console.log(`[props] ${version.id}: ${componentCount} компонентов (${source})`);
+      const missingSuffix = missing.length > 0 ? `, нет в этой версии: ${missing.join(', ')}` : '';
+      console.log(`[props] ${version.id}: ${componentCount} компонентов${missingSuffix} (${source})`);
       generated += 1;
     } catch (error) {
-      failures.push({ version: version.id, message: error.message });
-      console.warn(`[props] ${version.id}: ${error.message}`);
+      const message = String(error?.message ?? error);
+      // npm с `--silent` пишет причину в stderr: в message остаётся только
+      // «Command failed: npm pack …», поэтому код ошибки ищем и там.
+      const details = `${message} ${String(error?.stderr ?? '')}`;
+
+      // Legacy-версии (`v1`, `v2`) объявлены в конфиге, но никогда не были
+      // опубликованы в npm: это отсутствие источника, а не сбой генерации.
+      if (/E404|ETARGET|404 Not Found|is not in this registry|No matching version/i.test(details)) {
+        unpublished.push(version.id);
+        console.log(`[props] ${version.id}: версия ${packageVersion} не опубликована в npm — пропуск`);
+      } else {
+        failures.push({ version: version.id, message });
+        console.warn(`[props] ${version.id}: ${message}`);
+      }
     } finally {
       if (temporaryDirectory) {
         await fs.rm(temporaryDirectory, { recursive: true, force: true });
@@ -398,6 +449,10 @@ const main = async () => {
   console.log(
     `[props] готово: сгенерировано ${generated}, из кэша ${reused}, версий в индексе ${entries.length}`,
   );
+
+  if (unpublished.length > 0) {
+    console.log(`[props] нет в npm (legacy-версии): ${unpublished.join(', ')}`);
+  }
 
   if (failures.length > 0) {
     console.log(`[props] не удалось: ${failures.map((item) => item.version).join(', ')}`);

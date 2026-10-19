@@ -60,11 +60,14 @@ export const ArchivedPreview = ({
       {canShowCode && mode === 'code' ? (
         <CodeBlock code={code ?? ''} />
       ) : isImageMissing ? (
-        <div className="docs-preview-placeholder">
-          {canShowCode
-            ? 'Для этой версии превью не снято; код примера актуальной версии доступен на вкладке «Код».'
-            : 'Для этой версии превью не снято.'}
-        </div>
+        <>
+          <div className="docs-preview-placeholder">
+            {canShowCode
+              ? `Превью для версии ${version} не снято — ниже пример из актуальной версии кита.`
+              : `Превью для версии ${version} не снято, код примера для неё недоступен.`}
+          </div>
+          {canShowCode ? <CodeBlock code={code ?? ''} /> : null}
+        </>
       ) : (
         <img
           className="docs-archived-preview"
