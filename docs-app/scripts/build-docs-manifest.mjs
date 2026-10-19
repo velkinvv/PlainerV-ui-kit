@@ -475,8 +475,8 @@ const buildManifest = () => {
     groupsMap.set(item.group, current);
   }
 
+  // См. build-content-manifest.mjs: `generatedAt` делал артефакт нестабильным.
   return {
-    generatedAt: new Date().toISOString(),
     version: packageJson.version,
     groups: Array.from(groupsMap.entries()).map(([title, items]) => ({ id: slugify(title), title, items })),
     components,
@@ -490,7 +490,7 @@ const writeManifestArtifacts = (manifest) => {
   fs.mkdirSync(path.dirname(llmsTxtPath), { recursive: true });
   fs.mkdirSync(path.dirname(CACHE_FILE), { recursive: true });
 
-  const payload = { generatedAt: manifest.generatedAt, version: manifest.version, groups: manifest.groups, components: manifest.components };
+  const payload = { version: manifest.version, groups: manifest.groups, components: manifest.components };
   fs.writeFileSync(outputJson, `${JSON.stringify(payload, null, 2)}\n`, 'utf8');
   fs.writeFileSync(outputTs, `export const docsManifest = ${JSON.stringify(payload, null, 2)} as const;\n`, 'utf8');
 

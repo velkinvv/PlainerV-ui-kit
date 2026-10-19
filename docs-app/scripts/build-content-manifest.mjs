@@ -158,8 +158,9 @@ const buildManifest = () => {
     }
   }
 
+  // Без volatile-полей: `generatedAt` менялся при каждой генерации, из-за чего
+  // `check-manifest-fresh` считал артефакты устаревшими всегда.
   return {
-    generatedAt: new Date().toISOString(),
     guides,
   };
 };
