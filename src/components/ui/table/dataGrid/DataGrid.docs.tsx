@@ -31,6 +31,7 @@ export default defineComponentDocs({
     status: 'beta',
     description: 'Таблица с сортировкой, пагинацией, выбором строк и расширяемой конфигурацией колонок.',
   },
+  props: { mode: 'autogen' },
   examples: [
     {
       id: 'basic-grid',

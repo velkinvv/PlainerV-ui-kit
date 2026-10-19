@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { spawn } from 'node:child_process';
+import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import chokidar from 'chokidar';
 
@@ -9,7 +10,14 @@ const UI_DOCS_GLOB = path.resolve(DOCS_APP_ROOT, '../src/components/ui/**/*.docs
 const CONTENT_GLOB = path.resolve(DOCS_APP_ROOT, 'content/docs/**/*.mdx');
 const MANIFEST_SCRIPT = path.resolve(SCRIPT_DIR, 'build-docs-manifest.mjs');
 const CONTENT_MANIFEST_SCRIPT = path.resolve(SCRIPT_DIR, 'build-content-manifest.mjs');
-const VITE_BIN = path.resolve(DOCS_APP_ROOT, 'node_modules/vite/bin/vite.js');
+// В workspaces vite может быть hoisted в корневой `web/node_modules`, поэтому
+// путь к бинарю вычисляем резолвом пакета, а не жёстким `docs-app/node_modules`.
+const requireFromApp = createRequire(import.meta.url);
+const VITE_BIN = path.resolve(
+  path.dirname(requireFromApp.resolve('vite/package.json')),
+  'bin',
+  'vite.js',
+);
 
 let isGenerating = false;
 let rerunRequested = false;

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import * as React from 'react';
 import * as Plainerv from '@velkinvv/plainerv';
 import {
@@ -23,19 +23,49 @@ const normalizeSnippet = (snippet: string) => {
 
 export const Playground = ({ code }: PlaygroundProps) => {
   const preparedCode = useMemo(() => normalizeSnippet(code), [code]);
+  const [liveErrorMessage, setLiveErrorMessage] = useState('');
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // `react-live` в этой версии не отдаёт ошибку через props, поэтому следим за
+  // своим блоком ошибки: если он не пуст — пример в песочнице не выполнился.
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const readError = () => {
+      const errorNode = container.querySelector('.docs-playground-error');
+      setLiveErrorMessage(errorNode?.textContent?.trim() ?? '');
+    };
+
+    readError();
+
+    const observer = new MutationObserver(readError);
+    observer.observe(container, { childList: true, subtree: true, characterData: true });
+
+    return () => observer.disconnect();
+  }, [preparedCode]);
 
   return (
-    <div className="docs-playground">
+    <div className="docs-playground" ref={containerRef}>
+      {/* Без `noInline`: примеры из DSL — это JSX-выражения, а `noInline`
+          требует явного вызова `render(...)` и падал с SyntaxError. */}
       <LiveProvider
         code={preparedCode}
         scope={{ React, ...Plainerv }}
-        noInline
       >
         <div className="docs-playground-preview">
           <LivePreview />
         </div>
 
         <LiveError className="docs-playground-error" />
+
+        {liveErrorMessage ? (
+          <p className="docs-preview-placeholder">
+            Песочница выполнила код с ошибкой. Обычно причина в том, что пример ссылается на
+            данные из описания компонента (например, <code>employeeRows</code>) — их нет в
+            песочнице. Готовый результат и полный код смотрите в карточке примера выше.
+          </p>
+        ) : null}
 
         <div className="docs-playground-editor">
           <LiveEditor />

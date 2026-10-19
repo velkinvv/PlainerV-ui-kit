@@ -124,7 +124,7 @@ export const docsManifest = {
             "name": "variant",
             "type": "ButtonVariant",
             "required": false,
-            "defaultValue": "ButtonVariant.PRIMARY",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -132,7 +132,7 @@ export const docsManifest = {
             "name": "size",
             "type": "Size",
             "required": false,
-            "defaultValue": "Size.MD",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -156,7 +156,7 @@ export const docsManifest = {
             "name": "showTooltip",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -204,7 +204,7 @@ export const docsManifest = {
             "name": "loading",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -212,7 +212,7 @@ export const docsManifest = {
             "name": "disabled",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -220,7 +220,7 @@ export const docsManifest = {
             "name": "fullWidth",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -228,7 +228,7 @@ export const docsManifest = {
             "name": "rounded",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           }
@@ -316,7 +316,7 @@ export const docsManifest = {
             "name": "variant",
             "type": "BadgeVariant",
             "required": false,
-            "defaultValue": "BadgeVariant.DEFAULT",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -324,7 +324,7 @@ export const docsManifest = {
             "name": "size",
             "type": "Size",
             "required": false,
-            "defaultValue": "Size.MD",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -332,7 +332,7 @@ export const docsManifest = {
             "name": "isDot",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -340,7 +340,7 @@ export const docsManifest = {
             "name": "rounded",
             "type": "boolean",
             "required": false,
-            "defaultValue": "true",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -356,7 +356,7 @@ export const docsManifest = {
             "name": "motionEnabled",
             "type": "boolean",
             "required": false,
-            "defaultValue": "true",
+            "defaultValue": "",
             "description": "Включить анимации появления, пульса и смены размера (по умолчанию true)",
             "deprecated": false
           },
@@ -417,7 +417,808 @@ export const docsManifest = {
         "mode": "autogen",
         "include": [],
         "exclude": [],
-        "items": []
+        "items": [
+          {
+            "name": "tableId",
+            "type": "string",
+            "required": true,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "columns",
+            "type": "readonly DataGridColumn<Row, ColumnColorKey>[]",
+            "required": true,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "rows",
+            "type": "readonly Row[]",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "totalRows",
+            "type": "number",
+            "required": true,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "getRowId",
+            "type": "(row: Row) => string",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "displayRowSelectionColumn",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "multiselect",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "selectedIds",
+            "type": "ReadonlySet<string> | readonly string[]",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "disabledIds",
+            "type": "ReadonlySet<string> | readonly string[]",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "onRowSelectionChange",
+            "type": "(nextIds: string[], reason: \"row\" | \"header\" | \"clear\") => void",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "onRowClick",
+            "type": "(row: Row, event: MouseEvent<HTMLTableRowElement, MouseEvent>) => void",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "onRowDoubleClick",
+            "type": "(row: Row, event: MouseEvent<HTMLTableRowElement, MouseEvent>) => void",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "paginationModel",
+            "type": "DataGridPaginationModel",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "onPaginationChange",
+            "type": "(model: DataGridPaginationModel) => void",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "paginationVariant",
+            "type": "\"default\" | \"compact\"",
+            "required": false,
+            "defaultValue": "",
+            "description": "Режим отображения номеров страниц в подвале (`TablePagination`)",
+            "deprecated": false
+          },
+          {
+            "name": "paginationToolbarAlign",
+            "type": "TablePaginationToolbarAlign",
+            "required": false,
+            "defaultValue": "",
+            "description": "Выравнивание футера пагинации (селект размера страницы + номера страниц)",
+            "deprecated": false
+          },
+          {
+            "name": "paginationToolbarReverse",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "",
+            "description": "Обратный порядок элементов в строке футера пагинации",
+            "deprecated": false
+          },
+          {
+            "name": "showRowsPerPageSelect",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "",
+            "description": "Показать селект «строк на странице» в подвале (см. `TablePagination`)",
+            "deprecated": false
+          },
+          {
+            "name": "showPageJump",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "",
+            "description": "Поле «перейти к странице» слева от плашки страниц",
+            "deprecated": false
+          },
+          {
+            "name": "labelPageJump",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": "",
+            "description": "Подпись перед полем номера страницы",
+            "deprecated": false
+          },
+          {
+            "name": "rowsPerPageSelectVariant",
+            "type": "\"default\" | \"compact\"",
+            "required": false,
+            "defaultValue": "",
+            "description": "Сокращённый вид селектора размера страницы",
+            "deprecated": false
+          },
+          {
+            "name": "paginationMode",
+            "type": "DataGridPaginationMode",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "rowsPerPageOptions",
+            "type": "number[]",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "sortModel",
+            "type": "DataGridSortModel",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "onSortChange",
+            "type": "(model: DataGridSortModel) => void",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "multiColumnSort",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "",
+            "description": "Сортировка по нескольким колонкам: модель — массив `DataGridSortCriterion` по приоритету (см. `sortModel`)",
+            "deprecated": false
+          },
+          {
+            "name": "stickyHeader",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "",
+            "description": "Липкая шапка при вертикальном скролле.\nБез `scrollAreaMaxHeight` — `position: sticky` у заголовков. С `scrollAreaMaxHeight` — split-layout:\n`headerToolbar` и заголовки колонок вне скролла строк; горизонтально прокручиваются только колонки (синхронизация `scrollLeft` с телом).",
+            "deprecated": false
+          },
+          {
+            "name": "scrollAreaMaxHeight",
+            "type": "string | number",
+            "required": false,
+            "defaultValue": "",
+            "description": "Макс. высота прокручиваемой области **строк** (`tbody`); число трактуется как пиксели.\nПробрасывается в `TableContainerScroll`. Вместе со `stickyHeader` включает split-layout;\nпагинация остаётся под таблицей, вне вертикального скролла.",
+            "deprecated": false
+          },
+          {
+            "name": "horizontalScroll",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "",
+            "description": "Горизонтальный скролл при широкой сетке (`table-layout: fixed` при ресайзе колонок).\n`false` — колонки по ширине карточки. В split-layout горизонтальная полоса только у тела.",
+            "deprecated": false
+          },
+          {
+            "name": "tableHeaderVariant",
+            "type": "DataGridTableHeaderVariant",
+            "required": false,
+            "defaultValue": "",
+            "description": "Тон фона шапки (`thead`) и панели `headerToolbar`: `default` — `theme.tables.header.background`;\n`card` — `theme.tables.shell.background` (визуально как белая карточка).",
+            "deprecated": false
+          },
+          {
+            "name": "tableHeaderBackground",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "description": "Произвольный цвет фона шапки и панели иконок (`headerToolbar`), например `#f5f5f5` или `color-mix(...)`.\nНепустая строка перекрывает `tableHeaderVariant`.",
+            "deprecated": false
+          },
+          {
+            "name": "striped",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "",
+            "description": "Зебра в `tbody`; по умолчанию в `DataGrid` включена (`true`). Для фона строк как у карточки — `false`.",
+            "deprecated": false
+          },
+          {
+            "name": "columnDividers",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "",
+            "description": "Тонкие вертикальные разделители между колонками; по умолчанию `true` (прокидывается в `Table`)",
+            "deprecated": false
+          },
+          {
+            "name": "size",
+            "type": "Size",
+            "required": false,
+            "defaultValue": "",
+            "description": "Масштаб строк, шрифтов и контролов выбора",
+            "deprecated": false
+          },
+          {
+            "name": "headerMaxLines",
+            "type": "number",
+            "required": false,
+            "defaultValue": "",
+            "description": "Максимум строк текста в заголовке каждой колонки данных (сортировка — через `TableSortLabel.maxLines`)",
+            "deprecated": false
+          },
+          {
+            "name": "dataStatus",
+            "type": "DataGridDataStatus",
+            "required": false,
+            "defaultValue": "",
+            "description": "Статус данных таблицы: `loading`, `ready`, `error`.\nУстаревший `isLoading={true}` эквивалентен `dataStatus=\"loading\"`.",
+            "deprecated": false
+          },
+          {
+            "name": "loadingDisplay",
+            "type": "DataGridLoadingDisplay",
+            "required": false,
+            "defaultValue": "",
+            "description": "Вариант отображения загрузки: `overlay` (спиннер поверх таблицы) или `skeleton` (строки-заглушки в `tbody`).\nПри `skeleton` и непустых `rows` автоматически используется `overlay`.",
+            "deprecated": false
+          },
+          {
+            "name": "skeletonRowCount",
+            "type": "number",
+            "required": false,
+            "defaultValue": "",
+            "description": "Число строк-скелетонов при `loadingDisplay=\"skeleton\"`; иначе — `paginationModel.pageSize` или 8.",
+            "deprecated": false
+          },
+          {
+            "name": "isLoading",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "",
+            "description": "Устаревший флаг: то же, что `dataStatus=\"loading\"`. Предпочтительно `dataStatus`.",
+            "deprecated": false
+          },
+          {
+            "name": "error",
+            "type": "unknown",
+            "required": false,
+            "defaultValue": "",
+            "description": "Ошибка загрузки (текст для блока ошибки и `renderErrorState`)",
+            "deprecated": false
+          },
+          {
+            "name": "errorStateTitle",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": "",
+            "description": "Заголовок встроенного блока ошибки",
+            "deprecated": false
+          },
+          {
+            "name": "errorStateDescription",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": "",
+            "description": "Пояснение блока ошибки; по умолчанию — сообщение из `error`",
+            "deprecated": false
+          },
+          {
+            "name": "onRetry",
+            "type": "() => void",
+            "required": false,
+            "defaultValue": "",
+            "description": "Повтор запроса: кнопка в блоке ошибки; если не задан, но есть `refetch`, используется он",
+            "deprecated": false
+          },
+          {
+            "name": "errorStateRetryLabel",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": "",
+            "description": "Подпись кнопки повтора в блоке ошибки",
+            "deprecated": false
+          },
+          {
+            "name": "renderErrorState",
+            "type": "(error: unknown, retry?: () => void) => ReactNode",
+            "required": false,
+            "defaultValue": "",
+            "description": "Кастомный блок ошибки вместо встроенного (`error`, `onRetry` / `refetch`)",
+            "deprecated": false
+          },
+          {
+            "name": "renderLoadingOverlay",
+            "type": "() => ReactNode",
+            "required": false,
+            "defaultValue": "",
+            "description": "Кастомный оверлей при `loadingDisplay=\"overlay\"`",
+            "deprecated": false
+          },
+          {
+            "name": "statusMessage",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": "",
+            "description": "Информационное сообщение над строками (при `dataStatus=\"ready\"`).\nДля полного контроля — `renderStatusMessage`.",
+            "deprecated": false
+          },
+          {
+            "name": "statusMessageVariant",
+            "type": "DataGridStatusMessageVariant",
+            "required": false,
+            "defaultValue": "",
+            "description": "Тон полосы `statusMessage`: `info`, `warning`, `success`",
+            "deprecated": false
+          },
+          {
+            "name": "renderStatusMessage",
+            "type": "() => ReactNode",
+            "required": false,
+            "defaultValue": "",
+            "description": "Свой рендер полосы сообщения над данными",
+            "deprecated": false
+          },
+          {
+            "name": "rowBackgroundColorByStatus",
+            "type": "(row: Row) => string",
+            "required": false,
+            "defaultValue": "",
+            "description": "Цвет фона строки; например по статусу из `row` (возвращает CSS-цвет)",
+            "deprecated": false
+          },
+          {
+            "name": "rowColorMap",
+            "type": "Readonly<Partial<Record<RowColorKey, TableColorResolver>>>",
+            "required": false,
+            "defaultValue": "",
+            "description": "Карта ключ → цвет фона строки. В `rows` передаётся ключ (`rowColor` по умолчанию),\nзначение резолвится через эту карту и палитру UI-kit.",
+            "deprecated": false
+          },
+          {
+            "name": "rowColorField",
+            "type": "string | keyof Row",
+            "required": false,
+            "defaultValue": "",
+            "description": "Имя поля строки с ключом цвета (по умолчанию `rowColor`).\nИспользуется после `rowBackgroundColorByStatus`, если тот не вернул цвет.",
+            "deprecated": false
+          },
+          {
+            "name": "columnColorMap",
+            "type": "Readonly<Partial<Record<ColumnColorKey, TableColorResolver>>>",
+            "required": false,
+            "defaultValue": "",
+            "description": "Карта ключ → цвет фона колонки. В `columns[].columnColor` передаётся ключ,\nзначение резолвится через эту карту и палитру UI-kit.",
+            "deprecated": false
+          },
+          {
+            "name": "expandedRowIds",
+            "type": "ReadonlySet<string> | readonly string[]",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "getRowExpandable",
+            "type": "(row: Row) => boolean",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "getExpandedRowDataStatus",
+            "type": "(row: Row) => DataGridExpandedRowDataStatus",
+            "required": false,
+            "defaultValue": "",
+            "description": "Статус данных под раскрывающейся строкой. Если не задан, подстрока считается в состоянии `ready`,\nлибо загрузкой управляет только `getExpandedRowLoading`.",
+            "deprecated": false
+          },
+          {
+            "name": "getExpandedRowLoading",
+            "type": "(row: Row) => boolean",
+            "required": false,
+            "defaultValue": "",
+            "description": "Загрузка только области раскрытия (не перекрывает всю таблицу, в отличие от `isLoading`).\nИгнорируется, если передан `getExpandedRowDataStatus`.",
+            "deprecated": false
+          },
+          {
+            "name": "onExpandedRowOpen",
+            "type": "(row: Row) => void",
+            "required": false,
+            "defaultValue": "",
+            "description": "Вызывается при развороте строки (удобно запустить ленивую подгрузку по `row.id`)",
+            "deprecated": false
+          },
+          {
+            "name": "onExpandedRowChange",
+            "type": "(params: DataGridExpandedRowChangeParams) => void",
+            "required": false,
+            "defaultValue": "",
+            "description": "Клик по кнопке раскрытия строки: уведомление родителя о новом состоянии.\nВ `params` передаются `rowId`, флаг `expanded` для этой строки и полный массив `expandedIds` после операции.\nПри контролируемом `expandedRowIds` обновляйте состояние родителя из этого колбэка; при неконтролируемом (`expandedRowIds` не передан)\nвнутренний набор раскрытых строк обновит сам `DataGrid` после вызова колбэка.\nСтарое имя `onRowCollapseChange` удалено — используйте только этот колбэк.",
+            "deprecated": false
+          },
+          {
+            "name": "renderExpandedRow",
+            "type": "(row: Row, context: DataGridExpandedRowRenderContext) => ReactNode",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "renderRowWrapper",
+            "type": "(params: DataGridRenderRowWrapperParams<Row>) => ReactElement<unknown, string | JSXElementConstructor<any>>",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "renderCell",
+            "type": "(params: DataGridRenderCellParams<Row>) => ReactNode",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "enableColumnDrag",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "onColumnDragStart",
+            "type": "(params: DataGridColumnDragStartParams) => void",
+            "required": false,
+            "defaultValue": "",
+            "description": "Старт перетаскивания заголовка (индекс и поле колонки)",
+            "deprecated": false
+          },
+          {
+            "name": "onColumnDragEnd",
+            "type": "(fromIndex: number, toIndex: number) => void",
+            "required": false,
+            "defaultValue": "",
+            "description": "Успешный drop: индексы в текущем порядке `columns` до перестройки массива родителем",
+            "deprecated": false
+          },
+          {
+            "name": "onColumnOrderChange",
+            "type": "(params: DataGridColumnOrderChangeParams) => void",
+            "required": false,
+            "defaultValue": "",
+            "description": "То же перемещение, что и `onColumnDragEnd`, плюс `field` переносимой колонки",
+            "deprecated": false
+          },
+          {
+            "name": "onColumnDragCancel",
+            "type": "() => void",
+            "required": false,
+            "defaultValue": "",
+            "description": "Drag колонки завершён без смены позиции (drop на ту же колонку или отпускание вне цели)",
+            "deprecated": false
+          },
+          {
+            "name": "enableColumnResize",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "",
+            "description": "Ручка на правом краю заголовка колонки; ширину храните в `columns[].width`, обновляя по `onColumnResize`.\nВключает у `<table>` раскладку `table-layout: fixed`, чтобы при перетаскивании не пересчитывались ширины остальных колонок; для предсказуемости задавайте `width` данным колонкам.",
+            "deprecated": false
+          },
+          {
+            "name": "onColumnResizeStart",
+            "type": "(params: DataGridColumnResizeProgressParams) => void",
+            "required": false,
+            "defaultValue": "",
+            "description": "Начало жеста: исходная ширина в px",
+            "deprecated": false
+          },
+          {
+            "name": "onColumnResizeChange",
+            "type": "(params: DataGridColumnResizeProgressParams) => void",
+            "required": false,
+            "defaultValue": "",
+            "description": "Перетаскивание ручки: предпросмотр ширины в px",
+            "deprecated": false
+          },
+          {
+            "name": "onColumnResize",
+            "type": "(params: DataGridColumnResizeParams) => void",
+            "required": false,
+            "defaultValue": "",
+            "description": "Вызывается после отпускания ручки; передайте обновлённые `columns` с новым `width` (число px)",
+            "deprecated": false
+          },
+          {
+            "name": "onColumnResizeEnd",
+            "type": "(params: DataGridColumnResizeEndParams) => void",
+            "required": false,
+            "defaultValue": "",
+            "description": "Конец жеста: `committed` — отпускание без отмены (`pointerup`); `onColumnResize` вызывается только при `committed && onColumnResize`",
+            "deprecated": false
+          },
+          {
+            "name": "columnResizeMaxWidthPx",
+            "type": "number",
+            "required": false,
+            "defaultValue": "",
+            "description": "Верхняя граница ширины при ресайзе (по умолчанию 2000px)",
+            "deprecated": false
+          },
+          {
+            "name": "enableRowDrag",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "onRowDragStart",
+            "type": "(params: DataGridRowDragStartParams) => void",
+            "required": false,
+            "defaultValue": "",
+            "description": "Старт перетаскивания строки за ручку (индекс на текущей странице и id строки)",
+            "deprecated": false
+          },
+          {
+            "name": "onRowDragEnd",
+            "type": "(orderedIds: string[]) => void",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "onRowDragCancel",
+            "type": "() => void",
+            "required": false,
+            "defaultValue": "",
+            "description": "Drop на ту же строку или отпускание вне цели без смены порядка",
+            "deprecated": false
+          },
+          {
+            "name": "onColumnFilterClick",
+            "type": "(params: DataGridColumnFilterClickParams) => void",
+            "required": false,
+            "defaultValue": "",
+            "description": "Клик по кнопке фильтра у колонки с `filterable: true`",
+            "deprecated": false
+          },
+          {
+            "name": "headerToolbar",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": "",
+            "description": "Слот «подшапки»: строка в `thead` **выше** строки с названиями колонок; одна ячейка на всю ширину (`colSpan`).\nПередавайте ряд `IconButton`, группы действий и т.п. (настройки, экспорт, история изменений, документация).\nВ split-layout (`scrollAreaMaxHeight`) панель фиксирована по ширине карточки и не участвует в горизонтальном скролле колонок.",
+            "deprecated": false
+          },
+          {
+            "name": "headerToolbarAlign",
+            "type": "\"center\" | \"start\" | \"end\" | \"space-between\"",
+            "required": false,
+            "defaultValue": "",
+            "description": "Выравнивание содержимого `headerToolbar` по горизонтали (`justify-content` у flex-контейнера).",
+            "deprecated": false
+          },
+          {
+            "name": "headerToolbarAriaLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "description": "Краткая подпись для доступности (`aria-label` у контейнера с `role=\"toolbar\"`).\nЕсли не задана, используется нейтральная подпись по умолчанию в компоненте.",
+            "deprecated": false
+          },
+          {
+            "name": "refetch",
+            "type": "() => void | Promise<void>",
+            "required": false,
+            "defaultValue": "",
+            "description": "Обновление данных: при передаче в `headerToolbar` показывается кнопка с иконкой обновления.",
+            "deprecated": false
+          },
+          {
+            "name": "isRefetching",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "",
+            "description": "Состояние загрузки для кнопки `refetch` (`loading` у **IconButton**)",
+            "deprecated": false
+          },
+          {
+            "name": "onResetFilters",
+            "type": "() => void",
+            "required": false,
+            "defaultValue": "",
+            "description": "Сброс всех фильтров: при передаче в `headerToolbar` показывается кнопка-фильтр.\nПодсветка «фильтры применены» — через `hasActiveFilters`.\nПеред вызовом колбэка показывается модалка подтверждения (**Modal**).",
+            "deprecated": false
+          },
+          {
+            "name": "hasActiveFilters",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "",
+            "description": "Есть ли применённые фильтры (заливка кнопки сброса, как `filterApplied` у колонки)",
+            "deprecated": false
+          },
+          {
+            "name": "resetFiltersConfirmTexts",
+            "type": "{ title?: string; description?: string; confirmLabel?: string; cancelLabel?: string; }",
+            "required": false,
+            "defaultValue": "",
+            "description": "Тексты модалки подтверждения сброса фильтров (`title`, `description`, `confirmLabel`, `cancelLabel`).\nЕсли не заданы — используются значения по умолчанию на русском языке.",
+            "deprecated": false
+          },
+          {
+            "name": "excelExport",
+            "type": "DataGridExcelExportConfig<Row>",
+            "required": false,
+            "defaultValue": "",
+            "description": "Выгрузка в Excel (`.xls`, SpreadsheetML без внешних библиотек).\nПри передаче `dataFetcher` в `headerToolbar` показывается кнопка; по клику — модалка диапазона страниц.",
+            "deprecated": false
+          },
+          {
+            "name": "emptyStateTitle",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": "",
+            "description": "Заголовок пустого состояния (`rows` пустой или не передан); по умолчанию «Ничего не найдено»",
+            "deprecated": false
+          },
+          {
+            "name": "emptyStateDescription",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": "",
+            "description": "Пояснение пустого состояния; по умолчанию «По заданным критериям ничего не найдено»",
+            "deprecated": false
+          },
+          {
+            "name": "renderEmptyState",
+            "type": "() => ReactNode",
+            "required": false,
+            "defaultValue": "",
+            "description": "Полностью свой блок пустого состояния вместо встроенного",
+            "deprecated": false
+          },
+          {
+            "name": "hideFooter",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "elevated",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "shellVariant",
+            "type": "TableShellVariant",
+            "required": false,
+            "defaultValue": "",
+            "description": "`embedded` — без бордера и фона оболочки (вложение в **Card** с `padding`; у грида `elevated={false}`).",
+            "deprecated": false
+          },
+          {
+            "name": "shellInset",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "",
+            "description": "Внутренние отступы оболочки на белом фоне (см. `TableContainer.shellInset`).\nПрокидывается в `TableContainer`.",
+            "deprecated": false
+          },
+          {
+            "name": "shellInsetPadding",
+            "type": "string | number",
+            "required": false,
+            "defaultValue": "",
+            "description": "Внутренний отступ вокруг блока с сеткой (число — px)",
+            "deprecated": false
+          },
+          {
+            "name": "surfaceBackgrounds",
+            "type": "TableSurfaceBackgroundsInput",
+            "required": false,
+            "defaultValue": "",
+            "description": "Прозрачные фоны по частям таблицы или `'transparent'` для всех поверхностей.\nУдобно, когда таблица должна принять фон родительского контейнера.",
+            "deprecated": false
+          },
+          {
+            "name": "tableAriaLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "className",
+            "type": "string",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          },
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": "",
+            "description": "",
+            "deprecated": false
+          }
+        ]
       }
     },
     {
@@ -508,7 +1309,7 @@ export const docsManifest = {
             "name": "severity",
             "type": "AlertSeverity",
             "required": false,
-            "defaultValue": "'success'",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -516,7 +1317,7 @@ export const docsManifest = {
             "name": "variant",
             "type": "AlertVariant",
             "required": false,
-            "defaultValue": "'standard'",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -588,7 +1389,7 @@ export const docsManifest = {
             "name": "closeAriaLabel",
             "type": "string",
             "required": false,
-            "defaultValue": "'Закрыть'",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -596,7 +1397,7 @@ export const docsManifest = {
             "name": "role",
             "type": "AlertRole",
             "required": false,
-            "defaultValue": "'alert'",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -604,7 +1405,7 @@ export const docsManifest = {
             "name": "size",
             "type": "Size",
             "required": false,
-            "defaultValue": "Size.MD",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -612,7 +1413,7 @@ export const docsManifest = {
             "name": "fullWidth",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -698,7 +1499,7 @@ export const docsManifest = {
             "name": "size",
             "type": "Size",
             "required": false,
-            "defaultValue": "Size.SM",
+            "defaultValue": "",
             "description": "Размер поля (в `DateInput` по умолчанию `Size.SM`)",
             "deprecated": false
           },
@@ -706,7 +1507,7 @@ export const docsManifest = {
             "name": "precision",
             "type": "DateInputPrecision",
             "required": false,
-            "defaultValue": "'day'",
+            "defaultValue": "",
             "description": "Точность выбора. По умолчанию `day` — полный календарь.\n`month` / `year` / `monthYear` / `week` убирают сетку дней и меняют строку `onChange`.",
             "deprecated": false
           },
@@ -714,7 +1515,7 @@ export const docsManifest = {
             "name": "weekOfMonthMode",
             "type": "WeekOfMonthMode",
             "required": false,
-            "defaultValue": "'calendar'",
+            "defaultValue": "",
             "description": "Нумерация недель при `precision=\"week\"`.\nПо умолчанию `calendar` — недели с понедельника; `chunks` — 1–7, 8–14, …",
             "deprecated": false
           },
@@ -722,7 +1523,7 @@ export const docsManifest = {
             "name": "range",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -746,7 +1547,7 @@ export const docsManifest = {
             "name": "showIcon",
             "type": "boolean",
             "required": false,
-            "defaultValue": "true",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -786,7 +1587,7 @@ export const docsManifest = {
             "name": "disabledDates",
             "type": "Date[]",
             "required": false,
-            "defaultValue": "[]",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -794,7 +1595,7 @@ export const docsManifest = {
             "name": "disabledDays",
             "type": "number[]",
             "required": false,
-            "defaultValue": "[]",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -802,7 +1603,7 @@ export const docsManifest = {
             "name": "disabledMonths",
             "type": "number[]",
             "required": false,
-            "defaultValue": "[]",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -810,7 +1611,7 @@ export const docsManifest = {
             "name": "disabledYears",
             "type": "number[]",
             "required": false,
-            "defaultValue": "[]",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -818,7 +1619,7 @@ export const docsManifest = {
             "name": "segmented",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -834,7 +1635,7 @@ export const docsManifest = {
             "name": "showDateRollers",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "Роллеры день/месяц/год над сеткой в попапе (макет Figma)",
             "deprecated": false
           },
@@ -842,7 +1643,7 @@ export const docsManifest = {
             "name": "calendarMonthYearLayout",
             "type": "CalendarMonthYearLayout",
             "required": false,
-            "defaultValue": "'split'",
+            "defaultValue": "",
             "description": "Два триггера «месяц» и «год» в шапке календаря вместо одного списка",
             "deprecated": false
           },
@@ -850,7 +1651,7 @@ export const docsManifest = {
             "name": "calendarFullWidth",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "Растянуть выпадающий календарь на ширину поля ввода",
             "deprecated": false
           },
@@ -906,7 +1707,7 @@ export const docsManifest = {
             "name": "readOnly",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -954,7 +1755,7 @@ export const docsManifest = {
             "name": "fullWidth",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -962,7 +1763,7 @@ export const docsManifest = {
             "name": "autoWidth",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "Ширина по содержимому; игнорируется, если задан `fullWidth`",
             "deprecated": false
           },
@@ -970,7 +1771,7 @@ export const docsManifest = {
             "name": "displayClearIcon",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -994,7 +1795,7 @@ export const docsManifest = {
             "name": "textAlign",
             "type": "TextAlign",
             "required": false,
-            "defaultValue": "'left'",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -1002,7 +1803,7 @@ export const docsManifest = {
             "name": "isLoading",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -1010,7 +1811,7 @@ export const docsManifest = {
             "name": "skeleton",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -1026,7 +1827,7 @@ export const docsManifest = {
             "name": "disableCopying",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -1050,7 +1851,7 @@ export const docsManifest = {
             "name": "tooltipType",
             "type": "\"tooltip\" | \"hint\"",
             "required": false,
-            "defaultValue": "'tooltip'",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -1058,7 +1859,7 @@ export const docsManifest = {
             "name": "tooltipPosition",
             "type": "\"left\" | \"right\" | \"top\" | \"bottom\"",
             "required": false,
-            "defaultValue": "'top'",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -1066,7 +1867,7 @@ export const docsManifest = {
             "name": "displayCharacterCounter",
             "type": "boolean",
             "required": false,
-            "defaultValue": "true",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -1074,7 +1875,7 @@ export const docsManifest = {
             "name": "ignoreMaskCharacters",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -1082,7 +1883,7 @@ export const docsManifest = {
             "name": "characterCounterVisibilityThreshold",
             "type": "number",
             "required": false,
-            "defaultValue": "0",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -1179,7 +1980,7 @@ export const docsManifest = {
             "name": "variant",
             "type": "TextInputVariant",
             "required": false,
-            "defaultValue": "InputVariant.DEFAULT",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -1187,7 +1988,7 @@ export const docsManifest = {
             "name": "size",
             "type": "Size",
             "required": false,
-            "defaultValue": "Size.SM",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -1267,7 +2068,7 @@ export const docsManifest = {
             "name": "required",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -1275,7 +2076,7 @@ export const docsManifest = {
             "name": "fullWidth",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -1283,7 +2084,7 @@ export const docsManifest = {
             "name": "autoWidth",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "Ширина по содержимому; игнорируется, если задан `fullWidth`",
             "deprecated": false
           },
@@ -1291,7 +2092,7 @@ export const docsManifest = {
             "name": "displayClearIcon",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -1315,7 +2116,7 @@ export const docsManifest = {
             "name": "textAlign",
             "type": "TextAlign",
             "required": false,
-            "defaultValue": "'left'",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -1323,7 +2124,7 @@ export const docsManifest = {
             "name": "readOnly",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -1331,7 +2132,7 @@ export const docsManifest = {
             "name": "isLoading",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -1339,7 +2140,7 @@ export const docsManifest = {
             "name": "skeleton",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -1355,7 +2156,7 @@ export const docsManifest = {
             "name": "disableCopying",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -1379,7 +2180,7 @@ export const docsManifest = {
             "name": "tooltipType",
             "type": "\"tooltip\" | \"hint\"",
             "required": false,
-            "defaultValue": "'tooltip'",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -1387,7 +2188,7 @@ export const docsManifest = {
             "name": "tooltipPosition",
             "type": "\"left\" | \"right\" | \"top\" | \"bottom\"",
             "required": false,
-            "defaultValue": "'top'",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -1395,7 +2196,7 @@ export const docsManifest = {
             "name": "displayCharacterCounter",
             "type": "boolean",
             "required": false,
-            "defaultValue": "true",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -1411,7 +2212,7 @@ export const docsManifest = {
             "name": "characterCounterVisibilityThreshold",
             "type": "number",
             "required": false,
-            "defaultValue": "0",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -2093,7 +2894,7 @@ export const docsManifest = {
             "name": "placement",
             "type": "DrawerPlacement",
             "required": false,
-            "defaultValue": "DEFAULT_PLACEMENT",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -2109,7 +2910,7 @@ export const docsManifest = {
             "name": "showCloseButton",
             "type": "boolean",
             "required": false,
-            "defaultValue": "true",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -2165,7 +2966,7 @@ export const docsManifest = {
             "name": "overlayVariant",
             "type": "\"default\" | \"blur\" | \"dark\" | \"frosted\"",
             "required": false,
-            "defaultValue": "'default'",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -2181,7 +2982,7 @@ export const docsManifest = {
             "name": "closeOnOverlayClick",
             "type": "boolean",
             "required": false,
-            "defaultValue": "true",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -2189,7 +2990,7 @@ export const docsManifest = {
             "name": "closeOnEscape",
             "type": "boolean",
             "required": false,
-            "defaultValue": "true",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -2197,7 +2998,7 @@ export const docsManifest = {
             "name": "closeOnEscapeKeyDown",
             "type": "boolean",
             "required": false,
-            "defaultValue": "true",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -2205,7 +3006,7 @@ export const docsManifest = {
             "name": "closeOnOutsideClick",
             "type": "boolean",
             "required": false,
-            "defaultValue": "true",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -2237,7 +3038,7 @@ export const docsManifest = {
             "name": "unmountOnClose",
             "type": "boolean",
             "required": false,
-            "defaultValue": "true",
+            "defaultValue": "",
             "description": "Размонтировать панель после закрытия",
             "deprecated": false
           },
@@ -2245,7 +3046,7 @@ export const docsManifest = {
             "name": "lazy",
             "type": "boolean",
             "required": false,
-            "defaultValue": "true",
+            "defaultValue": "",
             "description": "Лениво монтировать панель только после первого открытия",
             "deprecated": false
           },
@@ -2382,7 +3183,7 @@ export const docsManifest = {
             "name": "mobile",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
+            "defaultValue": "",
             "description": "Переключение мобильной версии модального окна",
             "deprecated": false
           },
@@ -2422,7 +3223,7 @@ export const docsManifest = {
             "name": "animationPreset",
             "type": "\"default\" | \"fade\" | \"slideUp\"",
             "required": false,
-            "defaultValue": "'default'",
+            "defaultValue": "",
             "description": "Предустановленный пресет анимации",
             "deprecated": false
           },
@@ -2502,7 +3303,7 @@ export const docsManifest = {
             "name": "modalVariant",
             "type": "\"default\" | \"danger\" | \"success\" | \"info\"",
             "required": false,
-            "defaultValue": "'default'",
+            "defaultValue": "",
             "description": "Статус модалки: при `danger` / `success` / `info` слева в шапке — цветная иконка с размытой подсветкой.\nЗаголовок и фон шапки остаются нейтральными. Своя иконка — `headerIcon` (приоритет над встроенной).",
             "deprecated": false
           },
@@ -2518,7 +3319,7 @@ export const docsManifest = {
             "name": "size",
             "type": "ModalSize",
             "required": false,
-            "defaultValue": "ModalSize.MD",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -2526,7 +3327,7 @@ export const docsManifest = {
             "name": "closeOnOverlayClick",
             "type": "boolean",
             "required": false,
-            "defaultValue": "true",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -2534,7 +3335,7 @@ export const docsManifest = {
             "name": "closeOnEscape",
             "type": "boolean",
             "required": false,
-            "defaultValue": "true",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -2542,7 +3343,7 @@ export const docsManifest = {
             "name": "closeOnEscapeKeyDown",
             "type": "boolean",
             "required": false,
-            "defaultValue": "true",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -2550,7 +3351,7 @@ export const docsManifest = {
             "name": "closeOnOutsideClick",
             "type": "boolean",
             "required": false,
-            "defaultValue": "true",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -2566,7 +3367,7 @@ export const docsManifest = {
             "name": "showCloseButton",
             "type": "boolean",
             "required": false,
-            "defaultValue": "true",
+            "defaultValue": "",
             "description": "",
             "deprecated": false
           },
@@ -2574,7 +3375,7 @@ export const docsManifest = {
             "name": "unmountOnClose",
             "type": "boolean",
             "required": false,
-            "defaultValue": "true",
+            "defaultValue": "",
             "description": "Размонтировать модальное окно после закрытия",
             "deprecated": false
           },
@@ -2582,7 +3383,7 @@ export const docsManifest = {
             "name": "lazy",
             "type": "boolean",
             "required": false,
-            "defaultValue": "true",
+            "defaultValue": "",
             "description": "Лениво монтировать модальное окно только после первого открытия",
             "deprecated": false
           },

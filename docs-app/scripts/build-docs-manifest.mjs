@@ -3,6 +3,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
+import {
+  createDeclarationProgram,
+  findDeclarationNodes,
+  resolvePropsType,
+} from './lib/props-from-dts.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const DOCS_APP_ROOT = path.resolve(SCRIPT_DIR, '..');
@@ -10,7 +15,7 @@ const PROJECT_ROOT = path.resolve(DOCS_APP_ROOT, '..');
 const SOURCE_ROOT = path.resolve(PROJECT_ROOT, 'src');
 const DIST_TYPES_FILE = path.resolve(PROJECT_ROOT, 'dist/index.d.ts');
 const CACHE_FILE = path.resolve(DOCS_APP_ROOT, '.cache/docs-manifest-cache.json');
-const CACHE_VERSION = 3;
+const CACHE_VERSION = 6;
 
 const readJson = (filePath) => JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
@@ -261,6 +266,51 @@ const isOwnKitPropSymbol = (symbol) => {
   });
 };
 
+/**
+ * То же для режима `dist`: декларации лежат в `web/dist`, а не в `web/src`,
+ * поэтому фильтр по каталогу пакета, иначе в таблицу попадают DOM/React-пропсы
+ * (`style`, `className`, `onClick` и сотни других).
+ */
+const isPackagePropSymbol = (symbol) => {
+  const declarations = symbol.declarations ?? (symbol.valueDeclaration ? [symbol.valueDeclaration] : []);
+  if (declarations.length === 0) return true;
+
+  const normalizedDist = `${path.resolve(path.dirname(DIST_TYPES_FILE))}${path.sep}`;
+
+  return declarations.some((declaration) =>
+    path.resolve(declaration.getSourceFile().fileName).startsWith(normalizedDist),
+  );
+};
+
+/**
+ * Ищет объявление переменной компонента (`const X = ...` / `const X = forwardRef(...)`).
+ * Нужно как fallback: у обёрнутых в `forwardRef` компонентов тип пропсов живёт
+ * в параметре функции, а не в аннотации переменной (например, `DataGrid`).
+ */
+const findComponentDeclaration = (sourceFile, componentName) => {
+  let result = null;
+  const names = new Set([componentName, `${componentName}Base`]);
+
+  const visit = (node) => {
+    if (result) return;
+
+    if (
+      (ts.isVariableDeclaration(node) || ts.isFunctionDeclaration(node)) &&
+      node.name &&
+      ts.isIdentifier(node.name) &&
+      names.has(node.name.text)
+    ) {
+      result = node;
+      return;
+    }
+
+    ts.forEachChild(node, visit);
+  };
+
+  visit(sourceFile);
+  return result;
+};
+
 const extractComponentPropsFromSource = (componentFilePath, componentName) => {
   const program = ts.createProgram([componentFilePath], {
     target: ts.ScriptTarget.ES2022,
@@ -277,10 +327,36 @@ const extractComponentPropsFromSource = (componentFilePath, componentName) => {
 
   const checker = program.getTypeChecker();
   const propsTypeNode = findComponentTypeReference(sourceFile, componentName);
-  if (!propsTypeNode) return [];
-
   const defaultValues = collectDefaultPropValues(sourceFile, componentName);
-  const propsType = checker.getTypeFromTypeNode(propsTypeNode);
+
+  let propsType = propsTypeNode ? checker.getTypeFromTypeNode(propsTypeNode) : null;
+
+  if (!propsType) {
+    // `forwardRef` с generic-функцией: тип пропсов — первый параметр вызова.
+    const declaration = findComponentDeclaration(sourceFile, componentName);
+    const symbol =
+      declaration && ts.isIdentifier(declaration.name)
+        ? checker.getSymbolAtLocation(declaration.name)
+        : null;
+
+    if (symbol) {
+      const componentType = checker.getTypeOfSymbolAtLocation(symbol, declaration.name);
+      const signature = [
+        ...componentType.getCallSignatures(),
+        ...componentType.getConstructSignatures(),
+      ][0];
+      const parameter = signature?.getParameters()[0];
+
+      if (parameter) {
+        propsType = checker.getTypeOfSymbolAtLocation(
+          parameter,
+          parameter.valueDeclaration ?? declaration,
+        );
+      }
+    }
+  }
+
+  if (!propsType) return [];
 
   return mapPropsFromType(checker, propsType, defaultValues, isOwnKitPropSymbol);
 };
@@ -288,23 +364,24 @@ const extractComponentPropsFromSource = (componentFilePath, componentName) => {
 const extractComponentPropsFromDist = (componentName) => {
   if (!fs.existsSync(DIST_TYPES_FILE)) return [];
 
-  const program = ts.createProgram([DIST_TYPES_FILE], {
-    target: ts.ScriptTarget.ES2022,
-    module: ts.ModuleKind.ESNext,
-    moduleResolution: ts.ModuleResolutionKind.Bundler,
-    skipLibCheck: true,
-    noResolve: false,
-  });
-
+  const program = createDeclarationProgram(DIST_TYPES_FILE);
   const declarationFile = program.getSourceFile(DIST_TYPES_FILE);
   if (!declarationFile) return [];
 
   const checker = program.getTypeChecker();
-  const propsTypeNode = findComponentTypeReference(declarationFile, componentName);
-  if (!propsTypeNode) return [];
+  // Обходим весь каталог пакета: часть компонентов объявлена не в
+  // `index.d.ts`, а в собственном declaration-файле и реэкспортируется
+  // (например, `DataGrid` объявлен через generic-forwardRef в своём файле).
+  const declarationNodes = findDeclarationNodes(
+    program,
+    path.dirname(DIST_TYPES_FILE),
+    componentName,
+  );
+  const propsType = resolvePropsType(checker, declarationNodes, componentName);
 
-  const propsType = checker.getTypeFromTypeNode(propsTypeNode);
-  return mapPropsFromType(checker, propsType);
+  if (!propsType) return [];
+
+  return mapPropsFromType(checker, propsType, new Map(), isPackagePropSymbol);
 };
 
 const resolvePropsSourceMode = () => {
