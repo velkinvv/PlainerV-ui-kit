@@ -40,7 +40,7 @@
     "clean": "npx --yes rimraf dist",
     "start": "cross-env PUBLIC_URL=/plainerv npm run storybook",
     "start:dev": "cross-env PUBLIC_URL=/plainerv npm run dev",
-    "build": "npm run clean && node ./scripts/ensure-ui-table-folder-casing.mjs && node ./scripts/rollup-with-node-env.mjs production && node ./scripts/prepend-esm-use-client.mjs && tsc -p tsconfig.vite.json --sourceMap false --declarationMap false && node ./scripts/strip-dist-sourcemaps.mjs && node ./scripts/verify-package.mjs",
+    "build": "npm run clean && node ./scripts/ensure-ui-table-folder-casing.mjs && node ./scripts/rollup-with-node-env.mjs production && node ./scripts/prepend-esm-use-client.mjs && tsc -p tsconfig.vite.json --sourceMap false --declarationMap false && node ./scripts/strip-dist-sourcemaps.mjs && node ./scripts/verify-package.mjs --production",
     "build:dev": "npm run clean && node ./scripts/ensure-ui-table-folder-casing.mjs && node ./scripts/rollup-with-node-env.mjs development && node ./scripts/prepend-esm-use-client.mjs && tsc -p tsconfig.vite.json && node ./scripts/verify-package.mjs",
     "dev": "rollup -c rollup.config.mjs --watch",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",

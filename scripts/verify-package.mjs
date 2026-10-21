@@ -4,6 +4,8 @@ import path from 'node:path';
 const packageRootDirectoryPath = process.cwd();
 const distDirectoryPath = path.join(packageRootDirectoryPath, 'dist');
 const viteDistDirectoryPath = path.join(distDirectoryPath, 'vite');
+/** В dev-сборке sourcemap-файлы генерируются намеренно (emitSourceMaps = !isProduction). */
+const isProductionBuild = process.argv.includes('--production');
 
 const requiredArtifactRelativePaths = [
   'index.cjs.js',
@@ -18,6 +20,18 @@ const requiredArtifactRelativePaths = [
 ];
 
 const relativeImportPattern = /from\s+['"](\.{1,2}\/[^'"]+)['"]/g;
+const blockCommentPattern = /\/\*[\s\S]*?\*\//g;
+const lineCommentPattern = /(?<![:"'`\\])\/\/[^\n]*/g;
+
+/**
+ * В dev-сборке rollup сохраняет комментарии, поэтому закомментированные импорты
+ * не должны считаться битыми. Комментарии заменяем пробелами, сохраняя переносы строк.
+ */
+function stripComments(fileContent) {
+  return fileContent
+    .replace(blockCommentPattern, (commentMatch) => commentMatch.replace(/[^\n]/g, ' '))
+    .replace(lineCommentPattern, (commentMatch) => commentMatch.replace(/[^\n]/g, ' '));
+}
 
 async function fileExists(targetFilePath) {
   try {
@@ -74,7 +88,7 @@ async function verifyViteDistNodeEsmImports() {
   const invalidImportMessages = [];
 
   for (const javaScriptFilePath of viteJavaScriptFilePaths) {
-    const fileContent = await readFile(javaScriptFilePath, 'utf8');
+    const fileContent = stripComments(await readFile(javaScriptFilePath, 'utf8'));
     const relativeImportPaths = [...fileContent.matchAll(relativeImportPattern)].map(
       (regexpMatchResult) => regexpMatchResult[1],
     );
@@ -116,7 +130,7 @@ async function verifyNoMissingRelativeImports() {
       continue;
     }
 
-    const fileContent = await readFile(javaScriptFilePath, 'utf8');
+    const fileContent = stripComments(await readFile(javaScriptFilePath, 'utf8'));
     const relativeImportPaths = [...fileContent.matchAll(relativeImportPattern)].map(
       (regexpMatchResult) => regexpMatchResult[1],
     );
@@ -170,8 +184,13 @@ async function verifyEsmClientDirective() {
 
 /**
  * В tarball npm не должно быть .map: иначе Vite ищет ../src из index.esm.js.map и ругается.
+ * В dev-сборке sourcemap'ы генерируются намеренно, поэтому проверка применяется только к production.
  */
 async function verifyNoSourceMapFilesInDist() {
+  if (!isProductionBuild) {
+    return;
+  }
+
   const sourceMapFilePaths = [];
 
   async function walk(currentDirectoryPath) {
