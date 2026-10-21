@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import * as React from 'react';
 import * as Plainerv from '@velkinvv/plainerv';
+import { Alert } from '@velkinvv/plainerv';
 import {
   LiveEditor,
   LiveError,
@@ -60,11 +61,11 @@ export const Playground = ({ code }: PlaygroundProps) => {
         <LiveError className="docs-playground-error" />
 
         {liveErrorMessage ? (
-          <p className="docs-preview-placeholder">
+          <Alert severity="error" variant="outlined">
             Песочница выполнила код с ошибкой. Обычно причина в том, что пример ссылается на
             данные из описания компонента (например, <code>employeeRows</code>) — их нет в
             песочнице. Готовый результат и полный код смотрите в карточке примера выше.
-          </p>
+          </Alert>
         ) : null}
 
         <div className="docs-playground-editor">

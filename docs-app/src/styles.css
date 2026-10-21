@@ -8,29 +8,6 @@ body {
   font-family: Inter, system-ui, -apple-system, sans-serif;
 }
 
-.docs-sidebar-group {
-  display: grid;
-  gap: 8px;
-}
-
-.docs-sidebar-group h3 {
-  margin: 0;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  opacity: 0.7;
-}
-
-.docs-sidebar-buttons {
-  display: grid;
-  gap: 8px;
-}
-
-.docs-subtitle,
-.docs-group {
-  opacity: 0.7;
-}
-
 .docs-switchers {
   display: grid;
   gap: 10px;
@@ -47,27 +24,6 @@ body {
   font-weight: 600;
 }
 
-.docs-switcher-link {
-  text-decoration: none;
-}
-
-.docs-list {
-  display: grid;
-  gap: 12px;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.docs-list li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px;
-  border: 1px solid rgba(127, 127, 127, 0.3);
-  border-radius: 12px;
-}
-
 .docs-back {
   text-decoration: none;
 }
@@ -76,12 +32,6 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-}
-
-.docs-card {
-  border: 1px solid rgba(127, 127, 127, 0.3);
-  border-radius: 12px;
-  padding: 12px;
 }
 
 .docs-preview-header {
@@ -93,35 +43,6 @@ body {
 
 .docs-preview-toggle {
   display: inline-flex;
-  border: 1px solid rgba(127, 127, 127, 0.35);
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.docs-preview-toggle button {
-  border: 0;
-  background: transparent;
-  padding: 6px 10px;
-  cursor: pointer;
-}
-
-.docs-toggle-active {
-  background: rgba(127, 127, 127, 0.2) !important;
-}
-
-.docs-preview-placeholder {
-  border: 1px dashed rgba(127, 127, 127, 0.4);
-  border-radius: 10px;
-  padding: 10px;
-  opacity: 0.8;
-}
-
-.docs-archive-notice {
-  border-left: 3px solid rgba(230, 160, 30, 0.8);
-  background: rgba(230, 160, 30, 0.12);
-  border-radius: 8px;
-  padding: 10px 12px;
-  font-size: 14px;
 }
 
 .docs-archived-preview {
@@ -153,13 +74,8 @@ body {
   gap: 8px;
 }
 
-.docs-code-copy {
+.docs-code-actions {
   justify-self: end;
-  border: 1px solid rgba(127, 127, 127, 0.3);
-  border-radius: 8px;
-  padding: 4px 10px;
-  background: transparent;
-  cursor: pointer;
 }
 
 pre {
@@ -174,27 +90,9 @@ pre {
   overflow-x: auto;
 }
 
-.docs-props-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.docs-props-table th,
-.docs-props-table td {
-  text-align: left;
-  padding: 10px;
-  border-bottom: 1px solid rgba(127, 127, 127, 0.25);
-  vertical-align: top;
-}
-
-.docs-props-table th {
-  font-weight: 600;
-}
-
+/* Отступ отступается, чтобы китовой Tag не растягивался ячейкой таблицы. */
 .docs-props-deprecated {
   margin-left: 8px;
-  font-size: 12px;
-  opacity: 0.8;
 }
 
 .docs-props-empty {
@@ -259,28 +157,6 @@ pre {
 .docs-axis-control span {
   font-size: 13px;
   opacity: 0.8;
-}
-
-.docs-axis-control select {
-  border: 1px solid rgba(127, 127, 127, 0.35);
-  border-radius: 8px;
-  background: transparent;
-  padding: 6px 8px;
-}
-
-.docs-density-compact .docs-card,
-.docs-density-compact .docs-playground-preview {
-  padding: 8px;
-}
-
-.docs-radius-lg .docs-card,
-.docs-radius-lg .docs-playground-preview,
-.docs-radius-lg .docs-axis-switcher {
-  border-radius: 16px;
-}
-
-.docs-palette-neutral .docs-switcher-link {
-  color: inherit;
 }
 
 .docs-breadcrumbs {
@@ -371,14 +247,42 @@ pre {
 
 .docs-search {
   position: relative;
+  flex: 1 1 260px;
+  max-width: 380px;
+  min-width: 0;
+}
+
+.docs-search-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.docs-search-icon {
+  flex: none;
+  width: 15px;
+  height: 15px;
+  opacity: 0.6;
+}
+
+.docs-search-shortcut {
+  flex: none;
+  padding: 2px 5px;
+  border-radius: 5px;
+  border: 1px solid rgba(127, 127, 127, 0.3);
+  font-family: inherit;
+  font-size: 10px;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  opacity: 0.6;
 }
 
 .docs-search-panel {
   position: absolute;
   top: calc(100% + 8px);
-  right: 0;
+  left: 0;
   z-index: 20;
-  width: min(420px, 88vw);
+  width: min(440px, 88vw);
   display: grid;
   gap: 10px;
   padding: 14px;
@@ -387,16 +291,23 @@ pre {
   background: Canvas;
   color: CanvasText;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  animation: docs-fade-in 0.16s ease both;
 }
 
 .docs-search-input {
-  width: 100%;
-  padding: 9px 11px;
-  border-radius: 8px;
-  border: 1px solid rgba(127, 127, 127, 0.35);
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  padding: 0;
   background: transparent;
   color: inherit;
   font: inherit;
+  font-size: 14px;
+  outline: none;
+}
+
+.docs-search-input::-webkit-search-cancel-button {
+  appearance: none;
 }
 
 .docs-search-hint {
@@ -418,8 +329,17 @@ pre {
 .docs-search-results a {
   display: grid;
   gap: 4px;
+  margin: 0 -6px;
+  padding: 8px 10px;
+  border-radius: 8px;
   text-decoration: none;
   color: inherit;
+  transition: background 0.15s ease;
+}
+
+.docs-search-results a:hover,
+.docs-search-results a.is-active {
+  background: var(--docs-accent-soft);
 }
 
 .docs-search-title {
@@ -433,4 +353,355 @@ pre {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* ---------- Главная страница документации ---------- */
+
+:root {
+  --docs-accent: #2196f3;
+  --docs-accent-soft: rgba(33, 150, 243, 0.14);
+  --docs-tile-border: rgba(127, 127, 127, 0.26);
+}
+
+.docs-section {
+  display: grid;
+  gap: 12px;
+}
+
+.docs-hero {
+  position: relative;
+  display: grid;
+  gap: 14px;
+  overflow: hidden;
+  padding: clamp(20px, 3.6vw, 34px);
+  border-radius: 20px;
+  border: 1px solid var(--docs-tile-border);
+  background:
+    radial-gradient(120% 140% at 10% 0%, var(--docs-accent-soft), transparent 62%),
+    linear-gradient(160deg, rgba(127, 127, 127, 0.1), rgba(127, 127, 127, 0.02));
+  animation: docs-fade-in 0.5s ease both;
+}
+
+.docs-hero-glow {
+  position: absolute;
+  inset: -45% 45% 40% -20%;
+  pointer-events: none;
+  opacity: 0.55;
+  filter: blur(44px);
+  background: radial-gradient(circle at 35% 35%, rgba(33, 150, 243, 0.4), transparent 65%);
+  animation: docs-float 9s ease-in-out infinite;
+}
+
+.docs-hero-eyebrow {
+  position: relative;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--docs-accent);
+}
+
+.docs-hero-title {
+  position: relative;
+  margin: 0;
+  font-size: clamp(30px, 5vw, 46px);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .docs-hero-title {
+    /* CanvasText вместо currentColor: при `color: transparent` currentColor
+       в градиенте тоже становится прозрачным и текст исчезает. */
+    background-image: linear-gradient(115deg, CanvasText 25%, var(--docs-accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+.docs-hero-lead {
+  position: relative;
+  margin: 0;
+  max-width: 62ch;
+  font-size: clamp(14px, 1.6vw, 16px);
+  line-height: 1.6;
+  opacity: 0.82;
+}
+
+.docs-hero-stats {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+}
+
+.docs-hero-stat {
+  display: grid;
+  flex: 1 1 118px;
+  gap: 2px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(127, 127, 127, 0.22);
+  background: rgba(127, 127, 127, 0.08);
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.docs-hero-stat:hover {
+  transform: translateY(-2px);
+  border-color: var(--docs-accent);
+}
+
+.docs-hero-stat dt {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.68;
+}
+
+.docs-hero-stat dd {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--docs-accent);
+}
+
+.docs-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(127, 127, 127, 0.2);
+}
+
+.docs-section-head h2 {
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+}
+
+.docs-section-count {
+  min-width: 28px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--docs-accent);
+  background: var(--docs-accent-soft);
+}
+
+.docs-groups {
+  display: grid;
+  gap: 20px;
+}
+
+.docs-group-block {
+  display: grid;
+  gap: 10px;
+}
+
+.docs-group-title {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.62;
+}
+
+.docs-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(228px, 1fr));
+  gap: 12px;
+}
+
+.docs-tile {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  animation: docs-rise 0.45s ease both;
+  animation-delay: calc(var(--tile-index, 0) * 45ms);
+}
+
+/* Раскладку задаёт содержимое, внешний вид — Card из кита. */
+.docs-tile-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  height: 100%;
+}
+
+.docs-tile:focus-visible {
+  outline: none;
+}
+
+.docs-tile:focus-visible .docs-tile-card {
+  outline: 3px solid var(--docs-accent-soft);
+  outline-offset: 2px;
+}
+
+.docs-tile-body {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.docs-tile-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Пилюли статуса и версии не должны вылезать за границы карточки. */
+.docs-status-tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.docs-tile-text {
+  font-size: 13px;
+  line-height: 1.5;
+  opacity: 0.78;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.docs-tile-meta {
+  font-size: 12px;
+  opacity: 0.58;
+}
+
+.docs-tile-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  font-weight: 700;
+  color: var(--docs-accent);
+  background: var(--docs-accent-soft);
+}
+
+.docs-tile-arrow {
+  margin-left: auto;
+  font-size: 18px;
+  opacity: 0.45;
+  transition:
+    transform 0.22s ease,
+    opacity 0.22s ease,
+    color 0.22s ease;
+}
+
+.docs-tile:hover .docs-tile-arrow,
+.docs-tile:focus-visible .docs-tile-arrow {
+  transform: translateX(4px);
+  opacity: 1;
+  color: var(--docs-accent);
+}
+
+@keyframes docs-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes docs-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes docs-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(6%, -4%, 0) scale(1.08);
+  }
+}
+
+@media (max-width: 760px) {
+  .docs-hero {
+    border-radius: 16px;
+  }
+
+  .docs-hero-stats {
+    gap: 8px;
+  }
+
+  .docs-hero-stat {
+    flex: 1 1 calc(50% - 4px);
+  }
+
+  .docs-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .docs-tile {
+    padding: 14px;
+  }
+
+  .docs-hero-stat:hover {
+    transform: none;
+  }
+
+  .docs-search {
+    flex-basis: 100%;
+    max-width: none;
+  }
+
+  .docs-search-panel {
+    width: 100%;
+  }
+
+  .docs-search-shortcut {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .docs-hero,
+  .docs-hero-glow,
+  .docs-tile {
+    animation: none !important;
+  }
+
+  .docs-tile,
+  .docs-tile-arrow,
+  .docs-tile::after,
+  .docs-hero-stat {
+    transition: none !important;
+  }
+
+  .docs-tile:hover,
+  .docs-hero-stat:hover {
+    transform: none;
+  }
 }

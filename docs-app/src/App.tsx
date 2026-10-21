@@ -1,7 +1,24 @@
-import { lazy, Suspense, type ComponentType, useEffect, useMemo, useState } from 'react';
 import {
+  lazy,
+  Suspense,
+  type ComponentType,
+  type CSSProperties,
+  type MouseEvent as ReactMouseEvent,
+  type ReactNode,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import {
+  Alert,
   Button,
-  ButtonVariant,
+  Card,
+  List,
+  Link as KitLink,
+  NavigationMenu,
+  NavigationMenuActiveAppearance,
+  NavigationMenuItem,
+  SegmentedControl,
   Size,
   ThemeMode,
   ThemeProvider,
@@ -29,9 +46,9 @@ import { VariantGrid } from './components/VariantGrid';
 import { PropsTable } from './components/PropsTable';
 import { VersionPropsTable } from './components/VersionPropsTable';
 import { ThemeAxisSwitcher } from './components/ThemeAxisSwitcher';
+import { isLiveVersion } from './versioning';
 import { contentManifest } from './generated/content-manifest';
 import { docsManifest } from './generated/docs-manifest';
-import { isLiveVersion } from './versioning';
 
 const Playground = lazy(() =>
   import('./components/Playground').then(({ Playground: PlaygroundComponent }) => ({
@@ -61,8 +78,14 @@ const DocsShell = styled.div`
 
 const DocsToolbar = styled.div`
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   margin-bottom: 16px;
+
+  @media (max-width: 640px) {
+    flex-wrap: wrap;
+  }
 `;
 
 const DocsLayout = styled.div`
@@ -94,10 +117,34 @@ const SidebarRoot = styled.aside`
   }
 `;
 
-const DocsMain = styled.main`
+const DocsMainStyled = styled.main`
   display: grid;
   gap: 16px;
 `;
+
+/**
+ * `pagefind.yml` индексирует только `root_selector: main`, поэтому фильтр локали
+ * и исключение архивных версий обязаны стоять на самом `<main>`: атрибуты выше
+ * (например, на `#root`) индексатор не видит.
+ */
+const DocsMain = ({ children, className }: { children: ReactNode; className?: string }) => {
+  const params = useParams<DocsRouteParams>();
+  const routeState = resolveRouteState(params);
+
+  if (!isLiveVersion(routeState.platform, routeState.version)) {
+    return (
+      <DocsMainStyled className={className} data-pagefind-ignore="all">
+        {children}
+      </DocsMainStyled>
+    );
+  }
+
+  return (
+    <DocsMainStyled className={className} data-pagefind-filter={`locale:${routeState.locale}`}>
+      {children}
+    </DocsMainStyled>
+  );
+};
 
 const defaultLocale =
   docsVersioning.locales.find((locale) => locale.default)?.id ?? docsVersioning.locales[0]?.id ?? 'ru';
@@ -156,20 +203,31 @@ const RouteSwitchers = ({
   platform: string;
   version: string;
   routeSuffix?: string;
-}) => (
-  <div className="docs-switchers">
-    <div className="docs-switcher-group">
-      <span className="docs-switcher-title">Язык:</span>
-      {docsVersioning.locales.map((item) => (
-        <Link key={item.id} to={`/${item.id}/${platform}/${version}`} className="docs-switcher-link">
-          {item.label}
-        </Link>
-      ))}
-    </div>
+}) => {
+  const navigate = useNavigate();
 
-    <VersionSwitcher locale={locale} platform={platform} version={version} routeSuffix={routeSuffix} />
-  </div>
-);
+  return (
+    <div className="docs-switchers">
+      <div className="docs-switcher-group">
+        <span className="docs-switcher-title">Язык:</span>
+        <SegmentedControl
+          size={Size.SM}
+          ariaLabel="Язык документации"
+          value={locale}
+          options={docsVersioning.locales.map((item) => ({
+            value: item.id,
+            label: item.label,
+          }))}
+          onChange={(nextValue) =>
+            navigate(`/${nextValue}/${platform}/${version}${routeSuffix}`)
+          }
+        />
+      </div>
+
+      <VersionSwitcher locale={locale} platform={platform} version={version} routeSuffix={routeSuffix} />
+    </div>
+  );
+};
 
 const DocsSidebar = ({
   locale,
@@ -186,64 +244,95 @@ const DocsSidebar = ({
 }) => {
   const navigate = useNavigate();
   const guides = selectGuides(locale, platform, version);
+  const baseUrl = import.meta.env.BASE_URL.replace(/\/+$/, '');
+  const basePath = `${baseUrl}/${locale}/${platform}/${version}`;
+  const activeId = activeGuideSlug ? `guide:${activeGuideSlug}` : (activeSlug ?? null);
+
+  // Клик по любой ссылке меню (на любом уровне вложенности) ведём роутером:
+  // href остаётся в разметке для краулеров и «открыть в новой вкладке».
+  const handleSidebarClick = (event: ReactMouseEvent<HTMLElement>) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return;
+    }
+
+    const anchor = (event.target as HTMLElement).closest('a');
+
+    if (!(anchor instanceof HTMLAnchorElement)) {
+      return;
+    }
+
+    const href = anchor.getAttribute('href');
+
+    if (!href?.startsWith('/')) {
+      return;
+    }
+
+    event.preventDefault();
+    navigate(href.startsWith(baseUrl) ? href.slice(baseUrl.length) || '/' : href);
+  };
 
   return (
-    <SidebarRoot aria-label="Component navigation">
-      {guides.length > 0 ? (
-        <section className="docs-sidebar-group">
-          <h3>Guides</h3>
-          <div className="docs-sidebar-buttons">
-            {guides.map((guide) => (
-              <Button
-                key={`guide-${guide.slug}`}
-                size={Size.SM}
-                variant={guide.slug === activeGuideSlug ? ButtonVariant.PRIMARY : ButtonVariant.GHOST}
-                fullWidth
-                onClick={() => navigate(`/${locale}/${platform}/${version}/guides/${guide.slug}`)}
-              >
-                {guide.title}
-              </Button>
-            ))}
-          </div>
-        </section>
-      ) : null}
+    <SidebarRoot onClick={handleSidebarClick}>
+      <NavigationMenu
+        activeId={activeId}
+        aria-label="Навигация по документации"
+        activeAppearance={NavigationMenuActiveAppearance.HIGHLIGHTED}
+      >
+        {guides.length > 0 ? (
+          <NavigationMenuItem
+            id="docs-guides"
+            label="Руководства"
+            badge={guides.length}
+            items={guides.map((guide) => ({
+              id: `guide:${guide.slug}`,
+              label: guide.title,
+              href: `${basePath}/guides/${guide.slug}`,
+            }))}
+          />
+        ) : null}
 
-      {docsManifest.groups.map((group) => (
-        <section key={group.id} className="docs-sidebar-group">
-          <h3>{group.title}</h3>
-          <div className="docs-sidebar-buttons">
-            {group.items
-              .map((slug) => docsManifest.components.find((component) => component.slug === slug))
-              .filter(
-                (component): component is (typeof docsManifest.components)[number] =>
-                  Boolean(component),
-              )
-              .map((component) => (
-                <Button
-                  key={component.slug}
-                  size={Size.SM}
-                  variant={component.slug === activeSlug ? ButtonVariant.PRIMARY : ButtonVariant.GHOST}
-                  fullWidth
-                  onClick={() => navigate(`/${locale}/${platform}/${version}/components/${component.slug}`)}
-                >
-                  {component.name}
-                </Button>
-              ))}
-          </div>
-        </section>
-      ))}
+        {docsManifest.groups.map((group) => {
+          const items = group.items
+            .map((slug) => docsManifest.components.find((component) => component.slug === slug))
+            .filter(
+              (component): component is (typeof docsManifest.components)[number] =>
+                Boolean(component),
+            )
+            .map((component) => ({
+              id: component.slug,
+              label: component.name,
+              href: `${basePath}/components/${component.slug}`,
+            }));
+
+          if (items.length === 0) {
+            return null;
+          }
+
+          return (
+            <NavigationMenuItem
+              key={group.id}
+              id={group.id}
+              label={group.title}
+              badge={items.length}
+              items={items}
+            />
+          );
+        })}
+      </NavigationMenu>
     </SidebarRoot>
   );
 };
 
 const ComponentListPage = () => {
   const params = useParams<DocsRouteParams>();
-  const navigate = useNavigate();
   const routeState = resolveRouteState(params);
 
   if (!routeState.isValid) {
     return <Navigate to={`/${defaultLocale}/${defaultPlatform}/${defaultVersion}`} replace />;
   }
+
+  const guides = selectGuides(routeState.locale, routeState.platform, routeState.version);
+  const components = docsManifest.components;
 
   return (
     <DocsLayout>
@@ -254,61 +343,125 @@ const ComponentListPage = () => {
       />
 
       <DocsMain>
-        <h1>PlainerV Docs</h1>
-        <p className="docs-subtitle">
-          {routeState.locale} / {routeState.platform} / {routeState.version}
-        </p>
+        <section className="docs-hero">
+          <span className="docs-hero-glow" aria-hidden="true" />
 
-        <RouteSwitchers
-          locale={routeState.locale}
-          platform={routeState.platform}
-          version={routeState.version}
-        />
+          <span className="docs-hero-eyebrow">UI Kit · Documentation</span>
+          <h1 className="docs-hero-title">PlainerV Docs</h1>
+          <p className="docs-hero-lead">
+            Компоненты, живые примеры и токены темы. Открытая версия{' '}
+            <strong>{routeState.version}</strong> · {routeState.locale.toUpperCase()}
+          </p>
 
-        {selectGuides(routeState.locale, routeState.platform, routeState.version).length > 0 ? (
+          <dl className="docs-hero-stats">
+            <div className="docs-hero-stat">
+              <dt>Компоненты</dt>
+              <dd>{components.length}</dd>
+            </div>
+            <div className="docs-hero-stat">
+              <dt>Группы</dt>
+              <dd>{docsManifest.groups.length}</dd>
+            </div>
+            <div className="docs-hero-stat">
+              <dt>Руководства</dt>
+              <dd>{guides.length}</dd>
+            </div>
+          </dl>
+
+          <RouteSwitchers
+            locale={routeState.locale}
+            platform={routeState.platform}
+            version={routeState.version}
+          />
+        </section>
+
+        {guides.length > 0 ? (
           <section className="docs-section">
-            <h2>Руководства</h2>
-            <ul className="docs-list">
-              {selectGuides(routeState.locale, routeState.platform, routeState.version).map((guide) => (
-                <li key={`guide-${guide.slug}`}>
-                  <div>
-                    <strong>{guide.title}</strong>
-                    <div className="docs-group">{guide.description || guide.slug}</div>
-                  </div>
-                  <Button
-                    size={Size.SM}
-                    variant={ButtonVariant.OUTLINE}
-                    onClick={() =>
-                      navigate(`/${routeState.locale}/${routeState.platform}/${routeState.version}/guides/${guide.slug}`)
-                    }
-                  >
-                    Открыть
-                  </Button>
-                </li>
+            <div className="docs-section-head">
+              <h2>Руководства</h2>
+              <span className="docs-section-count">{guides.length}</span>
+            </div>
+
+            <div className="docs-card-grid">
+              {guides.map((guide, index) => (
+                <Link
+                  key={`guide-${guide.slug}`}
+                  to={`/${routeState.locale}/${routeState.platform}/${routeState.version}/guides/${guide.slug}`}
+                  className="docs-tile docs-tile--guide"
+                  style={{ '--tile-index': index } as unknown as CSSProperties}
+                >
+                  <Card className="docs-tile-card" fullWidth hoverable clickable>
+                    <span className="docs-tile-icon" aria-hidden="true">
+                      §
+                    </span>
+                    <span className="docs-tile-body">
+                      <span className="docs-tile-title">{guide.title}</span>
+                      <span className="docs-tile-text">{guide.description || guide.slug}</span>
+                    </span>
+                    <span className="docs-tile-arrow" aria-hidden="true">
+                      →
+                    </span>
+                  </Card>
+                </Link>
               ))}
-            </ul>
+            </div>
           </section>
         ) : null}
 
-        <ul className="docs-list">
-          {docsManifest.components.map((component) => (
-            <li key={component.slug}>
-              <div>
-                <strong>{component.name}</strong>
-                <div className="docs-group">{component.group}</div>
-              </div>
-              <Button
-                size={Size.SM}
-                variant={ButtonVariant.OUTLINE}
-                onClick={() =>
-                  navigate(`/${routeState.locale}/${routeState.platform}/${routeState.version}/components/${component.slug}`)
-                }
-              >
-                Открыть
-              </Button>
-            </li>
-          ))}
-        </ul>
+        <section className="docs-section">
+          <div className="docs-section-head">
+            <h2>Компоненты</h2>
+            <span className="docs-section-count">{components.length}</span>
+          </div>
+
+          <div className="docs-groups">
+            {docsManifest.groups.map((group) => {
+              const groupComponents = group.items
+                .map((slug) => components.find((component) => component.slug === slug))
+                .filter((component): component is (typeof components)[number] => Boolean(component));
+
+              if (groupComponents.length === 0) {
+                return null;
+              }
+
+              return (
+                <section key={group.id} className="docs-group-block">
+                  <h3 className="docs-group-title">{group.title}</h3>
+
+                  <div className="docs-card-grid">
+                    {groupComponents.map((component, index) => (
+                      <Link
+                        key={component.slug}
+                        to={`/${routeState.locale}/${routeState.platform}/${routeState.version}/components/${component.slug}`}
+                        className="docs-tile"
+                        style={{ '--tile-index': index } as unknown as CSSProperties}
+                      >
+                        <Card className="docs-tile-card" fullWidth hoverable clickable>
+                          <span className="docs-tile-body">
+                            <span className="docs-tile-title">
+                              {component.name}
+                              <ComponentStatusBadge
+                                status={component.status}
+                                since={component.since}
+                              />
+                            </span>
+                            <span className="docs-tile-text">{component.description}</span>
+                            <span className="docs-tile-meta">
+                              {component.examples.length} примера · {component.props.items.length} пропсов
+                            </span>
+                          </span>
+                          <span className="docs-tile-arrow" aria-hidden="true">
+                            →
+                          </span>
+                        </Card>
+                      </Link>
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
+          </div>
+        </section>
       </DocsMain>
     </DocsLayout>
   );
@@ -371,10 +524,14 @@ const ComponentPage = ({
         <p>{component.description}</p>
 
         {isArchived ? (
-          <div className="docs-archive-notice" role="note">
-            Архивная версия {routeState.version}: примеры показаны статичными превью и кодом,
-            Playground и переключатель тем доступны только в актуальной версии.
-          </div>
+          <Alert
+            severity="warning"
+            variant="outlined"
+            title={`Архивная версия ${routeState.version}`}
+          >
+            Примеры показаны статичными превью и кодом, Playground и переключатель тем доступны
+            только в актуальной версии.
+          </Alert>
         ) : (
           <ThemeAxisSwitcher
             state={themeAxes}
@@ -607,15 +764,18 @@ const GuidePage = () => {
         {toc.length > 0 ? (
           <section className="docs-guide-toc" aria-label="Оглавление">
             <h2>Оглавление</h2>
-            <ul>
+            <List>
               {toc.map((item) => (
-                <li key={item.id} className={`docs-guide-toc-level-${item.level}`}>
-                  <a href={`#${item.id}`} className={item.id === activeHeadingId ? 'docs-guide-toc-link-active' : ''}>
+                <List.Item key={item.id} className={`docs-guide-toc-level-${item.level}`}>
+                  <KitLink
+                    href={`#${item.id}`}
+                    className={item.id === activeHeadingId ? 'docs-guide-toc-link-active' : ''}
+                  >
                     {item.text}
-                  </a>
-                </li>
+                  </KitLink>
+                </List.Item>
               ))}
-            </ul>
+            </List>
           </section>
         ) : null}
 
@@ -648,9 +808,7 @@ export const DocsAppContent = ({
 }) => (
   <DocsShell className={`docs-density-${themeAxes.density} docs-radius-${themeAxes.radius} docs-palette-${themeAxes.palette}`}>
     <DocsToolbar>
-      <ClientOnly>
-        <DocsSearch fallbackLocale={defaultLocale} />
-      </ClientOnly>
+      <DocsSearch fallbackLocale={defaultLocale} />
       <Button
         onClick={() =>
           onThemeAxesChange({

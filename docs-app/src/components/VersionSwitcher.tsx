@@ -1,5 +1,5 @@
-import { Badge, BadgeVariant, Size } from '@velkinvv/plainerv';
-import { Link } from 'react-router-dom';
+import { Select, Size, Tag } from '@velkinvv/plainerv';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import docsVersioning from '../../docs-versioning.config.json';
 import { contentManifest } from '../generated/content-manifest';
@@ -24,74 +24,6 @@ const VersionTitle = styled.span`
   font-size: 13px;
   opacity: 0.75;
 `;
-
-const Versions = styled.details`
-  position: relative;
-
-  & > summary {
-    cursor: pointer;
-    font-size: 13px;
-    padding: 4px 8px;
-    border-radius: 8px;
-    border: 1px solid rgba(127, 127, 127, 0.35);
-    list-style: none;
-  }
-
-  & > summary::-webkit-details-marker {
-    display: none;
-  }
-`;
-
-const VersionList = styled.div`
-  position: absolute;
-  z-index: 20;
-  top: calc(100% + 6px);
-  left: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 4px;
-  width: min(520px, 80vw);
-  max-height: 320px;
-  overflow: auto;
-  padding: 10px;
-  border-radius: 12px;
-  border: 1px solid rgba(127, 127, 127, 0.3);
-  background: ${({ theme }) =>
-    (theme as { colors?: { background?: { primary?: string } } })?.colors?.background?.primary ??
-    '#ffffff'};
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
-`;
-
-const VersionLink = styled(Link)<{ $active: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  padding: 6px 8px;
-  border-radius: 8px;
-  font-size: 13px;
-  text-decoration: none;
-  color: inherit;
-  background: ${({ $active }) => ($active ? 'rgba(64, 120, 255, 0.16)' : 'transparent')};
-  font-weight: ${({ $active }) => ($active ? 600 : 400)};
-
-  &:hover {
-    background: rgba(127, 127, 127, 0.16);
-  }
-`;
-
-const resolveVersionEntries = (platformId: string): VersionEntry[] => {
-  const platform = docsVersioning.platforms.find((item) => item.id === platformId);
-  if (!platform) {
-    return [];
-  }
-
-  return platform.versions.map((version) => ({
-    id: version.id,
-    label: version.label ?? version.id,
-    live: version.live === true,
-  }));
-};
 
 /**
  * Адрес страницы при переключении версии. Компонентные страницы существуют
@@ -130,6 +62,19 @@ const resolveVersionHref = (
   return base;
 };
 
+const resolveVersionEntries = (platformId: string): VersionEntry[] => {
+  const platform = docsVersioning.platforms.find((item) => item.id === platformId);
+  if (!platform) {
+    return [];
+  }
+
+  return platform.versions.map((version) => ({
+    id: version.id,
+    label: version.label ?? version.id,
+    live: version.live === true,
+  }));
+};
+
 export const VersionSwitcher = ({
   locale,
   platform,
@@ -141,6 +86,7 @@ export const VersionSwitcher = ({
   version: string;
   routeSuffix?: string;
 }) => {
+  const navigate = useNavigate();
   const entries = resolveVersionEntries(platform);
   if (entries.length === 0) {
     return null;
@@ -153,42 +99,51 @@ export const VersionSwitcher = ({
   return (
     <VersionBar data-version-switcher="">
       <VersionTitle>Версия:</VersionTitle>
-      <Badge size={Size.SM} variant={isLive ? BadgeVariant.DEFAULT_MAIN : BadgeVariant.OUTLINE}>
+
+      <Tag
+        size={Size.SM}
+        colorVariant={isLive ? 'primary' : 'neutral'}
+        appearance={isLive ? 'filled' : 'outline'}
+      >
         {current?.label ?? version}
-      </Badge>
+      </Tag>
+
       {isLive ? (
-        <Badge size={Size.SM} variant={BadgeVariant.DEFAULT_SUCCESS}>
+        <Tag size={Size.SM} colorVariant="success" statusDisplay="marker">
           актуальная
-        </Badge>
+        </Tag>
       ) : (
-        <Badge size={Size.SM} variant={BadgeVariant.WARNING}>
+        <Tag size={Size.SM} colorVariant="warning" statusDisplay="marker">
           архивная
-        </Badge>
+        </Tag>
       )}
 
-      {!isLive && liveVersion ? (
-        <Link to={resolveVersionHref(locale, platform, liveVersion.id, routeSuffix)}>
-          перейти к {liveVersion.label}
-        </Link>
-      ) : null}
+      <Select
+        autoWidth
+        size={Size.SM}
+        aria-label="Версия документации"
+        options={entries.map((entry) => ({
+          value: entry.id,
+          label: entry.live ? `${entry.label} — актуальная` : entry.label,
+        }))}
+        value={version}
+        onChange={(event) =>
+          navigate(resolveVersionHref(locale, platform, event.target.value, routeSuffix))
+        }
+      />
 
-      <Versions>
-        <summary>Все версии ({entries.length})</summary>
-        <VersionList>
-          {entries.map((entry) => (
-            <VersionLink
-              key={entry.id}
-              to={resolveVersionHref(locale, platform, entry.id, routeSuffix)}
-              $active={entry.id === version}
-              data-version-id={entry.id}
-              data-version-live={entry.live ? 'true' : 'false'}
-            >
-              <span>{entry.label}</span>
-              {entry.live ? <span aria-label="актуальная версия">●</span> : null}
-            </VersionLink>
-          ))}
-        </VersionList>
-      </Versions>
+      {!isLive && liveVersion ? (
+        <Select
+          autoWidth
+          size={Size.SM}
+          aria-label="Актуальная версия"
+          options={[{ value: liveVersion.id, label: `перейти к ${liveVersion.label}` }]}
+          value={liveVersion.id}
+          onChange={() =>
+            navigate(resolveVersionHref(locale, platform, liveVersion.id, routeSuffix))
+          }
+        />
+      ) : null}
     </VersionBar>
   );
 };

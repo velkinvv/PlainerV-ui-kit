@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Alert, Card, SegmentedControl, Size } from '@velkinvv/plainerv';
 import { getSnapshotDirectory } from '../versioning';
 import { CodeBlock } from './CodeBlock';
 
@@ -32,51 +33,48 @@ export const ArchivedPreview = ({
   const snapshotUrl = `${getSnapshotDirectory(version)}/${componentSlug}/${exampleId}.png`;
 
   return (
-    <article className="docs-card" data-example-id={exampleId} data-example-archived="true">
-      <div className="docs-preview-header">
-        <h3>{title}</h3>
-        {canShowCode ? (
-          <div className="docs-preview-toggle" role="tablist" aria-label={`${title} view mode`}>
-            <button
-              type="button"
-              className={mode === 'preview' ? 'docs-toggle-active' : ''}
-              onClick={() => setMode('preview')}
-            >
-              Результат
-            </button>
-            <button
-              type="button"
-              className={mode === 'code' ? 'docs-toggle-active' : ''}
-              onClick={() => setMode('code')}
-            >
-              Код
-            </button>
-          </div>
-        ) : null}
-      </div>
+    <div data-example-id={exampleId} data-example-archived="true">
+      <Card fullWidth>
+        <div className="docs-preview-header">
+          <h3>{title}</h3>
+          {canShowCode ? (
+            <SegmentedControl
+              className="docs-preview-toggle"
+              size={Size.SM}
+              ariaLabel={`${title} view mode`}
+              value={mode}
+              options={[
+                { value: 'preview', label: 'Результат' },
+                { value: 'code', label: 'Код' },
+              ]}
+              onChange={(nextValue) => setMode(nextValue as 'preview' | 'code')}
+            />
+          ) : null}
+        </div>
 
-      {description ? <p>{description}</p> : null}
+        {description ? <p>{description}</p> : null}
 
-      {canShowCode && mode === 'code' ? (
-        <CodeBlock code={code ?? ''} />
-      ) : isImageMissing ? (
-        <>
-          <div className="docs-preview-placeholder">
-            {canShowCode
-              ? `Превью для версии ${version} не снято — ниже пример из актуальной версии кита.`
-              : `Превью для версии ${version} не снято, код примера для неё недоступен.`}
-          </div>
-          {canShowCode ? <CodeBlock code={code ?? ''} /> : null}
-        </>
-      ) : (
-        <img
-          className="docs-archived-preview"
-          src={snapshotUrl}
-          alt={`Превью примера «${title}», версия ${version}`}
-          loading="lazy"
-          onError={() => setIsImageMissing(true)}
-        />
-      )}
-    </article>
+        {canShowCode && mode === 'code' ? (
+          <CodeBlock code={code ?? ''} />
+        ) : isImageMissing ? (
+          <>
+            <Alert severity="warning" variant="outlined">
+              {canShowCode
+                ? `Превью для версии ${version} не снято — ниже пример из актуальной версии кита.`
+                : `Превью для версии ${version} не снято, код примера для неё недоступен.`}
+            </Alert>
+            {canShowCode ? <CodeBlock code={code ?? ''} /> : null}
+          </>
+        ) : (
+          <img
+            className="docs-archived-preview"
+            src={snapshotUrl}
+            alt={`Превью примера «${title}», версия ${version}`}
+            loading="lazy"
+            onError={() => setIsImageMissing(true)}
+          />
+        )}
+      </Card>
+    </div>
   );
 };

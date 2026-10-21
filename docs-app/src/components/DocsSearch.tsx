@@ -1,6 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { Button, Size } from '@velkinvv/plainerv';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent as ReactKeyboardEvent,
+} from 'react';
+import { Input, Link, Size } from '@velkinvv/plainerv';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 type SearchHit = {
   url: string;
@@ -29,36 +34,88 @@ type DocsSearchProps = {
 };
 
 const baseUrl = import.meta.env.BASE_URL;
+const basePath = baseUrl.replace(/\/+$/, '');
 
 /**
  * Pagefind отдаёт пути от корня сайта без учёта `base`, поэтому приводим их
  * к тому же префиксу, под которым раздаётся приложение.
  */
 const resolveHitUrl = (url: string) => {
-  const base = baseUrl.replace(/\/+$/, '');
-
-  if (url.startsWith(base)) {
+  if (url.startsWith(basePath)) {
     return url;
   }
 
-  return `${base}${url.startsWith('/') ? '' : '/'}${url}`;
+  return `${basePath}${url.startsWith('/') ? '' : '/'}${url}`;
 };
+
+/** Путь для роутера: `basename` добавит префикс сам, поэтому его надо срезать. */
+const toRouterPath = (url: string) =>
+  url.startsWith(basePath) ? url.slice(basePath.length) || '/' : url;
 
 export const DocsSearch = ({ fallbackLocale }: DocsSearchProps) => {
   const location = useLocation();
-  const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [hits, setHits] = useState<SearchHit[]>([]);
   const [status, setStatus] = useState<'idle' | 'searching' | 'done' | 'unavailable'>('idle');
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const [shortcutLabel, setShortcutLabel] = useState('Ctrl+K');
   const pagefindRef = useRef<PagefindModule | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  // Поле из кита не пробрасывает ref наружу, поэтому фокус адресуем по id.
+  const searchInputElement = () =>
+    document.getElementById('docs-search-input') as HTMLInputElement | null;
 
   const locale = location.pathname.split('/').filter(Boolean)[0] ?? fallbackLocale;
+  const normalizedQuery = query.trim();
+  const isPanelOpen = isOpen && normalizedQuery.length >= 2;
 
   useEffect(() => {
-    if (isOpen) {
-      inputRef.current?.focus();
+    if (typeof navigator !== 'undefined' && /Mac|iPhone|iPad/i.test(navigator.userAgent)) {
+      setShortcutLabel('⌘+K');
     }
+  }, []);
+
+  // Навигация закрывает панель: поле — часть шапки, а не модальное окно.
+  useEffect(() => {
+    setIsOpen(false);
+    setQuery('');
+    setHits([]);
+    setStatus('idle');
+    setActiveIndex(-1);
+  }, [location.pathname]);
+
+  // Кнопки «Поиск» больше нет, поэтому поле фокусируется горячей клавишей.
+  useEffect(() => {
+    const handleShortcut = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        setIsOpen(true);
+        searchInputElement()?.focus();
+      }
+    };
+
+    window.addEventListener('keydown', handleShortcut);
+
+    return () => window.removeEventListener('keydown', handleShortcut);
+  }, []);
+
+  // Клик вне поля закрывает панель с результатами.
+  useEffect(() => {
+    if (!isOpen) {
+      return undefined;
+    }
+
+    const handlePointerDown = (event: MouseEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handlePointerDown);
+
+    return () => document.removeEventListener('mousedown', handlePointerDown);
   }, [isOpen]);
 
   // Индекс подключается лениво и только на клиенте: в dev-режиме его нет,
@@ -95,16 +152,16 @@ export const DocsSearch = ({ fallbackLocale }: DocsSearchProps) => {
   }, [isOpen]);
 
   useEffect(() => {
-    const normalized = query.trim();
-
-    if (normalized.length < 2) {
+    if (normalizedQuery.length < 2) {
       setHits([]);
       setStatus('idle');
+      setActiveIndex(-1);
       return undefined;
     }
 
     let cancelled = false;
     setStatus('searching');
+    setActiveIndex(-1);
 
     const timer = window.setTimeout(async () => {
       const pagefind = pagefindRef.current;
@@ -115,7 +172,7 @@ export const DocsSearch = ({ fallbackLocale }: DocsSearchProps) => {
       }
 
       try {
-        const result = await pagefind.search(normalized, { filters: { locale } });
+        const result = await pagefind.search(normalizedQuery, { filters: { locale } });
         const items = await Promise.all(result.results.slice(0, 8).map((entry) => entry.data()));
 
         if (cancelled) {
@@ -141,26 +198,68 @@ export const DocsSearch = ({ fallbackLocale }: DocsSearchProps) => {
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [query, locale]);
+  }, [normalizedQuery, locale]);
+
+  const handleInputKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Escape') {
+      setIsOpen(false);
+      searchInputElement()?.blur();
+      return;
+    }
+
+    if (event.key === 'ArrowDown' && hits.length > 0) {
+      event.preventDefault();
+      setActiveIndex((previous) => (previous + 1) % hits.length);
+      return;
+    }
+
+    if (event.key === 'ArrowUp' && hits.length > 0) {
+      event.preventDefault();
+      setActiveIndex((previous) => (previous <= 0 ? hits.length - 1 : previous - 1));
+      return;
+    }
+
+    if (event.key === 'Enter') {
+      const target = hits[activeIndex >= 0 ? activeIndex : 0];
+
+      if (target) {
+        event.preventDefault();
+        navigate(toRouterPath(target.url));
+      }
+    }
+  };
 
   return (
-    <div className="docs-search">
-      <Button size={Size.SM} onClick={() => setIsOpen((previous) => !previous)} aria-expanded={isOpen}>
-        Поиск
-      </Button>
+    <div className="docs-search" ref={rootRef}>
+      <div className="docs-search-field">
+        <Input
+          id="docs-search-input"
+          fullWidth
+          size={Size.SM}
+          type="search"
+          value={query}
+          placeholder="Поиск по документации"
+          aria-label="Поиск по документации"
+          role="combobox"
+          aria-expanded={isPanelOpen}
+          aria-controls="docs-search-results"
+          aria-autocomplete="list"
+          aria-activedescendant={activeIndex >= 0 ? `docs-search-hit-${activeIndex}` : undefined}
+          onFocus={() => setIsOpen(true)}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            setIsOpen(true);
+          }}
+          onKeyDown={handleInputKeyDown}
+        />
 
-      {isOpen ? (
-        <div className="docs-search-panel" role="dialog" aria-label="Поиск по документации">
-          <input
-            ref={inputRef}
-            className="docs-search-input"
-            type="search"
-            value={query}
-            placeholder="Найти компонент или раздел"
-            aria-label="Поисковый запрос"
-            onChange={(event) => setQuery(event.target.value)}
-          />
+        <kbd className="docs-search-shortcut" aria-hidden="true">
+          {shortcutLabel}
+        </kbd>
+      </div>
 
+      {isPanelOpen ? (
+        <div className="docs-search-panel">
           {status === 'unavailable' ? (
             <p className="docs-search-hint">Поиск доступен в собранной версии сайта.</p>
           ) : null}
@@ -172,20 +271,33 @@ export const DocsSearch = ({ fallbackLocale }: DocsSearchProps) => {
           ) : null}
 
           {hits.length > 0 ? (
-            <ul className="docs-search-results">
-              {hits.map((hit) => (
-                <li key={hit.url}>
-                  <a href={hit.url}>
-                    <span className="docs-search-title">{hit.title}</span>
-                    {/* Разметку подсветки формирует сам Pagefind по своему индексу. */}
-                    <span
-                      className="docs-search-excerpt"
-                      dangerouslySetInnerHTML={{ __html: hit.excerpt }}
-                    />
-                  </a>
-                </li>
+            <div className="docs-search-results" id="docs-search-results" role="listbox">
+              {hits.map((hit, index) => (
+                <Link
+                  key={hit.url}
+                  id={`docs-search-hit-${index}`}
+                  href={hit.url}
+                  role="option"
+                  aria-selected={index === activeIndex}
+                  className={index === activeIndex ? 'docs-search-hit is-active' : 'docs-search-hit'}
+                  onMouseEnter={() => setActiveIndex(index)}
+                  onClick={(event) => {
+                    // Ведём переход роутером, чтобы не перезагружать страницу.
+                    event.preventDefault();
+                    setIsOpen(false);
+                    setQuery('');
+                    navigate(toRouterPath(hit.url));
+                  }}
+                >
+                  <span className="docs-search-title">{hit.title}</span>
+                  {/* Разметку подсветки формирует сам Pagefind по своему индексу. */}
+                  <span
+                    className="docs-search-excerpt"
+                    dangerouslySetInnerHTML={{ __html: hit.excerpt }}
+                  />
+                </Link>
               ))}
-            </ul>
+            </div>
           ) : null}
         </div>
       ) : null}

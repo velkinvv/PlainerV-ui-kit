@@ -1,3 +1,5 @@
+import { Select } from '@velkinvv/plainerv';
+
 type ColorMode = 'light' | 'dark';
 type Density = 'comfortable' | 'compact';
 type Radius = 'md' | 'lg';
@@ -16,6 +18,26 @@ type ThemeAxisSwitcherProps = {
   themes: readonly string[];
 };
 
+const colorModeOptions = [
+  { value: 'light', label: 'light' },
+  { value: 'dark', label: 'dark' },
+];
+
+const densityOptions = [
+  { value: 'comfortable', label: 'comfortable' },
+  { value: 'compact', label: 'compact' },
+];
+
+const radiusOptions = [
+  { value: 'md', label: 'md' },
+  { value: 'lg', label: 'lg' },
+];
+
+const paletteOptions = [
+  { value: 'brand', label: 'brand' },
+  { value: 'neutral', label: 'neutral' },
+];
+
 const hasThemeToken = (themes: readonly string[], token: string) => themes.includes(token);
 
 export const ThemeAxisSwitcher = ({ state, onChange, themes }: ThemeAxisSwitcherProps) => {
@@ -29,55 +51,51 @@ export const ThemeAxisSwitcher = ({ state, onChange, themes }: ThemeAxisSwitcher
       <h2>Theme Axis</h2>
 
       <div className="docs-axis-grid">
-        <label className="docs-axis-control">
+        <div className="docs-axis-control">
           <span>Color mode</span>
-          <select
+          <Select
+            autoWidth
+            options={colorModeOptions}
             value={state.colorMode}
             disabled={!canToggleColorMode}
             onChange={(event) =>
               onChange({ ...state, colorMode: event.target.value as ColorMode })
             }
-          >
-            <option value="light">light</option>
-            <option value="dark">dark</option>
-          </select>
-        </label>
+          />
+        </div>
 
-        <label className="docs-axis-control">
+        <div className="docs-axis-control">
           <span>Density</span>
-          <select
+          <Select
+            autoWidth
+            options={densityOptions}
             value={state.density}
             disabled={!canToggleDensity}
             onChange={(event) => onChange({ ...state, density: event.target.value as Density })}
-          >
-            <option value="comfortable">comfortable</option>
-            <option value="compact">compact</option>
-          </select>
-        </label>
+          />
+        </div>
 
-        <label className="docs-axis-control">
+        <div className="docs-axis-control">
           <span>Radius</span>
-          <select
+          <Select
+            autoWidth
+            options={radiusOptions}
             value={state.radius}
             disabled={!canToggleRadius}
             onChange={(event) => onChange({ ...state, radius: event.target.value as Radius })}
-          >
-            <option value="md">md</option>
-            <option value="lg">lg</option>
-          </select>
-        </label>
+          />
+        </div>
 
-        <label className="docs-axis-control">
+        <div className="docs-axis-control">
           <span>Palette</span>
-          <select
+          <Select
+            autoWidth
+            options={paletteOptions}
             value={state.palette}
             disabled={!canTogglePalette}
             onChange={(event) => onChange({ ...state, palette: event.target.value as Palette })}
-          >
-            <option value="brand">brand</option>
-            <option value="neutral">neutral</option>
-          </select>
-        </label>
+          />
+        </div>
       </div>
     </section>
   );

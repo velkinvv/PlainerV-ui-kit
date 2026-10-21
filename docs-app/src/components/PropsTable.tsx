@@ -1,3 +1,5 @@
+import { Size, Table, TableBody, TableCell, TableHead, TableRow, Tag } from '@velkinvv/plainerv';
+
 type PropItem = {
   name: string;
   type: string;
@@ -20,35 +22,45 @@ export const PropsTable = ({ items }: PropsTableProps) => {
 
   return (
     <div className="docs-props-wrap">
-      <table className="docs-props-table">
-        <thead>
-          <tr>
-            <th>Проп</th>
-            <th>Тип</th>
-            <th>Обяз.</th>
-            <th>По умолчанию</th>
-            <th>Описание</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table size="sm">
+        <TableHead>
+          <TableRow>
+            <TableCell variant="head">Проп</TableCell>
+            <TableCell variant="head">Тип</TableCell>
+            <TableCell variant="head">Обяз.</TableCell>
+            <TableCell variant="head">По умолчанию</TableCell>
+            <TableCell variant="head">Описание</TableCell>
+          </TableRow>
+        </TableHead>
+
+        <TableBody>
           {items.map((item) => (
-            <tr key={item.name}>
-              <td>
+            <TableRow key={item.name}>
+              <TableCell>
                 <code>{item.name}</code>
-                {item.deprecated ? <span className="docs-props-deprecated">deprecated</span> : null}
-              </td>
-              <td>
+                {item.deprecated ? (
+                  <Tag
+                    className="docs-props-deprecated"
+                    size={Size.XS}
+                    colorVariant="danger"
+                    appearance="outline"
+                  >
+                    deprecated
+                  </Tag>
+                ) : null}
+              </TableCell>
+              <TableCell>
                 <code>{item.type || 'unknown'}</code>
-              </td>
-              <td>{boolLabel(item.required)}</td>
-              <td>
+              </TableCell>
+              <TableCell>{boolLabel(item.required)}</TableCell>
+              <TableCell>
                 <code>{item.defaultValue || '—'}</code>
-              </td>
-              <td>{item.description || '—'}</td>
-            </tr>
+              </TableCell>
+              <TableCell>{item.description || '—'}</TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 };

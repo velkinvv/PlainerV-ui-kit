@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Button, ButtonVariant, Size } from '@velkinvv/plainerv';
 
 type CodeBlockProps = {
   code: string;
@@ -18,9 +19,12 @@ export const CodeBlock = ({ code }: CodeBlockProps) => {
 
   return (
     <div className="docs-code-block">
-      <button type="button" className="docs-code-copy" onClick={handleCopy}>
-        {copied ? 'Скопировано' : 'Копировать'}
-      </button>
+      <div className="docs-code-actions">
+        <Button size={Size.SM} variant={ButtonVariant.OUTLINE} onClick={handleCopy}>
+          {copied ? 'Скопировано' : 'Копировать'}
+        </Button>
+      </div>
+
       <pre>
         <code>{normalizedCode}</code>
       </pre>

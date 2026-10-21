@@ -355,10 +355,11 @@ const main = async () => {
 
   // Разметка Pagefind: фильтры по локали и версии плюс полное исключение
   // архивных версий из индекса поиска.
+  // Дублировать `data-pagefind-filter` в одном теге нельзя: второй атрибут
+  // отбрасывается парсером. Отдельный фильтр по версии не нужен — архивные
+  // страницы исключены атрибутом `data-pagefind-ignore` на `main`.
   const buildSearchAttributes = (version, locale) =>
-    version.isCurrent
-      ? ` data-pagefind-filter="locale:${locale.id}" data-pagefind-filter="version:${version.id}"`
-      : ' data-pagefind-ignore="all"';
+    version.isCurrent ? ` data-pagefind-filter="locale:${locale.id}"` : ' data-pagefind-ignore="all"';
 
   const routes = [];
 

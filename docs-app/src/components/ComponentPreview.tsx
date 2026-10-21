@@ -1,4 +1,5 @@
 import React, { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import { Alert, Card, SegmentedControl, Size } from '@velkinvv/plainerv';
 import { CodeBlock } from './CodeBlock';
 
 const InteractivePreview = lazy(() => import('./InteractivePreview'));
@@ -44,17 +45,17 @@ const DeferredInteractivePreview = ({ code, deferredHeight }: DeferredInteractiv
       {isVisible ? (
         <Suspense
           fallback={
-            <div className="docs-preview-placeholder">
+            <Alert severity="info" variant="outlined">
               Интерактивный предпросмотр загружается...
-            </div>
+            </Alert>
           }
         >
           <InteractivePreview code={code} />
         </Suspense>
       ) : (
-        <div className="docs-preview-placeholder">
+        <Alert severity="info" variant="outlined">
           Интерактивный предпросмотр загрузится при прокрутке.
-        </div>
+        </Alert>
       )}
     </div>
   );
@@ -81,40 +82,37 @@ export const ComponentPreview = ({
   const canShowCode = Boolean(code) && showCode;
 
   return (
-    <article className="docs-card" data-example-id={exampleId}>
-      <div className="docs-preview-header">
-        <h3>{title}</h3>
-        {canShowCode ? (
-          <div className="docs-preview-toggle" role="tablist" aria-label={`${title} view mode`}>
-            <button
-              type="button"
-              className={mode === 'preview' ? 'docs-toggle-active' : ''}
-              onClick={() => setMode('preview')}
-            >
-              Результат
-            </button>
-            <button
-              type="button"
-              className={mode === 'code' ? 'docs-toggle-active' : ''}
-              onClick={() => setMode('code')}
-            >
-              Код
-            </button>
-          </div>
-        ) : null}
-      </div>
-
-      {description ? <p>{description}</p> : null}
-
-      {canShowCode && mode === 'code' ? (
-        <CodeBlock code={code ?? ''} />
-      ) : canShowCode ? (
-        <DeferredInteractivePreview code={code ?? ''} deferredHeight={deferredHeight} />
-      ) : (
-        <div className="docs-preview-placeholder">
-          Для этого примера код предпросмотра не задан.
+    <div data-example-id={exampleId}>
+      <Card fullWidth>
+        <div className="docs-preview-header">
+          <h3>{title}</h3>
+          {canShowCode ? (
+            <SegmentedControl
+              className="docs-preview-toggle"
+              size={Size.SM}
+              ariaLabel={`${title} view mode`}
+              value={mode}
+              options={[
+                { value: 'preview', label: 'Результат' },
+                { value: 'code', label: 'Код' },
+              ]}
+              onChange={(nextValue) => setMode(nextValue as 'preview' | 'code')}
+            />
+          ) : null}
         </div>
-      )}
-    </article>
+
+        {description ? <p>{description}</p> : null}
+
+        {canShowCode && mode === 'code' ? (
+          <CodeBlock code={code ?? ''} />
+        ) : canShowCode ? (
+          <DeferredInteractivePreview code={code ?? ''} deferredHeight={deferredHeight} />
+        ) : (
+          <Alert severity="info" variant="outlined">
+            Для этого примера код предпросмотра не задан.
+          </Alert>
+        )}
+      </Card>
+    </div>
   );
 };

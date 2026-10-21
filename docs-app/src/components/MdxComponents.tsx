@@ -1,4 +1,5 @@
 import { MDXProvider } from '@mdx-js/react';
+import { Alert } from '@velkinvv/plainerv';
 import type { ComponentType, ReactNode } from 'react';
 
 /**
@@ -9,10 +10,10 @@ import type { ComponentType, ReactNode } from 'react';
  * живого интерактива, который для архивной версии невозможен.
  */
 const LegacyComponentPlaceholder = () => (
-  <div className="docs-preview-placeholder" role="note">
+  <Alert severity="info" variant="outlined">
     Этот блок относился к интерактивным примерам прежней документации. Откройте актуальную
     версию, чтобы работать с живыми примерами.
-  </div>
+  </Alert>
 );
 
 // Имена взяты из фактического контента (`content/docs/**/components-*.mdx`).

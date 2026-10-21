@@ -1,3 +1,4 @@
+import { Card } from '@velkinvv/plainerv';
 import { CodeBlock } from './CodeBlock';
 
 type VariantItem = {
@@ -29,11 +30,11 @@ export const VariantGrid = ({ group }: VariantGridProps) => {
         style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
       >
         {group.items.map((item) => (
-          <article key={item.id} className="docs-card">
+          <Card key={item.id} fullWidth>
             <h3>{item.title}</h3>
             {item.description ? <p>{item.description}</p> : null}
             {item.code ? <CodeBlock code={item.code} /> : null}
-          </article>
+          </Card>
         ))}
       </div>
     </section>
